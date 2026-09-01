@@ -3,41 +3,29 @@ export const landmarks = [
     slug: "holstentor",
     name: "Holstentor",
     duration: "2 min",
-
-    image: "/landmarks/holstentor.jpg",
-    audio: "/audio/holstentor-en.mp3",
-    
     description:
       "One of Lübeck's most famous landmarks and a symbol of its Hanseatic history.",
     story:
       "The Holstentor was built in the late 15th century as part of Lübeck's city fortifications. Its two distinctive towers became one of the city's most recognizable symbols.",
     facts: [
-    {
-      label: "Built",
-      value: "1464–1478",
-    },
-    {
-      label: "Master builder",
-      value: "Hinrich Helmstede",
-    },
-    {
-      label: "Purpose",
-      value: "Defense and representation",
-    },
-    {
-      label: "Fun fact",
-      value: "Saved from demolition by a 42–41 vote in 1863",
-    },
-  ],
+      {
+        label: "Built",
+        value: "Late 15th century",
+      },
+      {
+        label: "Architecture",
+        value: "Brick Gothic",
+      },
+      {
+        label: "Known for",
+        value: "Symbol of Lübeck",
+      },
+    ],
   },
   {
     slug: "marienkirche",
     name: "Marienkirche",
     duration: "3 min",
-
-    image: "",
-    audio: "",
-
     description:
       "A monumental Brick Gothic church in the heart of Lübeck's old town.",
     story:
@@ -61,10 +49,6 @@ export const landmarks = [
     slug: "rathaus",
     name: "Lübeck Rathaus",
     duration: "3 min",
-
-    image: "",
-    audio: "",
-
     description:
       "Lübeck's historic town hall reflects centuries of Hanseatic power.",
     story:
@@ -88,10 +72,6 @@ export const landmarks = [
     slug: "heiligen-geist-hospital",
     name: "Heiligen-Geist-Hospital",
     duration: "4 min",
-
-    image: "",
-    audio: "",
-
     description:
       "One of Europe's best-preserved medieval social institutions.",
     story:
@@ -115,10 +95,6 @@ export const landmarks = [
     slug: "buddenbrookhaus",
     name: "Buddenbrookhaus",
     duration: "3 min",
-
-    image: "",
-    audio: "",
-
     description:
       "A literary landmark connected with the famous Mann family.",
     story:

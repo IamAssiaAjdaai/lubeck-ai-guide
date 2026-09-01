@@ -1,5 +1,3 @@
-import Image from "next/image";
-import AudioPlayer from "@/components/AudioPlayer";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { landmarks } from "@/data/landmarks";
@@ -60,19 +58,7 @@ export default async function LandmarkPage({
         </div>
 
         {/* Image placeholder */}
-        {landmark.image ? (
-            <div className="relative mt-6 aspect-[4/3] overflow-hidden rounded-3xl">
-                    <Image
-                    src={landmark.image}
-                    alt={landmark.name}
-                    fill
-                    priority={currentIndex === 0}
-                    className="object-cover"
-                    />
-            </div>
-        ) : (
-            <div className="mt-6 aspect-[4/3] rounded-3xl bg-zinc-200" />
-        )}
+        <div className="mt-6 aspect-[4/3] w-full rounded-3xl bg-zinc-200" />
 
         {/* Header */}
         <div className="mt-6">
@@ -90,15 +76,28 @@ export default async function LandmarkPage({
         </div>
 
         {/* Audio */}
-        
-        {landmark.audio && (
-        <div className="mt-8">
-            <AudioPlayer
-            src={landmark.audio}
-            title={`${landmark.name} audio guide`}
-            />
+        <div className="mt-8 rounded-2xl bg-zinc-100 p-5">
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              aria-label={`Play ${landmark.name} audio guide`}
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-black text-xl text-white"
+            >
+              ▶
+            </button>
+
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold">Listen to the story</p>
+
+              <div className="mt-3 h-1.5 rounded-full bg-zinc-300" />
+
+              <div className="mt-2 flex justify-between text-xs text-zinc-500">
+                <span>0:00</span>
+                <span>{landmark.duration}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        )}
 
         {/* Story */}
         <section className="mt-10">
