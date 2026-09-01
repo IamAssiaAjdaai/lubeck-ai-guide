@@ -233,7 +233,7 @@ export default async function LandmarkPage({
           </Link>
         ) : (
           <Link
-            href={`/${currentLocale}/lubeck`}
+            href={`/${currentLocale}/lubeck/complete`}
             className="mt-4 flex h-16 w-full items-center justify-center rounded-2xl bg-black px-6 text-lg font-semibold text-white transition hover:bg-zinc-800"
           >
             {t.finishTour} ✓
