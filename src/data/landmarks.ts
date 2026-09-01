@@ -68,7 +68,7 @@ export const landmarks = [
 
   {
     slug: "marienkirche",
-    image: "",
+    image: "/landmarks/marienkirche.jpg",
 
     content: {
       en: {
@@ -135,7 +135,7 @@ export const landmarks = [
 
   {
     slug: "rathaus",
-    image: "",
+    image : "/landmarks/rathaus.jpg",
 
     content: {
       en: {
@@ -202,7 +202,7 @@ export const landmarks = [
 
   {
     slug: "heiligen-geist-hospital",
-    image: "",
+    image: "/landmarks/heiligen-geist-hospital.jpg",
 
     content: {
       en: {
@@ -269,7 +269,7 @@ export const landmarks = [
 
   {
     slug: "buddenbrookhaus",
-    image: "",
+    image: "/landmarks/buddenbrookhaus.jpg",
 
     content: {
       en: {
