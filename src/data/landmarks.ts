@@ -1,284 +1,336 @@
 export const landmarks = [
   {
-  slug: "holstentor",
+    slug: "holstentor",
+    image: "/landmarks/holstentor.jpg",
 
-  image: "/landmarks/holstentor.jpg",
+    content: {
+      en: {
+        name: "Holstentor",
+        duration: "2 min",
+        audio: "/audio/holstentor-en.mp3",
+        description:
+          "Lübeck's famous medieval city gate and one of the city's most recognizable symbols.",
+        story:
+          "The Holstentor was built between 1464 and 1478. It protected the city while also showing Lübeck's wealth and importance during the Hanseatic era.",
+        facts: [
+          { label: "Built", value: "1464–1478" },
+          { label: "Architecture", value: "Brick Gothic" },
+          { label: "Known for", value: "Symbol of Lübeck" },
+        ],
+      },
 
-  content: {
-    en: {
-      name: "Holstentor",
-      duration: "2 min",
-      audio: "/audio/holstentor-en.mp3",
-      description:
-        "Lübeck's famous medieval city gate and one of the city's most recognizable symbols.",
-      story:
-        "The Holstentor was built between 1464 and 1478. It protected the city while also showing Lübeck's wealth and importance during the Hanseatic era.",
-    },
+      de: {
+        name: "Holstentor",
+        duration: "2 Min.",
+        audio: "/audio/holstentor-de.mp3",
+        description:
+          "Das berühmte mittelalterliche Stadttor Lübecks und eines der bekanntesten Wahrzeichen der Stadt.",
+        story:
+          "Das Holstentor wurde zwischen 1464 und 1478 erbaut. Es schützte die Stadt und zeigte gleichzeitig Lübecks Reichtum und Bedeutung während der Hansezeit.",
+        facts: [
+          { label: "Erbaut", value: "1464–1478" },
+          { label: "Architektur", value: "Backsteingotik" },
+          { label: "Bekannt als", value: "Wahrzeichen Lübecks" },
+        ],
+      },
 
-    de: {
-      name: "Holstentor",
-      duration: "2 Min.",
-      audio: "/audio/holstentor-de.mp3",
-      description:
-        "Das berühmte mittelalterliche Stadttor Lübecks und eines der bekanntesten Wahrzeichen der Stadt.",
-      story:
-        "Das Holstentor wurde zwischen 1464 und 1478 erbaut. Es diente nicht nur dem Schutz der Stadt, sondern sollte auch den Reichtum und die Bedeutung Lübecks während der Hansezeit zeigen.",
-    },
+      fr: {
+        name: "Holstentor",
+        duration: "2 min",
+        audio: "/audio/holstentor-fr.mp3",
+        description:
+          "La célèbre porte médiévale de Lübeck et l'un des symboles les plus connus de la ville.",
+        story:
+          "Le Holstentor a été construit entre 1464 et 1478. Il protégeait la ville tout en montrant la richesse et l'importance de Lübeck à l'époque hanséatique.",
+        facts: [
+          { label: "Construction", value: "1464–1478" },
+          { label: "Architecture", value: "Gothique en brique" },
+          { label: "Connu pour", value: "Symbole de Lübeck" },
+        ],
+      },
 
-    fr: {
-      name: "Holstentor",
-      duration: "2 min",
-      audio: "/audio/holstentor-fr.mp3",
-      description:
-        "La célèbre porte médiévale de Lübeck et l'un des symboles les plus connus de la ville.",
-      story:
-        "Le Holstentor a été construit entre 1464 et 1478. Il servait à protéger la ville tout en montrant la richesse et l'importance de Lübeck à l'époque hanséatique.",
-    },
-
-    ar: {
-      name: "بوابة هولشتن",
-      duration: "دقيقتان",
-      audio: "",
-      description:
-        "بوابة لوبيك التاريخية الشهيرة وأحد أبرز رموز المدينة.",
-      story:
-        "بُنيت بوابة هولشتن بين عامي 1464 و1478. لم يكن هدفها حماية المدينة فقط، بل كانت أيضاً رمزاً لقوة لوبيك وثرائها خلال عصر الرابطة الهانزية.",
+      ar: {
+        name: "بوابة هولشتن",
+        duration: "دقيقتان",
+        audio: "",
+        description:
+          "بوابة لوبيك التاريخية الشهيرة وأحد أبرز رموز المدينة.",
+        story:
+          "بُنيت بوابة هولشتن بين عامي 1464 و1478. وكانت تحمي المدينة وفي الوقت نفسه تعكس ثروة لوبيك ومكانتها خلال العصر الهانزي.",
+        facts: [
+          { label: "تاريخ البناء", value: "1464–1478" },
+          { label: "العمارة", value: "القوطية بالطوب" },
+          { label: "تشتهر بأنها", value: "رمز مدينة لوبيك" },
+        ],
+      },
     },
   },
 
-  facts: [
-    {
-      label: "Built",
-      value: "1464–1478",
-    },
-    {
-      label: "Architecture",
-      value: "Brick Gothic",
-    },
-    {
-      label: "Known for",
-      value: "Symbol of Lübeck",
-    },
-  ],
-  },
   {
     slug: "marienkirche",
-    image: "/landmarks/marienkirche.jpg",
+    image: "",
+
     content: {
       en: {
         name: "Marienkirche",
         duration: "3 min",
-        audio: "/audio/marienkirche-en.mp3",
+        audio: "",
         description:
-          "A monumental Brick Gothic church in the heart of Lübeck's old town.",
+          "One of Lübeck's most important historic churches.",
         story:
-          "St. Mary's Church became one of the most influential examples of Brick Gothic architecture in northern Europe.",
+          "St. Mary's Church is one of the most significant examples of Brick Gothic architecture in northern Germany.",
+        facts: [
+          { label: "Type", value: "Church" },
+          { label: "Architecture", value: "Brick Gothic" },
+          { label: "Location", value: "Lübeck Old Town" },
+        ],
       },
+
       de: {
         name: "Marienkirche",
         duration: "3 Min.",
         audio: "",
         description:
-          "Eine monumentale Backstein-Gotik-Kirche im Herzen des alten Lübecks.",
+          "Eine der bedeutendsten historischen Kirchen Lübecks.",
         story:
-          "Die Kirche St. Maria wurde zu einer der einflussreichsten Beispiele für die Backstein-Gotik in Nordeuropa.",
+          "Die Marienkirche zählt zu den bedeutendsten Beispielen der Backsteingotik in Norddeutschland.",
+        facts: [
+          { label: "Typ", value: "Kirche" },
+          { label: "Architektur", value: "Backsteingotik" },
+          { label: "Ort", value: "Lübecker Altstadt" },
+        ],
       },
+
       fr: {
-        name: "Marienkirche",
+        name: "Église Sainte-Marie",
         duration: "3 min",
         audio: "",
         description:
-          "Une église monumentale en style gothique de brique au cœur de la vieille ville de Lübeck.",
+          "L'une des églises historiques les plus importantes de Lübeck.",
         story:
-          "L'église Sainte-Marie est devenue l'un des exemples les plus influents de l'architecture gothique de brique en Europe du Nord.",
+          "L'église Sainte-Marie est l'un des exemples majeurs de l'architecture gothique en brique du nord de l'Allemagne.",
+        facts: [
+          { label: "Type", value: "Église" },
+          { label: "Architecture", value: "Gothique en brique" },
+          { label: "Lieu", value: "Vieille ville de Lübeck" },
+        ],
       },
+
       ar: {
-        name: "كنيسة ماري",
+        name: "كنيسة مريم",
         duration: "3 دقائق",
         audio: "",
         description:
-          "كنيسة Monumentية بأسلوب القوطيك البرتغالي في قلب مدينة لوبيك القديمة.",
+          "إحدى أهم الكنائس التاريخية في مدينة لوبيك.",
         story:
-          "أصبحت كنيسة القديسة مريم واحدة من أبرز أمثلة العمارة القوطيكية بالبرتغال في شمال أوروبا.",
+          "تُعد كنيسة مريم من أبرز أمثلة العمارة القوطية المبنية بالطوب في شمال ألمانيا.",
+        facts: [
+          { label: "النوع", value: "كنيسة" },
+          { label: "العمارة", value: "القوطية بالطوب" },
+          { label: "الموقع", value: "المدينة القديمة في لوبيك" },
+        ],
       },
     },
-    facts: [
-      {
-        label: "Type",
-        value: "Church",
-      },
-      {
-        label: "Architecture",
-        value: "Brick Gothic",
-      },
-      {
-        label: "Location",
-        value: "Lübeck Old Town",
-      },
-    ],
   },
+
   {
     slug: "rathaus",
-    image: "/landmarks/rathaus.jpg",
+    image: "",
+
     content: {
       en: {
         name: "Lübeck Rathaus",
         duration: "3 min",
-        audio: "/audio/rathaus-en.mp3",
+        audio: "",
         description:
-          "Lübeck's historic town hall reflects centuries of Hanseatic power.",
+          "Lübeck's historic town hall in the heart of the old town.",
         story:
-          "The Lübeck Rathaus developed over several centuries and served as the political center of one of the most important cities of the Hanseatic League.",
+          "The historic town hall was an important political center during Lübeck's long Hanseatic history.",
+        facts: [
+          { label: "Type", value: "Town Hall" },
+          { label: "Location", value: "Market Square" },
+          { label: "City", value: "Lübeck" },
+        ],
       },
+
       de: {
-        name: "Lübeck Rathaus",
+        name: "Lübecker Rathaus",
         duration: "3 Min.",
         audio: "",
         description:
-          "Das historische Stadthaus von Lübeck spiegelt Jahrhunderte der Hanse-Power wider.",
+          "Das historische Rathaus im Herzen der Lübecker Altstadt.",
         story:
-          "Das Lübeck Rathaus entwickelte sich über mehrere Jahrhunderte und diente als politisches Zentrum einer der wichtigsten Städte der Hanse.",
+          "Das historische Rathaus war über Jahrhunderte ein wichtiges politisches Zentrum der Hansestadt Lübeck.",
+        facts: [
+          { label: "Typ", value: "Rathaus" },
+          { label: "Ort", value: "Marktplatz" },
+          { label: "Stadt", value: "Lübeck" },
+        ],
       },
+
       fr: {
-        name: "Lübeck Rathaus",
+        name: "Hôtel de ville de Lübeck",
         duration: "3 min",
         audio: "",
         description:
-          "Le bâtiment historique de la mairie de Lübeck reflète plusieurs siècles de pouvoir hanséatique.",
+          "L'hôtel de ville historique situé au cœur de la vieille ville.",
         story:
-          "Le Rathaus de Lübeck s'est développé au fil de plusieurs siècles et a servi de centre politique d'une des villes les plus importantes de la Ligue hanséatique.",
+          "Pendant des siècles, l'hôtel de ville a été un centre politique important de la cité hanséatique.",
+        facts: [
+          { label: "Type", value: "Hôtel de ville" },
+          { label: "Lieu", value: "Place du marché" },
+          { label: "Ville", value: "Lübeck" },
+        ],
       },
+
       ar: {
-        name: "لوبك راثاوس",
+        name: "مبنى بلدية لوبيك",
         duration: "3 دقائق",
         audio: "",
         description:
-          "مبنى المدينة التاريخي في لوبيك يعكس قرون من القوة الهانزية.",
+          "مبنى البلدية التاريخي في قلب المدينة القديمة.",
         story:
-          "طور مبنى لوبيك راثاوس على مر عدة قرون وخدم كمركز سياسي لأحد أهم مدن اتحاد الهانزية.",
+          "كان مبنى البلدية مركزاً سياسياً مهماً لمدينة لوبيك خلال تاريخها الهانزي الطويل.",
+        facts: [
+          { label: "النوع", value: "مبنى بلدية" },
+          { label: "الموقع", value: "ساحة السوق" },
+          { label: "المدينة", value: "لوبيك" },
+        ],
       },
     },
-    facts: [
-      {
-        label: "Type",
-        value: "Town Hall",
-      },
-      {
-        label: "Style",
-        value: "Gothic and Renaissance influences",
-      },
-      {
-        label: "Location",
-        value: "Market Square",
-      },
-    ],
   },
+
   {
     slug: "heiligen-geist-hospital",
-    image: "/landmarks/heiligen-geist-hospital.jpg",
+    image: "",
+
     content: {
       en: {
         name: "Heiligen-Geist-Hospital",
         duration: "4 min",
-        audio: "/audio/heiligen-geist-hospital-en.mp3",
+        audio: "",
         description:
-          "One of Europe's best-preserved medieval social institutions.",
+          "A remarkable medieval social institution in Lübeck.",
         story:
-          "The Hospital of the Holy Spirit was founded during the Middle Ages to care for poor, sick and elderly residents of Lübeck.",
+          "The Hospital of the Holy Spirit was created to care for people in need and remains one of Lübeck's important medieval monuments.",
+        facts: [
+          { label: "Type", value: "Historic hospital" },
+          { label: "Era", value: "Middle Ages" },
+          { label: "Purpose", value: "Social care" },
+        ],
       },
+
       de: {
         name: "Heiligen-Geist-Hospital",
         duration: "4 Min.",
         audio: "",
         description:
-          "Eine der besten erhaltenen mittelalterlichen sozialen Einrichtungen in Europa.",
+          "Eine bedeutende mittelalterliche Sozialeinrichtung in Lübeck.",
         story:
-          "Das Krankenhaus des Heiligen Geistes wurde während des Mittelalters gegründet, um die Armen, Kranken und Alten von Lübeck zu versorgen.",
+          "Das Heiligen-Geist-Hospital wurde zur Versorgung bedürftiger Menschen gegründet und gehört heute zu den bedeutenden mittelalterlichen Bauwerken Lübecks.",
+        facts: [
+          { label: "Typ", value: "Historisches Hospital" },
+          { label: "Epoche", value: "Mittelalter" },
+          { label: "Zweck", value: "Soziale Fürsorge" },
+        ],
       },
+
       fr: {
-        name: "Heiligen-Geist-Hospital",
+        name: "Hôpital du Saint-Esprit",
         duration: "4 min",
         audio: "",
         description:
-          "L'une des meilleures institutions sociales médiévales préservées en Europe.",
+          "Une remarquable institution sociale médiévale de Lübeck.",
         story:
-          "L'hôpital du Saint-Esprit a été fondé pendant le Moyen Âge pour prendre soin des pauvres, des malades et des personnes âgées de Lübeck.",
+          "L'Hôpital du Saint-Esprit a été fondé pour prendre soin des personnes dans le besoin.",
+        facts: [
+          { label: "Type", value: "Hôpital historique" },
+          { label: "Époque", value: "Moyen Âge" },
+          { label: "Fonction", value: "Aide sociale" },
+        ],
       },
+
       ar: {
-        name: "مستشفى السيدة العذراء",
+        name: "مستشفى الروح القدس",
         duration: "4 دقائق",
         audio: "",
         description:
-          "واحد من أفضل المؤسسات الاجتماعية المحافظة من العصر الوسطى في أوروبا.",
+          "إحدى المؤسسات الاجتماعية التاريخية البارزة في لوبيك.",
         story:
-          "أُقيم مستشفى السيدة العذراء خلال العصر الوسطى لرعاية الفقراء والمرضى والكبار في لوبيك.",
+          "أُسس مستشفى الروح القدس لرعاية الأشخاص المحتاجين ويُعد اليوم من أهم المعالم التاريخية في المدينة.",
+        facts: [
+          { label: "النوع", value: "مستشفى تاريخي" },
+          { label: "العصر", value: "العصور الوسطى" },
+          { label: "الهدف", value: "الرعاية الاجتماعية" },
+        ],
       },
     },
-    facts: [
-      {
-        label: "Type",
-        value: "Historic hospital",
-      },
-      {
-        label: "Era",
-        value: "Middle Ages",
-      },
-      {
-        label: "Known for",
-        value: "Historic social care",
-      },
-    ],
   },
+
   {
     slug: "buddenbrookhaus",
-    image: "/landmarks/buddenbrookhaus.jpg",
+    image: "",
+
     content: {
       en: {
         name: "Buddenbrookhaus",
         duration: "3 min",
-        audio: "/audio/buddenbrookhaus-en.mp3",
+        audio: "",
         description:
-          "A literary landmark connected with the famous Mann family.",
+          "A literary landmark closely connected with the Mann family.",
         story:
-          "The Buddenbrookhaus is closely associated with writers Thomas and Heinrich Mann and with the world portrayed in Thomas Mann's novel Buddenbrooks.",
+          "The Buddenbrookhaus is associated with writers Thomas and Heinrich Mann and with Lübeck's literary history.",
+        facts: [
+          { label: "Theme", value: "Literature" },
+          { label: "Connected to", value: "Thomas and Heinrich Mann" },
+          { label: "Location", value: "Lübeck Old Town" },
+        ],
       },
+
       de: {
         name: "Buddenbrookhaus",
         duration: "3 Min.",
-        audio: "/audio/buddenbrookhaus-de.mp3",
+        audio: "",
         description:
-          "Ein literarisches Denkmal, das mit der berühmten Mann-Familie verbunden ist.",
+          "Ein bedeutender literarischer Ort mit enger Verbindung zur Familie Mann.",
         story:
-          "Das Buddenbrookhaus ist eng mit den Schriftstellern Thomas und Heinrich Mann sowie der Welt verbunden, die in Thoms Manns Roman Buddenbrooks dargestellt ist.",
+          "Das Buddenbrookhaus ist eng mit Thomas und Heinrich Mann sowie mit der Literaturgeschichte Lübecks verbunden.",
+        facts: [
+          { label: "Thema", value: "Literatur" },
+          { label: "Verbunden mit", value: "Thomas und Heinrich Mann" },
+          { label: "Ort", value: "Lübecker Altstadt" },
+        ],
       },
+
       fr: {
         name: "Buddenbrookhaus",
         duration: "3 min",
-        audio: "/audio/buddenbrookhaus-fr.mp3",
+        audio: "",
         description:
-          "Un repère littéraire lié à la célèbre famille Mann.",
+          "Un lieu littéraire étroitement lié à la famille Mann.",
         story:
-          "Le Buddenbrookhaus est étroitement associé aux écrivains Thomas et Heinrich Mann et au monde représenté dans le roman de Thomas Mann, Buddenbrooks.",
+          "Le Buddenbrookhaus est associé aux écrivains Thomas et Heinrich Mann ainsi qu'à l'histoire littéraire de Lübeck.",
+        facts: [
+          { label: "Thème", value: "Littérature" },
+          { label: "Lié à", value: "Thomas et Heinrich Mann" },
+          { label: "Lieu", value: "Vieille ville de Lübeck" },
+        ],
       },
+
       ar: {
-        name: "بيت بودنبروك",
+        name: "بودنبروك هاوس",
         duration: "3 دقائق",
-        audio: "/audio/buddenbrookhaus-ar.mp3",
+        audio: "",
         description:
-          "معلم أدبي مرتبط بعائلة مان الشهيرة.",
+          "معلم أدبي مرتبط بشكل وثيق بعائلة مان.",
         story:
-          "بيت بودنبروك مرتبط بشكل وثيق بالكتابين توماس وهينريش مان والعالم الذي يُعرض في رواية توماس مان \"بودنبروك\".",
+          "يرتبط بودنبروك هاوس بالكاتبين توماس وهاينريش مان وبالتاريخ الأدبي لمدينة لوبيك.",
+        facts: [
+          { label: "الموضوع", value: "الأدب" },
+          { label: "مرتبط بـ", value: "توماس وهاينريش مان" },
+          { label: "الموقع", value: "المدينة القديمة في لوبيك" },
+        ],
       },
     },
-    facts: [
-      {
-        label: "Theme",
-        value: "Literature",
-      },
-      {
-        label: "Location",
-        value: "Lübeck Old Town",
-      },
-    ],
   },
-];
+] as const;

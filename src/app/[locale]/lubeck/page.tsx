@@ -97,47 +97,30 @@ export default async function LubeckPage({
 
           <div className="mt-4 flex flex-col gap-4">
             {landmarks.map((landmark) => {
-              const localizedContent =
-                "content" in landmark
-                  ? landmark.content[currentLocale]
-                  : null;
+                const content = landmark.content[currentLocale];
+                return (
+                  <Link
+                    key={landmark.slug}
+                    href={`/${currentLocale}/lubeck/${landmark.slug}`}
+                    className="flex items-center gap-4 rounded-2xl border border-zinc-200 p-3 transition hover:bg-zinc-50"
+                  >
+                    <div className="h-20 w-20 shrink-0 rounded-xl bg-zinc-200" />
 
-              const name =
-                localizedContent?.name ??
-                ("name" in landmark
-                  ? landmark.name
-                  : landmark.slug);
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold">
+                        {content.name}
+                      </h3>
 
-              const duration =
-                localizedContent?.duration ??
-                ("duration" in landmark
-                  ? landmark.duration
-                  : "");
+                      <p className="mt-1 text-sm text-zinc-500">
+                        🎧 {content.duration}
+                      </p>
+                    </div>
 
-              return (
-                <Link
-                  key={landmark.slug}
-                  href={`/${currentLocale}/lubeck/${landmark.slug}`}
-                  className="flex items-center gap-4 rounded-2xl border border-zinc-200 p-3 transition hover:bg-zinc-50"
-                >
-                  {/* Image placeholder */}
-                  <div className="h-20 w-20 shrink-0 rounded-xl bg-zinc-200" />
-
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold">
-                      {name}
-                    </h3>
-
-                    <p className="mt-1 text-sm text-zinc-500">
-                      🎧 {duration}
-                    </p>
-                  </div>
-
-                  <span className="text-xl text-zinc-400">
-                    {isArabic ? "←" : "→"}
-                  </span>
-                </Link>
-              );
+                    <span className="text-xl text-zinc-400">
+                      {isArabic ? "←" : "→"}
+                    </span>
+                  </Link>
+                );
             })}
           </div>
         </div>
