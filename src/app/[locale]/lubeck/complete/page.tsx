@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 import TourCompletionTracker from "@/components/TourCompletionTracker";
 
 import {
+  getDirection,
+  getTranslations,
+  isLocale,
   locales,
-  type Locale,
-} from "@/data/translations";
+} from "@/lib/i18n";
 
 type CompletePageProps = {
   params: Promise<{
@@ -13,71 +15,28 @@ type CompletePageProps = {
   }>;
 };
 
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
 export default async function CompletePage({
   params,
 }: CompletePageProps) {
   const { locale } = await params;
 
-  if (!locales.includes(locale as Locale)) {
+  if (!isLocale(locale)) {
     notFound();
   }
 
-  const currentLocale = locale as Locale;
-  const isArabic = currentLocale === "ar";
-
-  const content = {
-    en: {
-      badge: "Tour complete",
-      title: "You explored Lübeck!",
-      description:
-        "You completed 5 historic stops in Lübeck's old town.",
-      progress: "5 of 5 stops completed",
-      rating: "How was your tour?",
-      feedback: "Share feedback",
-      restart: "Explore again",
-      home: "Back to home",
-    },
-
-    de: {
-      badge: "Tour abgeschlossen",
-      title: "Du hast Lübeck entdeckt!",
-      description:
-        "Du hast 5 historische Stationen in der Lübecker Altstadt besucht.",
-      progress: "5 von 5 Stopps abgeschlossen",
-      rating: "Wie hat dir die Tour gefallen?",
-      feedback: "Feedback geben",
-      restart: "Noch einmal entdecken",
-      home: "Zur Startseite",
-    },
-
-    fr: {
-      badge: "Visite terminée",
-      title: "Vous avez découvert Lübeck !",
-      description:
-        "Vous avez terminé les 5 étapes historiques de la vieille ville.",
-      progress: "5 étapes sur 5 terminées",
-      rating: "Comment était votre visite ?",
-      feedback: "Donner votre avis",
-      restart: "Explorer à nouveau",
-      home: "Retour à l'accueil",
-    },
-
-    ar: {
-      badge: "اكتملت الجولة",
-      title: "لقد اكتشفت لوبيك!",
-      description:
-        "أكملت 5 محطات تاريخية في المدينة القديمة في لوبيك.",
-      progress: "تم إكمال 5 من 5 محطات",
-      rating: "كيف كانت جولتك؟",
-      feedback: "أرسل رأيك",
-      restart: "استكشف مرة أخرى",
-      home: "العودة إلى البداية",
-    },
-  }[currentLocale];
+  const currentLocale = locale;
+  const direction = getDirection(currentLocale);
+  const content = getTranslations(currentLocale).complete;
+  const common = getTranslations(currentLocale).common;
 
   return (
     <main
-      dir={isArabic ? "rtl" : "ltr"}
+      lang={currentLocale}
+      dir={direction}
       className="min-h-screen bg-white text-black"
     >
       <section className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6 py-12">
@@ -122,6 +81,9 @@ export default async function CompletePage({
             city="lubeck"
             locale={currentLocale}
             totalStops={5}
+            ratingQuestion={content.ratingQuestion}
+            thankYou={content.thankYou}
+            starRating={common.starRating}
         />
 
         {/* Feedback */}

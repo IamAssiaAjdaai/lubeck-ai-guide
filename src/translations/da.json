@@ -1,0 +1,8 @@
+{
+  "common": { "appName": "AI-guide til Lübeck", "back": "Tilbage", "language": "Sprog", "noAccount": "Ingen konto nødvendig", "play": "Afspil", "pause": "Pause", "close": "Luk AI-guiden", "starRating": "Bedømmelse: {rating} stjerner" },
+  "home": { "title": "Oplev Lübeck med din personlige guide", "subtitle": "Opdag fortællinger, historie og skjulte detaljer på dit eget sprog.", "chooseLanguage": "Vælg dit sprog" },
+  "explore": { "title": "Oplev Lübeck", "subtitle": "5 historiske steder at udforske", "walkingTour": "Byvandring", "historicCenter": "Lübecks historiske centrum", "duration": "~45 min • 5 stop", "places": "Steder", "startTour": "Start byvandringen" },
+  "landmark": { "stopProgress": "Stop {current} af {total}", "audioGuide": "Audioguide", "listenStory": "Lyt til fortællingen", "story": "Fortællingen", "quickFacts": "Kort fortalt", "audioUnavailable": "Lyd på dette sprog kommer snart.", "nextStop": "Næste stop", "finishTour": "Afslut turen" },
+  "complete": { "badge": "Turen er fuldført", "title": "Du har oplevet Lübeck!", "description": "Du gennemførte 5 historiske stop i Lübecks gamle bydel.", "progress": "5 af 5 stop fuldført", "ratingQuestion": "Hvordan var turen?", "thankYou": "Tak for din feedback!", "feedback": "Del din feedback", "restart": "Oplev igen", "home": "Tilbage til forsiden" },
+  "ai": { "title": "AI-guide", "open": "Spørg din AI-guide", "placeholder": "Spørg om dette sted...", "send": "Send", "empty": "Spørg mig om hvad som helst om dette sted.", "loading": "Tænker...", "limit": "Du har nået grænsen på 5 spørgsmål for denne tur.", "questionsUsed": "spørgsmål brugt", "unavailable": "Guiden er midlertidigt utilgængelig.", "rateLimited": "Du har stillet for mange spørgsmål. Prøv igen om et par minutter." }
+}

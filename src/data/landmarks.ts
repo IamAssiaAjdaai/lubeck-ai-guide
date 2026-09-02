@@ -1,4 +1,10 @@
-export const landmarks = [
+import {
+  addedLandmarkTranslations,
+  type LandmarkContent,
+} from "@/data/landmarkTranslations";
+import type { Locale } from "@/lib/i18n";
+
+const legacyLandmarks = [
   {
     slug: "holstentor",
     image: "/landmarks/holstentor.jpg",
@@ -526,3 +532,22 @@ export const landmarks = [
   },
   },
 ] as const;
+
+type AddedLocale = keyof typeof addedLandmarkTranslations;
+
+export const landmarks = legacyLandmarks.map((item, index) => {
+  const addedContent = Object.fromEntries(
+    (Object.keys(addedLandmarkTranslations) as AddedLocale[]).map(
+      (locale) => [locale, addedLandmarkTranslations[locale][index]],
+    ),
+  ) as Record<AddedLocale, LandmarkContent>;
+
+  return {
+    slug: item.slug,
+    image: item.image,
+    content: {
+      ...item.content,
+      ...addedContent,
+    } as Record<Locale, LandmarkContent>,
+  };
+});

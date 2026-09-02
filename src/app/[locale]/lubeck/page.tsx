@@ -5,10 +5,11 @@ import { notFound } from "next/navigation";
 import TrackedLink from "@/components/TrackedLink";
 import { landmarks } from "@/data/landmarks";
 import {
+  getDirection,
+  getTranslations,
+  isLocale,
   locales,
-  translations,
-  type Locale,
-} from "@/data/translations";
+} from "@/lib/i18n";
 
 type LubeckPageProps = {
   params: Promise<{
@@ -16,53 +17,29 @@ type LubeckPageProps = {
   }>;
 };
 
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
 export default async function LubeckPage({
   params,
 }: LubeckPageProps) {
   const { locale } = await params;
 
-  if (!locales.includes(locale as Locale)) {
+  if (!isLocale(locale)) {
     notFound();
   }
 
-  const currentLocale = locale as Locale;
-  const t = translations[currentLocale];
-
-  const isArabic = currentLocale === "ar";
-
-  const labels = {
-    en: {
-      walkingTour: "Walking Tour",
-      historicCenter: "Lübeck Historic Center",
-      duration: "~45 min • 5 stops",
-      places: "Places",
-    },
-
-    de: {
-      walkingTour: "Stadtrundgang",
-      historicCenter: "Historisches Zentrum von Lübeck",
-      duration: "~45 Min. • 5 Stopps",
-      places: "Orte",
-    },
-
-    fr: {
-      walkingTour: "Visite à pied",
-      historicCenter: "Centre historique de Lübeck",
-      duration: "~45 min • 5 étapes",
-      places: "Lieux",
-    },
-
-    ar: {
-      walkingTour: "جولة سيراً على الأقدام",
-      historicCenter: "المركز التاريخي لمدينة لوبيك",
-      duration: "حوالي 45 دقيقة • 5 محطات",
-      places: "الأماكن",
-    },
-  }[currentLocale];
+  const currentLocale = locale;
+  const t = getTranslations(currentLocale);
+  const direction = getDirection(currentLocale);
+  const forwardArrow = direction === "rtl" ? "←" : "→";
+  const backArrow = direction === "rtl" ? "→" : "←";
 
   return (
     <main
-      dir={isArabic ? "rtl" : "ltr"}
+      lang={currentLocale}
+      dir={direction}
       className="min-h-screen bg-white text-black"
     >
       <section className="mx-auto w-full max-w-md px-6 py-10">
@@ -72,32 +49,32 @@ export default async function LubeckPage({
           href="/"
           className="text-sm font-medium text-zinc-500 transition hover:text-black"
         >
-          {isArabic ? "→" : "←"} {t.back}
+          {backArrow} {t.common.back}
         </Link>
 
         {/* Header */}
         <header className="mt-6">
           <h1 className="text-3xl font-bold tracking-tight">
-            {t.discover}
+            {t.explore.title}
           </h1>
 
           <p className="mt-2 text-zinc-600">
-            {t.places}
+            {t.explore.subtitle}
           </p>
         </header>
 
         {/* Walking Tour Card */}
         <section className="mt-8 rounded-3xl bg-zinc-100 p-5">
           <p className="text-sm font-medium text-zinc-500">
-            {labels.walkingTour}
+            {t.explore.walkingTour}
           </p>
 
           <h2 className="mt-2 text-xl font-semibold">
-            {labels.historicCenter}
+            {t.explore.historicCenter}
           </h2>
 
           <p className="mt-2 text-sm text-zinc-600">
-            {labels.duration}
+            {t.explore.duration}
           </p>
 
           <TrackedLink
@@ -110,14 +87,14 @@ export default async function LubeckPage({
             }}
             className="mt-5 flex h-14 items-center justify-center rounded-xl bg-black px-5 font-semibold text-white transition hover:bg-zinc-800"
           >
-            {t.startTour}
+            {t.explore.startTour}
           </TrackedLink>
         </section>
 
         {/* Places */}
         <section className="mt-10">
           <h2 className="text-lg font-semibold">
-            {labels.places}
+            {t.explore.places}
           </h2>
 
           <div className="mt-4 flex flex-col gap-4">
@@ -164,7 +141,7 @@ export default async function LubeckPage({
 
                   {/* Arrow */}
                   <span className="text-xl text-zinc-400">
-                    {isArabic ? "←" : "→"}
+                    {forwardArrow}
                   </span>
                 </TrackedLink>
               );
