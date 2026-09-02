@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "Lübeck AI Guide", "back": "Back", "language": "Language", "noAccount": "No account required", "play": "Play", "pause": "Pause", "close": "Close AI Guide", "starRating": "{rating}-star rating" },
-  "home": { "title": "Explore Lübeck with your personal guide", "subtitle": "Discover stories, history and hidden facts in your language.", "chooseLanguage": "Choose your language" },
-  "explore": { "title": "Discover Lübeck", "subtitle": "5 historic places to explore", "walkingTour": "Walking Tour", "historicCenter": "Lübeck Historic Center", "duration": "~45 min • 5 stops", "places": "Places", "startTour": "Start Walking Tour" },
-  "landmark": { "stopProgress": "Stop {current} of {total}", "audioGuide": "Audio guide", "listenStory": "Listen to the story", "story": "The Story", "quickFacts": "Quick Facts", "audioUnavailable": "Audio for this language is coming soon.", "nextStop": "Next Stop", "finishTour": "Finish Tour" },
-  "complete": { "badge": "Tour complete", "title": "You explored Lübeck!", "description": "You completed 5 historic stops in Lübeck's old town.", "progress": "5 of 5 stops completed", "ratingQuestion": "How was your tour?", "thankYou": "Thanks for your feedback!", "feedback": "Share feedback", "restart": "Explore again", "home": "Back to home" },
-  "ai": { "title": "AI Guide", "open": "Ask your AI Guide", "placeholder": "Ask something about this place...", "send": "Send", "empty": "Ask me anything about this place.", "loading": "Thinking...", "limit": "You have reached the 5-question limit for this tour.", "questionsUsed": "questions used", "unavailable": "The guide is temporarily unavailable.", "rateLimited": "You've asked too many questions. Please try again in a few minutes." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "Back",
+    "language": "Language",
+    "noAccount": "No account required",
+    "play": "Play",
+    "pause": "Pause",
+    "close": "Close AI Guide",
+    "starRating": "{rating}-star rating"
+  },
+  "home": {
+    "title": "Discover cities one step at a time.",
+    "subtitle": "Explore local stories, audio guides and hidden places in your language.",
+    "chooseLanguage": "Choose your language",
+    "availableNow": "Available now",
+    "featuredCityDescription": "Explore 5 historic places through a guided walking experience.",
+    "moreCities": "More cities",
+    "comingSoon": "Coming soon",
+    "germany": "Germany"
+  },
+  "explore": {
+    "title": "Discover Lübeck",
+    "subtitle": "5 historic places to explore",
+    "walkingTour": "Walking Tour",
+    "historicCenter": "Lübeck Historic Center",
+    "duration": "~45 min • 5 stops",
+    "places": "Places",
+    "startTour": "Start Walking Tour"
+  },
+  "landmark": {
+    "stopProgress": "Stop {current} of {total}",
+    "audioGuide": "Audio guide",
+    "listenStory": "Listen to the story",
+    "story": "The Story",
+    "quickFacts": "Quick Facts",
+    "audioUnavailable": "Audio for this language is coming soon.",
+    "nextStop": "Next Stop",
+    "finishTour": "Finish Tour"
+  },
+  "complete": {
+    "badge": "Tour complete",
+    "title": "You explored Lübeck!",
+    "description": "You completed 5 historic stops in Lübeck's old town.",
+    "progress": "5 of 5 stops completed",
+    "ratingQuestion": "How was your tour?",
+    "thankYou": "Thanks for your feedback!",
+    "feedback": "Share feedback",
+    "restart": "Explore again",
+    "home": "Back to home",
+    "statsStops": "Stops",
+    "statsComplete": "Complete",
+    "statsMinutes": "Minutes"
+  },
+  "ai": {
+    "title": "Your Local Guide",
+    "open": "Ask your local guide",
+    "placeholder": "Ask something about this place...",
+    "send": "Send",
+    "empty": "Ask me anything about this place.",
+    "loading": "Thinking...",
+    "limit": "You have reached the 5-question limit for this tour.",
+    "questionsUsed": "questions used",
+    "unavailable": "The guide is temporarily unavailable.",
+    "rateLimited": "You've asked too many questions. Please try again in a few minutes.",
+    "suggestionFamous": "Why is it famous?",
+    "suggestionBuilt": "When was it built?",
+    "suggestionStory": "Tell me a short story"
+  }
 }

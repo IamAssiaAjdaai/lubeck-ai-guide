@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lübeck AI Guide",
-  description: "A multilingual walking guide to historic Lübeck.",
+  title: "CITYWALK",
+  description: "Discover cities one step at a time with multilingual walking tours, audio stories, and a local AI guide.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "Treoraí AI Lübeck", "back": "Ar ais", "language": "Teanga", "noAccount": "Ní gá cuntas", "play": "Seinn", "pause": "Cuir ar sos", "close": "Dún an treoraí AI", "starRating": "Rátáil {rating} réalta" },
-  "home": { "title": "Déan iniúchadh ar Lübeck le do threoraí pearsanta", "subtitle": "Faigh blaiseadh de scéalta, stair agus fíricí ceilte i do theanga féin.", "chooseLanguage": "Roghnaigh do theanga" },
-  "explore": { "title": "Faigh blaiseadh de Lübeck", "subtitle": "5 áit stairiúla le hiniúchadh", "walkingTour": "Turas siúlóide", "historicCenter": "Lár stairiúil Lübeck", "duration": "~45 nóim • 5 stad", "places": "Áiteanna", "startTour": "Cuir tús leis an turas" },
-  "landmark": { "stopProgress": "Stad {current} as {total}", "audioGuide": "Closleabhar", "listenStory": "Éist leis an scéal", "story": "An Scéal", "quickFacts": "Fíricí gasta", "audioUnavailable": "Beidh fuaim sa teanga seo ar fáil go luath.", "nextStop": "An chéad stad eile", "finishTour": "Críochnaigh an turas" },
-  "complete": { "badge": "Turas críochnaithe", "title": "Rinne tú iniúchadh ar Lübeck!", "description": "Chríochnaigh tú 5 stad stairiúla i seanbhaile Lübeck.", "progress": "5 stad as 5 críochnaithe", "ratingQuestion": "Conas a bhí an turas?", "thankYou": "Go raibh maith agat as d'aiseolas!", "feedback": "Roinn aiseolas", "restart": "Déan iniúchadh arís", "home": "Ar ais go dtí an baile" },
-  "ai": { "title": "Treoraí AI", "open": "Cuir ceist ar do threoraí AI", "placeholder": "Cuir ceist faoin áit seo...", "send": "Seol", "empty": "Cuir aon cheist orm faoin áit seo.", "loading": "Ag smaoineamh...", "limit": "Tá teorainn 5 cheist an turais seo sroichte agat.", "questionsUsed": "ceist úsáidte", "unavailable": "Níl an treoraí ar fáil faoi láthair.", "rateLimited": "Chuir tú an iomarca ceisteanna. Bain triail eile as i gceann cúpla nóiméad." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "Ar ais",
+    "language": "Teanga",
+    "noAccount": "Ní gá cuntas",
+    "play": "Seinn",
+    "pause": "Cuir ar sos",
+    "close": "Dún an treoraí AI",
+    "starRating": "Rátáil {rating} réalta"
+  },
+  "home": {
+    "title": "Faigh amach cathracha céim ar chéim.",
+    "subtitle": "Déan iniúchadh ar scéalta áitiúla, treoracha fuaime agus áiteanna ceilte i do theanga.",
+    "chooseLanguage": "Roghnaigh do theanga",
+    "availableNow": "Ar fáil anois",
+    "featuredCityDescription": "Faigh amach 5 áit stairiúla ar shiúlóid threoraithe.",
+    "moreCities": "Tuilleadh cathracha",
+    "comingSoon": "Ag teacht go luath",
+    "germany": "An Ghearmáin"
+  },
+  "explore": {
+    "title": "Faigh blaiseadh de Lübeck",
+    "subtitle": "5 áit stairiúla le hiniúchadh",
+    "walkingTour": "Turas siúlóide",
+    "historicCenter": "Lár stairiúil Lübeck",
+    "duration": "~45 nóim • 5 stad",
+    "places": "Áiteanna",
+    "startTour": "Cuir tús leis an turas"
+  },
+  "landmark": {
+    "stopProgress": "Stad {current} as {total}",
+    "audioGuide": "Closleabhar",
+    "listenStory": "Éist leis an scéal",
+    "story": "An Scéal",
+    "quickFacts": "Fíricí gasta",
+    "audioUnavailable": "Beidh fuaim sa teanga seo ar fáil go luath.",
+    "nextStop": "An chéad stad eile",
+    "finishTour": "Críochnaigh an turas"
+  },
+  "complete": {
+    "badge": "Turas críochnaithe",
+    "title": "Rinne tú iniúchadh ar Lübeck!",
+    "description": "Chríochnaigh tú 5 stad stairiúla i seanbhaile Lübeck.",
+    "progress": "5 stad as 5 críochnaithe",
+    "ratingQuestion": "Conas a bhí an turas?",
+    "thankYou": "Go raibh maith agat as d'aiseolas!",
+    "feedback": "Roinn aiseolas",
+    "restart": "Déan iniúchadh arís",
+    "home": "Ar ais go dtí an baile",
+    "statsStops": "Stadanna",
+    "statsComplete": "Críochnaithe",
+    "statsMinutes": "Nóiméid"
+  },
+  "ai": {
+    "title": "Do threoraí áitiúil",
+    "open": "Cuir ceist ar do threoraí áitiúil",
+    "placeholder": "Cuir ceist faoin áit seo...",
+    "send": "Seol",
+    "empty": "Cuir aon cheist orm faoin áit seo.",
+    "loading": "Ag smaoineamh...",
+    "limit": "Tá teorainn 5 cheist an turais seo sroichte agat.",
+    "questionsUsed": "ceist úsáidte",
+    "unavailable": "Níl an treoraí ar fáil faoi láthair.",
+    "rateLimited": "Chuir tú an iomarca ceisteanna. Bain triail eile as i gceann cúpla nóiméad.",
+    "suggestionFamous": "Cén fáth a bhfuil cáil ar an áit seo?",
+    "suggestionBuilt": "Cathain a tógadh é?",
+    "suggestionStory": "Inis scéal gearr dom"
+  }
 }

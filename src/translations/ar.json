@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "دليل Lübeck الذكي", "back": "رجوع", "language": "اللغة", "noAccount": "لا حاجة إلى إنشاء حساب", "play": "تشغيل", "pause": "إيقاف مؤقت", "close": "إغلاق الدليل الذكي", "starRating": "تقييم {rating} نجوم" },
-  "home": { "title": "استكشف Lübeck مع دليلك الشخصي", "subtitle": "اكتشف القصص والتاريخ والحقائق الخفية بلغتك.", "chooseLanguage": "اختر لغتك" },
-  "explore": { "title": "اكتشف Lübeck", "subtitle": "5 أماكن تاريخية تستحق الاستكشاف", "walkingTour": "جولة سيراً على الأقدام", "historicCenter": "المركز التاريخي لمدينة Lübeck", "duration": "نحو 45 دقيقة • 5 محطات", "places": "الأماكن", "startTour": "ابدأ جولة المشي" },
-  "landmark": { "stopProgress": "المحطة {current} من {total}", "audioGuide": "الدليل الصوتي", "listenStory": "استمع إلى القصة", "story": "القصة", "quickFacts": "معلومات سريعة", "audioUnavailable": "سيصبح الصوت بهذه اللغة متاحاً قريباً.", "nextStop": "المحطة التالية", "finishTour": "إنهاء الجولة" },
-  "complete": { "badge": "اكتملت الجولة", "title": "لقد استكشفت Lübeck!", "description": "أكملت 5 محطات تاريخية في مدينة Lübeck القديمة.", "progress": "اكتملت 5 محطات من أصل 5", "ratingQuestion": "كيف كانت جولتك؟", "thankYou": "شكراً على رأيك!", "feedback": "شاركنا رأيك", "restart": "استكشف مرة أخرى", "home": "العودة إلى الصفحة الرئيسية" },
-  "ai": { "title": "الدليل الذكي", "open": "اسأل دليلك الذكي", "placeholder": "اسأل عن هذا المكان...", "send": "إرسال", "empty": "اسألني ما تشاء عن هذا المكان.", "loading": "لحظة من فضلك...", "limit": "لقد وصلت إلى الحد الأقصى وهو 5 أسئلة لهذه الجولة.", "questionsUsed": "أسئلة مستخدمة", "unavailable": "الدليل غير متاح حالياً.", "rateLimited": "لقد طرحت عدداً كبيراً من الأسئلة. حاول مرة أخرى بعد بضع دقائق." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "رجوع",
+    "language": "اللغة",
+    "noAccount": "لا حاجة إلى إنشاء حساب",
+    "play": "تشغيل",
+    "pause": "إيقاف مؤقت",
+    "close": "إغلاق الدليل الذكي",
+    "starRating": "تقييم {rating} نجوم"
+  },
+  "home": {
+    "title": "اكتشف المدن خطوة بخطوة.",
+    "subtitle": "استكشف القصص المحلية والأدلة الصوتية والأماكن الخفية بلغتك.",
+    "chooseLanguage": "اختر لغتك",
+    "availableNow": "متاح الآن",
+    "featuredCityDescription": "استكشف 5 أماكن تاريخية من خلال جولة مشي بصحبة دليل.",
+    "moreCities": "مدن أخرى",
+    "comingSoon": "قريباً",
+    "germany": "ألمانيا"
+  },
+  "explore": {
+    "title": "اكتشف Lübeck",
+    "subtitle": "5 أماكن تاريخية تستحق الاستكشاف",
+    "walkingTour": "جولة سيراً على الأقدام",
+    "historicCenter": "المركز التاريخي لمدينة Lübeck",
+    "duration": "نحو 45 دقيقة • 5 محطات",
+    "places": "الأماكن",
+    "startTour": "ابدأ جولة المشي"
+  },
+  "landmark": {
+    "stopProgress": "المحطة {current} من {total}",
+    "audioGuide": "الدليل الصوتي",
+    "listenStory": "استمع إلى القصة",
+    "story": "القصة",
+    "quickFacts": "معلومات سريعة",
+    "audioUnavailable": "سيصبح الصوت بهذه اللغة متاحاً قريباً.",
+    "nextStop": "المحطة التالية",
+    "finishTour": "إنهاء الجولة"
+  },
+  "complete": {
+    "badge": "اكتملت الجولة",
+    "title": "لقد استكشفت Lübeck!",
+    "description": "أكملت 5 محطات تاريخية في مدينة Lübeck القديمة.",
+    "progress": "اكتملت 5 محطات من أصل 5",
+    "ratingQuestion": "كيف كانت جولتك؟",
+    "thankYou": "شكراً على رأيك!",
+    "feedback": "شاركنا رأيك",
+    "restart": "استكشف مرة أخرى",
+    "home": "العودة إلى الصفحة الرئيسية",
+    "statsStops": "المحطات",
+    "statsComplete": "مكتمل",
+    "statsMinutes": "دقائق"
+  },
+  "ai": {
+    "title": "دليلك المحلي",
+    "open": "اسأل دليلك المحلي",
+    "placeholder": "اسأل عن هذا المكان...",
+    "send": "إرسال",
+    "empty": "اسألني ما تشاء عن هذا المكان.",
+    "loading": "لحظة من فضلك...",
+    "limit": "لقد وصلت إلى الحد الأقصى وهو 5 أسئلة لهذه الجولة.",
+    "questionsUsed": "أسئلة مستخدمة",
+    "unavailable": "الدليل غير متاح حالياً.",
+    "rateLimited": "لقد طرحت عدداً كبيراً من الأسئلة. حاول مرة أخرى بعد بضع دقائق.",
+    "suggestionFamous": "لماذا يشتهر هذا المكان؟",
+    "suggestionBuilt": "متى تم بناؤه؟",
+    "suggestionStory": "احكِ لي قصة قصيرة"
+  }
 }
