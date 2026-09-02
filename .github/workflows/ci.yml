@@ -4,12 +4,9 @@ on:
   push:
     branches:
       - main
-      - develop
-
   pull_request:
     branches:
       - main
-      - develop 
 
 jobs:
   build:
@@ -22,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -30,6 +27,12 @@ jobs:
 
       - name: Run lint
         run: npm run lint
+      
+      - name: Run tests
+        run: npm run test:run
+
+      - name: Check coverage
+        run: npm run test:coverage
 
       - name: Build project
         run: npm run build

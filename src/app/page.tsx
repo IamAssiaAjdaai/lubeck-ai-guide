@@ -1,10 +1,16 @@
-import Link from "next/link";
+import TrackedLink from "@/components/TrackedLink";
+
+const languages = [
+  { code: "de", label: "DE" },
+  { code: "en", label: "EN" },
+  { code: "fr", label: "FR" },
+  { code: "ar", label: "AR" },
+];
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white text-black">
       <section className="mx-auto flex min-h-screen w-full max-w-md flex-col px-6 py-12">
-        {/* Main content */}
         <div className="flex flex-1 flex-col justify-center">
           <div className="text-center">
             <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
@@ -20,60 +26,33 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Language selector */}
           <div className="mt-12">
             <p className="mb-4 text-center text-sm font-semibold">
               Choose your language
             </p>
 
             <div className="grid grid-cols-4 gap-3">
-              <button
-                type="button"
-                className="h-14 rounded-xl border border-zinc-300 font-medium transition hover:bg-zinc-100"
-              >
-                DE
-              </button>
-
-              <button
-                type="button"
-                aria-pressed="true"
-                className="h-14 rounded-xl bg-black font-medium text-white"
-              >
-                EN
-              </button>
-
-              <button
-                type="button"
-                className="h-14 rounded-xl border border-zinc-300 font-medium transition hover:bg-zinc-100"
-              >
-                FR
-              </button>
-
-              <button
-                type="button"
-                className="h-14 rounded-xl border border-zinc-300 font-medium transition hover:bg-zinc-100"
-              >
-                AR
-              </button>
+              {languages.map((language) => (
+            <TrackedLink
+              key={language.code}
+              href={`/${language.code}/lubeck`}
+              eventName="language_selected"
+              properties={{
+                city: "lubeck",
+                locale: language.code,
+              }}
+              className="flex h-14 items-center justify-center rounded-xl border border-zinc-300 font-medium transition hover:bg-black hover:text-white"
+            >
+              {language.label}
+            </TrackedLink>
+              ))}
             </div>
           </div>
 
-          {/* CTA */}
-          <Link
-            href="/lubeck"
-            className="mt-8 flex h-16 items-center justify-center rounded-2xl bg-black px-6 text-lg font-semibold text-white transition hover:bg-zinc-800"
-          >
-            Start Exploring
-          </Link>
-
-          <p className="mt-4 text-center text-sm text-zinc-500">
+          <p className="mt-6 text-center text-sm text-zinc-500">
             No account required
           </p>
         </div>
-
-        <footer className="pt-8 text-center text-xs text-zinc-400">
-          Your personal guide to Lübeck
-        </footer>
       </section>
     </main>
   );
