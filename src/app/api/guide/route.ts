@@ -1,4 +1,5 @@
 import Groq from "groq-sdk";
+import { aiGuideRateLimit } from "@/lib/rateLimit";
 import { NextResponse } from "next/server";
 
 import { landmarks } from "@/data/landmarks";
@@ -30,8 +31,41 @@ const languageNames: Record<Locale, string> = {
   ar: "Arabic",
 };
 
+
 export async function POST(request: Request) {
   try {
+    const forwardedFor =
+      request.headers.get("x-forwarded-for");
+
+    const ip =
+      forwardedFor?.split(",")[0]?.trim() ??
+      "unknown";
+
+    const result =
+      await aiGuideRateLimit.limit(ip);
+    
+      if (!result.success) {
+      return NextResponse.json(
+        {
+          error:
+            "Too many AI questions. Please try again later.",
+        },
+        {
+          status: 429,
+
+          headers: {
+            "X-RateLimit-Limit":
+              result.limit.toString(),
+
+            "X-RateLimit-Remaining":
+              result.remaining.toString(),
+
+            "X-RateLimit-Reset":
+              result.reset.toString(),
+          },
+      }
+    );
+    }
     const body =
       (await request.json()) as GuideRequest;
 

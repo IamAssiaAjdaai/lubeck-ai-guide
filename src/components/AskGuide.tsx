@@ -164,11 +164,35 @@ export default function AskGuide({
       const data = await response.json();
 
       if (!response.ok) {
-        console.error("Guide API error:", data);
+        if (response.status === 429) {
+          const rateLimitMessages: Record<string, string> = {
+            en: "You’ve asked too many questions. Please try again in a few minutes.",
+            de: "Du hast zu viele Fragen gestellt. Bitte versuche es in ein paar Minuten erneut.",
+            fr: "Vous avez posé trop de questions. Réessayez dans quelques minutes.",
+            ar: "لقد طرحت عدداً كبيراً من الأسئلة. حاول مرة أخرى بعد بضع دقائق.",
+          };
+
+          setMessages((current) => [
+            ...current,
+            {
+              role: "assistant",
+              text:
+                rateLimitMessages[locale] ??
+                rateLimitMessages.en,
+            },
+          ]);
+
+          posthog.capture("ai_rate_limit_reached", {
+            city: "lubeck",
+            landmark,
+            locale,
+          });
+
+          return;
+        }
 
         throw new Error(
-          data.error ??
-            `Request failed with status ${response.status}`
+          data.error ?? `Request failed with status ${response.status}`
         );
       }
 
