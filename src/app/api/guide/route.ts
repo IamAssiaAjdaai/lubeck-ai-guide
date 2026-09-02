@@ -2,10 +2,7 @@ import Groq from "groq-sdk";
 
 import { NextResponse } from "next/server";
 import { landmarks } from "@/data/landmarks";
-import {
-  locales,
-  type Locale,
-} from "@/data/translations";
+import { isLocale, languages } from "@/lib/i18n";
 
 import { aiGuideRateLimit } from "@/lib/rateLimit";
 
@@ -20,14 +17,6 @@ type GuideRequest = {
   locale: string;
   history?: GuideMessage[];
 };
-
-const languageNames: Record<Locale, string> = {
-  en: "English",
-  de: "German",
-  fr: "French",
-  ar: "Arabic",
-};
-
 
 export async function POST(request: Request) {
   try {
@@ -104,7 +93,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!locales.includes(locale as Locale)) {
+    if (!isLocale(locale)) {
       return NextResponse.json(
         {
           error: "Invalid language.",
@@ -130,7 +119,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const currentLocale = locale as Locale;
+    const currentLocale = locale;
 
     const content =
       landmark.content[currentLocale];
@@ -194,7 +183,7 @@ The tourist is currently visiting:
 
 ${content.name}
 
-Answer in ${languageNames[currentLocale]}.
+Answer in ${languages[currentLocale].aiLanguageName}.
 
 IMPORTANT RULES:
 

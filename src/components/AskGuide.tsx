@@ -3,13 +3,22 @@
 import { FormEvent, useState } from "react";
 import posthog from "posthog-js";
 
+import type {
+  Locale,
+  TextDirection,
+  Translations,
+} from "@/lib/i18n";
+
 const MAX_QUESTIONS = 5;
 
 type AskGuideProps = {
   landmark: string;
   landmarkName: string;
-  locale: string;
+  locale: Locale;
+  direction: TextDirection;
   buttonLabel: string;
+  closeLabel: string;
+  labels: Translations["ai"];
 };
 
 type Message = {
@@ -21,7 +30,10 @@ export default function AskGuide({
   landmark,
   landmarkName,
   locale,
+  direction,
   buttonLabel,
+  closeLabel,
+  labels,
 }: AskGuideProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [question, setQuestion] = useState("");
@@ -29,57 +41,8 @@ export default function AskGuide({
   const [isLoading, setIsLoading] = useState(false);
   const [questionCount, setQuestionCount] = useState(0);
 
-  const isArabic = locale === "ar";
+  const isRtl = direction === "rtl";
   const limitReached = questionCount >= MAX_QUESTIONS;
-
-  const placeholders: Record<string, string> = {
-    en: "Ask something about this place...",
-    de: "Stelle eine Frage zu diesem Ort...",
-    fr: "Posez une question sur ce lieu...",
-    ar: "اسأل عن هذا المكان...",
-  };
-
-  const sendLabels: Record<string, string> = {
-    en: "Send",
-    de: "Senden",
-    fr: "Envoyer",
-    ar: "إرسال",
-  };
-
-  const emptyMessages: Record<string, string> = {
-    en: "Ask me anything about this place.",
-    de: "Frag mich etwas über diesen Ort.",
-    fr: "Posez-moi une question sur ce lieu.",
-    ar: "اسألني أي سؤال عن هذا المكان.",
-  };
-
-  const loadingMessages: Record<string, string> = {
-    en: "Thinking...",
-    de: "Einen Moment...",
-    fr: "Un instant...",
-    ar: "لحظة من فضلك...",
-  };
-
-  const limitMessages: Record<string, string> = {
-    en: "You have reached the 5-question limit for this tour.",
-    de: "Du hast das Limit von 5 Fragen für diese Tour erreicht.",
-    fr: "Vous avez atteint la limite de 5 questions pour cette visite.",
-    ar: "لقد وصلت إلى الحد الأقصى وهو 5 أسئلة لهذه الجولة.",
-  };
-
-  const questionCounterLabels: Record<string, string> = {
-    en: "questions used",
-    de: "Fragen verwendet",
-    fr: "questions utilisées",
-    ar: "أسئلة مستخدمة",
-  };
-
-  const unavailableMessages: Record<string, string> = {
-    en: "The guide is temporarily unavailable.",
-    de: "Der Guide ist gerade nicht verfügbar.",
-    fr: "Le guide est momentanément indisponible.",
-    ar: "الدليل غير متاح حالياً.",
-  };
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -165,20 +128,11 @@ export default function AskGuide({
 
       if (!response.ok) {
         if (response.status === 429) {
-          const rateLimitMessages: Record<string, string> = {
-            en: "You’ve asked too many questions. Please try again in a few minutes.",
-            de: "Du hast zu viele Fragen gestellt. Bitte versuche es in ein paar Minuten erneut.",
-            fr: "Vous avez posé trop de questions. Réessayez dans quelques minutes.",
-            ar: "لقد طرحت عدداً كبيراً من الأسئلة. حاول مرة أخرى بعد بضع دقائق.",
-          };
-
           setMessages((current) => [
             ...current,
             {
               role: "assistant",
-              text:
-                rateLimitMessages[locale] ??
-                rateLimitMessages.en,
+              text: labels.rateLimited,
             },
           ]);
 
@@ -215,9 +169,7 @@ export default function AskGuide({
         ...current,
         {
           role: "assistant",
-          text:
-            unavailableMessages[locale] ??
-            unavailableMessages.en,
+          text: labels.unavailable,
         },
       ]);
     } finally {
@@ -243,7 +195,7 @@ export default function AskGuide({
           onClick={() => setIsOpen(false)}
         >
           <div
-            dir={isArabic ? "rtl" : "ltr"}
+            dir={direction}
             onClick={(event) =>
               event.stopPropagation()
             }
@@ -253,7 +205,7 @@ export default function AskGuide({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
-                  AI Guide
+                  {labels.title}
                 </p>
 
                 <h2 className="mt-1 text-xl font-semibold">
@@ -264,7 +216,7 @@ export default function AskGuide({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                aria-label="Close AI Guide"
+                aria-label={closeLabel}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 text-xl transition hover:bg-zinc-200"
               >
                 ×
@@ -276,8 +228,7 @@ export default function AskGuide({
               {messages.length === 0 && (
                 <div className="rounded-2xl bg-zinc-100 p-4">
                   <p className="text-sm leading-6 text-zinc-600">
-                    {emptyMessages[locale] ??
-                      emptyMessages.en}
+                    {labels.empty}
                   </p>
                 </div>
               )}
@@ -288,12 +239,12 @@ export default function AskGuide({
                   className={
                     message.role === "user"
                       ? `${
-                          isArabic
+                          isRtl
                             ? "mr-auto"
                             : "ml-auto"
                         } max-w-[85%] rounded-2xl bg-black px-4 py-3 text-sm leading-6 text-white`
                       : `${
-                          isArabic
+                          isRtl
                             ? "ml-auto"
                             : "mr-auto"
                         } max-w-[85%] rounded-2xl bg-zinc-100 px-4 py-3 text-sm leading-6 text-zinc-800`
@@ -307,13 +258,12 @@ export default function AskGuide({
               {isLoading && (
                 <div
                   className={`${
-                    isArabic
+                    isRtl
                       ? "ml-auto"
                       : "mr-auto"
                   } max-w-[85%] rounded-2xl bg-zinc-100 px-4 py-3 text-sm text-zinc-500`}
                 >
-                  {loadingMessages[locale] ??
-                    loadingMessages.en}
+                  {labels.loading}
                 </div>
               )}
             </div>
@@ -321,15 +271,13 @@ export default function AskGuide({
             {/* Question counter */}
             <p className="mt-4 text-center text-xs text-zinc-500">
               {questionCount}/{MAX_QUESTIONS}{" "}
-              {questionCounterLabels[locale] ??
-                questionCounterLabels.en}
+              {labels.questionsUsed}
             </p>
 
             {/* Limit message */}
             {limitReached && (
               <div className="mt-3 rounded-xl bg-zinc-100 p-3 text-center text-sm leading-6 text-zinc-600">
-                {limitMessages[locale] ??
-                  limitMessages.en}
+                {labels.limit}
               </div>
             )}
 
@@ -346,10 +294,8 @@ export default function AskGuide({
                 disabled={limitReached}
                 placeholder={
                   limitReached
-                    ? limitMessages[locale] ??
-                      limitMessages.en
-                    : placeholders[locale] ??
-                      placeholders.en
+                    ? labels.limit
+                    : labels.placeholder
                 }
                 className="min-w-0 flex-1 rounded-xl border border-zinc-300 px-4 py-3 text-sm outline-none transition focus:border-black disabled:cursor-not-allowed disabled:bg-zinc-100"
               />
@@ -363,8 +309,7 @@ export default function AskGuide({
                 }
                 className="rounded-xl bg-black px-5 font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {sendLabels[locale] ??
-                  sendLabels.en}
+                {labels.send}
               </button>
             </form>
           </div>

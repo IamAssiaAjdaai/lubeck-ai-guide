@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import posthog from "posthog-js";
+import en from "@/translations/en.json";
 
 export default function GlobalError({
   error,
@@ -21,8 +22,8 @@ export default function GlobalError({
     <html lang="en">
       <body>
         <main>
-          <h1>Something went wrong</h1>
-          <p>Please try again later.</p>
+          <h1>{en.common.appName}</h1>
+          <p>{en.ai.unavailable}</p>
         </main>
       </body>
     </html>

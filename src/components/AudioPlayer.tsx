@@ -3,12 +3,18 @@
 import { useRef, useState } from "react";
 import posthog from "posthog-js";
 
+import type { Locale } from "@/lib/i18n";
+
 type AudioPlayerProps = {
   src: string;
   title: string;
   city: string;
   landmark: string;
-  locale: string;
+  locale: Locale;
+  listenLabel: string;
+  playLabel: string;
+  pauseLabel: string;
+  unavailableLabel: string;
 };
 
 export default function AudioPlayer({
@@ -17,6 +23,10 @@ export default function AudioPlayer({
   city,
   landmark,
   locale,
+  listenLabel,
+  playLabel,
+  pauseLabel,
+  unavailableLabel,
 }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -26,6 +36,7 @@ export default function AudioPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [hasError, setHasError] = useState(false);
 
   const togglePlay = async () => {
     const audio = audioRef.current;
@@ -48,6 +59,7 @@ export default function AudioPlayer({
         }
       } catch (error) {
         console.error("Audio playback failed:", error);
+        setHasError(true);
       }
     } else {
       audio.pause();
@@ -72,6 +84,16 @@ export default function AudioPlayer({
   const progress =
     duration > 0 ? (currentTime / duration) * 100 : 0;
 
+  if (hasError) {
+    return (
+      <div className="rounded-2xl bg-zinc-100 p-5">
+        <p className="text-center text-sm text-zinc-500">
+          {unavailableLabel}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-2xl bg-zinc-100 p-5">
       <audio
@@ -84,13 +106,14 @@ export default function AudioPlayer({
           setCurrentTime(event.currentTarget.currentTime)
         }
         onEnded={() => setIsPlaying(false)}
+        onError={() => setHasError(true)}
       />
 
       <div className="flex items-center gap-4">
         <button
           type="button"
           onClick={togglePlay}
-          aria-label={`${isPlaying ? "Pause" : "Play"} ${title}`}
+          aria-label={`${isPlaying ? pauseLabel : playLabel} ${title}`}
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-black text-xl text-white"
         >
           {isPlaying ? "❚❚" : "▶"}
@@ -98,7 +121,7 @@ export default function AudioPlayer({
 
         <div className="min-w-0 flex-1">
           <p className="font-semibold">
-            Listen to the story
+            {listenLabel}
           </p>
 
           <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-300">
