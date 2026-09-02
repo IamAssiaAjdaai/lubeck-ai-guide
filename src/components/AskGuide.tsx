@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { ChevronLeft, ChevronRight, Send, Sparkles, X } from "lucide-react";
 import posthog from "posthog-js";
 
 import type {
@@ -19,12 +20,26 @@ type AskGuideProps = {
   buttonLabel: string;
   closeLabel: string;
   labels: Translations["ai"];
+  suggestions: readonly string[];
 };
 
 type Message = {
   role: "user" | "assistant";
   text: string;
 };
+
+function captureGuideEvent(
+  eventName: string,
+  properties: Record<string, string | number>,
+) {
+  try {
+    posthog.capture(eventName, properties);
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("AI Guide analytics could not be captured:", error);
+    }
+  }
+}
 
 export default function AskGuide({
   landmark,
@@ -34,6 +49,7 @@ export default function AskGuide({
   buttonLabel,
   closeLabel,
   labels,
+  suggestions,
 }: AskGuideProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [question, setQuestion] = useState("");
@@ -42,12 +58,13 @@ export default function AskGuide({
   const [questionCount, setQuestionCount] = useState(0);
 
   const isRtl = direction === "rtl";
+  const GuideChevron = isRtl ? ChevronLeft : ChevronRight;
   const limitReached = questionCount >= MAX_QUESTIONS;
 
   const handleOpen = () => {
     setIsOpen(true);
 
-    posthog.capture("ai_guide_opened", {
+    captureGuideEvent("ai_guide_opened", {
       city: "lubeck",
       landmark,
       locale,
@@ -66,7 +83,7 @@ export default function AskGuide({
     }
 
     if (limitReached) {
-      posthog.capture("ai_limit_reached", {
+      captureGuideEvent("ai_limit_reached", {
         city: "lubeck",
         landmark,
         locale,
@@ -96,7 +113,7 @@ export default function AskGuide({
     setQuestion("");
     setIsLoading(true);
 
-    posthog.capture("ai_question_asked", {
+    captureGuideEvent("ai_question_asked", {
       city: "lubeck",
       landmark,
       locale,
@@ -136,7 +153,7 @@ export default function AskGuide({
             },
           ]);
 
-          posthog.capture("ai_rate_limit_reached", {
+          captureGuideEvent("ai_rate_limit_reached", {
             city: "lubeck",
             landmark,
             locale,
@@ -183,15 +200,24 @@ export default function AskGuide({
       <button
         type="button"
         onClick={handleOpen}
-        className="mt-10 flex h-14 w-full items-center justify-center rounded-xl border border-black px-4 font-semibold transition hover:bg-zinc-50"
+        aria-label={buttonLabel}
+        className="mt-9 flex min-h-24 w-full items-center gap-4 rounded-[var(--radius-md)] border border-violet-200 bg-gradient-to-br from-violet-50 to-blue-50 p-4 text-start transition hover:border-violet-300"
       >
-        {buttonLabel}
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-ai shadow-sm"><Sparkles aria-hidden="true" size={21} strokeWidth={1.8} /></span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold text-text-primary">{buttonLabel}</span>
+          <span className="mt-1 block text-sm leading-5 text-text-secondary">{labels.empty}</span>
+        </span>
+        <GuideChevron aria-hidden="true" size={19} strokeWidth={1.8} className="shrink-0 text-ai" />
       </button>
 
       {/* Bottom Sheet */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-end bg-black/40"
+          className="fixed inset-0 z-50 flex items-end bg-black/45 backdrop-blur-[2px]"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="ai-guide-title"
           onClick={() => setIsOpen(false)}
         >
           <div
@@ -199,35 +225,50 @@ export default function AskGuide({
             onClick={(event) =>
               event.stopPropagation()
             }
-            className="mx-auto flex max-h-[85vh] w-full max-w-md flex-col rounded-t-3xl bg-white p-6 shadow-xl"
+            className="mx-auto flex max-h-[88vh] w-full max-w-md flex-col rounded-t-[24px] bg-surface-elevated px-5 pb-5 pt-3 shadow-xl"
           >
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-border" />
             {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ai-soft text-ai"><Sparkles aria-hidden="true" size={20} strokeWidth={1.8} /></span>
+                <div>
+                <p className="eyebrow">
                   {labels.title}
                 </p>
 
-                <h2 className="mt-1 text-xl font-semibold">
+                <h2 id="ai-guide-title" className="mt-1 text-xl font-semibold tracking-[-0.02em]">
                   {landmarkName}
                 </h2>
+                <p className="mt-1 text-sm leading-5 text-text-secondary">{labels.empty}</p>
+                </div>
               </div>
 
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label={closeLabel}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 text-xl transition hover:bg-zinc-200"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface text-text-secondary transition hover:text-text-primary"
               >
-                ×
+                <X aria-hidden="true" size={20} strokeWidth={1.8} />
               </button>
             </div>
 
+            {messages.length === 0 && (
+              <div className="mt-5 flex flex-wrap gap-2">
+                {suggestions.map((suggestion) => (
+                  <button key={suggestion} type="button" onClick={() => setQuestion(suggestion)} className="min-h-10 rounded-full border border-violet-200 bg-ai-soft px-3 text-sm text-ai transition hover:border-ai">
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* Messages */}
-            <div className="mt-6 flex-1 space-y-3 overflow-y-auto">
+            <div className="mt-5 flex-1 space-y-3 overflow-y-auto pe-1">
               {messages.length === 0 && (
-                <div className="rounded-2xl bg-zinc-100 p-4">
-                  <p className="text-sm leading-6 text-zinc-600">
+                <div className="rounded-2xl bg-surface p-4">
+                  <p className="text-sm leading-6 text-text-secondary">
                     {labels.empty}
                   </p>
                 </div>
@@ -242,12 +283,12 @@ export default function AskGuide({
                           isRtl
                             ? "mr-auto"
                             : "ml-auto"
-                        } max-w-[85%] rounded-2xl bg-black px-4 py-3 text-sm leading-6 text-white`
+                        } max-w-[85%] rounded-2xl bg-primary px-4 py-3 text-sm leading-6 text-primary-foreground`
                       : `${
                           isRtl
                             ? "ml-auto"
                             : "mr-auto"
-                        } max-w-[85%] rounded-2xl bg-zinc-100 px-4 py-3 text-sm leading-6 text-zinc-800`
+                        } max-w-[85%] rounded-2xl bg-surface px-4 py-3 text-sm leading-6 text-text-primary`
                   }
                 >
                   {message.text}
@@ -261,7 +302,7 @@ export default function AskGuide({
                     isRtl
                       ? "ml-auto"
                       : "mr-auto"
-                  } max-w-[85%] rounded-2xl bg-zinc-100 px-4 py-3 text-sm text-zinc-500`}
+                  } max-w-[85%] rounded-2xl bg-surface px-4 py-3 text-sm text-text-secondary`}
                 >
                   {labels.loading}
                 </div>
@@ -269,14 +310,14 @@ export default function AskGuide({
             </div>
 
             {/* Question counter */}
-            <p className="mt-4 text-center text-xs text-zinc-500">
+            <p className="mt-4 text-center text-xs tabular-nums text-text-secondary">
               {questionCount}/{MAX_QUESTIONS}{" "}
               {labels.questionsUsed}
             </p>
 
             {/* Limit message */}
             {limitReached && (
-              <div className="mt-3 rounded-xl bg-zinc-100 p-3 text-center text-sm leading-6 text-zinc-600">
+              <div className="mt-3 rounded-xl bg-surface p-3 text-center text-sm leading-6 text-text-secondary">
                 {labels.limit}
               </div>
             )}
@@ -284,7 +325,7 @@ export default function AskGuide({
             {/* Input */}
             <form
               onSubmit={handleSubmit}
-              className="mt-4 flex gap-2"
+              className="mt-4 flex items-center gap-2"
             >
               <input
                 value={question}
@@ -297,7 +338,7 @@ export default function AskGuide({
                     ? labels.limit
                     : labels.placeholder
                 }
-                className="min-w-0 flex-1 rounded-xl border border-zinc-300 px-4 py-3 text-sm outline-none transition focus:border-black disabled:cursor-not-allowed disabled:bg-zinc-100"
+                className="h-12 min-w-0 flex-1 rounded-xl border border-border bg-surface-elevated px-4 text-sm outline-none transition focus:border-accent disabled:cursor-not-allowed disabled:bg-surface"
               />
 
               <button
@@ -307,9 +348,10 @@ export default function AskGuide({
                   limitReached ||
                   !question.trim()
                 }
-                className="rounded-xl bg-black px-5 font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label={labels.send}
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {labels.send}
+                <Send aria-hidden="true" size={19} strokeWidth={1.8} className={isRtl ? "rotate-180" : ""} />
               </button>
             </form>
           </div>

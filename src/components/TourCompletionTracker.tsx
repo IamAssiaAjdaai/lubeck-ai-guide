@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Star } from "lucide-react";
 import posthog from "posthog-js";
 
 import type { Locale } from "@/lib/i18n";
@@ -42,29 +43,27 @@ export default function TourCompletionTracker({
     });
   };
   return (
-    <div className="mt-8 text-center">
-      <p className="font-semibold">
+    <div className="surface-card mt-7 p-5 text-center">
+      <p className="text-[15px] font-semibold">
         {ratingQuestion}
       </p>
 
-      <div className="mt-4 flex justify-center gap-3">
+      <div className="mt-3 flex justify-center gap-1">
         {[1, 2, 3, 4, 5].map((rating) => (
           <button
             key={rating}
             type="button"
             onClick={() => handleRating(rating)}
             aria-label={starRating.replace("{rating}", String(rating))}
-            className="text-3xl transition hover:scale-110"
+            className={`flex h-11 w-11 items-center justify-center rounded-full transition hover:bg-amber-50 ${selectedRating !== null && rating <= selectedRating ? "text-rating" : "text-text-muted"}`}
           >
-            {selectedRating !== null && rating <= selectedRating
-              ? "★"
-              : "☆"}
+            <Star aria-hidden="true" size={24} strokeWidth={1.8} fill={selectedRating !== null && rating <= selectedRating ? "currentColor" : "none"} />
           </button>
         ))}
       </div>
 
       {selectedRating && (
-        <p className="mt-3 text-sm text-zinc-500">
+        <p className="mt-3 text-sm text-text-secondary">
           {thankYou}
         </p>
       )}

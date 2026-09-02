@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Headphones, Pause, Play } from "lucide-react";
 import posthog from "posthog-js";
 
+import { formatTime } from "@/lib/formatTime";
 import type { Locale } from "@/lib/i18n";
 
 type AudioPlayerProps = {
@@ -17,22 +19,19 @@ type AudioPlayerProps = {
   unavailableLabel: string;
 };
 
-export default function AudioPlayer({
-  src,
-  title,
-  city,
-  landmark,
-  locale,
-  listenLabel,
-  playLabel,
-  pauseLabel,
-  unavailableLabel,
-}: AudioPlayerProps) {
+function captureAudioPlayed(properties: Record<string, string>) {
+  try {
+    posthog.capture("audio_played", properties);
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Audio analytics could not be captured:", error);
+    }
+  }
+}
+
+export default function AudioPlayer({ src, title, city, landmark, locale, listenLabel, playLabel, pauseLabel, unavailableLabel }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  // باش ما نسجلوش audio_played أكثر من مرة
   const hasTrackedPlay = useRef(false);
-
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -40,21 +39,14 @@ export default function AudioPlayer({
 
   const togglePlay = async () => {
     const audio = audioRef.current;
-
     if (!audio) return;
 
     if (audio.paused) {
       try {
         await audio.play();
         setIsPlaying(true);
-
         if (!hasTrackedPlay.current) {
-          posthog.capture("audio_played", {
-            city,
-            landmark,
-            locale,
-          });
-
+          captureAudioPlayed({ city, landmark, locale });
           hasTrackedPlay.current = true;
         }
       } catch (error) {
@@ -67,75 +59,31 @@ export default function AudioPlayer({
     }
   };
 
-  const formatTime = (seconds: number) => {
-    if (!Number.isFinite(seconds) || seconds < 0) {
-      return "0:00";
-    }
-
-    const minutes = Math.floor(seconds / 60);
-
-    const remainingSeconds = Math.floor(seconds % 60)
-      .toString()
-      .padStart(2, "0");
-
-    return `${minutes}:${remainingSeconds}`;
-  };
-
-  const progress =
-    duration > 0 ? (currentTime / duration) * 100 : 0;
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   if (hasError) {
     return (
-      <div className="rounded-2xl bg-zinc-100 p-5">
-        <p className="text-center text-sm text-zinc-500">
-          {unavailableLabel}
-        </p>
+      <div className="flex items-center gap-3 rounded-2xl bg-surface p-4 text-text-secondary">
+        <Headphones aria-hidden="true" size={20} strokeWidth={1.8} className="shrink-0" />
+        <p className="text-sm leading-6">{unavailableLabel}</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl bg-zinc-100 p-5">
-      <audio
-        ref={audioRef}
-        src={src}
-        onLoadedMetadata={(event) =>
-          setDuration(event.currentTarget.duration)
-        }
-        onTimeUpdate={(event) =>
-          setCurrentTime(event.currentTarget.currentTime)
-        }
-        onEnded={() => setIsPlaying(false)}
-        onError={() => setHasError(true)}
-      />
-
+    <div className="rounded-[var(--radius-md)] border border-blue-100 bg-blue-50/60 p-4">
+      <audio ref={audioRef} src={src} preload="metadata" onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onPause={() => setIsPlaying(false)} onPlay={() => setIsPlaying(true)} onEnded={() => setIsPlaying(false)} onError={() => setHasError(true)} />
       <div className="flex items-center gap-4">
-        <button
-          type="button"
-          onClick={togglePlay}
-          aria-label={`${isPlaying ? pauseLabel : playLabel} ${title}`}
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-black text-xl text-white"
-        >
-          {isPlaying ? "❚❚" : "▶"}
+        <button type="button" onClick={togglePlay} aria-label={`${isPlaying ? pauseLabel : playLabel} ${title}`} className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary text-white shadow-[0_8px_20px_rgb(37_99_235_/_0.28)] transition hover:bg-blue-700">
+          {isPlaying ? <Pause aria-hidden="true" size={20} fill="currentColor" strokeWidth={1.8} /> : <Play aria-hidden="true" size={20} fill="currentColor" strokeWidth={1.8} className="ms-0.5" />}
         </button>
-
         <div className="min-w-0 flex-1">
-          <p className="font-semibold">
-            {listenLabel}
-          </p>
-
-          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-300">
-            <div
-              className="h-full bg-black transition-all"
-              style={{
-                width: `${progress}%`,
-              }}
-            />
+          <p className="text-[15px] font-semibold">{listenLabel}</p>
+          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-border" aria-hidden="true">
+            <div className="h-full rounded-full bg-primary transition-[width]" style={{ width: `${progress}%` }} />
           </div>
-
-          <div className="mt-2 flex justify-between text-xs text-zinc-500">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
+          <div className="mt-2 flex justify-between text-xs tabular-nums text-text-secondary">
+            <span>{formatTime(currentTime)}</span><span>{formatTime(duration)}</span>
           </div>
         </div>
       </div>

@@ -1,10 +1,13 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, ArrowRight, House } from "lucide-react";
 
-import TrackedLink from "@/components/TrackedLink";
+import LandmarkCard from "@/components/travel/LandmarkCard";
+import TourCard from "@/components/travel/TourCard";
+import { cities } from "@/data/cities";
 import { landmarks } from "@/data/landmarks";
 import {
+  formatMessage,
   getDirection,
   getTranslations,
   isLocale,
@@ -33,117 +36,63 @@ export default async function LubeckPage({
   const currentLocale = locale;
   const t = getTranslations(currentLocale);
   const direction = getDirection(currentLocale);
-  const forwardArrow = direction === "rtl" ? "←" : "→";
-  const backArrow = direction === "rtl" ? "→" : "←";
+  const city = cities.lubeck;
+  const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
+  const [durationLabel, stopsLabel = ""] = t.explore.duration.split("•").map((value) => value.trim());
 
   return (
     <main
       lang={currentLocale}
       dir={direction}
-      className="min-h-screen bg-white text-black"
+      className="app-shell"
     >
-      <section className="mx-auto w-full max-w-md px-6 py-10">
+      <section className="content-container py-8 sm:py-12">
 
         {/* Back */}
         <Link
           href="/"
-          className="text-sm font-medium text-zinc-500 transition hover:text-black"
+          className="button-tertiary -ms-3 min-h-11 px-3 text-sm"
         >
-          {backArrow} {t.common.back}
+          <BackIcon aria-hidden="true" size={18} strokeWidth={1.8} /> <House aria-hidden="true" size={16} strokeWidth={1.8} /> {t.common.back}
         </Link>
 
         {/* Header */}
-        <header className="mt-6">
-          <h1 className="text-3xl font-bold tracking-tight">
+        <header className="mt-5">
+          <h1 className="text-[2rem] font-bold leading-tight tracking-[-0.03em]">
             {t.explore.title}
           </h1>
 
-          <p className="mt-2 text-zinc-600">
+          <p className="mt-2 leading-7 text-text-secondary">
             {t.explore.subtitle}
           </p>
         </header>
 
         {/* Walking Tour Card */}
-        <section className="mt-8 rounded-3xl bg-zinc-100 p-5">
-          <p className="text-sm font-medium text-zinc-500">
-            {t.explore.walkingTour}
-          </p>
-
-          <h2 className="mt-2 text-xl font-semibold">
-            {t.explore.historicCenter}
-          </h2>
-
-          <p className="mt-2 text-sm text-zinc-600">
-            {t.explore.duration}
-          </p>
-
-          <TrackedLink
-            href={`/${currentLocale}/lubeck/holstentor`}
-            eventName="tour_started"
-            properties={{
-              locale: currentLocale,
-              start_landmark_slug: "holstentor",
-              tour_id: "lubeck_historic_center",
-            }}
-            className="mt-5 flex h-14 items-center justify-center rounded-xl bg-black px-5 font-semibold text-white transition hover:bg-zinc-800"
-          >
-            {t.explore.startTour}
-          </TrackedLink>
-        </section>
+        <div className="mt-7"><TourCard eyebrow={t.explore.walkingTour} title={t.explore.historicCenter} duration={durationLabel} stops={stopsLabel} ctaLabel={t.explore.startTour} href={`/${currentLocale}/${city.slug}/${city.startLandmarkSlug}`} locale={currentLocale} tourId={city.tourId} startLandmarkSlug={city.startLandmarkSlug} /></div>
 
         {/* Places */}
-        <section className="mt-10">
-          <h2 className="text-lg font-semibold">
+        <section className="mt-9">
+          <h2 className="text-xl font-semibold tracking-[-0.02em]">
             {t.explore.places}
           </h2>
 
-          <div className="mt-4 flex flex-col gap-4">
-            {landmarks.map((landmark) => {
+          <div className="mt-4 flex flex-col gap-3">
+            {landmarks.map((landmark, index) => {
               const content =
                 landmark.content[currentLocale];
 
               return (
-                <TrackedLink
+                <LandmarkCard
                   key={landmark.slug}
-                  href={`/${currentLocale}/lubeck/${landmark.slug}`}
-                  eventName="landmark_selected"
-                  properties={{
-                    landmark_slug: landmark.slug,
-                    locale: currentLocale,
-                  }}
-                  className="group flex items-center gap-4 rounded-2xl border border-zinc-200 p-3 transition hover:border-zinc-300 hover:bg-zinc-50"
-                >
-                  {/* Image */}
-                  {landmark.image ? (
-                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
-                      <Image
-                        src={landmark.image}
-                        alt={content.name}
-                        fill
-                        sizes="80px"
-                        className="object-cover transition duration-300 group-hover:scale-105"
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-20 w-20 shrink-0 rounded-xl bg-zinc-200" />
-                  )}
-
-                  {/* Content */}
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold">
-                      {content.name}
-                    </h3>
-
-                    <p className="mt-1 text-sm text-zinc-500">
-                      🎧 {content.duration}
-                    </p>
-                  </div>
-
-                  {/* Arrow */}
-                  <span className="text-xl text-zinc-400">
-                    {forwardArrow}
-                  </span>
-                </TrackedLink>
+                  href={`/${currentLocale}/${city.slug}/${landmark.slug}`}
+                  image={landmark.image}
+                  name={content.name}
+                  duration={content.duration}
+                  stopLabel={formatMessage(t.landmark.stopProgress, { current: index + 1, total: landmarks.length })}
+                  direction={direction}
+                  locale={currentLocale}
+                  slug={landmark.slug}
+                />
               );
             })}
           </div>

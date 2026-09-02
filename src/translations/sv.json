@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "AI-guide till Lübeck", "back": "Tillbaka", "language": "Språk", "noAccount": "Inget konto behövs", "play": "Spela", "pause": "Pausa", "close": "Stäng AI-guiden", "starRating": "Betyg: {rating} stjärnor" },
-  "home": { "title": "Upptäck Lübeck med din personliga guide", "subtitle": "Ta del av berättelser, historia och dolda fakta på ditt eget språk.", "chooseLanguage": "Välj språk" },
-  "explore": { "title": "Upptäck Lübeck", "subtitle": "5 historiska platser att utforska", "walkingTour": "Stadsvandring", "historicCenter": "Lübecks historiska centrum", "duration": "~45 min • 5 stopp", "places": "Platser", "startTour": "Starta stadsvandringen" },
-  "landmark": { "stopProgress": "Stopp {current} av {total}", "audioGuide": "Audioguide", "listenStory": "Lyssna på berättelsen", "story": "Berättelsen", "quickFacts": "Snabba fakta", "audioUnavailable": "Ljud på det här språket kommer snart.", "nextStop": "Nästa stopp", "finishTour": "Avsluta turen" },
-  "complete": { "badge": "Turen är klar", "title": "Du har upptäckt Lübeck!", "description": "Du har genomfört 5 historiska stopp i Lübecks gamla stad.", "progress": "5 av 5 stopp genomförda", "ratingQuestion": "Hur var turen?", "thankYou": "Tack för din feedback!", "feedback": "Dela feedback", "restart": "Upptäck igen", "home": "Tillbaka till startsidan" },
-  "ai": { "title": "AI-guide", "open": "Fråga din AI-guide", "placeholder": "Fråga något om den här platsen...", "send": "Skicka", "empty": "Fråga mig vad du vill om den här platsen.", "loading": "Tänker...", "limit": "Du har nått gränsen på 5 frågor för den här turen.", "questionsUsed": "frågor använda", "unavailable": "Guiden är tillfälligt otillgänglig.", "rateLimited": "Du har ställt för många frågor. Försök igen om några minuter." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "Tillbaka",
+    "language": "Språk",
+    "noAccount": "Inget konto behövs",
+    "play": "Spela",
+    "pause": "Pausa",
+    "close": "Stäng AI-guiden",
+    "starRating": "Betyg: {rating} stjärnor"
+  },
+  "home": {
+    "title": "Upptäck städer, ett steg i taget.",
+    "subtitle": "Utforska lokala berättelser, ljudguider och dolda platser på ditt språk.",
+    "chooseLanguage": "Välj språk",
+    "availableNow": "Tillgänglig nu",
+    "featuredCityDescription": "Upptäck 5 historiska platser på en guidad promenad.",
+    "moreCities": "Fler städer",
+    "comingSoon": "Kommer snart",
+    "germany": "Tyskland"
+  },
+  "explore": {
+    "title": "Upptäck Lübeck",
+    "subtitle": "5 historiska platser att utforska",
+    "walkingTour": "Stadsvandring",
+    "historicCenter": "Lübecks historiska centrum",
+    "duration": "~45 min • 5 stopp",
+    "places": "Platser",
+    "startTour": "Starta stadsvandringen"
+  },
+  "landmark": {
+    "stopProgress": "Stopp {current} av {total}",
+    "audioGuide": "Audioguide",
+    "listenStory": "Lyssna på berättelsen",
+    "story": "Berättelsen",
+    "quickFacts": "Snabba fakta",
+    "audioUnavailable": "Ljud på det här språket kommer snart.",
+    "nextStop": "Nästa stopp",
+    "finishTour": "Avsluta turen"
+  },
+  "complete": {
+    "badge": "Turen är klar",
+    "title": "Du har upptäckt Lübeck!",
+    "description": "Du har genomfört 5 historiska stopp i Lübecks gamla stad.",
+    "progress": "5 av 5 stopp genomförda",
+    "ratingQuestion": "Hur var turen?",
+    "thankYou": "Tack för din feedback!",
+    "feedback": "Dela feedback",
+    "restart": "Upptäck igen",
+    "home": "Tillbaka till startsidan",
+    "statsStops": "Stopp",
+    "statsComplete": "Klart",
+    "statsMinutes": "Minuter"
+  },
+  "ai": {
+    "title": "Din lokala guide",
+    "open": "Fråga din lokala guide",
+    "placeholder": "Fråga något om den här platsen...",
+    "send": "Skicka",
+    "empty": "Fråga mig vad du vill om den här platsen.",
+    "loading": "Tänker...",
+    "limit": "Du har nått gränsen på 5 frågor för den här turen.",
+    "questionsUsed": "frågor använda",
+    "unavailable": "Guiden är tillfälligt otillgänglig.",
+    "rateLimited": "Du har ställt för många frågor. Försök igen om några minuter.",
+    "suggestionFamous": "Varför är platsen berömd?",
+    "suggestionBuilt": "När byggdes den?",
+    "suggestionStory": "Berätta en kort historia"
+  }
 }
