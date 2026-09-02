@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
+import TrackLandmarkView from "@/components/TrackLandmarkView";
 import AudioPlayer from "@/components/AudioPlayer";
+import TrackedLink from "@/components/TrackedLink";
 import { landmarks } from "@/data/landmarks";
 import {
   locales,
@@ -97,6 +98,12 @@ export default async function LandmarkPage({
       <section className="mx-auto w-full max-w-md px-6 py-8">
         {/* Navigation */}
         <div className="flex items-center justify-between">
+          <TrackLandmarkView
+            city="lubeck"
+            landmark={landmark.slug}
+            locale={currentLocale}
+            stopNumber={currentIndex + 1}
+          />
           <Link
             href={`/${currentLocale}/lubeck`}
             className="text-sm font-medium text-zinc-500 transition hover:text-black"
@@ -158,6 +165,9 @@ export default async function LandmarkPage({
             <AudioPlayer
               src={audio}
               title={`${name} ${t.audioGuide}`}
+              city="lubeck"
+              landmark={landmark.slug}
+              locale={currentLocale}
             />
           </div>
         ) : (
@@ -232,12 +242,18 @@ export default async function LandmarkPage({
               : `${t.nextStop} →`}
           </Link>
         ) : (
-          <Link
+          <TrackedLink
             href={`/${currentLocale}/lubeck/complete`}
+            eventName="tour_completed"
+            properties={{
+              locale: currentLocale,
+              total_landmarks: landmarks.length,
+              tour_id: "lubeck_historic_center",
+            }}
             className="mt-4 flex h-16 w-full items-center justify-center rounded-2xl bg-black px-6 text-lg font-semibold text-white transition hover:bg-zinc-800"
           >
             {t.finishTour} ✓
-          </Link>
+          </TrackedLink>
         )}
       </section>
     </main>

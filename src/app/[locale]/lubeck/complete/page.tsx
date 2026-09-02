@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import TourCompletionTracker from "@/components/TourCompletionTracker";
 
 import {
   locales,
@@ -117,24 +118,11 @@ export default async function CompletePage({
         </div>
 
         {/* Rating */}
-        <div className="mt-8 text-center">
-          <p className="font-semibold">
-            {content.rating}
-          </p>
-
-          <div className="mt-4 flex justify-center gap-3">
-            {[1, 2, 3, 4, 5].map((rating) => (
-              <button
-                key={rating}
-                type="button"
-                aria-label={`${rating} star rating`}
-                className="text-3xl transition hover:scale-110"
-              >
-                ☆
-              </button>
-            ))}
-          </div>
-        </div>
+        <TourCompletionTracker
+            city="lubeck"
+            locale={currentLocale}
+            totalStops={5}
+        />
 
         {/* Feedback */}
         <button
