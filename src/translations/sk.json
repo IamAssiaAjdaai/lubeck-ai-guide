@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "AI sprievodca Lübeckom", "back": "Späť", "language": "Jazyk", "noAccount": "Účet nie je potrebný", "play": "Prehrať", "pause": "Pozastaviť", "close": "Zavrieť AI sprievodcu", "starRating": "Hodnotenie {rating} hviezdičiek" },
-  "home": { "title": "Preskúmajte Lübeck s osobným sprievodcom", "subtitle": "Objavte príbehy, históriu a skryté zaujímavosti vo svojom jazyku.", "chooseLanguage": "Vyberte jazyk" },
-  "explore": { "title": "Objavte Lübeck", "subtitle": "5 historických miest na preskúmanie", "walkingTour": "Pešia prehliadka", "historicCenter": "Historické centrum Lübecku", "duration": "~45 min • 5 zastávok", "places": "Miesta", "startTour": "Začať pešiu prehliadku" },
-  "landmark": { "stopProgress": "Zastávka {current} z {total}", "audioGuide": "Audiosprievodca", "listenStory": "Vypočuť si príbeh", "story": "Príbeh", "quickFacts": "Stručné fakty", "audioUnavailable": "Zvuk v tomto jazyku bude čoskoro dostupný.", "nextStop": "Ďalšia zastávka", "finishTour": "Dokončiť prehliadku" },
-  "complete": { "badge": "Prehliadka dokončená", "title": "Preskúmali ste Lübeck!", "description": "Absolvovali ste 5 historických zastávok v starom meste Lübecku.", "progress": "Dokončených 5 z 5 zastávok", "ratingQuestion": "Ako sa vám prehliadka páčila?", "thankYou": "Ďakujeme za váš názor!", "feedback": "Zdieľať názor", "restart": "Preskúmať znova", "home": "Späť na úvod" },
-  "ai": { "title": "AI sprievodca", "open": "Opýtať sa AI sprievodcu", "placeholder": "Opýtajte sa na toto miesto...", "send": "Odoslať", "empty": "Opýtajte sa ma čokoľvek o tomto mieste.", "loading": "Premýšľam...", "limit": "Dosiahli ste limit 5 otázok pre túto prehliadku.", "questionsUsed": "využitých otázok", "unavailable": "Sprievodca je dočasne nedostupný.", "rateLimited": "Položili ste priveľa otázok. Skúste to znova o niekoľko minút." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "Späť",
+    "language": "Jazyk",
+    "noAccount": "Účet nie je potrebný",
+    "play": "Prehrať",
+    "pause": "Pozastaviť",
+    "close": "Zavrieť AI sprievodcu",
+    "starRating": "Hodnotenie {rating} hviezdičiek"
+  },
+  "home": {
+    "title": "Objavujte mestá krok za krokom.",
+    "subtitle": "Objavujte miestne príbehy, audioprievodcov a skryté miesta vo svojom jazyku.",
+    "chooseLanguage": "Vyberte jazyk",
+    "availableNow": "Teraz dostupné",
+    "featuredCityDescription": "Objavte 5 historických miest počas komentovanej prechádzky.",
+    "moreCities": "Ďalšie mestá",
+    "comingSoon": "Už čoskoro",
+    "germany": "Nemecko"
+  },
+  "explore": {
+    "title": "Objavte Lübeck",
+    "subtitle": "5 historických miest na preskúmanie",
+    "walkingTour": "Pešia prehliadka",
+    "historicCenter": "Historické centrum Lübecku",
+    "duration": "~45 min • 5 zastávok",
+    "places": "Miesta",
+    "startTour": "Začať pešiu prehliadku"
+  },
+  "landmark": {
+    "stopProgress": "Zastávka {current} z {total}",
+    "audioGuide": "Audiosprievodca",
+    "listenStory": "Vypočuť si príbeh",
+    "story": "Príbeh",
+    "quickFacts": "Stručné fakty",
+    "audioUnavailable": "Zvuk v tomto jazyku bude čoskoro dostupný.",
+    "nextStop": "Ďalšia zastávka",
+    "finishTour": "Dokončiť prehliadku"
+  },
+  "complete": {
+    "badge": "Prehliadka dokončená",
+    "title": "Preskúmali ste Lübeck!",
+    "description": "Absolvovali ste 5 historických zastávok v starom meste Lübecku.",
+    "progress": "Dokončených 5 z 5 zastávok",
+    "ratingQuestion": "Ako sa vám prehliadka páčila?",
+    "thankYou": "Ďakujeme za váš názor!",
+    "feedback": "Zdieľať názor",
+    "restart": "Preskúmať znova",
+    "home": "Späť na úvod",
+    "statsStops": "Zastávky",
+    "statsComplete": "Dokončené",
+    "statsMinutes": "Minúty"
+  },
+  "ai": {
+    "title": "Váš miestny sprievodca",
+    "open": "Opýtajte sa miestneho sprievodcu",
+    "placeholder": "Opýtajte sa na toto miesto...",
+    "send": "Odoslať",
+    "empty": "Opýtajte sa ma čokoľvek o tomto mieste.",
+    "loading": "Premýšľam...",
+    "limit": "Dosiahli ste limit 5 otázok pre túto prehliadku.",
+    "questionsUsed": "využitých otázok",
+    "unavailable": "Sprievodca je dočasne nedostupný.",
+    "rateLimited": "Položili ste priveľa otázok. Skúste to znova o niekoľko minút.",
+    "suggestionFamous": "Prečo je toto miesto slávne?",
+    "suggestionBuilt": "Kedy bolo postavené?",
+    "suggestionStory": "Povedz mi krátky príbeh"
+  }
 }

@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "AI-guide til Lübeck", "back": "Tilbake", "language": "Språk", "noAccount": "Ingen konto nødvendig", "play": "Spill av", "pause": "Pause", "close": "Lukk AI-guiden", "starRating": "Vurdering: {rating} stjerner" },
-  "home": { "title": "Opplev Lübeck med din personlige guide", "subtitle": "Oppdag fortellinger, historie og skjulte detaljer på ditt eget språk.", "chooseLanguage": "Velg språk" },
-  "explore": { "title": "Oppdag Lübeck", "subtitle": "5 historiske steder å utforske", "walkingTour": "Byvandring", "historicCenter": "Lübecks historiske sentrum", "duration": "~45 min • 5 stopp", "places": "Steder", "startTour": "Start byvandringen" },
-  "landmark": { "stopProgress": "Stopp {current} av {total}", "audioGuide": "Lydguide", "listenStory": "Lytt til fortellingen", "story": "Fortellingen", "quickFacts": "Kort fortalt", "audioUnavailable": "Lyd på dette språket kommer snart.", "nextStop": "Neste stopp", "finishTour": "Avslutt turen" },
-  "complete": { "badge": "Turen er fullført", "title": "Du har opplevd Lübeck!", "description": "Du fullførte 5 historiske stopp i Lübecks gamleby.", "progress": "5 av 5 stopp fullført", "ratingQuestion": "Hvordan var turen?", "thankYou": "Takk for tilbakemeldingen!", "feedback": "Del tilbakemelding", "restart": "Opplev på nytt", "home": "Tilbake til forsiden" },
-  "ai": { "title": "AI-guide", "open": "Spør AI-guiden din", "placeholder": "Spør om dette stedet...", "send": "Send", "empty": "Spør meg om hva som helst om dette stedet.", "loading": "Tenker...", "limit": "Du har nådd grensen på 5 spørsmål for denne turen.", "questionsUsed": "spørsmål brukt", "unavailable": "Guiden er midlertidig utilgjengelig.", "rateLimited": "Du har stilt for mange spørsmål. Prøv igjen om noen minutter." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "Tilbake",
+    "language": "Språk",
+    "noAccount": "Ingen konto nødvendig",
+    "play": "Spill av",
+    "pause": "Pause",
+    "close": "Lukk AI-guiden",
+    "starRating": "Vurdering: {rating} stjerner"
+  },
+  "home": {
+    "title": "Oppdag byer, ett skritt om gangen.",
+    "subtitle": "Utforsk lokale historier, lydguider og skjulte steder på ditt språk.",
+    "chooseLanguage": "Velg språk",
+    "availableNow": "Tilgjengelig nå",
+    "featuredCityDescription": "Opplev 5 historiske steder på en guidet spasertur.",
+    "moreCities": "Flere byer",
+    "comingSoon": "Kommer snart",
+    "germany": "Tyskland"
+  },
+  "explore": {
+    "title": "Oppdag Lübeck",
+    "subtitle": "5 historiske steder å utforske",
+    "walkingTour": "Byvandring",
+    "historicCenter": "Lübecks historiske sentrum",
+    "duration": "~45 min • 5 stopp",
+    "places": "Steder",
+    "startTour": "Start byvandringen"
+  },
+  "landmark": {
+    "stopProgress": "Stopp {current} av {total}",
+    "audioGuide": "Lydguide",
+    "listenStory": "Lytt til fortellingen",
+    "story": "Fortellingen",
+    "quickFacts": "Kort fortalt",
+    "audioUnavailable": "Lyd på dette språket kommer snart.",
+    "nextStop": "Neste stopp",
+    "finishTour": "Avslutt turen"
+  },
+  "complete": {
+    "badge": "Turen er fullført",
+    "title": "Du har opplevd Lübeck!",
+    "description": "Du fullførte 5 historiske stopp i Lübecks gamleby.",
+    "progress": "5 av 5 stopp fullført",
+    "ratingQuestion": "Hvordan var turen?",
+    "thankYou": "Takk for tilbakemeldingen!",
+    "feedback": "Del tilbakemelding",
+    "restart": "Opplev på nytt",
+    "home": "Tilbake til forsiden",
+    "statsStops": "Stopp",
+    "statsComplete": "Fullført",
+    "statsMinutes": "Minutter"
+  },
+  "ai": {
+    "title": "Din lokale guide",
+    "open": "Spør din lokale guide",
+    "placeholder": "Spør om dette stedet...",
+    "send": "Send",
+    "empty": "Spør meg om hva som helst om dette stedet.",
+    "loading": "Tenker...",
+    "limit": "Du har nådd grensen på 5 spørsmål for denne turen.",
+    "questionsUsed": "spørsmål brukt",
+    "unavailable": "Guiden er midlertidig utilgjengelig.",
+    "rateLimited": "Du har stilt for mange spørsmål. Prøv igjen om noen minutter.",
+    "suggestionFamous": "Hvorfor er stedet berømt?",
+    "suggestionBuilt": "Når ble det bygget?",
+    "suggestionStory": "Fortell meg en kort historie"
+  }
 }

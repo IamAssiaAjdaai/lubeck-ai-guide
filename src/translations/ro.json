@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "Ghid AI pentru Lübeck", "back": "Înapoi", "language": "Limbă", "noAccount": "Nu este necesar un cont", "play": "Redare", "pause": "Pauză", "close": "Închide ghidul AI", "starRating": "Evaluare de {rating} stele" },
-  "home": { "title": "Explorați Lübeck cu ghidul personal", "subtitle": "Descoperiți povești, istorie și lucruri mai puțin știute în limba dvs.", "chooseLanguage": "Alegeți limba" },
-  "explore": { "title": "Descoperiți Lübeck", "subtitle": "5 locuri istorice de explorat", "walkingTour": "Tur pietonal", "historicCenter": "Centrul istoric al Lübeckului", "duration": "~45 min • 5 opriri", "places": "Locuri", "startTour": "Începeți turul pietonal" },
-  "landmark": { "stopProgress": "Oprirea {current} din {total}", "audioGuide": "Ghid audio", "listenStory": "Ascultați povestea", "story": "Povestea", "quickFacts": "Pe scurt", "audioUnavailable": "Materialul audio în această limbă va fi disponibil în curând.", "nextStop": "Următoarea oprire", "finishTour": "Încheiați turul" },
-  "complete": { "badge": "Tur încheiat", "title": "Ați explorat Lübeck!", "description": "Ați parcurs 5 opriri istorice în centrul vechi al Lübeckului.", "progress": "5 din 5 opriri finalizate", "ratingQuestion": "Cum vi s-a părut turul?", "thankYou": "Vă mulțumim pentru părere!", "feedback": "Trimiteți o părere", "restart": "Explorați din nou", "home": "Înapoi la pagina principală" },
-  "ai": { "title": "Ghid AI", "open": "Întrebați ghidul AI", "placeholder": "Întrebați ceva despre acest loc...", "send": "Trimite", "empty": "Întrebați-mă orice despre acest loc.", "loading": "Mă gândesc...", "limit": "Ați atins limita de 5 întrebări pentru acest tur.", "questionsUsed": "întrebări folosite", "unavailable": "Ghidul este momentan indisponibil.", "rateLimited": "Ați pus prea multe întrebări. Încercați din nou peste câteva minute." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "Înapoi",
+    "language": "Limbă",
+    "noAccount": "Nu este necesar un cont",
+    "play": "Redare",
+    "pause": "Pauză",
+    "close": "Închide ghidul AI",
+    "starRating": "Evaluare de {rating} stele"
+  },
+  "home": {
+    "title": "Descoperă orașe pas cu pas.",
+    "subtitle": "Explorează povești locale, ghiduri audio și locuri ascunse în limba ta.",
+    "chooseLanguage": "Alegeți limba",
+    "availableNow": "Disponibil acum",
+    "featuredCityDescription": "Descoperă 5 locuri istorice într-un tur pietonal ghidat.",
+    "moreCities": "Mai multe orașe",
+    "comingSoon": "În curând",
+    "germany": "Germania"
+  },
+  "explore": {
+    "title": "Descoperiți Lübeck",
+    "subtitle": "5 locuri istorice de explorat",
+    "walkingTour": "Tur pietonal",
+    "historicCenter": "Centrul istoric al Lübeckului",
+    "duration": "~45 min • 5 opriri",
+    "places": "Locuri",
+    "startTour": "Începeți turul pietonal"
+  },
+  "landmark": {
+    "stopProgress": "Oprirea {current} din {total}",
+    "audioGuide": "Ghid audio",
+    "listenStory": "Ascultați povestea",
+    "story": "Povestea",
+    "quickFacts": "Pe scurt",
+    "audioUnavailable": "Materialul audio în această limbă va fi disponibil în curând.",
+    "nextStop": "Următoarea oprire",
+    "finishTour": "Încheiați turul"
+  },
+  "complete": {
+    "badge": "Tur încheiat",
+    "title": "Ați explorat Lübeck!",
+    "description": "Ați parcurs 5 opriri istorice în centrul vechi al Lübeckului.",
+    "progress": "5 din 5 opriri finalizate",
+    "ratingQuestion": "Cum vi s-a părut turul?",
+    "thankYou": "Vă mulțumim pentru părere!",
+    "feedback": "Trimiteți o părere",
+    "restart": "Explorați din nou",
+    "home": "Înapoi la pagina principală",
+    "statsStops": "Opriri",
+    "statsComplete": "Finalizat",
+    "statsMinutes": "Minute"
+  },
+  "ai": {
+    "title": "Ghidul tău local",
+    "open": "Întreabă ghidul local",
+    "placeholder": "Întrebați ceva despre acest loc...",
+    "send": "Trimite",
+    "empty": "Întrebați-mă orice despre acest loc.",
+    "loading": "Mă gândesc...",
+    "limit": "Ați atins limita de 5 întrebări pentru acest tur.",
+    "questionsUsed": "întrebări folosite",
+    "unavailable": "Ghidul este momentan indisponibil.",
+    "rateLimited": "Ați pus prea multe întrebări. Încercați din nou peste câteva minute.",
+    "suggestionFamous": "De ce este faimos?",
+    "suggestionBuilt": "Când a fost construit?",
+    "suggestionStory": "Spune-mi o poveste scurtă"
+  }
 }

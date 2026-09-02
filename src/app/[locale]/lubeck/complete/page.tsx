@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CircleCheckBig, House, RotateCcw } from "lucide-react";
 import TourCompletionTracker from "@/components/TourCompletionTracker";
+import { cities } from "@/data/cities";
 
 import {
   getDirection,
@@ -32,48 +34,39 @@ export default async function CompletePage({
   const direction = getDirection(currentLocale);
   const content = getTranslations(currentLocale).complete;
   const common = getTranslations(currentLocale).common;
+  const city = cities.lubeck;
 
   return (
     <main
       lang={currentLocale}
       dir={direction}
-      className="min-h-screen bg-white text-black"
+      className="app-shell"
     >
-      <section className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6 py-12">
+      <section className="content-container flex min-h-screen flex-col justify-center py-10">
         <div className="text-center">
           {/* Success icon */}
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-zinc-100 text-3xl">
-            ✓
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-soft text-success">
+            <CircleCheckBig aria-hidden="true" size={32} strokeWidth={1.75} />
           </div>
 
-          <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-zinc-500">
+          <p className="eyebrow mt-5">
             {content.badge}
           </p>
 
-          <h1 className="mt-3 text-3xl font-bold tracking-tight">
+          <h1 className="mt-3 text-[2rem] font-bold leading-tight tracking-[-0.03em]">
             {content.title}
           </h1>
 
-          <p className="mx-auto mt-4 max-w-sm leading-7 text-zinc-600">
+          <p className="mx-auto mt-3 max-w-sm leading-7 text-text-secondary">
             {content.description}
           </p>
         </div>
 
-        {/* Progress */}
-        <div className="mt-10 rounded-2xl bg-zinc-100 p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">
-              {content.progress}
-            </span>
-
-            <span className="font-bold">
-              100%
-            </span>
-          </div>
-
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-zinc-300">
-            <div className="h-full w-full rounded-full bg-black" />
-          </div>
+        {/* Statistics */}
+        <div className="mt-8 grid grid-cols-3 gap-2.5">
+          <div className="surface-card px-2 py-4 text-center"><p className="text-xl font-bold tabular-nums">{city.landmarkCount}/{city.landmarkCount}</p><p className="mt-1 text-xs text-text-secondary">{content.statsStops}</p></div>
+          <div className="surface-card px-2 py-4 text-center"><p className="text-xl font-bold tabular-nums text-success">100%</p><p className="mt-1 text-xs text-text-secondary">{content.statsComplete}</p></div>
+          <div className="surface-card px-2 py-4 text-center"><p className="text-xl font-bold tabular-nums">~{city.estimatedMinutes}</p><p className="mt-1 text-xs text-text-secondary">{content.statsMinutes}</p></div>
         </div>
 
         {/* Rating */}
@@ -86,28 +79,20 @@ export default async function CompletePage({
             starRating={common.starRating}
         />
 
-        {/* Feedback */}
-        <button
-          type="button"
-          className="mt-8 flex h-14 items-center justify-center rounded-xl border border-black px-5 font-semibold transition hover:bg-zinc-50"
-        >
-          {content.feedback}
-        </button>
-
         {/* Restart */}
         <Link
           href={`/${currentLocale}/lubeck`}
-          className="mt-4 flex h-14 items-center justify-center rounded-xl bg-black px-5 font-semibold text-white transition hover:bg-zinc-800"
+          className="button-primary mt-7 w-full"
         >
-          {content.restart}
+          <RotateCcw aria-hidden="true" size={18} strokeWidth={1.8} /> {content.restart}
         </Link>
 
         {/* Home */}
         <Link
           href="/"
-          className="mt-5 text-center text-sm font-medium text-zinc-500 transition hover:text-black"
+          className="button-tertiary mt-2 w-full text-sm"
         >
-          {content.home}
+          <House aria-hidden="true" size={18} strokeWidth={1.8} /> {content.home}
         </Link>
       </section>
     </main>

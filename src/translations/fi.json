@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "Lübeckin AI-opas", "back": "Takaisin", "language": "Kieli", "noAccount": "Tiliä ei tarvita", "play": "Toista", "pause": "Keskeytä", "close": "Sulje AI-opas", "starRating": "{rating} tähden arvio" },
-  "home": { "title": "Tutustu Lyypekkiin oman oppaasi kanssa", "subtitle": "Löydä tarinoita, historiaa ja piilotettuja yksityiskohtia omalla kielelläsi.", "chooseLanguage": "Valitse kieli" },
-  "explore": { "title": "Tutustu Lyypekkiin", "subtitle": "5 historiallista kohdetta", "walkingTour": "Kävelykierros", "historicCenter": "Lyypekin historiallinen keskusta", "duration": "~45 min • 5 pysähdystä", "places": "Kohteet", "startTour": "Aloita kävelykierros" },
-  "landmark": { "stopProgress": "Pysähdys {current}/{total}", "audioGuide": "Ääniopas", "listenStory": "Kuuntele tarina", "story": "Tarina", "quickFacts": "Lyhyesti", "audioUnavailable": "Tämän kielen äänite on tulossa pian.", "nextStop": "Seuraava pysähdys", "finishTour": "Päätä kierros" },
-  "complete": { "badge": "Kierros suoritettu", "title": "Tutustuit Lyypekkiin!", "description": "Suoritit 5 historiallista pysähdystä Lyypekin vanhassakaupungissa.", "progress": "5/5 pysähdystä suoritettu", "ratingQuestion": "Millainen kierros oli?", "thankYou": "Kiitos palautteestasi!", "feedback": "Anna palautetta", "restart": "Tutustu uudelleen", "home": "Takaisin etusivulle" },
-  "ai": { "title": "AI-opas", "open": "Kysy AI-oppaalta", "placeholder": "Kysy jotain tästä paikasta...", "send": "Lähetä", "empty": "Kysy minulta mitä vain tästä paikasta.", "loading": "Mietin...", "limit": "Olet käyttänyt tämän kierroksen 5 kysymystä.", "questionsUsed": "kysymystä käytetty", "unavailable": "Opas ei ole juuri nyt käytettävissä.", "rateLimited": "Olet esittänyt liian monta kysymystä. Yritä uudelleen muutaman minuutin kuluttua." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "Takaisin",
+    "language": "Kieli",
+    "noAccount": "Tiliä ei tarvita",
+    "play": "Toista",
+    "pause": "Keskeytä",
+    "close": "Sulje AI-opas",
+    "starRating": "{rating} tähden arvio"
+  },
+  "home": {
+    "title": "Tutustu kaupunkeihin askel kerrallaan.",
+    "subtitle": "Tutustu paikallisiin tarinoihin, äänioppaisiin ja piilotettuihin paikkoihin omalla kielelläsi.",
+    "chooseLanguage": "Valitse kieli",
+    "availableNow": "Nyt saatavilla",
+    "featuredCityDescription": "Kierrä 5 historiallista kohdetta opastetulla kävelykierroksella.",
+    "moreCities": "Lisää kaupunkeja",
+    "comingSoon": "Tulossa pian",
+    "germany": "Saksa"
+  },
+  "explore": {
+    "title": "Tutustu Lyypekkiin",
+    "subtitle": "5 historiallista kohdetta",
+    "walkingTour": "Kävelykierros",
+    "historicCenter": "Lyypekin historiallinen keskusta",
+    "duration": "~45 min • 5 pysähdystä",
+    "places": "Kohteet",
+    "startTour": "Aloita kävelykierros"
+  },
+  "landmark": {
+    "stopProgress": "Pysähdys {current}/{total}",
+    "audioGuide": "Ääniopas",
+    "listenStory": "Kuuntele tarina",
+    "story": "Tarina",
+    "quickFacts": "Lyhyesti",
+    "audioUnavailable": "Tämän kielen äänite on tulossa pian.",
+    "nextStop": "Seuraava pysähdys",
+    "finishTour": "Päätä kierros"
+  },
+  "complete": {
+    "badge": "Kierros suoritettu",
+    "title": "Tutustuit Lyypekkiin!",
+    "description": "Suoritit 5 historiallista pysähdystä Lyypekin vanhassakaupungissa.",
+    "progress": "5/5 pysähdystä suoritettu",
+    "ratingQuestion": "Millainen kierros oli?",
+    "thankYou": "Kiitos palautteestasi!",
+    "feedback": "Anna palautetta",
+    "restart": "Tutustu uudelleen",
+    "home": "Takaisin etusivulle",
+    "statsStops": "Kohdetta",
+    "statsComplete": "Valmis",
+    "statsMinutes": "Minuuttia"
+  },
+  "ai": {
+    "title": "Paikallinen oppaasi",
+    "open": "Kysy paikalliselta oppaaltasi",
+    "placeholder": "Kysy jotain tästä paikasta...",
+    "send": "Lähetä",
+    "empty": "Kysy minulta mitä vain tästä paikasta.",
+    "loading": "Mietin...",
+    "limit": "Olet käyttänyt tämän kierroksen 5 kysymystä.",
+    "questionsUsed": "kysymystä käytetty",
+    "unavailable": "Opas ei ole juuri nyt käytettävissä.",
+    "rateLimited": "Olet esittänyt liian monta kysymystä. Yritä uudelleen muutaman minuutin kuluttua.",
+    "suggestionFamous": "Miksi tämä paikka on kuuluisa?",
+    "suggestionBuilt": "Milloin se rakennettiin?",
+    "suggestionStory": "Kerro minulle lyhyt tarina"
+  }
 }

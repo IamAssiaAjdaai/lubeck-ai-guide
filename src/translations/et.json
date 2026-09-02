@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "Lübecki AI-giid", "back": "Tagasi", "language": "Keel", "noAccount": "Kontot pole vaja", "play": "Esita", "pause": "Peata", "close": "Sulge AI-giid", "starRating": "Hinne: {rating} tärni" },
-  "home": { "title": "Avasta Lübeckit koos isikliku giidiga", "subtitle": "Kuula lugusid ning avasta ajalugu ja põnevaid fakte oma keeles.", "chooseLanguage": "Vali keel" },
-  "explore": { "title": "Avasta Lübeckit", "subtitle": "5 ajaloolist paika, mida avastada", "walkingTour": "Jalutuskäik", "historicCenter": "Lübecki ajalooline keskus", "duration": "~45 min • 5 peatust", "places": "Paigad", "startTour": "Alusta jalutuskäiku" },
-  "landmark": { "stopProgress": "Peatus {current}/{total}", "audioGuide": "Audiogiid", "listenStory": "Kuula lugu", "story": "Lugu", "quickFacts": "Lühifaktid", "audioUnavailable": "Selle keele helisalvestis lisandub peagi.", "nextStop": "Järgmine peatus", "finishTour": "Lõpeta ringkäik" },
-  "complete": { "badge": "Ringkäik läbitud", "title": "Avastasid Lübeckit!", "description": "Läbisid Lübecki vanalinnas 5 ajaloolist peatust.", "progress": "5 peatust 5-st läbitud", "ratingQuestion": "Kuidas ringkäik meeldis?", "thankYou": "Täname tagasiside eest!", "feedback": "Jaga tagasisidet", "restart": "Avasta uuesti", "home": "Tagasi avalehele" },
-  "ai": { "title": "AI-giid", "open": "Küsi AI-giidilt", "placeholder": "Küsi midagi selle paiga kohta...", "send": "Saada", "empty": "Küsi minult selle paiga kohta mida tahes.", "loading": "Mõtlen...", "limit": "Oled jõudnud selle ringkäigu 5 küsimuse piirini.", "questionsUsed": "küsimust kasutatud", "unavailable": "Giid pole ajutiselt saadaval.", "rateLimited": "Oled esitanud liiga palju küsimusi. Proovi mõne minuti pärast uuesti." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "Tagasi",
+    "language": "Keel",
+    "noAccount": "Kontot pole vaja",
+    "play": "Esita",
+    "pause": "Peata",
+    "close": "Sulge AI-giid",
+    "starRating": "Hinne: {rating} tärni"
+  },
+  "home": {
+    "title": "Avasta linnu samm-sammult.",
+    "subtitle": "Avasta kohalikke lugusid, audiogiide ja peidetud paiku oma keeles.",
+    "chooseLanguage": "Vali keel",
+    "availableNow": "Nüüd saadaval",
+    "featuredCityDescription": "Avasta giidiga jalutuskäigul 5 ajaloolist paika.",
+    "moreCities": "Rohkem linnu",
+    "comingSoon": "Peagi saadaval",
+    "germany": "Saksamaa"
+  },
+  "explore": {
+    "title": "Avasta Lübeckit",
+    "subtitle": "5 ajaloolist paika, mida avastada",
+    "walkingTour": "Jalutuskäik",
+    "historicCenter": "Lübecki ajalooline keskus",
+    "duration": "~45 min • 5 peatust",
+    "places": "Paigad",
+    "startTour": "Alusta jalutuskäiku"
+  },
+  "landmark": {
+    "stopProgress": "Peatus {current}/{total}",
+    "audioGuide": "Audiogiid",
+    "listenStory": "Kuula lugu",
+    "story": "Lugu",
+    "quickFacts": "Lühifaktid",
+    "audioUnavailable": "Selle keele helisalvestis lisandub peagi.",
+    "nextStop": "Järgmine peatus",
+    "finishTour": "Lõpeta ringkäik"
+  },
+  "complete": {
+    "badge": "Ringkäik läbitud",
+    "title": "Avastasid Lübeckit!",
+    "description": "Läbisid Lübecki vanalinnas 5 ajaloolist peatust.",
+    "progress": "5 peatust 5-st läbitud",
+    "ratingQuestion": "Kuidas ringkäik meeldis?",
+    "thankYou": "Täname tagasiside eest!",
+    "feedback": "Jaga tagasisidet",
+    "restart": "Avasta uuesti",
+    "home": "Tagasi avalehele",
+    "statsStops": "Peatused",
+    "statsComplete": "Valmis",
+    "statsMinutes": "Minutit"
+  },
+  "ai": {
+    "title": "Sinu kohalik giid",
+    "open": "Küsi oma kohalikult giidilt",
+    "placeholder": "Küsi midagi selle paiga kohta...",
+    "send": "Saada",
+    "empty": "Küsi minult selle paiga kohta mida tahes.",
+    "loading": "Mõtlen...",
+    "limit": "Oled jõudnud selle ringkäigu 5 küsimuse piirini.",
+    "questionsUsed": "küsimust kasutatud",
+    "unavailable": "Giid pole ajutiselt saadaval.",
+    "rateLimited": "Oled esitanud liiga palju küsimusi. Proovi mõne minuti pärast uuesti.",
+    "suggestionFamous": "Miks see koht on kuulus?",
+    "suggestionBuilt": "Millal see ehitati?",
+    "suggestionStory": "Räägi mulle lühike lugu"
+  }
 }

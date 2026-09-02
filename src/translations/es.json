@@ -1,8 +1,70 @@
 {
-  "common": { "appName": "Guía IA de Lübeck", "back": "Volver", "language": "Idioma", "noAccount": "No hace falta crear una cuenta", "play": "Reproducir", "pause": "Pausar", "close": "Cerrar la guía IA", "starRating": "Valoración de {rating} estrellas" },
-  "home": { "title": "Explora Lübeck con tu guía personal", "subtitle": "Descubre relatos, historia y curiosidades en tu idioma.", "chooseLanguage": "Elige tu idioma" },
-  "explore": { "title": "Descubre Lübeck", "subtitle": "5 lugares históricos por explorar", "walkingTour": "Ruta a pie", "historicCenter": "Centro histórico de Lübeck", "duration": "~45 min • 5 paradas", "places": "Lugares", "startTour": "Comenzar la ruta a pie" },
-  "landmark": { "stopProgress": "Parada {current} de {total}", "audioGuide": "Audioguía", "listenStory": "Escucha la historia", "story": "La historia", "quickFacts": "Datos clave", "audioUnavailable": "El audio en este idioma estará disponible próximamente.", "nextStop": "Siguiente parada", "finishTour": "Finalizar la ruta" },
-  "complete": { "badge": "Ruta completada", "title": "¡Has explorado Lübeck!", "description": "Has completado 5 paradas históricas en el casco antiguo de Lübeck.", "progress": "5 de 5 paradas completadas", "ratingQuestion": "¿Qué te ha parecido la ruta?", "thankYou": "¡Gracias por tu opinión!", "feedback": "Compartir opinión", "restart": "Explorar de nuevo", "home": "Volver al inicio" },
-  "ai": { "title": "Guía IA", "open": "Pregunta a tu guía IA", "placeholder": "Pregunta algo sobre este lugar...", "send": "Enviar", "empty": "Pregúntame lo que quieras sobre este lugar.", "loading": "Pensando...", "limit": "Has alcanzado el límite de 5 preguntas para esta ruta.", "questionsUsed": "preguntas utilizadas", "unavailable": "La guía no está disponible temporalmente.", "rateLimited": "Has hecho demasiadas preguntas. Inténtalo de nuevo dentro de unos minutos." }
+  "common": {
+    "appName": "CITYWALK",
+    "back": "Volver",
+    "language": "Idioma",
+    "noAccount": "No hace falta crear una cuenta",
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "close": "Cerrar la guía IA",
+    "starRating": "Valoración de {rating} estrellas"
+  },
+  "home": {
+    "title": "Descubre ciudades paso a paso.",
+    "subtitle": "Explora historias locales, audioguías y lugares ocultos en tu idioma.",
+    "chooseLanguage": "Elige tu idioma",
+    "availableNow": "Disponible ahora",
+    "featuredCityDescription": "Descubre 5 lugares históricos con un recorrido guiado a pie.",
+    "moreCities": "Más ciudades",
+    "comingSoon": "Próximamente",
+    "germany": "Alemania"
+  },
+  "explore": {
+    "title": "Descubre Lübeck",
+    "subtitle": "5 lugares históricos por explorar",
+    "walkingTour": "Ruta a pie",
+    "historicCenter": "Centro histórico de Lübeck",
+    "duration": "~45 min • 5 paradas",
+    "places": "Lugares",
+    "startTour": "Comenzar la ruta a pie"
+  },
+  "landmark": {
+    "stopProgress": "Parada {current} de {total}",
+    "audioGuide": "Audioguía",
+    "listenStory": "Escucha la historia",
+    "story": "La historia",
+    "quickFacts": "Datos clave",
+    "audioUnavailable": "El audio en este idioma estará disponible próximamente.",
+    "nextStop": "Siguiente parada",
+    "finishTour": "Finalizar la ruta"
+  },
+  "complete": {
+    "badge": "Ruta completada",
+    "title": "¡Has explorado Lübeck!",
+    "description": "Has completado 5 paradas históricas en el casco antiguo de Lübeck.",
+    "progress": "5 de 5 paradas completadas",
+    "ratingQuestion": "¿Qué te ha parecido la ruta?",
+    "thankYou": "¡Gracias por tu opinión!",
+    "feedback": "Compartir opinión",
+    "restart": "Explorar de nuevo",
+    "home": "Volver al inicio",
+    "statsStops": "Paradas",
+    "statsComplete": "Completado",
+    "statsMinutes": "Minutos"
+  },
+  "ai": {
+    "title": "Tu guía local",
+    "open": "Pregunta a tu guía local",
+    "placeholder": "Pregunta algo sobre este lugar...",
+    "send": "Enviar",
+    "empty": "Pregúntame lo que quieras sobre este lugar.",
+    "loading": "Pensando...",
+    "limit": "Has alcanzado el límite de 5 preguntas para esta ruta.",
+    "questionsUsed": "preguntas utilizadas",
+    "unavailable": "La guía no está disponible temporalmente.",
+    "rateLimited": "Has hecho demasiadas preguntas. Inténtalo de nuevo dentro de unos minutos.",
+    "suggestionFamous": "¿Por qué es famoso?",
+    "suggestionBuilt": "¿Cuándo se construyó?",
+    "suggestionStory": "Cuéntame una historia corta"
+  }
 }
