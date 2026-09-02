@@ -1,16 +1,13 @@
 import Groq from "groq-sdk";
-import { aiGuideRateLimit } from "@/lib/rateLimit";
-import { NextResponse } from "next/server";
 
+import { NextResponse } from "next/server";
 import { landmarks } from "@/data/landmarks";
 import {
   locales,
   type Locale,
 } from "@/data/translations";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+import { aiGuideRateLimit } from "@/lib/rateLimit";
 
 type GuideMessage = {
   role: "user" | "assistant";
@@ -34,6 +31,18 @@ const languageNames: Record<Locale, string> = {
 
 export async function POST(request: Request) {
   try {
+    const apiKey = process.env.GROQ_API_KEY;
+
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "AI service is not configured." },
+        { status: 500 }
+      );
+    }
+
+    const groq = new Groq({
+      apiKey,
+    });
     const forwardedFor =
       request.headers.get("x-forwarded-for");
 
