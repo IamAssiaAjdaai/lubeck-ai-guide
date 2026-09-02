@@ -3,16 +3,24 @@
 import { useEffect, useState } from "react";
 import posthog from "posthog-js";
 
+import type { Locale } from "@/lib/i18n";
+
 type TourCompletionTrackerProps = {
   city: string;
-  locale: string;
+  locale: Locale;
   totalStops: number;
+  ratingQuestion: string;
+  thankYou: string;
+  starRating: string;
 };
 
 export default function TourCompletionTracker({
   city,
   locale,
   totalStops,
+  ratingQuestion,
+  thankYou,
+  starRating,
 }: TourCompletionTrackerProps) {
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
 
@@ -33,23 +41,10 @@ export default function TourCompletionTracker({
       rating,
     });
   };
-  const ratingLabels: Record<string, string> = {
-    en: "How was your tour?",
-    de: "Wie hat dir die Tour gefallen?",
-    fr: "Comment avez-vous trouvé la visite ?",
-    ar: "كيف كانت جولتك؟",
-  };
-
-  const thankYouLabels: Record<string, string> = {
-    en: "Thanks for your feedback!",
-    de: "Danke für dein Feedback!",
-    fr: "Merci pour votre avis !",
-    ar: "شكراً على رأيك!",
-  };
   return (
     <div className="mt-8 text-center">
       <p className="font-semibold">
-        {ratingLabels[locale] ?? ratingLabels.en}
+        {ratingQuestion}
       </p>
 
       <div className="mt-4 flex justify-center gap-3">
@@ -58,7 +53,7 @@ export default function TourCompletionTracker({
             key={rating}
             type="button"
             onClick={() => handleRating(rating)}
-            aria-label={`${rating} star rating`}
+            aria-label={starRating.replace("{rating}", String(rating))}
             className="text-3xl transition hover:scale-110"
           >
             {selectedRating !== null && rating <= selectedRating
@@ -70,7 +65,7 @@ export default function TourCompletionTracker({
 
       {selectedRating && (
         <p className="mt-3 text-sm text-zinc-500">
-          {thankYouLabels[locale] ?? thankYouLabels.en}
+          {thankYou}
         </p>
       )}
     </div>
