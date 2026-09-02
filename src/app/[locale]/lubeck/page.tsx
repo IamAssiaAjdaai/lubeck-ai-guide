@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import TrackedLink from "@/components/TrackedLink";
 import { landmarks } from "@/data/landmarks";
 import {
   locales,
@@ -99,12 +100,18 @@ export default async function LubeckPage({
             {labels.duration}
           </p>
 
-          <Link
+          <TrackedLink
             href={`/${currentLocale}/lubeck/holstentor`}
+            eventName="tour_started"
+            properties={{
+              locale: currentLocale,
+              start_landmark_slug: "holstentor",
+              tour_id: "lubeck_historic_center",
+            }}
             className="mt-5 flex h-14 items-center justify-center rounded-xl bg-black px-5 font-semibold text-white transition hover:bg-zinc-800"
           >
             {t.startTour}
-          </Link>
+          </TrackedLink>
         </section>
 
         {/* Places */}
@@ -119,9 +126,14 @@ export default async function LubeckPage({
                 landmark.content[currentLocale];
 
               return (
-                <Link
+                <TrackedLink
                   key={landmark.slug}
                   href={`/${currentLocale}/lubeck/${landmark.slug}`}
+                  eventName="landmark_selected"
+                  properties={{
+                    landmark_slug: landmark.slug,
+                    locale: currentLocale,
+                  }}
                   className="group flex items-center gap-4 rounded-2xl border border-zinc-200 p-3 transition hover:border-zinc-300 hover:bg-zinc-50"
                 >
                   {/* Image */}
@@ -154,7 +166,7 @@ export default async function LubeckPage({
                   <span className="text-xl text-zinc-400">
                     {isArabic ? "←" : "→"}
                   </span>
-                </Link>
+                </TrackedLink>
               );
             })}
           </div>

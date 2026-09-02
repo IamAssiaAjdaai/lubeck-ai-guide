@@ -1,4 +1,4 @@
-import Link from "next/link";
+import TrackedLink from "@/components/TrackedLink";
 
 const languages = [
   { code: "de", label: "DE" },
@@ -33,13 +33,18 @@ export default function Home() {
 
             <div className="grid grid-cols-4 gap-3">
               {languages.map((language) => (
-                <Link
-                  key={language.code}
-                  href={`/${language.code}/lubeck`}
-                  className="flex h-14 items-center justify-center rounded-xl border border-zinc-300 font-medium transition hover:bg-black hover:text-white"
-                >
-                  {language.label}
-                </Link>
+            <TrackedLink
+              key={language.code}
+              href={`/${language.code}/lubeck`}
+              eventName="language_selected"
+              properties={{
+                city: "lubeck",
+                locale: language.code,
+              }}
+              className="flex h-14 items-center justify-center rounded-xl border border-zinc-300 font-medium transition hover:bg-black hover:text-white"
+            >
+              {language.label}
+            </TrackedLink>
               ))}
             </div>
           </div>
