@@ -33,11 +33,23 @@ export default function TourCompletionTracker({
       rating,
     });
   };
+  const ratingLabels: Record<string, string> = {
+    en: "How was your tour?",
+    de: "Wie hat dir die Tour gefallen?",
+    fr: "Comment avez-vous trouvé la visite ?",
+    ar: "كيف كانت جولتك؟",
+  };
 
+  const thankYouLabels: Record<string, string> = {
+    en: "Thanks for your feedback!",
+    de: "Danke für dein Feedback!",
+    fr: "Merci pour votre avis !",
+    ar: "شكراً على رأيك!",
+  };
   return (
     <div className="mt-8 text-center">
       <p className="font-semibold">
-        How was your tour?
+        {ratingLabels[locale] ?? ratingLabels.en}
       </p>
 
       <div className="mt-4 flex justify-center gap-3">
@@ -58,7 +70,7 @@ export default function TourCompletionTracker({
 
       {selectedRating && (
         <p className="mt-3 text-sm text-zinc-500">
-          Thanks for your feedback!
+          {thankYouLabels[locale] ?? thankYouLabels.en}
         </p>
       )}
     </div>
