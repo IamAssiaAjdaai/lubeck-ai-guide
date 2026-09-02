@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import TrackLandmarkView from "@/components/TrackLandmarkView";
 import AudioPlayer from "@/components/AudioPlayer";
 import TrackedLink from "@/components/TrackedLink";
+import AskGuide from "@/components/AskGuide";
 import { landmarks } from "@/data/landmarks";
 import {
   locales,
@@ -224,12 +225,12 @@ export default async function LandmarkPage({
         </section>
 
         {/* AI Guide */}
-        <button
-          type="button"
-          className="mt-10 flex h-14 w-full items-center justify-center rounded-xl border border-black px-4 font-semibold transition hover:bg-zinc-50"
-        >
-          {t.askAI}
-        </button>
+          <AskGuide
+            landmark={landmark.slug}
+            landmarkName={name}
+            locale={currentLocale}
+            buttonLabel={t.askAI}
+          />
 
         {/* Next landmark / Finish */}
         {nextLandmark ? (
