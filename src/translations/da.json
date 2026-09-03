@@ -30,6 +30,8 @@
   },
   "placeCategories": { "all": "Alle", "see": "Se", "eat": "Spis", "fun": "Sjov" },
   "placeCatalog": { "placeDuration": "{minutes} min.", "contentFallback": "Indhold på {language}" },
+  "location": { "use": "Brug min placering", "requesting": "Finder din placering…", "privacy": "Din placering forbliver i denne browser og bruges kun til at vise dig på kortet.", "available": "Din placering vises på kortet.", "denied": "Adgang til placering blev afvist. Tillad den i browserindstillingerne, og prøv igen.", "unavailable": "Din placering er ikke tilgængelig lige nu.", "unsupported": "Denne browser understøtter ikke adgang til placering.", "timeout": "Anmodningen om placering fik timeout. Prøv igen.", "error": "Vi kunne ikke få adgang til din placering. Prøv igen.", "retry": "Prøv igen", "markerLabel": "Din placering" },
+  "map": { "unavailable": "Det interaktive kort er ikke tilgængeligt i denne browser eller på denne enhed.", "retry": "Prøv kortet igen" },
   "landmark": {
     "stopProgress": "Stop {current} af {total}",
     "audioGuide": "Audioguide",

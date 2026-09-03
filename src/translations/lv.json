@@ -30,6 +30,8 @@
   },
   "placeCategories": { "all": "Visi", "see": "Apskates vietas", "eat": "Ēdiens", "fun": "Izklaide" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Saturs valodā: {language}" },
+  "location": { "use": "Izmantot manu atrašanās vietu", "requesting": "Nosaka jūsu atrašanās vietu…", "privacy": "Jūsu atrašanās vieta paliek šajā pārlūkā un tiek izmantota tikai, lai parādītu jūs kartē.", "available": "Jūsu atrašanās vieta ir redzama kartē.", "denied": "Piekļuve atrašanās vietai tika liegta. Atļaujiet to pārlūka iestatījumos un mēģiniet vēlreiz.", "unavailable": "Jūsu atrašanās vieta pašlaik nav pieejama.", "unsupported": "Šis pārlūks neatbalsta piekļuvi atrašanās vietai.", "timeout": "Atrašanās vietas pieprasījumam beidzās laiks. Mēģiniet vēlreiz.", "error": "Neizdevās piekļūt jūsu atrašanās vietai. Mēģiniet vēlreiz.", "retry": "Mēģināt vēlreiz", "markerLabel": "Jūsu atrašanās vieta" },
+  "map": { "unavailable": "Interaktīvā karte šajā pārlūkā vai ierīcē nav pieejama.", "retry": "Mēģināt karti vēlreiz" },
   "landmark": {
     "stopProgress": "{current}. pietura no {total}",
     "audioGuide": "Audiogids",

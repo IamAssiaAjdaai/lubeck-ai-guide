@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import PlaceDiscovery, {
@@ -7,16 +13,58 @@ import PlaceDiscovery, {
 import { localizePlaceCategories } from "@/data/placeCategories";
 import { getTranslations } from "@/lib/i18n";
 
-const { capture } = vi.hoisted(() => ({ capture: vi.fn() }));
+const { capture, mapUnavailable } = vi.hoisted(() => ({
+  capture: vi.fn(),
+  mapUnavailable: { value: false },
+}));
 
 vi.mock("posthog-js", () => ({
   default: { capture },
 }));
 
 vi.mock("@/components/map/CityMap", () => ({
-  default: ({ places: mapPlaces }: { places: readonly DiscoveryPlace[] }) => (
-    <div data-testid="city-map-marker-count">{mapPlaces.length}</div>
-  ),
+  default: ({
+    places: mapPlaces,
+    userLocation,
+    userLocationLabel,
+    locationStatus,
+    locationControlLabel,
+    onLocationControl,
+    centerUserLocationRequest,
+    mapLabels,
+  }: {
+    places: readonly DiscoveryPlace[];
+    userLocation?: { lat: number; lng: number };
+    userLocationLabel: string;
+    locationStatus: string;
+    locationControlLabel: string;
+    onLocationControl: () => void;
+    centerUserLocationRequest: number;
+    mapLabels: { unavailable: string };
+  }) => {
+    if (mapUnavailable.value) {
+      return <div role="status">{mapLabels.unavailable}</div>;
+    }
+
+    return <div data-testid="city-map">
+      <button
+        type="button"
+        aria-label={locationControlLabel}
+        aria-busy={locationStatus === "requesting"}
+        disabled={locationStatus === "requesting" || locationStatus === "unsupported"}
+        data-location-status={locationStatus}
+        onClick={onLocationControl}
+      />
+      <div
+        data-testid="city-map-marker-count"
+        data-user-location={userLocation ? "available" : "absent"}
+        data-user-location-label={userLocationLabel}
+        data-center-request={centerUserLocationRequest}
+      >
+        {mapPlaces.length}
+      </div>
+    </div>;
+  },
 }));
 
 const places = [
@@ -66,6 +114,8 @@ describe("PlaceDiscovery", () => {
   afterEach(() => {
     cleanup();
     capture.mockReset();
+    mapUnavailable.value = false;
+    vi.unstubAllGlobals();
   });
 
   it("filters cards, map markers, and tracks category selection", async () => {
@@ -79,6 +129,8 @@ describe("PlaceDiscovery", () => {
           city="test-city"
           direction="ltr"
           labelledBy="places-heading"
+          locationLabels={getTranslations("en").location}
+          mapLabels={getTranslations("en").map}
         />
       </section>,
     );
@@ -129,6 +181,8 @@ describe("PlaceDiscovery", () => {
           city="test-city"
           direction="rtl"
           labelledBy="arabic-places-heading"
+          locationLabels={getTranslations("ar").location}
+          mapLabels={getTranslations("ar").map}
         />
       </section>,
     );
@@ -143,5 +197,151 @@ describe("PlaceDiscovery", () => {
     expect(content?.getAttribute("lang")).toBe("en");
     expect(content?.getAttribute("dir")).toBe("ltr");
     expect(screen.getByText("المحتوى باللغة English")).not.toBeNull();
+  });
+
+  it("keeps place cards and category filtering usable when the map fails", () => {
+    mapUnavailable.value = true;
+    const t = getTranslations("en");
+
+    render(
+      <section>
+        <h2 id="fallback-places-heading">Places</h2>
+        <PlaceDiscovery
+          places={places}
+          categories={localizePlaceCategories(t)}
+          locale="en"
+          city="test-city"
+          direction="ltr"
+          labelledBy="fallback-places-heading"
+          locationLabels={t.location}
+          mapLabels={t.map}
+        />
+      </section>,
+    );
+
+    expect(screen.getByText(t.map.unavailable)).not.toBeNull();
+    expect(screen.getByText("Museum")).not.toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Eat (1)" }));
+    expect(screen.queryByText("Museum")).toBeNull();
+    expect(screen.getByText("Cafe")).not.toBeNull();
+  });
+
+  it("requests location only after user action and passes it to the map", async () => {
+    const getCurrentPosition = vi.fn<Geolocation["getCurrentPosition"]>(
+      (success) =>
+        success({
+          coords: { latitude: 53.865, longitude: 10.686, accuracy: 9 },
+          timestamp: 2468,
+        } as GeolocationPosition),
+    );
+    vi.stubGlobal("navigator", { geolocation: { getCurrentPosition } });
+
+    render(
+      <section>
+        <h2 id="location-places-heading">Places</h2>
+        <PlaceDiscovery
+          places={places}
+          categories={localizePlaceCategories(getTranslations("en"))}
+          locale="en"
+          city="test-city"
+          direction="ltr"
+          labelledBy="location-places-heading"
+          locationLabels={getTranslations("en").location}
+          mapLabels={getTranslations("en").map}
+        />
+      </section>,
+    );
+
+    const map = await screen.findByTestId("city-map-marker-count");
+    const gpsControl = screen.getByRole("button", { name: "Use my location" });
+    expect(getCurrentPosition).not.toHaveBeenCalled();
+    expect(map.getAttribute("data-user-location")).toBe("absent");
+    expect(map.getAttribute("data-user-location-label")).toBe("Your location");
+    expect(gpsControl.closest('[data-testid="city-map"]')).not.toBeNull();
+    expect(
+      screen.getByText(
+        "Your location stays in this browser and is used only to show you on the map.",
+      ).tagName,
+    ).toBe("P");
+
+    fireEvent.click(gpsControl);
+
+    await waitFor(() => {
+      expect(map.getAttribute("data-user-location")).toBe("available");
+      expect(capture).toHaveBeenCalledWith("location_available", {
+        city: "test-city",
+        locale: "en",
+      });
+    });
+    expect(getCurrentPosition).toHaveBeenCalledOnce();
+    expect(capture).toHaveBeenCalledWith("location_requested", {
+      city: "test-city",
+      locale: "en",
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Your location" }));
+
+    expect(getCurrentPosition).toHaveBeenCalledOnce();
+    expect(map.getAttribute("data-center-request")).toBe("1");
+    expect(
+      capture.mock.calls.filter(([eventName]) =>
+        eventName === "location_requested",
+      ),
+    ).toHaveLength(1);
+
+    const locationEvents = capture.mock.calls.filter(([eventName]) =>
+      String(eventName).startsWith("location_"),
+    );
+    expect(JSON.stringify(locationEvents)).not.toMatch(
+      /latitude|longitude|accuracy|timestamp|\blat\b|\blng\b|53\.865|10\.686/,
+    );
+  });
+
+  it("keeps the map and retry control usable after permission denial", async () => {
+    const getCurrentPosition = vi.fn<Geolocation["getCurrentPosition"]>(
+      (_, error) =>
+        error?.({
+          code: 1,
+          message: "Denied",
+          PERMISSION_DENIED: 1,
+          POSITION_UNAVAILABLE: 2,
+          TIMEOUT: 3,
+        }),
+    );
+    vi.stubGlobal("navigator", { geolocation: { getCurrentPosition } });
+
+    render(
+      <section>
+        <h2 id="denied-places-heading">Places</h2>
+        <PlaceDiscovery
+          places={places}
+          categories={localizePlaceCategories(getTranslations("en"))}
+          locale="en"
+          city="test-city"
+          direction="ltr"
+          labelledBy="denied-places-heading"
+          locationLabels={getTranslations("en").location}
+          mapLabels={getTranslations("en").map}
+        />
+      </section>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Use my location" }));
+
+    const retryControl = await screen.findByRole("button", {
+      name: "Try again",
+    });
+    expect(retryControl.hasAttribute("disabled")).toBe(false);
+    expect(screen.getByTestId("city-map")).not.toBeNull();
+    expect(screen.getByText("Museum")).not.toBeNull();
+    expect(
+      screen.getByText(
+        "Location permission was denied. Allow it in your browser settings and try again.",
+      ),
+    ).not.toBeNull();
+    expect(capture).toHaveBeenCalledWith("location_permission_denied", {
+      city: "test-city",
+      locale: "en",
+    });
   });
 });
