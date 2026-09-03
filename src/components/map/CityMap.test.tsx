@@ -1,4 +1,11 @@
-import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import CityMap, { type CityMapPlace } from "@/components/map/CityMap";
@@ -10,6 +17,7 @@ const mocks = vi.hoisted(() => ({
   isWebGL2Supported: vi.fn(() => true),
   reportFailure: vi.fn(),
   markerAdd: vi.fn(),
+  markerElements: [] as HTMLElement[],
 }));
 
 vi.mock("@/lib/mapSupport", async (importOriginal) => {
@@ -29,6 +37,10 @@ vi.mock("maplibre-gl", () => {
   }
 
   class MockMarker {
+    constructor(options: { element?: HTMLElement }) {
+      if (options.element) mocks.markerElements.push(options.element);
+    }
+
     setLngLat() {
       return this;
     }
@@ -72,11 +84,11 @@ const place = {
   didFallback: false,
 } as const satisfies CityMapPlace;
 
-function renderMap() {
+function renderMap(places: readonly CityMapPlace[] = [place]) {
   const t = getTranslations("en");
   return render(
     <CityMap
-      places={[place]}
+      places={places}
       categories={localizePlaceCategories(t)}
       locale="en"
       city="test-city"
@@ -88,6 +100,7 @@ function renderMap() {
       onLocationControl={vi.fn()}
       centerUserLocationRequest={0}
       mapLabels={t.map}
+      walkingTimeTemplate={t.distance.walkingMinutes}
     />,
   );
 }
@@ -113,6 +126,7 @@ describe("CityMap initialization", () => {
     mocks.constructMap.mockReset();
     mocks.reportFailure.mockReset();
     mocks.markerAdd.mockReset();
+    mocks.markerElements.length = 0;
   });
 
   afterEach(() => {
@@ -131,6 +145,22 @@ describe("CityMap initialization", () => {
     expect(mocks.markerAdd).toHaveBeenCalledOnce();
     expect(screen.getByRole("button", { name: "Use my location" })).not.toBeNull();
     expect(screen.queryByText(getTranslations("en").map.unavailable)).toBeNull();
+  });
+
+  it("shows supplied derived distance in the selected map popup", () => {
+    const { map } = createMapMock();
+    mocks.constructMap.mockReturnValue(map);
+    renderMap([
+      {
+        ...place,
+        distance: { distanceMeters: 852, walkingMinutes: 11 },
+      },
+    ]);
+
+    fireEvent.click(mocks.markerElements[0]);
+
+    expect(screen.getByText("850 m")).not.toBeNull();
+    expect(screen.getByText("~11 min walk")).not.toBeNull();
   });
 
   it("shows a non-retryable fallback when WebGL2 is unavailable", async () => {

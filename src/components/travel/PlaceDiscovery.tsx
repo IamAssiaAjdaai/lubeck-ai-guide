@@ -3,7 +3,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import posthog from "posthog-js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronRight,
   Clock3,
@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import TrackedLink from "@/components/TrackedLink";
+import PlaceDistanceLabel from "@/components/travel/PlaceDistanceLabel";
 import {
   filterPlacesByCategory,
   type LocalizedPlaceCategory,
@@ -22,6 +23,10 @@ import {
   type PlaceCategoryIconId,
 } from "@/data/placeCategories";
 import { useUserLocation } from "@/hooks/useUserLocation";
+import {
+  withPlacesDistance,
+  type PlaceDistance,
+} from "@/lib/distance";
 import type { UserLocationStatus } from "@/lib/geolocation";
 import type { Locale, TextDirection } from "@/lib/i18n";
 import type { Translations } from "@/lib/i18n";
@@ -48,6 +53,7 @@ export type DiscoveryPlace = MapPlace &
   Readonly<{
   duration: string;
   fallbackLabel?: string;
+  distance?: PlaceDistance;
   }>;
 
 type PlaceDiscoveryProps = Readonly<{
@@ -59,6 +65,7 @@ type PlaceDiscoveryProps = Readonly<{
   labelledBy: string;
   locationLabels: Translations["location"];
   mapLabels: Translations["map"];
+  distanceLabels: Translations["distance"];
 }>;
 
 type LocationAnalyticsEvent =
@@ -104,11 +111,13 @@ function PlaceCard({
   category,
   locale,
   direction,
+  walkingTimeTemplate,
 }: Readonly<{
   place: DiscoveryPlace;
   category: LocalizedPlaceCategory;
   locale: string;
   direction: TextDirection;
+  walkingTimeTemplate: string;
 }>) {
   const CategoryIcon = categoryIcons[category.icon];
   const cardContent = (
@@ -152,6 +161,13 @@ function PlaceCard({
             <Clock3 aria-hidden="true" size={14} strokeWidth={1.8} />
             {place.duration}
           </span>
+          {place.distance ? (
+            <PlaceDistanceLabel
+              distance={place.distance}
+              locale={locale}
+              walkingTimeTemplate={walkingTimeTemplate}
+            />
+          ) : null}
           {place.didFallback && place.fallbackLabel ? (
             <span>{place.fallbackLabel}</span>
           ) : null}
@@ -197,12 +213,24 @@ export default function PlaceDiscovery({
   labelledBy,
   locationLabels,
   mapLabels,
+  distanceLabels,
 }: PlaceDiscoveryProps) {
   const [selection, setSelection] = useState<PlaceCategoryFilter>("all");
   const [centerUserLocationRequest, setCenterUserLocationRequest] = useState(0);
   const { status, location, requestLocation } = useUserLocation();
   const trackedStatusRef = useRef<UserLocationStatus>("idle");
-  const visiblePlaces = filterPlacesByCategory(places, selection);
+  const visiblePlaces = useMemo(
+    () => filterPlacesByCategory(places, selection),
+    [places, selection],
+  );
+  const placesWithDistance = useMemo(
+    () =>
+      withPlacesDistance(
+        visiblePlaces,
+        status === "available" ? location : undefined,
+      ),
+    [location, status, visiblePlaces],
+  );
 
   useEffect(() => {
     if (trackedStatusRef.current === status) return;
@@ -281,7 +309,7 @@ export default function PlaceDiscovery({
       </div>
 
       <CityMap
-        places={visiblePlaces}
+        places={placesWithDistance}
         categories={categories}
         locale={locale}
         city={city}
@@ -294,6 +322,7 @@ export default function PlaceDiscovery({
         onLocationControl={handleLocationControl}
         centerUserLocationRequest={centerUserLocationRequest}
         mapLabels={mapLabels}
+        walkingTimeTemplate={distanceLabels.walkingMinutes}
       />
 
       <p
@@ -305,7 +334,7 @@ export default function PlaceDiscovery({
       </p>
 
       <div className="mt-4 flex flex-col gap-3" aria-live="polite">
-        {visiblePlaces.map((place) => {
+        {placesWithDistance.map((place) => {
           const category = categories.find(
             (candidate) => candidate.id === place.category,
           );
@@ -319,6 +348,7 @@ export default function PlaceDiscovery({
               category={category}
               locale={locale}
               direction={direction}
+              walkingTimeTemplate={distanceLabels.walkingMinutes}
             />
           );
         })}

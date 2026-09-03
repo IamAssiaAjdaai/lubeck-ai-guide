@@ -32,6 +32,7 @@
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Contenido mostrado en {language}" },
   "location": { "use": "Usar mi ubicación", "requesting": "Buscando tu ubicación…", "privacy": "Tu ubicación permanece en este navegador y solo se usa para mostrarte en el mapa.", "available": "Tu ubicación se muestra en el mapa.", "denied": "Se denegó el permiso de ubicación. Actívalo en la configuración del navegador e inténtalo de nuevo.", "unavailable": "Tu ubicación no está disponible en este momento.", "unsupported": "Este navegador no admite el acceso a la ubicación.", "timeout": "La solicitud de ubicación agotó el tiempo. Inténtalo de nuevo.", "error": "No pudimos acceder a tu ubicación. Inténtalo de nuevo.", "retry": "Intentar de nuevo", "markerLabel": "Tu ubicación" },
   "map": { "unavailable": "El mapa interactivo no está disponible en este navegador o dispositivo.", "retry": "Reintentar mapa" },
+  "distance": { "walkingMinutes": "~{minutes} min a pie" },
   "landmark": {
     "stopProgress": "Parada {current} de {total}",
     "audioGuide": "Audioguía",
