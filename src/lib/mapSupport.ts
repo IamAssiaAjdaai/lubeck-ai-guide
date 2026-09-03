@@ -10,7 +10,7 @@ type MapErrorEventLike = Readonly<{
   tile?: unknown;
 }>;
 
-export const MAP_STARTUP_TIMEOUT_MS = 20_000;
+export const MAP_STARTUP_TIMEOUT_MS = 30_000;
 
 const MAP_FAILURE_DEVELOPMENT_CODES: Readonly<
   Record<MapFailureReason, string>

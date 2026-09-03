@@ -184,10 +184,20 @@ export default function CityMap({
         new NavigationControl({ showCompass: false, visualizePitch: false }),
         "top-right",
       );
-      map.on("load", () => {
+      
+      const markMapInitialized = () => {
         hasLoaded = true;
-        if (startupTimer) clearTimeout(startupTimer);
-        startupTimer = undefined;
+
+        if (startupTimer) {
+          clearTimeout(startupTimer);
+          startupTimer = undefined;
+        }
+      };
+
+      map.on("style.load", markMapInitialized);
+
+      map.on("load", () => {
+        markMapInitialized();
         captureMapEvent("map_opened", { city, locale });
       });
       map.on("error", (event) => {
