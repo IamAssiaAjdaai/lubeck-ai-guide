@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import posthog from "posthog-js";
 import { useState } from "react";
 import {
@@ -20,8 +21,18 @@ import {
   type PlaceCategoryFilter,
   type PlaceCategoryIconId,
 } from "@/data/placeCategories";
-import type { PlaceCategory } from "@/data/places";
 import type { Locale, TextDirection } from "@/lib/i18n";
+import type { MapPlace } from "@/lib/mapPlaces";
+
+const CityMap = dynamic(() => import("@/components/map/CityMap"), {
+  ssr: false,
+  loading: () => (
+    <div
+      aria-hidden="true"
+      className="mt-4 h-80 animate-pulse rounded-2xl border bg-surface"
+    />
+  ),
+});
 
 const categoryIcons: Record<PlaceCategoryIconId, LucideIcon> = {
   LayoutGrid,
@@ -30,25 +41,16 @@ const categoryIcons: Record<PlaceCategoryIconId, LucideIcon> = {
   Sparkles,
 };
 
-export type DiscoveryPlace = Readonly<{
-  slug: string;
-  category: PlaceCategory;
-  image?: string;
-  name: string;
-  shortDescription: string;
+export type DiscoveryPlace = MapPlace &
+  Readonly<{
   duration: string;
-  requestedLocale: Locale;
-  actualLocale: Locale;
-  contentDirection: TextDirection;
-  didFallback: boolean;
   fallbackLabel?: string;
-  detailHref?: string;
-}>;
+  }>;
 
 type PlaceDiscoveryProps = Readonly<{
   places: readonly DiscoveryPlace[];
   categories: readonly LocalizedPlaceCategory[];
-  locale: string;
+  locale: Locale;
   city: string;
   direction: TextDirection;
   labelledBy: string;
@@ -197,6 +199,15 @@ export default function PlaceDiscovery({
           );
         })}
       </div>
+
+      <CityMap
+        places={visiblePlaces}
+        categories={categories}
+        locale={locale}
+        city={city}
+        direction={direction}
+        labelledBy={labelledBy}
+      />
 
       <div className="mt-4 flex flex-col gap-3" aria-live="polite">
         {visiblePlaces.map((place) => {
