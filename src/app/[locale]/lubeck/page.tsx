@@ -121,6 +121,7 @@ export default async function LubeckPage({
             labelledBy="place-category-heading"
             locationLabels={t.location}
             mapLabels={t.map}
+            distanceLabels={t.distance}
           />
         </section>
       </section>

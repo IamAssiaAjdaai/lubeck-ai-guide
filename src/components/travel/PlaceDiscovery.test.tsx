@@ -11,6 +11,7 @@ import PlaceDiscovery, {
   type DiscoveryPlace,
 } from "@/components/travel/PlaceDiscovery";
 import { localizePlaceCategories } from "@/data/placeCategories";
+import { formatDistance, formatWalkingTime } from "@/lib/distance";
 import { getTranslations } from "@/lib/i18n";
 
 const { capture, mapUnavailable } = vi.hoisted(() => ({
@@ -60,6 +61,8 @@ vi.mock("@/components/map/CityMap", () => ({
         data-user-location={userLocation ? "available" : "absent"}
         data-user-location-label={userLocationLabel}
         data-center-request={centerUserLocationRequest}
+        data-first-distance-meters={mapPlaces[0]?.distance?.distanceMeters}
+        data-first-walking-minutes={mapPlaces[0]?.distance?.walkingMinutes}
       >
         {mapPlaces.length}
       </div>
@@ -131,6 +134,7 @@ describe("PlaceDiscovery", () => {
           labelledBy="places-heading"
           locationLabels={getTranslations("en").location}
           mapLabels={getTranslations("en").map}
+          distanceLabels={getTranslations("en").distance}
         />
       </section>,
     );
@@ -183,6 +187,7 @@ describe("PlaceDiscovery", () => {
           labelledBy="arabic-places-heading"
           locationLabels={getTranslations("ar").location}
           mapLabels={getTranslations("ar").map}
+          distanceLabels={getTranslations("ar").distance}
         />
       </section>,
     );
@@ -215,6 +220,7 @@ describe("PlaceDiscovery", () => {
           labelledBy="fallback-places-heading"
           locationLabels={t.location}
           mapLabels={t.map}
+          distanceLabels={t.distance}
         />
       </section>,
     );
@@ -248,6 +254,7 @@ describe("PlaceDiscovery", () => {
           labelledBy="location-places-heading"
           locationLabels={getTranslations("en").location}
           mapLabels={getTranslations("en").map}
+          distanceLabels={getTranslations("en").distance}
         />
       </section>,
     );
@@ -257,6 +264,7 @@ describe("PlaceDiscovery", () => {
     expect(getCurrentPosition).not.toHaveBeenCalled();
     expect(map.getAttribute("data-user-location")).toBe("absent");
     expect(map.getAttribute("data-user-location-label")).toBe("Your location");
+    expect(map.getAttribute("data-first-distance-meters")).toBeNull();
     expect(gpsControl.closest('[data-testid="city-map"]')).not.toBeNull();
     expect(
       screen.getByText(
@@ -279,6 +287,26 @@ describe("PlaceDiscovery", () => {
       locale: "en",
     });
 
+    const firstDistanceMeters = Number(
+      map.getAttribute("data-first-distance-meters"),
+    );
+    const firstWalkingMinutes = Number(
+      map.getAttribute("data-first-walking-minutes"),
+    );
+    expect(firstDistanceMeters).toBeGreaterThan(0);
+    expect(
+      screen.getByText(formatDistance(firstDistanceMeters, "en") ?? ""),
+    ).not.toBeNull();
+    expect(
+      screen.getByText(
+        formatWalkingTime(
+          firstWalkingMinutes,
+          "en",
+          getTranslations("en").distance.walkingMinutes,
+        ) ?? "",
+      ),
+    ).not.toBeNull();
+
     fireEvent.click(screen.getByRole("button", { name: "Your location" }));
 
     expect(getCurrentPosition).toHaveBeenCalledOnce();
@@ -293,7 +321,7 @@ describe("PlaceDiscovery", () => {
       String(eventName).startsWith("location_"),
     );
     expect(JSON.stringify(locationEvents)).not.toMatch(
-      /latitude|longitude|accuracy|timestamp|\blat\b|\blng\b|53\.865|10\.686/,
+      /latitude|longitude|accuracy|timestamp|distance|walkingMinutes|\blat\b|\blng\b|53\.865|10\.686/,
     );
   });
 
@@ -322,6 +350,7 @@ describe("PlaceDiscovery", () => {
           labelledBy="denied-places-heading"
           locationLabels={getTranslations("en").location}
           mapLabels={getTranslations("en").map}
+          distanceLabels={getTranslations("en").distance}
         />
       </section>,
     );

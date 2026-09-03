@@ -13,6 +13,7 @@ import { MapPinOff } from "lucide-react";
 
 import TrackedLink from "@/components/TrackedLink";
 import MapLocationControl from "@/components/map/MapLocationControl";
+import PlaceDistanceLabel from "@/components/travel/PlaceDistanceLabel";
 import type { LocalizedPlaceCategory } from "@/data/placeCategories";
 import { mapProviderConfig } from "@/lib/mapProvider";
 import {
@@ -22,6 +23,7 @@ import {
 } from "@/lib/mapPlaces";
 import type { Locale, TextDirection, Translations } from "@/lib/i18n";
 import type { UserLocation, UserLocationStatus } from "@/lib/geolocation";
+import type { PlaceDistance } from "@/lib/distance";
 import {
   getFatalMapErrorReason,
   getMapFailureDevelopmentLabel,
@@ -37,6 +39,7 @@ export type CityMapPlace = MapPlace &
   Readonly<{
     duration: string;
     fallbackLabel?: string;
+    distance?: PlaceDistance;
   }>;
 
 type CityMapProps = Readonly<{
@@ -56,6 +59,7 @@ type CityMapProps = Readonly<{
   onLocationControl: () => void;
   centerUserLocationRequest: number;
   mapLabels: Translations["map"];
+  walkingTimeTemplate: string;
 }>;
 
 type MarkerEntry = Readonly<{
@@ -96,6 +100,7 @@ export default function CityMap({
   onLocationControl,
   centerUserLocationRequest,
   mapLabels,
+  walkingTimeTemplate,
 }: CityMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -448,6 +453,15 @@ export default function CityMap({
                 {selectedPlace.shortDescription}
               </p>
             </div>
+            {selectedPlace.distance ? (
+              <p className="mt-2 text-xs text-text-muted">
+                <PlaceDistanceLabel
+                  distance={selectedPlace.distance}
+                  locale={locale}
+                  walkingTimeTemplate={walkingTimeTemplate}
+                />
+              </p>
+            ) : null}
             {selectedPlace.didFallback && selectedPlace.fallbackLabel ? (
               <p className="mt-2 text-xs text-text-muted">
                 {selectedPlace.fallbackLabel}

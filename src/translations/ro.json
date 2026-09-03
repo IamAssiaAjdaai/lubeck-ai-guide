@@ -32,6 +32,7 @@
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Conținut afișat în {language}" },
   "location": { "use": "Folosește locația mea", "requesting": "Se caută locația…", "privacy": "Locația ta rămâne în acest browser și este folosită doar pentru a te afișa pe hartă.", "available": "Locația ta este afișată pe hartă.", "denied": "Accesul la locație a fost refuzat. Permite-l din setările browserului și încearcă din nou.", "unavailable": "Locația ta nu este disponibilă momentan.", "unsupported": "Acest browser nu acceptă accesul la locație.", "timeout": "Solicitarea locației a expirat. Încearcă din nou.", "error": "Nu am putut accesa locația ta. Încearcă din nou.", "retry": "Încearcă din nou", "markerLabel": "Locația ta" },
   "map": { "unavailable": "Harta interactivă nu este disponibilă în acest browser sau pe acest dispozitiv.", "retry": "Reîncearcă harta" },
+  "distance": { "walkingMinutes": "~{minutes} min pe jos" },
   "landmark": {
     "stopProgress": "Oprirea {current} din {total}",
     "audioGuide": "Ghid audio",
