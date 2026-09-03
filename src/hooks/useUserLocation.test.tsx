@@ -2,7 +2,10 @@ import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { useUserLocation } from "@/hooks/useUserLocation";
-import { USER_LOCATION_OPTIONS } from "@/lib/geolocation";
+import {
+  USER_LOCATION_OPTIONS,
+  USER_LOCATION_WATCH_OPTIONS,
+} from "@/lib/geolocation";
 
 function installGeolocation(
   getCurrentPosition: Geolocation["getCurrentPosition"],
@@ -111,5 +114,79 @@ describe("useUserLocation", () => {
     await act(() => result.current.requestLocation());
     expect(result.current.status).toBe("available");
     expect(getCurrentPosition).toHaveBeenCalledTimes(2);
+  });
+
+  it("updates location from the foreground watch and clears it on unmount", async () => {
+  let watchSuccess:
+    | PositionCallback
+    | undefined;
+
+  const getCurrentPosition =
+    vi.fn<Geolocation["getCurrentPosition"]>(
+      (success) =>
+        success({
+          coords: {
+            latitude: 53.85,
+            longitude: 10.67,
+            accuracy: 10,
+          },
+          timestamp: 1000,
+        } as GeolocationPosition),
+    );
+
+  const watchPosition =
+    vi.fn<Geolocation["watchPosition"]>(
+      (success) => {
+        watchSuccess = success;
+        return 42;
+      },
+    );
+
+  const clearWatch =
+    vi.fn<Geolocation["clearWatch"]>();
+
+  vi.stubGlobal("navigator", {
+    geolocation: {
+      getCurrentPosition,
+      watchPosition,
+      clearWatch,
+    },
+  });
+
+  const { result, unmount } =
+    renderHook(() => useUserLocation());
+
+  await act(() =>
+    result.current.requestLocation(),
+  );
+
+  expect(watchPosition).toHaveBeenCalledOnce();
+  expect(
+    watchPosition.mock.calls[0]?.[2],
+  ).toEqual(
+    USER_LOCATION_WATCH_OPTIONS,
+  );
+
+  act(() => {
+    watchSuccess?.({
+      coords: {
+        latitude: 53.8662,
+        longitude: 10.6797,
+        accuracy: 8,
+      },
+      timestamp: 2000,
+    } as GeolocationPosition);
+  });
+
+  expect(result.current.location).toEqual({
+    lat: 53.8662,
+    lng: 10.6797,
+    accuracy: 8,
+    timestamp: 2000,
+  });
+
+  unmount();
+
+  expect(clearWatch).toHaveBeenCalledWith(42);
   });
 });

@@ -122,6 +122,7 @@ export default async function LubeckPage({
             locationLabels={t.location}
             mapLabels={t.map}
             distanceLabels={t.distance}
+            storyLabel={t.landmark.listenStory}
           />
         </section>
       </section>

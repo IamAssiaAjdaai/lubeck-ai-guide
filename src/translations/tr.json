@@ -30,7 +30,7 @@
   },
   "placeCategories": { "all": "Tümü", "see": "Gör", "eat": "Yeme", "fun": "Eğlence" },
   "placeCatalog": { "placeDuration": "{minutes} dk", "contentFallback": "İçerik dili: {language}" },
-  "location": { "use": "Konumumu kullan", "requesting": "Konumunuz bulunuyor…", "privacy": "Konumunuz bu tarayıcıda kalır ve yalnızca sizi haritada göstermek için kullanılır.", "available": "Konumunuz haritada gösteriliyor.", "denied": "Konum izni reddedildi. Tarayıcı ayarlarından izin verip tekrar deneyin.", "unavailable": "Konumunuz şu anda kullanılamıyor.", "unsupported": "Bu tarayıcı konum erişimini desteklemiyor.", "timeout": "Konum isteği zaman aşımına uğradı. Tekrar deneyin.", "error": "Konumunuza erişemedik. Tekrar deneyin.", "retry": "Tekrar dene", "markerLabel": "Konumunuz" },
+  "location": { "use": "Konumumu kullan", "requesting": "Konumunuz bulunuyor…", "privacy": "Konumunuz bu tarayıcıda kalır ve yalnızca bu sayfadaki yakındaki özellikler için kullanılır.", "available": "Konumunuz haritada gösteriliyor.", "denied": "Konum izni reddedildi. Tarayıcı ayarlarından izin verip tekrar deneyin.", "unavailable": "Konumunuz şu anda kullanılamıyor.", "unsupported": "Bu tarayıcı konum erişimini desteklemiyor.", "timeout": "Konum isteği zaman aşımına uğradı. Tekrar deneyin.", "error": "Konumunuza erişemedik. Tekrar deneyin.", "retry": "Tekrar dene", "markerLabel": "Konumunuz","arrival": "{place} noktasına ulaştınız!" },
   "map": { "unavailable": "Etkileşimli harita bu tarayıcıda veya cihazda kullanılamıyor.", "retry": "Haritayı tekrar dene", "closePlace": "Yer detaylarını kapat" },
   "distance": { "walkingMinutes": "~{minutes} dk yürüme" },
   "landmark": {

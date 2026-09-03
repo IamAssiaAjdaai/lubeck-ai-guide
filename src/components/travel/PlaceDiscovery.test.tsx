@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -13,6 +14,7 @@ import PlaceDiscovery, {
 import { localizePlaceCategories } from "@/data/placeCategories";
 import { formatDistance, formatWalkingTime } from "@/lib/distance";
 import { getTranslations } from "@/lib/i18n";
+
 
 const { capture, mapUnavailable } = vi.hoisted(() => ({
   capture: vi.fn(),
@@ -83,6 +85,7 @@ const places = [
     actualLocale: "en",
     contentDirection: "ltr",
     didFallback: false,
+    detailHref: "/en/test-city/museum",
   },
   {
     slug: "cafe",
@@ -110,6 +113,7 @@ const places = [
     actualLocale: "en",
     contentDirection: "ltr",
     didFallback: false,
+    detailHref: "/en/test-city/theatre",
   },
 ] as const satisfies readonly DiscoveryPlace[];
 
@@ -135,6 +139,7 @@ describe("PlaceDiscovery", () => {
           locationLabels={getTranslations("en").location}
           mapLabels={getTranslations("en").map}
           distanceLabels={getTranslations("en").distance}
+          storyLabel={getTranslations("en").landmark.listenStory}
         />
       </section>,
     );
@@ -188,6 +193,7 @@ describe("PlaceDiscovery", () => {
           locationLabels={getTranslations("ar").location}
           mapLabels={getTranslations("ar").map}
           distanceLabels={getTranslations("ar").distance}
+          storyLabel={getTranslations("ar").landmark.listenStory}
         />
       </section>,
     );
@@ -221,6 +227,7 @@ describe("PlaceDiscovery", () => {
           locationLabels={t.location}
           mapLabels={t.map}
           distanceLabels={t.distance}
+          storyLabel={t.landmark.listenStory}
         />
       </section>,
     );
@@ -255,6 +262,7 @@ describe("PlaceDiscovery", () => {
           locationLabels={getTranslations("en").location}
           mapLabels={getTranslations("en").map}
           distanceLabels={getTranslations("en").distance}
+          storyLabel={getTranslations("en").landmark.listenStory}
         />
       </section>,
     );
@@ -268,7 +276,7 @@ describe("PlaceDiscovery", () => {
     expect(gpsControl.closest('[data-testid="city-map"]')).not.toBeNull();
     expect(
       screen.getByText(
-        "Your location stays in this browser and is used only to show you on the map.",
+        "Your location stays in this browser and is used only for nearby features on this page.",
       ).tagName,
     ).toBe("P");
 
@@ -351,6 +359,7 @@ describe("PlaceDiscovery", () => {
           locationLabels={getTranslations("en").location}
           mapLabels={getTranslations("en").map}
           distanceLabels={getTranslations("en").distance}
+          storyLabel={getTranslations("en").landmark.listenStory}
         />
       </section>,
     );
@@ -392,6 +401,7 @@ describe("PlaceDiscovery", () => {
       locale: "en",
     });
   });
+
   it("ranks place cards from nearest to farthest after location becomes available", async () => {
   const getCurrentPosition = vi.fn<Geolocation["getCurrentPosition"]>(
     (success) =>
@@ -425,6 +435,7 @@ describe("PlaceDiscovery", () => {
         locationLabels={t.location}
         mapLabels={t.map}
         distanceLabels={t.distance}
+        storyLabel={getTranslations("en").landmark.listenStory}
       />
     </section>,
   );
@@ -456,5 +467,140 @@ describe("PlaceDiscovery", () => {
       "Theatre",
     ]);
   });
+  });
+
+  it("shows an arrival prompt once when live location enters the radius", async () => {
+    let watchSuccess: PositionCallback | undefined;
+
+    const getCurrentPosition =
+      vi.fn<Geolocation["getCurrentPosition"]>((success) =>
+        success({
+          coords: {
+            latitude: 53.85,
+            longitude: 10.67,
+            accuracy: 8,
+          },
+          timestamp: 1000,
+        } as GeolocationPosition),
+      );
+
+    const watchPosition =
+      vi.fn<Geolocation["watchPosition"]>((success) => {
+        watchSuccess = success;
+        return 10;
+      });
+
+    const clearWatch =
+      vi.fn<Geolocation["clearWatch"]>();
+
+    vi.stubGlobal("navigator", {
+      geolocation: {
+        getCurrentPosition,
+        watchPosition,
+        clearWatch,
+      },
+    });
+
+    const t = getTranslations("en");
+
+    render(
+      <section>
+        <h2 id="arrival-heading">Places</h2>
+
+        <PlaceDiscovery
+          places={places}
+          categories={localizePlaceCategories(t)}
+          locale="en"
+          city="test-city"
+          direction="ltr"
+          labelledBy="arrival-heading"
+          locationLabels={t.location}
+          mapLabels={t.map}
+          distanceLabels={t.distance}
+          storyLabel={t.landmark.listenStory}
+        />
+      </section>,
+    );
+
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: t.location.use,
+      }),
+    );
+
+    expect(
+      screen.queryByText("You've arrived at Museum."),
+    ).toBeNull();
+
+    await waitFor(() => {
+      expect(watchPosition).toHaveBeenCalledOnce();
+      expect(watchSuccess).toBeDefined();
+    });
+
+    act(() => {
+      watchSuccess?.({
+        coords: {
+          latitude: 53.8601,
+          longitude: 10.68,
+          accuracy: 8,
+        },
+        timestamp: 2000,
+      } as GeolocationPosition);
+    });
+
+    expect(
+      await screen.findByText("You've arrived at Museum."),
+    ).not.toBeNull();
+
+    expect(
+      screen.getByRole("link", {
+        name: t.landmark.listenStory,
+      }),
+    ).not.toBeNull();
+
+    expect(capture).toHaveBeenCalledWith(
+      "arrival_detected",
+      {
+        city: "test-city",
+        locale: "en",
+        place_slug: "museum",
+      },
+    );
+
+    act(() => {
+      watchSuccess?.({
+        coords: {
+          latitude: 53.85,
+          longitude: 10.67,
+          accuracy: 8,
+        },
+        timestamp: 3000,
+      } as GeolocationPosition);
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText("You've arrived at Museum."),
+      ).toBeNull();
+    });
+
+    act(() => {
+      watchSuccess?.({
+        coords: {
+          latitude: 53.8601,
+          longitude: 10.68,
+          accuracy: 8,
+        },
+        timestamp: 4000,
+      } as GeolocationPosition);
+    });
+
+    await waitFor(() => {
+      const arrivalEvents = capture.mock.calls.filter(
+        ([eventName]) => eventName === "arrival_detected",
+      );
+
+      expect(arrivalEvents).toHaveLength(1);
+    });
   });
 });

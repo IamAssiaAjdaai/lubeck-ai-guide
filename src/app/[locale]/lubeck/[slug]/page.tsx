@@ -173,7 +173,10 @@ export default async function LandmarkPage({
 
         {/* Audio */}
         {audio ? (
-          <div className="mt-8">
+          <div
+            id="audio-guide"
+            className="mt-8 scroll-mt-6"
+          >
             <AudioPlayer
               src={audio}
               title={`${name} ${t.landmark.audioGuide}`}
@@ -187,8 +190,17 @@ export default async function LandmarkPage({
             />
           </div>
         ) : (
-          <div className="mt-7 flex items-center gap-3 rounded-2xl bg-surface p-4 text-text-secondary">
-            <Headphones aria-hidden="true" size={20} strokeWidth={1.8} className="shrink-0" />
+          <div
+            id="audio-guide"
+            className="mt-7 scroll-mt-6 flex items-center gap-3 rounded-2xl bg-surface p-4 text-text-secondary"
+          >
+            <Headphones
+              aria-hidden="true"
+              size={20}
+              strokeWidth={1.8}
+              className="shrink-0"
+            />
+
             <p className="text-sm leading-6">
               {t.landmark.audioUnavailable}
             </p>

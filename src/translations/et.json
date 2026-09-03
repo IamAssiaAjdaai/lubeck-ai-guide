@@ -30,7 +30,7 @@
   },
   "placeCategories": { "all": "Kõik", "see": "Vaatamisväärsused", "eat": "Söök", "fun": "Meelelahutus" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Sisu keeles {language}" },
-  "location": { "use": "Kasuta minu asukohta", "requesting": "Asukoha tuvastamine…", "privacy": "Sinu asukoht jääb sellesse brauserisse ja seda kasutatakse ainult sinu kuvamiseks kaardil.", "available": "Sinu asukoht kuvatakse kaardil.", "denied": "Juurdepääs asukohale keelati. Luba see brauseri seadetes ja proovi uuesti.", "unavailable": "Sinu asukoht pole praegu saadaval.", "unsupported": "See brauser ei toeta juurdepääsu asukohale.", "timeout": "Asukohapäring aegus. Proovi uuesti.", "error": "Sinu asukohale ei saadud juurdepääsu. Proovi uuesti.", "retry": "Proovi uuesti", "markerLabel": "Sinu asukoht" },
+  "location": { "use": "Kasuta minu asukohta", "requesting": "Asukoha tuvastamine…", "privacy": "Sinu asukoht jääb sellesse brauserisse ja seda kasutatakse ainult selle lehe läheduses olevate funktsioonide jaoks.", "available": "Sinu asukoht kuvatakse kaardil.", "denied": "Juurdepääs asukohale keelati. Luba see brauseri seadetes ja proovi uuesti.", "unavailable": "Sinu asukoht pole praegu saadaval.", "unsupported": "See brauser ei toeta juurdepääsu asukohale.", "timeout": "Asukohapäring aegus. Proovi uuesti.", "error": "Sinu asukohale ei saadud juurdepääsu. Proovi uuesti.", "retry": "Proovi uuesti", "markerLabel": "Sinu asukoht", "arrival": "Sa jõudsid kohale {place}!" },
   "map": { "unavailable": "Interaktiivne kaart pole selles brauseris või seadmes saadaval.", "retry": "Proovi kaarti uuesti", "closePlace": "Sulge koha detailid" },
   "distance": { "walkingMinutes": "~{minutes} min jalgsi" },
   "landmark": {
