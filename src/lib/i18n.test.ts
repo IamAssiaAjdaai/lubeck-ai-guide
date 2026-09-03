@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { getDirection, getTranslations, isLocale, languages, locales } from "./i18n";
+import {
+  formatMessage,
+  getDirection,
+  getTranslations,
+  isLocale,
+  languages,
+  locales,
+} from "./i18n";
 
 function keys(value: unknown, prefix = ""): string[] {
   if (typeof value !== "object" || value === null) return [prefix];
@@ -14,6 +21,21 @@ describe("i18n", () => {
     expect(new Set(locales).size).toBe(27);
   });
 
+  it("formats the arrival place name in every locale", () => {
+    for (const locale of locales) {
+      const message = formatMessage(
+        getTranslations(locale).location.arrival,
+        {
+          place: "Holstentor",
+        },
+      );
+
+      expect(message).toContain("Holstentor");
+      expect(message).not.toContain("{place}");
+      expect(message).not.toContain("{placeName}");
+  }
+  });
+  
   it("provides matching dictionary structures for every locale", () => {
     const englishKeys = keys(getTranslations("en"));
     for (const locale of locales) {
