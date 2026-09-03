@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Atraskite Lübeck",
-    "subtitle": "5 istorinės vietos, kurias verta pažinti",
+    "subtitle": "20 vietų, kurias verta atrasti",
     "walkingTour": "Ekskursija pėsčiomis",
     "historicCenter": "Lübeck istorinis centras",
     "duration": "~45 min. • 5 stotelės",
     "places": "Vietos",
     "startTour": "Pradėti ekskursiją"
   },
+  "placeCategories": { "all": "Visi", "see": "Lankytinos vietos", "eat": "Maistas", "fun": "Pramogos" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Turinys kalba: {language}" },
   "landmark": {
     "stopProgress": "{current} stotelė iš {total}",
     "audioGuide": "Audiogidas",

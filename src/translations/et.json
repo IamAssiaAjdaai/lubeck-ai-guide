@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Avasta Lübeckit",
-    "subtitle": "5 ajaloolist paika, mida avastada",
+    "subtitle": "20 avastamist väärt kohta",
     "walkingTour": "Jalutuskäik",
     "historicCenter": "Lübecki ajalooline keskus",
     "duration": "~45 min • 5 peatust",
     "places": "Paigad",
     "startTour": "Alusta jalutuskäiku"
   },
+  "placeCategories": { "all": "Kõik", "see": "Vaatamisväärsused", "eat": "Söök", "fun": "Meelelahutus" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Sisu keeles {language}" },
   "landmark": {
     "stopProgress": "Peatus {current}/{total}",
     "audioGuide": "Audiogiid",

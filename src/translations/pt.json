@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Descubra Lübeck",
-    "subtitle": "5 locais históricos para explorar",
+    "subtitle": "20 locais para descobrir",
     "walkingTour": "Percurso a pé",
     "historicCenter": "Centro histórico de Lübeck",
     "duration": "~45 min • 5 paragens",
     "places": "Locais",
     "startTour": "Iniciar percurso a pé"
   },
+  "placeCategories": { "all": "Todos", "see": "Ver", "eat": "Comer", "fun": "Diversão" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Conteúdo apresentado em {language}" },
   "landmark": {
     "stopProgress": "Paragem {current} de {total}",
     "audioGuide": "Audioguia",

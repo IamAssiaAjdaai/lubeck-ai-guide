@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Descoperiți Lübeck",
-    "subtitle": "5 locuri istorice de explorat",
+    "subtitle": "20 de locuri de descoperit",
     "walkingTour": "Tur pietonal",
     "historicCenter": "Centrul istoric al Lübeckului",
     "duration": "~45 min • 5 opriri",
     "places": "Locuri",
     "startTour": "Începeți turul pietonal"
   },
+  "placeCategories": { "all": "Toate", "see": "De văzut", "eat": "Mâncare", "fun": "Distracție" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Conținut afișat în {language}" },
   "landmark": {
     "stopProgress": "Oprirea {current} din {total}",
     "audioGuide": "Ghid audio",

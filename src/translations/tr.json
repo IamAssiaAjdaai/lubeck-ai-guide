@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Lübeck'i keşfedin",
-    "subtitle": "Keşfedilecek 5 tarihî yer",
+    "subtitle": "Keşfedilecek 20 yer",
     "walkingTour": "Yürüyüş turu",
     "historicCenter": "Lübeck Tarihî Merkezi",
     "duration": "~45 dk • 5 durak",
     "places": "Yerler",
     "startTour": "Yürüyüş turuna başla"
   },
+  "placeCategories": { "all": "Tümü", "see": "Gör", "eat": "Yeme", "fun": "Eğlence" },
+  "placeCatalog": { "placeDuration": "{minutes} dk", "contentFallback": "İçerik dili: {language}" },
   "landmark": {
     "stopProgress": "{total} durağın {current}. durağı",
     "audioGuide": "Sesli rehber",

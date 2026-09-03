@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Ανακαλύψτε το Lübeck",
-    "subtitle": "5 ιστορικά μέρη για εξερεύνηση",
+    "subtitle": "20 μέρη για να ανακαλύψεις",
     "walkingTour": "Περιήγηση με τα πόδια",
     "historicCenter": "Ιστορικό κέντρο του Lübeck",
     "duration": "~45 λεπτά • 5 στάσεις",
     "places": "Μέρη",
     "startTour": "Έναρξη περιήγησης"
   },
+  "placeCategories": { "all": "Όλα", "see": "Αξιοθέατα", "eat": "Φαγητό", "fun": "Διασκέδαση" },
+  "placeCatalog": { "placeDuration": "{minutes} λεπ.", "contentFallback": "Περιεχόμενο στα {language}" },
   "landmark": {
     "stopProgress": "Στάση {current} από {total}",
     "audioGuide": "Ηχητικός οδηγός",
