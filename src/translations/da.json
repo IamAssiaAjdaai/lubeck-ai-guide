@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Oplev Lübeck",
-    "subtitle": "5 historiske steder at udforske",
+    "subtitle": "20 steder at opdage",
     "walkingTour": "Byvandring",
     "historicCenter": "Lübecks historiske centrum",
     "duration": "~45 min • 5 stop",
     "places": "Steder",
     "startTour": "Start byvandringen"
   },
+  "placeCategories": { "all": "Alle", "see": "Se", "eat": "Spis", "fun": "Sjov" },
+  "placeCatalog": { "placeDuration": "{minutes} min.", "contentFallback": "Indhold på {language}" },
   "landmark": {
     "stopProgress": "Stop {current} af {total}",
     "audioGuide": "Audioguide",

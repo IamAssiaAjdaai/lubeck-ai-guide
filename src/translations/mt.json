@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Skopri Lübeck",
-    "subtitle": "5 postijiet storiċi x’tesplora",
+    "subtitle": "20 post x’tiskopri",
     "walkingTour": "Dawra bil-mixi",
     "historicCenter": "Iċ-ċentru storiku ta’ Lübeck",
     "duration": "~45 min • 5 waqfiet",
     "places": "Postijiet",
     "startTour": "Ibda d-dawra bil-mixi"
   },
+  "placeCategories": { "all": "Kollha", "see": "Ara", "eat": "Kul", "fun": "Divertiment" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Kontenut bi {language}" },
   "landmark": {
     "stopProgress": "Waqfa {current} minn {total}",
     "audioGuide": "Gwida bl-awdjo",

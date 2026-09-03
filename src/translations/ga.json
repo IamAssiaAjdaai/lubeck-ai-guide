@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Faigh blaiseadh de Lübeck",
-    "subtitle": "5 áit stairiúla le hiniúchadh",
+    "subtitle": "20 áit le haimsiú",
     "walkingTour": "Turas siúlóide",
     "historicCenter": "Lár stairiúil Lübeck",
     "duration": "~45 nóim • 5 stad",
     "places": "Áiteanna",
     "startTour": "Cuir tús leis an turas"
   },
+  "placeCategories": { "all": "Gach áit", "see": "Radharcanna", "eat": "Bia", "fun": "Spraoi" },
+  "placeCatalog": { "placeDuration": "{minutes} nóim", "contentFallback": "Ábhar i {language}" },
   "landmark": {
     "stopProgress": "Stad {current} as {total}",
     "audioGuide": "Closleabhar",

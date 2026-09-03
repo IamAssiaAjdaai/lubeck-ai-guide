@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Tutustu Lyypekkiin",
-    "subtitle": "5 historiallista kohdetta",
+    "subtitle": "20 paikkaa löydettäväksi",
     "walkingTour": "Kävelykierros",
     "historicCenter": "Lyypekin historiallinen keskusta",
     "duration": "~45 min • 5 pysähdystä",
     "places": "Kohteet",
     "startTour": "Aloita kävelykierros"
   },
+  "placeCategories": { "all": "Kaikki", "see": "Näe", "eat": "Syö", "fun": "Huvit" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Sisältö kielellä {language}" },
   "landmark": {
     "stopProgress": "Pysähdys {current}/{total}",
     "audioGuide": "Ääniopas",

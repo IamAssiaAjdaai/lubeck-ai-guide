@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Fedezze fel Lübecket",
-    "subtitle": "5 felfedezésre váró történelmi hely",
+    "subtitle": "20 felfedezésre váró hely",
     "walkingTour": "Gyalogos túra",
     "historicCenter": "Lübeck történelmi központja",
     "duration": "~45 perc • 5 állomás",
     "places": "Helyszínek",
     "startTour": "Gyalogos túra indítása"
   },
+  "placeCategories": { "all": "Összes", "see": "Látnivalók", "eat": "Étel", "fun": "Szórakozás" },
+  "placeCatalog": { "placeDuration": "{minutes} perc", "contentFallback": "Tartalom ezen a nyelven: {language}" },
   "landmark": {
     "stopProgress": "{current}. állomás, összesen {total}",
     "audioGuide": "Audiokalauz",

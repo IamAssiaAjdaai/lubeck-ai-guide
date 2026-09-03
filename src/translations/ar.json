@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "اكتشف Lübeck",
-    "subtitle": "5 أماكن تاريخية تستحق الاستكشاف",
+    "subtitle": "20 مكاناً لاكتشافها",
     "walkingTour": "جولة سيراً على الأقدام",
     "historicCenter": "المركز التاريخي لمدينة Lübeck",
     "duration": "نحو 45 دقيقة • 5 محطات",
     "places": "الأماكن",
     "startTour": "ابدأ جولة المشي"
   },
+  "placeCategories": { "all": "الكل", "see": "معالم", "eat": "طعام", "fun": "ترفيه" },
+  "placeCatalog": { "placeDuration": "{minutes} دقيقة", "contentFallback": "المحتوى باللغة {language}" },
   "landmark": {
     "stopProgress": "المحطة {current} من {total}",
     "audioGuide": "الدليل الصوتي",

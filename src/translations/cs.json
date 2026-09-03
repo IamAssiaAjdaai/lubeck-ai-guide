@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Objevte Lübeck",
-    "subtitle": "5 historických míst k prozkoumání",
+    "subtitle": "20 míst k objevování",
     "walkingTour": "Pěší prohlídka",
     "historicCenter": "Historické centrum Lübecku",
     "duration": "~45 min • 5 zastávek",
     "places": "Místa",
     "startTour": "Zahájit pěší prohlídku"
   },
+  "placeCategories": { "all": "Vše", "see": "Památky", "eat": "Jídlo", "fun": "Zábava" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Obsah v jazyce {language}" },
   "landmark": {
     "stopProgress": "Zastávka {current} z {total}",
     "audioGuide": "Audioprůvodce",

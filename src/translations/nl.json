@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Ontdek Lübeck",
-    "subtitle": "5 historische plekken om te verkennen",
+    "subtitle": "20 plekken om te ontdekken",
     "walkingTour": "Wandelroute",
     "historicCenter": "Historisch centrum van Lübeck",
     "duration": "~45 min • 5 stops",
     "places": "Plekken",
     "startTour": "Start de wandelroute"
   },
+  "placeCategories": { "all": "Alles", "see": "Zien", "eat": "Eten", "fun": "Plezier" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Inhoud in het {language}" },
   "landmark": {
     "stopProgress": "Stop {current} van {total}",
     "audioGuide": "Audiogids",

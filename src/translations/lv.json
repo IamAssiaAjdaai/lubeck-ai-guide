@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Atklājiet Lübeck",
-    "subtitle": "5 vēsturiskas vietas, ko iepazīt",
+    "subtitle": "20 vietas, ko atklāt",
     "walkingTour": "Pastaigu maršruts",
     "historicCenter": "Lübeck vēsturiskais centrs",
     "duration": "~45 min • 5 pieturas",
     "places": "Vietas",
     "startTour": "Sākt pastaigu"
   },
+  "placeCategories": { "all": "Visi", "see": "Apskates vietas", "eat": "Ēdiens", "fun": "Izklaide" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Saturs valodā: {language}" },
   "landmark": {
     "stopProgress": "{current}. pietura no {total}",
     "audioGuide": "Audiogids",

@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Entdecke Lübeck",
-    "subtitle": "5 historische Orte entdecken",
+    "subtitle": "20 Orte zum Entdecken",
     "walkingTour": "Stadtrundgang",
     "historicCenter": "Historisches Zentrum von Lübeck",
     "duration": "~45 Min. • 5 Stopps",
     "places": "Orte",
     "startTour": "Stadtrundgang starten"
   },
+  "placeCategories": { "all": "Alle", "see": "Sehen", "eat": "Essen", "fun": "Spaß" },
+  "placeCatalog": { "placeDuration": "{minutes} Min.", "contentFallback": "Inhalt auf {language}" },
   "landmark": {
     "stopProgress": "Stopp {current} von {total}",
     "audioGuide": "Audioguide",

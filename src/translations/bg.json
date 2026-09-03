@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Открийте Lübeck",
-    "subtitle": "5 исторически места за разглеждане",
+    "subtitle": "20 места за откриване",
     "walkingTour": "Пешеходна обиколка",
     "historicCenter": "Историческият център на Lübeck",
     "duration": "~45 мин • 5 спирки",
     "places": "Места",
     "startTour": "Започнете обиколката"
   },
+  "placeCategories": { "all": "Всички", "see": "Забележителности", "eat": "Храна", "fun": "Забавления" },
+  "placeCatalog": { "placeDuration": "{minutes} мин", "contentFallback": "Съдържание на {language}" },
   "landmark": {
     "stopProgress": "Спирка {current} от {total}",
     "audioGuide": "Аудиогид",

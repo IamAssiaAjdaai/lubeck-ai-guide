@@ -2,18 +2,23 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, House } from "lucide-react";
 
-import LandmarkCard from "@/components/travel/LandmarkCard";
+import PlaceDiscovery, {
+  type DiscoveryPlace,
+} from "@/components/travel/PlaceDiscovery";
 import TourCard from "@/components/travel/TourCard";
 import { cities } from "@/data/cities";
+import { localizePlaceCategories } from "@/data/placeCategories";
 import {
-  getPlaceDurationLabel,
-  lubeckLandmarks as landmarks,
+  lubeckLandmarks,
+  lubeckPlaces,
+  resolvePlaceContent,
 } from "@/data/places";
 import {
   formatMessage,
   getDirection,
   getTranslations,
   isLocale,
+  languages,
   locales,
 } from "@/lib/i18n";
 
@@ -42,6 +47,44 @@ export default async function LubeckPage({
   const city = cities.lubeck;
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
   const [durationLabel, stopsLabel = ""] = t.explore.duration.split("•").map((value) => value.trim());
+  const tourStopSlugs = new Set(lubeckLandmarks.map((place) => place.slug));
+  const categories = localizePlaceCategories(t);
+  const catalogPlaces = lubeckPlaces.flatMap((place): DiscoveryPlace[] => {
+    const resolvedContent = resolvePlaceContent(place, currentLocale);
+
+    if (!resolvedContent) return [];
+
+    return [
+      {
+        slug: place.slug,
+        category: place.category,
+        image: place.image,
+        name: resolvedContent.content.name,
+        shortDescription: resolvedContent.content.shortDescription,
+        requestedLocale: resolvedContent.requestedLocale,
+        actualLocale: resolvedContent.actualLocale,
+        contentDirection: getDirection(resolvedContent.actualLocale),
+        didFallback: resolvedContent.didFallback,
+        duration: formatMessage(t.placeCatalog.placeDuration, {
+          minutes: new Intl.NumberFormat(currentLocale).format(
+            place.durationMinutes,
+          ),
+        }),
+        ...(resolvedContent.didFallback
+          ? {
+              fallbackLabel: formatMessage(t.placeCatalog.contentFallback, {
+                language: languages[resolvedContent.actualLocale].nativeName,
+              }),
+            }
+          : {}),
+        ...(tourStopSlugs.has(place.slug)
+          ? {
+              detailHref: `/${currentLocale}/${city.slug}/${place.slug}`,
+            }
+          : {}),
+      },
+    ];
+  });
 
   return (
     <main
@@ -75,30 +118,21 @@ export default async function LubeckPage({
 
         {/* Places */}
         <section className="mt-9">
-          <h2 className="text-xl font-semibold tracking-[-0.02em]">
+          <h2
+            id="place-category-heading"
+            className="text-xl font-semibold tracking-[-0.02em]"
+          >
             {t.explore.places}
           </h2>
 
-          <div className="mt-4 flex flex-col gap-3">
-            {landmarks.map((landmark, index) => {
-              const content =
-                landmark.content[currentLocale];
-
-              return (
-                <LandmarkCard
-                  key={landmark.slug}
-                  href={`/${currentLocale}/${city.slug}/${landmark.slug}`}
-                  image={landmark.image}
-                  name={content.name}
-                  duration={getPlaceDurationLabel(landmark, currentLocale)}
-                  stopLabel={formatMessage(t.landmark.stopProgress, { current: index + 1, total: landmarks.length })}
-                  direction={direction}
-                  locale={currentLocale}
-                  slug={landmark.slug}
-                />
-              );
-            })}
-          </div>
+          <PlaceDiscovery
+            places={catalogPlaces}
+            categories={categories}
+            locale={currentLocale}
+            city={city.slug}
+            direction={direction}
+            labelledBy="place-category-heading"
+          />
         </section>
       </section>
     </main>

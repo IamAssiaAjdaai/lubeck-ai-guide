@@ -21,13 +21,15 @@
   },
   "explore": {
     "title": "Odkrijte Lübeck",
-    "subtitle": "5 zgodovinskih krajev za raziskovanje",
+    "subtitle": "20 krajev za odkrivanje",
     "walkingTour": "Peš ogled",
     "historicCenter": "Zgodovinsko središče Lübecka",
     "duration": "~45 min • 5 postankov",
     "places": "Kraji",
     "startTour": "Začni peš ogled"
   },
+  "placeCategories": { "all": "Vse", "see": "Znamenitosti", "eat": "Hrana", "fun": "Zabava" },
+  "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Vsebina v jeziku {language}" },
   "landmark": {
     "stopProgress": "Postanek {current} od {total}",
     "audioGuide": "Avdiovodnik",
