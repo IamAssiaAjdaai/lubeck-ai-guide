@@ -24,6 +24,12 @@ export const USER_LOCATION_OPTIONS: PositionOptions = {
   timeout: 10_000,
 };
 
+export const USER_LOCATION_WATCH_OPTIONS: PositionOptions = {
+  enableHighAccuracy: true,
+  maximumAge: 5_000,
+  timeout: 10_000,
+};
+
 export class UserLocationError extends Error {
   readonly type: UserLocationErrorType;
 
@@ -34,11 +40,28 @@ export class UserLocationError extends Error {
   }
 }
 
-function getErrorType(error: GeolocationPositionError): UserLocationErrorType {
+function getErrorType(
+  error: GeolocationPositionError,
+): UserLocationErrorType {
   if (error.code === 1) return "denied";
   if (error.code === 2) return "unavailable";
   if (error.code === 3) return "timeout";
   return "error";
+}
+
+function toUserLocation(
+  position: GeolocationPosition,
+): UserLocation {
+  const accuracy = Number.isFinite(position.coords.accuracy)
+    ? position.coords.accuracy
+    : undefined;
+
+  return {
+    lat: position.coords.latitude,
+    lng: position.coords.longitude,
+    ...(accuracy === undefined ? {} : { accuracy }),
+    timestamp: position.timestamp,
+  };
 }
 
 export function requestBrowserLocation(): Promise<UserLocation> {
@@ -46,25 +69,48 @@ export function requestBrowserLocation(): Promise<UserLocation> {
     typeof navigator === "undefined" ||
     typeof navigator.geolocation?.getCurrentPosition !== "function"
   ) {
-    return Promise.reject(new UserLocationError("unsupported"));
+    return Promise.reject(
+      new UserLocationError("unsupported"),
+    );
   }
 
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const accuracy = Number.isFinite(position.coords.accuracy)
-          ? position.coords.accuracy
-          : undefined;
-
-        resolve({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-          ...(accuracy === undefined ? {} : { accuracy }),
-          timestamp: position.timestamp,
-        });
-      },
-      (error) => reject(new UserLocationError(getErrorType(error))),
+      (position) => resolve(toUserLocation(position)),
+      (error) =>
+        reject(
+          new UserLocationError(getErrorType(error)),
+        ),
       USER_LOCATION_OPTIONS,
     );
   });
+}
+
+export function watchBrowserLocation(
+  onLocation: (location: UserLocation) => void,
+  onError?: (error: UserLocationError) => void,
+): (() => void) | undefined {
+  if (
+    typeof navigator === "undefined" ||
+    typeof navigator.geolocation?.watchPosition !== "function" ||
+    typeof navigator.geolocation?.clearWatch !== "function"
+  ) {
+    return undefined;
+  }
+
+  const watchId = navigator.geolocation.watchPosition(
+    (position) => {
+      onLocation(toUserLocation(position));
+    },
+    (error) => {
+      onError?.(
+        new UserLocationError(getErrorType(error)),
+      );
+    },
+    USER_LOCATION_WATCH_OPTIONS,
+  );
+
+  return () => {
+    navigator.geolocation.clearWatch(watchId);
+  };
 }

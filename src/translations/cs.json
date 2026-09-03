@@ -30,7 +30,7 @@
   },
   "placeCategories": { "all": "Vše", "see": "Památky", "eat": "Jídlo", "fun": "Zábava" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Obsah v jazyce {language}" },
-  "location": { "use": "Použít moji polohu", "requesting": "Zjišťování polohy…", "privacy": "Vaše poloha zůstává v tomto prohlížeči a používá se jen k vašemu zobrazení na mapě.", "available": "Vaše poloha je zobrazena na mapě.", "denied": "Přístup k poloze byl zamítnut. Povolte ho v nastavení prohlížeče a zkuste to znovu.", "unavailable": "Vaše poloha nyní není dostupná.", "unsupported": "Tento prohlížeč nepodporuje přístup k poloze.", "timeout": "Vypršel časový limit žádosti o polohu. Zkuste to znovu.", "error": "K vaší poloze se nepodařilo získat přístup. Zkuste to znovu.", "retry": "Zkusit znovu", "markerLabel": "Vaše poloha" },
+  "location": { "use": "Použít moji polohu", "requesting": "Zjišťování polohy…", "privacy": "Vaše poloha zůstává v tomto prohlížeči a používá se jen k vašemu zobrazení na mapě.", "available": "Vaše poloha je zobrazena na mapě.", "denied": "Přístup k poloze byl zamítnut. Povolte ho v nastavení prohlížeče a zkuste to znovu.", "unavailable": "Vaše poloha nyní není dostupná.", "unsupported": "Tento prohlížeč nepodporuje přístup k poloze.", "timeout": "Vypršel časový limit žádosti o polohu. Zkuste to znovu.", "error": "K vaší poloze se nepodařilo získat přístup. Zkuste to znovu.", "retry": "Zkusit znovu", "markerLabel": "Vaše poloha", "arrival": "Dorazili jste do {placeName}!" },
   "map": { "unavailable": "Interaktivní mapa není v tomto prohlížeči nebo zařízení dostupná.", "retry": "Zkusit mapu znovu", "closePlace": "Zavřít podrobnosti o místě" },
   "distance": { "walkingMinutes": "~{minutes} min pěšky" },
   "landmark": {

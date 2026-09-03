@@ -3,7 +3,13 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import posthog from "posthog-js";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ChevronRight,
   Clock3,
@@ -15,47 +21,73 @@ import {
 } from "lucide-react";
 
 import TrackedLink from "@/components/TrackedLink";
+import ArrivalNotice from "@/components/travel/ArrivalNotice";
 import PlaceDistanceLabel from "@/components/travel/PlaceDistanceLabel";
+
 import {
   filterPlacesByCategory,
   type LocalizedPlaceCategory,
   type PlaceCategoryFilter,
   type PlaceCategoryIconId,
 } from "@/data/placeCategories";
+
 import { useUserLocation } from "@/hooks/useUserLocation";
+
+import {
+  findArrivalMatch,
+  isWithinArrivalRadius,
+  type ArrivalMatch,
+} from "@/lib/arrival";
+
 import {
   sortPlacesByDistance,
   withPlacesDistance,
   type PlaceDistance,
 } from "@/lib/distance";
-import type { UserLocationStatus } from "@/lib/geolocation";
-import type { Locale, TextDirection } from "@/lib/i18n";
-import type { Translations } from "@/lib/i18n";
+
+import type {
+  UserLocation,
+  UserLocationStatus,
+} from "@/lib/geolocation";
+
+import type {
+  Locale,
+  TextDirection,
+  Translations,
+} from "@/lib/i18n";
+
 import type { MapPlace } from "@/lib/mapPlaces";
 
-const CityMap = dynamic(() => import("@/components/map/CityMap"), {
-  ssr: false,
-  loading: () => (
-    <div
-      aria-hidden="true"
-      className="mt-4 h-80 animate-pulse rounded-2xl border bg-surface"
-    />
-  ),
-});
+const CityMap = dynamic(
+  () => import("@/components/map/CityMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        aria-hidden="true"
+        className="mt-4 h-80 animate-pulse rounded-2xl border bg-surface"
+      />
+    ),
+  },
+);
 
-const categoryIcons: Record<PlaceCategoryIconId, LucideIcon> = {
+const categoryIcons: Record<
+  PlaceCategoryIconId,
+  LucideIcon
+> = {
   LayoutGrid,
   Landmark,
   Utensils,
   Sparkles,
 };
 
-export type DiscoveryPlace = MapPlace &
-  Readonly<{
-  duration: string;
-  fallbackLabel?: string;
-  distance?: PlaceDistance;
-  }>;
+export type DiscoveryPlace =
+  MapPlace &
+    Readonly<{
+      duration: string;
+      fallbackLabel?: string;
+      distance?: PlaceDistance;
+    }>;
 
 type PlaceDiscoveryProps = Readonly<{
   places: readonly DiscoveryPlace[];
@@ -67,6 +99,7 @@ type PlaceDiscoveryProps = Readonly<{
   locationLabels: Translations["location"];
   mapLabels: Translations["map"];
   distanceLabels: Translations["distance"];
+  storyLabel: string;
 }>;
 
 type LocationAnalyticsEvent =
@@ -77,12 +110,18 @@ type LocationAnalyticsEvent =
 
 function captureLocationEvent(
   eventName: LocationAnalyticsEvent,
-  properties: Readonly<Record<string, string>>,
+  properties: Readonly<
+    Record<string, string>
+  >,
 ) {
   try {
-    posthog.capture(eventName, properties);
+    posthog.capture(
+      eventName,
+      properties,
+    );
   } catch {
-    // Location access must keep working if analytics is unavailable.
+    // Location access must keep working
+    // if analytics is unavailable.
   }
 }
 
@@ -90,9 +129,18 @@ function getLocationStatusMessage(
   status: UserLocationStatus,
   labels: Translations["location"],
 ) {
-  if (status === "idle") return labels.privacy;
-  if (status === "requesting") return labels.requesting;
-  if (status === "available") return labels.available;
+  if (status === "idle") {
+    return labels.privacy;
+  }
+
+  if (status === "requesting") {
+    return labels.requesting;
+  }
+
+  if (status === "available") {
+    return labels.available;
+  }
+
   return labels[status];
 }
 
@@ -100,10 +148,22 @@ function getLocationControlLabel(
   status: UserLocationStatus,
   labels: Translations["location"],
 ) {
-  if (status === "idle") return labels.use;
-  if (status === "requesting") return labels.requesting;
-  if (status === "available") return labels.markerLabel;
-  if (status === "unsupported") return labels.unsupported;
+  if (status === "idle") {
+    return labels.use;
+  }
+
+  if (status === "requesting") {
+    return labels.requesting;
+  }
+
+  if (status === "available") {
+    return labels.markerLabel;
+  }
+
+  if (status === "unsupported") {
+    return labels.unsupported;
+  }
+
   return labels.retry;
 }
 
@@ -120,7 +180,9 @@ function PlaceCard({
   direction: TextDirection;
   walkingTimeTemplate: string;
 }>) {
-  const CategoryIcon = categoryIcons[category.icon];
+  const CategoryIcon =
+    categoryIcons[category.icon];
+
   const cardContent = (
     <>
       <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-accent-soft">
@@ -146,31 +208,54 @@ function PlaceCard({
 
       <div className="min-w-0 flex-1 py-0.5">
         <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-accent rtl:tracking-normal">
-          <CategoryIcon aria-hidden="true" size={13} strokeWidth={1.8} />
+          <CategoryIcon
+            aria-hidden="true"
+            size={13}
+            strokeWidth={1.8}
+          />
+
           {category.label}
         </p>
-        <div lang={place.actualLocale} dir={place.contentDirection}>
+
+        <div
+          lang={place.actualLocale}
+          dir={place.contentDirection}
+        >
           <h3 className="mt-1 text-[1rem] font-semibold leading-5">
             {place.name}
           </h3>
+
           <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-text-secondary">
             {place.shortDescription}
           </p>
         </div>
+
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-muted">
           <span className="inline-flex items-center gap-1.5">
-            <Clock3 aria-hidden="true" size={14} strokeWidth={1.8} />
+            <Clock3
+              aria-hidden="true"
+              size={14}
+              strokeWidth={1.8}
+            />
+
             {place.duration}
           </span>
+
           {place.distance ? (
             <PlaceDistanceLabel
               distance={place.distance}
               locale={locale}
-              walkingTimeTemplate={walkingTimeTemplate}
+              walkingTimeTemplate={
+                walkingTimeTemplate
+              }
             />
           ) : null}
-          {place.didFallback && place.fallbackLabel ? (
-            <span>{place.fallbackLabel}</span>
+
+          {place.didFallback &&
+          place.fallbackLabel ? (
+            <span>
+              {place.fallbackLabel}
+            </span>
           ) : null}
         </div>
       </div>
@@ -180,7 +265,11 @@ function PlaceCard({
           aria-hidden="true"
           size={19}
           strokeWidth={1.8}
-          className={`shrink-0 text-text-muted transition group-hover:text-text-primary ${direction === "rtl" ? "rotate-180" : ""}`}
+          className={`shrink-0 text-text-muted transition group-hover:text-text-primary ${
+            direction === "rtl"
+              ? "rotate-180"
+              : ""
+          }`}
         />
       ) : null}
     </>
@@ -194,7 +283,10 @@ function PlaceCard({
       <TrackedLink
         href={place.detailHref}
         eventName="landmark_selected"
-        properties={{ landmark_slug: place.slug, locale }}
+        properties={{
+          landmark_slug: place.slug,
+          locale,
+        }}
         className={`${cardClassName} transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-sm`}
       >
         {cardContent}
@@ -202,7 +294,11 @@ function PlaceCard({
     );
   }
 
-  return <article className={cardClassName}>{cardContent}</article>;
+  return (
+    <article className={cardClassName}>
+      {cardContent}
+    </article>
+  );
 }
 
 export default function PlaceDiscovery({
@@ -215,122 +311,343 @@ export default function PlaceDiscovery({
   locationLabels,
   mapLabels,
   distanceLabels,
+  storyLabel,
 }: PlaceDiscoveryProps) {
-  const [selection, setSelection] = useState<PlaceCategoryFilter>("all");
-  const [centerUserLocationRequest, setCenterUserLocationRequest] = useState(0);
-  const { status, location, requestLocation } = useUserLocation();
-  const trackedStatusRef = useRef<UserLocationStatus>("idle");
+  const [selection, setSelection] =
+    useState<PlaceCategoryFilter>("all");
+
+  const [
+    centerUserLocationRequest,
+    setCenterUserLocationRequest,
+  ] = useState(0);
+
+  const trackedStatusRef =
+    useRef<UserLocationStatus>("idle");
+
+  const promptedArrivalSlugsRef =
+    useRef(new Set<string>());
+
+  const [
+    activeArrival,
+    setActiveArrival,
+  ] = useState<
+    | ArrivalMatch<DiscoveryPlace>
+    | undefined
+  >(undefined);
+
+  const activeArrivalRef = useRef<
+    | ArrivalMatch<DiscoveryPlace>
+    | undefined
+  >(undefined);
+
+  const handleLocationUpdate =
+    useCallback(
+      (nextLocation: UserLocation) => {
+        const currentArrival =
+          activeArrivalRef.current;
+
+        if (currentArrival) {
+          const stillNearby =
+            isWithinArrivalRadius(
+              nextLocation,
+              currentArrival.place
+                .coordinates,
+            );
+
+          if (!stillNearby) {
+            activeArrivalRef.current =
+              undefined;
+
+            setActiveArrival(
+              undefined,
+            );
+          }
+
+          return;
+        }
+
+        const match =
+          findArrivalMatch(
+            places,
+            nextLocation,
+            promptedArrivalSlugsRef.current,
+          );
+
+        if (!match) {
+          return;
+        }
+
+        promptedArrivalSlugsRef.current.add(
+          match.place.slug,
+        );
+
+        activeArrivalRef.current =
+          match;
+
+        setActiveArrival(match);
+
+        try {
+          posthog.capture(
+            "arrival_detected",
+            {
+              city,
+              locale,
+              place_slug:
+                match.place.slug,
+            },
+          );
+        } catch {
+          // Arrival detection must not
+          // depend on analytics.
+        }
+      },
+      [city, locale, places],
+    );
+
+  const {
+    status,
+    location,
+    requestLocation,
+  } = useUserLocation({
+    onLocation:
+      handleLocationUpdate,
+  });
+
   const visiblePlaces = useMemo(
-    () => filterPlacesByCategory(places, selection),
+    () =>
+      filterPlacesByCategory(
+        places,
+        selection,
+      ),
     [places, selection],
   );
-  const placesWithDistance = useMemo(
-    () =>
-      withPlacesDistance(
+
+  const placesWithDistance =
+    useMemo(
+      () =>
+        withPlacesDistance(
+          visiblePlaces,
+          status === "available"
+            ? location
+            : undefined,
+        ),
+      [
+        location,
+        status,
         visiblePlaces,
-        status === "available" ? location : undefined,
-      ),
-    [location, status, visiblePlaces],
-  );
-  
+      ],
+    );
+
   const rankedPlaces = useMemo(
     () =>
       status === "available"
-        ? sortPlacesByDistance(placesWithDistance)
+        ? sortPlacesByDistance(
+            placesWithDistance,
+          )
         : placesWithDistance,
-    [placesWithDistance, status],
+    [
+      placesWithDistance,
+      status,
+    ],
   );
+
   useEffect(() => {
-    if (trackedStatusRef.current === status) return;
-    trackedStatusRef.current = status;
+    if (
+      trackedStatusRef.current ===
+      status
+    ) {
+      return;
+    }
+
+    trackedStatusRef.current =
+      status;
 
     if (status === "available") {
-      captureLocationEvent("location_available", { city, locale });
-    } else if (status === "denied") {
-      captureLocationEvent("location_permission_denied", { city, locale });
+      captureLocationEvent(
+        "location_available",
+        {
+          city,
+          locale,
+        },
+      );
+    } else if (
+      status === "denied"
+    ) {
+      captureLocationEvent(
+        "location_permission_denied",
+        {
+          city,
+          locale,
+        },
+      );
     } else if (
       status === "unsupported" ||
       status === "unavailable" ||
       status === "timeout" ||
       status === "error"
     ) {
-      captureLocationEvent("location_error", {
-        city,
-        locale,
-        error_type: status,
-      });
+      captureLocationEvent(
+        "location_error",
+        {
+          city,
+          locale,
+          error_type: status,
+        },
+      );
     }
   }, [city, locale, status]);
 
-  const handleCategorySelect = (category: PlaceCategoryFilter) => {
+  const handleCategorySelect = (
+    category: PlaceCategoryFilter,
+  ) => {
     setSelection(category);
-    posthog.capture("place_category_selected", {
-      category,
-      city,
-      locale,
-    });
+
+    posthog.capture(
+      "place_category_selected",
+      {
+        category,
+        city,
+        locale,
+      },
+    );
   };
 
-  const handleLocationControl = () => {
-    if (status === "available" && location) {
-      setCenterUserLocationRequest((request) => request + 1);
-      return;
-    }
+  const handleLocationControl =
+    () => {
+      if (
+        status === "available" &&
+        location
+      ) {
+        setCenterUserLocationRequest(
+          (request) => request + 1,
+        );
 
-    captureLocationEvent("location_requested", { city, locale });
-    void requestLocation();
-  };
+        return;
+      }
+
+      captureLocationEvent(
+        "location_requested",
+        {
+          city,
+          locale,
+        },
+      );
+
+      void requestLocation();
+    };
 
   return (
     <>
       <div
         role="group"
-        aria-labelledby={labelledBy}
+        aria-labelledby={
+          labelledBy
+        }
         className="mt-4 grid grid-cols-4 gap-2"
       >
-        {categories.map((category) => {
-          const Icon = categoryIcons[category.icon];
-          const count = filterPlacesByCategory(places, category.id).length;
-          const selected = selection === category.id;
+        {categories.map(
+          (category) => {
+            const Icon =
+              categoryIcons[
+                category.icon
+              ];
 
-          return (
-            <button
-              key={category.id}
-              type="button"
-              aria-pressed={selected}
-              aria-label={`${category.label} (${count})`}
-              onClick={() => handleCategorySelect(category.id)}
-              className={`flex min-h-18 flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-xs font-semibold transition ${
-                selected
-                  ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                  : "border-border bg-surface-elevated text-text-secondary hover:border-blue-200 hover:text-text-primary"
-              }`}
-            >
-              <Icon aria-hidden="true" size={19} strokeWidth={1.8} />
-              <span className="max-w-full truncate">{category.label}</span>
-              <span className={selected ? "text-blue-100" : "text-text-muted"}>
-                {count}
-              </span>
-            </button>
-          );
-        })}
+            const count =
+              filterPlacesByCategory(
+                places,
+                category.id,
+              ).length;
+
+            const selected =
+              selection ===
+              category.id;
+
+            return (
+              <button
+                key={
+                  category.id
+                }
+                type="button"
+                aria-pressed={
+                  selected
+                }
+                aria-label={`${category.label} (${count})`}
+                onClick={() =>
+                  handleCategorySelect(
+                    category.id,
+                  )
+                }
+                className={`flex min-h-18 flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-xs font-semibold transition ${
+                  selected
+                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                    : "border-border bg-surface-elevated text-text-secondary hover:border-blue-200 hover:text-text-primary"
+                }`}
+              >
+                <Icon
+                  aria-hidden="true"
+                  size={19}
+                  strokeWidth={
+                    1.8
+                  }
+                />
+
+                <span className="max-w-full truncate">
+                  {
+                    category.label
+                  }
+                </span>
+
+                <span
+                  className={
+                    selected
+                      ? "text-blue-100"
+                      : "text-text-muted"
+                  }
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          },
+        )}
       </div>
 
       <CityMap
-        places={placesWithDistance}
+        places={
+          placesWithDistance
+        }
         categories={categories}
         locale={locale}
         city={city}
         direction={direction}
-        labelledBy={labelledBy}
-        userLocation={status === "available" ? location : undefined}
-        userLocationLabel={locationLabels.markerLabel}
-        locationStatus={status}
-        locationControlLabel={getLocationControlLabel(status, locationLabels)}
-        onLocationControl={handleLocationControl}
-        centerUserLocationRequest={centerUserLocationRequest}
+        labelledBy={
+          labelledBy
+        }
+        userLocation={
+          status === "available"
+            ? location
+            : undefined
+        }
+        userLocationLabel={
+          locationLabels.markerLabel
+        }
+        locationStatus={
+          status
+        }
+        locationControlLabel={getLocationControlLabel(
+          status,
+          locationLabels,
+        )}
+        onLocationControl={
+          handleLocationControl
+        }
+        centerUserLocationRequest={
+          centerUserLocationRequest
+        }
         mapLabels={mapLabels}
-        walkingTimeTemplate={distanceLabels.walkingMinutes}
+        walkingTimeTemplate={
+          distanceLabels.walkingMinutes
+        }
       />
 
       <p
@@ -338,28 +655,67 @@ export default function PlaceDiscovery({
         aria-live="polite"
         className="mt-2 px-1 text-xs leading-5 text-text-muted"
       >
-        {getLocationStatusMessage(status, locationLabels)}
+        {getLocationStatusMessage(
+          status,
+          locationLabels,
+        )}
       </p>
 
-      <div className="mt-4 flex flex-col gap-3" aria-live="polite">
-        {rankedPlaces.map((place) => {
-          const category = categories.find(
-            (candidate) => candidate.id === place.category,
-          );
+      {status === "available" &&
+      activeArrival ? (
+        <ArrivalNotice
+          placeName={
+            activeArrival.place.name
+          }
+          href={
+            activeArrival.detailHref
+          }
+          messageTemplate={
+            locationLabels.arrival
+          }
+          storyLabel={
+            storyLabel
+          }
+          city={city}
+          locale={locale}
+        />
+      ) : null}
 
-          if (!category) return null;
+      <div
+        className="mt-4 flex flex-col gap-3"
+        aria-live="polite"
+      >
+        {rankedPlaces.map(
+          (place) => {
+            const category =
+              categories.find(
+                (candidate) =>
+                  candidate.id ===
+                  place.category,
+              );
 
-          return (
-            <PlaceCard
-              key={place.slug}
-              place={place}
-              category={category}
-              locale={locale}
-              direction={direction}
-              walkingTimeTemplate={distanceLabels.walkingMinutes}
-            />
-          );
-        })}
+            if (!category) {
+              return null;
+            }
+
+            return (
+              <PlaceCard
+                key={place.slug}
+                place={place}
+                category={
+                  category
+                }
+                locale={locale}
+                direction={
+                  direction
+                }
+                walkingTimeTemplate={
+                  distanceLabels.walkingMinutes
+                }
+              />
+            );
+          },
+        )}
       </div>
     </>
   );
