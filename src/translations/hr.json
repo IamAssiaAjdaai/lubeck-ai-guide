@@ -31,7 +31,7 @@
   "placeCategories": { "all": "Sve", "see": "Znamenitosti", "eat": "Hrana", "fun": "Zabava" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Sadržaj na jeziku {language}" },
   "location": { "use": "Upotrijebi moju lokaciju", "requesting": "Traženje vaše lokacije…", "privacy": "Vaša lokacija ostaje u ovom pregledniku i koristi se samo za prikaz na karti.", "available": "Vaša lokacija prikazana je na karti.", "denied": "Pristup lokaciji je odbijen. Dopustite ga u postavkama preglednika i pokušajte ponovno.", "unavailable": "Vaša lokacija trenutačno nije dostupna.", "unsupported": "Ovaj preglednik ne podržava pristup lokaciji.", "timeout": "Zahtjev za lokaciju je istekao. Pokušajte ponovno.", "error": "Nismo mogli pristupiti vašoj lokaciji. Pokušajte ponovno.", "retry": "Pokušaj ponovno", "markerLabel": "Vaša lokacija" },
-  "map": { "unavailable": "Interaktivna karta nije dostupna u ovom pregledniku ili na ovom uređaju.", "retry": "Pokušaj ponovno učitati kartu" },
+  "map": { "unavailable": "Interaktivna karta nije dostupna u ovom pregledniku ili na ovom uređaju.", "retry": "Pokušaj ponovno učitati kartu", "closePlace": "Zatvori detalje mjesta" },
   "distance": { "walkingMinutes": "~{minutes} min pješice" },
   "landmark": {
     "stopProgress": "Postaja {current} od {total}",

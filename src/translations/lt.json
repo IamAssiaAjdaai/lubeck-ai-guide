@@ -31,7 +31,7 @@
   "placeCategories": { "all": "Visi", "see": "Lankytinos vietos", "eat": "Maistas", "fun": "Pramogos" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Turinys kalba: {language}" },
   "location": { "use": "Naudoti mano vietą", "requesting": "Nustatoma jūsų vieta…", "privacy": "Jūsų vieta lieka šioje naršyklėje ir naudojama tik jums parodyti žemėlapyje.", "available": "Jūsų vieta rodoma žemėlapyje.", "denied": "Prieiga prie vietos atmesta. Leiskite ją naršyklės nustatymuose ir bandykite dar kartą.", "unavailable": "Jūsų vieta šiuo metu nepasiekiama.", "unsupported": "Ši naršyklė nepalaiko prieigos prie vietos.", "timeout": "Vietos užklausos laikas baigėsi. Bandykite dar kartą.", "error": "Nepavyko pasiekti jūsų vietos. Bandykite dar kartą.", "retry": "Bandyti dar kartą", "markerLabel": "Jūsų vieta" },
-  "map": { "unavailable": "Interaktyvus žemėlapis šioje naršyklėje ar įrenginyje nepasiekiamas.", "retry": "Bandyti žemėlapį dar kartą" },
+  "map": { "unavailable": "Interaktyvus žemėlapis šioje naršyklėje ar įrenginyje nepasiekiamas.", "retry": "Bandyti žemėlapį dar kartą", "closePlace": "Uždaryti vietos detales" },
   "distance": { "walkingMinutes": "~{minutes} min pėsčiomis" },
   "landmark": {
     "stopProgress": "{current} stotelė iš {total}",

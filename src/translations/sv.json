@@ -31,7 +31,7 @@
   "placeCategories": { "all": "Alla", "see": "Se", "eat": "Äta", "fun": "Nöje" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Innehåll på {language}" },
   "location": { "use": "Använd min plats", "requesting": "Hämtar din plats…", "privacy": "Din plats stannar i den här webbläsaren och används bara för att visa dig på kartan.", "available": "Din plats visas på kartan.", "denied": "Platsåtkomst nekades. Tillåt den i webbläsarens inställningar och försök igen.", "unavailable": "Din plats är inte tillgänglig just nu.", "unsupported": "Den här webbläsaren stöder inte platsåtkomst.", "timeout": "Platsförfrågan tog för lång tid. Försök igen.", "error": "Vi kunde inte komma åt din plats. Försök igen.", "retry": "Försök igen", "markerLabel": "Din plats" },
-  "map": { "unavailable": "Den interaktiva kartan är inte tillgänglig i den här webbläsaren eller på den här enheten.", "retry": "Försök med kartan igen" },
+  "map": { "unavailable": "Den interaktiva kartan är inte tillgänglig i den här webbläsaren eller på den här enheten.", "retry": "Försök med kartan igen", "closePlace": "Stäng platsdetaljer" },
   "distance": { "walkingMinutes": "~{minutes} min promenad" },
   "landmark": {
     "stopProgress": "Stopp {current} av {total}",
