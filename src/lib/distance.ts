@@ -190,3 +190,21 @@ export function localizePlaceDistance(
 
   return { ...distance, distanceLabel, walkingTimeLabel };
 }
+
+export function sortPlacesByDistance<
+  T extends Readonly<{ distance?: PlaceDistance }>,
+>(places: readonly T[]): readonly T[] {
+  return [...places].sort((first, second) => {
+    const firstDistance = first.distance?.distanceMeters;
+    const secondDistance = second.distance?.distanceMeters;
+
+    if (firstDistance === undefined && secondDistance === undefined) {
+      return 0;
+    }
+
+    if (firstDistance === undefined) return 1;
+    if (secondDistance === undefined) return -1;
+
+    return firstDistance - secondDistance;
+  });
+}

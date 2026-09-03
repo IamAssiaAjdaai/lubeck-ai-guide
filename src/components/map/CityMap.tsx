@@ -9,7 +9,7 @@ import {
   Marker,
   NavigationControl,
 } from "maplibre-gl";
-import { MapPinOff } from "lucide-react";
+import { MapPinOff, X } from "lucide-react";
 
 import TrackedLink from "@/components/TrackedLink";
 import MapLocationControl from "@/components/map/MapLocationControl";
@@ -435,6 +435,14 @@ export default function CityMap({
             tabIndex={-1}
             className={styles.popupCard}
           >
+            <button
+              type="button"
+              aria-label={mapLabels.closePlace}
+              onClick={() => setSelectedSlug(undefined)}
+              className={styles.popupClose}
+            >
+              <X aria-hidden="true" size={18} strokeWidth={1.8} />
+            </button>
             <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-accent rtl:tracking-normal">
               {selectedCategory.label} · {selectedPlace.duration}
             </p>

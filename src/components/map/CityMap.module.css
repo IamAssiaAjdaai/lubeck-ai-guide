@@ -204,6 +204,7 @@
 }
 
 .popupCard {
+  position: relative;
   pointer-events: auto;
   max-height: 11rem;
   overflow: auto;
@@ -211,8 +212,35 @@
   border-radius: var(--radius-sm);
   background: rgb(255 255 255 / 0.97);
   padding: 0.875rem;
+  padding-inline-end: 3rem;
   box-shadow: 0 12px 30px rgb(23 23 23 / 0.2);
   backdrop-filter: blur(8px);
+}
+
+.popupClose {
+  position: absolute;
+  top: 0.625rem;
+  inset-inline-end: 0.625rem;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.popupClose:hover,
+.popupClose:focus-visible {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.popupClose:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
 }
 
 @media (min-width: 430px) {

@@ -24,6 +24,7 @@ import {
 } from "@/data/placeCategories";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import {
+  sortPlacesByDistance,
   withPlacesDistance,
   type PlaceDistance,
 } from "@/lib/distance";
@@ -231,7 +232,14 @@ export default function PlaceDiscovery({
       ),
     [location, status, visiblePlaces],
   );
-
+  
+  const rankedPlaces = useMemo(
+    () =>
+      status === "available"
+        ? sortPlacesByDistance(placesWithDistance)
+        : placesWithDistance,
+    [placesWithDistance, status],
+  );
   useEffect(() => {
     if (trackedStatusRef.current === status) return;
     trackedStatusRef.current = status;
@@ -334,7 +342,7 @@ export default function PlaceDiscovery({
       </p>
 
       <div className="mt-4 flex flex-col gap-3" aria-live="polite">
-        {placesWithDistance.map((place) => {
+        {rankedPlaces.map((place) => {
           const category = categories.find(
             (candidate) => candidate.id === place.category,
           );

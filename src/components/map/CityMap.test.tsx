@@ -163,6 +163,25 @@ describe("CityMap initialization", () => {
     expect(screen.getByText("~11 min walk")).not.toBeNull();
   });
 
+  it("closes the selected place popup from the close button", () => {
+  const { map } = createMapMock();
+  mocks.constructMap.mockReturnValue(map);
+
+  renderMap();
+
+  fireEvent.click(mocks.markerElements[0]);
+
+  expect(screen.getByText("Museum description")).not.toBeNull();
+
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: getTranslations("en").map.closePlace
+    }),
+  );
+
+  expect(screen.queryByText("Museum description")).toBeNull();
+  });
+
   it("shows a non-retryable fallback when WebGL2 is unavailable", async () => {
     mocks.isWebGL2Supported.mockReturnValue(false);
 

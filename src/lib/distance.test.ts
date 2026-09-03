@@ -7,6 +7,7 @@ import {
   estimateWalkingMinutes,
   formatDistance,
   formatWalkingTime,
+  sortPlacesByDistance,
   withPlaceDistance,
   withPlacesDistance,
 } from "@/lib/distance";
@@ -113,5 +114,68 @@ describe("derived place distance", () => {
     expect(lubeckPlaces.filter((place) => place.category === "eat")).toHaveLength(5);
     expect(lubeckPlaces.filter((place) => place.category === "fun")).toHaveLength(3);
     expect(lubeckLandmarks).toHaveLength(5);
+  });
+});
+
+describe("distance sorting", () => {
+  it("sorts places from nearest to farthest", () => {
+    const places = [
+      {
+        slug: "far",
+        distance: { distanceMeters: 800, walkingMinutes: 10 },
+      },
+      {
+        slug: "near",
+        distance: { distanceMeters: 120, walkingMinutes: 2 },
+      },
+      {
+        slug: "middle",
+        distance: { distanceMeters: 450, walkingMinutes: 6 },
+      },
+    ];
+
+    const sorted = sortPlacesByDistance(places);
+
+    expect(sorted.map((place) => place.slug)).toEqual([
+      "near",
+      "middle",
+      "far",
+    ]);
+  });
+
+  it("keeps places without distance at the end", () => {
+    const places = [
+      { slug: "unknown" },
+      {
+        slug: "known",
+        distance: { distanceMeters: 200, walkingMinutes: 3 },
+      },
+    ];
+
+    const sorted = sortPlacesByDistance(places);
+
+    expect(sorted.map((place) => place.slug)).toEqual([
+      "known",
+      "unknown",
+    ]);
+  });
+
+  it("does not mutate the original array", () => {
+    const places = [
+      {
+        slug: "far",
+        distance: { distanceMeters: 800, walkingMinutes: 10 },
+      },
+      {
+        slug: "near",
+        distance: { distanceMeters: 120, walkingMinutes: 2 },
+      },
+    ];
+
+    const originalOrder = places.map((place) => place.slug);
+
+    sortPlacesByDistance(places);
+
+    expect(places.map((place) => place.slug)).toEqual(originalOrder);
   });
 });

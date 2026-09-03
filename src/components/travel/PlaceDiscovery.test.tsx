@@ -355,11 +355,30 @@ describe("PlaceDiscovery", () => {
       </section>,
     );
 
+    const originalOrder = screen
+      .getAllByRole("heading", { level: 3 })
+      .map((heading) => heading.textContent);
+
+    expect(originalOrder).toEqual([
+      "Museum",
+      "Cafe",
+      "Theatre",
+    ]);
     fireEvent.click(screen.getByRole("button", { name: "Use my location" }));
 
     const retryControl = await screen.findByRole("button", {
       name: "Try again",
     });
+
+    const orderAfterDenial = screen
+    .getAllByRole("heading", { level: 3 })
+    .map((heading) => heading.textContent);
+
+    expect(orderAfterDenial).toEqual([
+      "Museum",
+      "Cafe",
+      "Theatre",
+    ]);
     expect(retryControl.hasAttribute("disabled")).toBe(false);
     expect(screen.getByTestId("city-map")).not.toBeNull();
     expect(screen.getByText("Museum")).not.toBeNull();
@@ -372,5 +391,70 @@ describe("PlaceDiscovery", () => {
       city: "test-city",
       locale: "en",
     });
+  });
+  it("ranks place cards from nearest to farthest after location becomes available", async () => {
+  const getCurrentPosition = vi.fn<Geolocation["getCurrentPosition"]>(
+    (success) =>
+      success({
+        coords: {
+          latitude: 53.865,
+          longitude: 10.686,
+          accuracy: 9,
+        },
+        timestamp: 2468,
+      } as GeolocationPosition),
+  );
+
+  vi.stubGlobal("navigator", {
+    geolocation: { getCurrentPosition },
+  });
+
+  const t = getTranslations("en");
+
+  render(
+    <section>
+      <h2 id="near-me-heading">Places</h2>
+
+      <PlaceDiscovery
+        places={places}
+        categories={localizePlaceCategories(t)}
+        locale="en"
+        city="test-city"
+        direction="ltr"
+        labelledBy="near-me-heading"
+        locationLabels={t.location}
+        mapLabels={t.map}
+        distanceLabels={t.distance}
+      />
+    </section>,
+  );
+
+  const beforeLocation = screen
+    .getAllByRole("heading", { level: 3 })
+    .map((heading) => heading.textContent);
+
+  expect(beforeLocation).toEqual([
+    "Museum",
+    "Cafe",
+    "Theatre",
+  ]);
+
+  fireEvent.click(
+    await screen.findByRole("button", {
+      name: t.location.use,
+    }),
+  );
+
+  await waitFor(() => {
+    const afterLocation = screen
+      .getAllByRole("heading", { level: 3 })
+      .map((heading) => heading.textContent);
+
+    expect(afterLocation).toEqual([
+      "Cafe",
+      "Museum",
+      "Theatre",
+    ]);
+  });
   });
 });
