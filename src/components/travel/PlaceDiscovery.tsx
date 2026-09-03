@@ -3,7 +3,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import posthog from "posthog-js";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChevronRight,
   Clock3,
@@ -21,7 +21,10 @@ import {
   type PlaceCategoryFilter,
   type PlaceCategoryIconId,
 } from "@/data/placeCategories";
+import { useUserLocation } from "@/hooks/useUserLocation";
+import type { UserLocationStatus } from "@/lib/geolocation";
 import type { Locale, TextDirection } from "@/lib/i18n";
+import type { Translations } from "@/lib/i18n";
 import type { MapPlace } from "@/lib/mapPlaces";
 
 const CityMap = dynamic(() => import("@/components/map/CityMap"), {
@@ -54,7 +57,47 @@ type PlaceDiscoveryProps = Readonly<{
   city: string;
   direction: TextDirection;
   labelledBy: string;
+  locationLabels: Translations["location"];
+  mapLabels: Translations["map"];
 }>;
+
+type LocationAnalyticsEvent =
+  | "location_requested"
+  | "location_permission_denied"
+  | "location_available"
+  | "location_error";
+
+function captureLocationEvent(
+  eventName: LocationAnalyticsEvent,
+  properties: Readonly<Record<string, string>>,
+) {
+  try {
+    posthog.capture(eventName, properties);
+  } catch {
+    // Location access must keep working if analytics is unavailable.
+  }
+}
+
+function getLocationStatusMessage(
+  status: UserLocationStatus,
+  labels: Translations["location"],
+) {
+  if (status === "idle") return labels.privacy;
+  if (status === "requesting") return labels.requesting;
+  if (status === "available") return labels.available;
+  return labels[status];
+}
+
+function getLocationControlLabel(
+  status: UserLocationStatus,
+  labels: Translations["location"],
+) {
+  if (status === "idle") return labels.use;
+  if (status === "requesting") return labels.requesting;
+  if (status === "available") return labels.markerLabel;
+  if (status === "unsupported") return labels.unsupported;
+  return labels.retry;
+}
 
 function PlaceCard({
   place,
@@ -152,9 +195,36 @@ export default function PlaceDiscovery({
   city,
   direction,
   labelledBy,
+  locationLabels,
+  mapLabels,
 }: PlaceDiscoveryProps) {
   const [selection, setSelection] = useState<PlaceCategoryFilter>("all");
+  const [centerUserLocationRequest, setCenterUserLocationRequest] = useState(0);
+  const { status, location, requestLocation } = useUserLocation();
+  const trackedStatusRef = useRef<UserLocationStatus>("idle");
   const visiblePlaces = filterPlacesByCategory(places, selection);
+
+  useEffect(() => {
+    if (trackedStatusRef.current === status) return;
+    trackedStatusRef.current = status;
+
+    if (status === "available") {
+      captureLocationEvent("location_available", { city, locale });
+    } else if (status === "denied") {
+      captureLocationEvent("location_permission_denied", { city, locale });
+    } else if (
+      status === "unsupported" ||
+      status === "unavailable" ||
+      status === "timeout" ||
+      status === "error"
+    ) {
+      captureLocationEvent("location_error", {
+        city,
+        locale,
+        error_type: status,
+      });
+    }
+  }, [city, locale, status]);
 
   const handleCategorySelect = (category: PlaceCategoryFilter) => {
     setSelection(category);
@@ -163,6 +233,16 @@ export default function PlaceDiscovery({
       city,
       locale,
     });
+  };
+
+  const handleLocationControl = () => {
+    if (status === "available" && location) {
+      setCenterUserLocationRequest((request) => request + 1);
+      return;
+    }
+
+    captureLocationEvent("location_requested", { city, locale });
+    void requestLocation();
   };
 
   return (
@@ -207,7 +287,22 @@ export default function PlaceDiscovery({
         city={city}
         direction={direction}
         labelledBy={labelledBy}
+        userLocation={status === "available" ? location : undefined}
+        userLocationLabel={locationLabels.markerLabel}
+        locationStatus={status}
+        locationControlLabel={getLocationControlLabel(status, locationLabels)}
+        onLocationControl={handleLocationControl}
+        centerUserLocationRequest={centerUserLocationRequest}
+        mapLabels={mapLabels}
       />
+
+      <p
+        role="status"
+        aria-live="polite"
+        className="mt-2 px-1 text-xs leading-5 text-text-muted"
+      >
+        {getLocationStatusMessage(status, locationLabels)}
+      </p>
 
       <div className="mt-4 flex flex-col gap-3" aria-live="polite">
         {visiblePlaces.map((place) => {

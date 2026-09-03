@@ -119,6 +119,8 @@ export default async function LubeckPage({
             city={city.slug}
             direction={direction}
             labelledBy="place-category-heading"
+            locationLabels={t.location}
+            mapLabels={t.map}
           />
         </section>
       </section>

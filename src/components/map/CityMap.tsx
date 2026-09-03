@@ -4,12 +4,15 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  GPUInitializationError,
   Map as MapLibreMap,
   Marker,
   NavigationControl,
 } from "maplibre-gl";
+import { MapPinOff } from "lucide-react";
 
 import TrackedLink from "@/components/TrackedLink";
+import MapLocationControl from "@/components/map/MapLocationControl";
 import type { LocalizedPlaceCategory } from "@/data/placeCategories";
 import { mapProviderConfig } from "@/lib/mapProvider";
 import {
@@ -17,7 +20,16 @@ import {
   getMapMarkerAriaLabel,
   type MapPlace,
 } from "@/lib/mapPlaces";
-import type { Locale, TextDirection } from "@/lib/i18n";
+import type { Locale, TextDirection, Translations } from "@/lib/i18n";
+import type { UserLocation, UserLocationStatus } from "@/lib/geolocation";
+import {
+  getFatalMapErrorReason,
+  getMapFailureDevelopmentLabel,
+  isWebGL2Supported,
+  MAP_STARTUP_TIMEOUT_MS,
+  reportMapInitializationFailure,
+  type MapFailureReason,
+} from "@/lib/mapSupport";
 
 import styles from "./CityMap.module.css";
 
@@ -37,11 +49,23 @@ type CityMapProps = Readonly<{
   initialCenter?: readonly [lng: number, lat: number];
   initialZoom?: number;
   styleUrl?: string;
+  userLocation?: UserLocation;
+  userLocationLabel: string;
+  locationStatus: UserLocationStatus;
+  locationControlLabel: string;
+  onLocationControl: () => void;
+  centerUserLocationRequest: number;
+  mapLabels: Translations["map"];
 }>;
 
 type MarkerEntry = Readonly<{
   marker: Marker;
   element: HTMLButtonElement;
+}>;
+
+type MapFailure = Readonly<{
+  reason: MapFailureReason;
+  retryable: boolean;
 }>;
 
 const DEFAULT_INITIAL_CENTER = [0, 0] as const;
@@ -65,12 +89,24 @@ export default function CityMap({
   initialCenter = DEFAULT_INITIAL_CENTER,
   initialZoom = 1,
   styleUrl = mapProviderConfig.styleUrl,
+  userLocation,
+  userLocationLabel,
+  locationStatus,
+  locationControlLabel,
+  onLocationControl,
+  centerUserLocationRequest,
+  mapLabels,
 }: CityMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<MarkerEntry[]>([]);
+  const userMarkerRef = useRef<Marker | null>(null);
+  const lastCenteredLocationRef = useRef<number | undefined>(undefined);
+  const handledCenterRequestRef = useRef(0);
   const popupRef = useRef<HTMLElement>(null);
   const [selectedSlug, setSelectedSlug] = useState<string>();
+  const [mapFailure, setMapFailure] = useState<MapFailure>();
+  const [initializationAttempt, setInitializationAttempt] = useState(0);
 
   const categoryById = useMemo(
     () => new Map(categories.map((category) => [category.id, category])),
@@ -84,32 +120,103 @@ export default function CityMap({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    const map = new MapLibreMap({
-      container: containerRef.current,
-      style: styleUrl,
-      center: [...initialCenter],
-      zoom: initialZoom,
-      attributionControl: mapProviderConfig.attributionControl,
-      dragRotate: false,
-      pitchWithRotate: false,
-    });
+    let disposed = false;
 
-    map.addControl(
-      new NavigationControl({ showCompass: false, visualizePitch: false }),
-      "top-right",
-    );
-    map.on("load", () => {
-      captureMapEvent("map_opened", { city, locale });
-    });
-    mapRef.current = map;
+    if (!isWebGL2Supported()) {
+      const fallbackTimer = setTimeout(() => {
+        if (disposed) return;
+        reportMapInitializationFailure("webgl2-unavailable");
+        setMapFailure({ reason: "webgl2-unavailable", retryable: false });
+      }, 0);
 
-    return () => {
+      return () => {
+        disposed = true;
+        clearTimeout(fallbackTimer);
+      };
+    }
+
+    let map: MapLibreMap | null = null;
+    let hasLoaded = false;
+    let failed = false;
+    let startupTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const failMap = (
+      reason: MapFailureReason,
+      error: unknown,
+      retryable: boolean,
+    ) => {
+      if (disposed || failed) return;
+      failed = true;
+
+      reportMapInitializationFailure(reason, error);
+      if (startupTimer) clearTimeout(startupTimer);
+      startupTimer = undefined;
       markersRef.current.forEach(({ marker }) => marker.remove());
       markersRef.current = [];
-      map.remove();
+      userMarkerRef.current?.remove();
+      userMarkerRef.current = null;
+
+      const failedMap = map;
+      map = null;
+      mapRef.current = null;
+      failedMap?.remove();
+      setMapFailure({ reason, retryable });
+    };
+
+    try {
+      map = new MapLibreMap({
+        container: containerRef.current,
+        style: styleUrl,
+        center: [...initialCenter],
+        zoom: initialZoom,
+        attributionControl: mapProviderConfig.attributionControl,
+        dragRotate: false,
+        pitchWithRotate: false,
+      });
+      mapRef.current = map;
+
+      map.addControl(
+        new NavigationControl({ showCompass: false, visualizePitch: false }),
+        "top-right",
+      );
+      map.on("load", () => {
+        hasLoaded = true;
+        if (startupTimer) clearTimeout(startupTimer);
+        startupTimer = undefined;
+        captureMapEvent("map_opened", { city, locale });
+      });
+      map.on("error", (event) => {
+        const reason = getFatalMapErrorReason(event, hasLoaded);
+        if (!reason) return;
+        failMap(
+          reason,
+          event.error,
+          reason !== "webgl2-unavailable",
+        );
+      });
+      startupTimer = setTimeout(() => {
+        failMap("startup-timeout", undefined, true);
+      }, MAP_STARTUP_TIMEOUT_MS);
+    } catch (error) {
+      const reason =
+        error instanceof GPUInitializationError
+          ? "webgl2-unavailable"
+          : "constructor";
+      failMap(reason, error, reason !== "webgl2-unavailable");
+    }
+
+    return () => {
+      disposed = true;
+      if (startupTimer) clearTimeout(startupTimer);
+      markersRef.current.forEach(({ marker }) => marker.remove());
+      markersRef.current = [];
+      userMarkerRef.current?.remove();
+      userMarkerRef.current = null;
+      map?.remove();
+      map = null;
       mapRef.current = null;
     };
-  }, [city, initialCenter, initialZoom, locale, styleUrl]);
+  }, [city, initialCenter, initialZoom, initializationAttempt, locale, styleUrl]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -177,6 +284,83 @@ export default function CityMap({
   }, [categoryById, city, locale, places]);
 
   useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    userMarkerRef.current?.remove();
+    userMarkerRef.current = null;
+
+    if (!userLocation) {
+      lastCenteredLocationRef.current = undefined;
+      return;
+    }
+
+    const element = document.createElement("button");
+    const visual = document.createElement("span");
+    element.type = "button";
+    element.className = styles.locationMarker;
+    element.setAttribute("aria-label", userLocationLabel);
+    element.title = userLocationLabel;
+    visual.className = styles.locationMarkerVisual;
+    visual.setAttribute("aria-hidden", "true");
+    element.appendChild(visual);
+    element.addEventListener("click", (event) => {
+      event.stopPropagation();
+      map.easeTo({
+        center: [userLocation.lng, userLocation.lat],
+        zoom: Math.max(map.getZoom(), 15),
+        duration: 350,
+      });
+    });
+
+    userMarkerRef.current = new Marker({ element, anchor: "center" })
+      .setLngLat([userLocation.lng, userLocation.lat])
+      .addTo(map);
+
+    if (lastCenteredLocationRef.current !== userLocation.timestamp) {
+      const bounds = calculateMapBounds([
+        ...places,
+        { coordinates: { lat: userLocation.lat, lng: userLocation.lng } },
+      ]);
+
+      if (bounds) {
+        map.fitBounds(
+          [
+            [...bounds[0]],
+            [...bounds[1]],
+          ],
+          { padding: 48, maxZoom: 16, duration: 450 },
+        );
+      }
+      lastCenteredLocationRef.current = userLocation.timestamp;
+    }
+
+    return () => {
+      userMarkerRef.current?.remove();
+      userMarkerRef.current = null;
+    };
+  }, [places, userLocation, userLocationLabel]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (
+      !map ||
+      !userLocation ||
+      centerUserLocationRequest === 0 ||
+      handledCenterRequestRef.current === centerUserLocationRequest
+    ) {
+      return;
+    }
+
+    map.easeTo({
+      center: [userLocation.lng, userLocation.lat],
+      zoom: Math.max(map.getZoom(), 15),
+      duration: 350,
+    });
+    handledCenterRequestRef.current = centerUserLocationRequest;
+  }, [centerUserLocationRequest, userLocation]);
+
+  useEffect(() => {
     markersRef.current.forEach(({ element }) => {
       element.classList.toggle(
         styles.selected,
@@ -192,9 +376,44 @@ export default function CityMap({
       aria-labelledby={labelledBy}
       className={`mt-4 ${styles.mapFrame}`}
     >
-      <div ref={containerRef} className={styles.mapCanvas} dir="ltr" />
+      {mapFailure ? (
+        <div
+          role="status"
+          dir={direction}
+          className={styles.mapFallback}
+          data-map-failure={mapFailure.reason}
+        >
+          <MapPinOff aria-hidden="true" size={25} strokeWidth={1.7} />
+          <p>{mapLabels.unavailable}</p>
+          {process.env.NODE_ENV === "development" ? (
+            <code className={styles.mapFailureCode}>
+              {getMapFailureDevelopmentLabel(mapFailure.reason)}
+            </code>
+          ) : null}
+          {mapFailure.retryable ? (
+            <button
+              type="button"
+              className={styles.mapRetry}
+              onClick={() => {
+                setMapFailure(undefined);
+                setInitializationAttempt((attempt) => attempt + 1);
+              }}
+            >
+              {mapLabels.retry}
+            </button>
+          ) : null}
+        </div>
+      ) : (
+        <>
+          <div ref={containerRef} className={styles.mapCanvas} dir="ltr" />
 
-      <div className={styles.popupShell} dir={direction} aria-live="polite">
+          <MapLocationControl
+            status={locationStatus}
+            label={locationControlLabel}
+            onActivate={onLocationControl}
+          />
+
+          <div className={styles.popupShell} dir={direction} aria-live="polite">
         {selectedPlace && selectedCategory ? (
           <article
             ref={popupRef}
@@ -236,7 +455,9 @@ export default function CityMap({
             ) : null}
           </article>
         ) : null}
-      </div>
+          </div>
+        </>
+      )}
     </section>
   );
 }
