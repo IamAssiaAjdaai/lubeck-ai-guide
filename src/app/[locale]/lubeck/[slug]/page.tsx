@@ -6,7 +6,10 @@ import TrackLandmarkView from "@/components/TrackLandmarkView";
 import AudioPlayer from "@/components/AudioPlayer";
 import TrackedLink from "@/components/TrackedLink";
 import AskGuide from "@/components/AskGuide";
-import { landmarks } from "@/data/landmarks";
+import {
+  getPlaceDurationLabel,
+  lubeckLandmarks as landmarks,
+} from "@/data/places";
 import {
   formatMessage,
   getDirection,
@@ -78,10 +81,10 @@ export default async function LandmarkPage({
   const content = landmark.content[currentLocale];
 
   const name = content.name;
-  const duration = content.duration;
+  const duration = getPlaceDurationLabel(landmark, currentLocale);
   const description = content.description;
   const story = content.story;
-  const audio = content.audio;
+  const audio = landmark.audio?.[currentLocale] ?? "";
   const facts = content.facts;
   const image = landmark.image;
 

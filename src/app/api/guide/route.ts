@@ -1,7 +1,7 @@
 import Groq from "groq-sdk";
 
 import { NextResponse } from "next/server";
-import { landmarks } from "@/data/landmarks";
+import { lubeckLandmarks as landmarks } from "@/data/places";
 import { isLocale, languages } from "@/lib/i18n";
 
 import { aiGuideRateLimit } from "@/lib/rateLimit";
