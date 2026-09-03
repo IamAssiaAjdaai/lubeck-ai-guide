@@ -11,7 +11,6 @@ import { localizePlaceCategories } from "@/data/placeCategories";
 import {
   lubeckLandmarks,
   lubeckPlaces,
-  resolvePlaceContent,
 } from "@/data/places";
 import {
   formatMessage,
@@ -21,6 +20,7 @@ import {
   languages,
   locales,
 } from "@/lib/i18n";
+import { prepareMapPlaces } from "@/lib/mapPlaces";
 
 type LubeckPageProps = {
   params: Promise<{
@@ -49,42 +49,29 @@ export default async function LubeckPage({
   const [durationLabel, stopsLabel = ""] = t.explore.duration.split("•").map((value) => value.trim());
   const tourStopSlugs = new Set(lubeckLandmarks.map((place) => place.slug));
   const categories = localizePlaceCategories(t);
-  const catalogPlaces = lubeckPlaces.flatMap((place): DiscoveryPlace[] => {
-    const resolvedContent = resolvePlaceContent(place, currentLocale);
-
-    if (!resolvedContent) return [];
-
-    return [
-      {
-        slug: place.slug,
-        category: place.category,
-        image: place.image,
-        name: resolvedContent.content.name,
-        shortDescription: resolvedContent.content.shortDescription,
-        requestedLocale: resolvedContent.requestedLocale,
-        actualLocale: resolvedContent.actualLocale,
-        contentDirection: getDirection(resolvedContent.actualLocale),
-        didFallback: resolvedContent.didFallback,
-        duration: formatMessage(t.placeCatalog.placeDuration, {
-          minutes: new Intl.NumberFormat(currentLocale).format(
-            place.durationMinutes,
-          ),
-        }),
-        ...(resolvedContent.didFallback
-          ? {
-              fallbackLabel: formatMessage(t.placeCatalog.contentFallback, {
-                language: languages[resolvedContent.actualLocale].nativeName,
-              }),
-            }
-          : {}),
-        ...(tourStopSlugs.has(place.slug)
-          ? {
-              detailHref: `/${currentLocale}/${city.slug}/${place.slug}`,
-            }
-          : {}),
-      },
-    ];
+  const preparedPlaces = prepareMapPlaces(lubeckPlaces, currentLocale, {
+    getDetailHref: (place) =>
+      tourStopSlugs.has(place.slug)
+        ? `/${currentLocale}/${city.slug}/${place.slug}`
+        : undefined,
   });
+  const catalogPlaces: readonly DiscoveryPlace[] = preparedPlaces.map(
+    (place) => ({
+      ...place,
+      duration: formatMessage(t.placeCatalog.placeDuration, {
+        minutes: new Intl.NumberFormat(currentLocale).format(
+          place.durationMinutes,
+        ),
+      }),
+      ...(place.didFallback
+        ? {
+            fallbackLabel: formatMessage(t.placeCatalog.contentFallback, {
+              language: languages[place.actualLocale].nativeName,
+            }),
+          }
+        : {}),
+    }),
+  );
 
   return (
     <main

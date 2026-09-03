@@ -13,6 +13,12 @@ vi.mock("posthog-js", () => ({
   default: { capture },
 }));
 
+vi.mock("@/components/map/CityMap", () => ({
+  default: ({ places: mapPlaces }: { places: readonly DiscoveryPlace[] }) => (
+    <div data-testid="city-map-marker-count">{mapPlaces.length}</div>
+  ),
+}));
+
 const places = [
   {
     slug: "museum",
@@ -20,6 +26,8 @@ const places = [
     name: "Museum",
     shortDescription: "A museum without a supplied image.",
     duration: "30 min",
+    durationMinutes: 30,
+    coordinates: { lat: 53.86, lng: 10.68 },
     requestedLocale: "en",
     actualLocale: "en",
     contentDirection: "ltr",
@@ -31,6 +39,8 @@ const places = [
     name: "Cafe",
     shortDescription: "A cafe without a supplied image.",
     duration: "45 min",
+    durationMinutes: 45,
+    coordinates: { lat: 53.87, lng: 10.69 },
     requestedLocale: "fr",
     actualLocale: "en",
     contentDirection: "ltr",
@@ -43,6 +53,8 @@ const places = [
     name: "Theatre",
     shortDescription: "A theatre without a supplied image.",
     duration: "90 min",
+    durationMinutes: 90,
+    coordinates: { lat: 53.88, lng: 10.7 },
     requestedLocale: "en",
     actualLocale: "en",
     contentDirection: "ltr",
@@ -56,7 +68,7 @@ describe("PlaceDiscovery", () => {
     capture.mockReset();
   });
 
-  it("filters cards and tracks category selection", () => {
+  it("filters cards, map markers, and tracks category selection", async () => {
     render(
       <section>
         <h2 id="places-heading">Places</h2>
@@ -74,6 +86,9 @@ describe("PlaceDiscovery", () => {
     expect(screen.getByText("Museum")).not.toBeNull();
     expect(screen.getByText("Cafe")).not.toBeNull();
     expect(screen.getByText("Theatre")).not.toBeNull();
+    expect((await screen.findByTestId("city-map-marker-count")).textContent).toBe(
+      "3",
+    );
 
     const allButton = screen.getByRole("button", { name: "All (3)" });
     const eatButton = screen.getByRole("button", { name: "Eat (1)" });
@@ -86,6 +101,7 @@ describe("PlaceDiscovery", () => {
     expect(screen.queryByText("Museum")).toBeNull();
     expect(screen.getByText("Cafe")).not.toBeNull();
     expect(screen.queryByText("Theatre")).toBeNull();
+    expect(screen.getByTestId("city-map-marker-count").textContent).toBe("1");
     expect(screen.getByText("Content shown in English")).not.toBeNull();
     expect(allButton.getAttribute("aria-pressed")).toBe("false");
     expect(eatButton.getAttribute("aria-pressed")).toBe("true");

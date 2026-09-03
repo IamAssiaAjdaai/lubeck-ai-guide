@@ -1,0 +1,95 @@
+.mapFrame {
+  position: relative;
+  height: 20rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.mapCanvas {
+  position: absolute;
+  inset: 0;
+}
+
+.marker {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  cursor: pointer;
+  place-items: center;
+  border: 0;
+  background: transparent;
+}
+
+.markerVisual {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  place-items: center;
+  border: 2px solid white;
+  color: white;
+  font-size: 0.6875rem;
+  font-weight: 750;
+  line-height: 1;
+  box-shadow: 0 4px 12px rgb(23 23 23 / 0.24);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.marker:hover .markerVisual,
+.marker:focus-visible .markerVisual,
+.selected .markerVisual {
+  transform: scale(1.15);
+  box-shadow:
+    0 0 0 3px rgb(255 255 255 / 0.9),
+    0 5px 16px rgb(23 23 23 / 0.3);
+}
+
+.see .markerVisual {
+  border-radius: 999px;
+  background: #2563eb;
+}
+
+.eat .markerVisual {
+  border-radius: 0.45rem;
+  background: #14b8a6;
+}
+
+.fun .markerVisual {
+  border-radius: 999px 999px 0.3rem 999px;
+  background: #7c3aed;
+}
+
+.popupShell {
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0.75rem;
+  bottom: 1.75rem;
+  z-index: 2;
+}
+
+.popupCard {
+  pointer-events: auto;
+  max-height: 11rem;
+  overflow: auto;
+  border: 1px solid rgb(229 231 235 / 0.9);
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 0.97);
+  padding: 0.875rem;
+  box-shadow: 0 12px 30px rgb(23 23 23 / 0.2);
+  backdrop-filter: blur(8px);
+}
+
+@media (min-width: 430px) {
+  .mapFrame {
+    height: 22rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .markerVisual {
+    transition: none;
+  }
+}
