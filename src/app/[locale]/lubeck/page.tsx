@@ -5,7 +5,10 @@ import { ArrowLeft, ArrowRight, House } from "lucide-react";
 import LandmarkCard from "@/components/travel/LandmarkCard";
 import TourCard from "@/components/travel/TourCard";
 import { cities } from "@/data/cities";
-import { landmarks } from "@/data/landmarks";
+import {
+  getPlaceDurationLabel,
+  lubeckLandmarks as landmarks,
+} from "@/data/places";
 import {
   formatMessage,
   getDirection,
@@ -87,7 +90,7 @@ export default async function LubeckPage({
                   href={`/${currentLocale}/${city.slug}/${landmark.slug}`}
                   image={landmark.image}
                   name={content.name}
-                  duration={content.duration}
+                  duration={getPlaceDurationLabel(landmark, currentLocale)}
                   stopLabel={formatMessage(t.landmark.stopProgress, { current: index + 1, total: landmarks.length })}
                   direction={direction}
                   locale={currentLocale}
