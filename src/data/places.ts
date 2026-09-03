@@ -48,9 +48,12 @@ export type Place = Readonly<{
   environment: PlaceEnvironment;
   pricing: PlacePricing;
   status?: PlaceStatus;
+  statusVerifiedAt?: string;
+  visitNoteVerifiedAt?: string;
+  visitNoteValidUntil?: string;
   tags: readonly string[];
   audio?: Readonly<Partial<Record<Locale, string>>>;
-  content: Readonly<Record<Locale, PlaceContent>>;
+  content: Readonly<Partial<Record<Locale, PlaceContent>>>;
 }>;
 
 export type LandmarkPlaceContent = PlaceContent &
@@ -61,6 +64,13 @@ export type LandmarkPlace = Omit<Place, "image" | "content"> &
     image: string;
     content: Readonly<Record<Locale, LandmarkPlaceContent>>;
   }>;
+
+export type ResolvedPlaceContent = Readonly<{
+  requestedLocale: Locale;
+  actualLocale: Locale;
+  didFallback: boolean;
+  content: PlaceContent;
+}>;
 
 type LubeckLandmarkSlug =
   | "holstentor"
@@ -77,6 +87,10 @@ type PlaceMetadata = Readonly<
     | "durationMinutes"
     | "environment"
     | "pricing"
+    | "status"
+    | "statusVerifiedAt"
+    | "visitNoteVerifiedAt"
+    | "visitNoteValidUntil"
     | "tags"
   >
 >;
@@ -87,7 +101,7 @@ const lubeckLandmarkMetadata = {
   holstentor: {
     category: "see",
     coordinates: { lat: 53.8662, lng: 10.6797 },
-    durationMinutes: 2,
+    durationMinutes: 30,
     environment: "mixed",
     pricing: "unknown",
     tags: ["history", "architecture", "brick-gothic", "city-gate"],
@@ -95,7 +109,7 @@ const lubeckLandmarkMetadata = {
   marienkirche: {
     category: "see",
     coordinates: { lat: 53.8678, lng: 10.6851 },
-    durationMinutes: 2,
+    durationMinutes: 30,
     environment: "indoor",
     pricing: "unknown",
     tags: ["history", "architecture", "brick-gothic", "church"],
@@ -103,7 +117,7 @@ const lubeckLandmarkMetadata = {
   rathaus: {
     category: "see",
     coordinates: { lat: 53.867, lng: 10.6855 },
-    durationMinutes: 2,
+    durationMinutes: 20,
     environment: "outdoor",
     pricing: "unknown",
     tags: ["history", "architecture", "brick-gothic", "renaissance", "town-hall"],
@@ -111,7 +125,7 @@ const lubeckLandmarkMetadata = {
   "heiligen-geist-hospital": {
     category: "see",
     coordinates: { lat: 53.8714, lng: 10.6899 },
-    durationMinutes: 2,
+    durationMinutes: 30,
     environment: "indoor",
     pricing: "unknown",
     tags: ["history", "social-history", "medieval", "hospital"],
@@ -119,12 +133,24 @@ const lubeckLandmarkMetadata = {
   buddenbrookhaus: {
     category: "see",
     coordinates: { lat: 53.8683, lng: 10.6858 },
-    durationMinutes: 2,
+    durationMinutes: 10,
     environment: "indoor",
     pricing: "unknown",
+    status: "renovation",
+    statusVerifiedAt: "2026-09-03",
+    visitNoteVerifiedAt: "2026-09-03",
     tags: ["history", "literature", "museum", "thomas-mann"],
   },
 } as const satisfies Record<LubeckLandmarkSlug, PlaceMetadata>;
+
+const landmarkVisitNotes: Partial<
+  Record<LubeckLandmarkSlug, Partial<Record<Locale, string>>>
+> = {
+  buddenbrookhaus: {
+    de: "Das Buddenbrookhaus ist derzeit wegen Umbau geschlossen. Angebote und Ausstellungen finden an anderen Orten statt; aktuelle Hinweise stehen auf der offiziellen Website.",
+    en: "Buddenbrookhaus is currently closed for renovation. Events and exhibitions continue at other locations; check the official website for current visitor information.",
+  },
+};
 
 function placeKey(city: string, slug: string): string {
   return `${city}/${slug}`;
@@ -141,10 +167,21 @@ function toPlaceContent(content: LandmarkContent): LandmarkPlaceContent {
 }
 
 function toLocalizedContent(
+  slug: LubeckLandmarkSlug,
   content: Record<Locale, LandmarkContent>,
 ): Readonly<Record<Locale, LandmarkPlaceContent>> {
   return Object.fromEntries(
-    locales.map((locale) => [locale, toPlaceContent(content[locale])]),
+    locales.map((locale) => {
+      const visitNote = landmarkVisitNotes[slug]?.[locale];
+
+      return [
+        locale,
+        {
+          ...toPlaceContent(content[locale]),
+          ...(visitNote ? { visitNote } : {}),
+        },
+      ];
+    }),
   ) as Record<Locale, LandmarkPlaceContent>;
 }
 
@@ -185,17 +222,468 @@ export const lubeckLandmarks: readonly LandmarkPlace[] = legacyLandmarks.map(
       image: landmark.image,
       ...metadata,
       audio: toLocalizedAudio(landmark.content),
-      content: toLocalizedContent(landmark.content),
+      content: toLocalizedContent(
+        landmark.slug as LubeckLandmarkSlug,
+        landmark.content,
+      ),
     };
   },
 );
 
-export const places: readonly Place[] = [...lubeckLandmarks];
+function localizedCardContent(
+  de: PlaceContent,
+  en: PlaceContent,
+): Readonly<Partial<Record<Locale, PlaceContent>>> {
+  return { de, en };
+}
 
-export const lubeckPlaces = places.filter((place) => place.city === "lubeck");
+// Verified on 2026-09-03 against official venue/tourism information and
+// OpenStreetMap-derived location records. Missing images are intentional.
+const additionalLubeckPlaces = [
+  {
+    slug: "lubecker-altstadt",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8681, lng: 10.6861 },
+    durationMinutes: 120,
+    environment: "outdoor",
+    pricing: "free",
+    tags: ["must-see", "history", "architecture", "unesco", "outdoor", "photo-spot"],
+    content: localizedCardContent(
+      {
+        name: "Lübecker Altstadt",
+        shortDescription:
+          "Die von Wasser umgebene historische Altstadt gehört seit 1987 zum UNESCO-Welterbe.",
+      },
+      {
+        name: "Lübeck Old Town",
+        shortDescription:
+          "The historic old town surrounded by water has been a UNESCO World Heritage Site since 1987.",
+      },
+    ),
+  },
+  {
+    slug: "europaeisches-hansemuseum",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.874, lng: 10.6896 },
+    durationMinutes: 90,
+    environment: "indoor",
+    pricing: "paid",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    tags: ["must-see", "history", "museum", "family", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "Europäisches Hansemuseum",
+        shortDescription:
+          "Ein modernes Museum zur Geschichte der Hanse mit Zugang zum historischen Burgkloster.",
+      },
+      {
+        name: "European Hansemuseum",
+        shortDescription:
+          "A modern museum about the Hanseatic League with access to the historic Castle Friary.",
+      },
+    ),
+  },
+  {
+    slug: "st-petri-zu-luebeck",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8659, lng: 10.6825 },
+    durationMinutes: 30,
+    environment: "indoor",
+    pricing: "mixed",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    visitNoteVerifiedAt: "2026-09-03",
+    tags: ["architecture", "church", "culture", "viewpoint", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "St. Petri zu Lübeck",
+        shortDescription:
+          "Eine Kultur- und Universitätskirche im Zentrum der Altstadt, bekannt für Ausstellungen und Veranstaltungen.",
+        visitNote:
+          "Der Kirchenraum ist zugänglich; der Turmbesuch ist derzeit nicht möglich. Bitte aktuelle Hinweise auf der offiziellen Website prüfen.",
+      },
+      {
+        name: "St. Petri zu Lübeck",
+        shortDescription:
+          "A cultural and university church in the old-town centre, known for exhibitions and events.",
+        visitNote:
+          "The church interior is accessible, but the tower is currently unavailable. Check the official website for current information.",
+      },
+    ),
+  },
+  {
+    slug: "luebecker-dom",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8609, lng: 10.6858 },
+    durationMinutes: 30,
+    environment: "indoor",
+    pricing: "unknown",
+    tags: ["history", "architecture", "church", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "Lübecker Dom",
+        shortDescription:
+          "Der historische Dom ist eine der großen Backsteinkirchen der Lübecker Altstadt.",
+      },
+      {
+        name: "Lübeck Cathedral",
+        shortDescription:
+          "The historic cathedral is one of the major brick churches in Lübeck's old town.",
+      },
+    ),
+  },
+  {
+    slug: "willy-brandt-haus",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8697, lng: 10.6895 },
+    durationMinutes: 60,
+    environment: "indoor",
+    pricing: "free",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    visitNoteVerifiedAt: "2026-09-03",
+    visitNoteValidUntil: "2026-12-18",
+    tags: ["history", "museum", "politics", "family", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "Willy-Brandt-Haus Lübeck",
+        shortDescription:
+          "Eine multimediale Ausstellung über Willy Brandts politisches Leben und die deutsche Zeitgeschichte.",
+        visitNote:
+          "Die aktuelle Ausstellung ist laut Betreiber noch bis 18. Dezember 2026 geöffnet. Vor dem Besuch bitte aktuelle Hinweise prüfen.",
+      },
+      {
+        name: "Willy Brandt House Lübeck",
+        shortDescription:
+          "A multimedia exhibition about Willy Brandt's political life and modern German history.",
+        visitNote:
+          "The current exhibition is scheduled to remain open through 18 December 2026. Check current information before visiting.",
+      },
+    ),
+  },
+  {
+    slug: "an-der-obertrave",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8632, lng: 10.6806 },
+    durationMinutes: 30,
+    environment: "outdoor",
+    pricing: "free",
+    tags: ["waterfront", "walk", "outdoor", "photo-spot"],
+    content: localizedCardContent(
+      {
+        name: "An der Obertrave",
+        shortDescription:
+          "Eine Uferpromenade an der Altstadt mit historischen Fassaden und Blick auf die Trave.",
+      },
+      {
+        name: "An der Obertrave",
+        shortDescription:
+          "An old-town waterfront promenade with historic façades and views across the River Trave.",
+      },
+    ),
+  },
+  {
+    slug: "salzspeicher",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8659, lng: 10.6802 },
+    durationMinutes: 10,
+    environment: "outdoor",
+    pricing: "free",
+    tags: ["history", "architecture", "photo-spot", "outdoor"],
+    content: localizedCardContent(
+      {
+        name: "Salzspeicher",
+        shortDescription:
+          "Eine markante Gruppe historischer Lagerhäuser direkt an der Trave neben dem Holstentor.",
+      },
+      {
+        name: "Salt Storehouses",
+        shortDescription:
+          "A distinctive group of historic storehouses beside the River Trave and the Holsten Gate.",
+      },
+    ),
+  },
+  {
+    slug: "cafe-niederegger",
+    city: "lubeck",
+    category: "eat",
+    coordinates: { lat: 53.8666, lng: 10.6858 },
+    durationMinutes: 60,
+    environment: "indoor",
+    pricing: "paid",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    tags: ["food", "local-food", "cafe", "marzipan", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "Café Niederegger",
+        shortDescription:
+          "Das traditionsreiche Stammhaus serviert Konditoreispezialitäten und beherbergt ein Marzipan-Museum.",
+      },
+      {
+        name: "Café Niederegger",
+        shortDescription:
+          "The traditional flagship café serves confectionery specialities and houses a marzipan museum.",
+      },
+    ),
+  },
+  {
+    slug: "schiffergesellschaft",
+    city: "lubeck",
+    category: "eat",
+    coordinates: { lat: 53.8712, lng: 10.6882 },
+    durationMinutes: 90,
+    environment: "mixed",
+    pricing: "paid",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    tags: ["food", "local-food", "history", "architecture", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "Schiffergesellschaft",
+        shortDescription:
+          "Hanseatische und moderne Küche in der historischen Halle des ehemaligen Lübecker Gildehauses.",
+      },
+      {
+        name: "Schiffergesellschaft",
+        shortDescription:
+          "Hanseatic and modern cooking in the historic hall of Lübeck's former guild house.",
+      },
+    ),
+  },
+  {
+    slug: "fangfrisch",
+    city: "lubeck",
+    category: "eat",
+    coordinates: { lat: 53.8722, lng: 10.6838 },
+    durationMinutes: 60,
+    environment: "mixed",
+    pricing: "paid",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    tags: ["food", "local-food", "seafood", "waterfront"],
+    content: localizedCardContent(
+      {
+        name: "Fangfrisch",
+        shortDescription:
+          "Ein Fischrestaurant an der Untertrave mit Schwerpunkt auf nordischer Küche und regionalen Produkten.",
+      },
+      {
+        name: "Fangfrisch",
+        shortDescription:
+          "A fish restaurant on the Untertrave focused on Nordic cooking and regional produce.",
+      },
+    ),
+  },
+  {
+    slug: "restaurant-vai",
+    city: "lubeck",
+    category: "eat",
+    coordinates: { lat: 53.8658, lng: 10.6885 },
+    durationMinutes: 90,
+    environment: "mixed",
+    pricing: "paid",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    tags: ["food", "restaurant", "mediterranean", "wine", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "Restaurant VAI",
+        shortDescription:
+          "Ein Restaurant in der Hüxstraße mit mediterranen und deutschen Gerichten sowie einer vielseitigen Weinauswahl.",
+      },
+      {
+        name: "Restaurant VAI",
+        shortDescription:
+          "A Hüxstraße restaurant serving Mediterranean and German dishes with a varied wine selection.",
+      },
+    ),
+  },
+  {
+    slug: "brauberger-zu-luebeck",
+    city: "lubeck",
+    category: "eat",
+    coordinates: { lat: 53.8683, lng: 10.6809 },
+    durationMinutes: 90,
+    environment: "mixed",
+    pricing: "paid",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    tags: ["food", "local-food", "brewery", "history", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "Brauberger zu Lübeck",
+        shortDescription:
+          "Eine Altstadtbrauerei mit Braukesseln im Gastraum, herzhaften Gerichten und historischem Bierkeller.",
+      },
+      {
+        name: "Brauberger zu Lübeck",
+        shortDescription:
+          "An old-town brewery with brewing kettles in the dining room, hearty food and a historic beer cellar.",
+      },
+    ),
+  },
+  {
+    slug: "zaubertheater-luebeck",
+    city: "lubeck",
+    category: "fun",
+    coordinates: { lat: 53.8696, lng: 10.6811 },
+    durationMinutes: 90,
+    environment: "indoor",
+    pricing: "paid",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    tags: ["entertainment", "theatre", "magic", "hidden-gem", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "Zaubertheater Lübeck",
+        shortDescription:
+          "Ein kleines privates Theater in der Altstadt mit inszenierter Magie, Comedy und persönlichen Geschichten.",
+      },
+      {
+        name: "Zaubertheater Lübeck",
+        shortDescription:
+          "A small private old-town theatre presenting staged magic, comedy and personal storytelling.",
+      },
+    ),
+  },
+  {
+    slug: "kolk-17",
+    city: "lubeck",
+    category: "fun",
+    coordinates: { lat: 53.8656, lng: 10.6824 },
+    durationMinutes: 90,
+    environment: "indoor",
+    pricing: "paid",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    tags: ["entertainment", "museum", "puppet-theatre", "family", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "KOLK 17 Figurentheater & Museum",
+        shortDescription:
+          "Figurentheater und Museum verbinden Aufführungen mit Ausstellungen zur Welt des Figurenspiels.",
+      },
+      {
+        name: "KOLK 17 Puppet Theatre & Museum",
+        shortDescription:
+          "A puppet theatre and museum combining live performances with exhibitions about puppetry.",
+      },
+    ),
+  },
+  {
+    slug: "final-escape-luebeck",
+    city: "lubeck",
+    category: "fun",
+    coordinates: { lat: 53.8666, lng: 10.6835 },
+    durationMinutes: 90,
+    environment: "indoor",
+    pricing: "paid",
+    status: "open",
+    statusVerifiedAt: "2026-09-03",
+    tags: ["entertainment", "escape-room", "team", "indoor"],
+    content: localizedCardContent(
+      {
+        name: "Final Escape Lübeck",
+        shortDescription:
+          "Indoor-Escape-Games mit thematischen Räumen, Teamrätseln und deutsch- oder englischsprachigem Spiel.",
+      },
+      {
+        name: "Final Escape Lübeck",
+        shortDescription:
+          "Indoor escape games with themed rooms, team puzzles and play available in German or English.",
+      },
+    ),
+  },
+] as const satisfies readonly Place[];
+
+export const LUBECK_PLACE_SLUGS = [
+  "lubecker-altstadt",
+  "holstentor",
+  "marienkirche",
+  "europaeisches-hansemuseum",
+  "st-petri-zu-luebeck",
+  "luebecker-dom",
+  "heiligen-geist-hospital",
+  "rathaus",
+  "willy-brandt-haus",
+  "an-der-obertrave",
+  "salzspeicher",
+  "buddenbrookhaus",
+  "cafe-niederegger",
+  "schiffergesellschaft",
+  "fangfrisch",
+  "restaurant-vai",
+  "brauberger-zu-luebeck",
+  "zaubertheater-luebeck",
+  "kolk-17",
+  "final-escape-luebeck",
+] as const;
+
+export type LubeckPlaceSlug = (typeof LUBECK_PLACE_SLUGS)[number];
+
+const lubeckPlaceBySlug = new Map<string, Place>(
+  [...lubeckLandmarks, ...additionalLubeckPlaces].map(
+    (place) => [place.slug, place] as const,
+  ),
+);
+
+export const lubeckPlaces: readonly Place[] = LUBECK_PLACE_SLUGS.map((slug) => {
+  const place = lubeckPlaceBySlug.get(slug);
+
+  if (!place) {
+    throw new Error(`Missing curated Place data for lubeck/${slug}`);
+  }
+
+  return place;
+});
+
+export const places: readonly Place[] = [...lubeckPlaces];
+
 
 export function getPlace(city: string, slug: string): Place | undefined {
   return places.find((place) => place.city === city && place.slug === slug);
+}
+
+export function resolvePlaceContent(
+  place: Place,
+  requestedLocale: Locale,
+): ResolvedPlaceContent | undefined {
+  const requestedContent = place.content[requestedLocale];
+
+  if (requestedContent) {
+    return {
+      requestedLocale,
+      actualLocale: requestedLocale,
+      didFallback: false,
+      content: requestedContent,
+    };
+  }
+
+  const fallbackLocales: readonly Locale[] = ["en", "de", ...locales];
+
+  for (const actualLocale of fallbackLocales) {
+    const content = place.content[actualLocale];
+
+    if (content) {
+      return {
+        requestedLocale,
+        actualLocale,
+        didFallback: true,
+        content,
+      };
+    }
+  }
+
+  return undefined;
 }
 
 export function getPlacesByCategory(
