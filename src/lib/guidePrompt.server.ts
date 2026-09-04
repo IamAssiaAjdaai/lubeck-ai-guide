@@ -81,46 +81,63 @@ function buildTourReference({
   tourContext: ResolvedTourContext;
   locale: Locale;
 }): string {
-  /*
-   * Historical reference is intentionally
-   * limited to places useful for continuity:
-   * visited stops + next stop.
-   *
-   * Current place has its own dedicated
-   * verified section.
-   */
-  const referenceSlugs =
-    Array.from(
-      new Set([
-        ...tourContext.visitedStops.map(
-          (stop) => stop.slug,
-        ),
-
-        ...(tourContext.nextStop
-          ? [
-              tourContext.nextStop
-                .slug,
-            ]
-          : []),
-      ]),
-    );
-
-  const references =
-    referenceSlugs.flatMap(
-      (slug) => {
+  const visitedReferences =
+    tourContext.visitedStops.flatMap(
+      (stop) => {
         const place =
-          findLandmark(slug);
+          findLandmark(stop.slug);
 
-        return place
-          ? [
-              buildVerifiedPlaceReference(
-                place,
-                locale,
-              ),
-            ]
-          : [];
+        if (!place) {
+          return [];
+        }
+
+        return [
+          `
+REFERENCE ROLE:
+VISITED STOP
+
+${buildVerifiedPlaceReference(
+  place,
+  locale,
+)}
+`.trim(),
+        ];
       },
     );
+
+  const nextReference =
+    tourContext.nextStop
+      ? (() => {
+          const place =
+            findLandmark(
+              tourContext.nextStop.slug,
+            );
+
+          if (!place) {
+            return [];
+          }
+
+          return [
+            `
+REFERENCE ROLE:
+NEXT STOP — TRANSITION ONLY
+
+IMPORTANT:
+This place has NOT been visited unless it also appears under VISITED STOPS.
+
+${buildVerifiedPlaceReference(
+  place,
+  locale,
+)}
+`.trim(),
+          ];
+        })()
+      : [];
+
+  const references = [
+    ...visitedReferences,
+    ...nextReference,
+  ];
 
   return references.length > 0
     ? references.join(
@@ -208,9 +225,13 @@ ${
 
   GUIDE STYLE:
 
-  Observation → Curiosity → Story → Historical context → Connection
+  Use this sequence only as internal writing guidance when useful:
+  Observation → Curiosity → Story → Historical context → Connection.
 
-  Use that pattern only when it fits the tourist's question. Do not force every step into every answer.
+  Do NOT print or label these steps in the answer.
+  Do NOT use headings such as "Observation", "Curiosity", "Story", "Historical context", or "Connection".
+
+  If VERIFIED LOOK-FOR CUES is empty, do not describe what the visitor can currently see.
 
   IMPORTANT GROUNDING RULES:
 
@@ -251,6 +272,22 @@ ${
   - Prefer 2 to 5 sentences.
 
   - When useful, connect the answer to the previous stop, current stop, or next stop.
+
+  - Preserve the strength of verified wording. For example, "one of the most recognizable" must not become "the most recognizable".
+
+  - Never use proximity or geographic claims such as "beside", "near", "a short walk", "same street", "from here you can see", or similar language unless explicitly stated in verified content.
+
+  - Never infer that two places share a historical cause, economic cause, architectural movement, social meaning, or citywide role merely because both verified sections contain related words.
+
+  - When connecting two stops, state verified facts about each stop separately. Only state a direct relationship between them if that relationship is explicitly present in verified content.
+
+  - A stop may be described as VISITED only if it appears under VISITED STOPS.
+
+  - A stop may be described as NEXT only if it appears under NEXT STOP.
+
+  - Never suggest "we are heading to", "next we will see", or equivalent language for any stop other than NEXT STOP.
+
+  - When the tourist asks only why the current place is important, answer primarily from VERIFIED CURRENT PLACE CONTENT. Do not introduce other tour stops unless they are necessary to answer the question.
 
   VERIFIED CURRENT PLACE CONTENT:
 

@@ -191,6 +191,30 @@ describe(
         expect(prompt).toContain(
           "Do not treat that stop as visited unless it also appears under VISITED STOPS",
         );
+
+        expect(prompt).toContain(
+          "Do NOT print or label these steps",
+        );
+
+        expect(prompt).toContain(
+          "Preserve the strength of verified wording",
+        );
+
+        expect(prompt).toContain(
+          "Never use proximity or geographic claims",
+        );
+
+        expect(prompt).toContain(
+            "NEXT STOP — TRANSITION ONLY",
+        );
+
+        expect(prompt).toContain(
+            "VISITED STOP",
+        );
+
+        expect(prompt).toContain(
+            "A stop may be described as VISITED only if it appears under VISITED STOPS",
+        );
       },
     );
   },
