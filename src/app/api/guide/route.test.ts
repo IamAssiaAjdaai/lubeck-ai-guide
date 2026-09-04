@@ -293,5 +293,101 @@ describe(
         ).not.toHaveBeenCalled();
       },
     );
+
+    it(
+    "anchors ambiguous follow-up questions to the current stop",
+    async () => {
+      const request =
+        new Request(
+          "http://localhost/api/guide",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              question:
+                "Why is it famous?",
+
+              landmark:
+                "heiligen-geist-hospital",
+
+              locale: "en",
+
+              history: [
+                {
+                  role: "user",
+                  text:
+                    "Why is Holstentor important?",
+                },
+                {
+                  role: "assistant",
+                  text:
+                    "Holstentor was built between 1464 and 1478.",
+                },
+              ],
+
+              tourContext: {
+                version:
+                  TOUR_CONTEXT_VERSION,
+
+                tourId:
+                  LUBECK_HISTORIC_TOUR_ID,
+
+                currentStop:
+                  "heiligen-geist-hospital",
+
+                visitedStops: [
+                  "holstentor",
+                  "marienkirche",
+                  "rathaus",
+                ],
+              },
+            }),
+          },
+        );
+
+      const response =
+        await POST(request);
+
+      expect(
+        response.status,
+      ).toBe(200);
+
+      const groqRequest =
+        createCompletion.mock
+          .calls[0][0];
+
+      const currentTurn =
+        groqRequest.messages[
+          groqRequest.messages.length - 1
+        ];
+
+      expect(
+        currentTurn.role,
+      ).toBe("user");
+
+      expect(
+        currentTurn.content,
+      ).toContain(
+        "CURRENT STOP:\nHeiligen-Geist-Hospital",
+      );
+
+      expect(
+        currentTurn.content,
+      ).toContain(
+        "CURRENT QUESTION:\nWhy is it famous?",
+      );
+
+      expect(
+        currentTurn.content,
+      ).toContain(
+        "refer to CURRENT STOP",
+      );
+    },
+    );
   },
 );

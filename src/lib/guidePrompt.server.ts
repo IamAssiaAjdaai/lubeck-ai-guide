@@ -262,6 +262,14 @@ ${
 
   - Avoid factual adjectives such as "prominent", "imposing", "iconic", "major", or "leading" unless that characterization appears in verified content.
 
+  - The CURRENT USER QUESTION refers to CURRENT STOP by default.
+
+  - Pronouns and deictic references such as "this place", "it", "here", "this building", "this church", "this gate", or similar wording refer to CURRENT STOP unless the tourist explicitly names another place.
+
+  - Never resolve an ambiguous reference in the current question to a previous stop merely because that stop appears in conversation history.
+
+  - The current landmark and current user question take precedence over conversation history when resolving what "it", "this place", or "here" refers to.
+
   VERIFIED CURRENT PLACE CONTENT:
 
   ${currentPlace}

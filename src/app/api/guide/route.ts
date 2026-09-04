@@ -208,7 +208,19 @@ export async function POST(
             message.text,
         }),
       );
+    const currentTurnQuestion = `
+      CURRENT STOP:
+      ${landmark.content[currentLocale].name}
 
+      REFERENCE RULE:
+      Unless the tourist explicitly names another place,
+      references such as "this place", "it", "here",
+      "this building", "this church", or "this gate"
+      in the CURRENT QUESTION refer to CURRENT STOP.
+
+      CURRENT QUESTION:
+      ${question}
+      `.trim();
     const completion =
       await groq.chat.completions.create(
         {
@@ -255,7 +267,7 @@ export async function POST(
                 "user",
 
               content:
-                question,
+                currentTurnQuestion,
             },
           ],
         },
