@@ -55,6 +55,26 @@ const buddenbrookhausSource =
     "buddenbrookhaus",
   );
 
+function requireSource(
+  slug: LubeckPlaceSlug,
+  url: string,
+): PlaceSource {
+  const source =
+    getPlaceSources(slug).find(
+      (candidate) =>
+        candidate.type === "official" &&
+        candidate.url === url,
+    );
+
+  if (!source) {
+    throw new Error(
+      `Missing verified source ${url} for lubeck/${slug}`,
+    );
+  }
+
+  return source;
+}
+
 export const lubeckKnowledgeChunks =
   [
     {

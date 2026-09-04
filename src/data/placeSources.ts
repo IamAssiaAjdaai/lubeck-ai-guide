@@ -17,8 +17,17 @@ export type PlaceSourceRegistry = Readonly<
 
 const VERIFIED_AT = "2026-09-03";
 
-function official(label: string, url: string): PlaceSource {
-  return { label, url, type: "official", verifiedAt: VERIFIED_AT };
+function official(
+  label: string,
+  url: string,
+  verifiedAt = VERIFIED_AT,
+  ): PlaceSource {
+  return {
+    label,
+    url, 
+    type: "official", 
+    verifiedAt: VERIFIED_AT 
+  };
 }
 
 function map(label: string, url: string): PlaceSource {
@@ -27,6 +36,31 @@ function map(label: string, url: string): PlaceSource {
 
 export const lubeckPlaceSources = {
   "lubecker-altstadt": [
+    official(
+      "Museum Holstentor — The Holstentor",
+      "https://museum-holstentor.de/about-holstentor",
+      "2026-09-04",
+    ),  
+    official(
+      "St. Marien Lübeck — History of St Marien",
+      "https://www.st-marien-luebeck.de/en/discover/history/history-of-st-marien",
+      "2026-09-04",
+    ),
+    official(
+      "City of Lübeck — Lübeck Rathaus",
+      "https://www.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/rathaus/rathaus",
+      "2026-09-04",
+    ),
+    official(
+      "City of Lübeck — Heiligen-Geist-Hospital",
+      "https://www.luebeck.de/de/rathaus/verwaltung/stiftungsverwaltung/heiligen-geist-hospital",
+      "2026-09-04",
+    ),
+    official(
+      "Buddenbrookhaus — Das Haus",
+      "https://buddenbrookhaus.de/das-haus",
+      "2026-09-04",
+    ),
     official(
       "Lübeck tourism — Old Town",
       "https://www.visit-luebeck.com/old-town",
