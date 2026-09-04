@@ -171,6 +171,26 @@ describe(
         expect(prompt).toContain(
           "VERIFIED LOOK-FOR CUES:\nNone",
         );
+
+        expect(prompt).toContain(
+          "Never describe a remaining or next stop as already visited",
+        );
+
+        expect(prompt).toContain(
+          "Do not infer walking distance",
+        );
+
+        expect(prompt).toContain(
+          "Every factual statement in the answer must be directly supported",
+        );
+
+        expect(prompt).toContain(
+          "TOUR STATE is navigation state only",
+        );
+
+        expect(prompt).toContain(
+          "Do not treat that stop as visited unless it also appears under VISITED STOPS",
+        );
       },
     );
   },
