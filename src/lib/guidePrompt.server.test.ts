@@ -62,6 +62,7 @@ describe(
             locale: "en",
             expectedCurrentStop:
               "rathaus",
+            
           });
 
         const prompt =
@@ -109,6 +110,14 @@ describe(
 
         expect(prompt).not.toMatch(
           /latitude|longitude|"lat"|"lng"/i,
+        );
+
+        expect(prompt).toContain(
+          "VISITED STOPS:\nNone",
+        );
+
+        expect(prompt).toContain(
+          "If VISITED STOPS is None",
         );
       },
     );
@@ -214,6 +223,19 @@ describe(
 
         expect(prompt).toContain(
             "A stop may be described as VISITED only if it appears under VISITED STOPS",
+        );
+
+        expect(prompt).toContain(
+          "NEXT STOP:\nMarienkirche",
+        );
+
+        /*
+        * Next-stop identity is available
+        * for navigation, but its factual
+        * reference must not be injected.
+        */
+        expect(prompt).not.toContain(
+          "NEXT STOP — TRANSITION ONLY",
         );
       },
     );

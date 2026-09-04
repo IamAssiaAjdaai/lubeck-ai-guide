@@ -81,7 +81,7 @@ function buildTourReference({
   tourContext: ResolvedTourContext;
   locale: Locale;
 }): string {
-  const visitedReferences =
+  const references =
     tourContext.visitedStops.flatMap(
       (stop) => {
         const place =
@@ -104,40 +104,6 @@ ${buildVerifiedPlaceReference(
         ];
       },
     );
-
-  const nextReference =
-    tourContext.nextStop
-      ? (() => {
-          const place =
-            findLandmark(
-              tourContext.nextStop.slug,
-            );
-
-          if (!place) {
-            return [];
-          }
-
-          return [
-            `
-REFERENCE ROLE:
-NEXT STOP — TRANSITION ONLY
-
-IMPORTANT:
-This place has NOT been visited unless it also appears under VISITED STOPS.
-
-${buildVerifiedPlaceReference(
-  place,
-  locale,
-)}
-`.trim(),
-          ];
-        })()
-      : [];
-
-  const references = [
-    ...visitedReferences,
-    ...nextReference,
-  ];
 
   return references.length > 0
     ? references.join(
@@ -191,9 +157,6 @@ ${
     ? tourContext.nextStop.name
     : "None"
 }
-
-TOUR THEME:
-${tourContext.narrative}
 
 VERIFIED LOOK-FOR CUES:
 ${
@@ -288,6 +251,16 @@ ${
   - Never suggest "we are heading to", "next we will see", or equivalent language for any stop other than NEXT STOP.
 
   - When the tourist asks only why the current place is important, answer primarily from VERIFIED CURRENT PLACE CONTENT. Do not introduce other tour stops unless they are necessary to answer the question.
+
+  - Treat each factual sentence as an extractive paraphrase of verified content.
+
+  - Do not create a new factual claim by combining two separately verified facts.
+
+  - If VISITED STOPS is None and the tourist asks about places visited before, explain that there are no previous visited stops in the current tour session. Do not discuss remaining or next stops as previous stops.
+
+  - The name under NEXT STOP is navigation information only. Do not make factual claims about that place unless it is also present in VERIFIED TOUR REFERENCE.
+
+  - Avoid factual adjectives such as "prominent", "imposing", "iconic", "major", or "leading" unless that characterization appears in verified content.
 
   VERIFIED CURRENT PLACE CONTENT:
 
