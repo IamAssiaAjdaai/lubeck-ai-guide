@@ -132,7 +132,23 @@ describe(
         const groqRequest =
           createCompletion.mock
             .calls[0][0];
+        expect(
+          groqRequest.reasoning_effort,
+        ).toBe("low");
 
+        expect(
+          groqRequest.include_reasoning,
+        ).toBe(false);
+
+        expect(
+          groqRequest.max_completion_tokens,
+        ).toBe(1024);
+
+        expect(
+          groqRequest,
+        ).not.toHaveProperty(
+          "max_tokens",
+        );
         const systemMessage =
           groqRequest.messages.find(
             (
