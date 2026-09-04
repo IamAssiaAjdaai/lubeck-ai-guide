@@ -10,6 +10,14 @@ import type {
   Translations,
 } from "@/lib/i18n";
 
+import {
+  createTourContextInput,
+  type SupportedTourId,
+} from "@/lib/tourContext";
+import {
+  getVisitedTourStops,
+} from "@/lib/tourSession";
+
 const MAX_QUESTIONS = 5;
 
 type AskGuideProps = {
@@ -21,6 +29,7 @@ type AskGuideProps = {
   closeLabel: string;
   labels: Translations["ai"];
   suggestions: readonly string[];
+  tourId: SupportedTourId;
 };
 
 type Message = {
@@ -50,6 +59,7 @@ export default function AskGuide({
   closeLabel,
   labels,
   suggestions,
+  tourId,
 }: AskGuideProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [question, setQuestion] = useState("");
@@ -121,6 +131,15 @@ export default function AskGuide({
     });
 
     try {
+      const tourContext =
+      createTourContextInput({
+        tourId,
+        currentStop: landmark,
+        visitedStops:
+          getVisitedTourStops(
+            tourId,
+          ),
+      });
       const response = await fetch("/api/guide", {
         method: "POST",
 
@@ -132,7 +151,7 @@ export default function AskGuide({
           question: cleanQuestion,
           landmark,
           locale,
-
+          tourContext,
           /*
            * Send recent conversation context
            * so follow-up questions work.

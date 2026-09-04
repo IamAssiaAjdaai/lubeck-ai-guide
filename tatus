@@ -1,0 +1,4 @@
+src/app/api/guide/route.ts:138: trailing whitespace.
+[32m+[m[41m    [m
+src/components/AskGuide.tsx:143: trailing whitespace.
+[32m+[m[41m      [m

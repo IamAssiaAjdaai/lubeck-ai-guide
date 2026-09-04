@@ -1,4 +1,7 @@
 import Image from "next/image";
+import {
+  LUBECK_HISTORIC_TOUR_ID,
+} from "@/lib/tourContext";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, CircleCheckBig, Headphones } from "lucide-react";
@@ -109,6 +112,7 @@ export default async function LandmarkPage({
         {/* Navigation */}
         <div className="flex items-center justify-between">
           <TrackLandmarkView
+            tourId={LUBECK_HISTORIC_TOUR_ID}
             city="lubeck"
             landmark={landmark.slug}
             locale={currentLocale}
@@ -244,6 +248,7 @@ export default async function LandmarkPage({
 
         {/* AI Guide */}
           <AskGuide
+            tourId={LUBECK_HISTORIC_TOUR_ID}
             landmark={landmark.slug}
             landmarkName={name}
             locale={currentLocale}

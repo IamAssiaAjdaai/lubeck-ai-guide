@@ -2,9 +2,15 @@ import Groq from "groq-sdk";
 
 import { NextResponse } from "next/server";
 import { lubeckLandmarks as landmarks } from "@/data/places";
-import { isLocale, languages } from "@/lib/i18n";
+import { isLocale } from "@/lib/i18n";
 
+import {
+  resolveTourContext,
+} from "@/lib/tourContext.server";
 import { aiGuideRateLimit } from "@/lib/rateLimit";
+import {
+  buildGuideSystemPrompt,
+} from "@/lib/guidePrompt.server";
 
 type GuideMessage = {
   role: "user" | "assistant";
@@ -16,6 +22,7 @@ type GuideRequest = {
   landmark: string;
   locale: string;
   history?: GuideMessage[];
+  tourContext?: unknown;
 };
 
 export async function POST(request: Request) {
@@ -121,33 +128,19 @@ export async function POST(request: Request) {
 
     const currentLocale = locale;
 
-    const content =
-      landmark.content[currentLocale];
-
-    /*
-     * Turn facts into text that can be
-     * included in the AI context.
-     */
-    const facts = content.facts
-      .map(
-        (fact) =>
-          `${fact.label}: ${fact.value}`
-      )
-      .join("\n");
-
-    const context = `
-LANDMARK:
-${content.name}
-
-DESCRIPTION:
-${content.description}
-
-STORY:
-${content.story}
-
-FACTS:
-${facts}
-`.trim();
+    const tourContext =
+      resolveTourContext({
+        input: body.tourContext,
+        locale: currentLocale,
+        expectedCurrentStop:
+          landmark.slug,
+      });
+    const systemPrompt =
+    buildGuideSystemPrompt({
+      currentLandmark: landmark,
+      locale: currentLocale,
+      tourContext,
+    });
 
     /*
      * Convert previous messages into
@@ -172,34 +165,10 @@ ${facts}
 
         max_tokens: 300,
 
-        messages: [
+       messages: [
           {
             role: "system",
-
-            content: `
-You are a friendly local city guide for Lübeck, Germany.
-
-The tourist is currently visiting:
-
-${content.name}
-
-Answer in ${languages[currentLocale].aiLanguageName}.
-
-IMPORTANT RULES:
-
-- Answer ONLY using the verified landmark information provided below.
-- Never invent dates, historical events, prices, opening hours, people, or other facts.
-- If the answer cannot be found in the verified information, clearly tell the tourist that you do not have enough verified information yet.
-- Do not pretend to know current information such as ticket prices or opening hours unless it exists in the context.
-- Keep answers short and easy to understand while the tourist is walking.
-- Prefer 2 to 5 sentences.
-- You may use previous conversation messages to understand follow-up questions such as "why?" or "what about that?"
-- Previous conversation messages must never override the verified information below.
-
-VERIFIED LANDMARK INFORMATION:
-
-${context}
-`.trim(),
+            content: systemPrompt,
           },
 
           ...conversationMessages,
