@@ -8,6 +8,14 @@ import {
   retrieveVerifiedKnowledge,
 } from "@/lib/knowledgeRetriever.server";
 
+import {
+  lubeckKnowledgeChunks,
+} from "@/data/knowledge/lubeck";
+
+import {
+  getPlaceSources,
+} from "@/data/placeSources";
+
 describe(
   "retrieveVerifiedKnowledge",
   () => {
@@ -198,6 +206,46 @@ describe(
           result,
         ).toHaveLength(1);
       },
+    );
+
+    it(
+        "binds every chunk to an exact registered official source",
+        () => {
+            for (
+            const chunk
+            of lubeckKnowledgeChunks
+            ) {
+            expect(
+                chunk.source.type,
+            ).toBe("official");
+
+            expect(
+                getPlaceSources(
+                chunk.placeSlug,
+                ),
+            ).toContainEqual(
+                chunk.source,
+            );
+            }
+        },
+    );
+
+    it(
+        "uses the current verified Buddenbrookhaus ownership year",
+        () => {
+            const chunk =
+            lubeckKnowledgeChunks.find(
+                (item) =>
+                item.id ===
+                "buddenbrookhaus-family",
+            );
+
+            expect(chunk?.text)
+            .toContain("1842");
+
+            expect(chunk?.text)
+            .not.toContain("1841");
+        },
     );
   },
 );

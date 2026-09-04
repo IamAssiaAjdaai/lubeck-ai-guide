@@ -26,7 +26,7 @@ function official(
     label,
     url, 
     type: "official", 
-    verifiedAt: VERIFIED_AT 
+    verifiedAt,
   };
 }
 
@@ -36,26 +36,6 @@ function map(label: string, url: string): PlaceSource {
 
 export const lubeckPlaceSources = {
   "lubecker-altstadt": [
-    official(
-      "Museum Holstentor — The Holstentor",
-      "https://museum-holstentor.de/about-holstentor",
-      "2026-09-04",
-    ),  
-    official(
-      "St. Marien Lübeck — History of St Marien",
-      "https://www.st-marien-luebeck.de/en/discover/history/history-of-st-marien",
-      "2026-09-04",
-    ),
-    official(
-      "City of Lübeck — Lübeck Rathaus",
-      "https://www.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/rathaus/rathaus",
-      "2026-09-04",
-    ),
-    official(
-      "City of Lübeck — Heiligen-Geist-Hospital",
-      "https://www.luebeck.de/de/rathaus/verwaltung/stiftungsverwaltung/heiligen-geist-hospital",
-      "2026-09-04",
-    ),
     official(
       "Buddenbrookhaus — Das Haus",
       "https://buddenbrookhaus.de/das-haus",
@@ -72,11 +52,21 @@ export const lubeckPlaceSources = {
   ],
   holstentor: [
     official(
+      "Museum Holstentor — The Holstentor",
+      "https://museum-holstentor.de/about-holstentor",
+      "2026-09-04",
+    ),
+    official(
       "Lübeck tourism — Holsten Gate",
       "https://www.visit-luebeck.com/old-town/holsten-gate",
     ),
   ],
   marienkirche: [
+    official(
+      "St. Marien Lübeck — History of St Marien",
+      "https://www.st-marien-luebeck.de/en/discover/history/history-of-st-marien",
+      "2026-09-04",
+    ),
     official(
       "City of Lübeck — St. Marien",
       "https://www.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/kirchen/st-marien",
@@ -103,11 +93,21 @@ export const lubeckPlaceSources = {
   ],
   "heiligen-geist-hospital": [
     official(
+      "City of Lübeck — Heiligen-Geist-Hospital",
+      "https://www.luebeck.de/de/rathaus/verwaltung/stiftungsverwaltung/heiligen-geist-hospital",
+      "2026-09-04",
+    ),
+    official(
       "Lübeck tourism — Holy Spirit Hospital",
       "https://www.visit-luebeck.com/old-town/poi/holy-spirit-hospital",
     ),
   ],
   rathaus: [
+    official(
+      "City of Lübeck — Lübeck Rathaus",
+      "https://www.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/rathaus/rathaus",
+      "2026-09-04",
+    ),
     official(
       "Lübeck tourism — Lübeck City Hall",
       "https://www.visit-luebeck.com/old-town/poi/luebeck-city-hall",

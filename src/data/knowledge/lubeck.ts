@@ -11,50 +11,6 @@ import type {
   KnowledgeChunk,
 } from "@/lib/knowledge";
 
-function requireOfficialSource(
-  slug: LubeckPlaceSlug,
-): PlaceSource {
-  const source =
-    getPlaceSources(slug).find(
-      (candidate) =>
-        candidate.type ===
-        "official",
-    );
-
-  if (!source) {
-    throw new Error(
-      `Missing official knowledge source for lubeck/${slug}`,
-    );
-  }
-
-  return source;
-}
-
-const holstentorSource =
-  requireOfficialSource(
-    "holstentor",
-  );
-
-const marienkircheSource =
-  requireOfficialSource(
-    "marienkirche",
-  );
-
-const rathausSource =
-  requireOfficialSource(
-    "rathaus",
-  );
-
-const hospitalSource =
-  requireOfficialSource(
-    "heiligen-geist-hospital",
-  );
-
-const buddenbrookhausSource =
-  requireOfficialSource(
-    "buddenbrookhaus",
-  );
-
 function requireSource(
   slug: LubeckPlaceSlug,
   url: string,
@@ -74,6 +30,37 @@ function requireSource(
 
   return source;
 }
+
+const holstentorSource =
+  requireSource(
+    "holstentor",
+    "https://museum-holstentor.de/about-holstentor",
+);
+
+const marienkircheSource =
+  requireSource(
+    "marienkirche",
+    "https://www.st-marien-luebeck.de/en/discover/history/history-of-st-marien",
+);
+
+const rathausSource =
+  requireSource(
+    "rathaus",
+    "https://www.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/rathaus/rathaus",
+);
+
+const hospitalSource =
+  requireSource(
+    "heiligen-geist-hospital",
+    "https://www.luebeck.de/de/rathaus/verwaltung/stiftungsverwaltung/heiligen-geist-hospital",
+);
+
+const buddenbrookhausSource =
+  requireSource(
+    "buddenbrookhaus",
+    "https://buddenbrookhaus.de/",
+);
+
 
 export const lubeckKnowledgeChunks =
   [
@@ -263,7 +250,7 @@ export const lubeckKnowledgeChunks =
       locale: "en",
 
       text:
-        "The Buddenbrookhaus at Mengstraße 4 was built in 1758 for the merchant Johann Michael Croll. Johann Siegmund Mann purchased it in 1841, and it remained in the Mann family until 1891.",
+        "The house at Mengstraße 4 was rebuilt for merchant Johann Michael Croll in 1758. Johann Siegmund Mann purchased it in 1842, and the house left Mann family ownership in 1891.",
 
       topics: [
         "history",
