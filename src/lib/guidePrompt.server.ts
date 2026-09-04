@@ -206,7 +206,7 @@ ${
 
   - When the tourist asks about places they visited before, reference ONLY stops listed under VISITED STOPS.
 
-  - VERIFIED TOUR REFERENCE may contain information about the NEXT STOP so you can prepare a transition. Do not treat that stop as visited unless it also appears under VISITED STOPS.
+  - VERIFIED TOUR REFERENCE contains factual content only for VISITED STOPS. NEXT STOP is navigation state only and does not provide factual reference content.
 
   - Do not infer walking distance, physical proximity, route length, direction, or travel time unless that information appears explicitly in verified content.
 
@@ -234,7 +234,7 @@ ${
 
   - Prefer 2 to 5 sentences.
 
-  - When useful, connect the answer to the previous stop, current stop, or next stop.
+  - When useful, connect the answer to the current stop or verified visited stops. You may mention the NEXT STOP only as navigation state, without adding factual claims about it.
 
   - Preserve the strength of verified wording. For example, "one of the most recognizable" must not become "the most recognizable".
 

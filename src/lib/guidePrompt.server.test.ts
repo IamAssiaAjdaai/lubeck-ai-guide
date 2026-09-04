@@ -111,14 +111,6 @@ describe(
         expect(prompt).not.toMatch(
           /latitude|longitude|"lat"|"lng"/i,
         );
-
-        expect(prompt).toContain(
-          "VISITED STOPS:\nNone",
-        );
-
-        expect(prompt).toContain(
-          "If VISITED STOPS is None",
-        );
       },
     );
 
@@ -198,11 +190,11 @@ describe(
         );
 
         expect(prompt).toContain(
-          "Do not treat that stop as visited unless it also appears under VISITED STOPS",
+          "VERIFIED TOUR REFERENCE contains factual content only for VISITED STOPS",
         );
 
         expect(prompt).toContain(
-          "Do NOT print or label these steps",
+          "NEXT STOP is navigation state only",
         );
 
         expect(prompt).toContain(
@@ -214,15 +206,23 @@ describe(
         );
 
         expect(prompt).toContain(
-            "NEXT STOP — TRANSITION ONLY",
+          "VISITED STOPS:\nNone",
         );
 
         expect(prompt).toContain(
-            "VISITED STOP",
+          "If VISITED STOPS is None",
         );
 
         expect(prompt).toContain(
-            "A stop may be described as VISITED only if it appears under VISITED STOPS",
+          "NEXT STOP:\nMarienkirche",
+        );
+
+        expect(prompt).toContain(
+          "VISITED STOP",
+        );
+
+        expect(prompt).toContain(
+          "A stop may be described as VISITED only if it appears under VISITED STOPS",
         );
 
         expect(prompt).toContain(
@@ -234,6 +234,7 @@ describe(
         * for navigation, but its factual
         * reference must not be injected.
         */
+
         expect(prompt).not.toContain(
           "NEXT STOP — TRANSITION ONLY",
         );
