@@ -95,7 +95,6 @@ export const lubeckPlaceSources = {
     official(
       "Lübeck tourism — Holy Spirit Hospital",
       "https://www.visit-luebeck.com/old-town/poi/holy-spirit-hospital",
-      "2026-09-04",
     ),
   ],
   rathaus: [
@@ -107,14 +106,12 @@ export const lubeckPlaceSources = {
     official(
       "Lübeck tourism — Lübeck City Hall",
       "https://www.visit-luebeck.com/old-town/poi/luebeck-city-hall",
-      "2026-09-04",
     ),
   ],
   "willy-brandt-haus": [
     official(
       "Federal Chancellor Willy Brandt Foundation — Lübeck exhibition",
       "https://willy-brandt.de/ausstellungen/ausstellungen/haus-luebeck/",
-      "2026-09-04",
     ),
     map("OpenStreetMap-derived place record", "https://mapcarta.com/W153789584"),
   ],
@@ -153,23 +150,23 @@ export const lubeckPlaceSources = {
     ),
   ],
   schiffergesellschaft: [
-    official("Schiffergesellschaft", "https://schiffergesellschaft.de/", "2026-09-04"),
+    official("Schiffergesellschaft", "https://schiffergesellschaft.de/",),
   ],
   fangfrisch: [
-    official("Fangfrisch", "https://fangfrisch-luebeck.de/das-sind-wir/", "2026-09-04"),
+    official("Fangfrisch", "https://fangfrisch-luebeck.de/das-sind-wir/",),
   ],
   "restaurant-vai": [
-    official("Restaurant VAI — Contact", "https://restaurant-vai.de/kontakt-2/", "2026-09-04"),
+    official("Restaurant VAI — Contact", "https://restaurant-vai.de/kontakt-2/",),
   ],
   "brauberger-zu-luebeck": [
-    official("Brauberger zu Lübeck", "https://www.brauberger.de/", "2026-09-04"),
+    official("Brauberger zu Lübeck", "https://www.brauberger.de/",),
   ],
   "zaubertheater-luebeck": [
-    official("Zaubertheater Lübeck", "https://zaubertheater-luebeck.de/", "2026-09-04"),
+    official("Zaubertheater Lübeck", "https://zaubertheater-luebeck.de/",),
     map("OpenStreetMap-derived place record", "https://mapcarta.com/N5361074487"),
   ],
   "kolk-17": [
-    official("KOLK 17 — Visit us", "https://kolk17.de/en/visit-us", "2026-09-04"),
+    official("KOLK 17 — Visit us", "https://kolk17.de/en/visit-us",),
     map(
       "OpenStreetMap-derived place record",
       "https://mapcarta.com/de/N446219816",
