@@ -16,9 +16,11 @@ import {
   type RankablePreferencePlace,
 } from "@/lib/tourPreferences";
 import {
+  clearTourPreferences,
   getTourPreferencesStorageKey,
   loadTourPreferences,
   saveTourPreferences,
+  subscribeTourPreferences,
 } from "@/lib/tourPreferencesStorage";
 
 type TestPlace = RankablePreferencePlace &
@@ -355,7 +357,36 @@ describe("tour preference persistence", () => {
         walkingPreference: "standard",
       }),
     ).not.toThrow();
+    expect(loadTourPreferences(tourId)).toEqual({
+      interests: ["history"],
+      walkingPreference: "standard",
+    });
 
     vi.restoreAllMocks();
+    clearTourPreferences(tourId);
+  });
+
+  it("notifies same-tab subscribers only for their tour", () => {
+    const listener = vi.fn();
+    const unsubscribe =
+      subscribeTourPreferences(
+        tourId,
+        listener,
+      );
+
+    saveTourPreferences("another-tour", {
+      interests: ["family"],
+      walkingPreference: "standard",
+    });
+    expect(listener).not.toHaveBeenCalled();
+
+    saveTourPreferences(tourId, {
+      interests: ["architecture"],
+      walkingPreference: "less-walking",
+    });
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    unsubscribe();
+    clearTourPreferences(tourId);
   });
 });

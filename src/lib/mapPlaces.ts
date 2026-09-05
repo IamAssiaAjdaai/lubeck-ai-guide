@@ -11,6 +11,10 @@ export type MapPlace = Readonly<{
   shortDescription: string;
   durationMinutes: number;
   tags?: readonly string[];
+  status?: Place["status"];
+  statusVerifiedAt?: string;
+  visitNoteVerifiedAt?: string;
+  visitNoteValidUntil?: string;
   requestedLocale: Locale;
   actualLocale: Locale;
   contentDirection: TextDirection;
@@ -63,6 +67,13 @@ export function prepareMapPlaces(
         shortDescription: resolvedContent.content.shortDescription,
         durationMinutes: place.durationMinutes,
         tags: place.tags,
+        status: place.status,
+        statusVerifiedAt:
+          place.statusVerifiedAt,
+        visitNoteVerifiedAt:
+          place.visitNoteVerifiedAt,
+        visitNoteValidUntil:
+          place.visitNoteValidUntil,
         requestedLocale: resolvedContent.requestedLocale,
         actualLocale: resolvedContent.actualLocale,
         contentDirection: getDirection(resolvedContent.actualLocale),

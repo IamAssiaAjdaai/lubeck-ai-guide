@@ -100,7 +100,7 @@ export function parseTourPreferences(
   };
 }
 
-function countInterestMatches(
+export function countTourInterestMatches(
   place: RankablePreferencePlace,
   interests: readonly TourInterest[],
 ): number {
@@ -132,7 +132,7 @@ export function rankPlacesForTourPreferences<
     .map((place, originalIndex) => ({
       place,
       originalIndex,
-      interestMatches: countInterestMatches(
+      interestMatches: countTourInterestMatches(
         place,
         preferences.interests,
       ),

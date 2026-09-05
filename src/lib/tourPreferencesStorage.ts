@@ -6,7 +6,11 @@ import {
 
 const TOUR_PREFERENCES_STORAGE_PREFIX =
   "citywalk:tour:preferences";
+const TOUR_PREFERENCES_CHANGED_EVENT =
+  "citywalk:tour-preferences-changed";
 export const TOUR_PREFERENCES_STORAGE_VERSION = 1;
+
+const memorySnapshots = new Map<string, string>();
 
 export function getTourPreferencesStorageKey(
   tourId: string,
@@ -22,8 +26,8 @@ export function loadTourPreferences(
   }
 
   try {
-    const rawValue = window.sessionStorage.getItem(
-      getTourPreferencesStorageKey(tourId),
+    const rawValue = getTourPreferencesSnapshot(
+      tourId,
     );
 
     if (!rawValue) {
@@ -52,26 +56,102 @@ export function loadTourPreferences(
   }
 }
 
+function dispatchPreferenceChange(
+  tourId: string,
+): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(
+    new CustomEvent(
+      TOUR_PREFERENCES_CHANGED_EVENT,
+      { detail: { tourId } },
+    ),
+  );
+}
+
+export function getTourPreferencesSnapshot(
+  tourId: string,
+): string {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  try {
+    const rawValue = window.sessionStorage.getItem(
+      getTourPreferencesStorageKey(tourId),
+    );
+
+    if (rawValue === null) {
+      memorySnapshots.delete(tourId);
+      return "";
+    }
+
+    return rawValue;
+  } catch {
+    return memorySnapshots.get(tourId) ?? "";
+  }
+}
+
+export function subscribeTourPreferences(
+  tourId: string,
+  listener: () => void,
+): () => void {
+  if (typeof window === "undefined") {
+    return () => undefined;
+  }
+
+  const handlePreferenceChange = (
+    event: Event,
+  ) => {
+    if (
+      event instanceof CustomEvent &&
+      event.detail?.tourId === tourId
+    ) {
+      listener();
+    }
+  };
+
+  window.addEventListener(
+    TOUR_PREFERENCES_CHANGED_EVENT,
+    handlePreferenceChange,
+  );
+
+  return () =>
+    window.removeEventListener(
+      TOUR_PREFERENCES_CHANGED_EVENT,
+      handlePreferenceChange,
+    );
+}
+
 export function saveTourPreferences(
   tourId: string,
   preferences: TourPreferences,
 ): TourPreferences {
   const validatedPreferences =
     parseTourPreferences(preferences);
+  const serializedPreferences = JSON.stringify({
+    version: TOUR_PREFERENCES_STORAGE_VERSION,
+    preferences: validatedPreferences,
+  });
 
   try {
     window.sessionStorage.setItem(
       getTourPreferencesStorageKey(tourId),
-      JSON.stringify({
-        version:
-          TOUR_PREFERENCES_STORAGE_VERSION,
-        preferences: validatedPreferences,
-      }),
+      serializedPreferences,
     );
+    memorySnapshots.delete(tourId);
   } catch {
     // Preferences remain usable in memory when
     // sessionStorage is unavailable.
+    memorySnapshots.set(
+      tourId,
+      serializedPreferences,
+    );
   }
+
+  dispatchPreferenceChange(tourId);
 
   return validatedPreferences;
 }
@@ -79,6 +159,8 @@ export function saveTourPreferences(
 export function clearTourPreferences(
   tourId: string,
 ): void {
+  memorySnapshots.delete(tourId);
+
   try {
     window.sessionStorage.removeItem(
       getTourPreferencesStorageKey(tourId),
@@ -87,4 +169,6 @@ export function clearTourPreferences(
     // Reset remains usable in memory when
     // sessionStorage is unavailable.
   }
+
+  dispatchPreferenceChange(tourId);
 }
