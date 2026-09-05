@@ -67,6 +67,7 @@
     "limit": "Dosegnuli ste ograničenje od 5 pitanja za ovu turu.",
     "questionsUsed": "iskorištenih pitanja",
     "unavailable": "Vodič trenutačno nije dostupan.",
+    "insufficientEvidence": "Nemam dovoljno provjerenih informacija za odgovor.",
     "rateLimited": "Postavili ste previše pitanja. Pokušajte ponovno za nekoliko minuta.",
     "suggestionFamous": "Zašto je ovo mjesto poznato?",
     "suggestionBuilt": "Kada je izgrađeno?",

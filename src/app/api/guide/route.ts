@@ -10,6 +10,7 @@ import {
 } from "@/data/places";
 
 import {
+  getTranslations,
   isLocale,
 } from "@/lib/i18n";
 
@@ -27,7 +28,8 @@ import {
 
 import {
   buildGuideSourceMetadata,
-  parseGuideAnswerAttribution,
+  GUIDE_RESPONSE_FORMAT,
+  parseGuideStructuredAnswer,
   retrieveGuideKnowledge,
 } from "@/lib/guideKnowledge.server";
 
@@ -51,6 +53,18 @@ type GuideRequest = {
 
   tourContext?: unknown;
 };
+
+const MAX_COMPLETION_ATTEMPTS = 2;
+
+const ATTRIBUTION_RETRY_INSTRUCTION = `
+ATTRIBUTION CORRECTION:
+
+- The previous response could not be accepted because it did not satisfy the structured grounding contract.
+
+- If groundingStatus is "grounded", usedChunkIds must contain at least one exact CHUNK ID from VERIFIED RETRIEVED KNOWLEDGE that supports the answer.
+
+- If no retrieved chunk supports the answer, set groundingStatus to "insufficient_evidence", use an empty usedChunkIds array, and do not make the unsupported factual claim.
+`.trim();
 
 export async function POST(
   request: Request,
@@ -277,9 +291,20 @@ export async function POST(
       question,
     ].join("\n");
 
-    const completion =
-      await groq.chat.completions.create(
-        {
+    let guideAnswer:
+      | ReturnType<
+          typeof parseGuideStructuredAnswer
+        >
+      | undefined;
+
+    for (
+      let attempt = 0;
+      attempt < MAX_COMPLETION_ATTEMPTS;
+      attempt += 1
+    ) {
+      const completion =
+        await groq.chat.completions.create(
+          {
           model:
             "openai/gpt-oss-20b",
 
@@ -308,13 +333,18 @@ export async function POST(
           max_completion_tokens:
             1024,
 
+          response_format:
+            GUIDE_RESPONSE_FORMAT,
+
           messages: [
             {
               role:
                 "system",
 
               content:
-                systemPrompt,
+                attempt === 0
+                  ? systemPrompt
+                  : `${systemPrompt}\n\n${ATTRIBUTION_RETRY_INSTRUCTION}`,
             },
 
             ...conversationMessages,
@@ -327,66 +357,43 @@ export async function POST(
                 currentTurnQuestion,
             },
           ],
-        },
-      );
+          },
+        );
 
-    const rawAnswer =
-    completion
-      .choices[0]
-      ?.message
-      ?.content
-      ?.trim();
+      const rawAnswer =
+        completion
+          .choices[0]
+          ?.message
+          ?.content
+          ?.trim();
 
-    if (!rawAnswer) {
-        /*
-       * Privacy-safe diagnostics.
-       *
-       * Never log:
-       * - user question
-       * - prompt
-       * - conversation history
-       * - coordinates
-       */
-      console.error(
-        "AI Guide returned no final content.",
-        {
-          finishReason:
-            completion
-              .choices[0]
-              ?.finish_reason,
+      const parsedAnswer =
+        rawAnswer
+          ? parseGuideStructuredAnswer(
+              rawAnswer,
+              knowledge,
+            )
+          : null;
 
-          usage:
-            completion
-              .usage,
-        },
-      );
+      if (
+        parsedAnswer &&
+        (parsedAnswer.groundingStatus ===
+          "insufficient_evidence" ||
+          parsedAnswer.usedChunkIds.length > 0)
+      ) {
+        guideAnswer = parsedAnswer;
 
-      throw new Error(
-        "No AI response was returned.",
-      );
+        break;
+      }
     }
 
-    /*
-     * Phase 2A keeps the old API
-     * response shape.
-     *
-     * Safe source metadata will be
-     * added separately in Phase 2B.
-     */
-    const {
-      answer,
-      usedChunkIds,
-    } =
-      parseGuideAnswerAttribution(
-        rawAnswer,
-        knowledge,
-      );
+    const answer =
+      guideAnswer?.answer ??
+      getTranslations(currentLocale).ai
+        .insufficientEvidence;
 
-    if (!answer) {
-      throw new Error(
-        "AI response contained no visible answer.",
-      );
-    }
+    const usedChunkIds =
+      guideAnswer?.usedChunkIds ?? [];
 
     const sources =
       buildGuideSourceMetadata(

@@ -67,6 +67,7 @@
     "limit": "Dosiahli ste limit 5 otázok pre túto prehliadku.",
     "questionsUsed": "využitých otázok",
     "unavailable": "Sprievodca je dočasne nedostupný.",
+    "insufficientEvidence": "Nemám dostatok overených informácií, aby som na to odpovedal.",
     "rateLimited": "Položili ste priveľa otázok. Skúste to znova o niekoľko minút.",
     "suggestionFamous": "Prečo je toto miesto slávne?",
     "suggestionBuilt": "Kedy bolo postavené?",

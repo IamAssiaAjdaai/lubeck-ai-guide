@@ -33,6 +33,26 @@ import {
   TOUR_CONTEXT_VERSION,
 } from "@/lib/tourContext";
 
+function modelAnswer({
+  answer,
+  groundingStatus,
+  usedChunkIds,
+}: {
+  answer: string;
+
+  groundingStatus:
+    | "grounded"
+    | "insufficient_evidence";
+
+  usedChunkIds: readonly string[];
+}) {
+  return JSON.stringify({
+    answer,
+    groundingStatus,
+    usedChunkIds,
+  });
+}
+
 describe("POST /api/guide", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -53,7 +73,13 @@ describe("POST /api/guide", () => {
       choices: [
         {
           message: {
-            content: "A contextual verified answer.",
+            content: modelAnswer({
+              answer: "I do not have enough verified information.",
+
+              groundingStatus: "insufficient_evidence",
+
+              usedChunkIds: [],
+            }),
           },
 
           finish_reason: "stop",
@@ -69,11 +95,17 @@ describe("POST /api/guide", () => {
       choices: [
         {
           message: {
-            content: [
-              "A contextual verified answer.",
-              "",
-              "[[SOURCES:rathaus-political-role,holstentor-history,fake-chunk]]",
-            ].join("\n"),
+            content: modelAnswer({
+              answer: "A contextual verified answer.",
+
+              groundingStatus: "grounded",
+
+              usedChunkIds: [
+                "rathaus-political-role",
+                "holstentor-history",
+                "fake-chunk",
+              ],
+            }),
           },
 
           finish_reason: "stop",
@@ -190,6 +222,16 @@ describe("POST /api/guide", () => {
 
     expect(groqRequest.max_completion_tokens).toBe(1024);
 
+    expect(groqRequest.response_format).toMatchObject({
+      type: "json_schema",
+
+      json_schema: {
+        name: "citywalk_guide_answer",
+
+        strict: true,
+      },
+    });
+
     expect(groqRequest).not.toHaveProperty("max_tokens");
 
     const systemMessage = groqRequest.messages.find(
@@ -233,6 +275,224 @@ describe("POST /api/guide", () => {
     expect(systemMessage.content).not.toMatch(
       /latitude|longitude|"lat"|"lng"/i,
     );
+  });
+
+  it("returns the official source for a grounded Holstentor answer", async () => {
+    createCompletion.mockResolvedValueOnce({
+      choices: [
+        {
+          message: {
+            content: modelAnswer({
+              answer: "The Holstentor was built between 1464 and 1478.",
+
+              groundingStatus: "grounded",
+
+              usedChunkIds: ["holstentor-history"],
+            }),
+          },
+
+          finish_reason: "stop",
+        },
+      ],
+
+      usage: {},
+    });
+
+    const response = await POST(
+      new Request("http://localhost/api/guide", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          question: "When was this gate built?",
+
+          landmark: "holstentor",
+
+          locale: "en",
+
+          history: [],
+        }),
+      }),
+    );
+
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+
+    expect(data.answer).toContain("1464");
+
+    expect(data.answer).toContain("1478");
+
+    expect(data.sources).toEqual([
+      expect.objectContaining({
+        placeSlug: "holstentor",
+
+        url: "https://museum-holstentor.de/about-holstentor",
+
+        chunkIds: ["holstentor-history"],
+      }),
+    ]);
+  });
+
+  it("retries once when a grounded answer has no valid chunk IDs", async () => {
+    createCompletion
+      .mockResolvedValueOnce({
+        choices: [
+          {
+            message: {
+              content: modelAnswer({
+                answer: "The gate was built between 1464 and 1478.",
+
+                groundingStatus: "grounded",
+
+                usedChunkIds: ["fake-chunk"],
+              }),
+            },
+
+            finish_reason: "stop",
+          },
+        ],
+
+        usage: {},
+      })
+      .mockResolvedValueOnce({
+        choices: [
+          {
+            message: {
+              content: modelAnswer({
+                answer: "The Holstentor was built between 1464 and 1478.",
+
+                groundingStatus: "grounded",
+
+                usedChunkIds: ["holstentor-history"],
+              }),
+            },
+
+            finish_reason: "stop",
+          },
+        ],
+
+        usage: {},
+      });
+
+    const response = await POST(
+      new Request("http://localhost/api/guide", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          question: "When was this gate built?",
+
+          landmark: "holstentor",
+
+          locale: "en",
+        }),
+      }),
+    );
+
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+
+    expect(createCompletion).toHaveBeenCalledTimes(2);
+
+    expect(
+      createCompletion.mock.calls[1][0].messages[0].content,
+    ).toContain("ATTRIBUTION CORRECTION");
+
+    expect(data.answer).toContain("1464");
+
+    expect(data.sources[0].chunkIds).toEqual(["holstentor-history"]);
+  });
+
+  it("fails closed after one retry without valid grounded attribution", async () => {
+    createCompletion.mockResolvedValue({
+      choices: [
+        {
+          message: {
+            content: modelAnswer({
+              answer: "The gate was built between 1464 and 1478.",
+
+              groundingStatus: "grounded",
+
+              usedChunkIds: ["fake-chunk"],
+            }),
+          },
+
+          finish_reason: "stop",
+        },
+      ],
+
+      usage: {},
+    });
+
+    const response = await POST(
+      new Request("http://localhost/api/guide", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          question: "When was this gate built?",
+
+          landmark: "holstentor",
+
+          locale: "en",
+        }),
+      }),
+    );
+
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+
+    expect(createCompletion).toHaveBeenCalledTimes(2);
+
+    expect(data.answer).toBe(
+      "I don't have enough verified information to answer that.",
+    );
+
+    expect(data.answer).not.toContain("1464");
+
+    expect(data.sources).toEqual([]);
+  });
+
+  it("accepts insufficient evidence without sources or a retry", async () => {
+    const response = await POST(
+      new Request("http://localhost/api/guide", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          question: "What happened here yesterday?",
+
+          landmark: "holstentor",
+
+          locale: "en",
+        }),
+      }),
+    );
+
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+
+    expect(createCompletion).toHaveBeenCalledOnce();
+
+    expect(data.answer).toBe("I do not have enough verified information.");
+
+    expect(data.sources).toEqual([]);
   });
 
   it("keeps requests without tour context working", async () => {

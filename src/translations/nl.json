@@ -67,6 +67,7 @@
     "limit": "Je hebt de limiet van 5 vragen voor deze route bereikt.",
     "questionsUsed": "vragen gebruikt",
     "unavailable": "De gids is tijdelijk niet beschikbaar.",
+    "insufficientEvidence": "Ik heb niet genoeg geverifieerde informatie om dat te beantwoorden.",
     "rateLimited": "Je hebt te veel vragen gesteld. Probeer het over een paar minuten opnieuw.",
     "suggestionFamous": "Waarom is deze plek beroemd?",
     "suggestionBuilt": "Wanneer werd het gebouwd?",

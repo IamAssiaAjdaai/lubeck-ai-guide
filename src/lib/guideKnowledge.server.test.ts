@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   buildGuideSourceMetadata,
-  parseGuideAnswerAttribution,
+  parseGuideStructuredAnswer,
   retrieveGuideKnowledge,
 } from "@/lib/guideKnowledge.server";
 
@@ -84,22 +84,29 @@ describe("retrieveGuideKnowledge", () => {
       question: "How does this connect to earlier stops?",
     });
 
-    const parsed = parseGuideAnswerAttribution(
-      [
-        "The Rathaus remains a seat of city administration.",
-        "",
-        "[[SOURCES:rathaus-political-role,fake-chunk]]",
-      ].join("\n"),
+    const parsed = parseGuideStructuredAnswer(
+      JSON.stringify({
+        answer: "The Rathaus remains a seat of city administration.",
+
+        groundingStatus: "grounded",
+
+        usedChunkIds: ["rathaus-political-role", "fake-chunk"],
+      }),
       knowledge,
     );
 
-    expect(parsed.answer).toBe(
+    expect(parsed?.answer).toBe(
       "The Rathaus remains a seat of city administration.",
     );
 
-    expect(parsed.usedChunkIds).toEqual(["rathaus-political-role"]);
+    expect(parsed?.groundingStatus).toBe("grounded");
 
-    const sources = buildGuideSourceMetadata(knowledge, parsed.usedChunkIds);
+    expect(parsed?.usedChunkIds).toEqual(["rathaus-political-role"]);
+
+    const sources = buildGuideSourceMetadata(
+      knowledge,
+      parsed?.usedChunkIds ?? [],
+    );
 
     expect(sources).toHaveLength(1);
 
@@ -115,9 +122,7 @@ describe("retrieveGuideKnowledge", () => {
       false,
     );
   });
-  it(
-  "returns no attributed sources when the model provides no source marker",
-  () => {
+  it("accepts insufficient evidence without attributed chunks", () => {
     const knowledge =
       retrieveGuideKnowledge({
         currentPlaceSlug:
@@ -131,27 +136,52 @@ describe("retrieveGuideKnowledge", () => {
       });
 
     const parsed =
-      parseGuideAnswerAttribution(
-        "The Holstentor was built between 1464 and 1478.",
+      parseGuideStructuredAnswer(
+        JSON.stringify({
+          answer: "I do not have enough verified information.",
+
+          groundingStatus: "insufficient_evidence",
+
+          usedChunkIds: [],
+        }),
         knowledge,
       );
 
     expect(
-      parsed.answer,
+      parsed?.answer,
     ).toBe(
-      "The Holstentor was built between 1464 and 1478.",
+      "I do not have enough verified information.",
     );
 
     expect(
-      parsed.usedChunkIds,
+      parsed?.usedChunkIds,
     ).toEqual([]);
 
     expect(
       buildGuideSourceMetadata(
         knowledge,
-        parsed.usedChunkIds,
+        parsed?.usedChunkIds ?? [],
       ),
     ).toEqual([]);
-  },
-);
+  });
+
+  it("rejects obsolete free-text attribution responses", () => {
+    const knowledge = retrieveGuideKnowledge({
+      currentPlaceSlug: "holstentor",
+
+      visitedPlaceSlugs: [],
+
+      question: "When was it built?",
+    });
+
+    expect(
+      parseGuideStructuredAnswer(
+        [
+          "The Holstentor was built between 1464 and 1478.",
+          "[[SOURCES:holstentor-history]]",
+        ].join("\n"),
+        knowledge,
+      ),
+    ).toBeNull();
+  });
 });

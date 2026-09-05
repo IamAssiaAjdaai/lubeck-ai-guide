@@ -67,6 +67,7 @@
     "limit": "Dosegli ste omejitev 5 vprašanj za ta ogled.",
     "questionsUsed": "porabljenih vprašanj",
     "unavailable": "Vodnik trenutno ni na voljo.",
+    "insufficientEvidence": "Nimam dovolj preverjenih informacij, da bi odgovoril.",
     "rateLimited": "Zastavili ste preveč vprašanj. Poskusite znova čez nekaj minut.",
     "suggestionFamous": "Zakaj je ta kraj znan?",
     "suggestionBuilt": "Kdaj je bil zgrajen?",

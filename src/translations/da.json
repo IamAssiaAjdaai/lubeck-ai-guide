@@ -67,6 +67,7 @@
     "limit": "Du har nået grænsen på 5 spørgsmål for denne tur.",
     "questionsUsed": "spørgsmål brugt",
     "unavailable": "Guiden er midlertidigt utilgængelig.",
+    "insufficientEvidence": "Jeg har ikke nok verificerede oplysninger til at besvare det.",
     "rateLimited": "Du har stillet for mange spørgsmål. Prøv igen om et par minutter.",
     "suggestionFamous": "Hvorfor er stedet berømt?",
     "suggestionBuilt": "Hvornår blev det bygget?",

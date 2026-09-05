@@ -205,12 +205,18 @@ describe("buildGuideSystemPrompt", () => {
     expect(prompt).not.toContain("VERIFIED CURRENT PLACE CONTENT:");
 
     expect(prompt).not.toContain("VERIFIED TOUR REFERENCE:");
-    expect(prompt).toContain("SOURCE ATTRIBUTION PROTOCOL");
+    expect(prompt).toContain("STRUCTURED RESPONSE CONTRACT");
 
-    expect(prompt).toContain("[[SOURCES:chunk-id-1,chunk-id-2]]");
+    expect(prompt).toContain("answer, groundingStatus, and usedChunkIds");
+
+    expect(prompt).toContain(
+      'A grounded response must include at least one exact CHUNK ID',
+    );
 
     expect(prompt).toContain(
       "Do not include chunks merely because they were retrieved or available.",
     );
+
+    expect(prompt).not.toContain("[[SOURCES:");
   });
 });

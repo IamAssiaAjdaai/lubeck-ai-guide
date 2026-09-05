@@ -67,6 +67,7 @@
     "limit": "Oled jõudnud selle ringkäigu 5 küsimuse piirini.",
     "questionsUsed": "küsimust kasutatud",
     "unavailable": "Giid pole ajutiselt saadaval.",
+    "insufficientEvidence": "Mul ei ole vastamiseks piisavalt kontrollitud teavet.",
     "rateLimited": "Oled esitanud liiga palju küsimusi. Proovi mõne minuti pärast uuesti.",
     "suggestionFamous": "Miks see koht on kuulus?",
     "suggestionBuilt": "Millal see ehitati?",

@@ -67,6 +67,7 @@
     "limit": "Dosáhli jste limitu 5 otázek pro tuto prohlídku.",
     "questionsUsed": "využitých otázek",
     "unavailable": "Průvodce je dočasně nedostupný.",
+    "insufficientEvidence": "Nemám dostatek ověřených informací, abych na to odpověděl.",
     "rateLimited": "Položili jste příliš mnoho otázek. Zkuste to znovu za několik minut.",
     "suggestionFamous": "Proč je toto místo slavné?",
     "suggestionBuilt": "Kdy bylo postaveno?",

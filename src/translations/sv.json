@@ -67,6 +67,7 @@
     "limit": "Du har nått gränsen på 5 frågor för den här turen.",
     "questionsUsed": "frågor använda",
     "unavailable": "Guiden är tillfälligt otillgänglig.",
+    "insufficientEvidence": "Jag har inte tillräckligt med verifierad information för att svara på det.",
     "rateLimited": "Du har ställt för många frågor. Försök igen om några minuter.",
     "suggestionFamous": "Varför är platsen berömd?",
     "suggestionBuilt": "När byggdes den?",

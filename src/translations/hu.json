@@ -67,6 +67,7 @@
     "limit": "Elérte a túránkénti 5 kérdéses korlátot.",
     "questionsUsed": "felhasznált kérdés",
     "unavailable": "Az útikalauz átmenetileg nem érhető el.",
+    "insufficientEvidence": "Nincs elég ellenőrzött információm ahhoz, hogy válaszoljak.",
     "rateLimited": "Túl sok kérdést tett fel. Próbálja újra néhány perc múlva.",
     "suggestionFamous": "Miért híres ez a hely?",
     "suggestionBuilt": "Mikor épült?",

@@ -67,6 +67,7 @@
     "limit": "Osiągnięto limit 5 pytań na tę trasę.",
     "questionsUsed": "wykorzystanych pytań",
     "unavailable": "Przewodnik jest chwilowo niedostępny.",
+    "insufficientEvidence": "Nie mam wystarczających zweryfikowanych informacji, aby na to odpowiedzieć.",
     "rateLimited": "Zadano zbyt wiele pytań. Spróbuj ponownie za kilka minut.",
     "suggestionFamous": "Dlaczego to miejsce jest słynne?",
     "suggestionBuilt": "Kiedy je zbudowano?",

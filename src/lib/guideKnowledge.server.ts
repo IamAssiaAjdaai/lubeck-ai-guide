@@ -28,13 +28,62 @@ export type GuideSourceMetadata = Readonly<{
   chunkIds: readonly string[];
 }>;
 
+export type GuideGroundingStatus =
+  | "grounded"
+  | "insufficient_evidence";
+
 export type ParsedGuideAnswer = Readonly<{
   answer: string;
+
+  groundingStatus: GuideGroundingStatus;
 
   usedChunkIds: readonly string[];
 }>;
 
-const SOURCE_MARKER_PATTERN = /\n*\[\[SOURCES:([^\]]*)\]\]\s*$/i;
+export const GUIDE_RESPONSE_FORMAT = {
+  type: "json_schema",
+
+  json_schema: {
+    name: "citywalk_guide_answer",
+
+    strict: true,
+
+    schema: {
+      type: "object",
+
+      properties: {
+        answer: {
+          type: "string",
+        },
+
+        groundingStatus: {
+          type: "string",
+
+          enum: [
+            "grounded",
+            "insufficient_evidence",
+          ],
+        },
+
+        usedChunkIds: {
+          type: "array",
+
+          items: {
+            type: "string",
+          },
+        },
+      },
+
+      required: [
+        "answer",
+        "groundingStatus",
+        "usedChunkIds",
+      ],
+
+      additionalProperties: false,
+    },
+  },
+} as const;
 
 export function buildGuideSourceMetadata(
   knowledge:
@@ -100,40 +149,55 @@ export function buildGuideSourceMetadata(
     chunkIds: [...source.chunkIds],
   }));
 }
-export function parseGuideAnswerAttribution(
+export function parseGuideStructuredAnswer(
   rawAnswer: string,
   knowledge: readonly GuideKnowledgeItem[],
-): ParsedGuideAnswer {
-  const match = rawAnswer.match(SOURCE_MARKER_PATTERN);
+): ParsedGuideAnswer | null {
+  let parsed: unknown;
 
-  if (!match) {
-    return {
-      answer: rawAnswer.trim(),
-
-      usedChunkIds: [],
-    };
+  try {
+    parsed = JSON.parse(rawAnswer);
+  } catch {
+    return null;
   }
 
-  const answer = rawAnswer.replace(SOURCE_MARKER_PATTERN, "").trim();
+  if (
+    typeof parsed !== "object" ||
+    parsed === null ||
+    !("answer" in parsed) ||
+    typeof parsed.answer !== "string" ||
+    !parsed.answer.trim() ||
+    !("groundingStatus" in parsed) ||
+    (parsed.groundingStatus !== "grounded" &&
+      parsed.groundingStatus !== "insufficient_evidence") ||
+    !("usedChunkIds" in parsed) ||
+    !Array.isArray(parsed.usedChunkIds) ||
+    !parsed.usedChunkIds.every(
+      (chunkId) => typeof chunkId === "string",
+    )
+  ) {
+    return null;
+  }
 
   const allowedChunkIds = new Set(
     knowledge.map((item) => item.retrieved.chunk.id),
   );
 
-  const requestedChunkIds = match[1]
-    .split(",")
-    .map((chunkId) => chunkId.trim())
-    .filter(Boolean);
-
   const usedChunkIds = Array.from(
     new Set(
-      requestedChunkIds.filter((chunkId) => allowedChunkIds.has(chunkId)),
+      parsed.usedChunkIds.filter((chunkId) => allowedChunkIds.has(chunkId)),
     ),
   );
 
   return {
-    answer,
-    usedChunkIds,
+    answer: parsed.answer.trim(),
+
+    groundingStatus: parsed.groundingStatus,
+
+    usedChunkIds:
+      parsed.groundingStatus === "grounded"
+        ? usedChunkIds
+        : [],
   };
 }
 export function retrieveGuideKnowledge({
