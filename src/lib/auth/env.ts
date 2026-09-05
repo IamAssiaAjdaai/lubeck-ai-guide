@@ -9,7 +9,6 @@ export function getBetterAuthEnvironment(
   environment: Readonly<Record<string, string | undefined>> = process.env,
 ): BetterAuthEnvironment {
   const secret = environment.BETTER_AUTH_SECRET?.trim();
-  const baseURL = environment.BETTER_AUTH_URL?.trim();
 
   if (!secret || secret.length < MINIMUM_AUTH_SECRET_LENGTH) {
     throw new Error(
@@ -17,10 +16,28 @@ export function getBetterAuthEnvironment(
     );
   }
 
-  if (!baseURL) {
-    throw new Error("BETTER_AUTH_URL must be configured.");
+  const explicitBaseURL = environment.BETTER_AUTH_URL?.trim();
+  if (explicitBaseURL) {
+    return {
+      secret,
+      baseURL: parseExplicitBaseURL(explicitBaseURL),
+    };
   }
 
+  const vercelHostname = environment.VERCEL_URL?.trim();
+  if (!vercelHostname) {
+    throw new Error(
+      "BETTER_AUTH_URL must be configured when VERCEL_URL is unavailable.",
+    );
+  }
+
+  return {
+    secret,
+    baseURL: parseVercelBaseURL(vercelHostname),
+  };
+}
+
+function parseExplicitBaseURL(baseURL: string): string {
   let parsedURL: URL;
   try {
     parsedURL = new URL(baseURL);
@@ -32,5 +49,28 @@ export function getBetterAuthEnvironment(
     throw new Error("BETTER_AUTH_URL must use http or https.");
   }
 
-  return { secret, baseURL: parsedURL.origin };
+  return parsedURL.origin;
+}
+
+function parseVercelBaseURL(hostname: string): string {
+  let parsedURL: URL;
+  try {
+    parsedURL = new URL(`https://${hostname}`);
+  } catch {
+    throw new Error("VERCEL_URL must be a valid hostname.");
+  }
+
+  if (
+    parsedURL.protocol !== "https:" ||
+    parsedURL.host !== hostname.toLowerCase() ||
+    parsedURL.username ||
+    parsedURL.password ||
+    parsedURL.pathname !== "/" ||
+    parsedURL.search ||
+    parsedURL.hash
+  ) {
+    throw new Error("VERCEL_URL must be a valid hostname.");
+  }
+
+  return parsedURL.origin;
 }

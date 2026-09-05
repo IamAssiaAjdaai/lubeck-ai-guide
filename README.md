@@ -179,3 +179,31 @@ Remove-Item Env:CITYWALK_ADMIN_PASSWORD
 The bootstrap command refuses to silently elevate an existing traveler or a
 non-super staff identity. It is separate from `npm run db:seed`; catalog seeds
 never create staff accounts.
+
+### Vercel deployment
+
+Vercel Preview deployments require these server-only environment variables:
+
+```env
+DATABASE_URL=<hosted-postgresql-connection-string>
+BETTER_AUTH_SECRET=<unique-random-secret-at-least-32-characters>
+```
+
+`BETTER_AUTH_URL` may be omitted for Preview deployments. When it is absent,
+the server derives the Better Auth base URL from Vercel's deployment-specific
+`VERCEL_URL` hostname using HTTPS. An explicitly configured `BETTER_AUTH_URL`
+always takes precedence.
+
+Production requires the same database URL and secret plus the canonical public
+application URL:
+
+```env
+DATABASE_URL=<hosted-postgresql-connection-string>
+BETTER_AUTH_SECRET=<unique-random-secret-at-least-32-characters>
+BETTER_AUTH_URL=https://<canonical-production-domain>
+```
+
+Use the canonical production domain instead of a deployment-specific Vercel
+hostname. Vercel runs `npm run vercel-build`, which applies committed Drizzle
+migrations before the normal Next.js production build. It does not generate
+migrations, seed data, or reset the database.
