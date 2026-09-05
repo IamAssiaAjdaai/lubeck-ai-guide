@@ -28,6 +28,7 @@
     "places": "الأماكن",
     "startTour": "ابدأ جولة المشي"
   },
+  "tourPreferences": { "title": "خصّص اكتشافاتك", "description": "اختر اهتماماتك ومقدار المشي الذي تفضّله.", "interests": "الاهتمامات", "history": "التاريخ", "architecture": "العمارة", "hidden-gems": "الجواهر الخفية", "family": "العائلة", "walkingPreference": "تفضيل المشي", "standard": "عادي", "less-walking": "مشي أقل", "recommendedForYou": "موصى به لك", "reset": "إعادة ضبط" },
   "placeCategories": { "all": "الكل", "see": "معالم", "eat": "طعام", "fun": "ترفيه" },
   "placeCatalog": { "placeDuration": "{minutes} دقيقة", "contentFallback": "المحتوى باللغة {language}" },
   "location": { "use": "استخدم موقعي", "requesting": "جارٍ تحديد موقعك…", "privacy": "يبقى موقعك في هذا المتصفح ويُستخدم فقط للميزات القريبة في هذه الصفحة.", "available": "يظهر موقعك الآن على الخريطة.", "denied": "تم رفض إذن الموقع. يمكنك السماح به من إعدادات المتصفح ثم المحاولة مجدداً.", "unavailable": "موقعك غير متاح حالياً.", "unsupported": "هذا المتصفح لا يدعم الوصول إلى الموقع.", "timeout": "انتهت مهلة طلب الموقع. حاول مجدداً.", "error": "تعذر الوصول إلى موقعك. حاول مجدداً.", "retry": "حاول مجدداً", "markerLabel": "موقعك","arrival": "لقد وصلت إلى {place}!" },

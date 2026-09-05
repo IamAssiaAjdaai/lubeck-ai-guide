@@ -10,6 +10,7 @@ export type MapPlace = Readonly<{
   name: string;
   shortDescription: string;
   durationMinutes: number;
+  tags?: readonly string[];
   requestedLocale: Locale;
   actualLocale: Locale;
   contentDirection: TextDirection;
@@ -61,6 +62,7 @@ export function prepareMapPlaces(
         name: resolvedContent.content.name,
         shortDescription: resolvedContent.content.shortDescription,
         durationMinutes: place.durationMinutes,
+        tags: place.tags,
         requestedLocale: resolvedContent.requestedLocale,
         actualLocale: resolvedContent.actualLocale,
         contentDirection: getDirection(resolvedContent.actualLocale),

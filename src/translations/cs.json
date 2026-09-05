@@ -28,6 +28,7 @@
     "places": "Místa",
     "startTour": "Zahájit pěší prohlídku"
   },
+  "tourPreferences": { "title": "Přizpůsobte si objevování", "description": "Vyberte své zájmy a kolik chcete chodit pěšky.", "interests": "Zájmy", "history": "Historie", "architecture": "Architektura", "hidden-gems": "Skryté poklady", "family": "Rodina", "walkingPreference": "Preference chůze", "standard": "Standardní", "less-walking": "Méně chůze", "recommendedForYou": "Doporučeno pro vás", "reset": "Obnovit" },
   "placeCategories": { "all": "Vše", "see": "Památky", "eat": "Jídlo", "fun": "Zábava" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Obsah v jazyce {language}" },
   "location": { "use": "Použít moji polohu", "requesting": "Zjišťování polohy…", "privacy": "Vaše poloha zůstává v tomto prohlížeči a používá se pouze pro funkce v okolí na této stránce.", "available": "Vaše poloha je zobrazena na mapě.", "denied": "Přístup k poloze byl zamítnut. Povolte ho v nastavení prohlížeče a zkuste to znovu.", "unavailable": "Vaše poloha nyní není dostupná.", "unsupported": "Tento prohlížeč nepodporuje přístup k poloze.", "timeout": "Vypršel časový limit žádosti o polohu. Zkuste to znovu.", "error": "K vaší poloze se nepodařilo získat přístup. Zkuste to znovu.", "retry": "Zkusit znovu", "markerLabel": "Vaše poloha", "arrival": "Dorazili jste do {place}!" },

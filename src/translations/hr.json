@@ -28,6 +28,7 @@
     "places": "Mjesta",
     "startTour": "Započni pješačku turu"
   },
+  "tourPreferences": { "title": "Prilagodite svoja otkrića", "description": "Odaberite interese i koliko želite hodati.", "interests": "Interesi", "history": "Povijest", "architecture": "Arhitektura", "hidden-gems": "Skriveni dragulji", "family": "Obitelj", "walkingPreference": "Postavka hodanja", "standard": "Standardno", "less-walking": "Manje hodanja", "recommendedForYou": "Preporučeno za vas", "reset": "Poništi" },
   "placeCategories": { "all": "Sve", "see": "Znamenitosti", "eat": "Hrana", "fun": "Zabava" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Sadržaj na jeziku {language}" },
   "location": { "use": "Upotrijebi moju lokaciju", "requesting": "Traženje vaše lokacije…", "privacy": "Vaša lokacija ostaje u ovom pregledniku i koristi se samo za obližnje značajke na ovoj stranici.", "available": "Vaša lokacija prikazana je na karti.", "denied": "Pristup lokaciji je odbijen. Dopustite ga u postavkama preglednika i pokušajte ponovno.", "unavailable": "Vaša lokacija trenutačno nije dostupna.", "unsupported": "Ovaj preglednik ne podržava pristup lokaciji.", "timeout": "Zahtjev za lokaciju je istekao. Pokušajte ponovno.", "error": "Nismo mogli pristupiti vašoj lokaciji. Pokušajte ponovno.", "retry": "Pokušaj ponovno", "markerLabel": "Vaša lokacija","arrival": "Stigli ste na {place}!" },

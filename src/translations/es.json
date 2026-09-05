@@ -28,6 +28,7 @@
     "places": "Lugares",
     "startTour": "Comenzar la ruta a pie"
   },
+  "tourPreferences": { "title": "Personaliza tus descubrimientos", "description": "Elige tus intereses y cuánto quieres caminar.", "interests": "Intereses", "history": "Historia", "architecture": "Arquitectura", "hidden-gems": "Joyas ocultas", "family": "Familia", "walkingPreference": "Preferencia de paseo", "standard": "Estándar", "less-walking": "Caminar menos", "recommendedForYou": "Recomendado para ti", "reset": "Restablecer" },
   "placeCategories": { "all": "Todos", "see": "Ver", "eat": "Comer", "fun": "Diversión" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Contenido mostrado en {language}" },
   "location": { "use": "Usar mi ubicación", "requesting": "Buscando tu ubicación…", "privacy": "Tu ubicación permanece en este navegador y solo se utiliza para las funciones cercanas de esta página.", "available": "Tu ubicación se muestra en el mapa.", "denied": "Se denegó el permiso de ubicación. Actívalo en la configuración del navegador e inténtalo de nuevo.", "unavailable": "Tu ubicación no está disponible en este momento.", "unsupported": "Este navegador no admite el acceso a la ubicación.", "timeout": "La solicitud de ubicación agotó el tiempo. Inténtalo de nuevo.", "error": "No pudimos acceder a tu ubicación. Inténtalo de nuevo.", "retry": "Intentar de nuevo", "markerLabel": "Tu ubicación", "arrival": "¡Has llegado a {place}!" },

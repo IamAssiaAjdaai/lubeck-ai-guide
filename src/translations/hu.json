@@ -28,6 +28,7 @@
     "places": "Helyszínek",
     "startTour": "Gyalogos túra indítása"
   },
+  "tourPreferences": { "title": "Szabd személyre a felfedezést", "description": "Válaszd ki az érdeklődési köreidet és a kívánt gyaloglás mértékét.", "interests": "Érdeklődési körök", "history": "Történelem", "architecture": "Építészet", "hidden-gems": "Rejtett gyöngyszemek", "family": "Család", "walkingPreference": "Gyaloglási beállítás", "standard": "Normál", "less-walking": "Kevesebb gyaloglás", "recommendedForYou": "Neked ajánljuk", "reset": "Visszaállítás" },
   "placeCategories": { "all": "Összes", "see": "Látnivalók", "eat": "Étel", "fun": "Szórakozás" },
   "placeCatalog": { "placeDuration": "{minutes} perc", "contentFallback": "Tartalom ezen a nyelven: {language}" },
   "location": { "use": "Saját helyzet használata", "requesting": "Helyzet meghatározása…", "privacy": "A helyzeted ebben a böngészőben marad, és csak az ezen az oldalon található közeli funkciókhoz használjuk.", "available": "A helyzeted megjelenik a térképen.", "denied": "A helyhozzáférés megtagadva. Engedélyezd a böngésző beállításaiban, majd próbáld újra.", "unavailable": "A helyzeted jelenleg nem érhető el.", "unsupported": "Ez a böngésző nem támogatja a helyhozzáférést.", "timeout": "A helymeghatározási kérés időtúllépés miatt megszakadt. Próbáld újra.", "error": "Nem sikerült elérni a helyzetedet. Próbáld újra.", "retry": "Újrapróbálás", "markerLabel": "A helyzeted","arrival": "Megérkeztél ide: {place}!" },

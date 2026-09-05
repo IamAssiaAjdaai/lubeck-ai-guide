@@ -28,6 +28,7 @@
     "places": "Orte",
     "startTour": "Stadtrundgang starten"
   },
+  "tourPreferences": { "title": "Deine Entdeckungen personalisieren", "description": "Wähle deine Interessen und wie viel du zu Fuß gehen möchtest.", "interests": "Interessen", "history": "Geschichte", "architecture": "Architektur", "hidden-gems": "Geheimtipps", "family": "Familie", "walkingPreference": "Gehpräferenz", "standard": "Standard", "less-walking": "Weniger gehen", "recommendedForYou": "Für dich empfohlen", "reset": "Zurücksetzen" },
   "placeCategories": { "all": "Alle", "see": "Sehen", "eat": "Essen", "fun": "Spaß" },
   "placeCatalog": { "placeDuration": "{minutes} Min.", "contentFallback": "Inhalt auf {language}" },
   "location": { "use": "Standort verwenden", "requesting": "Standort wird ermittelt…", "privacy": "Dein Standort bleibt in diesem Browser und wird nur für Funktionen in deiner Nähe auf dieser Seite verwendet.", "available": "Dein Standort wird auf der Karte angezeigt.", "denied": "Der Standortzugriff wurde verweigert. Erlaube ihn in den Browsereinstellungen und versuche es erneut.", "unavailable": "Dein Standort ist derzeit nicht verfügbar.", "unsupported": "Dieser Browser unterstützt keinen Standortzugriff.", "timeout": "Die Standortabfrage hat zu lange gedauert. Versuche es erneut.", "error": "Dein Standort konnte nicht ermittelt werden. Versuche es erneut.", "retry": "Erneut versuchen", "markerLabel": "Dein Standort", "arrival": "Du bist in {place} angekommen!" },

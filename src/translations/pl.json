@@ -28,6 +28,7 @@
     "places": "Miejsca",
     "startTour": "Rozpocznij spacer"
   },
+  "tourPreferences": { "title": "Dostosuj swoje odkrycia", "description": "Wybierz zainteresowania i preferowaną ilość chodzenia.", "interests": "Zainteresowania", "history": "Historia", "architecture": "Architektura", "hidden-gems": "Ukryte perełki", "family": "Rodzina", "walkingPreference": "Preferencja spaceru", "standard": "Standardowo", "less-walking": "Mniej chodzenia", "recommendedForYou": "Polecane dla Ciebie", "reset": "Resetuj" },
   "placeCategories": { "all": "Wszystkie", "see": "Zobacz", "eat": "Jedzenie", "fun": "Rozrywka" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Treść w języku: {language}" },
   "location": { "use": "Użyj mojej lokalizacji", "requesting": "Ustalanie Twojej lokalizacji…", "privacy": "Twoja lokalizacja pozostaje w tej przeglądarce i jest używana tylko do funkcji związanych z miejscami w pobliżu na tej stronie.", "available": "Twoja lokalizacja jest widoczna na mapie.", "denied": "Odmówiono dostępu do lokalizacji. Zezwól na niego w ustawieniach przeglądarki i spróbuj ponownie.", "unavailable": "Twoja lokalizacja jest obecnie niedostępna.", "unsupported": "Ta przeglądarka nie obsługuje dostępu do lokalizacji.", "timeout": "Upłynął limit czasu żądania lokalizacji. Spróbuj ponownie.", "error": "Nie udało się uzyskać dostępu do Twojej lokalizacji. Spróbuj ponownie.", "retry": "Spróbuj ponownie", "markerLabel": "Twoja lokalizacja","arrival": "Dotarłeś do {place}!" },

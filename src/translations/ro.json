@@ -28,6 +28,7 @@
     "places": "Locuri",
     "startTour": "Începeți turul pietonal"
   },
+  "tourPreferences": { "title": "Personalizează-ți descoperirile", "description": "Alege interesele și cât dorești să mergi pe jos.", "interests": "Interese", "history": "Istorie", "architecture": "Arhitectură", "hidden-gems": "Comori ascunse", "family": "Familie", "walkingPreference": "Preferință de mers", "standard": "Standard", "less-walking": "Mai puțin mers", "recommendedForYou": "Recomandat pentru tine", "reset": "Resetează" },
   "placeCategories": { "all": "Toate", "see": "De văzut", "eat": "Mâncare", "fun": "Distracție" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Conținut afișat în {language}" },
   "location": { "use": "Folosește locația mea", "requesting": "Se caută locația…", "privacy": "Locația ta rămâne în acest browser și este folosită doar pentru funcțiile din apropiere de pe această pagină.", "available": "Locația ta este afișată pe hartă.", "denied": "Accesul la locație a fost refuzat. Permite-l din setările browserului și încearcă din nou.", "unavailable": "Locația ta nu este disponibilă momentan.", "unsupported": "Acest browser nu acceptă accesul la locație.", "timeout": "Solicitarea locației a expirat. Încearcă din nou.", "error": "Nu am putut accesa locația ta. Încearcă din nou.", "retry": "Încearcă din nou", "markerLabel": "Locația ta","arrival": "Ai ajuns la {place}!" },

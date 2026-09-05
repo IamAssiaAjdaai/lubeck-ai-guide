@@ -28,6 +28,7 @@
     "places": "Áiteanna",
     "startTour": "Cuir tús leis an turas"
   },
+  "tourPreferences": { "title": "Cuir do chuid fionnachtana in oiriúint", "description": "Roghnaigh do chuid spéiseanna agus an méid siúil atá uait.", "interests": "Spéiseanna", "history": "Stair", "architecture": "Ailtireacht", "hidden-gems": "Seoda ceilte", "family": "Teaghlach", "walkingPreference": "Rogha siúil", "standard": "Caighdeánach", "less-walking": "Níos lú siúil", "recommendedForYou": "Molta duit", "reset": "Athshocraigh" },
   "placeCategories": { "all": "Gach áit", "see": "Radharcanna", "eat": "Bia", "fun": "Spraoi" },
   "placeCatalog": { "placeDuration": "{minutes} nóim", "contentFallback": "Ábhar i {language}" },
   "location": { "use": "Úsáid mo shuíomh", "requesting": "Do shuíomh á aimsiú…", "privacy": "Fanann do shuíomh sa bhrabhsálaí seo agus ní úsáidtear é ach le haghaidh gnéithe in aice láimhe ar an leathanach seo.", "available": "Tá do shuíomh le feiceáil ar an léarscáil.", "denied": "Diúltaíodh cead suímh. Ceadaigh é i socruithe an bhrabhsálaí agus bain triail eile as.", "unavailable": "Níl do shuíomh ar fáil faoi láthair.", "unsupported": "Ní thacaíonn an brabhsálaí seo le rochtain suímh.", "timeout": "Chuaigh an t-iarratas suímh thar am. Bain triail eile as.", "error": "Níorbh fhéidir linn rochtain a fháil ar do shuíomh. Bain triail eile as.", "retry": "Bain triail eile as", "markerLabel": "Do shuíomh", "arrival": "Tá tú tagtha chuig {place}!" },
