@@ -8,6 +8,13 @@
       "when": 1788462143856,
       "tag": "0000_striped_scarlet_spider",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788639631090,
+      "tag": "0001_jazzy_shinko_yamashiro",
+      "breakpoints": true
     }
   ]
 }
