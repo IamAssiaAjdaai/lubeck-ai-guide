@@ -212,7 +212,7 @@ describe(
         ).not.toMatch(
           /question|score|prompt|history|latitude|longitude/i,
         );
-        
+
         expect(
           createCompletion,
         ).toHaveBeenCalledOnce();
@@ -251,10 +251,10 @@ describe(
             (
               message: {
                 role:
-                  string;
+                string;
 
                 content:
-                  string;
+                string;
               },
             ) =>
               message.role ===
@@ -551,8 +551,8 @@ describe(
 
         const currentTurn =
           groqRequest.messages[
-            groqRequest.messages.length -
-              1
+          groqRequest.messages.length -
+          1
           ];
 
         expect(

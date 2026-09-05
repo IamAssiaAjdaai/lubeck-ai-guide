@@ -8,10 +8,26 @@ const CONVERSATION_PREFIX =
 const MAX_STORED_MESSAGES = 10;
 const MAX_QUESTIONS = 5;
 
+export type StoredGuideSource =
+  Readonly<{
+    label: string;
+    url: string;
+    verifiedAt: string;
+    placeSlug: string;
+    chunkIds:
+      readonly string[];
+  }>;
+
 export type StoredGuideMessage =
   Readonly<{
-    role: "user" | "assistant";
+    role:
+      | "user"
+      | "assistant";
+
     text: string;
+
+    sources?:
+      readonly StoredGuideSource[];
   }>;
 
 export type TourConversation =
@@ -26,6 +42,49 @@ const EMPTY_CONVERSATION:
     messages: [],
     questionCount: 0,
   };
+
+  export function isStoredGuideSource(
+  value: unknown,
+  ): value is StoredGuideSource {
+  if (
+    typeof value !==
+      "object" ||
+    value === null
+  ) {
+    return false;
+  }
+
+  const source =
+    value as {
+      label?: unknown;
+      url?: unknown;
+      verifiedAt?: unknown;
+      placeSlug?: unknown;
+      chunkIds?: unknown;
+    };
+
+  return (
+    typeof source.label ===
+      "string" &&
+    typeof source.url ===
+      "string" &&
+    source.url.startsWith(
+      "https://",
+    ) &&
+    typeof source.verifiedAt ===
+      "string" &&
+    typeof source.placeSlug ===
+      "string" &&
+    Array.isArray(
+      source.chunkIds,
+    ) &&
+    source.chunkIds.every(
+      (chunkId) =>
+        typeof chunkId ===
+        "string",
+    )
+  );
+}
 
 function getStorageKey(
   tourId: SupportedTourId,
@@ -67,24 +126,70 @@ export function getTourConversation(
       questionCount?: unknown;
     };
 
-    const messages =
-      Array.isArray(value.messages)
-        ? value.messages.filter(
+  const messages =
+    Array.isArray(
+      value.messages,
+    )
+    ? value.messages.flatMap(
+        (
+          item,
+        ): StoredGuideMessage[] => {
+          if (
+            typeof item !==
+              "object" ||
+            item === null
+          ) {
+            return [];
+          }
+
+          const candidate =
+            item as {
+              role?: unknown;
+              text?: unknown;
+              sources?: unknown;
+            };
+
+          if (
             (
-              item,
-            ): item is StoredGuideMessage =>
-              typeof item === "object" &&
-              item !== null &&
-              "role" in item &&
-              (
-                item.role === "user" ||
-                item.role === "assistant"
-              ) &&
-              "text" in item &&
-              typeof item.text ===
-                "string",
-          )
-        : [];
+              candidate.role !==
+                "user" &&
+              candidate.role !==
+                "assistant"
+            ) ||
+            typeof candidate.text !==
+              "string"
+          ) {
+            return [];
+          }
+
+          const sources =
+            Array.isArray(
+              candidate.sources,
+            )
+              ? candidate.sources.filter(
+                  isStoredGuideSource,
+                )
+              : [];
+
+          return [
+            {
+              role:
+                candidate.role,
+
+              text:
+                candidate.text,
+
+              ...(sources.length >
+              0
+                ? {
+                    sources,
+                  }
+                : {}),
+            },
+          ];
+        },
+      )
+    : [];
 
     const questionCount =
       typeof value.questionCount ===

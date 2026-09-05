@@ -30,7 +30,31 @@ describe("AskGuide", () => {
 
     const request = vi.fn().mockImplementation(() =>
       Promise.resolve(
-        new Response(JSON.stringify({ answer: "A verified answer." }), {
+        new Response(
+          JSON.stringify({
+             answer:
+             "A verified answer.",
+              sources: [
+                {
+                  label:
+                    "Museum Holstentor — The Holstentor",
+
+                  url:
+                    "https://museum-holstentor.de/about-holstentor",
+
+                  verifiedAt:
+                    "2026-09-04",
+
+                  placeSlug:
+                    "holstentor",
+
+                  chunkIds: [
+                    "holstentor-history",
+                  ],
+                },
+              ],
+            }),
+         {
           status: 200,
           headers: { "Content-Type": "application/json" },
         }),
@@ -65,6 +89,22 @@ describe("AskGuide", () => {
 
     await waitFor(() => expect(request).toHaveBeenCalledOnce());
     expect(await screen.findByText("A verified answer.")).not.toBeNull();
+    const sourceLink =
+    await screen.findByRole(
+      "link",
+      {
+        name:
+          "Museum Holstentor — The Holstentor",
+      },
+    );
+
+      expect(
+        sourceLink.getAttribute(
+          "href",
+        ),
+      ).toBe(
+        "https://museum-holstentor.de/about-holstentor",
+      );
   });
   it("disables new questions after five successful answers", async () => {
     const request = vi.fn().mockImplementation(() =>
@@ -241,14 +281,33 @@ describe("AskGuide", () => {
             JSON.stringify({
               answer:
                 "Holstentor was built between 1464 and 1478.",
-            }),
-            {
-              status: 200,
-              headers: {
-                "Content-Type":
-                  "application/json",
+              sources: [
+              {
+                label:
+                  "Museum Holstentor — The Holstentor",
+
+                url:
+                  "https://museum-holstentor.de/about-holstentor",
+
+                verifiedAt:
+                  "2026-09-04",
+
+                placeSlug:
+                  "holstentor",
+
+                chunkIds: [
+                  "holstentor-history",
+                ],
               },
-            },
+            ],
+          }),
+          {
+            status: 200,
+            headers: {
+                        "Content-Type":
+                          "application/json",
+                      },
+                    },
           ),
         );
 
@@ -320,6 +379,15 @@ describe("AskGuide", () => {
           `1/5 ${labels.questionsUsed}`,
         ),
       ).not.toBeNull();
+      expect(
+        screen.getByRole(
+          "link",
+          {
+            name:
+              "Museum Holstentor — The Holstentor",
+          },
+        ),
+      ).not.toBeNull();
 
       /*
       * Simulate route navigation.
@@ -349,7 +417,22 @@ describe("AskGuide", () => {
           ]}
         />,
       );
+      const restoredSource =
+        screen.getByRole(
+          "link",
+          {
+            name:
+              "Museum Holstentor — The Holstentor",
+          },
+        );
 
+      expect(
+        restoredSource.getAttribute(
+          "href",
+        ),
+      ).toBe(
+        "https://museum-holstentor.de/about-holstentor",
+      );
       fireEvent.click(
         screen.getByRole(
           "button",

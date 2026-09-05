@@ -228,7 +228,7 @@ export async function POST(
 
         question,
       });
-    
+
     const sources =
       buildGuideSourceMetadata(
         knowledge,
