@@ -65,6 +65,23 @@ describe("POST /api/guide", () => {
   });
 
   it("builds trusted multi-stop RAG context", async () => {
+    createCompletion.mockResolvedValueOnce({
+      choices: [
+        {
+          message: {
+            content: [
+              "A contextual verified answer.",
+              "",
+              "[[SOURCES:rathaus-political-role,holstentor-history,fake-chunk]]",
+            ].join("\n"),
+          },
+
+          finish_reason: "stop",
+        },
+      ],
+
+      usage: {},
+    });
     const request = new Request("http://localhost/api/guide", {
       method: "POST",
 
@@ -136,6 +153,33 @@ describe("POST /api/guide", () => {
           "longitude" in source,
       ),
     ).toBe(false);
+    expect(data.answer).toBe("A contextual verified answer.");
+    expect(
+      data.sources.some(
+        (source: { placeSlug: string }) => source.placeSlug === "rathaus",
+      ),
+    ).toBe(true);
+
+    expect(
+      data.sources.some(
+        (source: { placeSlug: string }) => source.placeSlug === "holstentor",
+      ),
+    ).toBe(true);
+
+    expect(
+      data.sources.some(
+        (source: { placeSlug: string }) => source.placeSlug === "marienkirche",
+      ),
+    ).toBe(false);
+
+    expect(
+      data.sources.some(
+        (source: { placeSlug: string }) =>
+          source.placeSlug === "heiligen-geist-hospital",
+      ),
+    ).toBe(false);
+
+    expect(JSON.stringify(data)).not.toContain("[[SOURCES:");
     expect(createCompletion).toHaveBeenCalledOnce();
 
     const groqRequest = createCompletion.mock.calls[0][0];

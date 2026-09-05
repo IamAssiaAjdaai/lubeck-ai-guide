@@ -27,6 +27,7 @@ import {
 
 import {
   buildGuideSourceMetadata,
+  parseGuideAnswerAttribution,
   retrieveGuideKnowledge,
 } from "@/lib/guideKnowledge.server";
 
@@ -229,10 +230,6 @@ export async function POST(
         question,
       });
 
-    const sources =
-      buildGuideSourceMetadata(
-        knowledge,
-      );
     const systemPrompt =
       buildGuideSystemPrompt({
         currentLandmark:
@@ -333,15 +330,15 @@ export async function POST(
         },
       );
 
-    const answer =
-      completion
-        .choices[0]
-        ?.message
-        ?.content
-        ?.trim();
+    const rawAnswer =
+    completion
+      .choices[0]
+      ?.message
+      ?.content
+      ?.trim();
 
-    if (!answer) {
-      /*
+    if (!rawAnswer) {
+        /*
        * Privacy-safe diagnostics.
        *
        * Never log:
@@ -376,6 +373,26 @@ export async function POST(
      * Safe source metadata will be
      * added separately in Phase 2B.
      */
+    const {
+      answer,
+      usedChunkIds,
+    } =
+      parseGuideAnswerAttribution(
+        rawAnswer,
+        knowledge,
+      );
+
+    if (!answer) {
+      throw new Error(
+        "AI response contained no visible answer.",
+      );
+    }
+
+    const sources =
+      buildGuideSourceMetadata(
+        knowledge,
+        usedChunkIds,
+      );
     return NextResponse.json({
       answer,
       sources,

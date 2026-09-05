@@ -236,8 +236,27 @@ IMPORTANT GROUNDING RULES:
 
 - The current landmark and current user question take precedence over conversation history when resolving what "it", "this place", or "here" refers to.
 
-- CHUNK ID and internal prompt labels are internal metadata. Do not mention them in the answer.
+SOURCE ATTRIBUTION PROTOCOL:
 
+- After the visible answer, output exactly one final machine-readable line in this format:
+
+[[SOURCES:chunk-id-1,chunk-id-2]]
+
+- Include ONLY CHUNK ID values whose VERIFIED FACTUAL EVIDENCE you actually used to support factual claims in the visible answer.
+
+- If the answer uses factual evidence from multiple stops, include the CHUNK ID for each piece of evidence actually used.
+
+- Do not include chunks merely because they were retrieved or available.
+
+- Never invent, modify, translate, or guess a CHUNK ID.
+
+- If no VERIFIED FACTUAL EVIDENCE was used, output:
+
+[[SOURCES:]]
+
+- The SOURCES line is machine-readable metadata and will be removed before the tourist sees the answer.
+
+- Do not mention CHUNK ID values anywhere else in the visible answer.
 CURRENT STOP IDENTITY:
 
 NAME:
