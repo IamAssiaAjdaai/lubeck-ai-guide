@@ -13,6 +13,10 @@ import type {
   TourStopContext,
 } from "@/lib/tourContext";
 
+import type {
+  GuideKnowledgeItem,
+} from "@/lib/guideKnowledge.server";
+
 function formatFacts(
   facts: readonly {
     label: string;
@@ -25,6 +29,45 @@ function formatFacts(
         `${fact.label}: ${fact.value}`,
     )
     .join("\n");
+}
+
+function buildRetrievedKnowledge(
+  knowledge:
+    readonly GuideKnowledgeItem[],
+): string {
+  if (
+    knowledge.length === 0
+  ) {
+    return "None";
+  }
+
+  return knowledge
+    .map(
+      ({
+        role,
+        placeSlug,
+        retrieved,
+      }) => `
+REFERENCE ROLE:
+${
+  role === "current"
+    ? "CURRENT STOP"
+    : "VISITED STOP"
+}
+
+PLACE SLUG:
+${placeSlug}
+
+CHUNK ID:
+${retrieved.chunk.id}
+
+VERIFIED FACTUAL EVIDENCE:
+${retrieved.chunk.text}
+`.trim(),
+    )
+    .join(
+      "\n\n---\n\n",
+    );
 }
 
 function buildVerifiedPlaceReference(
@@ -81,7 +124,7 @@ function buildTourReference({
   tourContext: ResolvedTourContext;
   locale: Locale;
 }): string {
-  const references =
+   const references =
     tourContext.visitedStops.flatMap(
       (stop) => {
         const place =
@@ -104,7 +147,11 @@ ${buildVerifiedPlaceReference(
         ];
       },
     );
-
+    
+  const retrievedKnowledge =
+   buildRetrievedKnowledge(
+    knowledge,
+  );
   return references.length > 0
     ? references.join(
         "\n\n---\n\n",
@@ -116,6 +163,7 @@ export function buildGuideSystemPrompt({
   currentLandmark,
   locale,
   tourContext,
+  knowledge,
 }: {
   currentLandmark: LandmarkPlace;
   locale: Locale;
