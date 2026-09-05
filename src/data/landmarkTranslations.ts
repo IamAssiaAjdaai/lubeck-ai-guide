@@ -3,7 +3,6 @@ import type { Locale } from "@/lib/i18n";
 export type LandmarkContent = {
   name: string;
   duration: string;
-  audio: string;
   description: string;
   story: string;
   facts: readonly { label: string; value: string }[];
@@ -22,7 +21,6 @@ function landmark(
   return {
     name,
     duration,
-    audio: "",
     description,
     story,
     facts: facts.map(([label, value]) => ({ label, value })),

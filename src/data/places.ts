@@ -1,4 +1,5 @@
 import type { LandmarkContent } from "@/data/landmarkTranslations";
+import { getLandmarkAudioMap } from "@/data/landmarkAudio";
 import { landmarks as legacyLandmarks } from "@/data/landmarks";
 import { locales, type Locale } from "@/lib/i18n";
 
@@ -185,19 +186,6 @@ function toLocalizedContent(
   ) as Record<Locale, LandmarkPlaceContent>;
 }
 
-function toLocalizedAudio(
-  content: Record<Locale, LandmarkContent>,
-): Readonly<Partial<Record<Locale, string>>> | undefined {
-  const audio = Object.fromEntries(
-    locales.flatMap((locale) => {
-      const source = content[locale].audio;
-      return source ? ([[locale, source]] as const) : [];
-    }),
-  ) as Partial<Record<Locale, string>>;
-
-  return Object.keys(audio).length > 0 ? audio : undefined;
-}
-
 const legacyDurationLabels = Object.fromEntries(
   legacyLandmarks.map((landmark) => [
     placeKey("lubeck", landmark.slug),
@@ -221,7 +209,7 @@ export const lubeckLandmarks: readonly LandmarkPlace[] = legacyLandmarks.map(
       city: "lubeck",
       image: landmark.image,
       ...metadata,
-      audio: toLocalizedAudio(landmark.content),
+      audio: getLandmarkAudioMap(landmark.slug),
       content: toLocalizedContent(
         landmark.slug as LubeckLandmarkSlug,
         landmark.content,
