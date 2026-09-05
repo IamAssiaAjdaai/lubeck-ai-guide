@@ -417,6 +417,16 @@ describe("AskGuide", () => {
           ]}
         />,
       );
+
+      fireEvent.click(
+        screen.getByRole(
+          "button",
+          {
+            name: labels.open,
+          },
+        ),
+      );
+
       const restoredSource =
         screen.getByRole(
           "link",
@@ -433,6 +443,15 @@ describe("AskGuide", () => {
       ).toBe(
         "https://museum-holstentor.de/about-holstentor",
       );
+
+      expect(
+        restoredSource.getAttribute(
+          "href",
+        ),
+      ).toBe(
+        "https://museum-holstentor.de/about-holstentor",
+      );
+
       fireEvent.click(
         screen.getByRole(
           "button",
