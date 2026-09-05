@@ -76,8 +76,8 @@ describe("Place model", () => {
 });
 
 describe("Lubeck places dataset", () => {
-  it("contains the exact 20 ticket places in the required order", () => {
-    expect(lubeckPlaces).toHaveLength(20);
+  it("contains the exact 25 curated places in the required order", () => {
+    expect(lubeckPlaces).toHaveLength(25);
     expect(lubeckPlaces.map((place) => place.slug)).toEqual(
       LUBECK_PLACE_SLUGS,
     );
@@ -125,7 +125,7 @@ describe("Lubeck places dataset", () => {
   });
 
   it("has the required category breakdown", () => {
-    expect(getPlacesByCategory("see", "lubeck")).toHaveLength(12);
+    expect(getPlacesByCategory("see", "lubeck")).toHaveLength(17);
     expect(getPlacesByCategory("eat", "lubeck")).toHaveLength(5);
     expect(getPlacesByCategory("fun", "lubeck")).toHaveLength(3);
   });
@@ -144,7 +144,7 @@ describe("Lubeck places dataset", () => {
       (place) => !legacySlugs.includes(place.slug),
     );
 
-    expect(newPlaces).toHaveLength(15);
+    expect(newPlaces).toHaveLength(20);
     for (const place of newPlaces) {
       expect(Object.keys(place.content).sort()).toEqual(["de", "en"]);
       expect(place.content.de?.name).toBeTruthy();
@@ -268,7 +268,7 @@ describe("Lubeck places dataset", () => {
 });
 
 describe("Lubeck place provenance", () => {
-  it("provides source metadata for all 20 places", () => {
+  it("provides source metadata for all 25 places", () => {
     expect(Object.keys(lubeckPlaceSources).sort()).toEqual(
       [...LUBECK_PLACE_SLUGS].sort(),
     );

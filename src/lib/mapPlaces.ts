@@ -9,6 +9,7 @@ export type MapPlace = Readonly<{
   coordinates: PlaceCoordinates;
   name: string;
   shortDescription: string;
+  visitNote?: string;
   durationMinutes: number;
   tags?: readonly string[];
   status?: Place["status"];
@@ -65,6 +66,7 @@ export function prepareMapPlaces(
         coordinates: place.coordinates,
         name: resolvedContent.content.name,
         shortDescription: resolvedContent.content.shortDescription,
+        visitNote: resolvedContent.content.visitNote,
         durationMinutes: place.durationMinutes,
         tags: place.tags,
         status: place.status,

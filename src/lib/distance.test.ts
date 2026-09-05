@@ -90,10 +90,10 @@ describe("distance formatting", () => {
 describe("derived place distance", () => {
   const origin = { lat: 53.865, lng: 10.686 };
 
-  it("adds distance to all 20 Lübeck places without mutating them", () => {
+  it("adds distance to all 25 Lübeck places without mutating them", () => {
     const derivedPlaces = withPlacesDistance(lubeckPlaces, origin);
 
-    expect(derivedPlaces).toHaveLength(20);
+    expect(derivedPlaces).toHaveLength(25);
     expect(derivedPlaces.every((place) => place.distance)).toBe(true);
     expect(lubeckPlaces.every((place) => !("distance" in place))).toBe(true);
   });
@@ -109,8 +109,8 @@ describe("derived place distance", () => {
   });
 
   it("preserves catalog/category and five-stop tour boundaries", () => {
-    expect(lubeckPlaces).toHaveLength(20);
-    expect(lubeckPlaces.filter((place) => place.category === "see")).toHaveLength(12);
+    expect(lubeckPlaces).toHaveLength(25);
+    expect(lubeckPlaces.filter((place) => place.category === "see")).toHaveLength(17);
     expect(lubeckPlaces.filter((place) => place.category === "eat")).toHaveLength(5);
     expect(lubeckPlaces.filter((place) => place.category === "fun")).toHaveLength(3);
     expect(lubeckLandmarks).toHaveLength(5);

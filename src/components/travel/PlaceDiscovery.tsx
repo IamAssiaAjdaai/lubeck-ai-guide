@@ -13,6 +13,7 @@ import {
 import {
   ChevronRight,
   Clock3,
+  Gem,
   Landmark,
   LayoutGrid,
   Sparkles,
@@ -30,6 +31,7 @@ import {
   type PlaceCategoryFilter,
   type PlaceCategoryIconId,
 } from "@/data/placeCategories";
+import { HIDDEN_GEM_TAG } from "@/data/places";
 
 import { useUserLocation } from "@/hooks/useUserLocation";
 
@@ -100,6 +102,7 @@ type PlaceDiscoveryProps = Readonly<{
   mapLabels: Translations["map"];
   distanceLabels: Translations["distance"];
   storyLabel: string;
+  hiddenGemLabel?: string;
 }>;
 
 type LocationAnalyticsEvent =
@@ -173,15 +176,19 @@ function PlaceCard({
   locale,
   direction,
   walkingTimeTemplate,
+  hiddenGemLabel,
 }: Readonly<{
   place: DiscoveryPlace;
   category: LocalizedPlaceCategory;
   locale: string;
   direction: TextDirection;
   walkingTimeTemplate: string;
+  hiddenGemLabel?: string;
 }>) {
   const CategoryIcon =
     categoryIcons[category.icon];
+  const isHiddenGem =
+    place.tags?.includes(HIDDEN_GEM_TAG) ?? false;
 
   const cardContent = (
     <>
@@ -207,15 +214,24 @@ function PlaceCard({
       </div>
 
       <div className="min-w-0 flex-1 py-0.5">
-        <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-accent rtl:tracking-normal">
-          <CategoryIcon
-            aria-hidden="true"
-            size={13}
-            strokeWidth={1.8}
-          />
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-accent rtl:tracking-normal">
+            <CategoryIcon
+              aria-hidden="true"
+              size={13}
+              strokeWidth={1.8}
+            />
 
-          {category.label}
-        </p>
+            {category.label}
+          </p>
+
+          {hiddenGemLabel && isHiddenGem ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
+              <Gem aria-hidden="true" size={11} strokeWidth={1.8} />
+              {hiddenGemLabel}
+            </span>
+          ) : null}
+        </div>
 
         <div
           lang={place.actualLocale}
@@ -228,6 +244,12 @@ function PlaceCard({
           <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-text-secondary">
             {place.shortDescription}
           </p>
+
+          {isHiddenGem && place.visitNote ? (
+            <p className="mt-2 text-xs leading-5 text-text-muted">
+              {place.visitNote}
+            </p>
+          ) : null}
         </div>
 
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-muted">
@@ -312,6 +334,7 @@ export default function PlaceDiscovery({
   mapLabels,
   distanceLabels,
   storyLabel,
+  hiddenGemLabel,
 }: PlaceDiscoveryProps) {
   const [selection, setSelection] =
     useState<PlaceCategoryFilter>("all");
@@ -712,6 +735,7 @@ export default function PlaceDiscovery({
                 walkingTimeTemplate={
                   distanceLabels.walkingMinutes
                 }
+                hiddenGemLabel={hiddenGemLabel}
               />
             );
           },

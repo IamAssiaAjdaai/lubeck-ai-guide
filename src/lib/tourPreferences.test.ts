@@ -259,9 +259,18 @@ describe("tour preference ranking", () => {
         { origin: holstentor.coordinates },
       );
 
-    expect(hiddenGemRanking[0].slug).toBe(
+    expect(
+      hiddenGemRanking
+        .slice(0, 6)
+        .map(({ slug }) => slug),
+    ).toEqual([
+      "fuechtingshof",
+      "dunkelgruener-gang",
+      "kalandsgang",
+      "malerwinkel",
+      "buergergaerten",
       "zaubertheater-luebeck",
-    );
+    ]);
     expect(
       familyRanking
         .slice(0, 3)

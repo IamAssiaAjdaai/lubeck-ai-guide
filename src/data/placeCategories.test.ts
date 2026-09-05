@@ -72,8 +72,8 @@ describe("reusable place category filtering", () => {
     ).toEqual(["theatre"]);
   });
 
-  it("returns the required 12/5/3 Lübeck catalog split", () => {
-    expect(filterPlacesByCategory(lubeckPlaces, "see")).toHaveLength(12);
+  it("returns the current 17/5/3 Lübeck catalog split", () => {
+    expect(filterPlacesByCategory(lubeckPlaces, "see")).toHaveLength(17);
     expect(filterPlacesByCategory(lubeckPlaces, "eat")).toHaveLength(5);
     expect(filterPlacesByCategory(lubeckPlaces, "fun")).toHaveLength(3);
   });

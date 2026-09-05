@@ -21,25 +21,25 @@ function prepareLubeckMapPlaces(locale: "en" | "ar" = "en") {
 }
 
 describe("map place preparation", () => {
-  it("produces valid marker data for all 20 Lübeck places", () => {
+  it("produces valid marker data for all 25 Lübeck places", () => {
     const markers = prepareLubeckMapPlaces();
 
-    expect(markers).toHaveLength(20);
+    expect(markers).toHaveLength(25);
     for (const marker of markers) {
       expect(isValidMapCoordinate(marker.coordinates)).toBe(true);
       expect(marker.name.trim()).not.toBe("");
       expect(marker.shortDescription.trim()).not.toBe("");
     }
     expect(calculateMapBounds(markers)).toEqual([
-      [10.6797, 53.8609],
-      [10.6899, 53.874],
+      [10.6794443, 53.8609],
+      [10.6908538, 53.874],
     ]);
   });
 
   it("preserves category-filtered marker counts", () => {
     expect(
       prepareMapPlaces(filterPlacesByCategory(lubeckPlaces, "see"), "en"),
-    ).toHaveLength(12);
+    ).toHaveLength(17);
     expect(
       prepareMapPlaces(filterPlacesByCategory(lubeckPlaces, "eat"), "en"),
     ).toHaveLength(5);
@@ -57,7 +57,7 @@ describe("map place preparation", () => {
     expect(linkedMarkers.map((marker) => marker.slug).sort()).toEqual(
       [...tourStopSlugs].sort(),
     );
-    expect(informationalMarkers).toHaveLength(15);
+    expect(informationalMarkers).toHaveLength(20);
   });
 
   it("preserves fallback locale and direction semantics", () => {
