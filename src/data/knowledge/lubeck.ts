@@ -58,7 +58,7 @@ const hospitalSource =
 const buddenbrookhausSource =
   requireSource(
     "buddenbrookhaus",
-    "https://buddenbrookhaus.de/",
+    "https://buddenbrookhaus.de/das-haus",
 );
 
 
@@ -93,12 +93,13 @@ export const lubeckKnowledgeChunks =
       locale: "en",
 
       text:
-        "The Holstentor is a medieval city gate built in Brick Gothic architecture and is a symbol of Lübeck.",
+        "The Holstentor has two round towers linked by a central wing, with a round-arched gateway leading into the city.",
 
       topics: [
         "architecture",
-        "brick-gothic",
-        "symbol",
+        "towers",
+        "gateway",
+        "fortifications",
       ],
 
       priority: 80,
@@ -179,15 +180,15 @@ export const lubeckKnowledgeChunks =
       locale: "en",
 
       text:
-        "Lübeck Town Hall was closely connected to the city's political importance during the Hanseatic era and remains the seat of the city administration and local parliament today.",
+        "Lübeck Town Hall remains the seat of the city administration and a meeting place for the Bürgerschaft, its committees and the Senate. Its former Hansesaal hosted Hanseatic assemblies.",
 
       topics: [
-        "politics",
-        "hanseatic",
         "administration",
         "parliament",
-        "importance",
-      ],
+        "senate",
+        "hanseatic",
+        "hansesaal",
+        ],
 
       priority: 100,
 

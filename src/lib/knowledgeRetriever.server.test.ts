@@ -245,6 +245,11 @@ describe(
 
             expect(chunk?.text)
             .not.toContain("1841");
+
+            expect(chunk?.source.url)
+            .toBe(
+            "https://buddenbrookhaus.de/das-haus",
+            );
         },
     );
   },

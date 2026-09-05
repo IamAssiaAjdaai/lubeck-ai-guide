@@ -37,11 +37,6 @@ function map(label: string, url: string): PlaceSource {
 export const lubeckPlaceSources = {
   "lubecker-altstadt": [
     official(
-      "Buddenbrookhaus — Das Haus",
-      "https://buddenbrookhaus.de/das-haus",
-      "2026-09-04",
-    ),
-    official(
       "Lübeck tourism — Old Town",
       "https://www.visit-luebeck.com/old-town",
     ),
@@ -100,6 +95,7 @@ export const lubeckPlaceSources = {
     official(
       "Lübeck tourism — Holy Spirit Hospital",
       "https://www.visit-luebeck.com/old-town/poi/holy-spirit-hospital",
+      "2026-09-04",
     ),
   ],
   rathaus: [
@@ -111,12 +107,14 @@ export const lubeckPlaceSources = {
     official(
       "Lübeck tourism — Lübeck City Hall",
       "https://www.visit-luebeck.com/old-town/poi/luebeck-city-hall",
+      "2026-09-04",
     ),
   ],
   "willy-brandt-haus": [
     official(
       "Federal Chancellor Willy Brandt Foundation — Lübeck exhibition",
       "https://willy-brandt.de/ausstellungen/ausstellungen/haus-luebeck/",
+      "2026-09-04",
     ),
     map("OpenStreetMap-derived place record", "https://mapcarta.com/W153789584"),
   ],
@@ -124,45 +122,57 @@ export const lubeckPlaceSources = {
     official(
       "Lübeck tourism — Obertrave",
       "https://www.visit-luebeck.com/old-town/poi/obertrave-enms34eg",
+      "2026-09-04",
     ),
   ],
   salzspeicher: [
     official(
       "City of Lübeck — Salzspeicher",
       "https://www2.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/historische-gebaeude/die-salzspeicher.html",
+      "2026-09-04",
     ),
     map(
       "OpenStreetMap-derived place record",
       "https://mapcarta.com/de/W28831875",
+
     ),
   ],
   buddenbrookhaus: [
-    official("Buddenbrookhaus", "https://buddenbrookhaus.de/"),
+    official(
+      "Buddenbrookhaus — Das Haus",
+      "https://buddenbrookhaus.de/das-haus",
+      "2026-09-04",
+    ),
+    official(
+      "Buddenbrookhaus",
+      "https://buddenbrookhaus.de/",
+    ),
   ],
   "cafe-niederegger": [
     official(
       "Niederegger — Café Niederegger",
       "https://www.niederegger.de/cafe-niederegger/",
+      "2026-09-04",
     ),
   ],
   schiffergesellschaft: [
-    official("Schiffergesellschaft", "https://schiffergesellschaft.de/"),
+    official("Schiffergesellschaft", "https://schiffergesellschaft.de/", "2026-09-04"),
   ],
   fangfrisch: [
-    official("Fangfrisch", "https://fangfrisch-luebeck.de/das-sind-wir/"),
+    official("Fangfrisch", "https://fangfrisch-luebeck.de/das-sind-wir/", "2026-09-04"),
   ],
   "restaurant-vai": [
-    official("Restaurant VAI — Contact", "https://restaurant-vai.de/kontakt-2/"),
+    official("Restaurant VAI — Contact", "https://restaurant-vai.de/kontakt-2/", "2026-09-04"),
   ],
   "brauberger-zu-luebeck": [
-    official("Brauberger zu Lübeck", "https://www.brauberger.de/"),
+    official("Brauberger zu Lübeck", "https://www.brauberger.de/", "2026-09-04"),
   ],
   "zaubertheater-luebeck": [
-    official("Zaubertheater Lübeck", "https://zaubertheater-luebeck.de/"),
+    official("Zaubertheater Lübeck", "https://zaubertheater-luebeck.de/", "2026-09-04"),
     map("OpenStreetMap-derived place record", "https://mapcarta.com/N5361074487"),
   ],
   "kolk-17": [
-    official("KOLK 17 — Visit us", "https://kolk17.de/en/visit-us"),
+    official("KOLK 17 — Visit us", "https://kolk17.de/en/visit-us", "2026-09-04"),
     map(
       "OpenStreetMap-derived place record",
       "https://mapcarta.com/de/N446219816",
