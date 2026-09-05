@@ -41,11 +41,62 @@ CITYWALK uses PostgreSQL with Drizzle ORM for its planned server-side data layer
 
 ### Current status
 
-The database schema, migrations, seed mapping, and server-side database client are implemented.
+The database schema, migration, seed mapping, server-side client, and local
+runtime verification workflow are implemented.
 
-The frontend still uses the existing TypeScript dataset. No production or local PostgreSQL instance is required yet.
+The frontend continues to use the canonical TypeScript dataset. PostgreSQL is
+only used by the backend foundation in this phase.
 
-### Generate migrations
+### Local PostgreSQL
+
+The Compose service uses PostgreSQL 16 Alpine with local-development-only
+credentials and a persistent named volume.
+
+```bash
+docker compose up -d
+```
+
+Copy `.env.example` to `.env.local` (PowerShell):
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+The local server-only connection is:
+
+```env
+DATABASE_URL=postgresql://citywalk:citywalk@localhost:5432/citywalk
+```
+
+Never expose database credentials through a `NEXT_PUBLIC_*` variable or commit
+`.env.local`.
+
+Wait until `docker compose ps` reports PostgreSQL as healthy, then run:
+
+```bash
+npm run db:migrate
+npm run db:seed
+npm run db:verify
+```
+
+Expected verification:
+
+```text
+Verified Lübeck: 1 city, 25 places (17 See, 5 Eat, 3 Fun; 5 curated Hidden Gems)
+```
+
+The seed is deterministic. Verify idempotency by repeating:
+
+```bash
+npm run db:seed
+npm run db:verify
+```
+
+The result must remain one Lübeck city and 25 places.
+
+### Database commands
+
+Generate a migration after an intentional schema change:
 
 ```bash
 npm run db:generate
@@ -63,23 +114,37 @@ and writes SQL migrations to:
 drizzle/
 ```
 
-### Database environment
+Apply existing migrations to the configured database:
 
-Database connections use the server-only environment variable:
-
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/citywalk
+```bash
+npm run db:migrate
 ```
 
-Never expose database credentials through a `NEXT_PUBLIC_*` variable.
+Seed from the canonical `lubeckPlaces` collection:
 
-### Local PostgreSQL
+```bash
+npm run db:seed
+```
 
-Local PostgreSQL and Docker Compose setup are intentionally postponed.
+Validate the real database against all canonical slugs, categories,
+coordinates, tags, statuses, and catalog counts:
 
-When Docker is available, the remaining steps are:
+```bash
+npm run db:verify
+```
 
-1. Start PostgreSQL.
-2. Apply the generated migration.
-3. Run the Lübeck seed.
-4. Verify one city and exactly 20 places.
+### Reset local development data
+
+To delete only the Compose-managed local development database volume and start
+fresh:
+
+```bash
+docker compose down -v
+docker compose up -d
+npm run db:migrate
+npm run db:seed
+npm run db:verify
+```
+
+`docker compose down -v` permanently deletes the local development database
+data. It is not a production reset command.
