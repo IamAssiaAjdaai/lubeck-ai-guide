@@ -106,6 +106,7 @@ Drizzle reads the schema from:
 
 ```text
 src/db/schema.ts
+src/db/authSchema.ts
 ```
 
 and writes SQL migrations to:
@@ -148,3 +149,61 @@ npm run db:verify
 
 `docker compose down -v` permanently deletes the local development database
 data. It is not a production reset command.
+
+## Admin authentication foundation
+
+The internal `/admin` console uses Better Auth for email/password identity,
+database sessions, and secure cookies. CITYWALK authorization is separate:
+an authenticated identity also needs an active row in `staff_memberships`, and
+non-global staff access is constrained by `staff_city_access`.
+
+Configure these server-only values in `.env.local`:
+
+```env
+BETTER_AUTH_SECRET=<unique-random-secret-at-least-32-characters>
+BETTER_AUTH_URL=http://localhost:3000
+```
+
+There is no public staff signup page and the public email signup endpoint is
+disabled. Create the first local super admin only from a trusted terminal with
+database access. Keep the password out of command arguments and shell history:
+
+```powershell
+$env:CITYWALK_ADMIN_EMAIL = "admin@example.com"
+$env:CITYWALK_ADMIN_NAME = "Local Admin"
+$env:CITYWALK_ADMIN_PASSWORD = Read-Host "Temporary password"
+npm run admin:create-super
+Remove-Item Env:CITYWALK_ADMIN_PASSWORD
+```
+
+The bootstrap command refuses to silently elevate an existing traveler or a
+non-super staff identity. It is separate from `npm run db:seed`; catalog seeds
+never create staff accounts.
+
+### Vercel deployment
+
+Vercel Preview deployments require these server-only environment variables:
+
+```env
+DATABASE_URL=<hosted-postgresql-connection-string>
+BETTER_AUTH_SECRET=<unique-random-secret-at-least-32-characters>
+```
+
+`BETTER_AUTH_URL` may be omitted for Preview deployments. When it is absent,
+the server derives the Better Auth base URL from Vercel's deployment-specific
+`VERCEL_URL` hostname using HTTPS. An explicitly configured `BETTER_AUTH_URL`
+always takes precedence.
+
+Production requires the same database URL and secret plus the canonical public
+application URL:
+
+```env
+DATABASE_URL=<hosted-postgresql-connection-string>
+BETTER_AUTH_SECRET=<unique-random-secret-at-least-32-characters>
+BETTER_AUTH_URL=https://<canonical-production-domain>
+```
+
+Use the canonical production domain instead of a deployment-specific Vercel
+hostname. Vercel runs `npm run vercel-build`, which applies committed Drizzle
+migrations before the normal Next.js production build. It does not generate
+migrations, seed data, or reset the database.
