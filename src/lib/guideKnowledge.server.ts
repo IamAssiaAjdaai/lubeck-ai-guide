@@ -26,6 +26,20 @@ export type GuideKnowledgeItem =
     retrieved: RetrievedKnowledge;
   }>;
 
+export type GuideSourceMetadata =
+  Readonly<{
+      label: string;
+
+      url: string;
+
+      verifiedAt: string;
+
+      placeSlug: LubeckPlaceSlug;
+
+      chunkIds:
+        readonly string[];
+}>;
+
 export function retrieveGuideKnowledge({
   currentPlaceSlug,
   visitedPlaceSlugs,
@@ -111,4 +125,79 @@ export function retrieveGuideKnowledge({
     ...currentKnowledge,
     ...visitedKnowledge,
   ];
+}
+
+export function buildGuideSourceMetadata(
+  knowledge:
+    readonly GuideKnowledgeItem[],
+): readonly GuideSourceMetadata[] {
+  const grouped =
+    new Map<
+      string,
+      {
+        label: string;
+        url: string;
+        verifiedAt: string;
+        placeSlug: LubeckPlaceSlug;
+        chunkIds: string[];
+      }
+    >();
+
+  for (const item of knowledge) {
+    const source =
+      item.retrieved.chunk.source;
+
+    const key =
+      `${item.placeSlug}:${source.url}`;
+
+    const existing =
+      grouped.get(key);
+
+    if (existing) {
+      if (
+        !existing.chunkIds.includes(
+          item.retrieved.chunk.id,
+        )
+      ) {
+        existing.chunkIds.push(
+          item.retrieved.chunk.id,
+        );
+      }
+
+      continue;
+    }
+
+    grouped.set(
+      key,
+      {
+        label:
+          source.label,
+
+        url:
+          source.url,
+
+        verifiedAt:
+          source.verifiedAt,
+
+        placeSlug:
+          item.placeSlug,
+
+        chunkIds: [
+          item.retrieved.chunk.id,
+        ],
+      },
+    );
+  }
+
+  return Array.from(
+    grouped.values(),
+  ).map(
+    (source) => ({
+      ...source,
+
+      chunkIds: [
+        ...source.chunkIds,
+      ],
+    }),
+  );
 }

@@ -162,6 +162,57 @@ describe(
           200,
         );
 
+        const data =
+          await response.json();
+
+        expect(
+          data.answer,
+        ).toBe(
+          "A contextual verified answer.",
+        );
+
+        expect(
+          Array.isArray(
+            data.sources,
+          ),
+        ).toBe(true);
+
+        expect(
+          data.sources.length,
+        ).toBeGreaterThan(0);
+
+        expect(
+          data.sources.some(
+            (
+              source: {
+                placeSlug: string;
+              },
+            ) =>
+              source.placeSlug ===
+              "rathaus",
+          ),
+        ).toBe(true);
+
+        expect(
+          data.sources.some(
+            (
+              source: {
+                placeSlug: string;
+              },
+            ) =>
+              source.placeSlug ===
+              "heiligen-geist-hospital",
+          ),
+        ).toBe(false);
+
+        expect(
+          JSON.stringify(
+            data.sources,
+          ),
+        ).not.toMatch(
+          /question|score|prompt|history|latitude|longitude/i,
+        );
+        
         expect(
           createCompletion,
         ).toHaveBeenCalledOnce();

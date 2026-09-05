@@ -5,6 +5,7 @@ import {
 } from "vitest";
 
 import {
+  buildGuideSourceMetadata,
   retrieveGuideKnowledge,
 } from "@/lib/guideKnowledge.server";
 
@@ -91,5 +92,67 @@ describe(
         ).toBe(false);
       },
     );
+
+    it(
+        "builds deduplicated safe source metadata",
+        () => {
+          const knowledge =
+            retrieveGuideKnowledge({
+              currentPlaceSlug:
+                "holstentor",
+
+              visitedPlaceSlugs:
+                [],
+
+              question:
+                "Tell me about its history and architecture",
+            });
+
+          const sources =
+            buildGuideSourceMetadata(
+              knowledge,
+            );
+
+          expect(
+            sources.length,
+          ).toBeGreaterThan(0);
+
+          expect(
+            sources.every(
+              (source) =>
+                source.placeSlug ===
+                "holstentor",
+            ),
+          ).toBe(true);
+
+          expect(
+            sources.every(
+              (source) =>
+                source.url.startsWith(
+                  "https://",
+                ),
+            ),
+          ).toBe(true);
+
+          expect(
+            sources.every(
+              (source) =>
+                source.chunkIds.length >
+                0,
+            ),
+          ).toBe(true);
+
+          expect(
+            new Set(
+              sources.map(
+                (source) =>
+                  `${source.placeSlug}:${source.url}`,
+              ),
+            ).size,
+          ).toBe(
+            sources.length,
+          );
+        },
+      );
   },
 );

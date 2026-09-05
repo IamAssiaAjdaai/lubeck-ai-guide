@@ -26,8 +26,10 @@ import {
 } from "@/lib/guidePrompt.server";
 
 import {
+  buildGuideSourceMetadata,
   retrieveGuideKnowledge,
 } from "@/lib/guideKnowledge.server";
+
 
 type GuideMessage = {
   role:
@@ -226,7 +228,11 @@ export async function POST(
 
         question,
       });
-
+    
+    const sources =
+      buildGuideSourceMetadata(
+        knowledge,
+      );
     const systemPrompt =
       buildGuideSystemPrompt({
         currentLandmark:
@@ -372,8 +378,9 @@ export async function POST(
      */
     return NextResponse.json({
       answer,
+      sources,
     });
-  } catch 
+  } catch
     (error: unknown)
   {
     console.error(
