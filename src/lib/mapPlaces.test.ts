@@ -79,6 +79,20 @@ describe("map place preparation", () => {
     });
   });
 
+  it("carries trusted availability metadata into client planning data", () => {
+    const buddenbrookhaus =
+      prepareLubeckMapPlaces().find(
+        (marker) =>
+          marker.slug === "buddenbrookhaus",
+      );
+
+    expect(buddenbrookhaus).toMatchObject({
+      status: "renovation",
+      statusVerifiedAt: "2026-09-03",
+      visitNoteVerifiedAt: "2026-09-03",
+    });
+  });
+
   it("builds accessible marker labels from name and category", () => {
     expect(getMapMarkerAriaLabel("Café Niederegger", "Eat")).toBe(
       "Café Niederegger — Eat",

@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, House } from "lucide-react";
 import PlaceDiscovery, {
   type DiscoveryPlace,
 } from "@/components/travel/PlaceDiscovery";
+import TourBuilder from "@/components/travel/TourBuilder";
 import TourCard from "@/components/travel/TourCard";
 import TourPreferences from "@/components/travel/TourPreferences";
 import { cities } from "@/data/cities";
@@ -122,6 +123,17 @@ export default async function LubeckPage({
             locale={currentLocale}
             tourId={city.tourId}
             rankingOrigin={tourStart.coordinates}
+          />
+        </div>
+
+        <div className="mt-4">
+          <TourBuilder
+            places={catalogPlaces}
+            categories={categories}
+            labels={t.tourBuilder}
+            locale={currentLocale}
+            tourId={city.tourId}
+            origin={tourStart.coordinates}
           />
         </div>
 

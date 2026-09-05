@@ -10,12 +10,7 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
-import {
-  useId,
-  useMemo,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useId, useMemo } from "react";
 
 import TrackedLink from "@/components/TrackedLink";
 import type { DiscoveryPlace } from "@/components/travel/PlaceDiscovery";
@@ -24,6 +19,7 @@ import type {
   Locale,
   Translations,
 } from "@/lib/i18n";
+import { useTourPreferences } from "@/hooks/useTourPreferences";
 import {
   DEFAULT_TOUR_PREFERENCES,
   TOUR_INTERESTS,
@@ -34,7 +30,6 @@ import {
 } from "@/lib/tourPreferences";
 import {
   clearTourPreferences,
-  loadTourPreferences,
   saveTourPreferences,
 } from "@/lib/tourPreferencesStorage";
 
@@ -58,10 +53,6 @@ type TourPreferencesProps = Readonly<{
     lng: number;
   }>;
 }>;
-
-function subscribeToHydration(): () => void {
-  return () => undefined;
-}
 
 function capturePreferenceChange(
   tourId: string,
@@ -95,22 +86,8 @@ export default function TourPreferences({
 }: TourPreferencesProps) {
   const titleId = useId();
   const interestsId = useId();
-  const hydrated = useSyncExternalStore(
-    subscribeToHydration,
-    () => true,
-    () => false,
-  );
-  const persistedPreferences = useMemo(
-    () =>
-      hydrated
-        ? loadTourPreferences(tourId)
-        : DEFAULT_TOUR_PREFERENCES,
-    [hydrated, tourId],
-  );
-  const [updatedPreferences, setPreferences] =
-    useState<TourPreferencesValue>();
   const preferences =
-    updatedPreferences ?? persistedPreferences;
+    useTourPreferences(tourId);
 
   const recommendations = useMemo(
     () =>
@@ -146,7 +123,6 @@ export default function TourPreferences({
       nextPreferences,
     );
 
-    setPreferences(validated);
     capturePreferenceChange(
       tourId,
       locale,
@@ -185,7 +161,6 @@ export default function TourPreferences({
 
   const resetPreferences = () => {
     clearTourPreferences(tourId);
-    setPreferences(DEFAULT_TOUR_PREFERENCES);
     capturePreferenceChange(
       tourId,
       locale,
