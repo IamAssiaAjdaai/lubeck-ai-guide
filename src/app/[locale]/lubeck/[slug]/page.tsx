@@ -14,6 +14,9 @@ import {
   lubeckLandmarks as landmarks,
 } from "@/data/places";
 import {
+  getLandmarkAudio,
+} from "@/data/landmarkAudio";
+import {
   formatMessage,
   getDirection,
   getTranslations,
@@ -87,7 +90,10 @@ export default async function LandmarkPage({
   const duration = getPlaceDurationLabel(landmark, currentLocale);
   const description = content.description;
   const story = content.story;
-  const audio = landmark.audio?.[currentLocale] ?? "";
+  const audio = getLandmarkAudio(
+    landmark.slug,
+    currentLocale,
+  );
   const facts = content.facts;
   const image = landmark.image;
 

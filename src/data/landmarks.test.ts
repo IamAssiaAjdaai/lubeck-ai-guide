@@ -20,12 +20,4 @@ describe("landmarks", () => {
     }
   });
 
-  it("does not invent audio paths for added locales", () => {
-    for (const landmark of landmarks) {
-      for (const locale of locales) {
-        const audio = landmark.content[locale].audio;
-        expect(audio === "" || audio.startsWith("/audio/")).toBe(true);
-      }
-    }
-  });
 });

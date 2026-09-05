@@ -50,4 +50,31 @@ describe("i18n", () => {
       expect(getDirection(locale)).toBe(locale === "ar" ? "rtl" : "ltr");
     }
   });
+
+  it("provides localized missing-audio UI for every priority locale", () => {
+    const priorityLocales = [
+      "de",
+      "en",
+      "da",
+      "nl",
+      "sv",
+      "fr",
+      "tr",
+    ] as const;
+    const englishLabel =
+      getTranslations("en").landmark
+        .audioUnavailable;
+
+    for (const locale of priorityLocales) {
+      const label =
+        getTranslations(locale).landmark
+          .audioUnavailable;
+
+      expect(label.trim()).not.toBe("");
+
+      if (locale !== "en") {
+        expect(label).not.toBe(englishLabel);
+      }
+    }
+  });
 });

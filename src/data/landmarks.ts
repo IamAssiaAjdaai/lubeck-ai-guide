@@ -13,7 +13,6 @@ const legacyLandmarks = [
       en: {
         name: "Holstentor",
         duration: "2 min",
-        audio: "/audio/holstentor-en.mp3",
         description:
           "Lübeck's famous medieval city gate and one of the city's most recognizable symbols.",
         story:
@@ -28,7 +27,6 @@ const legacyLandmarks = [
       de: {
         name: "Holstentor",
         duration: "2 Min.",
-        audio: "/audio/holstentor-de.mp3",
         description:
           "Das berühmte mittelalterliche Stadttor Lübecks und eines der bekanntesten Wahrzeichen der Stadt.",
         story:
@@ -43,7 +41,6 @@ const legacyLandmarks = [
       fr: {
         name: "Holstentor",
         duration: "2 min",
-        audio: "/audio/holstentor-fr.mp3",
         description:
           "La célèbre porte médiévale de Lübeck et l'un des symboles les plus connus de la ville.",
         story:
@@ -58,7 +55,6 @@ const legacyLandmarks = [
       ar: {
         name: "بوابة هولشتن",
         duration: "دقيقتان",
-        audio: "",
         description: "بوابة لوبيك التاريخية الشهيرة وأحد أبرز رموز المدينة.",
         story:
           "بُنيت بوابة هولشتن بين عامي 1464 و1478. وكانت تحمي المدينة وفي الوقت نفسه تعكس ثروة لوبيك ومكانتها خلال العصر الهانزي.",
@@ -79,7 +75,6 @@ const legacyLandmarks = [
       en: {
         name: "Marienkirche",
         duration: "2 min",
-        audio: "/audio/marienkirche-en.mp3",
 
         description:
           "One of Lübeck's most important churches and a landmark of northern German Brick Gothic architecture.",
@@ -106,7 +101,6 @@ const legacyLandmarks = [
       de: {
         name: "Marienkirche",
         duration: "2 Min.",
-        audio: "",
 
         description:
           "Eine der bedeutendsten Kirchen Lübecks und ein Wahrzeichen der norddeutschen Backsteingotik.",
@@ -133,7 +127,6 @@ const legacyLandmarks = [
       fr: {
         name: "Église Sainte-Marie",
         duration: "2 min",
-        audio: "",
 
         description:
           "L'une des églises les plus importantes de Lübeck et un monument majeur du gothique en brique.",
@@ -160,7 +153,6 @@ const legacyLandmarks = [
       ar: {
         name: "كنيسة مريم",
         duration: "دقيقتان",
-        audio: "",
 
         description:
           "إحدى أهم كنائس لوبيك وأحد أبرز معالم العمارة القوطية المبنية بالطوب في شمال ألمانيا.",
@@ -194,7 +186,6 @@ const legacyLandmarks = [
       en: {
         name: "Lübeck Rathaus",
         duration: "2 min",
-        audio: "/audio/rathaus-en.mp3",
 
         description:
           "Lübeck's historic town hall, one of the most striking buildings in the heart of the old town.",
@@ -221,7 +212,6 @@ const legacyLandmarks = [
       de: {
         name: "Lübecker Rathaus",
         duration: "2 Min.",
-        audio: "",
 
         description:
           "Das historische Rathaus Lübecks und eines der markantesten Gebäude im Herzen der Altstadt.",
@@ -248,7 +238,6 @@ const legacyLandmarks = [
       fr: {
         name: "Hôtel de ville de Lübeck",
         duration: "2 min",
-        audio: "",
 
         description:
           "L'hôtel de ville historique de Lübeck, au cœur de la vieille ville.",
@@ -275,7 +264,6 @@ const legacyLandmarks = [
       ar: {
         name: "مبنى بلدية لوبيك",
         duration: "دقيقتان",
-        audio: "",
 
         description: "مبنى البلدية التاريخي في قلب المدينة القديمة في لوبيك.",
 
@@ -308,7 +296,6 @@ const legacyLandmarks = [
       en: {
         name: "Heiligen-Geist-Hospital",
         duration: "2 min",
-        audio: "/audio/heiligen-geist-hospital-en.mp3",
 
         description:
           "One of Europe's oldest medieval social institutions and an important landmark of Lübeck.",
@@ -335,7 +322,6 @@ const legacyLandmarks = [
       de: {
         name: "Heiligen-Geist-Hospital",
         duration: "2 Min.",
-        audio: "",
 
         description:
           "Eine der ältesten mittelalterlichen Sozialeinrichtungen Europas und ein bedeutendes Wahrzeichen Lübecks.",
@@ -362,7 +348,6 @@ const legacyLandmarks = [
       fr: {
         name: "Hôpital du Saint-Esprit",
         duration: "2 min",
-        audio: "",
 
         description:
           "L'une des plus anciennes institutions sociales médiévales d'Europe et un monument important de Lübeck.",
@@ -389,7 +374,6 @@ const legacyLandmarks = [
       ar: {
         name: "مستشفى الروح القدس",
         duration: "دقيقتان",
-        audio: "",
 
         description:
           "إحدى أقدم المؤسسات الاجتماعية في أوروبا ومن أبرز معالم لوبيك التاريخية.",
@@ -423,7 +407,6 @@ const legacyLandmarks = [
       en: {
         name: "Buddenbrookhaus",
         duration: "2 min",
-        audio: "/audio/buddenbrookhaus-en.mp3",
 
         description:
           "A famous literary landmark connected with Thomas Mann, Heinrich Mann and Lübeck's merchant history.",
@@ -450,7 +433,6 @@ const legacyLandmarks = [
       de: {
         name: "Buddenbrookhaus",
         duration: "2 Min.",
-        audio: "",
 
         description:
           "Ein berühmter Literaturort mit enger Verbindung zu Thomas Mann, Heinrich Mann und der Lübecker Kaufmannsgeschichte.",
@@ -477,7 +459,6 @@ const legacyLandmarks = [
       fr: {
         name: "Buddenbrookhaus",
         duration: "2 min",
-        audio: "",
 
         description:
           "Un célèbre lieu littéraire lié à Thomas Mann, Heinrich Mann et à l'histoire marchande de Lübeck.",
@@ -504,7 +485,6 @@ const legacyLandmarks = [
       ar: {
         name: "بودنبروك هاوس",
         duration: "دقيقتان",
-        audio: "",
 
         description:
           "معلم أدبي شهير مرتبط بتوماس مان وهاينريش مان وتاريخ لوبيك التجاري.",

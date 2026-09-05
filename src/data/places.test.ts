@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { landmarks as legacyLandmarks } from "@/data/landmarks";
+import { getLandmarkAudio } from "@/data/landmarkAudio";
 import {
   PLACE_SOURCE_TYPES,
   getPlaceSources,
@@ -180,7 +181,7 @@ describe("Lubeck places dataset", () => {
     });
   });
 
-  it("preserves all original landmark content, audio and duration labels", () => {
+  it("preserves all original landmark content and duration labels", () => {
     expect(lubeckLandmarks).toHaveLength(5);
     expect(lubeckLandmarks.map((place) => place.slug)).toEqual(legacySlugs);
 
@@ -201,7 +202,9 @@ describe("Lubeck places dataset", () => {
         expect(content?.description).toBe(legacyContent.description);
         expect(content?.story).toBe(legacyContent.story);
         expect(content?.facts).toBe(legacyContent.facts);
-        expect(place?.audio?.[locale] ?? "").toBe(legacyContent.audio);
+        expect(place?.audio?.[locale]).toBe(
+          getLandmarkAudio(legacyLandmark.slug, locale),
+        );
         if (place) {
           expect(getPlaceDurationLabel(place, locale)).toBe(
             legacyContent.duration,

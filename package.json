@@ -10,6 +10,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "audio:generate": "tsx scripts/generate-landmark-audio.ts",
+    "audio:coverage": "tsx scripts/generate-landmark-audio.ts --coverage",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
@@ -27,6 +29,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@google-cloud/text-to-speech": "^7.0.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -39,10 +42,12 @@
     "@vitest/coverage-v8": "^4.1.11",
     "babel-plugin-react-compiler": "1.0.0",
     "drizzle-kit": "^0.31.10",
+    "edge-tts.js": "^2.0.4",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "jsdom": "^30.0.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.11"
