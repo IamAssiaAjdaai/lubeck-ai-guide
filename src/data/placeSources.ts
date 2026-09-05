@@ -24,8 +24,8 @@ function official(
   ): PlaceSource {
   return {
     label,
-    url, 
-    type: "official", 
+    url,
+    type: "official",
     verifiedAt,
   };
 }
@@ -122,14 +122,12 @@ export const lubeckPlaceSources = {
     official(
       "Lübeck tourism — Obertrave",
       "https://www.visit-luebeck.com/old-town/poi/obertrave-enms34eg",
-      "2026-09-04",
     ),
   ],
   salzspeicher: [
     official(
       "City of Lübeck — Salzspeicher",
       "https://www2.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/historische-gebaeude/die-salzspeicher.html",
-      "2026-09-04",
     ),
     map(
       "OpenStreetMap-derived place record",
@@ -152,7 +150,6 @@ export const lubeckPlaceSources = {
     official(
       "Niederegger — Café Niederegger",
       "https://www.niederegger.de/cafe-niederegger/",
-      "2026-09-04",
     ),
   ],
   schiffergesellschaft: [
