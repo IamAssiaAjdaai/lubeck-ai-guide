@@ -9,35 +9,49 @@ import {
 const {
   createCompletion,
   rateLimit,
-} = vi.hoisted(() => ({
-  createCompletion: vi.fn(),
-  rateLimit: vi.fn(),
-}));
+} = vi.hoisted(
+  () => ({
+    createCompletion:
+      vi.fn(),
 
-vi.mock("groq-sdk", () => {
-  class MockGroq {
-    chat = {
-      completions: {
-        create: createCompletion,
-      },
+    rateLimit:
+      vi.fn(),
+  }),
+);
+
+vi.mock(
+  "groq-sdk",
+  () => {
+    class MockGroq {
+      chat = {
+        completions: {
+          create:
+            createCompletion,
+        },
+      };
+    }
+
+    return {
+      default:
+        MockGroq,
     };
-  }
-
-  return {
-    default: MockGroq,
-  };
-});
+  },
+);
 
 vi.mock(
   "@/lib/rateLimit",
   () => ({
     aiGuideRateLimit: {
-      limit: rateLimit,
+      limit:
+        rateLimit,
     },
   }),
 );
 
-import { POST } from "@/app/api/guide/route";
+import {
+  POST,
+} from "@/app/api/guide/route";
+
 import {
   LUBECK_HISTORIC_TOUR_ID,
   TOUR_CONTEXT_VERSION,
@@ -46,39 +60,55 @@ import {
 describe(
   "POST /api/guide",
   () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
+    beforeEach(
+      () => {
+        vi.clearAllMocks();
 
-      process.env.GROQ_API_KEY =
-        "test-key";
+        process.env.GROQ_API_KEY =
+          "test-key";
 
-      rateLimit.mockResolvedValue({
-        success: true,
-        limit: 10,
-        remaining: 9,
-        reset: Date.now() + 60_000,
-      });
+        rateLimit.mockResolvedValue({
+          success:
+            true,
 
-      createCompletion.mockResolvedValue({
-        choices: [
-          {
-            message: {
-              content:
-                "A contextual verified answer.",
+          limit:
+            10,
+
+          remaining:
+            9,
+
+          reset:
+            Date.now() +
+            60_000,
+        });
+
+        createCompletion.mockResolvedValue({
+          choices: [
+            {
+              message: {
+                content:
+                  "A contextual verified answer.",
+              },
+
+              finish_reason:
+                "stop",
             },
-          },
-        ],
-      });
-    });
+          ],
+
+          usage: {},
+        });
+      },
+    );
 
     it(
-      "builds trusted multi-stop AI context",
+      "builds trusted multi-stop RAG context",
       async () => {
         const request =
           new Request(
             "http://localhost/api/guide",
             {
-              method: "POST",
+              method:
+                "POST",
 
               headers: {
                 "Content-Type":
@@ -88,73 +118,92 @@ describe(
                   "127.0.0.1",
               },
 
-              body: JSON.stringify({
-                question:
-                  "How does this connect to the earlier stops?",
+              body:
+                JSON.stringify({
+                  question:
+                    "How does this connect to the earlier stops?",
 
-                landmark:
-                  "rathaus",
-
-                locale: "en",
-
-                history: [],
-
-                tourContext: {
-                  version:
-                    TOUR_CONTEXT_VERSION,
-
-                  tourId:
-                    LUBECK_HISTORIC_TOUR_ID,
-
-                  currentStop:
+                  landmark:
                     "rathaus",
 
-                  visitedStops: [
-                    "holstentor",
-                    "marienkirche",
-                  ],
-                },
-              }),
+                  locale:
+                    "en",
+
+                  history:
+                    [],
+
+                  tourContext: {
+                    version:
+                      TOUR_CONTEXT_VERSION,
+
+                    tourId:
+                      LUBECK_HISTORIC_TOUR_ID,
+
+                    currentStop:
+                      "rathaus",
+
+                    visitedStops: [
+                      "holstentor",
+                      "marienkirche",
+                    ],
+                  },
+                }),
             },
           );
 
         const response =
-          await POST(request);
+          await POST(
+            request,
+          );
 
         expect(
           response.status,
-        ).toBe(200);
+        ).toBe(
+          200,
+        );
 
         expect(
           createCompletion,
         ).toHaveBeenCalledOnce();
 
         const groqRequest =
-          createCompletion.mock
+          createCompletion
+            .mock
             .calls[0][0];
+
         expect(
           groqRequest.reasoning_effort,
-        ).toBe("low");
+        ).toBe(
+          "low",
+        );
 
         expect(
           groqRequest.include_reasoning,
-        ).toBe(false);
+        ).toBe(
+          false,
+        );
 
         expect(
           groqRequest.max_completion_tokens,
-        ).toBe(1024);
+        ).toBe(
+          1024,
+        );
 
         expect(
           groqRequest,
         ).not.toHaveProperty(
           "max_tokens",
         );
+
         const systemMessage =
           groqRequest.messages.find(
             (
               message: {
-                role: string;
-                content: string;
+                role:
+                  string;
+
+                content:
+                  string;
               },
             ) =>
               message.role ===
@@ -163,7 +212,9 @@ describe(
 
         expect(
           systemMessage.content,
-        ).toContain("3 of 5");
+        ).toContain(
+          "3 of 5",
+        );
 
         expect(
           systemMessage.content,
@@ -180,7 +231,51 @@ describe(
         expect(
           systemMessage.content,
         ).toContain(
-          "Heiligen-Geist-Hospital",
+          "NEXT STOP:\nHeiligen-Geist-Hospital",
+        );
+
+        expect(
+          systemMessage.content,
+        ).toContain(
+          "VERIFIED RETRIEVED KNOWLEDGE",
+        );
+
+        expect(
+          systemMessage.content,
+        ).toContain(
+          "rathaus-political-role",
+        );
+
+        expect(
+          systemMessage.content,
+        ).toContain(
+          "holstentor-history",
+        );
+
+        expect(
+          systemMessage.content,
+        ).toContain(
+          "marienkirche-history",
+        );
+
+        /*
+         * Hospital is the NEXT stop.
+         * Its factual chunk must not
+         * be injected.
+         */
+        expect(
+          systemMessage.content,
+        ).not.toContain(
+          "hospital-foundation",
+        );
+
+        /*
+         * Source URLs stay server-side.
+         */
+        expect(
+          systemMessage.content,
+        ).not.toContain(
+          "https://",
         );
 
         expect(
@@ -198,40 +293,49 @@ describe(
           new Request(
             "http://localhost/api/guide",
             {
-              method: "POST",
+              method:
+                "POST",
 
               headers: {
                 "Content-Type":
                   "application/json",
               },
 
-              body: JSON.stringify({
-                question:
-                  "Why is this gate important?",
+              body:
+                JSON.stringify({
+                  question:
+                    "Why is this gate important?",
 
-                landmark:
-                  "holstentor",
+                  landmark:
+                    "holstentor",
 
-                locale: "en",
+                  locale:
+                    "en",
 
-                history: [],
-              }),
+                  history:
+                    [],
+                }),
             },
           );
 
         const response =
-          await POST(request);
+          await POST(
+            request,
+          );
 
         expect(
           response.status,
-        ).toBe(200);
+        ).toBe(
+          200,
+        );
 
         expect(
           createCompletion,
         ).toHaveBeenCalledOnce();
 
         const systemMessage =
-          createCompletion.mock
+          createCompletion
+            .mock
             .calls[0][0]
             .messages[0];
 
@@ -239,6 +343,18 @@ describe(
           systemMessage.content,
         ).toContain(
           "No active tour context.",
+        );
+
+        expect(
+          systemMessage.content,
+        ).toContain(
+          "VERIFIED RETRIEVED KNOWLEDGE",
+        );
+
+        expect(
+          systemMessage.content,
+        ).toContain(
+          "holstentor-history",
         );
       },
     );
@@ -250,43 +366,52 @@ describe(
           new Request(
             "http://localhost/api/guide",
             {
-              method: "POST",
+              method:
+                "POST",
 
               headers: {
                 "Content-Type":
                   "application/json",
               },
 
-              body: JSON.stringify({
-                question:
-                  "Tell me about this place.",
+              body:
+                JSON.stringify({
+                  question:
+                    "Tell me about this place.",
 
-                landmark:
-                  "holstentor",
+                  landmark:
+                    "holstentor",
 
-                locale: "en",
+                  locale:
+                    "en",
 
-                tourContext: {
-                  version: 1,
+                  tourContext: {
+                    version:
+                      TOUR_CONTEXT_VERSION,
 
-                  tourId:
-                    LUBECK_HISTORIC_TOUR_ID,
+                    tourId:
+                      LUBECK_HISTORIC_TOUR_ID,
 
-                  currentStop:
-                    "rathaus",
+                    currentStop:
+                      "rathaus",
 
-                  visitedStops: [],
-                },
-              }),
+                    visitedStops:
+                      [],
+                  },
+                }),
             },
           );
 
         const response =
-          await POST(request);
+          await POST(
+            request,
+          );
 
         expect(
           response.status,
-        ).toBe(400);
+        ).toBe(
+          400,
+        );
 
         expect(
           createCompletion,
@@ -295,99 +420,128 @@ describe(
     );
 
     it(
-    "anchors ambiguous follow-up questions to the current stop",
-    async () => {
-      const request =
-        new Request(
-          "http://localhost/api/guide",
-          {
-            method: "POST",
+      "anchors ambiguous follow-up questions to the current stop",
+      async () => {
+        const request =
+          new Request(
+            "http://localhost/api/guide",
+            {
+              method:
+                "POST",
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              question:
-                "Why is it famous?",
-
-              landmark:
-                "heiligen-geist-hospital",
-
-              locale: "en",
-
-              history: [
-                {
-                  role: "user",
-                  text:
-                    "Why is Holstentor important?",
-                },
-                {
-                  role: "assistant",
-                  text:
-                    "Holstentor was built between 1464 and 1478.",
-                },
-              ],
-
-              tourContext: {
-                version:
-                  TOUR_CONTEXT_VERSION,
-
-                tourId:
-                  LUBECK_HISTORIC_TOUR_ID,
-
-                currentStop:
-                  "heiligen-geist-hospital",
-
-                visitedStops: [
-                  "holstentor",
-                  "marienkirche",
-                  "rathaus",
-                ],
+              headers: {
+                "Content-Type":
+                  "application/json",
               },
-            }),
-          },
+
+              body:
+                JSON.stringify({
+                  question:
+                    "Why is it famous?",
+
+                  landmark:
+                    "heiligen-geist-hospital",
+
+                  locale:
+                    "en",
+
+                  history: [
+                    {
+                      role:
+                        "user",
+
+                      text:
+                        "Why is Holstentor important?",
+                    },
+                    {
+                      role:
+                        "assistant",
+
+                      text:
+                        "Holstentor was built between 1464 and 1478.",
+                    },
+                  ],
+
+                  tourContext: {
+                    version:
+                      TOUR_CONTEXT_VERSION,
+
+                    tourId:
+                      LUBECK_HISTORIC_TOUR_ID,
+
+                    currentStop:
+                      "heiligen-geist-hospital",
+
+                    visitedStops: [
+                      "holstentor",
+                      "marienkirche",
+                      "rathaus",
+                    ],
+                  },
+                }),
+            },
+          );
+
+        const response =
+          await POST(
+            request,
+          );
+
+        expect(
+          response.status,
+        ).toBe(
+          200,
         );
 
-      const response =
-        await POST(request);
+        const groqRequest =
+          createCompletion
+            .mock
+            .calls[0][0];
 
-      expect(
-        response.status,
-      ).toBe(200);
+        const currentTurn =
+          groqRequest.messages[
+            groqRequest.messages.length -
+              1
+          ];
 
-      const groqRequest =
-        createCompletion.mock
-          .calls[0][0];
+        expect(
+          currentTurn.role,
+        ).toBe(
+          "user",
+        );
 
-      const currentTurn =
-        groqRequest.messages[
-          groqRequest.messages.length - 1
-        ];
+        expect(
+          currentTurn.content,
+        ).toContain(
+          "CURRENT STOP:\nHeiligen-Geist-Hospital",
+        );
 
-      expect(
-        currentTurn.role,
-      ).toBe("user");
+        expect(
+          currentTurn.content,
+        ).toContain(
+          "CURRENT QUESTION:\nWhy is it famous?",
+        );
 
-      expect(
-        currentTurn.content,
-      ).toContain(
-        "CURRENT STOP:\nHeiligen-Geist-Hospital",
-      );
+        expect(
+          currentTurn.content,
+        ).toContain(
+          "refer to CURRENT STOP",
+        );
 
-      expect(
-        currentTurn.content,
-      ).toContain(
-        "CURRENT QUESTION:\nWhy is it famous?",
-      );
+        /*
+         * Current stop RAG evidence
+         * must be available despite
+         * previous-stop conversation.
+         */
+        const systemMessage =
+          groqRequest.messages[0];
 
-      expect(
-        currentTurn.content,
-      ).toContain(
-        "refer to CURRENT STOP",
-      );
-    },
+        expect(
+          systemMessage.content,
+        ).toContain(
+          "hospital-foundation",
+        );
+      },
     );
   },
 );

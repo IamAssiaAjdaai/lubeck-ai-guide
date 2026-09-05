@@ -6,6 +6,7 @@ import {
 
 import {
   lubeckLandmarks as landmarks,
+  type LubeckPlaceSlug,
 } from "@/data/places";
 
 import {
@@ -24,18 +25,27 @@ import {
   buildGuideSystemPrompt,
 } from "@/lib/guidePrompt.server";
 
+import {
+  retrieveGuideKnowledge,
+} from "@/lib/guideKnowledge.server";
+
 type GuideMessage = {
   role:
     | "user"
     | "assistant";
+
   text: string;
 };
 
 type GuideRequest = {
   question: string;
+
   landmark: string;
+
   locale: string;
+
   history?: GuideMessage[];
+
   tourContext?: unknown;
 };
 
@@ -175,6 +185,13 @@ export async function POST(
     const currentLocale =
       locale;
 
+    /*
+     * Browser tour context is not
+     * authoritative.
+     *
+     * Validate it against the
+     * canonical server dataset first.
+     */
     const tourContext =
       resolveTourContext({
         input:
@@ -187,6 +204,29 @@ export async function POST(
           landmark.slug,
       });
 
+    /*
+     * RAG retrieval happens only
+     * after landmark and tour state
+     * have been validated server-side.
+     */
+    const knowledge =
+      retrieveGuideKnowledge({
+        currentPlaceSlug:
+          landmark.slug as
+            LubeckPlaceSlug,
+
+        visitedPlaceSlugs:
+          tourContext
+            ?.visitedStops
+            .map(
+              (stop) =>
+                stop.slug as
+                  LubeckPlaceSlug,
+            ) ?? [],
+
+        question,
+      });
+
     const systemPrompt =
       buildGuideSystemPrompt({
         currentLandmark:
@@ -196,6 +236,8 @@ export async function POST(
           currentLocale,
 
         tourContext,
+
+        knowledge,
       });
 
     const conversationMessages =
@@ -208,19 +250,29 @@ export async function POST(
             message.text,
         }),
       );
-      const currentTurnQuestion = [
-        "CURRENT STOP:",
-        landmark.content[currentLocale].name,
-        "",
-        "REFERENCE RULE:",
-        "Unless the tourist explicitly names another place,",
-        'references such as "this place", "it", "here",',
-        '"this building", "this church", or "this gate"',
-        "in the CURRENT QUESTION refer to CURRENT STOP.",
-        "",
-        "CURRENT QUESTION:",
-        question,
-      ].join("\n");
+
+    /*
+     * Current-stop anchoring prevents
+     * an ambiguous follow-up such as
+     * "Why is it famous?" from being
+     * resolved to an older stop in
+     * conversation history.
+     */
+    const currentTurnQuestion = [
+      "CURRENT STOP:",
+      landmark.content[
+        currentLocale
+      ].name,
+      "",
+      "REFERENCE RULE:",
+      "Unless the tourist explicitly names another place,",
+      'references such as "this place", "it", "here",',
+      '"this building", "this church", or "this gate"',
+      "in the CURRENT QUESTION refer to CURRENT STOP.",
+      "",
+      "CURRENT QUESTION:",
+      question,
+    ].join("\n");
 
     const completion =
       await groq.chat.completions.create(
@@ -228,7 +280,8 @@ export async function POST(
           model:
             "openai/gpt-oss-20b",
 
-          temperature: 0.2,
+          temperature:
+            0.2,
 
           /*
            * Keep reasoning light:
@@ -310,12 +363,19 @@ export async function POST(
       );
     }
 
+    /*
+     * Phase 2A keeps the old API
+     * response shape.
+     *
+     * Safe source metadata will be
+     * added separately in Phase 2B.
+     */
     return NextResponse.json({
       answer,
     });
-  } catch (
-    error: unknown
-  ) {
+  } catch 
+    (error: unknown)
+  {
     console.error(
       "AI Guide error:",
       error,
