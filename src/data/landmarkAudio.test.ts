@@ -12,6 +12,7 @@ import {
 } from "vitest";
 
 import {
+  EDGE_AUDIO_MANIFEST_PROVIDER,
   HISTORIC_TOUR_AUDIO_SLUGS,
   LANDMARK_AUDIO_REGISTRY,
   PRIORITY_AUDIO_LOCALES,
@@ -19,7 +20,9 @@ import {
   getLandmarkAudio,
   getPriorityAudioCoverage,
   hasLandmarkAudio,
+  isGeneratedAudioManifestEntry,
 } from "@/data/landmarkAudio";
+import generatedAudioManifest from "../../scripts/audio-generation-manifest.json";
 
 const expectedCoverage = {
   holstentor: {
@@ -146,6 +149,25 @@ describe("landmark audio registry", () => {
     expect(
       getAvailableAudioLocales("holstentor"),
     ).toEqual(["de", "en", "fr"]);
+  });
+
+  it("keeps test recordings out of the production manifest while accepting explicit Edge test provenance", () => {
+    expect(generatedAudioManifest.assets).toEqual(
+      [],
+    );
+    expect(
+      isGeneratedAudioManifestEntry({
+        file: "holstentor-da.mp3",
+        landmark: "holstentor",
+        locale: "da",
+        provider:
+          EDGE_AUDIO_MANIFEST_PROVIDER,
+        providerLocale: "da-DK",
+        voice: "da-DK-TestNeural",
+        source: "landmark.story",
+        sourceHash: "0".repeat(64),
+      }),
+    ).toBe(true);
   });
 
   it("registers every MP3 on disk and only non-empty valid MP3 files", () => {
