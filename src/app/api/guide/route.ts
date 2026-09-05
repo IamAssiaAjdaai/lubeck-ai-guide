@@ -6,9 +6,11 @@ import {
 
 import {
   lubeckLandmarks as landmarks,
+  type LubeckPlaceSlug,
 } from "@/data/places";
 
 import {
+  getTranslations,
   isLocale,
 } from "@/lib/i18n";
 
@@ -24,20 +26,45 @@ import {
   buildGuideSystemPrompt,
 } from "@/lib/guidePrompt.server";
 
+import {
+  buildGuideSourceMetadata,
+  GUIDE_RESPONSE_FORMAT,
+  parseGuideStructuredAnswer,
+  retrieveGuideKnowledge,
+} from "@/lib/guideKnowledge.server";
+
+
 type GuideMessage = {
   role:
     | "user"
     | "assistant";
+
   text: string;
 };
 
 type GuideRequest = {
   question: string;
+
   landmark: string;
+
   locale: string;
+
   history?: GuideMessage[];
+
   tourContext?: unknown;
 };
+
+const MAX_COMPLETION_ATTEMPTS = 2;
+
+const ATTRIBUTION_RETRY_INSTRUCTION = `
+ATTRIBUTION CORRECTION:
+
+- The previous response could not be accepted because it did not satisfy the structured grounding contract.
+
+- If groundingStatus is "grounded", usedChunkIds must contain at least one exact CHUNK ID from VERIFIED RETRIEVED KNOWLEDGE that supports the answer.
+
+- If no retrieved chunk supports the answer, set groundingStatus to "insufficient_evidence", use an empty usedChunkIds array, and do not make the unsupported factual claim.
+`.trim();
 
 export async function POST(
   request: Request,
@@ -175,6 +202,13 @@ export async function POST(
     const currentLocale =
       locale;
 
+    /*
+     * Browser tour context is not
+     * authoritative.
+     *
+     * Validate it against the
+     * canonical server dataset first.
+     */
     const tourContext =
       resolveTourContext({
         input:
@@ -187,6 +221,29 @@ export async function POST(
           landmark.slug,
       });
 
+    /*
+     * RAG retrieval happens only
+     * after landmark and tour state
+     * have been validated server-side.
+     */
+    const knowledge =
+      retrieveGuideKnowledge({
+        currentPlaceSlug:
+          landmark.slug as
+            LubeckPlaceSlug,
+
+        visitedPlaceSlugs:
+          tourContext
+            ?.visitedStops
+            .map(
+              (stop) =>
+                stop.slug as
+                  LubeckPlaceSlug,
+            ) ?? [],
+
+        question,
+      });
+
     const systemPrompt =
       buildGuideSystemPrompt({
         currentLandmark:
@@ -196,6 +253,8 @@ export async function POST(
           currentLocale,
 
         tourContext,
+
+        knowledge,
       });
 
     const conversationMessages =
@@ -208,27 +267,49 @@ export async function POST(
             message.text,
         }),
       );
-      const currentTurnQuestion = [
-        "CURRENT STOP:",
-        landmark.content[currentLocale].name,
-        "",
-        "REFERENCE RULE:",
-        "Unless the tourist explicitly names another place,",
-        'references such as "this place", "it", "here",',
-        '"this building", "this church", or "this gate"',
-        "in the CURRENT QUESTION refer to CURRENT STOP.",
-        "",
-        "CURRENT QUESTION:",
-        question,
-      ].join("\n");
 
-    const completion =
-      await groq.chat.completions.create(
-        {
+    /*
+     * Current-stop anchoring prevents
+     * an ambiguous follow-up such as
+     * "Why is it famous?" from being
+     * resolved to an older stop in
+     * conversation history.
+     */
+    const currentTurnQuestion = [
+      "CURRENT STOP:",
+      landmark.content[
+        currentLocale
+      ].name,
+      "",
+      "REFERENCE RULE:",
+      "Unless the tourist explicitly names another place,",
+      'references such as "this place", "it", "here",',
+      '"this building", "this church", or "this gate"',
+      "in the CURRENT QUESTION refer to CURRENT STOP.",
+      "",
+      "CURRENT QUESTION:",
+      question,
+    ].join("\n");
+
+    let guideAnswer:
+      | ReturnType<
+          typeof parseGuideStructuredAnswer
+        >
+      | undefined;
+
+    for (
+      let attempt = 0;
+      attempt < MAX_COMPLETION_ATTEMPTS;
+      attempt += 1
+    ) {
+      const completion =
+        await groq.chat.completions.create(
+          {
           model:
             "openai/gpt-oss-20b",
 
-          temperature: 0.2,
+          temperature:
+            0.2,
 
           /*
            * Keep reasoning light:
@@ -252,13 +333,18 @@ export async function POST(
           max_completion_tokens:
             1024,
 
+          response_format:
+            GUIDE_RESPONSE_FORMAT,
+
           messages: [
             {
               role:
                 "system",
 
               content:
-                systemPrompt,
+                attempt === 0
+                  ? systemPrompt
+                  : `${systemPrompt}\n\n${ATTRIBUTION_RETRY_INSTRUCTION}`,
             },
 
             ...conversationMessages,
@@ -271,51 +357,56 @@ export async function POST(
                 currentTurnQuestion,
             },
           ],
-        },
-      );
+          },
+        );
 
-    const answer =
-      completion
-        .choices[0]
-        ?.message
-        ?.content
-        ?.trim();
+      const rawAnswer =
+        completion
+          .choices[0]
+          ?.message
+          ?.content
+          ?.trim();
 
-    if (!answer) {
-      /*
-       * Privacy-safe diagnostics.
-       *
-       * Never log:
-       * - user question
-       * - prompt
-       * - conversation history
-       * - coordinates
-       */
-      console.error(
-        "AI Guide returned no final content.",
-        {
-          finishReason:
-            completion
-              .choices[0]
-              ?.finish_reason,
+      const parsedAnswer =
+        rawAnswer
+          ? parseGuideStructuredAnswer(
+              rawAnswer,
+              knowledge,
+            )
+          : null;
 
-          usage:
-            completion
-              .usage,
-        },
-      );
+      if (
+        parsedAnswer &&
+        (parsedAnswer.groundingStatus ===
+          "insufficient_evidence" ||
+          parsedAnswer.usedChunkIds.length > 0)
+      ) {
+        guideAnswer = parsedAnswer;
 
-      throw new Error(
-        "No AI response was returned.",
-      );
+        break;
+      }
     }
 
+    const answer =
+      guideAnswer?.answer ??
+      getTranslations(currentLocale).ai
+        .insufficientEvidence;
+
+    const usedChunkIds =
+      guideAnswer?.usedChunkIds ?? [];
+
+    const sources =
+      buildGuideSourceMetadata(
+        knowledge,
+        usedChunkIds,
+      );
     return NextResponse.json({
       answer,
+      sources,
     });
-  } catch (
-    error: unknown
-  ) {
+  } catch
+    (error: unknown)
+  {
     console.error(
       "AI Guide error:",
       error,

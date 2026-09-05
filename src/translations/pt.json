@@ -67,6 +67,7 @@
     "limit": "Atingiu o limite de 5 perguntas para este percurso.",
     "questionsUsed": "perguntas utilizadas",
     "unavailable": "O guia está temporariamente indisponível.",
+    "insufficientEvidence": "Não tenho informação verificada suficiente para responder.",
     "rateLimited": "Fez demasiadas perguntas. Tente novamente dentro de alguns minutos.",
     "suggestionFamous": "Por que é famoso?",
     "suggestionBuilt": "Quando foi construído?",

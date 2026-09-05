@@ -67,6 +67,7 @@
     "limit": "Ați atins limita de 5 întrebări pentru acest tur.",
     "questionsUsed": "întrebări folosite",
     "unavailable": "Ghidul este momentan indisponibil.",
+    "insufficientEvidence": "Nu am suficiente informații verificate pentru a răspunde.",
     "rateLimited": "Ați pus prea multe întrebări. Încercați din nou peste câteva minute.",
     "suggestionFamous": "De ce este faimos?",
     "suggestionBuilt": "Când a fost construit?",

@@ -17,8 +17,17 @@ export type PlaceSourceRegistry = Readonly<
 
 const VERIFIED_AT = "2026-09-03";
 
-function official(label: string, url: string): PlaceSource {
-  return { label, url, type: "official", verifiedAt: VERIFIED_AT };
+function official(
+  label: string,
+  url: string,
+  verifiedAt = VERIFIED_AT,
+  ): PlaceSource {
+  return {
+    label,
+    url,
+    type: "official",
+    verifiedAt,
+  };
 }
 
 function map(label: string, url: string): PlaceSource {
@@ -38,11 +47,21 @@ export const lubeckPlaceSources = {
   ],
   holstentor: [
     official(
+      "Museum Holstentor — The Holstentor",
+      "https://museum-holstentor.de/about-holstentor",
+      "2026-09-04",
+    ),
+    official(
       "Lübeck tourism — Holsten Gate",
       "https://www.visit-luebeck.com/old-town/holsten-gate",
     ),
   ],
   marienkirche: [
+    official(
+      "St. Marien Lübeck — History of St Marien",
+      "https://www.st-marien-luebeck.de/en/discover/history/history-of-st-marien",
+      "2026-09-04",
+    ),
     official(
       "City of Lübeck — St. Marien",
       "https://www.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/kirchen/st-marien",
@@ -69,11 +88,21 @@ export const lubeckPlaceSources = {
   ],
   "heiligen-geist-hospital": [
     official(
+      "City of Lübeck — Heiligen-Geist-Hospital",
+      "https://www.luebeck.de/de/rathaus/verwaltung/stiftungsverwaltung/heiligen-geist-hospital",
+      "2026-09-04",
+    ),
+    official(
       "Lübeck tourism — Holy Spirit Hospital",
       "https://www.visit-luebeck.com/old-town/poi/holy-spirit-hospital",
     ),
   ],
   rathaus: [
+    official(
+      "City of Lübeck — Lübeck Rathaus",
+      "https://www.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/rathaus/rathaus",
+      "2026-09-04",
+    ),
     official(
       "Lübeck tourism — Lübeck City Hall",
       "https://www.visit-luebeck.com/old-town/poi/luebeck-city-hall",
@@ -100,10 +129,19 @@ export const lubeckPlaceSources = {
     map(
       "OpenStreetMap-derived place record",
       "https://mapcarta.com/de/W28831875",
+
     ),
   ],
   buddenbrookhaus: [
-    official("Buddenbrookhaus", "https://buddenbrookhaus.de/"),
+    official(
+      "Buddenbrookhaus — Das Haus",
+      "https://buddenbrookhaus.de/das-haus",
+      "2026-09-04",
+    ),
+    official(
+      "Buddenbrookhaus",
+      "https://buddenbrookhaus.de/",
+    ),
   ],
   "cafe-niederegger": [
     official(
@@ -112,23 +150,23 @@ export const lubeckPlaceSources = {
     ),
   ],
   schiffergesellschaft: [
-    official("Schiffergesellschaft", "https://schiffergesellschaft.de/"),
+    official("Schiffergesellschaft", "https://schiffergesellschaft.de/",),
   ],
   fangfrisch: [
-    official("Fangfrisch", "https://fangfrisch-luebeck.de/das-sind-wir/"),
+    official("Fangfrisch", "https://fangfrisch-luebeck.de/das-sind-wir/",),
   ],
   "restaurant-vai": [
-    official("Restaurant VAI — Contact", "https://restaurant-vai.de/kontakt-2/"),
+    official("Restaurant VAI — Contact", "https://restaurant-vai.de/kontakt-2/",),
   ],
   "brauberger-zu-luebeck": [
-    official("Brauberger zu Lübeck", "https://www.brauberger.de/"),
+    official("Brauberger zu Lübeck", "https://www.brauberger.de/",),
   ],
   "zaubertheater-luebeck": [
-    official("Zaubertheater Lübeck", "https://zaubertheater-luebeck.de/"),
+    official("Zaubertheater Lübeck", "https://zaubertheater-luebeck.de/",),
     map("OpenStreetMap-derived place record", "https://mapcarta.com/N5361074487"),
   ],
   "kolk-17": [
-    official("KOLK 17 — Visit us", "https://kolk17.de/en/visit-us"),
+    official("KOLK 17 — Visit us", "https://kolk17.de/en/visit-us",),
     map(
       "OpenStreetMap-derived place record",
       "https://mapcarta.com/de/N446219816",

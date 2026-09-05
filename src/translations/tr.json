@@ -67,6 +67,7 @@
     "limit": "Bu tur için 5 soru sınırına ulaştınız.",
     "questionsUsed": "soru kullanıldı",
     "unavailable": "Rehber geçici olarak kullanılamıyor.",
+    "insufficientEvidence": "Bunu yanıtlamak için yeterli doğrulanmış bilgim yok.",
     "rateLimited": "Çok fazla soru sordunuz. Lütfen birkaç dakika sonra tekrar deneyin.",
     "suggestionFamous": "Burası neden ünlü?",
     "suggestionBuilt": "Ne zaman inşa edildi?",

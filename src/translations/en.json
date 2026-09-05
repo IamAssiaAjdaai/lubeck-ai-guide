@@ -67,6 +67,7 @@
     "limit": "You have reached the 5-question limit for this tour.",
     "questionsUsed": "questions used",
     "unavailable": "The guide is temporarily unavailable.",
+    "insufficientEvidence": "I don't have enough verified information to answer that.",
     "rateLimited": "You've asked too many questions. Please try again in a few minutes.",
     "suggestionFamous": "Why is it famous?",
     "suggestionBuilt": "When was it built?",

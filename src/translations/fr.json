@@ -67,6 +67,7 @@
     "limit": "Vous avez atteint la limite de 5 questions pour cette visite.",
     "questionsUsed": "questions utilisées",
     "unavailable": "Le guide est momentanément indisponible.",
+    "insufficientEvidence": "Je n’ai pas assez d’informations vérifiées pour répondre à cette question.",
     "rateLimited": "Vous avez posé trop de questions. Réessayez dans quelques minutes.",
     "suggestionFamous": "Pourquoi ce lieu est-il célèbre ?",
     "suggestionBuilt": "Quand a-t-il été construit ?",

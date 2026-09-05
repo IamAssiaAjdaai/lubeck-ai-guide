@@ -67,6 +67,7 @@
     "limit": "Esat sasniedzis šī maršruta 5 jautājumu limitu.",
     "questionsUsed": "izmantoti jautājumi",
     "unavailable": "Gids pašlaik nav pieejams.",
+    "insufficientEvidence": "Man nav pietiekami daudz pārbaudītas informācijas, lai atbildētu.",
     "rateLimited": "Uzdots pārāk daudz jautājumu. Mēģiniet vēlreiz pēc dažām minūtēm.",
     "suggestionFamous": "Kāpēc šī vieta ir slavena?",
     "suggestionBuilt": "Kad tā tika uzcelta?",

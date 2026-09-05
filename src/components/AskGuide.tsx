@@ -7,6 +7,7 @@ import {
 import {
   ChevronLeft,
   ChevronRight,
+  ExternalLink,
   Send,
   Sparkles,
   X,
@@ -30,7 +31,9 @@ import {
 
 import {
   getTourConversation,
+  isStoredGuideSource,
   saveTourConversation,
+  type StoredGuideMessage,
 } from "@/lib/tourConversation";
 
 const MAX_QUESTIONS = 5;
@@ -47,10 +50,8 @@ type AskGuideProps = {
   tourId: SupportedTourId;
 };
 
-type Message = {
-  role: "user" | "assistant";
-  text: string;
-};
+type Message =
+  StoredGuideMessage;
 
 function captureGuideEvent(
   eventName: string,
@@ -320,7 +321,14 @@ export default function AskGuide({
             `Request failed with status ${response.status}`,
         );
       }
-
+      const responseSources =
+        Array.isArray(
+          data.sources,
+        )
+          ? data.sources.filter(
+              isStoredGuideSource,
+            )
+          : [];
       /*
        * Only successful Q/A pairs
        * become persistent tour history.
@@ -336,8 +344,12 @@ export default function AskGuide({
           {
             role:
               "assistant",
+
             text:
               data.answer,
+
+            sources:
+              responseSources,
           },
         ];
 
@@ -577,9 +589,53 @@ export default function AskGuide({
                           } max-w-[85%] rounded-2xl bg-surface px-4 py-3 text-sm leading-6 text-text-primary`
                     }
                   >
-                    {
-                      message.text
-                    }
+                  <>
+                    <p>
+                      {
+                        message.text
+                      }
+                    </p>
+
+                      {message.role ===
+                        "assistant" &&
+                        message.sources &&
+                        message.sources.length >
+                          0 && (
+                          <div className="mt-3 border-t border-border pt-3">
+                            <div className="flex flex-wrap gap-2">
+                              {message.sources.map(
+                                (
+                                  source,
+                                ) => (
+                                  <a
+                                    key={`${source.placeSlug}-${source.url}`}
+                                    href={
+                                      source.url
+                                    }
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border bg-surface-elevated px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-ai hover:text-ai"
+                                  >
+                                    <span>
+                                      {
+                                        source.label
+                                      }
+                                    </span>
+
+                                    <ExternalLink
+                                      aria-hidden="true"
+                                      size={13}
+                                      strokeWidth={
+                                        1.8
+                                      }
+                                    />
+                                  </a>
+                                ),
+                              )}
+                            </div>
+                          </div>
+                        )}
+                    </>
                   </div>
                 ),
               )}

@@ -67,6 +67,7 @@
     "limit": "Has alcanzado el límite de 5 preguntas para esta ruta.",
     "questionsUsed": "preguntas utilizadas",
     "unavailable": "La guía no está disponible temporalmente.",
+    "insufficientEvidence": "No tengo suficiente información verificada para responder.",
     "rateLimited": "Has hecho demasiadas preguntas. Inténtalo de nuevo dentro de unos minutos.",
     "suggestionFamous": "¿Por qué es famoso?",
     "suggestionBuilt": "¿Cuándo se construyó?",

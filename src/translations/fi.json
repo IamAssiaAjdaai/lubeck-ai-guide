@@ -67,6 +67,7 @@
     "limit": "Olet käyttänyt tämän kierroksen 5 kysymystä.",
     "questionsUsed": "kysymystä käytetty",
     "unavailable": "Opas ei ole juuri nyt käytettävissä.",
+    "insufficientEvidence": "Minulla ei ole tarpeeksi varmennettua tietoa vastatakseni tähän.",
     "rateLimited": "Olet esittänyt liian monta kysymystä. Yritä uudelleen muutaman minuutin kuluttua.",
     "suggestionFamous": "Miksi tämä paikka on kuuluisa?",
     "suggestionBuilt": "Milloin se rakennettiin?",
