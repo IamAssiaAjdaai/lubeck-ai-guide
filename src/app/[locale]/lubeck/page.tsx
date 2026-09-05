@@ -6,6 +6,7 @@ import PlaceDiscovery, {
   type DiscoveryPlace,
 } from "@/components/travel/PlaceDiscovery";
 import TourCard from "@/components/travel/TourCard";
+import TourPreferences from "@/components/travel/TourPreferences";
 import { cities } from "@/data/cities";
 import { localizePlaceCategories } from "@/data/placeCategories";
 import {
@@ -72,6 +73,16 @@ export default async function LubeckPage({
         : {}),
     }),
   );
+  const tourStart = lubeckLandmarks.find(
+    (place) =>
+      place.slug === city.startLandmarkSlug,
+  );
+
+  if (!tourStart) {
+    throw new Error(
+      `Missing tour start place ${city.startLandmarkSlug}.`,
+    );
+  }
 
   return (
     <main
@@ -102,6 +113,17 @@ export default async function LubeckPage({
 
         {/* Walking Tour Card */}
         <div className="mt-7"><TourCard eyebrow={t.explore.walkingTour} title={t.explore.historicCenter} duration={durationLabel} stops={stopsLabel} ctaLabel={t.explore.startTour} href={`/${currentLocale}/${city.slug}/${city.startLandmarkSlug}`} locale={currentLocale} tourId={city.tourId} startLandmarkSlug={city.startLandmarkSlug} /></div>
+
+        <div className="mt-4">
+          <TourPreferences
+            places={catalogPlaces}
+            categories={categories}
+            labels={t.tourPreferences}
+            locale={currentLocale}
+            tourId={city.tourId}
+            rankingOrigin={tourStart.coordinates}
+          />
+        </div>
 
         {/* Places */}
         <section className="mt-9">

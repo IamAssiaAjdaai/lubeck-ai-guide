@@ -28,6 +28,7 @@
     "places": "Plekken",
     "startTour": "Start de wandelroute"
   },
+  "tourPreferences": { "title": "Personaliseer je ontdekkingen", "description": "Kies je interesses en hoeveel je wilt wandelen.", "interests": "Interesses", "history": "Geschiedenis", "architecture": "Architectuur", "hidden-gems": "Verborgen parels", "family": "Familie", "walkingPreference": "Wandelvoorkeur", "standard": "Standaard", "less-walking": "Minder wandelen", "recommendedForYou": "Aanbevolen voor jou", "reset": "Herstellen" },
   "placeCategories": { "all": "Alles", "see": "Zien", "eat": "Eten", "fun": "Plezier" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Inhoud in het {language}" },
   "location": { "use": "Mijn locatie gebruiken", "requesting": "Je locatie wordt bepaald…", "privacy": "Je locatie blijft in deze browser en wordt alleen gebruikt voor functies in de buurt op deze pagina.", "available": "Je locatie wordt op de kaart getoond.", "denied": "Locatietoegang is geweigerd. Sta deze toe in je browserinstellingen en probeer opnieuw.", "unavailable": "Je locatie is momenteel niet beschikbaar.", "unsupported": "Deze browser ondersteunt geen locatietoegang.", "timeout": "Het locatieverzoek duurde te lang. Probeer opnieuw.", "error": "We konden je locatie niet bepalen. Probeer opnieuw.", "retry": "Opnieuw proberen", "markerLabel": "Je locatie","arrival": "Je bent aangekomen bij {place}!" },

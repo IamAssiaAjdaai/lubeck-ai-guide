@@ -28,6 +28,7 @@
     "places": "Platser",
     "startTour": "Starta stadsvandringen"
   },
+  "tourPreferences": { "title": "Anpassa dina upptäckter", "description": "Välj dina intressen och hur mycket du vill promenera.", "interests": "Intressen", "history": "Historia", "architecture": "Arkitektur", "hidden-gems": "Dolda pärlor", "family": "Familj", "walkingPreference": "Promenadpreferens", "standard": "Standard", "less-walking": "Mindre promenad", "recommendedForYou": "Rekommenderat för dig", "reset": "Återställ" },
   "placeCategories": { "all": "Alla", "see": "Se", "eat": "Äta", "fun": "Nöje" },
   "placeCatalog": { "placeDuration": "{minutes} min", "contentFallback": "Innehåll på {language}" },
   "location": { "use": "Använd min plats", "requesting": "Hämtar din plats…", "privacy": "Din plats stannar i den här webbläsaren och används bara för funktioner i närheten på den här sidan.", "available": "Din plats visas på kartan.", "denied": "Platsåtkomst nekades. Tillåt den i webbläsarens inställningar och försök igen.", "unavailable": "Din plats är inte tillgänglig just nu.", "unsupported": "Den här webbläsaren stöder inte platsåtkomst.", "timeout": "Platsförfrågan tog för lång tid. Försök igen.", "error": "Vi kunde inte komma åt din plats. Försök igen.", "retry": "Försök igen", "markerLabel": "Din plats","arrival": "Du har anlänt till {place}!" },

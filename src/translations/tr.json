@@ -28,6 +28,7 @@
     "places": "Yerler",
     "startTour": "Yürüyüş turuna başla"
   },
+  "tourPreferences": { "title": "Keşiflerini kişiselleştir", "description": "İlgi alanlarını ve ne kadar yürümek istediğini seç.", "interests": "İlgi alanları", "history": "Tarih", "architecture": "Mimari", "hidden-gems": "Gizli hazineler", "family": "Aile", "walkingPreference": "Yürüyüş tercihi", "standard": "Standart", "less-walking": "Daha az yürüyüş", "recommendedForYou": "Senin için önerilenler", "reset": "Sıfırla" },
   "placeCategories": { "all": "Tümü", "see": "Gör", "eat": "Yeme", "fun": "Eğlence" },
   "placeCatalog": { "placeDuration": "{minutes} dk", "contentFallback": "İçerik dili: {language}" },
   "location": { "use": "Konumumu kullan", "requesting": "Konumunuz bulunuyor…", "privacy": "Konumunuz bu tarayıcıda kalır ve yalnızca bu sayfadaki yakındaki özellikler için kullanılır.", "available": "Konumunuz haritada gösteriliyor.", "denied": "Konum izni reddedildi. Tarayıcı ayarlarından izin verip tekrar deneyin.", "unavailable": "Konumunuz şu anda kullanılamıyor.", "unsupported": "Bu tarayıcı konum erişimini desteklemiyor.", "timeout": "Konum isteği zaman aşımına uğradı. Tekrar deneyin.", "error": "Konumunuza erişemedik. Tekrar deneyin.", "retry": "Tekrar dene", "markerLabel": "Konumunuz","arrival": "{place} noktasına ulaştınız!" },
