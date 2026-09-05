@@ -15,3 +15,12 @@ export function getDb() {
 
   return drizzle(pool, { schema });
 }
+
+export async function closeDb(): Promise<void> {
+  const activePool = pool;
+  pool = undefined;
+
+  if (activePool) {
+    await activePool.end();
+  }
+}

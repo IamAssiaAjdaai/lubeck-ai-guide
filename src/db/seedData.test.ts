@@ -16,7 +16,44 @@ describe("database seed data", () => {
   });
 
   it("maps exactly 25 Lübeck places", () => {
+    expect(lubeckPlaceSeeds).toHaveLength(lubeckPlaces.length);
     expect(lubeckPlaceSeeds).toHaveLength(25);
+  });
+
+  it("preserves every canonical slug exactly once", () => {
+    const canonicalSlugs = lubeckPlaces.map((place) => place.slug);
+    const seedSlugs = lubeckPlaceSeeds.map((place) => place.slug);
+
+    expect(seedSlugs).toEqual(canonicalSlugs);
+    expect(new Set(seedSlugs).size).toBe(seedSlugs.length);
+  });
+
+  it("includes all five curated See-category Hidden Gems", () => {
+    const hiddenGemSlugs = lubeckPlaceSeeds
+      .filter(
+        (place) =>
+          place.category === "see" && place.tags.includes("hidden-gem"),
+      )
+      .map((place) => place.slug);
+
+    expect(hiddenGemSlugs).toEqual([
+      "fuechtingshof",
+      "dunkelgruener-gang",
+      "kalandsgang",
+      "malerwinkel",
+      "buergergaerten",
+    ]);
+  });
+
+  it("preserves category and coordinates for every canonical place", () => {
+    for (const [index, place] of lubeckPlaces.entries()) {
+      expect(lubeckPlaceSeeds[index]).toMatchObject({
+        slug: place.slug,
+        category: place.category,
+        latitude: place.coordinates.lat,
+        longitude: place.coordinates.lng,
+      });
+    }
   });
 
   it("preserves the expected place categories", () => {
