@@ -225,8 +225,14 @@ function localizedCardContent(
   return { de, en };
 }
 
-// Verified on 2026-09-03 against official venue/tourism information and
-// OpenStreetMap-derived location records. Missing images are intentional.
+const residentialHiddenGemVisitNotes = {
+  de: "Bitte respektiere die Privatsphäre der Anwohnenden und halte dich beim Besuch leise.",
+  en: "Please respect residents' privacy and keep noise low while visiting.",
+} as const satisfies Readonly<Record<"de" | "en", string>>;
+
+// Verified against official venue/tourism information and OpenStreetMap-
+// derived location records. CW-11 additions were checked on 2026-09-05.
+// Missing images are intentional.
 const additionalLubeckPlaces = [
   {
     slug: "lubecker-altstadt",
@@ -396,6 +402,127 @@ const additionalLubeckPlaces = [
         name: "Salt Storehouses",
         shortDescription:
           "A distinctive group of historic storehouses beside the River Trave and the Holsten Gate.",
+      },
+    ),
+  },
+  {
+    slug: "fuechtingshof",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.869632, lng: 10.6908538 },
+    durationMinutes: 15,
+    environment: "outdoor",
+    pricing: "unknown",
+    visitNoteVerifiedAt: "2026-09-05",
+    tags: [HIDDEN_GEM_TAG, "history", "architecture", "courtyard", "outdoor"],
+    content: localizedCardContent(
+      {
+        name: "Füchtingshof",
+        shortDescription:
+          "Ein frühbarocker Stiftungshof Johann Füchtings, der bis heute als Wohnhof genutzt wird.",
+        visitNote:
+          `Der Hof kann normalerweise von 10–12 Uhr und 15–18 Uhr besichtigt werden, wenn das Tor geöffnet ist. ${residentialHiddenGemVisitNotes.de}`,
+      },
+      {
+        name: "Füchtingshof",
+        shortDescription:
+          "An early-Baroque charitable courtyard founded through Johann Füchting's legacy and still used as housing.",
+        visitNote:
+          `The courtyard can normally be viewed from 10am–12pm and 3–6pm when the gate is open. ${residentialHiddenGemVisitNotes.en}`,
+      },
+    ),
+  },
+  {
+    slug: "dunkelgruener-gang",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8731584, lng: 10.6867884 },
+    durationMinutes: 15,
+    environment: "outdoor",
+    pricing: "unknown",
+    visitNoteVerifiedAt: "2026-09-05",
+    tags: [HIDDEN_GEM_TAG, "history", "alley", "outdoor"],
+    content: localizedCardContent(
+      {
+        name: "Dunkelgrüner Gang",
+        shortDescription:
+          "Ein verwinkelter Wohngang zwischen Untertrave und Engelswisch mit kleinen Häusern, Gärten und versteckten Durchgängen.",
+        visitNote: residentialHiddenGemVisitNotes.de,
+      },
+      {
+        name: "Dunkelgrüner Gang",
+        shortDescription:
+          "A winding residential passage between Untertrave and Engelswisch, with small houses, gardens and hidden exits.",
+        visitNote: residentialHiddenGemVisitNotes.en,
+      },
+    ),
+  },
+  {
+    slug: "kalandsgang",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8620556, lng: 10.6809059 },
+    durationMinutes: 10,
+    environment: "outdoor",
+    pricing: "unknown",
+    visitNoteVerifiedAt: "2026-09-05",
+    tags: [HIDDEN_GEM_TAG, "history", "alley", "outdoor"],
+    content: localizedCardContent(
+      {
+        name: "Kalandsgang",
+        shortDescription:
+          "Ein historischer Gang an der Hartengrube 52, dessen Name auf die Kaland-Bruderschaft zurückgeht.",
+        visitNote: residentialHiddenGemVisitNotes.de,
+      },
+      {
+        name: "Kalandsgang",
+        shortDescription:
+          "A historic passage at Hartengrube 52 whose name traces back to the Kaland brotherhood.",
+        visitNote: residentialHiddenGemVisitNotes.en,
+      },
+    ),
+  },
+  {
+    slug: "malerwinkel",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8619857, lng: 10.6794443 },
+    durationMinutes: 20,
+    environment: "outdoor",
+    pricing: "free",
+    tags: [HIDDEN_GEM_TAG, "garden", "viewpoint", "outdoor", "photo-spot", "quiet"],
+    content: localizedCardContent(
+      {
+        name: "Malerwinkel",
+        shortDescription:
+          "Eine kleine Grünanlage an der Wallstraße mit Blick über die Trave auf die Altstadt und das Domviertel.",
+      },
+      {
+        name: "Malerwinkel",
+        shortDescription:
+          "A small riverside green space on Wallstraße with views across the Trave toward the old town and cathedral quarter.",
+      },
+    ),
+  },
+  {
+    slug: "buergergaerten",
+    city: "lubeck",
+    category: "see",
+    coordinates: { lat: 53.8705631, lng: 10.6907062 },
+    durationMinutes: 20,
+    environment: "outdoor",
+    pricing: "unknown",
+    tags: [HIDDEN_GEM_TAG, "garden", "outdoor", "quiet"],
+    content: localizedCardContent(
+      {
+        name: "Bürgergärten",
+        shortDescription:
+          "Mehrere verbundene Gärten mit grünen Wegen, Sitzplätzen, Skulpturen und Blick auf historische Hausrückseiten.",
+      },
+      {
+        name: "Bürgergärten",
+        shortDescription:
+          "Connected gardens with green paths, seating, sculptures and views toward the backs of historic town houses.",
       },
     ),
   },
@@ -605,6 +732,11 @@ export const LUBECK_PLACE_SLUGS = [
   "willy-brandt-haus",
   "an-der-obertrave",
   "salzspeicher",
+  "fuechtingshof",
+  "dunkelgruener-gang",
+  "kalandsgang",
+  "malerwinkel",
+  "buergergaerten",
   "buddenbrookhaus",
   "cafe-niederegger",
   "schiffergesellschaft",

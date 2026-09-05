@@ -30,8 +30,12 @@ function official(
   };
 }
 
-function map(label: string, url: string): PlaceSource {
-  return { label, url, type: "map", verifiedAt: VERIFIED_AT };
+function map(
+  label: string,
+  url: string,
+  verifiedAt = VERIFIED_AT,
+): PlaceSource {
+  return { label, url, type: "map", verifiedAt };
 }
 
 export const lubeckPlaceSources = {
@@ -130,6 +134,71 @@ export const lubeckPlaceSources = {
       "OpenStreetMap-derived place record",
       "https://mapcarta.com/de/W28831875",
 
+    ),
+  ],
+  fuechtingshof: [
+    official(
+      "Füchtingshof — Visiting information",
+      "https://www.fuechtingshof.de/kontakt/index.html",
+      "2026-09-05",
+    ),
+    official(
+      "Lübeck tourism — Füchtingshof",
+      "https://www.visit-luebeck.com/old-town/poi/fuechtingshof-2",
+      "2026-09-05",
+    ),
+    map(
+      "OpenStreetMap — Füchtingshof footway",
+      "https://www.openstreetmap.org/way/231906528",
+      "2026-09-05",
+    ),
+  ],
+  "dunkelgruener-gang": [
+    official(
+      "City of Lübeck — Dunkel- und Hellgrüner Gang",
+      "https://www.luebeck.de/de/stadtleben/tourismus/luebeck/sehenswuerdigkeiten/gaenge-und-hoefe/dunkel-und-hellgruener-gang.html",
+      "2026-09-05",
+    ),
+    map(
+      "OpenStreetMap — Dunkelgrüner Gang footway",
+      "https://www.openstreetmap.org/way/235323244",
+      "2026-09-05",
+    ),
+  ],
+  kalandsgang: [
+    official(
+      "Lübeck tourism — Alleys and courtyards",
+      "https://www.visit-luebeck.com/old-town/alleys-courtyards",
+      "2026-09-05",
+    ),
+    map(
+      "OpenStreetMap — Hartengrube 52 entrance",
+      "https://www.openstreetmap.org/node/1541971038",
+      "2026-09-05",
+    ),
+  ],
+  malerwinkel: [
+    official(
+      "Lübeck tourism — Malerwinkel",
+      "https://www.visit-luebeck.com/old-town/poi/painter-angle",
+      "2026-09-05",
+    ),
+    map(
+      "OpenStreetMap — Malerwinkel viewpoint",
+      "https://www.openstreetmap.org/node/1475562859",
+      "2026-09-05",
+    ),
+  ],
+  buergergaerten: [
+    official(
+      "Lübeck tourism — Bürgergärten",
+      "https://www.luebeck-tourismus.de/altstadt/poi/buergergaerten-6",
+      "2026-09-05",
+    ),
+    map(
+      "OpenStreetMap — Bürgergärten park",
+      "https://www.openstreetmap.org/way/188233809",
+      "2026-09-05",
     ),
   ],
   buddenbrookhaus: [

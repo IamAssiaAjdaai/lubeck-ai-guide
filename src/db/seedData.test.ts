@@ -15,8 +15,8 @@ describe("database seed data", () => {
     });
   });
 
-  it("maps exactly 20 Lübeck places", () => {
-    expect(lubeckPlaceSeeds).toHaveLength(20);
+  it("maps exactly 25 Lübeck places", () => {
+    expect(lubeckPlaceSeeds).toHaveLength(25);
   });
 
   it("preserves the expected place categories", () => {
@@ -33,7 +33,7 @@ describe("database seed data", () => {
     );
 
     expect(categoryCounts).toEqual({
-      see: 12,
+      see: 17,
       eat: 5,
       fun: 3,
     });

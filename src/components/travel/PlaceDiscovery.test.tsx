@@ -177,6 +177,8 @@ describe("PlaceDiscovery", () => {
     const englishFallback = {
       ...places[1],
       requestedLocale: "ar",
+      tags: ["hidden-gem"],
+      visitNote: "Please respect residents' privacy.",
       fallbackLabel: "المحتوى باللغة English",
     } as const satisfies DiscoveryPlace;
 
@@ -194,6 +196,9 @@ describe("PlaceDiscovery", () => {
           mapLabels={getTranslations("ar").map}
           distanceLabels={getTranslations("ar").distance}
           storyLabel={getTranslations("ar").landmark.listenStory}
+          hiddenGemLabel={
+            getTranslations("ar").tourPreferences["hidden-gems"]
+          }
         />
       </section>,
     );
@@ -208,6 +213,14 @@ describe("PlaceDiscovery", () => {
     expect(content?.getAttribute("lang")).toBe("en");
     expect(content?.getAttribute("dir")).toBe("ltr");
     expect(screen.getByText("المحتوى باللغة English")).not.toBeNull();
+    expect(
+      screen.getByText(
+        getTranslations("ar").tourPreferences["hidden-gems"],
+      ),
+    ).not.toBeNull();
+    expect(
+      screen.getByText("Please respect residents' privacy."),
+    ).not.toBeNull();
   });
 
   it("keeps place cards and category filtering usable when the map fails", () => {

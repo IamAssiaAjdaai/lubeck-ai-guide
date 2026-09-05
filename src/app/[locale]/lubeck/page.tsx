@@ -157,6 +157,7 @@ export default async function LubeckPage({
             mapLabels={t.map}
             distanceLabels={t.distance}
             storyLabel={t.landmark.listenStory}
+            hiddenGemLabel={t.tourPreferences["hidden-gems"]}
           />
         </section>
       </section>
