@@ -22,6 +22,8 @@ export type DatabasePlaceSnapshot = Readonly<
     | "pricing"
     | "status"
     | "statusVerifiedAt"
+    | "visitNoteVerifiedAt"
+    | "visitNoteValidUntil"
     | "image"
     | "tags"
   >
@@ -54,6 +56,8 @@ const comparableSeedKeys = [
   "pricing",
   "status",
   "statusVerifiedAt",
+  "visitNoteVerifiedAt",
+  "visitNoteValidUntil",
   "image",
 ] as const satisfies readonly (keyof PlaceSeedRow)[];
 

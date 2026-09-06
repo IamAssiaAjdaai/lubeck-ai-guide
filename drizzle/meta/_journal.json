@@ -15,6 +15,13 @@
       "when": 1788639631090,
       "tag": "0001_jazzy_shinko_yamashiro",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788662007993,
+      "tag": "0002_wooden_magik",
+      "breakpoints": true
     }
   ]
 }

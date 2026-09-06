@@ -15,6 +15,12 @@ const { audioPlayer } = vi.hoisted(() => ({
   audioPlayer: vi.fn(),
 }));
 
+vi.mock("server-only", () => ({}));
+
+vi.mock("next/server", () => ({
+  connection: vi.fn(),
+}));
+
 vi.mock("next/image", () => ({
   default: ({ alt }: { alt: string }) => (
     <div role="img" aria-label={alt} />

@@ -17,6 +17,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx scripts/seed-database.ts",
     "db:verify": "tsx scripts/verify-database.ts",
+    "cms:import-lubeck": "tsx scripts/import-lubeck-cms.ts",
+    "cms:test:integration": "tsx scripts/run-cms-integration-tests.ts",
     "admin:create-super": "tsx scripts/create-super-admin.ts"
   },
   "dependencies": {

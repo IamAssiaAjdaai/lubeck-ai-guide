@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { ArrowLeft, ArrowRight, House } from "lucide-react";
 
 import PlaceDiscovery, {
@@ -12,8 +13,9 @@ import { cities } from "@/data/cities";
 import { localizePlaceCategories } from "@/data/placeCategories";
 import {
   lubeckLandmarks,
-  lubeckPlaces,
 } from "@/data/places";
+import { getContentSource } from "@/lib/content/source";
+import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import {
   formatMessage,
   getDirection,
@@ -44,6 +46,9 @@ export default async function LubeckPage({
   }
 
   const currentLocale = locale;
+  const contentSource = getContentSource();
+  if (contentSource !== "code") await connection();
+  const publicSnapshot = await getPublicCitySnapshot("lubeck", contentSource);
   const t = getTranslations(currentLocale);
   const direction = getDirection(currentLocale);
   const city = cities.lubeck;
@@ -51,7 +56,7 @@ export default async function LubeckPage({
   const [durationLabel, stopsLabel = ""] = t.explore.duration.split("•").map((value) => value.trim());
   const tourStopSlugs = new Set(lubeckLandmarks.map((place) => place.slug));
   const categories = localizePlaceCategories(t);
-  const preparedPlaces = prepareMapPlaces(lubeckPlaces, currentLocale, {
+  const preparedPlaces = prepareMapPlaces(publicSnapshot.places, currentLocale, {
     getDetailHref: (place) =>
       tourStopSlugs.has(place.slug)
         ? `/${currentLocale}/${city.slug}/${place.slug}`
@@ -74,7 +79,7 @@ export default async function LubeckPage({
         : {}),
     }),
   );
-  const tourStart = lubeckLandmarks.find(
+  const tourStart = publicSnapshot.places.find(
     (place) =>
       place.slug === city.startLandmarkSlug,
   );
