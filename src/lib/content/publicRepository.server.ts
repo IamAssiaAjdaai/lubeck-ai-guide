@@ -64,6 +64,14 @@ export type PublicCitySnapshot = Readonly<{
   }>;
 }>;
 
+export type PublicCitySummary = Readonly<{
+  city: Readonly<{
+    slug: string;
+    content: Readonly<Partial<Record<Locale, PublicCityLocalization>>>;
+  }>;
+  media?: readonly PublicMedia[];
+}>;
+
 export type ResolvedPublicContent<TContent> = Readonly<{
   requestedLocale: Locale;
   resolvedLocale: Locale;
@@ -87,6 +95,19 @@ export async function getPublicCitySnapshot(
     return snapshot;
   } catch {
     return getCodeSnapshot(citySlug);
+  }
+}
+
+export async function getPublicCitySummaries(
+  source: ContentSource = getContentSource(),
+): Promise<readonly PublicCitySummary[]> {
+  if (source === "code") return [getCodeCitySummary()];
+  if (source === "database") return loadPublishedDatabaseCitySummaries();
+  try {
+    const summaries = await loadPublishedDatabaseCitySummaries();
+    return summaries.length > 0 ? summaries : [getCodeCitySummary()];
+  } catch {
+    return [getCodeCitySummary()];
   }
 }
 
@@ -367,6 +388,49 @@ async function loadPublishedDatabaseSnapshot(
   };
 }
 
+async function loadPublishedDatabaseCitySummaries(): Promise<readonly PublicCitySummary[]> {
+  const db = getDb();
+  const [cityRows, localizations] = await Promise.all([
+    db
+      .select()
+      .from(citiesTable)
+      .where(eq(citiesTable.publicationStatus, "published"))
+      .orderBy(asc(citiesTable.slug)),
+    db.select().from(cityLocalizationsTable),
+  ]);
+  const publishedCities = cityRows.filter(
+    ({ publicationStatus }) => publicationStatus === "published",
+  );
+  const media = await Promise.all(
+    publishedCities.map(({ id }) => getPublicMediaSnapshot(id, [], [])),
+  );
+  return publishedCities.map((city, index) => {
+    const summary = {
+      city: {
+        slug: city.slug,
+        content: Object.fromEntries(
+          localizations
+            .filter(
+              ({ cityId, locale }) => cityId === city.id && isLocale(locale),
+            )
+            .map((localization) => [
+              localization.locale,
+              {
+                name: localization.name,
+                ...(localization.shortDescription
+                  ? { shortDescription: localization.shortDescription }
+                  : {}),
+              },
+            ]),
+        ),
+      },
+      media: media[index]?.city ?? [],
+    } satisfies PublicCitySummary;
+    assertLocalizedCitySummary(summary);
+    return summary;
+  });
+}
+
 function getCodeSnapshot(citySlug: string): PublicCitySnapshot {
   if (citySlug !== "lubeck") {
     throw new Error(`Canonical code content is unavailable for ${citySlug}.`);
@@ -399,6 +463,32 @@ function getCodeSnapshot(citySlug: string): PublicCitySnapshot {
       })),
     }],
   };
+}
+
+function getCodeCitySummary(): PublicCitySummary {
+  return {
+    city: {
+      slug: cities.lubeck.slug,
+      content: Object.fromEntries(
+        locales.map((locale) => {
+          const translations = getTranslations(locale);
+          return [
+            locale,
+            {
+              name: cities.lubeck.name,
+              shortDescription: translations.home.featuredCityDescription,
+            },
+          ];
+        }),
+      ),
+    },
+  };
+}
+
+function assertLocalizedCitySummary(summary: PublicCitySummary) {
+  if (Object.keys(summary.city.content).length === 0) {
+    throw new Error("Published city has no authored localization.");
+  }
 }
 
 function assertCompleteSnapshot(snapshot: PublicCitySnapshot) {
