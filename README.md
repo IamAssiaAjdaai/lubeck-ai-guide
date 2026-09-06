@@ -307,9 +307,12 @@ separately permissioned prefix. `vercel-build` still runs only migrations and
 the Next.js build; it never uploads, seeds, or imports media.
 
 Every upload belongs to one authorized city. Assets can be reused only within
-that city. Editors with `media:manage` may upload and attach assets. Approval
-requires the existing `publishing:publish` capability, so media management does
-not grant content publication powers.
+that city. Editors with `media:manage` may upload and prepare non-public media
+attachments. Changing approved media on published content additionally requires
+`publishing:publish`; approving an asset requires `publishing:publish`, while
+rejecting it requires `publishing:review`. An actively referenced approved asset
+must be safely detached or replaced before it can become non-public. Media
+management therefore does not grant content publication powers.
 
 The allowlist and limits are:
 

@@ -60,6 +60,7 @@ describe("CITYWALK admin permissions", () => {
       false,
     );
     expect(hasAdminCapability("content_editor", "staff:manage")).toBe(false);
+    expect(hasAdminCapability("content_editor", "media:manage")).toBe(true);
   });
 
   it("allows reviewers to review and publish but not manage staff", () => {
@@ -72,6 +73,10 @@ describe("CITYWALK admin permissions", () => {
     expect(
       hasAdminCapability("reviewer_publisher", "places:manage"),
     ).toBe(false);
+    expect(hasAdminCapability("reviewer_publisher", "media:view")).toBe(true);
+    expect(hasAdminCapability("reviewer_publisher", "media:manage")).toBe(
+      false,
+    );
     expect(
       hasAdminCapability("reviewer_publisher", "staff:manage"),
     ).toBe(false);

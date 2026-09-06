@@ -4,8 +4,12 @@ vi.mock("server-only", () => ({}));
 
 const {
   createMediaUploadRecord,
+  attachMedia,
+  detachMedia,
   finalizeMediaAsset,
+  getCmsPlace,
   getMediaAsset,
+  getMediaAttachment,
   requireAdminCapability,
   requireCityCapability,
   setMediaLifecycle,
@@ -13,7 +17,11 @@ const {
   requireCityCapability: vi.fn(),
   requireAdminCapability: vi.fn(),
   createMediaUploadRecord: vi.fn(),
+  attachMedia: vi.fn(),
+  detachMedia: vi.fn(),
+  getCmsPlace: vi.fn(),
   getMediaAsset: vi.fn(),
+  getMediaAttachment: vi.fn(),
   finalizeMediaAsset: vi.fn(),
   setMediaLifecycle: vi.fn(),
 }));
@@ -24,18 +32,18 @@ vi.mock("@/lib/admin/authorization.server", () => ({
 }));
 vi.mock("@/lib/admin/content/repository.server", () => ({
   getCmsCity: vi.fn(),
-  getCmsPlace: vi.fn(),
+  getCmsPlace,
   getCmsTour: vi.fn(),
 }));
 vi.mock("@/lib/media/repository.server", () => ({
-  attachMedia: vi.fn(),
+  attachMedia,
   createExternalVideoRecord: vi.fn(),
   createMediaUploadRecord,
-  detachMedia: vi.fn(),
+  detachMedia,
   finalizeMediaAsset,
   getMediaAsset,
   getMediaAssetWithUsages: vi.fn(),
-  getMediaAttachment: vi.fn(),
+  getMediaAttachment,
   listEntityMedia: vi.fn(),
   listMediaAssets: vi.fn(),
   listStaleUploadingAssets: vi.fn(),
@@ -45,12 +53,33 @@ vi.mock("@/lib/media/repository.server", () => ({
   setMediaLifecycle,
 }));
 
-import { createAuthorizedUploadIntent, finalizeAuthorizedUpload, reviewAuthorizedMediaAsset } from "@/lib/media/service.server";
+import {
+  attachAuthorizedMedia,
+  createAuthorizedUploadIntent,
+  detachAuthorizedMedia,
+  finalizeAuthorizedUpload,
+  reviewAuthorizedMediaAsset,
+} from "@/lib/media/service.server";
 import { FakeMediaObjectStore } from "@/lib/media/testing/fakeObjectStore";
 
 const context = {
   user: { id: "actor-1", email: "editor@example.com", name: "Editor" },
   staff: { membershipId: 1, userId: "actor-1", role: "content_editor", active: true, globalAccess: false, cityIds: [7] },
+};
+
+const reviewerContext = {
+  user: { id: "reviewer-1", email: "reviewer@example.com", name: "Reviewer" },
+  staff: { membershipId: 2, userId: "reviewer-1", role: "reviewer_publisher", active: true, globalAccess: false, cityIds: [7] },
+};
+
+const adminContext = {
+  user: { id: "admin-1", email: "admin@example.com", name: "Admin" },
+  staff: { membershipId: 3, userId: "admin-1", role: "admin", active: true, globalAccess: true, cityIds: [] },
+};
+
+const superAdminContext = {
+  user: { id: "super-1", email: "super@example.com", name: "Super Admin" },
+  staff: { membershipId: 4, userId: "super-1", role: "super_admin", active: true, globalAccess: false, cityIds: [] },
 };
 
 describe("media service", () => {
@@ -96,12 +125,68 @@ describe("media service", () => {
     expect(finalizeMediaAsset).toHaveBeenCalledTimes(1);
   });
 
-  it("uses existing publishing authority for approval without granting edit rights", async () => {
+  it("lets a reviewer approve and reject without granting media management", async () => {
+    requireAdminCapability.mockResolvedValue(reviewerContext);
+    requireCityCapability.mockResolvedValue(reviewerContext);
     getMediaAsset.mockResolvedValue({ id: 19, cityId: 7, approvalStatus: "pending_review" });
     setMediaLifecycle.mockResolvedValue({ id: 19, approvalStatus: "approved" });
     await reviewAuthorizedMediaAsset(19, "approved");
     expect(requireAdminCapability).toHaveBeenCalledWith("media:view");
     expect(requireCityCapability).toHaveBeenCalledWith(7, "publishing:publish");
-    expect(setMediaLifecycle).toHaveBeenCalledWith(19, "approved", "actor-1");
+    expect(setMediaLifecycle).toHaveBeenCalledWith(19, "approved", "reviewer-1");
+
+    await reviewAuthorizedMediaAsset(19, "rejected");
+    expect(requireCityCapability).toHaveBeenLastCalledWith(7, "publishing:review");
+
+    requireCityCapability.mockRejectedValueOnce(new Error("FORBIDDEN"));
+    await expect(createAuthorizedUploadIntent({ cityId: 7, kind: "image", originalFilename: "gate.jpg", mimeType: "image/jpeg", sizeBytes: 3 }, new FakeMediaObjectStore())).rejects.toThrow("FORBIDDEN");
+    expect(requireCityCapability).toHaveBeenLastCalledWith(7, "media:manage");
+  });
+
+  it("passes a fail-closed public mutation decision for editors and publishers", async () => {
+    getMediaAsset.mockResolvedValue({ id: 19, cityId: 7, approvalStatus: "approved" });
+    getCmsPlace.mockResolvedValue({ id: 31, cityId: 7 });
+    attachMedia.mockResolvedValue({ id: 41 });
+
+    await attachAuthorizedMedia({ entityType: "place", entityId: 31, mediaAssetId: 19, purpose: "hero" });
+    expect(attachMedia).toHaveBeenLastCalledWith(
+      expect.objectContaining({ entityId: 31, mediaAssetId: 19 }),
+      "actor-1",
+      { allowPublicMutation: false },
+    );
+
+    requireCityCapability.mockResolvedValue(adminContext);
+    await attachAuthorizedMedia({ entityType: "place", entityId: 31, mediaAssetId: 19, purpose: "hero" });
+    expect(attachMedia).toHaveBeenLastCalledWith(
+      expect.objectContaining({ entityId: 31, mediaAssetId: 19 }),
+      "admin-1",
+      { allowPublicMutation: true },
+    );
+
+    getMediaAttachment.mockResolvedValue({ id: 41, placeId: 31 });
+    detachMedia.mockResolvedValue({ id: 41 });
+    requireCityCapability.mockResolvedValue(context);
+    await detachAuthorizedMedia("place", 41);
+    expect(detachMedia).toHaveBeenLastCalledWith("place", 41, {
+      allowPublicMutation: false,
+    });
+  });
+
+  it.each([
+    ["admin", adminContext],
+    ["super_admin", superAdminContext],
+  ])("lets %s manage media with publication authority", async (_role, privilegedContext) => {
+    getMediaAsset.mockResolvedValue({ id: 19, cityId: 7, approvalStatus: "approved" });
+    getCmsPlace.mockResolvedValue({ id: 31, cityId: 7 });
+    attachMedia.mockResolvedValue({ id: 41 });
+    requireCityCapability.mockResolvedValue(privilegedContext);
+
+    await attachAuthorizedMedia({ entityType: "place", entityId: 31, mediaAssetId: 19, purpose: "hero" });
+
+    expect(attachMedia).toHaveBeenLastCalledWith(
+      expect.objectContaining({ mediaAssetId: 19 }),
+      privilegedContext.user.id,
+      { allowPublicMutation: true },
+    );
   });
 });

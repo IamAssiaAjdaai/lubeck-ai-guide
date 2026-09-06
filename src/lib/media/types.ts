@@ -45,6 +45,10 @@ export type MediaAttachmentInput = Readonly<{
   locale?: Locale;
 }>;
 
+export type MediaMutationAuthorization = Readonly<{
+  allowPublicMutation: boolean;
+}>;
+
 export type PublicMedia = Readonly<{
   assetKey: string;
   kind: MediaKind;

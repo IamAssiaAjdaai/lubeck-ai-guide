@@ -22,6 +22,7 @@ import {
   type MediaAttachmentInput,
   type MediaEntityType,
   type MediaLifecycle,
+  type MediaMutationAuthorization,
   type UploadIntentInput,
 } from "@/lib/media/types";
 
@@ -180,7 +181,17 @@ export async function setMediaLifecycle(
 ) {
   return getDb().transaction(async (tx) => {
     const asset = await lockMediaAsset(tx, id);
-    if (status === "archived") {
+    if (
+      asset.approvalStatus === "approved" &&
+      (status === "archived" || status === "rejected")
+    ) {
+      const usageCount = await countMediaUsages(tx, id);
+      if (usageCount > 0) {
+        throw new MediaIntegrityError(
+          "Detach or replace this approved asset before making it non-public.",
+        );
+      }
+    } else if (status === "archived") {
       const usageCount = await countMediaUsages(tx, id);
       if (usageCount > 0) {
         throw new MediaIntegrityError(
@@ -256,15 +267,16 @@ export async function markMediaObjectDeleted(
 export async function attachMedia(
   input: MediaAttachmentInput,
   actorId: string,
+  authorization: MediaMutationAuthorization,
 ) {
   return getDb().transaction(async (tx) => {
     const asset = await lockMediaAsset(tx, input.mediaAssetId);
-    const targetCityId = await assertEntityCity(
+    const target = await lockEntityPublicationState(
       tx,
       input.entityType,
       input.entityId,
     );
-    if (asset.cityId !== targetCityId) {
+    if (asset.cityId !== target.cityId) {
       throw new MediaIntegrityError("Media and content must belong to the same city.");
     }
     if (asset.approvalStatus === "uploading") {
@@ -295,7 +307,7 @@ export async function attachMedia(
     const table = attachmentTable(input.entityType);
     const entityColumn = attachmentEntityColumn(input.entityType);
     const existing = await tx
-      .select({ id: table.id })
+      .select({ id: table.id, mediaAssetId: table.mediaAssetId })
       .from(table)
       .where(
         and(
@@ -306,6 +318,31 @@ export async function attachMedia(
         ),
       )
       .limit(1);
+    const existingAttachment = existing[0];
+    let replacesApprovedMedia = false;
+    if (
+      existingAttachment &&
+      existingAttachment.mediaAssetId !== input.mediaAssetId
+    ) {
+      const existingAsset = await lockMediaAsset(
+        tx,
+        existingAttachment.mediaAssetId,
+      );
+      replacesApprovedMedia = existingAsset.approvalStatus === "approved";
+    }
+    const addsApprovedMedia =
+      (!existingAttachment ||
+        existingAttachment.mediaAssetId !== input.mediaAssetId) &&
+      asset.approvalStatus === "approved";
+    if (
+      target.isPublic &&
+      (addsApprovedMedia || replacesApprovedMedia) &&
+      !authorization.allowPublicMutation
+    ) {
+      throw new MediaIntegrityError(
+        "Publishing permission is required to change approved media on published content.",
+      );
+    }
     const values = {
       mediaAssetId: input.mediaAssetId,
       purpose: input.purpose,
@@ -314,7 +351,7 @@ export async function attachMedia(
       createdByUserId: actorId,
       [entityKey(input.entityType)]: input.entityId,
     };
-    if (existing[0]) {
+    if (existingAttachment) {
       if (["gallery", "video"].includes(input.purpose)) {
         throw new MediaIntegrityError("This ordered media position is already occupied.");
       }
@@ -325,7 +362,7 @@ export async function attachMedia(
           createdByUserId: actorId,
           createdAt: new Date(),
         })
-        .where(eq(table.id, existing[0].id))
+        .where(eq(table.id, existingAttachment.id))
         .returning();
       if (!replacement) throw new MediaIntegrityError("Unable to replace media attachment.");
       return replacement;
@@ -339,14 +376,41 @@ export async function attachMedia(
 export async function detachMedia(
   entityType: MediaEntityType,
   attachmentId: number,
+  authorization: MediaMutationAuthorization,
 ) {
-  const table = attachmentTable(entityType);
-  const [deleted] = await getDb()
-    .delete(table)
-    .where(eq(table.id, attachmentId))
-    .returning();
-  if (!deleted) throw new MediaNotFoundError("Media attachment");
-  return deleted;
+  return getDb().transaction(async (tx) => {
+    const table = attachmentTable(entityType);
+    const [attachment] = await tx
+      .select()
+      .from(table)
+      .where(eq(table.id, attachmentId))
+      .for("update")
+      .limit(1);
+    if (!attachment) throw new MediaNotFoundError("Media attachment");
+    const entityId =
+      entityType === "city"
+        ? (attachment as { cityId: number }).cityId
+        : entityType === "place"
+          ? (attachment as { placeId: number }).placeId
+          : (attachment as { tourId: number }).tourId;
+    const target = await lockEntityPublicationState(tx, entityType, entityId);
+    const asset = await lockMediaAsset(tx, attachment.mediaAssetId);
+    if (
+      target.isPublic &&
+      asset.approvalStatus === "approved" &&
+      !authorization.allowPublicMutation
+    ) {
+      throw new MediaIntegrityError(
+        "Publishing permission is required to change approved media on published content.",
+      );
+    }
+    const [deleted] = await tx
+      .delete(table)
+      .where(eq(table.id, attachmentId))
+      .returning();
+    if (!deleted) throw new MediaNotFoundError("Media attachment");
+    return deleted;
+  });
 }
 
 export async function getMediaAttachment(
@@ -492,6 +556,71 @@ async function assertEntityCity(
   const [tour] = await tx.select({ cityId: toursTable.cityId }).from(toursTable).where(eq(toursTable.id, entityId)).limit(1);
   if (!tour) throw new MediaNotFoundError("Tour");
   return tour.cityId;
+}
+
+async function lockEntityPublicationState(
+  tx: CmsTransaction,
+  entityType: MediaEntityType,
+  entityId: number,
+): Promise<{ cityId: number; isPublic: boolean }> {
+  if (entityType === "city") {
+    const [city] = await tx
+      .select({ id: citiesTable.id, status: citiesTable.publicationStatus })
+      .from(citiesTable)
+      .where(eq(citiesTable.id, entityId))
+      .for("update")
+      .limit(1);
+    if (!city) throw new MediaNotFoundError("City");
+    return { cityId: city.id, isPublic: city.status === "published" };
+  }
+
+  if (entityType === "place") {
+    const [place] = await tx
+      .select({
+        cityId: placesTable.cityId,
+        status: placesTable.publicationStatus,
+      })
+      .from(placesTable)
+      .where(eq(placesTable.id, entityId))
+      .for("update")
+      .limit(1);
+    if (!place) throw new MediaNotFoundError("Place");
+    const cityIsPublished = await lockPublishedCityState(tx, place.cityId);
+    return {
+      cityId: place.cityId,
+      isPublic: place.status === "published" && cityIsPublished,
+    };
+  }
+
+  const [tour] = await tx
+    .select({
+      cityId: toursTable.cityId,
+      status: toursTable.publicationStatus,
+    })
+    .from(toursTable)
+    .where(eq(toursTable.id, entityId))
+    .for("update")
+    .limit(1);
+  if (!tour) throw new MediaNotFoundError("Tour");
+  const cityIsPublished = await lockPublishedCityState(tx, tour.cityId);
+  return {
+    cityId: tour.cityId,
+    isPublic: tour.status === "published" && cityIsPublished,
+  };
+}
+
+async function lockPublishedCityState(
+  tx: CmsTransaction,
+  cityId: number,
+): Promise<boolean> {
+  const [city] = await tx
+    .select({ status: citiesTable.publicationStatus })
+    .from(citiesTable)
+    .where(eq(citiesTable.id, cityId))
+    .for("update")
+    .limit(1);
+  if (!city) throw new MediaNotFoundError("City");
+  return city.status === "published";
 }
 
 async function countMediaUsages(tx: CmsTransaction, mediaAssetId: number): Promise<number> {

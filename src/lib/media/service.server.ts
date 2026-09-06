@@ -8,6 +8,7 @@ import {
   requireCityCapability,
   type AdminContext,
 } from "@/lib/admin/authorization.server";
+import { hasCityCapability } from "@/lib/admin/permissions";
 import {
   getCmsCity,
   getCmsPlace,
@@ -178,7 +179,10 @@ export async function reviewAuthorizedMediaAsset(
 ) {
   const asset = await getRequiredMediaAsset(id);
   await requireAdminCapability("media:view");
-  const context = await requireCityCapability(asset.cityId, "publishing:publish");
+  const context = await requireCityCapability(
+    asset.cityId,
+    status === "approved" ? "publishing:publish" : "publishing:review",
+  );
   return setMediaLifecycle(id, status, context.user.id);
 }
 
@@ -213,7 +217,11 @@ export async function attachAuthorizedMedia(input: MediaAttachmentInput) {
     throw new MediaIntegrityError("Media and content must belong to the same city.");
   }
   const context = await requireCityCapability(targetCityId, "media:manage");
-  return attachMedia({ ...input, purpose }, context.user.id);
+  return attachMedia(
+    { ...input, purpose },
+    context.user.id,
+    mediaMutationAuthorization(context, targetCityId),
+  );
 }
 
 export async function detachAuthorizedMedia(
@@ -229,8 +237,12 @@ export async function detachAuthorizedMedia(
         ? (attachment as { placeId: number }).placeId
         : (attachment as { tourId: number }).tourId;
   const cityId = await getTargetCityId(entityType, entityId);
-  await requireCityCapability(cityId, "media:manage");
-  return detachMedia(entityType, attachmentId);
+  const context = await requireCityCapability(cityId, "media:manage");
+  return detachMedia(
+    entityType,
+    attachmentId,
+    mediaMutationAuthorization(context, cityId),
+  );
 }
 
 export async function listAuthorizedEntityMedia(
@@ -287,4 +299,17 @@ async function getTargetCityId(entityType: MediaEntityType, entityId: number): P
 function filterCityScope<TRow extends { cityId: number }>(rows: readonly TRow[], context: AdminContext) {
   if (context.staff.role === "super_admin" || context.staff.globalAccess) return rows;
   return rows.filter(({ cityId }) => context.staff.cityIds.includes(cityId));
+}
+
+function mediaMutationAuthorization(
+  context: AdminContext,
+  cityId: number,
+) {
+  return {
+    allowPublicMutation: hasCityCapability(
+      context.staff,
+      cityId,
+      "publishing:publish",
+    ),
+  } as const;
 }
