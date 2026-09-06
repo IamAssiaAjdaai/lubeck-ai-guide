@@ -2,13 +2,17 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-import { resolvePlaceMedia } from "@/lib/media/publicMedia.server";
+import { applicationMediaPath, resolvePlaceMedia } from "@/lib/media/publicMedia.server";
 import type { PublicMedia } from "@/lib/media/types";
 import { toLocalizedPublicCityResponse } from "@/lib/content/publicRepository.server";
 
 const englishAudio: PublicMedia = { assetKey: "a", kind: "audio", purpose: "audio", url: "https://cdn.example/en.mp3", mimeType: "audio/mpeg", locale: "en" };
 
 describe("public media legacy migration", () => {
+  it("uses stable application delivery paths without storage details", () => {
+    expect(applicationMediaPath("asset-key")).toBe("/api/media/asset-key");
+  });
+
   it("prefers approved CMS media and otherwise keeps legacy media", () => {
     const place = { image: "/legacy.jpg", audio: { en: "/legacy-en.mp3", ar: "/legacy-ar.mp3" } };
     expect(resolvePlaceMedia(place, [{ assetKey: "i", kind: "image", purpose: "hero", url: "https://cdn.example/hero.jpg", mimeType: "image/jpeg" }], "en").image).toBe("https://cdn.example/hero.jpg");

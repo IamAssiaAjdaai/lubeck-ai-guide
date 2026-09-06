@@ -294,17 +294,19 @@ Configure these server-only variables for upload and preview operations:
 CITYWALK_MEDIA_STORAGE=s3
 CITYWALK_MEDIA_S3_ENDPOINT=https://<s3-compatible-endpoint>
 CITYWALK_MEDIA_S3_REGION=<region-or-auto>
-CITYWALK_MEDIA_S3_BUCKET=<environment-specific-bucket>
+CITYWALK_MEDIA_S3_BUCKET=<environment-specific-private-bucket>
 CITYWALK_MEDIA_S3_ACCESS_KEY_ID=<server-only-access-key>
 CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY=<server-only-secret-key>
-CITYWALK_MEDIA_PUBLIC_BASE_URL=https://<public-cdn-origin>
 ```
 
 None of these values may use a `NEXT_PUBLIC_` prefix. Missing storage variables
 fail only media operations; public CITYWALK pages and database-independent
-builds remain available. Preview must use a dedicated non-production bucket or
-separately permissioned prefix. `vercel-build` still runs only migrations and
-the Next.js build; it never uploads, seeds, or imports media.
+builds remain available. The bucket stays private: approved uploaded media is
+streamed through `/api/media/[assetKey]` only after server-side publication and
+attachment checks. Object keys, bucket details, and credentials are not exposed
+by the public content API. Preview must use a dedicated non-production bucket
+or separately permissioned prefix. `vercel-build` still runs only migrations
+and the Next.js build; it never uploads, seeds, or imports media.
 
 Every upload belongs to one authorized city. Assets can be reused only within
 that city. Editors with `media:manage` may upload and prepare non-public media

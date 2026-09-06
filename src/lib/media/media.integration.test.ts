@@ -18,7 +18,7 @@ import {
   prepareMediaObjectDeletion,
   setMediaLifecycle,
 } from "@/lib/media/repository.server";
-import { getPublicMediaForEntity } from "@/lib/media/publicMedia.server";
+import { getPublicMediaDeliveryAsset, getPublicMediaForEntity } from "@/lib/media/publicMedia.server";
 import { FakeMediaObjectStore } from "@/lib/media/testing/fakeObjectStore";
 
 const runIntegration = process.env.MEDIA_DB_INTEGRATION === "1";
@@ -70,9 +70,11 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     const attachment = await attachMedia({ entityType: "place", entityId: placeId, mediaAssetId: asset.id, purpose: "hero" }, actorId, { allowPublicMutation: false });
     expect(attachment.createdByUserId).toBe(actorId);
     expect((await getMediaAssetWithUsages(asset.id))?.usageCount).toBe(1);
-    expect(await getPublicMediaForEntity("place", placeId, store)).toEqual([]);
+    expect(await getPublicMediaForEntity("place", placeId)).toEqual([]);
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
     await setMediaLifecycle(asset.id, "approved", actorId);
-    expect((await getPublicMediaForEntity("place", placeId, store))[0]).toMatchObject({ kind: "image", purpose: "hero", url: expect.stringContaining("cdn.test.invalid") });
+    expect((await getPublicMediaForEntity("place", placeId))[0]).toMatchObject({ kind: "image", purpose: "hero", url: `/api/media/${asset.assetKey}` });
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toEqual({ objectKey: asset.objectKey, mimeType: "image/jpeg", sizeBytes: 3 });
     await expect(setMediaLifecycle(asset.id, "rejected", actorId)).rejects.toThrow(/Detach or replace/);
     await expect(setMediaLifecycle(asset.id, "archived", actorId)).rejects.toThrow(/Detach or replace/);
     const replacement = await createMediaUploadRecord({ assetKey: randomUUID(), cityId, kind: "image", originalFilename: "new-gate.jpg", mimeType: "image/jpeg", sizeBytes: 3, objectKey: `media/${suffix}/new-original.jpg`, storageProvider: "s3-test", uploadExpiresAt: new Date(Date.now() + 60_000) }, actorId);
@@ -84,6 +86,7 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     expect(replaced.id).toBe(attachment.id);
     expect((await getMediaAssetWithUsages(asset.id))?.usageCount).toBe(0);
     await expect(setMediaLifecycle(asset.id, "archived", actorId)).resolves.toMatchObject({ approvalStatus: "archived" });
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
     const deletion = await prepareMediaObjectDeletion(asset.id);
     await store.deleteObject(deletion.objectKey);
     await expect(markMediaObjectDeleted(asset.id, deletion.objectKey, actorId)).resolves.toMatchObject({ objectKey: null });
@@ -99,22 +102,26 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     await expect(attachMedia({ entityType: "place", entityId: placeId, mediaAssetId: asset.id, purpose: "audio", locale: "ar" }, actorId, { allowPublicMutation: false })).rejects.toThrow(/exact locale/);
     const attachment = await attachMedia({ entityType: "place", entityId: placeId, mediaAssetId: asset.id, purpose: "audio", locale: "en" }, actorId, { allowPublicMutation: false });
     await expect(getDb().transaction((tx) => assertEntityMovePreservesMediaCity(tx, "place", placeId, otherCityId))).rejects.toThrow(/Detach city-scoped media/);
-    expect(await getPublicMediaForEntity("place", placeId, store)).toEqual([]);
+    expect(await getPublicMediaForEntity("place", placeId)).toEqual([]);
     await setMediaLifecycle(asset.id, "approved", actorId);
-    const media = await getPublicMediaForEntity("place", placeId, store);
+    const media = await getPublicMediaForEntity("place", placeId);
     expect(media).toHaveLength(1);
     expect(media[0]?.locale).toBe("en");
     expect(media.some(({ locale }) => locale === "ar")).toBe(false);
     await expect(setMediaLifecycle(asset.id, "rejected", actorId)).rejects.toThrow(/Detach or replace/);
     await expect(detachMedia("place", attachment.id, { allowPublicMutation: false })).rejects.toThrow(/Publishing permission/);
     await detachMedia("place", attachment.id, { allowPublicMutation: true });
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
     await setMediaLifecycle(asset.id, "rejected", actorId);
-    expect(await getPublicMediaForEntity("place", placeId, store)).toEqual([]);
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
+    expect(await getPublicMediaForEntity("place", placeId)).toEqual([]);
     await setMediaLifecycle(asset.id, "approved", actorId);
     const draftAttachment = await attachMedia({ entityType: "place", entityId: draftPlaceId, mediaAssetId: asset.id, purpose: "audio", locale: "en" }, actorId, { allowPublicMutation: false });
-    expect(await getPublicMediaForEntity("place", draftPlaceId, store)).toEqual([]);
+    expect(await getPublicMediaForEntity("place", draftPlaceId)).toEqual([]);
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
     await detachMedia("place", draftAttachment.id, { allowPublicMutation: false });
     await setMediaLifecycle(asset.id, "archived", actorId);
-    expect(await getPublicMediaForEntity("place", placeId, store)).toEqual([]);
+    expect(await getPublicMediaForEntity("place", placeId)).toEqual([]);
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
   });
 });

@@ -1,6 +1,7 @@
 import type {
   CreateUploadUrlInput,
   MediaObjectStore,
+  ReadableStoredObject,
   StoredObjectMetadata,
 } from "@/lib/media/storage/types";
 
@@ -37,6 +38,30 @@ export class FakeMediaObjectStore implements MediaObjectStore {
     return object.bytes.slice(start, end + 1);
   }
 
+  async readObject(
+    objectKey: string,
+    range?: string,
+  ): Promise<ReadableStoredObject | undefined> {
+    const object = this.objects.get(objectKey);
+    if (!object) return undefined;
+    const bounds = range ? parseRange(range, object.bytes.byteLength) : undefined;
+    const bytes = bounds
+      ? object.bytes.slice(bounds.start, bounds.end + 1)
+      : object.bytes;
+    return {
+      body: new ReadableStream({
+        start(controller) {
+          controller.enqueue(bytes);
+          controller.close();
+        },
+      }),
+      contentLength: bytes.byteLength,
+      ...(bounds
+        ? { contentRange: `bytes ${bounds.start}-${bounds.end}/${object.bytes.byteLength}` }
+        : {}),
+    };
+  }
+
   async deleteObject(objectKey: string): Promise<void> {
     this.deletedKeys.push(objectKey);
     this.objects.delete(objectKey);
@@ -46,11 +71,19 @@ export class FakeMediaObjectStore implements MediaObjectStore {
     return `https://admin-preview.test.invalid/${encodeURIComponent(objectKey)}`;
   }
 
-  getPublicUrl(objectKey: string): string {
-    return `https://cdn.test.invalid/${objectKey.split("/").map(encodeURIComponent).join("/")}`;
-  }
-
   seedObject(objectKey: string, object: FakeObject): void {
     this.objects.set(objectKey, object);
   }
+}
+
+function parseRange(
+  range: string,
+  size: number,
+): { start: number; end: number } | undefined {
+  const match = /^bytes=(\d+)-(\d*)$/.exec(range);
+  if (!match) return undefined;
+  const start = Number(match[1]);
+  const end = match[2] ? Number(match[2]) : size - 1;
+  if (start < 0 || start >= size || end < start) return undefined;
+  return { start, end: Math.min(end, size - 1) };
 }

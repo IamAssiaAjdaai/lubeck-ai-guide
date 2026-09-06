@@ -8,7 +8,6 @@ export type S3MediaEnvironment = Readonly<{
   bucket: string;
   accessKeyId: string;
   secretAccessKey: string;
-  publicBaseUrl: string;
 }>;
 
 export function getS3MediaEnvironment(
@@ -24,10 +23,8 @@ export function getS3MediaEnvironment(
     bucket: required(environment, "CITYWALK_MEDIA_S3_BUCKET"),
     accessKeyId: required(environment, "CITYWALK_MEDIA_S3_ACCESS_KEY_ID"),
     secretAccessKey: required(environment, "CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY"),
-    publicBaseUrl: required(environment, "CITYWALK_MEDIA_PUBLIC_BASE_URL"),
   };
   validateUrl(config.endpoint, "CITYWALK_MEDIA_S3_ENDPOINT", true);
-  validateUrl(config.publicBaseUrl, "CITYWALK_MEDIA_PUBLIC_BASE_URL", false);
   return config;
 }
 

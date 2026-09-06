@@ -13,6 +13,7 @@ import type { S3MediaEnvironment } from "@/lib/media/storage/environment.server"
 import type {
   CreateUploadUrlInput,
   MediaObjectStore,
+  ReadableStoredObject,
   StoredObjectMetadata,
 } from "@/lib/media/storage/types";
 
@@ -73,6 +74,32 @@ export class S3MediaObjectStore implements MediaObjectStore {
     return result.Body.transformToByteArray();
   }
 
+  async readObject(
+    objectKey: string,
+    range?: string,
+  ): Promise<ReadableStoredObject | undefined> {
+    try {
+      const result = await this.client.send(
+        new GetObjectCommand({
+          Bucket: this.config.bucket,
+          Key: objectKey,
+          ...(range ? { Range: range } : {}),
+        }),
+      );
+      if (!result.Body) return undefined;
+      return {
+        body: result.Body.transformToWebStream(),
+        ...(result.ContentLength !== undefined
+          ? { contentLength: result.ContentLength }
+          : {}),
+        ...(result.ContentRange ? { contentRange: result.ContentRange } : {}),
+      };
+    } catch (error) {
+      if (isNotFound(error)) return undefined;
+      throw error;
+    }
+  }
+
   async deleteObject(objectKey: string): Promise<void> {
     await this.client.send(
       new DeleteObjectCommand({ Bucket: this.config.bucket, Key: objectKey }),
@@ -87,10 +114,6 @@ export class S3MediaObjectStore implements MediaObjectStore {
     );
   }
 
-  getPublicUrl(objectKey: string): string {
-    const base = this.config.publicBaseUrl.replace(/\/+$/, "");
-    return `${base}/${objectKey.split("/").map(encodeURIComponent).join("/")}`;
-  }
 }
 
 function isNotFound(error: unknown): boolean {

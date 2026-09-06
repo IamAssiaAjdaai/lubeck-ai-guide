@@ -11,12 +11,11 @@ const valid = {
   CITYWALK_MEDIA_S3_BUCKET: "citywalk-preview",
   CITYWALK_MEDIA_S3_ACCESS_KEY_ID: "test-access",
   CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY: "test-secret",
-  CITYWALK_MEDIA_PUBLIC_BASE_URL: "https://cdn.example.com",
 };
 
 describe("S3 media environment", () => {
   it("returns validated server-only configuration", () => {
-    expect(getS3MediaEnvironment(valid)).toEqual({ endpoint: valid.CITYWALK_MEDIA_S3_ENDPOINT, region: "auto", bucket: "citywalk-preview", accessKeyId: "test-access", secretAccessKey: "test-secret", publicBaseUrl: "https://cdn.example.com" });
+    expect(getS3MediaEnvironment(valid)).toEqual({ endpoint: valid.CITYWALK_MEDIA_S3_ENDPOINT, region: "auto", bucket: "citywalk-preview", accessKeyId: "test-access", secretAccessKey: "test-secret" });
   });
 
   it("fails clearly only when media configuration is requested", () => {
@@ -26,7 +25,7 @@ describe("S3 media environment", () => {
 
   it("rejects insecure remote endpoints and credentials in URLs", () => {
     expect(() => getS3MediaEnvironment({ ...valid, CITYWALK_MEDIA_S3_ENDPOINT: "http://storage.example.com" })).toThrow(/HTTPS/);
-    expect(() => getS3MediaEnvironment({ ...valid, CITYWALK_MEDIA_PUBLIC_BASE_URL: "https://user:pass@cdn.example.com" })).toThrow(/credentials/);
+    expect(() => getS3MediaEnvironment({ ...valid, CITYWALK_MEDIA_S3_ENDPOINT: "https://user:pass@storage.example.com" })).toThrow(/credentials/);
   });
 
   it("does not use any NEXT_PUBLIC credential fallback", () => {
