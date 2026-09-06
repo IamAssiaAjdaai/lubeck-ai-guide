@@ -124,4 +124,38 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     expect(await getPublicMediaForEntity("place", placeId)).toEqual([]);
     expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
   });
+
+  it("exposes city media only through an approved published attachment", async () => {
+    const asset = await createMediaUploadRecord({ assetKey: randomUUID(), cityId, kind: "image", originalFilename: "city-card.jpg", mimeType: "image/jpeg", sizeBytes: 3, objectKey: `media/${suffix}/city-card.jpg`, storageProvider: "s3-test", uploadExpiresAt: new Date(Date.now() + 60_000) }, actorId);
+    assetIds.push(asset.id);
+    await finalizeMediaAsset(asset.id, { sizeBytes: 3, mimeType: "image/jpeg" }, actorId);
+    const attachment = await attachMedia({ entityType: "city", entityId: cityId, mediaAssetId: asset.id, purpose: "card" }, actorId, { allowPublicMutation: false });
+
+    expect(await getPublicMediaForEntity("city", cityId)).toEqual([]);
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
+    await setMediaLifecycle(asset.id, "rejected", actorId);
+    expect(await getPublicMediaForEntity("city", cityId)).toEqual([]);
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
+
+    await setMediaLifecycle(asset.id, "approved", actorId);
+    expect(await getPublicMediaForEntity("city", cityId)).toEqual([
+      expect.objectContaining({ purpose: "card", url: `/api/media/${asset.assetKey}` }),
+    ]);
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeDefined();
+
+    await detachMedia("city", attachment.id, { allowPublicMutation: true });
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
+    await setMediaLifecycle(asset.id, "archived", actorId);
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
+
+    const draftCityAsset = await createMediaUploadRecord({ assetKey: randomUUID(), cityId: otherCityId, kind: "image", originalFilename: "draft-city-hero.jpg", mimeType: "image/jpeg", sizeBytes: 3, objectKey: `media/${suffix}/draft-city-hero.jpg`, storageProvider: "s3-test", uploadExpiresAt: new Date(Date.now() + 60_000) }, actorId);
+    assetIds.push(draftCityAsset.id);
+    await finalizeMediaAsset(draftCityAsset.id, { sizeBytes: 3, mimeType: "image/jpeg" }, actorId);
+    await setMediaLifecycle(draftCityAsset.id, "approved", actorId);
+    const draftAttachment = await attachMedia({ entityType: "city", entityId: otherCityId, mediaAssetId: draftCityAsset.id, purpose: "hero" }, actorId, { allowPublicMutation: false });
+    expect(await getPublicMediaForEntity("city", otherCityId)).toEqual([]);
+    expect(await getPublicMediaDeliveryAsset(draftCityAsset.assetKey)).toBeUndefined();
+    await detachMedia("city", draftAttachment.id, { allowPublicMutation: false });
+    await setMediaLifecycle(draftCityAsset.id, "archived", actorId);
+  });
 });
