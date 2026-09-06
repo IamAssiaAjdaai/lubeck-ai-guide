@@ -20,6 +20,12 @@ import type {
   PublicationStatus,
   TourInput,
 } from "@/lib/admin/content/validation";
+import {
+  CROSS_CITY_PLACE_MOVE_ERROR,
+  PUBLISHED_TOUR_PLACE_ARCHIVE_ERROR,
+  getPublishedTourGraphError,
+  hasCrossCityTourReference,
+} from "@/lib/admin/content/graphIntegrity";
 
 export class CmsContentNotFoundError extends Error {
   constructor(entity: string) {
@@ -245,6 +251,10 @@ export async function updateCmsPlace(
   const db = getDb();
   return db.transaction(async (tx) => {
     await assertCityExists(tx, input.cityId);
+    const current = await lockCmsPlace(tx, id);
+    if (current.cityId !== input.cityId) {
+      await assertPlaceMovePreservesTourCities(tx, id, input.cityId);
+    }
     const now = new Date();
     const [place] = await tx
       .update(placesTable)
@@ -342,6 +352,7 @@ export async function updateCmsTour(
 ) {
   const db = getDb();
   return db.transaction(async (tx) => {
+    await lockCmsTour(tx, id);
     await assertTourRelations(tx, input);
     const now = new Date();
     const [tour] = await tx
@@ -381,23 +392,31 @@ export async function setCmsPublicationStatus(
   status: PublicationStatus,
   actorId: string,
 ) {
-  const table =
-    entity === "city"
-      ? citiesTable
-      : entity === "place"
-        ? placesTable
-        : toursTable;
-  const [record] = await getDb()
-    .update(table)
-    .set({
-      publicationStatus: status,
-      updatedByUserId: actorId,
-      updatedAt: new Date(),
-    })
-    .where(eq(table.id, id))
-    .returning();
-  if (!record) throw new CmsContentNotFoundError(entity);
-  return record;
+  return getDb().transaction(async (tx) => {
+    if (entity === "tour" && status === "published") {
+      await assertStoredTourCanBePublished(tx, id);
+    }
+    if (entity === "place" && status === "archived") {
+      await assertPlaceCanBeArchived(tx, id);
+    }
+    const table =
+      entity === "city"
+        ? citiesTable
+        : entity === "place"
+          ? placesTable
+          : toursTable;
+    const [record] = await tx
+      .update(table)
+      .set({
+        publicationStatus: status,
+        updatedByUserId: actorId,
+        updatedAt: new Date(),
+      })
+      .where(eq(table.id, id))
+      .returning();
+    if (!record) throw new CmsContentNotFoundError(entity);
+    return record;
+  });
 }
 
 export async function deleteCmsDraft(
@@ -439,24 +458,45 @@ async function assertCityExists(
   cityId: number,
 ) {
   const [city] = await tx
-    .select({ id: citiesTable.id })
+    .select({
+      id: citiesTable.id,
+      publicationStatus: citiesTable.publicationStatus,
+    })
     .from(citiesTable)
     .where(eq(citiesTable.id, cityId))
+    .for("update")
     .limit(1);
   if (!city) throw new CmsContentIntegrityError("City does not exist.");
+  return city;
 }
 
 async function assertTourRelations(
   tx: Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0],
-  input: TourInput,
+  input: Readonly<{
+    cityId: number;
+    publicationStatus: PublicationStatus;
+    stops: readonly Readonly<{ placeId: number }>[];
+  }>,
 ) {
-  await assertCityExists(tx, input.cityId);
-  if (input.stops.length === 0) return;
+  const city = await assertCityExists(tx, input.cityId);
+  if (input.stops.length === 0) {
+    if (input.publicationStatus === "published") {
+      throw new CmsContentIntegrityError(
+        "Published tours require at least one stop.",
+      );
+    }
+    return;
+  }
   const placeIds = input.stops.map(({ placeId }) => placeId);
   const records = await tx
-    .select({ id: placesTable.id, cityId: placesTable.cityId })
+    .select({
+      id: placesTable.id,
+      cityId: placesTable.cityId,
+      publicationStatus: placesTable.publicationStatus,
+    })
     .from(placesTable)
-    .where(inArray(placesTable.id, placeIds));
+    .where(inArray(placesTable.id, placeIds))
+    .for("update");
   if (
     records.length !== placeIds.length ||
     records.some(({ cityId }) => cityId !== input.cityId)
@@ -464,6 +504,98 @@ async function assertTourRelations(
     throw new CmsContentIntegrityError(
       "Every tour stop must exist and belong to the tour city.",
     );
+  }
+  if (input.publicationStatus === "published") {
+    const graphError = getPublishedTourGraphError(
+      city.publicationStatus,
+      records.map(({ publicationStatus }) => publicationStatus),
+    );
+    if (graphError) throw new CmsContentIntegrityError(graphError);
+  }
+}
+
+type CmsTransaction = Parameters<
+  Parameters<ReturnType<typeof getDb>["transaction"]>[0]
+>[0];
+
+async function lockCmsPlace(tx: CmsTransaction, placeId: number) {
+  const [place] = await tx
+    .select({ id: placesTable.id, cityId: placesTable.cityId })
+    .from(placesTable)
+    .where(eq(placesTable.id, placeId))
+    .for("update")
+    .limit(1);
+  if (!place) throw new CmsContentNotFoundError("Place");
+  return place;
+}
+
+async function lockCmsTour(tx: CmsTransaction, tourId: number) {
+  const [tour] = await tx
+    .select({ id: toursTable.id, cityId: toursTable.cityId })
+    .from(toursTable)
+    .where(eq(toursTable.id, tourId))
+    .for("update")
+    .limit(1);
+  if (!tour) throw new CmsContentNotFoundError("Tour");
+  return tour;
+}
+
+async function assertStoredTourCanBePublished(
+  tx: CmsTransaction,
+  tourId: number,
+) {
+  const tour = await lockCmsTour(tx, tourId);
+  const stops = await tx
+    .select({ placeId: tourStopsTable.placeId })
+    .from(tourStopsTable)
+    .where(eq(tourStopsTable.tourId, tourId));
+  await assertTourRelations(tx, {
+    cityId: tour.cityId,
+    publicationStatus: "published",
+    stops,
+  });
+}
+
+async function assertPlaceCanBeArchived(
+  tx: CmsTransaction,
+  placeId: number,
+) {
+  await lockCmsPlace(tx, placeId);
+  const [publishedTour] = await tx
+    .select({ slug: toursTable.slug })
+    .from(tourStopsTable)
+    .innerJoin(toursTable, eq(tourStopsTable.tourId, toursTable.id))
+    .where(
+      and(
+        eq(tourStopsTable.placeId, placeId),
+        eq(toursTable.publicationStatus, "published"),
+      ),
+    )
+    .limit(1);
+  if (publishedTour) {
+    throw new CmsContentIntegrityError(
+      PUBLISHED_TOUR_PLACE_ARCHIVE_ERROR,
+    );
+  }
+}
+
+async function assertPlaceMovePreservesTourCities(
+  tx: CmsTransaction,
+  placeId: number,
+  targetCityId: number,
+) {
+  const tourCities = await tx
+    .select({ cityId: toursTable.cityId })
+    .from(tourStopsTable)
+    .innerJoin(toursTable, eq(tourStopsTable.tourId, toursTable.id))
+    .where(eq(tourStopsTable.placeId, placeId));
+  if (
+    hasCrossCityTourReference(
+      targetCityId,
+      tourCities.map(({ cityId }) => cityId),
+    )
+  ) {
+    throw new CmsContentIntegrityError(CROSS_CITY_PLACE_MOVE_ERROR);
   }
 }
 
