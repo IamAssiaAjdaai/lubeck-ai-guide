@@ -190,9 +190,11 @@ BETTER_AUTH_SECRET=<unique-random-secret-at-least-32-characters>
 ```
 
 `BETTER_AUTH_URL` may be omitted for Preview deployments. When it is absent,
-the server derives the Better Auth base URL from Vercel's deployment-specific
-`VERCEL_URL` hostname using HTTPS. An explicitly configured `BETTER_AUTH_URL`
-always takes precedence.
+the server uses Better Auth's dynamic base URL support to permit only the exact
+`VERCEL_URL` and `VERCEL_BRANCH_URL` hostnames supplied by Vercel. This supports
+both the immutable deployment URL and stable branch alias URL over HTTPS without
+broad wildcard origin trust. An explicitly configured `BETTER_AUTH_URL` always
+takes precedence.
 
 Production requires the same database URL and secret plus the canonical public
 application URL:

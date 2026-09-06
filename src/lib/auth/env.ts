@@ -2,7 +2,13 @@ const MINIMUM_AUTH_SECRET_LENGTH = 32;
 
 export type BetterAuthEnvironment = Readonly<{
   secret: string;
-  baseURL: string;
+  baseURL: string | BetterAuthDynamicBaseURL;
+}>;
+
+export type BetterAuthDynamicBaseURL = Readonly<{
+  allowedHosts: string[];
+  protocol: "https";
+  fallback: string;
 }>;
 
 export function getBetterAuthEnvironment(
@@ -24,16 +30,29 @@ export function getBetterAuthEnvironment(
     };
   }
 
-  const vercelHostname = environment.VERCEL_URL?.trim();
-  if (!vercelHostname) {
+  const vercelURL = environment.VERCEL_URL?.trim();
+  if (!vercelURL) {
     throw new Error(
       "BETTER_AUTH_URL must be configured when VERCEL_URL is unavailable.",
     );
   }
 
+  const deploymentHost = parseVercelHostname(vercelURL, "VERCEL_URL");
+  const branchURL = environment.VERCEL_BRANCH_URL?.trim();
+  const branchHost = branchURL
+    ? parseVercelHostname(branchURL, "VERCEL_BRANCH_URL")
+    : undefined;
+  const allowedHosts = [...new Set([deploymentHost, branchHost])].filter(
+    (host): host is string => Boolean(host),
+  );
+
   return {
     secret,
-    baseURL: parseVercelBaseURL(vercelHostname),
+    baseURL: {
+      allowedHosts,
+      protocol: "https",
+      fallback: `https://${deploymentHost}`,
+    },
   };
 }
 
@@ -52,25 +71,36 @@ function parseExplicitBaseURL(baseURL: string): string {
   return parsedURL.origin;
 }
 
-function parseVercelBaseURL(hostname: string): string {
+function parseVercelHostname(hostname: string, variableName: string): string {
   let parsedURL: URL;
   try {
     parsedURL = new URL(`https://${hostname}`);
   } catch {
-    throw new Error("VERCEL_URL must be a valid hostname.");
+    throw new Error(`${variableName} must be a valid hostname.`);
   }
 
   if (
     parsedURL.protocol !== "https:" ||
-    parsedURL.host !== hostname.toLowerCase() ||
+    parsedURL.hostname !== hostname.toLowerCase() ||
+    parsedURL.port ||
     parsedURL.username ||
     parsedURL.password ||
     parsedURL.pathname !== "/" ||
     parsedURL.search ||
-    parsedURL.hash
+    parsedURL.hash ||
+    !isValidHostname(parsedURL.hostname)
   ) {
-    throw new Error("VERCEL_URL must be a valid hostname.");
+    throw new Error(`${variableName} must be a valid hostname.`);
   }
 
-  return parsedURL.origin;
+  return parsedURL.hostname;
+}
+
+function isValidHostname(hostname: string): boolean {
+  return (
+    hostname.length <= 253 &&
+    hostname.split(".").every((label) =>
+      /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label),
+    )
+  );
 }

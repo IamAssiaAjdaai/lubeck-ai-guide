@@ -9,6 +9,7 @@ describe("Better Auth environment", () => {
         BETTER_AUTH_SECRET: "a-secure-test-secret-with-32-characters",
         BETTER_AUTH_URL: "https://admin.example.com/path",
         VERCEL_URL: "preview.example.vercel.app",
+        VERCEL_BRANCH_URL: "branch.example.vercel.app",
       }),
     ).toEqual({
       secret: "a-secure-test-secret-with-32-characters",
@@ -16,7 +17,7 @@ describe("Better Auth environment", () => {
     });
   });
 
-  it("derives an HTTPS base URL from the Vercel hostname", () => {
+  it("creates a dynamic base URL from the Vercel deployment hostname", () => {
     expect(
       getBetterAuthEnvironment({
         BETTER_AUTH_SECRET: "a-secure-test-secret-with-32-characters",
@@ -25,8 +26,45 @@ describe("Better Auth environment", () => {
       }),
     ).toEqual({
       secret: "a-secure-test-secret-with-32-characters",
-      baseURL:
-        "https://lubeck-ai-guide-git-feat-admin-console-rbac-example.vercel.app",
+      baseURL: {
+        allowedHosts: [
+          "lubeck-ai-guide-git-feat-admin-console-rbac-example.vercel.app",
+        ],
+        protocol: "https",
+        fallback:
+          "https://lubeck-ai-guide-git-feat-admin-console-rbac-example.vercel.app",
+      },
+    });
+  });
+
+  it("allows both the Vercel deployment and branch alias hostnames", () => {
+    expect(
+      getBetterAuthEnvironment({
+        BETTER_AUTH_SECRET: "a-secure-test-secret-with-32-characters",
+        VERCEL_URL: "deployment.example.vercel.app",
+        VERCEL_BRANCH_URL: "branch.example.vercel.app",
+      }).baseURL,
+    ).toEqual({
+      allowedHosts: [
+        "deployment.example.vercel.app",
+        "branch.example.vercel.app",
+      ],
+      protocol: "https",
+      fallback: "https://deployment.example.vercel.app",
+    });
+  });
+
+  it("deduplicates matching Vercel deployment and branch hostnames", () => {
+    expect(
+      getBetterAuthEnvironment({
+        BETTER_AUTH_SECRET: "a-secure-test-secret-with-32-characters",
+        VERCEL_URL: "same.example.vercel.app",
+        VERCEL_BRANCH_URL: "same.example.vercel.app",
+      }).baseURL,
+    ).toEqual({
+      allowedHosts: ["same.example.vercel.app"],
+      protocol: "https",
+      fallback: "https://same.example.vercel.app",
     });
   });
 
@@ -83,12 +121,33 @@ describe("Better Auth environment", () => {
     ).toThrow(/VERCEL_URL/);
   });
 
+  it("fails closed when the Vercel branch hostname is malformed", () => {
+    expect(() =>
+      getBetterAuthEnvironment({
+        BETTER_AUTH_SECRET: "a-secure-test-secret-with-32-characters",
+        VERCEL_URL: "deployment.example.vercel.app",
+        VERCEL_BRANCH_URL: "https://branch.example.vercel.app/admin",
+      }),
+    ).toThrow(/VERCEL_BRANCH_URL/);
+  });
+
+  it("requires the Vercel deployment hostname as the fallback anchor", () => {
+    expect(() =>
+      getBetterAuthEnvironment({
+        BETTER_AUTH_SECRET: "a-secure-test-secret-with-32-characters",
+        VERCEL_BRANCH_URL: "branch.example.vercel.app",
+      }),
+    ).toThrow(/VERCEL_URL/);
+  });
+
   it("ignores public-prefixed auth configuration", () => {
     expect(() =>
       getBetterAuthEnvironment({
         NEXT_PUBLIC_BETTER_AUTH_SECRET:
           "a-public-value-that-must-never-configure-server-auth",
         NEXT_PUBLIC_BETTER_AUTH_URL: "https://public.example.com",
+        NEXT_PUBLIC_VERCEL_URL: "public-deployment.example.vercel.app",
+        NEXT_PUBLIC_VERCEL_BRANCH_URL: "public-branch.example.vercel.app",
       }),
     ).toThrow(/BETTER_AUTH_SECRET/);
   });
