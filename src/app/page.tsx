@@ -1,18 +1,34 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { Route } from "lucide-react";
 
 import LanguageSelector from "@/components/LanguageSelector";
 import { ComingSoonCityCard, FeaturedCityCard } from "@/components/travel/CityCard";
 import CityHero from "@/components/travel/CityHero";
 import { brandHeroImage, cities, upcomingCities } from "@/data/cities";
+import { resolveFeaturedCityImage } from "@/lib/content/homeMedia";
+import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
+import { getContentSource } from "@/lib/content/source";
 import { getDirection, getTranslations, isLocale, languages, locales } from "@/lib/i18n";
 
 export default async function Home() {
-  const savedLocale = (await cookies()).get("preferred_locale")?.value;
+  const contentSource = getContentSource();
+  if (contentSource !== "code") await connection();
+  const [cookieStore, publicSnapshot] = await Promise.all([
+    cookies(),
+    getPublicCitySnapshot("lubeck", contentSource),
+  ]);
+  const savedLocale = cookieStore.get("preferred_locale")?.value;
   const locale = isLocale(savedLocale) ? savedLocale : "de";
   const t = getTranslations(locale);
   const city = cities.lubeck;
+  const featuredCityImage = resolveFeaturedCityImage(
+    contentSource,
+    publicSnapshot.media?.city,
+    locale,
+    city.heroImage,
+  );
   const languageOptions = locales.map((item) => ({
     locale: item,
     nativeName: languages[item].nativeName,
@@ -36,7 +52,7 @@ export default async function Home() {
           <div className="mt-3">
             <FeaturedCityCard
               href={`/${locale}/${city.slug}`}
-              image={city.heroImage}
+              image={featuredCityImage}
               name={city.name}
               country={t.home.germany}
               description={t.home.featuredCityDescription}

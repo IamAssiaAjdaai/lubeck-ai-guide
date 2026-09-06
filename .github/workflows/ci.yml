@@ -94,3 +94,18 @@ jobs:
 
       - name: Verify seed idempotency
         run: npm run db:verify
+
+      - name: Verify seed idempotency
+        run: npm run db:verify
+
+      - name: Import canonical CMS content
+        run: npm run cms:import-lubeck
+
+      - name: Verify CMS import idempotency
+        run: npm run cms:import-lubeck
+
+      - name: Run CMS content integration tests
+        run: npm run cms:test:integration
+
+      - name: Run CMS media integration tests
+        run: npm run media:test:integration

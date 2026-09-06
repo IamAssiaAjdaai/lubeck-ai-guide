@@ -19,9 +19,12 @@
     "db:verify": "tsx scripts/verify-database.ts",
     "cms:import-lubeck": "tsx scripts/import-lubeck-cms.ts",
     "cms:test:integration": "tsx scripts/run-cms-integration-tests.ts",
+    "media:test:integration": "tsx scripts/run-media-integration-tests.ts",
     "admin:create-super": "tsx scripts/create-super-admin.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1127.0",
+    "@aws-sdk/s3-request-presigner": "^3.1127.0",
     "@better-auth/drizzle-adapter": "^1.7.2",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.3",

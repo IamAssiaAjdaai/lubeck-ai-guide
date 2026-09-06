@@ -26,6 +26,7 @@ import {
   locales,
 } from "@/lib/i18n";
 import { getContentSource } from "@/lib/content/source";
+import { resolveLandmarkPageAudio } from "@/lib/content/landmarkAudio";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 
 type LandmarkPageProps = {
@@ -108,9 +109,15 @@ export default async function LandmarkPage({
   const duration = getPlaceDurationLabel(landmark, currentLocale);
   const description = content.description ?? content.shortDescription;
   const story = content.story;
-  const audio = getLandmarkAudio(
+  const legacyAudio = getLandmarkAudio(
     landmark.slug,
     currentLocale,
+  );
+  const audio = resolveLandmarkPageAudio(
+    contentSource,
+    snapshot.media?.places[landmark.slug],
+    currentLocale,
+    legacyAudio,
   );
   const facts = content.facts ?? [];
   const image = landmark.image;

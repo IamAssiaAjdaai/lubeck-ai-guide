@@ -25,6 +25,8 @@ import {
 } from "@/db/schema";
 import { getContentSource, type ContentSource } from "@/lib/content/source";
 import { getTranslations, isLocale, locales, type Locale } from "@/lib/i18n";
+import { getPublicMediaSnapshot } from "@/lib/media/publicMedia.server";
+import type { PublicMedia } from "@/lib/media/types";
 
 export type PublicCityLocalization = Readonly<{
   name: string;
@@ -55,6 +57,11 @@ export type PublicCitySnapshot = Readonly<{
   }>;
   places: readonly Place[];
   tours: readonly PublicTour[];
+  media?: Readonly<{
+    city: readonly PublicMedia[];
+    places: Readonly<Record<string, readonly PublicMedia[]>>;
+    tours: Readonly<Record<string, readonly PublicMedia[]>>;
+  }>;
 }>;
 
 export type ResolvedPublicContent<TContent> = Readonly<{
@@ -120,6 +127,7 @@ export function toLocalizedPublicCityResponse(
     city: {
       slug: snapshot.city.slug,
       ...city,
+      media: publicMediaForLocale(snapshot.media?.city ?? [], requestedLocale),
     },
     places: snapshot.places.flatMap((place) => {
       const resolved = resolvePublicLocalization(place.content, requestedLocale);
@@ -137,6 +145,10 @@ export function toLocalizedPublicCityResponse(
         visitNoteValidUntil: place.visitNoteValidUntil,
         image: place.image,
         tags: place.tags,
+        media: publicMediaForLocale(
+          snapshot.media?.places[place.slug] ?? [],
+          requestedLocale,
+        ),
         ...resolved,
       }];
     }),
@@ -147,6 +159,10 @@ export function toLocalizedPublicCityResponse(
         slug: tour.slug,
         estimatedDurationMinutes: tour.estimatedDurationMinutes,
         stops: tour.stops,
+        media: publicMediaForLocale(
+          snapshot.media?.tours[tour.slug] ?? [],
+          requestedLocale,
+        ),
         ...resolved,
       }];
     }),
@@ -196,6 +212,11 @@ async function loadPublishedDatabaseSnapshot(
   const publishedTourRows = tourRows.filter(
     ({ publicationStatus }) => publicationStatus === "published",
   );
+  const mediaSnapshot = await getPublicMediaSnapshot(
+    city.id,
+    publishedPlaces.map(({ id }) => id),
+    publishedTourRows.map(({ id }) => id),
+  );
   if (
     publishedTourRows.some((tour) =>
       stopRows.some(
@@ -236,6 +257,18 @@ async function loadPublishedDatabaseSnapshot(
         return slug ? [slug] : [];
       });
     const canonical = getPlace(citySlug, place.slug);
+    const cmsMedia = mediaSnapshot.places.get(place.id) ?? [];
+    const cmsImage = cmsMedia.find(
+      ({ kind, purpose }) =>
+        kind === "image" && (purpose === "hero" || purpose === "card"),
+    );
+    const cmsAudio = Object.fromEntries(
+      cmsMedia.flatMap((media) =>
+        media.kind === "audio" && media.locale
+          ? [[media.locale, media.url] as const]
+          : [],
+      ),
+    );
     return {
       slug: place.slug,
       city: citySlug,
@@ -254,9 +287,15 @@ async function loadPublishedDatabaseSnapshot(
       ...(place.visitNoteValidUntil
         ? { visitNoteValidUntil: place.visitNoteValidUntil }
         : {}),
-      ...(place.image ? { image: place.image } : {}),
+      ...(cmsImage?.url
+        ? { image: cmsImage.url }
+        : place.image
+          ? { image: place.image }
+          : {}),
       tags: normalizedTags,
-      ...(canonical?.audio ? { audio: canonical.audio } : {}),
+      ...(canonical?.audio || Object.keys(cmsAudio).length > 0
+        ? { audio: { ...canonical?.audio, ...cmsAudio } }
+        : {}),
       content,
     };
   });
@@ -310,6 +349,21 @@ async function loadPublishedDatabaseSnapshot(
     },
     places,
     tours,
+    media: {
+      city: mediaSnapshot.city,
+      places: Object.fromEntries(
+        publishedPlaces.map((place) => [
+          place.slug,
+          mediaSnapshot.places.get(place.id) ?? [],
+        ]),
+      ),
+      tours: Object.fromEntries(
+        publishedTourRows.map((tour) => [
+          tour.slug,
+          mediaSnapshot.tours.get(tour.id) ?? [],
+        ]),
+      ),
+    },
   };
 }
 
@@ -370,4 +424,13 @@ function assertCompleteSnapshot(snapshot: PublicCitySnapshot) {
   ) {
     throw new Error("Published tour snapshot is inconsistent.");
   }
+}
+
+function publicMediaForLocale(
+  media: readonly PublicMedia[],
+  requestedLocale: Locale,
+): readonly PublicMedia[] {
+  return media.filter(
+    ({ locale }) => locale === undefined || locale === requestedLocale,
+  );
 }

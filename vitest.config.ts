@@ -7,6 +7,7 @@ export default defineConfig({
 
   test: {
     environment: "jsdom",
+    maxWorkers: 4,
 
     coverage: {
       provider: "v8",
