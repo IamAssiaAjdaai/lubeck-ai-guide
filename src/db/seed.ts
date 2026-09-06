@@ -11,33 +11,32 @@ export async function seedLubeckDatabase() {
   const db = getDb();
 
   return db.transaction(async (tx) => {
-    const [city] = await tx
+    const [createdCity] = await tx
       .insert(citiesTable)
       .values(lubeckCitySeed)
-      .onConflictDoUpdate({
-        target: citiesTable.slug,
-        set: {
-          name: lubeckCitySeed.name,
-        },
-      })
-      .returning({
-        id: citiesTable.id,
-      });
+      .onConflictDoNothing({ target: citiesTable.slug })
+      .returning({ id: citiesTable.id });
 
-    if (!city) {
-      throw new Error("Failed to create or update Lübeck.");
+    const city =
+      createdCity ??
+      (
+        await tx
+          .select({ id: citiesTable.id })
+          .from(citiesTable)
+          .where(eq(citiesTable.slug, lubeckCitySeed.slug))
+          .limit(1)
+      )[0];
+
+    if (!city) throw new Error("Failed to find or create Lubeck.");
+
+    for (const place of lubeckPlaceSeeds) {
+      await tx
+        .insert(placesTable)
+        .values({ ...place, cityId: city.id })
+        .onConflictDoNothing({
+          target: [placesTable.cityId, placesTable.slug],
+        });
     }
-
-    await tx
-      .delete(placesTable)
-      .where(eq(placesTable.cityId, city.id));
-
-    await tx.insert(placesTable).values(
-      lubeckPlaceSeeds.map((place) => ({
-        ...place,
-        cityId: city.id,
-      })),
-    );
 
     return {
       cityId: city.id,

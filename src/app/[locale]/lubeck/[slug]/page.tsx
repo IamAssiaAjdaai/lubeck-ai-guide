@@ -4,6 +4,7 @@ import {
 } from "@/lib/tourContext";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { ArrowLeft, ArrowRight, CircleCheckBig, Headphones } from "lucide-react";
 import TrackLandmarkView from "@/components/TrackLandmarkView";
 import AudioPlayer from "@/components/AudioPlayer";
@@ -12,6 +13,7 @@ import AskGuide from "@/components/AskGuide";
 import {
   getPlaceDurationLabel,
   lubeckLandmarks as landmarks,
+  resolvePlaceContent,
 } from "@/data/places";
 import {
   getLandmarkAudio,
@@ -23,6 +25,8 @@ import {
   isLocale,
   locales,
 } from "@/lib/i18n";
+import { getContentSource } from "@/lib/content/source";
+import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 
 type LandmarkPageProps = {
   params: Promise<{
@@ -79,22 +83,36 @@ export default async function LandmarkPage({
     notFound();
   }
 
-  const landmark = landmarks[currentIndex];
+  const contentSource = getContentSource();
+  if (contentSource !== "code") await connection();
+  const snapshot = await getPublicCitySnapshot("lubeck", contentSource);
+  const landmark = snapshot.places.find((place) => place.slug === slug);
+
+  if (!landmark) {
+    notFound();
+  }
 
   /*
    * Get translated landmark content
    */
-  const content = landmark.content[currentLocale];
+  const resolvedContent = resolvePlaceContent(landmark, currentLocale);
+
+  if (!resolvedContent) {
+    notFound();
+  }
+
+  const { actualLocale, content } = resolvedContent;
+  const contentDirection = getDirection(actualLocale);
 
   const name = content.name;
   const duration = getPlaceDurationLabel(landmark, currentLocale);
-  const description = content.description;
+  const description = content.description ?? content.shortDescription;
   const story = content.story;
   const audio = getLandmarkAudio(
     landmark.slug,
     currentLocale,
   );
-  const facts = content.facts;
+  const facts = content.facts ?? [];
   const image = landmark.image;
 
   /*
@@ -167,7 +185,7 @@ export default async function LandmarkPage({
         )}
 
         {/* Landmark header */}
-        <div className="mt-6">
+        <div className="mt-6" lang={actualLocale} dir={contentDirection}>
           <p className="flex items-center gap-2 text-sm font-medium text-text-secondary">
             <Headphones aria-hidden="true" size={17} strokeWidth={1.8} /> {t.landmark.audioGuide} · {duration}
           </p>
@@ -218,17 +236,24 @@ export default async function LandmarkPage({
         )}
 
         {/* Story */}
-        <section className="mt-9">
-          <h2 className="text-[1.375rem] font-semibold tracking-[-0.02em]">
-            {t.landmark.story}
-          </h2>
+        {story ? (
+          <section className="mt-9">
+            <h2 className="text-[1.375rem] font-semibold tracking-[-0.02em]">
+              {t.landmark.story}
+            </h2>
 
-          <p className="mt-3 text-base leading-7 text-text-primary">
-            {story}
-          </p>
-        </section>
+            <p
+              lang={actualLocale}
+              dir={contentDirection}
+              className="mt-3 text-base leading-7 text-text-primary"
+            >
+              {story}
+            </p>
+          </section>
+        ) : null}
 
         {/* Quick facts */}
+        {facts.length > 0 ? (
         <section className="mt-9">
           <h2 className="text-[1.375rem] font-semibold tracking-[-0.02em]">
             {t.landmark.quickFacts}
@@ -238,6 +263,8 @@ export default async function LandmarkPage({
             {facts.map((fact) => (
               <div
                 key={fact.label}
+                lang={actualLocale}
+                dir={contentDirection}
                 className="surface-card min-w-0 p-4 last:odd:col-span-full"
               >
                 <p className="text-[13px] text-text-secondary">
@@ -251,6 +278,7 @@ export default async function LandmarkPage({
             ))}
           </div>
         </section>
+        ) : null}
 
         {/* AI Guide */}
           <AskGuide

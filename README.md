@@ -209,3 +209,72 @@ Use the canonical production domain instead of a deployment-specific Vercel
 hostname. Vercel runs `npm run vercel-build`, which applies committed Drizzle
 migrations before the normal Next.js production build. It does not generate
 migrations, seed data, or reset the database.
+
+## CMS content management
+
+Authorized staff manage cities, places, explicitly authored localizations,
+normalized tags, and curated editorial tours under `/admin`. Every mutation is
+validated and authorized on the server, constrained by the CMS-01 staff city
+scope, and records its authenticated actor. Publication is deliberately
+separate from editing: drafts are admin-only, publishers can move valid content
+from draft to published and from published to archived, and only safe drafts
+can be permanently deleted.
+
+The PostgreSQL content model is additive. The legacy place `tags` array remains
+for rollback compatibility while public database reads prefer normalized
+`content_tags` and `place_content_tags`. Curated database tours are separate
+from the deterministic personalized Tour Builder.
+
+### Public content source
+
+Set the server-only `CITYWALK_CONTENT_SOURCE` variable to control the migration:
+
+```env
+CITYWALK_CONTENT_SOURCE=code
+```
+
+- `code` uses the current canonical TypeScript snapshot and is the safe default.
+- `database` requires a complete, internally consistent published database
+  snapshot and fails clearly when it is missing.
+- `auto` prefers a valid published database snapshot and otherwise falls back
+  wholesale to code. It never merges a partial database snapshot into the
+  canonical one.
+
+The public read API is `GET /api/content/cities/:citySlug?locale=en`. It exposes
+public DTOs only, includes requested/resolved locale metadata for honest
+fallback handling, and never exposes drafts, actor IDs, staff data, or RAG
+metadata. Publishing CMS text does not make that text verified RAG evidence;
+the source registry, verified knowledge chunks, and approved audio registry
+remain independent trust systems.
+
+### Explicit Lübeck import
+
+After applying migrations, import the canonical Lübeck bootstrap snapshot with:
+
+```bash
+npm run cms:import-lubeck
+```
+
+The transaction imports one city, 25 places, normalized tags, the five curated
+Hidden Gems, explicitly authored place localizations, and the curated historic
+five-stop editorial tour. It does not import generated personalized tours or
+invent fallback translation rows. Repeating the command does not create
+duplicates. Once a row has staff-authored localizations or an authenticated
+editor actor, the importer leaves it unchanged instead of overwriting editorial
+work.
+
+Never add the content import to `vercel-build`. Deployments run migrations only;
+the import is an explicit bootstrap/migration operation. For a Preview database,
+apply the migration, run the import once explicitly, verify the public snapshot,
+then test draft invisibility, publishing, and archiving without using the
+production database.
+
+Run the real PostgreSQL CRUD and public-visibility checks with:
+
+```bash
+npm run cms:test:integration
+```
+
+The integration test uses only exact `cms02-integration-*` records and removes
+those records afterward. It does not modify staff identities or canonical
+Lübeck content.

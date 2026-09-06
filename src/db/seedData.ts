@@ -26,6 +26,8 @@ export function mapPlaceToSeedRow(
     pricing: place.pricing,
     status: place.status,
     statusVerifiedAt: place.statusVerifiedAt,
+    visitNoteVerifiedAt: place.visitNoteVerifiedAt,
+    visitNoteValidUntil: place.visitNoteValidUntil,
     image: place.image,
     tags: [...place.tags],
   };

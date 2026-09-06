@@ -10,45 +10,37 @@ vi.mock("@/db/client", () => ({
 
 import { seedLubeckDatabase } from "@/db/seed";
 
-describe("Lübeck database seed transaction", () => {
+describe("Lubeck database seed transaction", () => {
   beforeEach(() => {
     transaction.mockReset();
   });
 
-  it("replaces the city's places on every run instead of appending", async () => {
+  it("inserts missing canonical rows without deleting CMS-authored content", async () => {
     const transactionOperations: string[][] = [];
-    const insertedPlaceCounts: number[] = [];
 
     transaction.mockImplementation(async (callback) => {
       const operations: string[] = [];
       transactionOperations.push(operations);
-      const insert = vi
-        .fn()
-        .mockReturnValueOnce({
-          values: vi.fn(() => {
-            operations.push("city-upsert");
+      let insertCount = 0;
+      const insert = vi.fn(() => ({
+        values: vi.fn(() => {
+          insertCount += 1;
+          if (insertCount === 1) {
+            operations.push("city-insert-if-missing");
             return {
-              onConflictDoUpdate: vi.fn(() => ({
+              onConflictDoNothing: vi.fn(() => ({
                 returning: vi.fn().mockResolvedValue([{ id: 7 }]),
               })),
             };
-          }),
-        })
-        .mockReturnValueOnce({
-          values: vi.fn((values: readonly unknown[]) => {
-            operations.push("place-insert");
-            insertedPlaceCounts.push(values.length);
-            return Promise.resolve();
-          }),
-        });
-      const remove = vi.fn(() => ({
-        where: vi.fn(() => {
-          operations.push("place-delete");
-          return Promise.resolve();
+          }
+          operations.push("place-insert-if-missing");
+          return {
+            onConflictDoNothing: vi.fn().mockResolvedValue(undefined),
+          };
         }),
       }));
 
-      return callback({ insert, delete: remove });
+      return callback({ insert });
     });
 
     const first = await seedLubeckDatabase();
@@ -56,10 +48,11 @@ describe("Lübeck database seed transaction", () => {
 
     expect(first.placeCount).toBe(25);
     expect(second.placeCount).toBe(25);
-    expect(insertedPlaceCounts).toEqual([25, 25]);
-    expect(transactionOperations).toEqual([
-      ["city-upsert", "place-delete", "place-insert"],
-      ["city-upsert", "place-delete", "place-insert"],
-    ]);
+    expect(transactionOperations).toHaveLength(2);
+    for (const operations of transactionOperations) {
+      expect(operations.filter((operation) => operation === "city-insert-if-missing")).toHaveLength(1);
+      expect(operations.filter((operation) => operation === "place-insert-if-missing")).toHaveLength(25);
+      expect(operations).not.toContain("place-delete");
+    }
   });
 });

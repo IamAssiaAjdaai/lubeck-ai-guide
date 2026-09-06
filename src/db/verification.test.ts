@@ -29,6 +29,8 @@ function createSnapshot() {
       pricing: place.pricing,
       status: place.status ?? null,
       statusVerifiedAt: place.statusVerifiedAt ?? null,
+      visitNoteVerifiedAt: place.visitNoteVerifiedAt ?? null,
+      visitNoteValidUntil: place.visitNoteValidUntil ?? null,
       image: place.image ?? null,
       tags: [...place.tags],
     }),
