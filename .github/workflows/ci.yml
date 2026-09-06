@@ -94,3 +94,9 @@ jobs:
 
       - name: Verify seed idempotency
         run: npm run db:verify
+
+      - name: Run CMS content integration tests
+        run: npm run cms:test:integration
+
+      - name: Run CMS media integration tests
+        run: npm run media:test:integration

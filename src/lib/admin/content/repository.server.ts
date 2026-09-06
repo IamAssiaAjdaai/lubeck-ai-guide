@@ -26,6 +26,7 @@ import {
   getPublishedTourGraphError,
   hasCrossCityTourReference,
 } from "@/lib/admin/content/graphIntegrity";
+import { assertEntityMovePreservesMediaCity } from "@/lib/media/repository.server";
 
 export class CmsContentNotFoundError extends Error {
   constructor(entity: string) {
@@ -254,6 +255,7 @@ export async function updateCmsPlace(
     const current = await lockCmsPlace(tx, id);
     if (current.cityId !== input.cityId) {
       await assertPlaceMovePreservesTourCities(tx, id, input.cityId);
+      await assertEntityMovePreservesMediaCity(tx, "place", id, input.cityId);
     }
     const now = new Date();
     const [place] = await tx
@@ -352,7 +354,10 @@ export async function updateCmsTour(
 ) {
   const db = getDb();
   return db.transaction(async (tx) => {
-    await lockCmsTour(tx, id);
+    const current = await lockCmsTour(tx, id);
+    if (current.cityId !== input.cityId) {
+      await assertEntityMovePreservesMediaCity(tx, "tour", id, input.cityId);
+    }
     await assertTourRelations(tx, input);
     const now = new Date();
     const [tour] = await tx

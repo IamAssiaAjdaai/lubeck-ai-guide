@@ -278,3 +278,63 @@ npm run cms:test:integration
 The integration test uses only exact `cms02-integration-*` records and removes
 those records afterward. It does not modify staff identities or canonical
 Lübeck content.
+
+## CMS media library
+
+CMS-03 stores immutable media identity, lifecycle metadata, and city/place/tour
+attachments in PostgreSQL while binary files stay in S3-compatible object
+storage. Large uploads go directly from the authenticated admin browser to a
+short-lived presigned PUT URL; the server then verifies the stored size,
+content type, and file signature before the asset enters `pending_review`.
+Only `approved`, non-archived attachments are returned by the public resolver.
+
+Configure these server-only variables for upload and preview operations:
+
+```env
+CITYWALK_MEDIA_STORAGE=s3
+CITYWALK_MEDIA_S3_ENDPOINT=https://<s3-compatible-endpoint>
+CITYWALK_MEDIA_S3_REGION=<region-or-auto>
+CITYWALK_MEDIA_S3_BUCKET=<environment-specific-bucket>
+CITYWALK_MEDIA_S3_ACCESS_KEY_ID=<server-only-access-key>
+CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY=<server-only-secret-key>
+CITYWALK_MEDIA_PUBLIC_BASE_URL=https://<public-cdn-origin>
+```
+
+None of these values may use a `NEXT_PUBLIC_` prefix. Missing storage variables
+fail only media operations; public CITYWALK pages and database-independent
+builds remain available. Preview must use a dedicated non-production bucket or
+separately permissioned prefix. `vercel-build` still runs only migrations and
+the Next.js build; it never uploads, seeds, or imports media.
+
+Every upload belongs to one authorized city. Assets can be reused only within
+that city. Editors with `media:manage` may upload and attach assets. Approval
+requires the existing `publishing:publish` capability, so media management does
+not grant content publication powers.
+
+The allowlist and limits are:
+
+- JPEG, PNG, WebP, and AVIF images up to 15 MB; SVG is rejected.
+- MP3, M4A/MP4 audio, and WAV up to 50 MB; an exact CITYWALK locale is required.
+- MP4 and WebM video up to 250 MB.
+- PDF documents up to 25 MB.
+- Structured YouTube or Vimeo links; raw iframe HTML is rejected.
+
+Checksums are persisted when object storage supplies SHA-256 metadata. CMS-03
+does not download and hash complete large objects during finalization. Replacing
+media creates a new UUID-backed key; existing bytes are never overwritten.
+Detaching does not delete reusable objects, and attached assets cannot be
+archived. Permanent object deletion is an explicit action available only after
+an asset is archived and unreferenced; database state changes only after storage
+confirms deletion. A server-only cleanup service can remove stale incomplete
+uploads under the same ordering rule. This ticket installs no cleanup cron.
+
+Existing canonical images and the approved CW-08 audio registry remain the
+fallback. Unapproved CMS media never suppresses legacy media, and audio resolves
+only for the exact requested locale. Media approval does not grant RAG/source
+provenance trust.
+
+Run the focused PostgreSQL lifecycle test after applying migrations:
+
+```bash
+npm run media:test:integration
+```
