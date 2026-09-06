@@ -12,10 +12,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # No reachable database; auth initialization does not connect during build.
+      DATABASE_URL: postgresql://citywalk:citywalk@127.0.0.1:5432/citywalk_build
+      BETTER_AUTH_URL: http://localhost:3000
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Configure ephemeral build auth secret
+        shell: bash
+        run: echo "BETTER_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

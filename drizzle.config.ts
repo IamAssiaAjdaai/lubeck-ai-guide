@@ -15,7 +15,7 @@ if (requiresDatabaseConnection && !databaseUrl) {
 
 export default defineConfig({
   dialect: "postgresql",
-  schema: "./src/db/schema.ts",
+  schema: ["./src/db/schema.ts", "./src/db/authSchema.ts"],
   out: "./drizzle",
   ...(databaseUrl
     ? {

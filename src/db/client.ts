@@ -2,7 +2,13 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
 import { getDatabaseUrl } from "@/db/env";
-import * as schema from "@/db/schema";
+import * as authSchema from "@/db/authSchema";
+import * as citywalkSchema from "@/db/schema";
+
+export const databaseSchema = {
+  ...citywalkSchema,
+  ...authSchema,
+};
 
 let pool: Pool | undefined;
 
@@ -13,7 +19,7 @@ export function getDb() {
     });
   }
 
-  return drizzle(pool, { schema });
+  return drizzle(pool, { schema: databaseSchema });
 }
 
 export async function closeDb(): Promise<void> {
