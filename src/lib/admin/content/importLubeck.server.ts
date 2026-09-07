@@ -126,6 +126,9 @@ export async function importCanonicalLubeckContent() {
         existingLocalizationCount: existingLocalizations.length,
         updatedByUserId: place.updatedByUserId,
       });
+      const effectivePublicationStatus = mayImportPlace
+        ? "published"
+        : place.publicationStatus;
       if (mayImportPlace && !createdPlace) {
         await tx
           .update(placesTable)
@@ -226,7 +229,7 @@ export async function importCanonicalLubeckContent() {
           ),
         )
         .limit(1);
-      if (!currentRevision && place.publicationStatus === "published") {
+      if (!currentRevision && effectivePublicationStatus === "published") {
         await tx.insert(placeRevisionsTable).values({
           placeId: place.id,
           revisionNumber: 1,

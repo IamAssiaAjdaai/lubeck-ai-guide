@@ -46,6 +46,7 @@ import {
   getPublicCitySnapshot,
   resolvePublicLocalization,
 } from "@/lib/content/publicRepository.server";
+import { importCanonicalLubeckContent } from "@/lib/admin/content/importLubeck.server";
 
 const shouldRun = process.env.CMS_DB_INTEGRATION === "1";
 const citySlug = "cms02-integration-city";
@@ -151,7 +152,11 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
       .where(eq(placesTable.cityId, lubeck!.id));
     expect(new Set(canonicalSourceLinks.map(({ placeId }) => placeId)).size).toBe(25);
     const canonicalRevisions = await getDb()
-      .select({ placeId: placeRevisionsTable.placeId })
+      .select({
+        id: placeRevisionsTable.id,
+        placeId: placeRevisionsTable.placeId,
+        revisionNumber: placeRevisionsTable.revisionNumber,
+      })
       .from(placeRevisionsTable)
       .innerJoin(placesTable, eq(placeRevisionsTable.placeId, placesTable.id))
       .where(
@@ -160,7 +165,27 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
           eq(placeRevisionsTable.isCurrent, true),
         ),
       );
+    expect(canonicalRevisions).toHaveLength(25);
     expect(new Set(canonicalRevisions.map(({ placeId }) => placeId)).size).toBe(25);
+    expect(canonicalRevisions.every(({ revisionNumber }) => revisionNumber === 1)).toBe(true);
+
+    const revisionIdsBeforeRepeat = canonicalRevisions.map(({ id }) => id).sort((a, b) => a - b);
+    await importCanonicalLubeckContent();
+    await importCanonicalLubeckContent();
+    const canonicalRevisionsAfterRepeat = await getDb()
+      .select({ id: placeRevisionsTable.id, placeId: placeRevisionsTable.placeId })
+      .from(placeRevisionsTable)
+      .innerJoin(placesTable, eq(placeRevisionsTable.placeId, placesTable.id))
+      .where(
+        and(
+          eq(placesTable.cityId, lubeck!.id),
+          eq(placeRevisionsTable.isCurrent, true),
+        ),
+      );
+    expect(canonicalRevisionsAfterRepeat).toHaveLength(25);
+    expect(new Set(canonicalRevisionsAfterRepeat.map(({ placeId }) => placeId)).size).toBe(25);
+    expect(canonicalRevisionsAfterRepeat.map(({ id }) => id).sort((a, b) => a - b))
+      .toEqual(revisionIdsBeforeRepeat);
   });
 
   it("runs transactional CRUD, publication, ordering, and public visibility", async () => {
