@@ -149,9 +149,12 @@ describe("CMS content validation", () => {
   });
 
   it("allows only the defined publication transitions", () => {
-    expect(canTransitionPublication("draft", "published")).toBe(true);
+    expect(canTransitionPublication("draft", "in_review")).toBe(true);
+    expect(canTransitionPublication("in_review", "approved")).toBe(true);
+    expect(canTransitionPublication("approved", "published")).toBe(true);
     expect(canTransitionPublication("published", "archived")).toBe(true);
     expect(canTransitionPublication("archived", "draft")).toBe(true);
+    expect(canTransitionPublication("draft", "published")).toBe(false);
     expect(canTransitionPublication("draft", "archived")).toBe(false);
     expect(canTransitionPublication("archived", "published")).toBe(false);
   });

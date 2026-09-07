@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { changePublicationAction, deleteDraftAction, updateCityAction } from "@/app/admin/(protected)/content-actions";
+import { approveAndPublishAction, changePublicationAction, deleteDraftAction, updateCityAction } from "@/app/admin/(protected)/content-actions";
 import { AdminFormShell, AdminNotice, CityFields, LocaleNavigator, PublicationActions } from "@/components/admin/AdminContentForms";
 import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import { MediaAttachmentPanel } from "@/components/admin/MediaAttachmentPanel";
@@ -23,6 +23,6 @@ export default async function EditCityPage({ params, searchParams }: { params: P
     <LocaleNavigator authoredLocales={city.localizations.map(({ locale }) => locale)} currentLocale={editingLocale} />
     <AdminFormShell action={updateCityAction.bind(null, id)} submitLabel="Save city"><CityFields city={city} editingLocale={editingLocale} /></AdminFormShell>
     <MediaAttachmentPanel assets={mediaAssets.filter((asset) => asset.cityId === city.id)} attachments={mediaAttachments} entityId={id} entityType="city" readOnly={!hasActiveStaffCapability(admin.staff, "media:manage")} />
-    <PublicationActions action={changePublicationAction.bind(null, "city", id)} deleteAction={deleteDraftAction.bind(null, "city", id)} entity="city" id={id} status={city.publicationStatus} />
+    <PublicationActions action={changePublicationAction.bind(null, "city", id)} approveAndPublishAction={approveAndPublishAction.bind(null, "city", id)} cityId={city.id} deleteAction={deleteDraftAction.bind(null, "city", id)} entity="city" id={id} staff={admin.staff} status={city.publicationStatus} />
   </section>;
 }

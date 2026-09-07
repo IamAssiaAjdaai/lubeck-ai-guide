@@ -39,20 +39,24 @@ describe("public content repository", () => {
   it("filters unpublished cities and returns every published CMS city", async () => {
     mockCitySummaryDatabase([
       { id: 1, slug: "draft-city", publicationStatus: "draft" },
+      { id: 4, slug: "review-city", publicationStatus: "in_review" },
+      { id: 5, slug: "approved-city", publicationStatus: "approved" },
+      { id: 6, slug: "archived-city", publicationStatus: "archived" },
       { id: 2, slug: "ghent", publicationStatus: "published" },
       { id: 3, slug: "lubeck", publicationStatus: "published" },
-      { id: 4, slug: "archived-city", publicationStatus: "archived" },
     ], [
       { cityId: 1, locale: "en", name: "Draft city", shortDescription: null },
       { cityId: 2, locale: "en", name: "Ghent", shortDescription: "Ghent description" },
       { cityId: 3, locale: "en", name: "Lübeck", shortDescription: "Lübeck description" },
-      { cityId: 4, locale: "en", name: "Archived city", shortDescription: null },
+      { cityId: 6, locale: "en", name: "Archived city", shortDescription: null },
     ]);
 
     const summaries = await getPublicCitySummaries("database");
 
     expect(summaries.map(({ city }) => city.slug)).toEqual(["ghent", "lubeck"]);
     expect(summaries.some(({ city }) => city.slug === "draft-city")).toBe(false);
+    expect(summaries.some(({ city }) => city.slug === "review-city")).toBe(false);
+    expect(summaries.some(({ city }) => city.slug === "approved-city")).toBe(false);
     expect(summaries.some(({ city }) => city.slug === "archived-city")).toBe(false);
     expect(getPublicMediaSnapshot).toHaveBeenCalledTimes(2);
   });
@@ -91,6 +95,25 @@ describe("public content repository", () => {
       authoredLocalizationCount: 1,
       publishedTravelerVisiblePlaceCount: 1,
     })).toBe(false);
+  });
+
+  it("keeps a city discoverable while its only live place has a working draft", async () => {
+    mockCitySummaryDatabase(
+      [{ id: 7, slug: "revision-city", publicationStatus: "published" }],
+      [{ cityId: 7, locale: "en", name: "Revision city", shortDescription: null }],
+      [{ id: 70, cityId: 7, publicationStatus: "in_review" }],
+      [{ placeId: 70, locale: "en", name: "Unpublished working name" }],
+      [{
+        placeId: 70,
+        snapshot: {
+          localizations: [{ locale: "en", name: "Published place" }],
+        },
+      }],
+    );
+
+    await expect(getPublicCitySummaries("database")).resolves.toEqual([
+      expect.objectContaining({ city: expect.objectContaining({ slug: "revision-city" }) }),
+    ]);
   });
 
   it("exposes only media returned by the approved public media boundary", async () => {
@@ -271,6 +294,15 @@ function mockCitySummaryDatabase(
     locale: "en",
     name: "Published place",
   })),
+  revisions: readonly Readonly<{
+    placeId: number;
+    snapshot: Readonly<{
+      localizations: readonly Readonly<{
+        locale: string;
+        name: string;
+      }>[];
+    }>;
+  }>[] = [],
 ) {
   let queryIndex = 0;
   getDb.mockReturnValue({
@@ -284,9 +316,10 @@ function mockCitySummaryDatabase(
         };
       }
       if (queryIndex === 2) return { from: async () => localizations };
-      if (queryIndex === 3) {
+      if (queryIndex === 3) return { from: async () => places };
+      if (queryIndex === 4) {
         return {
-          from: () => ({ where: async () => places }),
+          from: () => ({ where: async () => revisions }),
         };
       }
       return { from: async () => placeLocalizations };

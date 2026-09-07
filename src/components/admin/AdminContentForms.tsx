@@ -20,6 +20,17 @@ import type {
 import { locales, type Locale } from "@/lib/i18n";
 import { TourStopEditor } from "@/components/admin/TourStopEditor";
 import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
+import type { ContentSourceRow } from "@/db/schema";
+import type { PublicationStatus } from "@/lib/admin/content/validation";
+import {
+  EDITORIAL_TRANSITIONS,
+  type EditorialWorkflowState,
+} from "@/lib/admin/content/editorialWorkflow";
+import {
+  hasCityCapability,
+  type AdminCapability,
+  type StaffAccess,
+} from "@/lib/admin/permissions";
 
 type FormAction = (formData: FormData) => Promise<void>;
 type AdminPlaceFormRecord = Omit<PlaceRow, "tags"> & {
@@ -259,23 +270,49 @@ export function PublicationActions({
   status,
   action,
   deleteAction,
+  approveAndPublishAction,
+  cityId,
+  staff,
 }: Readonly<{
   entity: "city" | "place" | "tour";
   id: number;
-  status: "draft" | "published" | "archived";
+  status: PublicationStatus;
   action: FormAction;
   deleteAction?: () => Promise<void>;
+  approveAndPublishAction?: () => Promise<void>;
+  cityId: number;
+  staff: StaffAccess;
 }>) {
-  const nextStatus = status === "draft" ? "published" : status === "published" ? "archived" : "draft";
+  const canReview = hasCityCapability(staff, cityId, "publishing:review");
+  const canPublish = hasCityCapability(staff, cityId, "publishing:publish");
+  const showCombinedAction = status === "in_review" && canReview && canPublish && approveAndPublishAction;
+  const transitions = EDITORIAL_TRANSITIONS.filter(
+    (transition) =>
+      transition.from === status &&
+      transition.to !== "archived" &&
+      !(showCombinedAction && transition.to === "approved") &&
+      hasCityCapability(
+        staff,
+        cityId,
+        transitionCapability(entity, transition.from, transition.action),
+      ),
+  );
   return (
     <div className="mt-5 flex flex-wrap gap-3">
-      <form action={action}>
-        <input name="publicationStatus" type="hidden" value={nextStatus} />
-        <button className="button-secondary min-h-11 px-4" type="submit">
-          {nextStatus === "published" ? "Publish" : nextStatus === "archived" ? "Archive" : "Return to draft"} {entity}
-        </button>
-      </form>
-      {status === "draft" && deleteAction ? (
+      {transitions.map((transition) => (
+        <form action={action} key={transition.to}>
+          <input name="publicationStatus" type="hidden" value={transition.to} />
+          <button className="button-secondary min-h-11 px-4" type="submit">
+            {transitionLabel(transition.from, transition.to)} {entity}
+          </button>
+        </form>
+      ))}
+      {showCombinedAction ? (
+        <form action={approveAndPublishAction}>
+          <button className="button-primary min-h-11 px-4" type="submit">Approve &amp; Publish {entity}</button>
+        </form>
+      ) : null}
+      {status === "draft" && deleteAction && hasCityCapability(staff, cityId, entityManageCapability(entity)) ? (
         <form action={deleteAction}>
           <ConfirmSubmitButton
             className="min-h-11 rounded-xl border border-red-200 px-4 text-sm font-semibold text-red-700"
@@ -286,8 +323,86 @@ export function PublicationActions({
         </form>
       ) : null}
       <span className="self-center text-xs text-text-secondary">Record #{id}</span>
+      {status === "published" && canPublish ? (
+        <details className="relative self-center">
+          <summary className="cursor-pointer rounded-xl px-3 py-2 text-sm font-semibold">⋯ More</summary>
+          <form action={action} className="absolute end-0 z-10 mt-2 min-w-44 rounded-xl border border-border bg-white p-2 shadow-lg">
+            <input name="publicationStatus" type="hidden" value="archived" />
+            <ConfirmSubmitButton
+              className="w-full rounded-lg px-3 py-2 text-start text-sm font-semibold text-red-700 hover:bg-red-50"
+              confirmation={`Archive this ${entity}? It will disappear from public CITYWALK content.`}
+            >
+              Archive {entity}
+            </ConfirmSubmitButton>
+          </form>
+        </details>
+      ) : null}
     </div>
   );
+}
+
+export function PlaceSourcesPanel({
+  action,
+  canManage,
+  sourceLinks,
+}: Readonly<{
+  action: FormAction;
+  canManage: boolean;
+  sourceLinks: readonly Readonly<{ source: ContentSourceRow; required: boolean }>[];
+}>) {
+  return (
+    <section className="surface-card mt-6 p-5 sm:p-7">
+      <h2 className="text-xl font-extrabold">References</h2>
+      <p className="mt-2 text-sm text-text-secondary">
+        Add links that editors and reviewers can use to verify this place.
+      </p>
+      {sourceLinks.length ? (
+        <ul className="mt-4 space-y-3">
+          {sourceLinks.map(({ source, required }) => (
+            <li className="rounded-xl border border-border p-4" key={source.id}>
+              <a className="font-bold text-primary underline-offset-2 hover:underline" href={source.canonicalUrl} rel="noreferrer" target="_blank">
+                {source.title}
+              </a>
+              <p className="mt-1 text-sm text-text-secondary">
+                {source.publisher}{required ? " · required for publishing" : ""}
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : <p className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">Add a reliable source before this content can be published.</p>}
+      {canManage ? (
+        <form action={action} className="mt-6 grid gap-4">
+          <Field label="Reference link"><input className={inputClass} name="referenceUrl" placeholder="https://…" required type="url" /></Field>
+          <button className="button-secondary min-h-11 justify-self-start px-4" type="submit">+ Add another reference</button>
+        </form>
+      ) : null}
+    </section>
+  );
+}
+
+function transitionLabel(
+  from: EditorialWorkflowState,
+  to: EditorialWorkflowState,
+): string {
+  if (to === "in_review") return "Send for review";
+  if (to === "approved") return "Approve";
+  if (to === "published") return "Publish";
+  return from === "archived" ? "Return to draft" : "Request changes";
+}
+
+function entityManageCapability(entity: "city" | "place" | "tour"): AdminCapability {
+  return `${entity === "city" ? "cities" : `${entity}s`}:manage` as AdminCapability;
+}
+
+function transitionCapability(
+  entity: "city" | "place" | "tour",
+  from: EditorialWorkflowState,
+  action: "submitted_for_review" | "returned_to_draft" | "approved" | "published" | "archived",
+): AdminCapability {
+  if (action === "submitted_for_review") return entityManageCapability(entity);
+  if (from === "archived") return "publishing:publish";
+  if (action === "approved" || action === "returned_to_draft") return "publishing:review";
+  return "publishing:publish";
 }
 
 function LocalizationFields({

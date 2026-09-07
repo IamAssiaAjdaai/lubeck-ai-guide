@@ -13,9 +13,11 @@ export function canEditCmsContent(
     "cities:manage" | "places:manage" | "tours:manage"
   >,
   status: PublicationStatus,
+  hasLiveRevision = false,
 ): boolean {
   if (!hasCityCapability(staff, cityId, capability)) return false;
-  return staff?.role !== "content_editor" || status === "draft";
+  return staff?.role !== "content_editor" || status === "draft" ||
+    (capability === "places:manage" && status === "published" && hasLiveRevision);
 }
 
 export function canPublishCmsContent(

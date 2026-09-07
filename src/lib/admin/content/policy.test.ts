@@ -26,6 +26,7 @@ describe("CMS RBAC policy", () => {
   it("allows a content editor to edit drafts but not published content", () => {
     expect(canEditCmsContent(staff("content_editor"), 1, "places:manage", "draft")).toBe(true);
     expect(canEditCmsContent(staff("content_editor"), 1, "places:manage", "published")).toBe(false);
+    expect(canEditCmsContent(staff("content_editor"), 1, "places:manage", "published", true)).toBe(true);
   });
 
   it("allows reviewer/publishers to publish without edit capability", () => {

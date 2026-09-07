@@ -8,6 +8,7 @@ import {
   cityMediaTable,
   mediaAssetsTable,
   placeMediaTable,
+  placeRevisionsTable,
   placesTable,
   tourMediaTable,
   toursTable,
@@ -679,10 +680,23 @@ async function lockEntityPublicationState(
       .for("update")
       .limit(1);
     if (!place) throw new MediaNotFoundError("Place");
+    const [publishedRevision] = await tx
+      .select({ id: placeRevisionsTable.id })
+      .from(placeRevisionsTable)
+      .where(
+        and(
+          eq(placeRevisionsTable.placeId, entityId),
+          eq(placeRevisionsTable.isCurrent, true),
+        ),
+      )
+      .limit(1);
     const cityIsPublished = await lockPublishedCityState(tx, place.cityId);
     return {
       cityId: place.cityId,
-      isPublic: place.status === "published" && cityIsPublished,
+      isPublic:
+        place.status !== "archived" &&
+        (place.status === "published" || Boolean(publishedRevision)) &&
+        cityIsPublished,
     };
   }
 

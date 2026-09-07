@@ -9,6 +9,8 @@ import {
   createCmsCity,
   createCmsPlace,
   createCmsTour,
+  approveAndPublishCmsContent,
+  createOrReuseCmsSourceForPlace,
   deleteCmsDraft,
   getCmsCity,
   getCmsPlace,
@@ -25,7 +27,6 @@ import {
   CmsContentNotFoundError,
 } from "@/lib/admin/content/repository.server";
 import {
-  canTransitionPublication,
   validateCityInput,
   validatePlaceInput,
   validatePublicationStatus,
@@ -36,6 +37,14 @@ import {
   type TourInput,
 } from "@/lib/admin/content/validation";
 import type { AdminCapability } from "@/lib/admin/permissions";
+import {
+  getEditorialTransition,
+  normalizeCanonicalSourceUrl,
+} from "@/lib/admin/content/editorialWorkflow";
+import {
+  validateContentSourceInput,
+  type ContentSourceInput,
+} from "@/lib/admin/content/sources";
 
 type CmsEntity = "city" | "place" | "tour";
 
@@ -57,7 +66,7 @@ export async function createAuthorizedCity(input: CityInput) {
   requireGlobalAccess(context);
   const validated = validateCityInput(input);
   if (validated.publicationStatus !== "draft") {
-    await requireAdminCapability("publishing:publish");
+    throw new CmsContentIntegrityError("New content must start as a draft.");
   }
   return createCmsCity(validated, context.user.id);
 }
@@ -101,7 +110,7 @@ export async function createAuthorizedPlace(input: PlaceInput) {
     "places:manage",
   );
   if (validated.publicationStatus !== "draft") {
-    await requireCityCapability(validated.cityId, "publishing:publish");
+    throw new CmsContentIntegrityError("New content must start as a draft.");
   }
   return createCmsPlace(validated, context.user.id);
 }
@@ -121,7 +130,11 @@ export async function updateAuthorizedPlace(
   if (input.cityId !== current.cityId) {
     await requireCityCapability(input.cityId, "places:manage");
   }
-  requireEditableStatus(context, current.publicationStatus);
+  requireEditableStatus(
+    context,
+    current.publicationStatus,
+    Boolean(current.publishedRevision),
+  );
   const validated = validatePlaceInput(input);
   if (validated.publicationStatus !== current.publicationStatus) {
     throw new CmsContentIntegrityError(
@@ -156,7 +169,7 @@ export async function createAuthorizedTour(input: TourInput) {
     "tours:manage",
   );
   if (validated.publicationStatus !== "draft") {
-    await requireCityCapability(validated.cityId, "publishing:publish");
+    throw new CmsContentIntegrityError("New content must start as a draft.");
   }
   return createCmsTour(validated, context.user.id);
 }
@@ -191,22 +204,67 @@ export async function changeAuthorizedPublicationStatus(
   id: number,
   requestedStatus: unknown,
 ) {
-  await requireAdminCapability("publishing:publish");
+  await requireAdminCapability("admin:view");
   const status = validatePublicationStatus(requestedStatus);
   const record = await loadEntity(entity, id);
-  const context = await requireCityCapability(
-    getEntityCityId(entity, record),
-    "publishing:publish",
-  );
-  if (!canTransitionPublication(record.publicationStatus, status)) {
+  const transition = getEditorialTransition(record.publicationStatus, status);
+  if (!transition) {
     throw new CmsContentIntegrityError(
       `Cannot transition ${record.publicationStatus} to ${status}.`,
     );
   }
-  if (status === "published") {
-    await assertPublishable(entity, id);
-  }
+  const capability = transitionCapability(entity, transition.from, transition.action);
+  const context = await requireCityCapability(
+    getEntityCityId(entity, record),
+    capability,
+  );
   return setCmsPublicationStatus(entity, id, status, context.user.id);
+}
+
+export async function approveAndPublishAuthorizedContent(
+  entity: CmsEntity,
+  id: number,
+) {
+  await requireAdminCapability("admin:view");
+  const record = await loadEntity(entity, id);
+  const cityId = getEntityCityId(entity, record);
+  const reviewContext = await requireCityCapability(cityId, "publishing:review");
+  await requireCityCapability(cityId, "publishing:publish");
+  return approveAndPublishCmsContent(entity, id, reviewContext.user.id);
+}
+
+export async function addAuthorizedPlaceSource(
+  placeId: number,
+  input: ContentSourceInput,
+) {
+  await requireAdminCapability("sources:manage");
+  const place = await getCmsPlace(placeId);
+  if (!place) throw new CmsContentNotFoundError("Place");
+  const context = await requireCityCapability(place.cityId, "sources:manage");
+  return createOrReuseCmsSourceForPlace(
+    placeId,
+    validateContentSourceInput(input),
+    context.user.id,
+  );
+}
+
+export async function addAuthorizedPlaceReference(
+  placeId: number,
+  rawUrl: string,
+) {
+  let canonicalUrl: string;
+  try {
+    canonicalUrl = normalizeCanonicalSourceUrl(rawUrl);
+  } catch {
+    throw new CmsContentIntegrityError("Enter a valid HTTP or HTTPS reference link.");
+  }
+  const hostname = new URL(canonicalUrl).hostname;
+  return addAuthorizedPlaceSource(placeId, {
+    publisher: hostname,
+    title: `Reference from ${hostname}`,
+    canonicalUrl,
+    verifiedAt: new Date().toISOString().slice(0, 10),
+  });
 }
 
 export async function deleteAuthorizedDraft(entity: CmsEntity, id: number) {
@@ -243,20 +301,6 @@ function getEntityCityId(
   throw new CmsContentIntegrityError("Content city scope is invalid.");
 }
 
-async function assertPublishable(entity: CmsEntity, id: number) {
-  const record = await loadEntity(entity, id);
-  if (record.localizations.length === 0) {
-    throw new CmsContentIntegrityError(
-      "Published content requires at least one authored localization.",
-    );
-  }
-  if (entity === "tour" && "stops" in record && record.stops.length === 0) {
-    throw new CmsContentIntegrityError(
-      "Published tours require at least one stop.",
-    );
-  }
-}
-
 function filterCityScope<TRow extends { id?: number; cityId?: number }>(
   rows: readonly TRow[],
   context: AdminContext,
@@ -283,12 +327,30 @@ function requireGlobalAccess(context: AdminContext) {
 function requireEditableStatus(
   context: AdminContext,
   status: PublicationStatus,
+  hasLiveRevision = false,
 ) {
-  if (context.staff.role === "content_editor" && status !== "draft") {
+  if (
+    context.staff.role === "content_editor" &&
+    status !== "draft" &&
+    !(status === "published" && hasLiveRevision)
+  ) {
     throw new CmsContentIntegrityError(
       "Content editors may only change draft content.",
     );
   }
+}
+
+function transitionCapability(
+  entity: CmsEntity,
+  from: PublicationStatus,
+  action: "submitted_for_review" | "returned_to_draft" | "approved" | "published" | "archived",
+): AdminCapability {
+  if (action === "submitted_for_review") return CMS_ENTITY_CAPABILITIES[entity];
+  if (from === "archived") return "publishing:publish";
+  if (action === "returned_to_draft" || action === "approved") {
+    return "publishing:review";
+  }
+  return "publishing:publish";
 }
 
 export const CMS_ENTITY_CAPABILITIES = {

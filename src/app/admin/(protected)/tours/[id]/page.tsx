@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { changePublicationAction, deleteDraftAction, updateTourAction } from "@/app/admin/(protected)/content-actions";
+import { approveAndPublishAction, changePublicationAction, deleteDraftAction, updateTourAction } from "@/app/admin/(protected)/content-actions";
 import { AdminFormShell, AdminNotice, LocaleNavigator, PublicationActions, TourFields } from "@/components/admin/AdminContentForms";
 import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import { MediaAttachmentPanel } from "@/components/admin/MediaAttachmentPanel";
@@ -23,6 +23,6 @@ export default async function EditTourPage({ params, searchParams }: { params: P
     <LocaleNavigator authoredLocales={tour.localizations.map(({ locale }) => locale)} currentLocale={editingLocale} />
     <AdminFormShell action={updateTourAction.bind(null, id)} submitLabel="Save tour"><TourFields cities={cities} editingLocale={editingLocale} places={places} tour={tour} /></AdminFormShell>
     <MediaAttachmentPanel assets={mediaAssets.filter((asset) => asset.cityId === tour.cityId)} attachments={mediaAttachments} entityId={id} entityType="tour" readOnly={!hasActiveStaffCapability(admin.staff, "media:manage")} />
-    <PublicationActions action={changePublicationAction.bind(null, "tour", id)} deleteAction={deleteDraftAction.bind(null, "tour", id)} entity="tour" id={id} status={tour.publicationStatus} />
+    <PublicationActions action={changePublicationAction.bind(null, "tour", id)} approveAndPublishAction={approveAndPublishAction.bind(null, "tour", id)} cityId={tour.cityId} deleteAction={deleteDraftAction.bind(null, "tour", id)} entity="tour" id={id} staff={admin.staff} status={tour.publicationStatus} />
   </section>;
 }
