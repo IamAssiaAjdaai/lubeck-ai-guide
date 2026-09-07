@@ -189,6 +189,45 @@ export async function finalizeMediaAsset(
   });
 }
 
+export async function cancelMediaUpload(id: number, actorId: string) {
+  return getDb().transaction(async (tx) => {
+    const asset = await lockMediaAsset(tx, id);
+    if (
+      asset.approvalStatus !== "uploading" ||
+      asset.sourceType !== "upload"
+    ) {
+      throw new MediaIntegrityError("Only incomplete uploads can be cancelled.");
+    }
+    if ((await countMediaUsages(tx, id)) > 0) {
+      throw new MediaIntegrityError(
+        "Detach this upload from all content before cancelling it.",
+      );
+    }
+
+    const [cancelled] = await tx
+      .update(mediaAssetsTable)
+      .set({
+        approvalStatus: "archived",
+        archivedAt: new Date(),
+        uploadExpiresAt: null,
+        updatedByUserId: actorId,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(mediaAssetsTable.id, id),
+          eq(mediaAssetsTable.approvalStatus, "uploading"),
+          eq(mediaAssetsTable.sourceType, "upload"),
+        ),
+      )
+      .returning();
+    if (!cancelled) {
+      throw new MediaIntegrityError("This upload can no longer be cancelled.");
+    }
+    return cancelled;
+  });
+}
+
 export async function listMediaAssetsForAudioDurationBackfill(): Promise<
   readonly AudioDurationBackfillAsset[]
 > {

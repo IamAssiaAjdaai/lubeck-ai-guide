@@ -7,10 +7,12 @@ import { AdminAuthorizationError } from "@/lib/admin/authorization.server";
 import {
   archiveAuthorizedMediaAsset,
   attachAuthorizedMedia,
+  cancelAuthorizedMediaUpload,
   createAuthorizedExternalVideo,
   deleteAuthorizedArchivedMediaObject,
   detachAuthorizedMedia,
   reviewAuthorizedMediaAsset,
+  retryAuthorizedUploadFinalize,
 } from "@/lib/media/service.server";
 import {
   MediaIntegrityError,
@@ -73,6 +75,54 @@ export async function deleteMediaObjectAction(id: number) {
     destination += "?saved=1";
   } catch (error) {
     destination += `?error=${encodeURIComponent(mediaActionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function retryFinalizeMediaAction(id: number) {
+  let destination = "/admin/media?status=uploading";
+  try {
+    await retryAuthorizedUploadFinalize(id);
+    revalidatePath("/admin/media");
+    destination = "/admin/media?status=pending_review&saved=1";
+  } catch (error) {
+    destination += `&error=${encodeURIComponent(mediaActionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function cancelUploadAction(id: number) {
+  let destination = `/admin/media/${id}`;
+  try {
+    await cancelAuthorizedMediaUpload(id);
+    revalidatePath("/admin/media");
+    destination = "/admin/media?status=archived&saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(mediaActionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function archiveMediaFromLibraryAction(id: number) {
+  let destination = "/admin/media";
+  try {
+    await archiveAuthorizedMediaAsset(id);
+    revalidatePath("/admin/media");
+    destination = "/admin/media?status=archived&saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(mediaActionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function deleteMediaObjectFromLibraryAction(id: number) {
+  let destination = "/admin/media?status=archived";
+  try {
+    await deleteAuthorizedArchivedMediaObject(id);
+    revalidatePath("/admin/media");
+    destination += "&saved=1";
+  } catch (error) {
+    destination += `&error=${encodeURIComponent(mediaActionError(error))}`;
   }
   redirect(destination);
 }

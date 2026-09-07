@@ -10,6 +10,7 @@ import { citiesTable, mediaAssetsTable, placesTable } from "@/db/schema";
 import {
   attachMedia,
   assertEntityMovePreservesMediaCity,
+  cancelMediaUpload,
   createMediaUploadRecord,
   detachMedia,
   finalizeMediaAsset,
@@ -94,6 +95,33 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     await expect(detachMedia("place", replaced.id, { allowPublicMutation: false })).rejects.toThrow(/Publishing permission/);
     await detachMedia("place", replaced.id, { allowPublicMutation: true });
     await setMediaLifecycle(replacement.id, "archived", actorId);
+  });
+
+  it("retires an incomplete upload atomically without weakening lifecycle rules", async () => {
+    const asset = await createMediaUploadRecord({
+      assetKey: randomUUID(),
+      cityId,
+      kind: "image",
+      originalFilename: "interrupted.jpg",
+      mimeType: "image/jpeg",
+      sizeBytes: 3,
+      objectKey: `media/${suffix}/interrupted.jpg`,
+      storageProvider: "s3-test",
+      uploadExpiresAt: new Date(Date.now() + 60_000),
+    }, actorId);
+    assetIds.push(asset.id);
+
+    await expect(cancelMediaUpload(asset.id, actorId)).resolves.toMatchObject({
+      approvalStatus: "archived",
+      objectKey: asset.objectKey,
+      uploadExpiresAt: null,
+    });
+    await expect(cancelMediaUpload(asset.id, actorId)).rejects.toThrow(
+      /Only incomplete uploads/,
+    );
+    await expect(
+      setMediaLifecycle(asset.id, "approved", actorId),
+    ).rejects.toThrow(/Archived assets cannot be reviewed/);
   });
 
   it("keeps audio exact-locale and approved-only", async () => {

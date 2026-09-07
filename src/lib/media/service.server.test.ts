@@ -8,6 +8,7 @@ vi.mock("server-only", () => ({}));
 const {
   createMediaUploadRecord,
   attachMedia,
+  cancelMediaUpload,
   detachMedia,
   finalizeMediaAsset,
   getCmsPlace,
@@ -15,17 +16,20 @@ const {
   getMediaAttachment,
   requireAdminCapability,
   requireCityCapability,
+  markMediaObjectDeleted,
   setMediaLifecycle,
 } = vi.hoisted(() => ({
   requireCityCapability: vi.fn(),
   requireAdminCapability: vi.fn(),
   createMediaUploadRecord: vi.fn(),
   attachMedia: vi.fn(),
+  cancelMediaUpload: vi.fn(),
   detachMedia: vi.fn(),
   getCmsPlace: vi.fn(),
   getMediaAsset: vi.fn(),
   getMediaAttachment: vi.fn(),
   finalizeMediaAsset: vi.fn(),
+  markMediaObjectDeleted: vi.fn(),
   setMediaLifecycle: vi.fn(),
 }));
 
@@ -40,6 +44,7 @@ vi.mock("@/lib/admin/content/repository.server", () => ({
 }));
 vi.mock("@/lib/media/repository.server", () => ({
   attachMedia,
+  cancelMediaUpload,
   createExternalVideoRecord: vi.fn(),
   createMediaUploadRecord,
   detachMedia,
@@ -51,17 +56,19 @@ vi.mock("@/lib/media/repository.server", () => ({
   listMediaAssets: vi.fn(),
   listStaleUploadingAssets: vi.fn(),
   markStaleUploadArchived: vi.fn(),
-  markMediaObjectDeleted: vi.fn(),
+  markMediaObjectDeleted,
   prepareMediaObjectDeletion: vi.fn(),
   setMediaLifecycle,
 }));
 
 import {
   attachAuthorizedMedia,
+  cancelAuthorizedMediaUpload,
   createAuthorizedUploadIntent,
   detachAuthorizedMedia,
   finalizeAuthorizedUpload,
   reviewAuthorizedMediaAsset,
+  retryAuthorizedUploadFinalize,
 } from "@/lib/media/service.server";
 import { FakeMediaObjectStore } from "@/lib/media/testing/fakeObjectStore";
 
@@ -126,6 +133,152 @@ describe("media service", () => {
     getMediaAsset.mockResolvedValue({ id: 19, cityId: 7, approvalStatus: "pending_review" });
     await expect(finalizeAuthorizedUpload(19, store)).resolves.toEqual({ assetId: 19, status: "pending_review" });
     expect(finalizeMediaAsset).toHaveBeenCalledTimes(1);
+  });
+
+  it("retries finalize through the verified upload path", async () => {
+    const store = new FakeMediaObjectStore();
+    store.seedObject("media/id/original.jpg", {
+      bytes: Uint8Array.from([0xff, 0xd8, 0xff]),
+      contentType: "image/jpeg",
+      checksumSha256: "checksum",
+    });
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 7,
+      kind: "image",
+      sourceType: "upload",
+      objectKey: "media/id/original.jpg",
+      mimeType: "image/jpeg",
+      expectedSizeBytes: 3,
+      approvalStatus: "uploading",
+    });
+    finalizeMediaAsset.mockResolvedValue({
+      id: 19,
+      approvalStatus: "pending_review",
+    });
+
+    await expect(retryAuthorizedUploadFinalize(19, store)).resolves.toEqual({
+      assetId: 19,
+      status: "pending_review",
+    });
+    expect(finalizeMediaAsset).toHaveBeenCalledWith(
+      19,
+      expect.objectContaining({ sizeBytes: 3, checksumSha256: "checksum" }),
+      "actor-1",
+    );
+  });
+
+  it("returns a recoverable retry error when the uploaded object is missing", async () => {
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 7,
+      kind: "image",
+      sourceType: "upload",
+      objectKey: "media/id/missing.jpg",
+      mimeType: "image/jpeg",
+      expectedSizeBytes: 3,
+      approvalStatus: "uploading",
+    });
+
+    await expect(
+      retryAuthorizedUploadFinalize(19, new FakeMediaObjectStore()),
+    ).rejects.toThrow(/Cancel this upload and upload the file again/);
+    expect(finalizeMediaAsset).not.toHaveBeenCalled();
+  });
+
+  it("rejects retry finalize outside the uploading state", async () => {
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 7,
+      sourceType: "upload",
+      approvalStatus: "pending_review",
+    });
+
+    await expect(
+      retryAuthorizedUploadFinalize(19, new FakeMediaObjectStore()),
+    ).rejects.toThrow(/Only incomplete uploads/);
+  });
+
+  it("cancels an upload and deletes its stored object", async () => {
+    const store = new FakeMediaObjectStore();
+    store.seedObject("media/id/original.jpg", {
+      bytes: Uint8Array.from([0xff, 0xd8, 0xff]),
+      contentType: "image/jpeg",
+    });
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 7,
+      sourceType: "upload",
+      approvalStatus: "uploading",
+    });
+    cancelMediaUpload.mockResolvedValue({
+      id: 19,
+      objectKey: "media/id/original.jpg",
+      approvalStatus: "archived",
+    });
+    markMediaObjectDeleted.mockResolvedValue({
+      id: 19,
+      objectKey: null,
+      approvalStatus: "archived",
+    });
+
+    await expect(cancelAuthorizedMediaUpload(19, store)).resolves.toEqual({
+      assetId: 19,
+      status: "archived",
+    });
+    expect(store.deletedKeys).toEqual(["media/id/original.jpg"]);
+    expect(markMediaObjectDeleted).toHaveBeenCalledWith(
+      19,
+      "media/id/original.jpg",
+      "actor-1",
+    );
+  });
+
+  it("cancels safely when the stored object is already absent", async () => {
+    const store = new FakeMediaObjectStore();
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 7,
+      sourceType: "upload",
+      approvalStatus: "uploading",
+    });
+    cancelMediaUpload.mockResolvedValue({
+      id: 19,
+      objectKey: "media/id/missing.jpg",
+      approvalStatus: "archived",
+    });
+    markMediaObjectDeleted.mockResolvedValue({
+      id: 19,
+      objectKey: null,
+      approvalStatus: "archived",
+    });
+
+    await expect(cancelAuthorizedMediaUpload(19, store)).resolves.toEqual({
+      assetId: 19,
+      status: "archived",
+    });
+    expect(store.deletedKeys).toEqual([]);
+    expect(markMediaObjectDeleted).toHaveBeenCalledWith(
+      19,
+      "media/id/missing.jpg",
+      "actor-1",
+    );
+  });
+
+  it("checks city-scoped media management before cancelling", async () => {
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 99,
+      sourceType: "upload",
+      approvalStatus: "uploading",
+    });
+    requireCityCapability.mockRejectedValue(new Error("FORBIDDEN"));
+
+    await expect(
+      cancelAuthorizedMediaUpload(19, new FakeMediaObjectStore()),
+    ).rejects.toThrow("FORBIDDEN");
+    expect(cancelMediaUpload).not.toHaveBeenCalled();
+    expect(markMediaObjectDeleted).not.toHaveBeenCalled();
   });
 
   it("persists actual audio duration derived from the uploaded object", async () => {

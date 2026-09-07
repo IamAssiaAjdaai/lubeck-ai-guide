@@ -32,7 +32,7 @@ export default async function MediaDetailPage({ params, searchParams }: Readonly
     <div className="mt-6 flex flex-wrap gap-3">
       {canApprove && asset.approvalStatus !== "uploading" && asset.approvalStatus !== "archived" ? <form action={reviewMediaAction.bind(null, id, "approved")}><button className="button-primary min-h-11 px-4" type="submit">Approve</button></form> : null}
       {canReview && asset.approvalStatus !== "uploading" && asset.approvalStatus !== "archived" ? <form action={reviewMediaAction.bind(null, id, "rejected")}><button className="button-secondary min-h-11 px-4" type="submit">Reject</button></form> : null}
-      {canManage && asset.approvalStatus !== "archived" ? <form action={archiveMediaAction.bind(null, id)}><button className="min-h-11 rounded-xl border border-red-200 px-4 text-sm font-bold text-red-700" type="submit">Archive asset</button></form> : null}
+      {canManage && asset.approvalStatus !== "archived" ? <form action={archiveMediaAction.bind(null, id)}><ConfirmSubmitButton className="min-h-11 rounded-xl border border-red-200 px-4 text-sm font-bold text-red-700" confirmation="Archive this unreferenced media asset?">Archive asset</ConfirmSubmitButton></form> : null}
       {canManage && asset.approvalStatus === "archived" && asset.objectKey ? <form action={deleteMediaObjectAction.bind(null, id)}><ConfirmSubmitButton className="min-h-11 rounded-xl border border-red-300 px-4 text-sm font-bold text-red-800" confirmation="Permanently delete this unreferenced stored object? The asset metadata will remain archived.">Delete stored object</ConfirmSubmitButton></form> : null}
     </div>
   </section>;
