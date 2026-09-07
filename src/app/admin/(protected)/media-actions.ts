@@ -46,7 +46,7 @@ export async function reviewMediaAction(
   try {
     await reviewAuthorizedMediaAsset(id, status);
     revalidatePath("/admin/media");
-    destination += "?saved=1";
+    destination = `/admin/media?status=${status}&saved=1`;
   } catch (error) {
     destination += `?error=${encodeURIComponent(mediaActionError(error))}`;
   }
