@@ -15,6 +15,10 @@ import {
   getCmsTour,
 } from "@/lib/admin/content/repository.server";
 import { isLocale } from "@/lib/i18n";
+import {
+  extractAudioDurationSeconds,
+  type AudioDurationExtractor,
+} from "@/lib/media/audioMetadata.server";
 import { parseExternalVideoUrl } from "@/lib/media/externalVideo";
 import {
   validateMediaPurpose,
@@ -82,6 +86,7 @@ export async function createAuthorizedUploadIntent(
 export async function finalizeAuthorizedUpload(
   assetId: number,
   store: MediaObjectStore = getMediaObjectStore(),
+  extractDuration: AudioDurationExtractor = extractAudioDurationSeconds,
 ) {
   const asset = await getRequiredMediaAsset(assetId);
   const context = await requireCityCapability(asset.cityId, "media:manage");
@@ -106,16 +111,40 @@ export async function finalizeAuthorizedUpload(
       initialBytes,
     },
   );
+  const durationSeconds =
+    asset.kind === "audio"
+      ? await safelyExtractAudioDuration(extractDuration, {
+          store,
+          objectKey: asset.objectKey,
+          mimeType: asset.mimeType,
+          sizeBytes: metadata.sizeBytes,
+        })
+      : undefined;
   const updated = await finalizeMediaAsset(
     asset.id,
     {
       sizeBytes: metadata.sizeBytes,
       mimeType: asset.mimeType,
       checksumSha256: metadata.checksumSha256,
+      ...(durationSeconds !== undefined ? { durationSeconds } : {}),
     },
     context.user.id,
   );
   return { assetId: updated.id, status: updated.approvalStatus };
+}
+
+async function safelyExtractAudioDuration(
+  extractDuration: AudioDurationExtractor,
+  input: Parameters<AudioDurationExtractor>[0],
+): Promise<number | undefined> {
+  try {
+    const durationSeconds = await extractDuration(input);
+    return Number.isFinite(durationSeconds) && (durationSeconds ?? 0) > 0
+      ? durationSeconds
+      : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 export async function createAuthorizedExternalVideo(input: Readonly<{

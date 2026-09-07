@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, lt, ne, or, sql } from "drizzle-orm";
+import { and, asc, eq, isNotNull, isNull, lt, ne, or, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -37,6 +37,11 @@ export type CreateUploadRecordInput = UploadIntentInput &
     storageProvider: string;
     uploadExpiresAt: Date;
   }>;
+
+export type AudioDurationBackfillAsset = Pick<
+  MediaAssetRow,
+  "id" | "kind" | "sourceType" | "objectKey" | "mimeType" | "durationSeconds"
+>;
 
 export type CreateExternalVideoInput = Readonly<{
   assetKey: string;
@@ -146,18 +151,28 @@ export async function finalizeMediaAsset(
     sizeBytes: number;
     mimeType: string;
     checksumSha256?: string;
+    durationSeconds?: number;
   }>,
   actorId: string,
 ) {
   return getDb().transaction(async (tx) => {
     const asset = await lockMediaAsset(tx, id);
     if (asset.approvalStatus !== "uploading") return asset;
+    if (
+      values.durationSeconds !== undefined &&
+      (asset.kind !== "audio" ||
+        !Number.isFinite(values.durationSeconds) ||
+        values.durationSeconds <= 0)
+    ) {
+      throw new MediaIntegrityError("Audio duration metadata is invalid.");
+    }
     const [updated] = await tx
       .update(mediaAssetsTable)
       .set({
         sizeBytes: values.sizeBytes,
         mimeType: values.mimeType,
         checksumSha256: values.checksumSha256,
+        durationSeconds: values.durationSeconds,
         approvalStatus: "pending_review",
         uploadExpiresAt: null,
         updatedByUserId: actorId,
@@ -172,6 +187,46 @@ export async function finalizeMediaAsset(
       .returning();
     return updated ?? asset;
   });
+}
+
+export async function listMediaAssetsForAudioDurationBackfill(): Promise<
+  readonly AudioDurationBackfillAsset[]
+> {
+  return getDb()
+    .select({
+      id: mediaAssetsTable.id,
+      kind: mediaAssetsTable.kind,
+      sourceType: mediaAssetsTable.sourceType,
+      objectKey: mediaAssetsTable.objectKey,
+      mimeType: mediaAssetsTable.mimeType,
+      durationSeconds: mediaAssetsTable.durationSeconds,
+    })
+    .from(mediaAssetsTable)
+    .orderBy(asc(mediaAssetsTable.id));
+}
+
+export async function setMediaAssetDurationIfMissing(
+  id: number,
+  durationSeconds: number,
+): Promise<boolean> {
+  if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
+    throw new MediaIntegrityError("Audio duration metadata is invalid.");
+  }
+
+  const [updated] = await getDb()
+    .update(mediaAssetsTable)
+    .set({ durationSeconds, updatedAt: new Date() })
+    .where(
+      and(
+        eq(mediaAssetsTable.id, id),
+        eq(mediaAssetsTable.kind, "audio"),
+        eq(mediaAssetsTable.sourceType, "upload"),
+        isNotNull(mediaAssetsTable.objectKey),
+        isNull(mediaAssetsTable.durationSeconds),
+      ),
+    )
+    .returning({ id: mediaAssetsTable.id });
+  return updated !== undefined;
 }
 
 export async function setMediaLifecycle(

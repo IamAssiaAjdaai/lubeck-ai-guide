@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
@@ -123,6 +126,104 @@ describe("media service", () => {
     getMediaAsset.mockResolvedValue({ id: 19, cityId: 7, approvalStatus: "pending_review" });
     await expect(finalizeAuthorizedUpload(19, store)).resolves.toEqual({ assetId: 19, status: "pending_review" });
     expect(finalizeMediaAsset).toHaveBeenCalledTimes(1);
+  });
+
+  it("persists actual audio duration derived from the uploaded object", async () => {
+    const store = new FakeMediaObjectStore();
+    const bytes = new Uint8Array(
+      await readFile(resolve(process.cwd(), "public/audio/holstentor-de.mp3")),
+    );
+    store.seedObject("media/id/story-en.mp3", {
+      bytes,
+      contentType: "audio/mpeg",
+      checksumSha256: "checksum",
+    });
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 7,
+      kind: "audio",
+      sourceType: "upload",
+      objectKey: "media/id/story-en.mp3",
+      mimeType: "audio/mpeg",
+      expectedSizeBytes: bytes.byteLength,
+      approvalStatus: "uploading",
+    });
+    finalizeMediaAsset.mockResolvedValue({ id: 19, approvalStatus: "pending_review" });
+
+    await finalizeAuthorizedUpload(19, store);
+
+    expect(finalizeMediaAsset).toHaveBeenCalledWith(
+      19,
+      expect.objectContaining({ durationSeconds: expect.any(Number) }),
+      "actor-1",
+    );
+    expect(finalizeMediaAsset.mock.calls[0]?.[1]?.durationSeconds).toBeCloseTo(
+      72.744,
+      3,
+    );
+  });
+
+  it("finalizes safely without fabricated duration when extraction fails", async () => {
+    const store = new FakeMediaObjectStore();
+    const bytes = Uint8Array.from([0x49, 0x44, 0x33]);
+    store.seedObject("media/id/story-en.mp3", {
+      bytes,
+      contentType: "audio/mpeg",
+    });
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 7,
+      kind: "audio",
+      sourceType: "upload",
+      objectKey: "media/id/story-en.mp3",
+      mimeType: "audio/mpeg",
+      expectedSizeBytes: bytes.byteLength,
+      approvalStatus: "uploading",
+    });
+    finalizeMediaAsset.mockResolvedValue({ id: 19, approvalStatus: "pending_review" });
+
+    await expect(
+      finalizeAuthorizedUpload(
+        19,
+        store,
+        vi.fn().mockRejectedValue(new Error("unsupported audio")),
+      ),
+    ).resolves.toEqual({ assetId: 19, status: "pending_review" });
+    expect(finalizeMediaAsset).toHaveBeenCalledWith(
+      19,
+      expect.not.objectContaining({ durationSeconds: expect.anything() }),
+      "actor-1",
+    );
+  });
+
+  it("does not inspect duration for non-audio uploads", async () => {
+    const store = new FakeMediaObjectStore();
+    const bytes = Uint8Array.from([0xff, 0xd8, 0xff]);
+    store.seedObject("media/id/original.jpg", {
+      bytes,
+      contentType: "image/jpeg",
+    });
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 7,
+      kind: "image",
+      sourceType: "upload",
+      objectKey: "media/id/original.jpg",
+      mimeType: "image/jpeg",
+      expectedSizeBytes: bytes.byteLength,
+      approvalStatus: "uploading",
+    });
+    finalizeMediaAsset.mockResolvedValue({ id: 19, approvalStatus: "pending_review" });
+    const extractDuration = vi.fn();
+
+    await finalizeAuthorizedUpload(19, store, extractDuration);
+
+    expect(extractDuration).not.toHaveBeenCalled();
+    expect(finalizeMediaAsset).toHaveBeenCalledWith(
+      19,
+      expect.not.objectContaining({ durationSeconds: expect.anything() }),
+      "actor-1",
+    );
   });
 
   it("lets a reviewer approve and reject without granting media management", async () => {

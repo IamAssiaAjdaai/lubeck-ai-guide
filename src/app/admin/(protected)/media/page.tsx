@@ -8,7 +8,7 @@ import { listAuthorizedMediaAssets } from "@/lib/media/service.server";
 import type { MediaKind } from "@/lib/media/types";
 
 export default async function MediaLibraryPage({ searchParams }: Readonly<{
-  searchParams: Promise<{ error?: string; q?: string; kind?: string; status?: string; locale?: string; city?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; q?: string; kind?: string; status?: string; locale?: string; city?: string }>;
 }>) {
   const query = await searchParams;
   const authorizedAssets = await listAuthorizedMediaAssets();
@@ -21,7 +21,7 @@ export default async function MediaLibraryPage({ searchParams }: Readonly<{
   const cityIds = [...new Set(authorizedAssets.map(({ cityId }) => cityId))].sort((a, b) => a - b);
   return <section>
     <AdminPageHeader actionHref="/admin/media/new" actionLabel="Upload media" description="Upload, verify, review, and reuse immutable media assets without committing binaries to Git." eyebrow="Content" title="Media library" />
-    <AdminNotice error={query.error} />
+    <AdminNotice error={query.error} saved={query.saved} />
     <form className="surface-card mt-6 grid gap-3 p-4 sm:grid-cols-3 xl:grid-cols-6">
       <input aria-label="Search media" className={inputClass} defaultValue={query.q} name="q" placeholder="Filename or asset key" />
       <select aria-label="Kind filter" className={inputClass} defaultValue={query.kind} name="kind"><option value="">All kinds</option><option>image</option><option>audio</option><option>video</option><option>document</option></select>

@@ -20,6 +20,7 @@
     "cms:import-lubeck": "tsx scripts/import-lubeck-cms.ts",
     "cms:test:integration": "tsx scripts/run-cms-integration-tests.ts",
     "media:test:integration": "tsx scripts/run-media-integration-tests.ts",
+    "media:backfill-audio-duration": "node --conditions=react-server --import tsx scripts/backfill-audio-duration.ts",
     "admin:create-super": "tsx scripts/create-super-admin.ts"
   },
   "dependencies": {
@@ -33,6 +34,7 @@
     "groq-sdk": "^1.6.0",
     "lucide-react": "^1.39.0",
     "maplibre-gl": "^6.7.0",
+    "music-metadata": "^11.15.0",
     "next": "16.3.4",
     "openai": "^7.9.0",
     "pg": "^8.23.0",
