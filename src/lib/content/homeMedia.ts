@@ -6,8 +6,8 @@ export function resolveFeaturedCityImage(
   source: ContentSource,
   media: readonly PublicMedia[] | undefined,
   locale: Locale,
-  legacyImage: string,
-): string {
+  legacyImage?: string,
+): string | undefined {
   if (source === "code") return legacyImage;
   return (
     findImage(media, "card", locale)?.url ??

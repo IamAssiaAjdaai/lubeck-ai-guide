@@ -10,6 +10,7 @@ const englishCmsAudio: PublicMedia = {
   locale: "en",
   url: "/api/media/english-audio",
   mimeType: "audio/mpeg",
+  durationSeconds: 97,
 };
 
 describe("landmark page audio resolution", () => {
@@ -22,7 +23,7 @@ describe("landmark page audio resolution", () => {
           "en",
           "/audio/legacy-en.mp3",
         ),
-      ).toBe(englishCmsAudio.url);
+      ).toEqual({ src: englishCmsAudio.url, durationSeconds: 97 });
     }
   });
 
@@ -36,7 +37,7 @@ describe("landmark page audio resolution", () => {
           locale,
           `/audio/legacy-${locale}.mp3`,
         ),
-      ).toBe(`/audio/legacy-${locale}.mp3`);
+      ).toEqual({ src: `/audio/legacy-${locale}.mp3` });
     },
   );
 
@@ -65,7 +66,7 @@ describe("landmark page audio resolution", () => {
         "en",
         "/audio/legacy-en.mp3",
       ),
-    ).toBe("/audio/legacy-en.mp3");
+    ).toEqual({ src: "/audio/legacy-en.mp3" });
   });
 
   it("uses exact-locale legacy fallback when CMS audio is missing", () => {
@@ -76,7 +77,7 @@ describe("landmark page audio resolution", () => {
         "fr",
         "/audio/legacy-fr.mp3",
       ),
-    ).toBe("/audio/legacy-fr.mp3");
+    ).toEqual({ src: "/audio/legacy-fr.mp3" });
   });
 
   it("keeps code source legacy-only", () => {
@@ -87,6 +88,31 @@ describe("landmark page audio resolution", () => {
         "en",
         "/audio/legacy-en.mp3",
       ),
-    ).toBe("/audio/legacy-en.mp3");
+    ).toEqual({ src: "/audio/legacy-en.mp3" });
+  });
+
+  it.each([undefined, 0, -1, Number.NaN, Infinity])(
+    "omits unreliable CMS duration metadata: %s",
+    (durationSeconds) => {
+      expect(
+        resolveLandmarkPageAudio(
+          "database",
+          [{ ...englishCmsAudio, durationSeconds }],
+          "en",
+          "/audio/legacy-en.mp3",
+        ),
+      ).toEqual({ src: englishCmsAudio.url });
+    },
+  );
+
+  it("does not attach CMS duration metadata to a selected legacy fallback", () => {
+    expect(
+      resolveLandmarkPageAudio(
+        "database",
+        [englishCmsAudio],
+        "de",
+        "/audio/legacy-de.mp3",
+      ),
+    ).toEqual({ src: "/audio/legacy-de.mp3" });
   });
 });

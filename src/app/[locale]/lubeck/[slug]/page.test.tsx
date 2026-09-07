@@ -17,11 +17,15 @@ const {
   connection,
   getContentSource,
   getPublicCitySnapshot,
+  trackLandmarkView,
+  askGuide,
 } = vi.hoisted(() => ({
   audioPlayer: vi.fn(),
   connection: vi.fn(),
   getContentSource: vi.fn(),
   getPublicCitySnapshot: vi.fn(),
+  trackLandmarkView: vi.fn(),
+  askGuide: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -39,8 +43,8 @@ vi.mock("@/lib/content/publicRepository.server", () => ({
 }));
 
 vi.mock("next/image", () => ({
-  default: ({ alt }: { alt: string }) => (
-    <div role="img" aria-label={alt} />
+  default: ({ alt, src }: { alt: string; src: string }) => (
+    <div role="img" aria-label={alt} data-src={src} />
   ),
 }));
 
@@ -48,10 +52,13 @@ vi.mock("next/link", () => ({
   default: ({
     children,
     href,
+    ...props
   }: {
     children: React.ReactNode;
     href: string;
-  }) => <a href={href}>{children}</a>,
+  } & React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+    <a href={href} {...props}>{children}</a>
+  ),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -69,11 +76,17 @@ vi.mock("@/components/AudioPlayer", () => ({
 }));
 
 vi.mock("@/components/AskGuide", () => ({
-  default: () => null,
+  default: (props: Record<string, unknown>) => {
+    askGuide(props);
+    return <div data-testid="ask-guide" />;
+  },
 }));
 
 vi.mock("@/components/TrackLandmarkView", () => ({
-  default: () => null,
+  default: (props: Record<string, unknown>) => {
+    trackLandmarkView(props);
+    return null;
+  },
 }));
 
 vi.mock("@/components/TrackedLink", () => ({
@@ -86,7 +99,9 @@ vi.mock("@/components/TrackedLink", () => ({
   }) => <a href={href}>{children}</a>,
 }));
 
-import LandmarkPage from "@/app/[locale]/lubeck/[slug]/page";
+import LandmarkPage, {
+  generateStaticParams,
+} from "@/app/[locale]/lubeck/[slug]/page";
 import { lubeckPlaces } from "@/data/places";
 import type { PublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { getTranslations } from "@/lib/i18n";
@@ -98,6 +113,7 @@ const cmsEnglishAudio: PublicMedia = {
   purpose: "audio",
   url: "/api/media/lubeck%2Fplaces%2Fholstentor%2Faudio%2Fen%2Fapproved.mp3",
   mimeType: "audio/mpeg",
+  durationSeconds: 97,
   locale: "en",
 };
 
@@ -178,6 +194,48 @@ describe("LandmarkPage audio", () => {
     );
   });
 
+  it.each([
+    [38, "0:38"],
+    [87, "1:27"],
+    [124, "2:04"],
+  ] as const)("renders selected CMS audio duration %s as %s", async (durationSeconds, expected) => {
+    getContentSource.mockReturnValue("database");
+    getPublicCitySnapshot.mockResolvedValue(
+      createSnapshot({ holstentor: [{ ...cmsEnglishAudio, durationSeconds }] }),
+    );
+
+    render(
+      await LandmarkPage({
+        params: Promise.resolve({ locale: "en", slug: "holstentor" }),
+      }),
+    );
+
+    expect(screen.getByText(`Audio guide · ${expected}`)).not.toBeNull();
+  });
+
+  it("omits duration when the selected audio has no reliable metadata", async () => {
+    getContentSource.mockReturnValue("database");
+    getPublicCitySnapshot.mockResolvedValue(
+      createSnapshot({
+        holstentor: [{ ...cmsEnglishAudio, durationSeconds: undefined }],
+      }),
+    );
+
+    render(
+      await LandmarkPage({
+        params: Promise.resolve({ locale: "en", slug: "holstentor" }),
+      }),
+    );
+
+    expect(audioPlayer).toHaveBeenCalledWith(
+      expect.objectContaining({ src: cmsEnglishAudio.url }),
+    );
+    expect(screen.getByText("Audio guide")).not.toBeNull();
+    expect(screen.queryByText(/Audio guide ·/)).toBeNull();
+    expect(screen.queryByText("2 min")).toBeNull();
+    expect(screen.queryByText("30 min")).toBeNull();
+  });
+
   it("passes eligible exact-locale CMS audio to AudioPlayer", async () => {
     getContentSource.mockReturnValue("database");
     getPublicCitySnapshot.mockResolvedValue(
@@ -202,6 +260,7 @@ describe("LandmarkPage audio", () => {
         landmark: "holstentor",
       }),
     );
+    expect(screen.getByText("Audio guide · 1:37")).not.toBeNull();
   });
 
   it.each(["de", "ar"] as const)(
@@ -280,5 +339,104 @@ describe("LandmarkPage audio", () => {
         locale: "en",
       }),
     );
+  });
+
+  it("keeps canonical tour progress, tracking, and AI context unchanged", async () => {
+    render(
+      await LandmarkPage({
+        params: Promise.resolve({
+          locale: "en",
+          slug: "holstentor",
+        }),
+      }),
+    );
+
+    expect(screen.getByText("Stop 1 of 5")).not.toBeNull();
+    expect(
+      screen.getByRole("link", { name: /Next Stop/i }).getAttribute("href"),
+    ).toBe("/en/lubeck/marienkirche");
+    expect(trackLandmarkView).toHaveBeenCalledWith(
+      expect.objectContaining({
+        landmark: "holstentor",
+        stopNumber: 1,
+      }),
+    );
+    expect(askGuide).toHaveBeenCalledWith(
+      expect.objectContaining({ landmark: "holstentor" }),
+    );
+  });
+
+  it("renders a simple non-tour place detail without tour-only behavior or fake audio", async () => {
+    render(
+      await LandmarkPage({
+        params: Promise.resolve({
+          locale: "en",
+          slug: "cafe-niederegger",
+        }),
+      }),
+    );
+
+    expect(
+      screen.getByRole("heading", { name: /Café Niederegger/i }),
+    ).not.toBeNull();
+    expect(screen.getByText("Eat")).not.toBeNull();
+    expect(screen.queryByTestId("audio-player")).toBeNull();
+    expect(screen.queryByTestId("ask-guide")).toBeNull();
+    expect(screen.queryByText(/Stop 1 of 5/i)).toBeNull();
+    expect(trackLandmarkView).not.toHaveBeenCalled();
+    expect(askGuide).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("link", { name: "Back" }).getAttribute("href"),
+    ).toBe("/en/lubeck");
+  });
+
+  it("uses CMS place imagery on non-tour details without changing RTL navigation", async () => {
+    const cmsImage: PublicMedia = {
+      assetKey: "place-hero",
+      kind: "image",
+      purpose: "hero",
+      url: "/api/media/place-hero",
+      mimeType: "image/jpeg",
+    };
+    getContentSource.mockReturnValue("database");
+    getPublicCitySnapshot.mockResolvedValue(
+      createSnapshot({ "cafe-niederegger": [cmsImage] }),
+    );
+
+    render(
+      await LandmarkPage({
+        params: Promise.resolve({
+          locale: "ar",
+          slug: "cafe-niederegger",
+        }),
+      }),
+    );
+
+    expect(
+      screen.getByRole("img").getAttribute("data-src"),
+    ).toBe(cmsImage.url);
+    const heading = screen.getByRole("heading", {
+      name: /Café Niederegger/i,
+    });
+    expect(heading.getAttribute("lang")).toBe("en");
+    expect(heading.getAttribute("dir")).toBe("ltr");
+    const backLink = screen.getByRole("link", {
+      name: getTranslations("ar").common.back,
+    });
+    expect(backLink.closest("main")?.getAttribute("dir")).toBe("rtl");
+    expect(backLink.querySelector(".lucide-arrow-right")).not.toBeNull();
+  });
+
+  it("prepares static params for all 25 code-catalog places", () => {
+    const params = generateStaticParams();
+
+    expect(params).toHaveLength(27 * 25);
+    expect(
+      params.filter(({ locale }) => locale === "en"),
+    ).toHaveLength(25);
+    expect(params).toContainEqual({
+      locale: "en",
+      slug: "cafe-niederegger",
+    });
   });
 });

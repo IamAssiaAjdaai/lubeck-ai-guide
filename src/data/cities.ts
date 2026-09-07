@@ -12,10 +12,4 @@ export const cities = {
 
 export const brandHeroImage = "/images/citywalk-hero.png";
 
-export const upcomingCities = [
-  { slug: "barcelona", name: "Barcelona" },
-  { slug: "amsterdam", name: "Amsterdam" },
-  { slug: "paris", name: "Paris" },
-] as const;
-
 export type CitySlug = keyof typeof cities;

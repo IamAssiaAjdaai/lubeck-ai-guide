@@ -5,14 +5,24 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
-import { ArrowLeft, ArrowRight, CircleCheckBig, Headphones } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CircleCheckBig,
+  Clock3,
+  Gem,
+  Headphones,
+  MapPin,
+} from "lucide-react";
 import TrackLandmarkView from "@/components/TrackLandmarkView";
 import AudioPlayer from "@/components/AudioPlayer";
 import TrackedLink from "@/components/TrackedLink";
 import AskGuide from "@/components/AskGuide";
 import {
   getPlaceDurationLabel,
+  HIDDEN_GEM_TAG,
   lubeckLandmarks as landmarks,
+  lubeckPlaces,
   resolvePlaceContent,
 } from "@/data/places";
 import {
@@ -27,7 +37,9 @@ import {
 } from "@/lib/i18n";
 import { getContentSource } from "@/lib/content/source";
 import { resolveLandmarkPageAudio } from "@/lib/content/landmarkAudio";
+import { resolvePlaceImage } from "@/lib/content/placeMedia";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
+import { formatTime } from "@/lib/formatTime";
 
 type LandmarkPageProps = {
   params: Promise<{
@@ -44,13 +56,13 @@ type LandmarkPageProps = {
  * /fr/lubeck/holstentor
  * /ar/lubeck/holstentor
  *
- * ...and the same for every landmark.
+ * ...and the same for every published code-catalog place.
  */
 export function generateStaticParams() {
   return locales.flatMap((locale) =>
-    landmarks.map((landmark) => ({
+    lubeckPlaces.map((place) => ({
       locale,
-      slug: landmark.slug,
+      slug: place.slug,
     }))
   );
 }
@@ -73,16 +85,10 @@ export default async function LandmarkPage({
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
   const NextIcon = direction === "rtl" ? ArrowLeft : ArrowRight;
 
-  /*
-   * Find current landmark
-   */
   const currentIndex = landmarks.findIndex(
     (landmark) => landmark.slug === slug
   );
-
-  if (currentIndex === -1) {
-    notFound();
-  }
+  const isTourLandmark = currentIndex >= 0;
 
   const contentSource = getContentSource();
   if (contentSource !== "code") await connection();
@@ -106,7 +112,9 @@ export default async function LandmarkPage({
   const contentDirection = getDirection(actualLocale);
 
   const name = content.name;
-  const duration = getPlaceDurationLabel(landmark, currentLocale);
+  const visitDuration = isTourLandmark
+    ? undefined
+    : getPlaceDurationLabel(landmark, currentLocale);
   const description = content.description ?? content.shortDescription;
   const story = content.story;
   const legacyAudio = getLandmarkAudio(
@@ -119,19 +127,32 @@ export default async function LandmarkPage({
     currentLocale,
     legacyAudio,
   );
+  const audioDuration = audio?.durationSeconds === undefined
+    ? undefined
+    : formatTime(audio.durationSeconds);
   const facts = content.facts ?? [];
-  const image = landmark.image;
+  const image = resolvePlaceImage(
+    contentSource,
+    snapshot.media?.places[landmark.slug],
+    currentLocale,
+    landmark.image,
+    "detail",
+  );
+  const isHiddenGem = landmark.tags.includes(HIDDEN_GEM_TAG);
 
   /*
    * Find next landmark
    */
-  const nextLandmark = landmarks[currentIndex + 1];
+  const nextLandmark = isTourLandmark
+    ? landmarks[currentIndex + 1]
+    : undefined;
 
   /*
    * Calculate tour progress
    */
-  const progress =
-    ((currentIndex + 1) / landmarks.length) * 100;
+  const progress = isTourLandmark
+    ? ((currentIndex + 1) / landmarks.length) * 100
+    : 0;
 
   return (
     <main
@@ -142,13 +163,15 @@ export default async function LandmarkPage({
       <section className="content-container py-7 sm:py-10">
         {/* Navigation */}
         <div className="flex items-center justify-between">
-          <TrackLandmarkView
-            tourId={LUBECK_HISTORIC_TOUR_ID}
-            city="lubeck"
-            landmark={landmark.slug}
-            locale={currentLocale}
-            stopNumber={currentIndex + 1}
-          />
+          {isTourLandmark ? (
+            <TrackLandmarkView
+              tourId={LUBECK_HISTORIC_TOUR_ID}
+              city="lubeck"
+              landmark={landmark.slug}
+              locale={currentLocale}
+              stopNumber={currentIndex + 1}
+            />
+          ) : null}
           <Link
             href={`/${currentLocale}/lubeck`}
             aria-label={t.common.back}
@@ -157,23 +180,27 @@ export default async function LandmarkPage({
             <BackIcon aria-hidden="true" size={19} strokeWidth={1.8} />
           </Link>
 
-          <span className="text-[13px] font-medium text-text-secondary">
-            {formatMessage(t.landmark.stopProgress, {
-              current: currentIndex + 1,
-              total: landmarks.length,
-            })}
-          </span>
+          {isTourLandmark ? (
+            <span className="text-[13px] font-medium text-text-secondary">
+              {formatMessage(t.landmark.stopProgress, {
+                current: currentIndex + 1,
+                total: landmarks.length,
+              })}
+            </span>
+          ) : null}
         </div>
 
         {/* Tour progress */}
-        <div className="mt-3 h-1 overflow-hidden rounded-full bg-border">
-          <div
-            className="h-full rounded-full bg-accent transition-all"
-            style={{
-              width: `${progress}%`,
-            }}
-          />
-        </div>
+        {isTourLandmark ? (
+          <div className="mt-3 h-1 overflow-hidden rounded-full bg-border">
+            <div
+              className="h-full rounded-full bg-accent transition-all"
+              style={{
+                width: `${progress}%`,
+              }}
+            />
+          </div>
+        ) : null}
 
         {/* Landmark image */}
         {image ? (
@@ -182,28 +209,69 @@ export default async function LandmarkPage({
               src={image}
               alt={name}
               fill
-              priority={currentIndex === 0}
+              priority={isTourLandmark && currentIndex === 0}
               sizes="(max-width: 448px) 100vw, 448px"
               className="object-cover"
             />
           </div>
-        ) : (
-          <div className="mt-6 aspect-[4/3] w-full rounded-[var(--radius-lg)] bg-surface" />
-        )}
+        ) : null}
 
         {/* Landmark header */}
-        <div className="mt-6" lang={actualLocale} dir={contentDirection}>
+        <div className="mt-6">
+          {isTourLandmark ? (
           <p className="flex items-center gap-2 text-sm font-medium text-text-secondary">
-            <Headphones aria-hidden="true" size={17} strokeWidth={1.8} /> {t.landmark.audioGuide} · {duration}
+            <Headphones aria-hidden="true" size={17} strokeWidth={1.8} />
+            <span>
+              {t.landmark.audioGuide}
+              {audioDuration ? ` · ${audioDuration}` : ""}
+            </span>
           </p>
+          ) : (
+            <div className="flex flex-wrap items-center gap-2 text-sm font-medium text-text-secondary">
+              <p className="flex items-center gap-1.5">
+                <MapPin aria-hidden="true" size={16} strokeWidth={1.8} />
+                {t.placeCategories[landmark.category]}
+              </p>
+              <span aria-hidden="true">·</span>
+              <p className="flex items-center gap-1.5">
+                <Clock3 aria-hidden="true" size={16} strokeWidth={1.8} />
+                {visitDuration}
+              </p>
+            </div>
+          )}
 
-          <h1 className="mt-2 text-[2rem] font-bold leading-tight tracking-[-0.03em]">
+          <h1
+            lang={actualLocale}
+            dir={contentDirection}
+            className="mt-2 text-[2rem] font-bold leading-tight tracking-[-0.03em]"
+          >
             {name}
           </h1>
 
-          <p className="mt-3 text-base leading-7 text-text-secondary">
+          {isHiddenGem ? (
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
+              <Gem aria-hidden="true" size={14} strokeWidth={1.8} />
+              {t.tourPreferences["hidden-gems"]}
+            </span>
+          ) : null}
+
+          <p
+            lang={actualLocale}
+            dir={contentDirection}
+            className="mt-3 text-base leading-7 text-text-secondary"
+          >
             {description}
           </p>
+
+          {content.visitNote ? (
+            <p
+              lang={actualLocale}
+              dir={contentDirection}
+              className="mt-4 rounded-xl border border-border bg-surface p-4 text-sm leading-6 text-text-secondary"
+            >
+              {content.visitNote}
+            </p>
+          ) : null}
         </div>
 
         {/* Audio */}
@@ -213,7 +281,7 @@ export default async function LandmarkPage({
             className="mt-8 scroll-mt-6"
           >
             <AudioPlayer
-              src={audio}
+              src={audio.src}
               title={`${name} ${t.landmark.audioGuide}`}
               city="lubeck"
               landmark={landmark.slug}
@@ -224,7 +292,7 @@ export default async function LandmarkPage({
               unavailableLabel={t.landmark.audioUnavailable}
             />
           </div>
-        ) : (
+        ) : isTourLandmark ? (
           <div
             id="audio-guide"
             className="mt-7 scroll-mt-6 flex items-center gap-3 rounded-2xl bg-surface p-4 text-text-secondary"
@@ -240,7 +308,7 @@ export default async function LandmarkPage({
               {t.landmark.audioUnavailable}
             </p>
           </div>
-        )}
+        ) : null}
 
         {/* Story */}
         {story ? (
@@ -287,7 +355,8 @@ export default async function LandmarkPage({
         </section>
         ) : null}
 
-        {/* AI Guide */}
+        {/* AI Guide remains scoped to the verified canonical tour. */}
+        {isTourLandmark ? (
           <AskGuide
             tourId={LUBECK_HISTORIC_TOUR_ID}
             landmark={landmark.slug}
@@ -299,8 +368,10 @@ export default async function LandmarkPage({
             labels={t.ai}
             suggestions={[t.ai.suggestionFamous, t.ai.suggestionBuilt, t.ai.suggestionStory]}
           />
+        ) : null}
 
         {/* Next landmark / Finish */}
+        {isTourLandmark ? (
         <div className="sticky bottom-3 z-20 -mx-2 mt-7 rounded-2xl bg-background/90 p-2 backdrop-blur-md">
           {nextLandmark ? (
             <Link href={`/${currentLocale}/lubeck/${nextLandmark.slug}`} className="button-dark w-full">
@@ -317,6 +388,7 @@ export default async function LandmarkPage({
             </TrackedLink>
           )}
         </div>
+        ) : null}
       </section>
     </main>
   );

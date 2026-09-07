@@ -15,7 +15,9 @@ import {
   Clock3,
   Gem,
   Landmark,
+  List,
   LayoutGrid,
+  Map,
   Sparkles,
   Utensils,
   type LucideIcon,
@@ -110,6 +112,8 @@ type LocationAnalyticsEvent =
   | "location_permission_denied"
   | "location_available"
   | "location_error";
+
+type DiscoveryView = "list" | "map";
 
 function captureLocationEvent(
   eventName: LocationAnalyticsEvent,
@@ -214,42 +218,24 @@ function PlaceCard({
       </div>
 
       <div className="min-w-0 flex-1 py-0.5">
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-accent rtl:tracking-normal">
-            <CategoryIcon
-              aria-hidden="true"
-              size={13}
-              strokeWidth={1.8}
-            />
-
-            {category.label}
-          </p>
-
-          {hiddenGemLabel && isHiddenGem ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
-              <Gem aria-hidden="true" size={11} strokeWidth={1.8} />
-              {hiddenGemLabel}
-            </span>
-          ) : null}
-        </div>
+        {hiddenGemLabel && isHiddenGem ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
+            <Gem aria-hidden="true" size={11} strokeWidth={1.8} />
+            {hiddenGemLabel}
+          </span>
+        ) : null}
 
         <div
           lang={place.actualLocale}
           dir={place.contentDirection}
         >
-          <h3 className="mt-1 text-[1rem] font-semibold leading-5">
+          <h3 className={`${isHiddenGem ? "mt-1.5" : ""} text-[1rem] font-semibold leading-5`}>
             {place.name}
           </h3>
 
           <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-text-secondary">
             {place.shortDescription}
           </p>
-
-          {isHiddenGem && place.visitNote ? (
-            <p className="mt-2 text-xs leading-5 text-text-muted">
-              {place.visitNote}
-            </p>
-          ) : null}
         </div>
 
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-muted">
@@ -338,6 +324,8 @@ export default function PlaceDiscovery({
 }: PlaceDiscoveryProps) {
   const [selection, setSelection] =
     useState<PlaceCategoryFilter>("all");
+  const [view, setView] =
+    useState<DiscoveryView>("list");
 
   const [
     centerUserLocationRequest,
@@ -563,184 +551,138 @@ export default function PlaceDiscovery({
     <>
       <div
         role="group"
-        aria-labelledby={
-          labelledBy
-        }
-        className="mt-4 grid grid-cols-4 gap-2"
+        aria-labelledby={labelledBy}
+        className="-mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-2"
       >
-        {categories.map(
-          (category) => {
-            const Icon =
-              categoryIcons[
-                category.icon
-              ];
+        {categories.map((category) => {
+          const Icon = categoryIcons[category.icon];
+          const count = filterPlacesByCategory(
+            places,
+            category.id,
+          ).length;
+          const selected = selection === category.id;
 
-            const count =
-              filterPlacesByCategory(
-                places,
-                category.id,
-              ).length;
-
-            const selected =
-              selection ===
-              category.id;
-
-            return (
-              <button
-                key={
-                  category.id
-                }
-                type="button"
-                aria-pressed={
-                  selected
-                }
-                aria-label={`${category.label} (${count})`}
-                onClick={() =>
-                  handleCategorySelect(
-                    category.id,
-                  )
-                }
-                className={`flex min-h-18 flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-xs font-semibold transition ${
-                  selected
-                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                    : "border-border bg-surface-elevated text-text-secondary hover:border-blue-200 hover:text-text-primary"
-                }`}
+          return (
+            <button
+              key={category.id}
+              type="button"
+              aria-pressed={selected}
+              aria-label={`${category.label} (${count})`}
+              onClick={() => handleCategorySelect(category.id)}
+              className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-semibold transition ${
+                selected
+                  ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                  : "border-border bg-surface-elevated text-text-secondary hover:border-blue-200 hover:text-text-primary"
+              }`}
+            >
+              <Icon aria-hidden="true" size={16} strokeWidth={1.8} />
+              <span>{category.label}</span>
+              <span
+                aria-hidden="true"
+                className={selected ? "text-blue-100" : "text-text-muted"}
               >
-                <Icon
-                  aria-hidden="true"
-                  size={19}
-                  strokeWidth={
-                    1.8
-                  }
-                />
-
-                <span className="max-w-full truncate">
-                  {
-                    category.label
-                  }
-                </span>
-
-                <span
-                  className={
-                    selected
-                      ? "text-blue-100"
-                      : "text-text-muted"
-                  }
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          },
-        )}
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
-      <CityMap
-        places={
-          placesWithDistance
-        }
-        categories={categories}
-        locale={locale}
-        city={city}
-        direction={direction}
-        labelledBy={
-          labelledBy
-        }
-        userLocation={
-          status === "available"
-            ? location
-            : undefined
-        }
-        userLocationLabel={
-          locationLabels.markerLabel
-        }
-        locationStatus={
-          status
-        }
-        locationControlLabel={getLocationControlLabel(
-          status,
-          locationLabels,
-        )}
-        onLocationControl={
-          handleLocationControl
-        }
-        centerUserLocationRequest={
-          centerUserLocationRequest
-        }
-        mapLabels={mapLabels}
-        walkingTimeTemplate={
-          distanceLabels.walkingMinutes
-        }
-      />
-
-      <p
-        role="status"
-        aria-live="polite"
-        className="mt-2 px-1 text-xs leading-5 text-text-muted"
-      >
-        {getLocationStatusMessage(
-          status,
-          locationLabels,
-        )}
-      </p>
-
-      {status === "available" &&
-      activeArrival ? (
-        <ArrivalNotice
-          placeName={
-            activeArrival.place.name
-          }
-          href={
-            activeArrival.detailHref
-          }
-          messageTemplate={
-            locationLabels.arrival
-          }
-          storyLabel={
-            storyLabel
-          }
-          city={city}
-          locale={locale}
-        />
-      ) : null}
-
       <div
-        className="mt-4 flex flex-col gap-3"
-        aria-live="polite"
+        role="group"
+        aria-label={`${mapLabels.listView} / ${mapLabels.mapView}`}
+        className="mt-2 grid grid-cols-2 rounded-xl bg-surface p-1"
       >
-        {rankedPlaces.map(
-          (place) => {
-            const category =
-              categories.find(
-                (candidate) =>
-                  candidate.id ===
-                  place.category,
-              );
+        {(["list", "map"] as const).map((candidate) => {
+          const selected = view === candidate;
+          const Icon = candidate === "list" ? List : Map;
+          const label = candidate === "list"
+            ? mapLabels.listView
+            : mapLabels.mapView;
 
-            if (!category) {
-              return null;
-            }
+          return (
+            <button
+              key={candidate}
+              type="button"
+              aria-pressed={selected}
+              onClick={() => setView(candidate)}
+              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-3 text-sm font-semibold transition ${
+                selected
+                  ? "bg-white text-text-primary shadow-sm"
+                  : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              <Icon aria-hidden="true" size={17} strokeWidth={1.8} />
+              {label}
+            </button>
+          );
+        })}
+      </div>
+
+      {view === "map" ? (
+        <>
+          <CityMap
+            places={placesWithDistance}
+            categories={categories}
+            locale={locale}
+            city={city}
+            direction={direction}
+            labelledBy={labelledBy}
+            userLocation={status === "available" ? location : undefined}
+            userLocationLabel={locationLabels.markerLabel}
+            locationStatus={status}
+            locationControlLabel={getLocationControlLabel(
+              status,
+              locationLabels,
+            )}
+            onLocationControl={handleLocationControl}
+            centerUserLocationRequest={centerUserLocationRequest}
+            mapLabels={mapLabels}
+            walkingTimeTemplate={distanceLabels.walkingMinutes}
+          />
+
+          <p
+            role="status"
+            aria-live="polite"
+            className="mt-2 px-1 text-xs leading-5 text-text-muted"
+          >
+            {getLocationStatusMessage(status, locationLabels)}
+          </p>
+
+          {status === "available" && activeArrival ? (
+            <ArrivalNotice
+              placeName={activeArrival.place.name}
+              href={activeArrival.detailHref}
+              messageTemplate={locationLabels.arrival}
+              storyLabel={storyLabel}
+              city={city}
+              locale={locale}
+            />
+          ) : null}
+        </>
+      ) : (
+        <div className="mt-4 flex flex-col gap-3" aria-live="polite">
+          {rankedPlaces.map((place) => {
+            const category = categories.find(
+              (candidate) => candidate.id === place.category,
+            );
+
+            if (!category) return null;
 
             return (
               <PlaceCard
                 key={place.slug}
                 place={place}
-                category={
-                  category
-                }
+                category={category}
                 locale={locale}
-                direction={
-                  direction
-                }
-                walkingTimeTemplate={
-                  distanceLabels.walkingMinutes
-                }
+                direction={direction}
+                walkingTimeTemplate={distanceLabels.walkingMinutes}
                 hiddenGemLabel={hiddenGemLabel}
               />
             );
-          },
-        )}
-      </div>
+          })}
+        </div>
+      )}
     </>
   );
 }

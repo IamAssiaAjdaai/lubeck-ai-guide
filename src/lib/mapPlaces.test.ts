@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { filterPlacesByCategory } from "@/data/placeCategories";
-import { lubeckLandmarks, lubeckPlaces } from "@/data/places";
+import { lubeckPlaces } from "@/data/places";
 import {
   calculateMapBounds,
   getMapMarkerAriaLabel,
@@ -9,14 +9,10 @@ import {
   prepareMapPlaces,
 } from "@/lib/mapPlaces";
 
-const tourStopSlugs = new Set(lubeckLandmarks.map((place) => place.slug));
-
 function prepareLubeckMapPlaces(locale: "en" | "ar" = "en") {
   return prepareMapPlaces(lubeckPlaces, locale, {
     getDetailHref: (place) =>
-      tourStopSlugs.has(place.slug)
-        ? `/${locale}/lubeck/${place.slug}`
-        : undefined,
+      `/${locale}/lubeck/${place.slug}`,
   });
 }
 
@@ -48,16 +44,14 @@ describe("map place preparation", () => {
     ).toHaveLength(3);
   });
 
-  it("adds existing landmark links without inventing new-place routes", () => {
+  it("gives all 25 catalog places usable detail links", () => {
     const markers = prepareLubeckMapPlaces();
     const linkedMarkers = markers.filter((marker) => marker.detailHref);
-    const informationalMarkers = markers.filter((marker) => !marker.detailHref);
 
-    expect(linkedMarkers).toHaveLength(5);
-    expect(linkedMarkers.map((marker) => marker.slug).sort()).toEqual(
-      [...tourStopSlugs].sort(),
+    expect(linkedMarkers).toHaveLength(25);
+    expect(linkedMarkers.map((marker) => marker.detailHref)).toEqual(
+      lubeckPlaces.map((place) => `/en/lubeck/${place.slug}`),
     );
-    expect(informationalMarkers).toHaveLength(20);
   });
 
   it("preserves fallback locale and direction semantics", () => {

@@ -13,7 +13,7 @@ import PlaceDiscovery, {
 } from "@/components/travel/PlaceDiscovery";
 import { localizePlaceCategories } from "@/data/placeCategories";
 import { formatDistance, formatWalkingTime } from "@/lib/distance";
-import { getTranslations } from "@/lib/i18n";
+import { getTranslations, locales } from "@/lib/i18n";
 
 
 const { capture, mapUnavailable } = vi.hoisted(() => ({
@@ -100,6 +100,7 @@ const places = [
     contentDirection: "ltr",
     didFallback: true,
     fallbackLabel: "Content shown in English",
+    detailHref: "/fr/test-city/cafe",
   },
   {
     slug: "theatre",
@@ -147,9 +148,15 @@ describe("PlaceDiscovery", () => {
     expect(screen.getByText("Museum")).not.toBeNull();
     expect(screen.getByText("Cafe")).not.toBeNull();
     expect(screen.getByText("Theatre")).not.toBeNull();
-    expect((await screen.findByTestId("city-map-marker-count")).textContent).toBe(
-      "3",
-    );
+    expect(
+      screen
+        .getAllByRole("heading", { level: 3 })
+        .every((heading) => heading.closest("a") !== null),
+    ).toBe(true);
+    expect(screen.queryByTestId("city-map-marker-count")).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "List" }).getAttribute("aria-pressed"),
+    ).toBe("true");
 
     const allButton = screen.getByRole("button", { name: "All (3)" });
     const eatButton = screen.getByRole("button", { name: "Eat (1)" });
@@ -162,7 +169,6 @@ describe("PlaceDiscovery", () => {
     expect(screen.queryByText("Museum")).toBeNull();
     expect(screen.getByText("Cafe")).not.toBeNull();
     expect(screen.queryByText("Theatre")).toBeNull();
-    expect(screen.getByTestId("city-map-marker-count").textContent).toBe("1");
     expect(screen.getByText("Content shown in English")).not.toBeNull();
     expect(allButton.getAttribute("aria-pressed")).toBe("false");
     expect(eatButton.getAttribute("aria-pressed")).toBe("true");
@@ -171,6 +177,14 @@ describe("PlaceDiscovery", () => {
       city: "test-city",
       locale: "en",
     });
+
+    fireEvent.click(screen.getByRole("button", { name: "Map" }));
+
+    expect((await screen.findByTestId("city-map-marker-count")).textContent).toBe(
+      "1",
+    );
+    expect(screen.queryByText("Museum")).toBeNull();
+    expect(eatButton.getAttribute("aria-pressed")).toBe("true");
   });
 
   it("keeps Arabic chrome RTL while English fallback content is LTR", () => {
@@ -207,9 +221,11 @@ describe("PlaceDiscovery", () => {
       "[lang]",
     );
 
-    expect(screen.getByRole("group").closest("[dir]")?.getAttribute("dir")).toBe(
-      "rtl",
-    );
+    expect(
+      screen.getByRole("button", {
+        name: getTranslations("ar").map.listView,
+      }).closest("[dir]")?.getAttribute("dir"),
+    ).toBe("rtl");
     expect(content?.getAttribute("lang")).toBe("en");
     expect(content?.getAttribute("dir")).toBe("ltr");
     expect(screen.getByText("المحتوى باللغة English")).not.toBeNull();
@@ -219,8 +235,8 @@ describe("PlaceDiscovery", () => {
       ),
     ).not.toBeNull();
     expect(
-      screen.getByText("Please respect residents' privacy."),
-    ).not.toBeNull();
+      screen.queryByText("Please respect residents' privacy."),
+    ).toBeNull();
   });
 
   it("keeps place cards and category filtering usable when the map fails", () => {
@@ -245,10 +261,16 @@ describe("PlaceDiscovery", () => {
       </section>,
     );
 
-    expect(screen.getByText(t.map.unavailable)).not.toBeNull();
     expect(screen.getByText("Museum")).not.toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Eat (1)" }));
     expect(screen.queryByText("Museum")).toBeNull();
+    expect(screen.getByText("Cafe")).not.toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: t.map.mapView }));
+    expect(screen.getByText(t.map.unavailable)).not.toBeNull();
+    expect(screen.queryByText("Cafe")).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: t.map.listView }));
     expect(screen.getByText("Cafe")).not.toBeNull();
   });
 
@@ -280,9 +302,12 @@ describe("PlaceDiscovery", () => {
       </section>,
     );
 
+    expect(getCurrentPosition).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("city-map-marker-count")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Map" }));
+
     const map = await screen.findByTestId("city-map-marker-count");
     const gpsControl = screen.getByRole("button", { name: "Use my location" });
-    expect(getCurrentPosition).not.toHaveBeenCalled();
     expect(map.getAttribute("data-user-location")).toBe("absent");
     expect(map.getAttribute("data-user-location-label")).toBe("Your location");
     expect(map.getAttribute("data-first-distance-meters")).toBeNull();
@@ -315,6 +340,18 @@ describe("PlaceDiscovery", () => {
       map.getAttribute("data-first-walking-minutes"),
     );
     expect(firstDistanceMeters).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole("button", { name: "Your location" }));
+
+    expect(getCurrentPosition).toHaveBeenCalledOnce();
+    expect(map.getAttribute("data-center-request")).toBe("1");
+    expect(
+      capture.mock.calls.filter(([eventName]) =>
+        eventName === "location_requested",
+      ),
+    ).toHaveLength(1);
+
+    fireEvent.click(screen.getByRole("button", { name: "List" }));
     expect(
       screen.getByText(formatDistance(firstDistanceMeters, "en") ?? ""),
     ).not.toBeNull();
@@ -327,16 +364,6 @@ describe("PlaceDiscovery", () => {
         ) ?? "",
       ),
     ).not.toBeNull();
-
-    fireEvent.click(screen.getByRole("button", { name: "Your location" }));
-
-    expect(getCurrentPosition).toHaveBeenCalledOnce();
-    expect(map.getAttribute("data-center-request")).toBe("1");
-    expect(
-      capture.mock.calls.filter(([eventName]) =>
-        eventName === "location_requested",
-      ),
-    ).toHaveLength(1);
 
     const locationEvents = capture.mock.calls.filter(([eventName]) =>
       String(eventName).startsWith("location_"),
@@ -377,33 +404,16 @@ describe("PlaceDiscovery", () => {
       </section>,
     );
 
-    const originalOrder = screen
-      .getAllByRole("heading", { level: 3 })
-      .map((heading) => heading.textContent);
+    fireEvent.click(screen.getByRole("button", { name: "Map" }));
 
-    expect(originalOrder).toEqual([
-      "Museum",
-      "Cafe",
-      "Theatre",
-    ]);
     fireEvent.click(screen.getByRole("button", { name: "Use my location" }));
 
     const retryControl = await screen.findByRole("button", {
       name: "Try again",
     });
 
-    const orderAfterDenial = screen
-    .getAllByRole("heading", { level: 3 })
-    .map((heading) => heading.textContent);
-
-    expect(orderAfterDenial).toEqual([
-      "Museum",
-      "Cafe",
-      "Theatre",
-    ]);
     expect(retryControl.hasAttribute("disabled")).toBe(false);
     expect(screen.getByTestId("city-map")).not.toBeNull();
-    expect(screen.getByText("Museum")).not.toBeNull();
     expect(
       screen.getByText(
         "Location permission was denied. Allow it in your browser settings and try again.",
@@ -413,6 +423,9 @@ describe("PlaceDiscovery", () => {
       city: "test-city",
       locale: "en",
     });
+
+    fireEvent.click(screen.getByRole("button", { name: "List" }));
+    expect(screen.getByText("Museum")).not.toBeNull();
   });
 
   it("ranks place cards from nearest to farthest after location becomes available", async () => {
@@ -463,11 +476,22 @@ describe("PlaceDiscovery", () => {
     "Theatre",
   ]);
 
+  fireEvent.click(screen.getByRole("button", { name: "Map" }));
+
   fireEvent.click(
     await screen.findByRole("button", {
       name: t.location.use,
     }),
   );
+
+  await waitFor(() => {
+    expect(capture).toHaveBeenCalledWith("location_available", {
+      city: "test-city",
+      locale: "en",
+    });
+  });
+
+  fireEvent.click(screen.getByRole("button", { name: "List" }));
 
   await waitFor(() => {
     const afterLocation = screen
@@ -534,6 +558,8 @@ describe("PlaceDiscovery", () => {
         />
       </section>,
     );
+
+    fireEvent.click(screen.getByRole("button", { name: "Map" }));
 
     fireEvent.click(
       await screen.findByRole("button", {
@@ -615,5 +641,25 @@ describe("PlaceDiscovery", () => {
 
       expect(arrivalEvents).toHaveLength(1);
     });
+  });
+});
+
+describe("discovery view translations", () => {
+  it("provides localized List and Map labels for every supported locale", () => {
+    for (const locale of locales) {
+      const { listView, mapView } = getTranslations(locale).map;
+
+      expect(listView.trim()).not.toBe("");
+      expect(mapView.trim()).not.toBe("");
+    }
+  });
+
+  it.each([
+    ["de", "Liste", "Karte"],
+    ["en", "List", "Map"],
+    ["ar", "قائمة", "خريطة"],
+  ] as const)("uses explicit %s view labels", (locale, list, map) => {
+    expect(getTranslations(locale).map.listView).toBe(list);
+    expect(getTranslations(locale).map.mapView).toBe(map);
   });
 });

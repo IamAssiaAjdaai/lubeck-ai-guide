@@ -1,19 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
-import { ArrowLeft, ArrowRight, House } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
+import CustomTourPlanner from "@/components/travel/CustomTourPlanner";
 import PlaceDiscovery, {
   type DiscoveryPlace,
 } from "@/components/travel/PlaceDiscovery";
-import TourBuilder from "@/components/travel/TourBuilder";
 import TourCard from "@/components/travel/TourCard";
-import TourPreferences from "@/components/travel/TourPreferences";
 import { cities } from "@/data/cities";
 import { localizePlaceCategories } from "@/data/placeCategories";
-import {
-  lubeckLandmarks,
-} from "@/data/places";
+import { resolvePlaceImage } from "@/lib/content/placeMedia";
 import { getContentSource } from "@/lib/content/source";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import {
@@ -54,14 +51,24 @@ export default async function LubeckPage({
   const city = cities.lubeck;
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
   const [durationLabel, stopsLabel = ""] = t.explore.duration.split("•").map((value) => value.trim());
-  const tourStopSlugs = new Set(lubeckLandmarks.map((place) => place.slug));
   const categories = localizePlaceCategories(t);
-  const preparedPlaces = prepareMapPlaces(publicSnapshot.places, currentLocale, {
-    getDetailHref: (place) =>
-      tourStopSlugs.has(place.slug)
-        ? `/${currentLocale}/${city.slug}/${place.slug}`
-        : undefined,
-  });
+  const preparedPlaces = prepareMapPlaces(
+    publicSnapshot.places,
+    currentLocale,
+    {
+      getDetailHref: (place) =>
+        `/${currentLocale}/${city.slug}/${place.slug}`,
+    },
+  ).map((place) => ({
+    ...place,
+    image: resolvePlaceImage(
+      contentSource,
+      publicSnapshot.media?.places[place.slug],
+      currentLocale,
+      place.image,
+      "card",
+    ),
+  }));
   const catalogPlaces: readonly DiscoveryPlace[] = preparedPlaces.map(
     (place) => ({
       ...place,
@@ -101,9 +108,10 @@ export default async function LubeckPage({
         {/* Back */}
         <Link
           href="/"
-          className="button-tertiary -ms-3 min-h-11 px-3 text-sm"
+          aria-label={t.common.back}
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-text-secondary transition hover:border-blue-200 hover:text-accent"
         >
-          <BackIcon aria-hidden="true" size={18} strokeWidth={1.8} /> <House aria-hidden="true" size={16} strokeWidth={1.8} /> {t.common.back}
+          <BackIcon aria-hidden="true" size={19} strokeWidth={1.8} />
         </Link>
 
         {/* Header */}
@@ -111,31 +119,17 @@ export default async function LubeckPage({
           <h1 className="text-[2rem] font-bold leading-tight tracking-[-0.03em]">
             {t.explore.title}
           </h1>
-
-          <p className="mt-2 leading-7 text-text-secondary">
-            {t.explore.subtitle}
-          </p>
         </header>
 
         {/* Walking Tour Card */}
         <div className="mt-7"><TourCard eyebrow={t.explore.walkingTour} title={t.explore.historicCenter} duration={durationLabel} stops={stopsLabel} ctaLabel={t.explore.startTour} href={`/${currentLocale}/${city.slug}/${city.startLandmarkSlug}`} locale={currentLocale} tourId={city.tourId} startLandmarkSlug={city.startLandmarkSlug} /></div>
 
-        <div className="mt-4">
-          <TourPreferences
+        <div className="mt-3">
+          <CustomTourPlanner
             places={catalogPlaces}
             categories={categories}
-            labels={t.tourPreferences}
-            locale={currentLocale}
-            tourId={city.tourId}
-            rankingOrigin={tourStart.coordinates}
-          />
-        </div>
-
-        <div className="mt-4">
-          <TourBuilder
-            places={catalogPlaces}
-            categories={categories}
-            labels={t.tourBuilder}
+            preferenceLabels={t.tourPreferences}
+            builderLabels={t.tourBuilder}
             locale={currentLocale}
             tourId={city.tourId}
             origin={tourStart.coordinates}
