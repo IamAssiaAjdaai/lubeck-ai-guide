@@ -146,18 +146,28 @@ export async function finalizeMediaAsset(
     sizeBytes: number;
     mimeType: string;
     checksumSha256?: string;
+    durationSeconds?: number;
   }>,
   actorId: string,
 ) {
   return getDb().transaction(async (tx) => {
     const asset = await lockMediaAsset(tx, id);
     if (asset.approvalStatus !== "uploading") return asset;
+    if (
+      values.durationSeconds !== undefined &&
+      (asset.kind !== "audio" ||
+        !Number.isFinite(values.durationSeconds) ||
+        values.durationSeconds <= 0)
+    ) {
+      throw new MediaIntegrityError("Audio duration metadata is invalid.");
+    }
     const [updated] = await tx
       .update(mediaAssetsTable)
       .set({
         sizeBytes: values.sizeBytes,
         mimeType: values.mimeType,
         checksumSha256: values.checksumSha256,
+        durationSeconds: values.durationSeconds,
         approvalStatus: "pending_review",
         uploadExpiresAt: null,
         updatedByUserId: actorId,

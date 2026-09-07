@@ -98,7 +98,12 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
   it("keeps audio exact-locale and approved-only", async () => {
     const asset = await createMediaUploadRecord({ assetKey: randomUUID(), cityId, kind: "audio", originalFilename: "story-en.mp3", mimeType: "audio/mpeg", sizeBytes: 3, locale: "en", objectKey: `media/${suffix}/story-en.mp3`, storageProvider: "s3-test", uploadExpiresAt: new Date(Date.now() + 60_000) }, actorId);
     assetIds.push(asset.id);
-    await finalizeMediaAsset(asset.id, { sizeBytes: 3, mimeType: "audio/mpeg" }, actorId);
+    const finalized = await finalizeMediaAsset(
+      asset.id,
+      { sizeBytes: 3, mimeType: "audio/mpeg", durationSeconds: 87 },
+      actorId,
+    );
+    expect(finalized.durationSeconds).toBe(87);
     await expect(attachMedia({ entityType: "place", entityId: placeId, mediaAssetId: asset.id, purpose: "audio", locale: "ar" }, actorId, { allowPublicMutation: false })).rejects.toThrow(/exact locale/);
     const attachment = await attachMedia({ entityType: "place", entityId: placeId, mediaAssetId: asset.id, purpose: "audio", locale: "en" }, actorId, { allowPublicMutation: false });
     await expect(getDb().transaction((tx) => assertEntityMovePreservesMediaCity(tx, "place", placeId, otherCityId))).rejects.toThrow(/Detach city-scoped media/);
@@ -107,6 +112,7 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     const media = await getPublicMediaForEntity("place", placeId);
     expect(media).toHaveLength(1);
     expect(media[0]?.locale).toBe("en");
+    expect(media[0]?.durationSeconds).toBe(87);
     expect(media.some(({ locale }) => locale === "ar")).toBe(false);
     await expect(setMediaLifecycle(asset.id, "rejected", actorId)).rejects.toThrow(/Detach or replace/);
     await expect(detachMedia("place", attachment.id, { allowPublicMutation: false })).rejects.toThrow(/Publishing permission/);
