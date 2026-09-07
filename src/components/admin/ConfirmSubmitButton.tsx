@@ -1,15 +1,17 @@
 "use client";
 
-import type { MouseEvent } from "react";
+import type { AriaRole, MouseEvent, ReactNode } from "react";
 
 export function ConfirmSubmitButton({
   children,
   confirmation,
   className,
+  role,
 }: Readonly<{
-  children: string;
+  children: ReactNode;
   confirmation: string;
   className?: string;
+  role?: AriaRole;
 }>) {
   function confirmSubmission(event: MouseEvent<HTMLButtonElement>) {
     if (!window.confirm(confirmation)) event.preventDefault();
@@ -19,6 +21,7 @@ export function ConfirmSubmitButton({
     <button
       className={className}
       onClick={confirmSubmission}
+      role={role}
       type="submit"
     >
       {children}

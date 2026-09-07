@@ -27,6 +27,7 @@ import {
 } from "@/lib/media/policy";
 import {
   attachMedia,
+  cancelMediaUpload,
   createExternalVideoRecord,
   createMediaUploadRecord,
   detachMedia,
@@ -131,6 +132,83 @@ export async function finalizeAuthorizedUpload(
     context.user.id,
   );
   return { assetId: updated.id, status: updated.approvalStatus };
+}
+
+export async function retryAuthorizedUploadFinalize(
+  assetId: number,
+  store: MediaObjectStore = getMediaObjectStore(),
+  extractDuration: AudioDurationExtractor = extractAudioDurationSeconds,
+) {
+  const asset = await getRequiredMediaAsset(assetId);
+  await requireCityCapability(asset.cityId, "media:manage");
+  if (asset.approvalStatus !== "uploading") {
+    throw new MediaIntegrityError("Only incomplete uploads can be retried.");
+  }
+  if (
+    asset.sourceType !== "upload" ||
+    !asset.objectKey ||
+    asset.expectedSizeBytes === null
+  ) {
+    throw new MediaIntegrityError(
+      "Upload record is incomplete. Cancel it and upload the file again.",
+    );
+  }
+
+  try {
+    const result = await finalizeAuthorizedUpload(
+      assetId,
+      store,
+      extractDuration,
+    );
+    if (result.status !== "pending_review") {
+      throw new MediaIntegrityError("This upload can no longer be retried.");
+    }
+    return result;
+  } catch (error) {
+    if (
+      error instanceof MediaIntegrityError &&
+      error.message === "Uploaded object was not found."
+    ) {
+      throw new MediaIntegrityError(
+        "Uploaded object was not found. Cancel this upload and upload the file again.",
+      );
+    }
+    throw error;
+  }
+}
+
+export async function cancelAuthorizedMediaUpload(
+  assetId: number,
+  store: MediaObjectStore = getMediaObjectStore(),
+) {
+  const asset = await getRequiredMediaAsset(assetId);
+  const context = await requireCityCapability(asset.cityId, "media:manage");
+  if (
+    asset.approvalStatus !== "uploading" ||
+    asset.sourceType !== "upload"
+  ) {
+    throw new MediaIntegrityError("Only incomplete uploads can be cancelled.");
+  }
+
+  const cancelled = await cancelMediaUpload(assetId, context.user.id);
+  if (!cancelled.objectKey) {
+    return { assetId: cancelled.id, status: cancelled.approvalStatus };
+  }
+
+  try {
+    const object = await store.headObject(cancelled.objectKey);
+    if (object) await store.deleteObject(cancelled.objectKey);
+    const cleaned = await markMediaObjectDeleted(
+      cancelled.id,
+      cancelled.objectKey,
+      context.user.id,
+    );
+    return { assetId: cleaned.id, status: cleaned.approvalStatus };
+  } catch {
+    throw new MediaIntegrityError(
+      "Upload was cancelled, but stored object cleanup failed. Open the archived asset and retry deletion.",
+    );
+  }
 }
 
 async function safelyExtractAudioDuration(

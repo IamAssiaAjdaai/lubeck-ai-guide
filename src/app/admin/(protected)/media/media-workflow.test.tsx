@@ -7,11 +7,15 @@ const {
   revalidatePath,
   reviewAuthorizedMediaAsset,
   listAuthorizedMediaAssets,
+  cancelAuthorizedMediaUpload,
+  retryAuthorizedUploadFinalize,
 } = vi.hoisted(() => ({
   redirect: vi.fn(),
   revalidatePath: vi.fn(),
   reviewAuthorizedMediaAsset: vi.fn(),
   listAuthorizedMediaAssets: vi.fn(),
+  cancelAuthorizedMediaUpload: vi.fn(),
+  retryAuthorizedUploadFinalize: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -19,18 +23,32 @@ vi.mock("next/cache", () => ({ revalidatePath }));
 vi.mock("next/navigation", () => ({ redirect }));
 vi.mock("@/lib/admin/authorization.server", () => ({
   AdminAuthorizationError: class AdminAuthorizationError extends Error {},
+  requireStaff: vi.fn().mockResolvedValue({
+    staff: {
+      role: "admin",
+      active: true,
+      globalAccess: true,
+      cityIds: [],
+    },
+  }),
 }));
 vi.mock("@/lib/media/service.server", () => ({
   archiveAuthorizedMediaAsset: vi.fn(),
   attachAuthorizedMedia: vi.fn(),
+  cancelAuthorizedMediaUpload,
   createAuthorizedExternalVideo: vi.fn(),
   deleteAuthorizedArchivedMediaObject: vi.fn(),
   detachAuthorizedMedia: vi.fn(),
   listAuthorizedMediaAssets,
   reviewAuthorizedMediaAsset,
+  retryAuthorizedUploadFinalize,
 }));
 
-import { reviewMediaAction } from "@/app/admin/(protected)/media-actions";
+import {
+  cancelUploadAction,
+  reviewMediaAction,
+  retryFinalizeMediaAction,
+} from "@/app/admin/(protected)/media-actions";
 import MediaLibraryPage from "@/app/admin/(protected)/media/page";
 
 describe("admin media review workflow", () => {
@@ -67,6 +85,34 @@ describe("admin media review workflow", () => {
     expect(screen.getByLabelText("Status filter")).toHaveValue("approved");
     expect(screen.getByText("approved.jpg")).toBeInTheDocument();
     expect(screen.queryByText("rejected.jpg")).not.toBeInTheDocument();
+  });
+
+  it("returns a successfully retried upload to pending review", async () => {
+    retryAuthorizedUploadFinalize.mockResolvedValue({
+      assetId: 17,
+      status: "pending_review",
+    });
+
+    await retryFinalizeMediaAction(17);
+
+    expect(retryAuthorizedUploadFinalize).toHaveBeenCalledWith(17);
+    expect(redirect).toHaveBeenCalledWith(
+      "/admin/media?status=pending_review&saved=1",
+    );
+  });
+
+  it("returns a cancelled upload to the archived list", async () => {
+    cancelAuthorizedMediaUpload.mockResolvedValue({
+      assetId: 17,
+      status: "archived",
+    });
+
+    await cancelUploadAction(17);
+
+    expect(cancelAuthorizedMediaUpload).toHaveBeenCalledWith(17);
+    expect(redirect).toHaveBeenCalledWith(
+      "/admin/media?status=archived&saved=1",
+    );
   });
 });
 
