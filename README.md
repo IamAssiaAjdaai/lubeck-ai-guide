@@ -2,17 +2,20 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, configure `.env.local` as described below, then run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+
+The local bootstrap checks Docker Engine, starts Docker Desktop automatically
+on Windows when necessary, waits for PostgreSQL to become healthy, and applies
+existing migrations before Next.js starts. It preserves the Compose volume and
+does not seed or reset data. On non-Windows systems, start Docker manually.
+
+`npm run start` performs the same local infrastructure bootstrap before serving
+an existing production build. Use `npm run db:up` or `npm run db:down` when you
+only need to start or stop the local Compose services.
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -52,9 +55,8 @@ only used by the backend foundation in this phase.
 The Compose service uses PostgreSQL 16 Alpine with local-development-only
 credentials and a persistent named volume.
 
-```bash
-docker compose up -d
-```
+`npm run dev`, `npm run start`, and `npm run db:up` start this service with
+`docker compose up -d --wait`.
 
 Copy `.env.example` to `.env.local` (PowerShell):
 
