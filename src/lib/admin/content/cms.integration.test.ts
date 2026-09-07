@@ -37,6 +37,7 @@ import {
   TOUR_STOP_NOT_PUBLISHED_ERROR,
 } from "@/lib/admin/content/graphIntegrity";
 import {
+  getPublicCitySummaries,
   getPublicCitySnapshot,
   resolvePublicLocalization,
 } from "@/lib/content/publicRepository.server";
@@ -128,6 +129,13 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
     await expect(
       getPublicCitySnapshot(citySlug, "database"),
     ).rejects.toThrow("Published city snapshot is unavailable");
+    expect((await getPublicCitySummaries("database")).some(
+      ({ city: publicCity }) => publicCity.slug === citySlug,
+    )).toBe(false);
+    await setCmsPublicationStatus("city", city.id, "published", actorId);
+    expect((await getPublicCitySummaries("database")).some(
+      ({ city: publicCity }) => publicCity.slug === citySlug,
+    )).toBe(false);
 
     const firstPlace = await createCmsPlace({
       cityId: city.id,
@@ -175,8 +183,10 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
     expect(storedPlace?.createdByUserId).toBe(actorId);
 
     await setCmsPublicationStatus("place", firstPlace.id, "published", actorId);
+    expect((await getPublicCitySummaries("database")).some(
+      ({ city: publicCity }) => publicCity.slug === citySlug,
+    )).toBe(true);
     await setCmsPublicationStatus("place", secondPlace.id, "published", actorId);
-    await setCmsPublicationStatus("city", city.id, "published", actorId);
 
     const tour = await createCmsTour({
       cityId: city.id,
@@ -254,6 +264,9 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
     expect(await getCmsPlace(draft.id)).toBeUndefined();
 
     await setCmsPublicationStatus("city", city.id, "archived", actorId);
+    expect((await getPublicCitySummaries("database")).some(
+      ({ city: publicCity }) => publicCity.slug === citySlug,
+    )).toBe(false);
     await expect(
       getPublicCitySnapshot(citySlug, "database"),
     ).rejects.toThrow("Published city snapshot is unavailable");
