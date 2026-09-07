@@ -80,6 +80,24 @@ export type ResolvedPublicContent<TContent> = Readonly<{
   content: TContent;
 }>;
 
+export type TravelerDiscoverabilityInput = Readonly<{
+  publicationStatus: string;
+  authoredLocalizationCount: number;
+  publishedTravelerVisiblePlaceCount: number;
+}>;
+
+export function isTravelerDiscoverableCity({
+  publicationStatus,
+  authoredLocalizationCount,
+  publishedTravelerVisiblePlaceCount,
+}: TravelerDiscoverabilityInput): boolean {
+  return (
+    publicationStatus === "published" &&
+    authoredLocalizationCount > 0 &&
+    publishedTravelerVisiblePlaceCount > 0
+  );
+}
+
 export async function getPublicCitySnapshot(
   citySlug: string,
   source: ContentSource = getContentSource(),
@@ -191,6 +209,32 @@ export function toLocalizedPublicCityResponse(
   };
 }
 
+export function toLocalizedPublicCityIndexResponse(
+  summaries: readonly PublicCitySummary[],
+  requestedLocale: Locale,
+) {
+  return {
+    cities: summaries.flatMap((summary) => {
+      const resolved = resolvePublicLocalization(
+        summary.city.content,
+        requestedLocale,
+      );
+      if (!resolved) return [];
+      return [{
+        slug: summary.city.slug,
+        name: resolved.content.name,
+        ...(resolved.content.shortDescription
+          ? { shortDescription: resolved.content.shortDescription }
+          : {}),
+        requestedLocale: resolved.requestedLocale,
+        resolvedLocale: resolved.resolvedLocale,
+        didFallback: resolved.didFallback,
+        media: publicMediaForLocale(summary.media ?? [], requestedLocale),
+      }];
+    }),
+  };
+}
+
 async function loadPublishedDatabaseSnapshot(
   citySlug: string,
 ): Promise<PublicCitySnapshot> {
@@ -232,10 +276,29 @@ async function loadPublishedDatabaseSnapshot(
   const currentRevisionByPlaceId = new Map(
     placeRevisions.map((revision) => [revision.placeId, revision] as const),
   );
-  const publishedPlaces = placeRows.filter((place) =>
-    place.publicationStatus !== "archived" &&
-    (place.publicationStatus === "published" || currentRevisionByPlaceId.has(place.id)),
+  const validCityLocalizations = cityLocalizations.filter(
+    ({ locale, name }) => isLocale(locale) && name.trim().length > 0,
   );
+  const publishedPlaces = placeRows.filter((place) => {
+    const revision = currentRevisionByPlaceId.get(place.id);
+    const localizationRows = revision
+      ? revision.snapshot.localizations
+      : placeLocalizations.filter(({ placeId }) => placeId === place.id);
+    return (
+      place.publicationStatus !== "archived" &&
+      (place.publicationStatus === "published" || Boolean(revision)) &&
+      localizationRows.some(
+        ({ locale, name }) => isLocale(locale) && name.trim().length > 0,
+      )
+    );
+  });
+  if (!isTravelerDiscoverableCity({
+    publicationStatus: city.publicationStatus,
+    authoredLocalizationCount: validCityLocalizations.length,
+    publishedTravelerVisiblePlaceCount: publishedPlaces.length,
+  })) {
+    throw new Error("Published city is not traveler-discoverable.");
+  }
   const placeSlugById = new Map(
     publishedPlaces.map(({ id, slug }) => [id, slug] as const),
   );
@@ -265,7 +328,9 @@ async function loadPublishedDatabaseSnapshot(
       : placeLocalizations.filter(({ placeId }) => placeId === place.id);
     const content = Object.fromEntries(
       localizationRows
-        .filter(({ locale }) => isLocale(locale))
+        .filter(
+          ({ locale, name }) => isLocale(locale) && name.trim().length > 0,
+        )
         .map((localization) => [
           localization.locale,
           {
@@ -375,8 +440,7 @@ async function loadPublishedDatabaseSnapshot(
     city: {
       slug: city.slug,
       content: Object.fromEntries(
-        cityLocalizations
-          .filter(({ locale }) => isLocale(locale))
+        validCityLocalizations
           .map((localization) => [localization.locale, {
             name: localization.name,
             ...(localization.shortDescription
@@ -407,28 +471,61 @@ async function loadPublishedDatabaseSnapshot(
 
 async function loadPublishedDatabaseCitySummaries(): Promise<readonly PublicCitySummary[]> {
   const db = getDb();
-  const [cityRows, localizations] = await Promise.all([
+  const [cityRows, localizations, placeRows, placeRevisions, placeLocalizations] = await Promise.all([
     db
       .select()
       .from(citiesTable)
       .where(eq(citiesTable.publicationStatus, "published"))
       .orderBy(asc(citiesTable.slug)),
     db.select().from(cityLocalizationsTable),
+    db.select().from(placesTable),
+    db
+      .select()
+      .from(placeRevisionsTable)
+      .where(eq(placeRevisionsTable.isCurrent, true)),
+    db.select().from(placeLocalizationsTable),
   ]);
-  const publishedCities = cityRows.filter(
-    ({ publicationStatus }) => publicationStatus === "published",
+  const currentRevisionByPlaceId = new Map(
+    placeRevisions.map((revision) => [revision.placeId, revision] as const),
+  );
+  const discoverableCities = cityRows.filter((city) =>
+    isTravelerDiscoverableCity({
+      publicationStatus: city.publicationStatus,
+      authoredLocalizationCount: localizations.filter(
+        ({ cityId, locale, name }) =>
+          cityId === city.id && isLocale(locale) && name.trim().length > 0,
+      ).length,
+      publishedTravelerVisiblePlaceCount: placeRows.filter(
+        (place) => {
+          if (place.cityId !== city.id || place.publicationStatus === "archived") {
+            return false;
+          }
+          const revision = currentRevisionByPlaceId.get(place.id);
+          if (place.publicationStatus !== "published" && !revision) return false;
+          const localizationRows = revision
+            ? revision.snapshot.localizations
+            : placeLocalizations.filter(({ placeId }) => placeId === place.id);
+          return localizationRows.some(
+            ({ locale, name }) => isLocale(locale) && name.trim().length > 0,
+          );
+        },
+      ).length,
+    }),
   );
   const media = await Promise.all(
-    publishedCities.map(({ id }) => getPublicMediaSnapshot(id, [], [])),
+    discoverableCities.map(({ id }) => getPublicMediaSnapshot(id, [], [])),
   );
-  return publishedCities.map((city, index) => {
+  return discoverableCities.map((city, index) => {
     const summary = {
       city: {
         slug: city.slug,
         content: Object.fromEntries(
           localizations
             .filter(
-              ({ cityId, locale }) => cityId === city.id && isLocale(locale),
+              ({ cityId, locale, name }) =>
+                cityId === city.id &&
+                isLocale(locale) &&
+                name.trim().length > 0,
             )
             .map((localization) => [
               localization.locale,
@@ -443,7 +540,6 @@ async function loadPublishedDatabaseCitySummaries(): Promise<readonly PublicCity
       },
       media: media[index]?.city ?? [],
     } satisfies PublicCitySummary;
-    assertLocalizedCitySummary(summary);
     return summary;
   });
 }
@@ -502,18 +598,15 @@ function getCodeCitySummary(): PublicCitySummary {
   };
 }
 
-function assertLocalizedCitySummary(summary: PublicCitySummary) {
-  if (Object.keys(summary.city.content).length === 0) {
-    throw new Error("Published city has no authored localization.");
-  }
-}
-
 function assertCompleteSnapshot(snapshot: PublicCitySnapshot) {
   if (Object.keys(snapshot.city.content).length === 0) {
     throw new Error("Published city snapshot has no authored localization.");
   }
   if (snapshot.places.some((place) => Object.keys(place.content).length === 0)) {
     throw new Error("Published place snapshot is incomplete.");
+  }
+  if (snapshot.places.length === 0) {
+    throw new Error("Published city has no traveler-visible places.");
   }
   if (snapshot.city.slug === "lubeck") {
     const slugs = new Set(snapshot.places.map(({ slug }) => slug));
