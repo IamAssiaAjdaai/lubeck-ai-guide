@@ -1,4 +1,5 @@
 import {
+  boolean,
   date,
   doublePrecision,
   index,
@@ -15,6 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import type { PlaceFact } from "@/data/places";
+import type { PlaceRevisionSnapshot } from "@/lib/admin/content/placeRevision";
 
 function contentTimestamps() {
   return {
@@ -37,6 +39,8 @@ function actorColumns() {
 
 export const publicationStatusEnum = pgEnum("publication_status", [
   "draft",
+  "in_review",
+  "approved",
   "published",
   "archived",
 ]);
@@ -300,6 +304,92 @@ export const tourStopsTable = pgTable(
   ],
 );
 
+export const placeRevisionsTable = pgTable(
+  "place_revisions",
+  {
+    id: serial("id").primaryKey(),
+    placeId: integer("place_id")
+      .notNull()
+      .references(() => placesTable.id, { onDelete: "cascade" }),
+    revisionNumber: integer("revision_number").notNull(),
+    snapshot: jsonb("snapshot").$type<PlaceRevisionSnapshot>().notNull(),
+    isCurrent: boolean("is_current").default(false).notNull(),
+    publishedByUserId: text("published_by_user_id"),
+    publishedAt: timestamp("published_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("place_revisions_place_number_unique").on(
+      table.placeId,
+      table.revisionNumber,
+    ),
+    index("place_revisions_place_current_idx").on(table.placeId, table.isCurrent),
+  ],
+);
+
+export const contentSourcesTable = pgTable(
+  "content_sources",
+  {
+    id: serial("id").primaryKey(),
+    publisher: text("publisher").notNull(),
+    title: text("title").notNull(),
+    canonicalUrl: text("canonical_url").notNull(),
+    verifiedAt: date("verified_at").notNull(),
+    validUntil: date("valid_until"),
+    notes: text("notes"),
+    ...actorColumns(),
+    ...contentTimestamps(),
+  },
+  (table) => [
+    uniqueIndex("content_sources_canonical_url_unique").on(table.canonicalUrl),
+  ],
+);
+
+export const placeSourcesTable = pgTable(
+  "place_sources",
+  {
+    placeId: integer("place_id")
+      .notNull()
+      .references(() => placesTable.id, { onDelete: "cascade" }),
+    sourceId: integer("source_id")
+      .notNull()
+      .references(() => contentSourcesTable.id, { onDelete: "restrict" }),
+    required: boolean("required").default(true).notNull(),
+    createdByUserId: text("created_by_user_id"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.placeId, table.sourceId] }),
+    index("place_sources_source_id_idx").on(table.sourceId),
+  ],
+);
+
+export const contentWorkflowEventsTable = pgTable(
+  "content_workflow_events",
+  {
+    id: serial("id").primaryKey(),
+    entityType: text("entity_type").notNull(),
+    entityId: integer("entity_id").notNull(),
+    action: text("action").notNull(),
+    fromStatus: publicationStatusEnum("from_status").notNull(),
+    toStatus: publicationStatusEnum("to_status").notNull(),
+    actorUserId: text("actor_user_id").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("content_workflow_events_entity_idx").on(
+      table.entityType,
+      table.entityId,
+      table.createdAt,
+    ),
+  ],
+);
+
 export const mediaAssetsTable = pgTable(
   "media_assets",
   {
@@ -422,10 +512,14 @@ export type PlaceRow = typeof placesTable.$inferSelect;
 export type NewPlaceRow = typeof placesTable.$inferInsert;
 export type CityLocalizationRow = typeof cityLocalizationsTable.$inferSelect;
 export type PlaceLocalizationRow = typeof placeLocalizationsTable.$inferSelect;
+export type PlaceRevisionRow = typeof placeRevisionsTable.$inferSelect;
 export type ContentTagRow = typeof contentTagsTable.$inferSelect;
 export type TourRow = typeof toursTable.$inferSelect;
 export type TourLocalizationRow = typeof tourLocalizationsTable.$inferSelect;
 export type TourStopRow = typeof tourStopsTable.$inferSelect;
+export type ContentSourceRow = typeof contentSourcesTable.$inferSelect;
+export type PlaceSourceRow = typeof placeSourcesTable.$inferSelect;
+export type ContentWorkflowEventRow = typeof contentWorkflowEventsTable.$inferSelect;
 export type MediaAssetRow = typeof mediaAssetsTable.$inferSelect;
 export type NewMediaAssetRow = typeof mediaAssetsTable.$inferInsert;
 export type CityMediaRow = typeof cityMediaTable.$inferSelect;

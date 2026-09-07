@@ -37,6 +37,9 @@ describe("public content repository", () => {
   it("filters unpublished cities and returns every published CMS city", async () => {
     mockCitySummaryDatabase([
       { id: 1, slug: "draft-city", publicationStatus: "draft" },
+      { id: 4, slug: "review-city", publicationStatus: "in_review" },
+      { id: 5, slug: "approved-city", publicationStatus: "approved" },
+      { id: 6, slug: "archived-city", publicationStatus: "archived" },
       { id: 2, slug: "ghent", publicationStatus: "published" },
       { id: 3, slug: "lubeck", publicationStatus: "published" },
     ], [
@@ -49,6 +52,9 @@ describe("public content repository", () => {
 
     expect(summaries.map(({ city }) => city.slug)).toEqual(["ghent", "lubeck"]);
     expect(summaries.some(({ city }) => city.slug === "draft-city")).toBe(false);
+    expect(summaries.some(({ city }) => city.slug === "review-city")).toBe(false);
+    expect(summaries.some(({ city }) => city.slug === "approved-city")).toBe(false);
+    expect(summaries.some(({ city }) => city.slug === "archived-city")).toBe(false);
     expect(getPublicMediaSnapshot).toHaveBeenCalledTimes(2);
   });
 

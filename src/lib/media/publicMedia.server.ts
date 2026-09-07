@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray, isNull } from "drizzle-orm";
+import { and, asc, eq, exists, inArray, isNull, ne, or } from "drizzle-orm";
 
 import type { Place } from "@/data/places";
 import { getDb } from "@/db/client";
@@ -9,6 +9,7 @@ import {
   cityMediaTable,
   mediaAssetsTable,
   placeMediaTable,
+  placeRevisionsTable,
   placesTable,
   tourMediaTable,
   toursTable,
@@ -115,7 +116,7 @@ export async function getPublicMediaDeliveryAsset(
         and(
           eq(placeMediaTable.mediaAssetId, asset.id),
           eq(placesTable.cityId, asset.cityId),
-          eq(placesTable.publicationStatus, "published"),
+          publicPlaceCondition(db),
           eq(citiesTable.publicationStatus, "published"),
         ),
       )
@@ -197,9 +198,29 @@ async function getPublishedEntityCityId(entityType: MediaEntityType, entityId: n
     return city?.id;
   }
   if (entityType === "place") {
-    const [place] = await db.select({ cityId: placesTable.cityId }).from(placesTable).innerJoin(citiesTable, eq(placesTable.cityId, citiesTable.id)).where(and(eq(placesTable.id, entityId), eq(placesTable.publicationStatus, "published"), eq(citiesTable.publicationStatus, "published"))).limit(1);
+    const [place] = await db.select({ cityId: placesTable.cityId }).from(placesTable).innerJoin(citiesTable, eq(placesTable.cityId, citiesTable.id)).where(and(eq(placesTable.id, entityId), publicPlaceCondition(db), eq(citiesTable.publicationStatus, "published"))).limit(1);
     return place?.cityId;
   }
   const [tour] = await db.select({ cityId: toursTable.cityId }).from(toursTable).innerJoin(citiesTable, eq(toursTable.cityId, citiesTable.id)).where(and(eq(toursTable.id, entityId), eq(toursTable.publicationStatus, "published"), eq(citiesTable.publicationStatus, "published"))).limit(1);
   return tour?.cityId;
+}
+
+function publicPlaceCondition(db: ReturnType<typeof getDb>) {
+  return and(
+    ne(placesTable.publicationStatus, "archived"),
+    or(
+      eq(placesTable.publicationStatus, "published"),
+      exists(
+        db
+          .select({ id: placeRevisionsTable.id })
+          .from(placeRevisionsTable)
+          .where(
+            and(
+              eq(placeRevisionsTable.placeId, placesTable.id),
+              eq(placeRevisionsTable.isCurrent, true),
+            ),
+          ),
+      ),
+    ),
+  );
 }

@@ -4,9 +4,13 @@ import { describe, expect, it } from "vitest";
 import {
   citiesTable,
   cityLocalizationsTable,
+  contentSourcesTable,
+  contentWorkflowEventsTable,
   contentTagsTable,
   placeContentTagsTable,
   placeLocalizationsTable,
+  placeSourcesTable,
+  placeRevisionsTable,
   placesTable,
   publicationStatusEnum,
   tourLocalizationsTable,
@@ -15,12 +19,26 @@ import {
 } from "@/db/schema";
 
 describe("CMS content schema", () => {
-  it("defines only the CMS-02 publication states", () => {
+  it("defines the CMS editorial workflow states", () => {
     expect(publicationStatusEnum.enumValues).toEqual([
       "draft",
+      "in_review",
+      "approved",
       "published",
       "archived",
     ]);
+  });
+
+  it("stores canonical place provenance and workflow history additively", () => {
+    expect(getTableConfig(contentSourcesTable).name).toBe("content_sources");
+    expect(getTableConfig(placeSourcesTable).primaryKeys).toHaveLength(1);
+    expect(getTableConfig(contentWorkflowEventsTable).name).toBe("content_workflow_events");
+    expect(getTableConfig(placeRevisionsTable).name).toBe("place_revisions");
+    expect(
+      getTableConfig(contentSourcesTable).indexes.some(
+        (index) => index.config.name === "content_sources_canonical_url_unique" && index.config.unique,
+      ),
+    ).toBe(true);
   });
 
   it("keeps operational and publication status separate", () => {

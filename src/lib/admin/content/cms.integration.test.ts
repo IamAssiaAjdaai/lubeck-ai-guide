@@ -9,8 +9,11 @@ import { closeDb, getDb } from "@/db/client";
 import {
   citiesTable,
   contentTagsTable,
+  contentSourcesTable,
   placeContentTagsTable,
   placeLocalizationsTable,
+  placeRevisionsTable,
+  placeSourcesTable,
   placesTable,
   tourStopsTable,
   toursTable,
@@ -18,9 +21,11 @@ import {
 import {
   CmsContentConflictError,
   CmsContentIntegrityError,
+  approveAndPublishCmsContent,
   createCmsCity,
   createCmsPlace,
   createCmsTour,
+  createOrReuseCmsSourceForPlace,
   deleteCmsDraft,
   getCmsCity,
   getCmsPlace,
@@ -47,6 +52,30 @@ const graphCitySlug = "cms02-graph-city";
 const graphOtherCitySlug = "cms02-graph-other-city";
 const actorId = "cms02-integration-actor";
 
+async function prepareForPublication(
+  entity: "city" | "place" | "tour",
+  id: number,
+) {
+  if (entity === "place") {
+    await createOrReuseCmsSourceForPlace(id, {
+      publisher: "CITYWALK integration",
+      title: `Integration source ${id}`,
+      canonicalUrl: `https://example.com/cms-source/${id}`,
+      verifiedAt: "2020-01-01",
+    }, actorId);
+  }
+  await setCmsPublicationStatus(entity, id, "in_review", actorId);
+  await setCmsPublicationStatus(entity, id, "approved", actorId);
+}
+
+async function publish(
+  entity: "city" | "place" | "tour",
+  id: number,
+) {
+  await prepareForPublication(entity, id);
+  return setCmsPublicationStatus(entity, id, "published", actorId);
+}
+
 describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
   afterAll(async () => {
     const db = getDb();
@@ -66,6 +95,9 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
     await db
       .delete(contentTagsTable)
       .where(eq(contentTagsTable.slug, "cms02-integration-tag"));
+    await db
+      .delete(contentSourcesTable)
+      .where(eq(contentSourcesTable.publisher, "CITYWALK integration"));
     await closeDb();
   });
 
@@ -111,6 +143,23 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
         eq(placeLocalizationsTable.placeId, placesTable.id),
       )
       .where(eq(placesTable.cityId, lubeck!.id))).toHaveLength(175);
+    const canonicalSourceLinks = await getDb()
+      .select({ placeId: placeSourcesTable.placeId })
+      .from(placeSourcesTable)
+      .innerJoin(placesTable, eq(placeSourcesTable.placeId, placesTable.id))
+      .where(eq(placesTable.cityId, lubeck!.id));
+    expect(new Set(canonicalSourceLinks.map(({ placeId }) => placeId)).size).toBe(25);
+    const canonicalRevisions = await getDb()
+      .select({ placeId: placeRevisionsTable.placeId })
+      .from(placeRevisionsTable)
+      .innerJoin(placesTable, eq(placeRevisionsTable.placeId, placesTable.id))
+      .where(
+        and(
+          eq(placesTable.cityId, lubeck!.id),
+          eq(placeRevisionsTable.isCurrent, true),
+        ),
+      );
+    expect(new Set(canonicalRevisions.map(({ placeId }) => placeId)).size).toBe(25);
   });
 
   it("runs transactional CRUD, publication, ordering, and public visibility", async () => {
@@ -174,9 +223,128 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
     ]);
     expect(storedPlace?.createdByUserId).toBe(actorId);
 
+    await publish("place", firstPlace.id);
+    await publish("place", secondPlace.id);
+    await publish("city", city.id);
+    const combinedPlace = await createCmsPlace({
+      cityId: city.id,
+      slug: "combined-place",
+      category: "see",
+      latitude: 53.854,
+      longitude: 10.674,
+      durationMinutes: 10,
+      environment: "outdoor",
+      pricing: "free",
+      publicationStatus: "draft",
+      tagSlugs: [],
+      localizations: [{ locale: "en", name: "Combined place", shortDescription: "Combined action.", facts: [] }],
+    }, actorId);
+    await createOrReuseCmsSourceForPlace(combinedPlace.id, {
+      publisher: "CITYWALK integration",
+      title: "Combined source",
+      canonicalUrl: `https://example.com/cms-source/${combinedPlace.id}/combined`,
+      verifiedAt: "2020-01-01",
+    }, actorId);
+    await setCmsPublicationStatus("place", combinedPlace.id, "in_review", actorId);
+    await expect(approveAndPublishCmsContent("place", combinedPlace.id, actorId))
+      .resolves.toMatchObject({ publicationStatus: "published" });
+    expect((await getCmsPlace(combinedPlace.id))?.workflowEvents.slice(-2).map(({ action }) => action))
+      .toEqual(["approved", "published"]);
+    await setCmsPublicationStatus("place", combinedPlace.id, "archived", actorId);
+    const expiredSourcePlace = await createCmsPlace({
+      cityId: city.id,
+      slug: "expired-source-place",
+      category: "see",
+      latitude: 53.853,
+      longitude: 10.673,
+      durationMinutes: 10,
+      environment: "outdoor",
+      pricing: "free",
+      publicationStatus: "draft",
+      tagSlugs: [],
+      localizations: [{
+        locale: "en",
+        name: "Expired source place",
+        shortDescription: "Publication must remain blocked.",
+        facts: [],
+      }],
+    }, actorId);
+    await expect(
+      setCmsPublicationStatus("place", expiredSourcePlace.id, "in_review", actorId),
+    ).resolves.toMatchObject({ publicationStatus: "in_review" });
+    await setCmsPublicationStatus("place", expiredSourcePlace.id, "draft", actorId);
+    await createOrReuseCmsSourceForPlace(expiredSourcePlace.id, {
+      publisher: "CITYWALK integration",
+      title: "Expired source",
+      canonicalUrl: `https://example.com/cms-source/${expiredSourcePlace.id}/expired`,
+      verifiedAt: "2020-01-01",
+      validUntil: "2020-01-02",
+    }, actorId);
+    await setCmsPublicationStatus("place", expiredSourcePlace.id, "in_review", actorId);
+    await setCmsPublicationStatus("place", expiredSourcePlace.id, "approved", actorId);
+    await expect(
+      setCmsPublicationStatus("place", expiredSourcePlace.id, "published", actorId),
+    ).rejects.toThrow("required source is invalid or expired");
+
+    const publishedFirstPlace = await getCmsPlace(firstPlace.id);
+    expect(publishedFirstPlace?.sourceLinks).toHaveLength(1);
+    const secondarySource = {
+      publisher: "CITYWALK integration",
+      title: "Secondary integration source",
+      canonicalUrl: `https://example.com/cms-source/${firstPlace.id}/secondary`,
+      verifiedAt: "2020-01-01",
+    } as const;
+    await createOrReuseCmsSourceForPlace(firstPlace.id, secondarySource, actorId);
+    await createOrReuseCmsSourceForPlace(firstPlace.id, secondarySource, actorId);
+    expect((await getCmsPlace(firstPlace.id))?.sourceLinks).toHaveLength(2);
+    await updateCmsPlace(firstPlace.id, {
+      cityId: city.id,
+      slug: "first-place",
+      category: "see",
+      latitude: 53.86,
+      longitude: 10.68,
+      durationMinutes: 25,
+      environment: "outdoor",
+      pricing: "free",
+      publicationStatus: "published",
+      tagSlugs: ["cms02-integration-tag", "hidden-gem"],
+      localizations: [{
+        locale: "en",
+        name: "First place",
+        shortDescription: "Materially edited content.",
+        facts: [{ label: "Test", value: "Structured" }],
+      }, {
+        locale: "de",
+        name: "Erster Ort",
+        shortDescription: "Neue Arbeitsübersetzung.",
+        facts: [],
+      }],
+    }, actorId, publishedFirstPlace!.updatedAt.toISOString());
+    expect((await getCmsPlace(firstPlace.id))?.publicationStatus).toBe("draft");
+    const publicWhileDraft = (await getPublicCitySnapshot(citySlug, "database")).places.find(
+      ({ slug }) => slug === "first-place",
+    );
+    expect(publicWhileDraft?.durationMinutes).toBe(20);
+    expect(publicWhileDraft?.content.en?.shortDescription).toBe("First authored localization.");
+    expect(publicWhileDraft?.content.de).toBeUndefined();
+    await setCmsPublicationStatus("place", firstPlace.id, "in_review", actorId);
+    expect((await getPublicCitySnapshot(citySlug, "database")).places.find(
+      ({ slug }) => slug === "first-place",
+    )?.durationMinutes).toBe(20);
+    await setCmsPublicationStatus("place", firstPlace.id, "approved", actorId);
+    expect((await getPublicCitySnapshot(citySlug, "database")).places.find(
+      ({ slug }) => slug === "first-place",
+    )?.durationMinutes).toBe(20);
     await setCmsPublicationStatus("place", firstPlace.id, "published", actorId);
-    await setCmsPublicationStatus("place", secondPlace.id, "published", actorId);
-    await setCmsPublicationStatus("city", city.id, "published", actorId);
+    const publicAfterPublish = (await getPublicCitySnapshot(citySlug, "database")).places.find(
+      ({ slug }) => slug === "first-place",
+    );
+    expect(publicAfterPublish?.durationMinutes).toBe(25);
+    expect(publicAfterPublish?.content.en?.shortDescription).toBe("Materially edited content.");
+    expect(publicAfterPublish?.content.de?.shortDescription).toBe("Neue Arbeitsübersetzung.");
+    expect(await getDb().select().from(placeRevisionsTable).where(
+      eq(placeRevisionsTable.placeId, firstPlace.id),
+    )).toHaveLength(2);
 
     const tour = await createCmsTour({
       cityId: city.id,
@@ -189,7 +357,7 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
         { placeId: secondPlace.id, position: 2 },
       ],
     }, actorId);
-    await setCmsPublicationStatus("tour", tour.id, "published", actorId);
+    await publish("tour", tour.id);
 
     const published = await getPublicCitySnapshot(citySlug, "database");
     expect(published.places.map(({ slug }) => slug)).toEqual([
@@ -216,6 +384,8 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
     }, actorId, currentTour!.updatedAt.toISOString());
     expect((await getCmsTour(tour.id))?.stops.map(({ placeId }) => placeId))
       .toEqual([secondPlace.id, firstPlace.id]);
+    expect((await getCmsTour(tour.id))?.publicationStatus).toBe("draft");
+    await publish("tour", tour.id);
 
     const currentCity = await getCmsCity(city.id);
     expect(currentCity).toBeDefined();
@@ -231,6 +401,8 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
     }, actorId, currentCity!.updatedAt.toISOString())).rejects.toBeInstanceOf(
       CmsContentConflictError,
     );
+    expect((await getCmsCity(city.id))?.publicationStatus).toBe("draft");
+    await publish("city", city.id);
 
     const draft = await createCmsPlace({
       cityId: city.id,
@@ -270,13 +442,20 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
     expect(duplicateRows).toHaveLength(1);
     expect(await getDb().select().from(placeLocalizationsTable).where(
       eq(placeLocalizationsTable.placeId, firstPlace.id),
-    )).toHaveLength(1);
+    )).toHaveLength(2);
     expect(await getDb().select().from(placeContentTagsTable).where(
       eq(placeContentTagsTable.placeId, firstPlace.id),
     )).toHaveLength(2);
     expect(await getDb().select().from(tourStopsTable).where(
       eq(tourStopsTable.tourId, tour.id),
     )).toHaveLength(2);
+    expect((await getCmsPlace(firstPlace.id))?.workflowEvents.map(({ action }) => action))
+      .toEqual(expect.arrayContaining([
+        "submitted_for_review",
+        "approved",
+        "published",
+        "returned_to_draft",
+      ]));
   });
 
   it("prevents publication graph corruption across every write path", async () => {
@@ -337,40 +516,83 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
       ],
     }, actorId);
 
+    await prepareForPublication("tour", tour.id);
     await expect(
       setCmsPublicationStatus("tour", tour.id, "published", actorId),
     ).rejects.toMatchObject({
       message: TOUR_CITY_NOT_PUBLISHED_ERROR,
     } satisfies Partial<CmsContentIntegrityError>);
 
-    await setCmsPublicationStatus("city", city.id, "published", actorId);
+    await publish("city", city.id);
     await expect(
       setCmsPublicationStatus("tour", tour.id, "published", actorId),
     ).rejects.toMatchObject({
       message: TOUR_STOP_NOT_PUBLISHED_ERROR,
     } satisfies Partial<CmsContentIntegrityError>);
 
-    await setCmsPublicationStatus(
-      "place",
-      firstPlace.id,
-      "published",
-      actorId,
-    );
+    await publish("place", firstPlace.id);
     await expect(
       setCmsPublicationStatus("tour", tour.id, "published", actorId),
     ).rejects.toMatchObject({
       message: TOUR_STOP_NOT_PUBLISHED_ERROR,
     } satisfies Partial<CmsContentIntegrityError>);
 
-    await setCmsPublicationStatus(
-      "place",
-      secondPlace.id,
-      "published",
-      actorId,
-    );
+    await publish("place", secondPlace.id);
     await expect(
       setCmsPublicationStatus("tour", tour.id, "published", actorId),
     ).resolves.toMatchObject({ publicationStatus: "published" });
+
+    const liveFirstPlace = await getCmsPlace(firstPlace.id);
+    await updateCmsPlace(firstPlace.id, {
+      cityId: city.id,
+      slug: "graph-first-place",
+      category: "see",
+      latitude: 53.85,
+      longitude: 10.67,
+      durationMinutes: 30,
+      environment: "outdoor",
+      pricing: "free",
+      publicationStatus: "published",
+      tagSlugs: [],
+      localizations: [{
+        locale: "en",
+        name: "Graph first place revision",
+        shortDescription: "Working revision.",
+        facts: [],
+      }],
+    }, actorId, liveFirstPlace!.updatedAt.toISOString());
+    expect((await getCmsTour(tour.id))?.publicationStatus).toBe("published");
+    const publicDuringPlaceEdit = await getPublicCitySnapshot(graphCitySlug, "database");
+    expect(publicDuringPlaceEdit.tours[0]?.stops).toHaveLength(2);
+    expect(publicDuringPlaceEdit.places.find(({ slug }) => slug === "graph-first-place")?.durationMinutes).toBe(20);
+    await publish("place", firstPlace.id);
+
+    const republishedFirstPlace = await getCmsPlace(firstPlace.id);
+    await expect(updateCmsPlace(firstPlace.id, {
+      cityId: city.id,
+      slug: "changed-live-slug",
+      category: "see",
+      latitude: 53.85,
+      longitude: 10.67,
+      durationMinutes: 30,
+      environment: "outdoor",
+      pricing: "free",
+      publicationStatus: "published",
+      tagSlugs: [],
+      localizations: [{
+        locale: "en",
+        name: "Graph first place revision",
+        shortDescription: "Working revision.",
+        facts: [],
+      }],
+    }, actorId, republishedFirstPlace!.updatedAt.toISOString())).rejects.toMatchObject({
+      message: "Archive this published place before changing its slug.",
+    } satisfies Partial<CmsContentIntegrityError>);
+    expect(
+      (await getPublicCitySnapshot(graphCitySlug, "database")).places.some(
+        ({ slug }) => slug === "graph-first-place",
+      ),
+    ).toBe(true);
 
     const draftPlace = await createCmsPlace({
       cityId: city.id,
@@ -401,11 +623,24 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
         { placeId: firstPlace.id, position: 1 },
         { placeId: draftPlace.id, position: 2 },
       ],
-    }, actorId, currentTour!.updatedAt.toISOString())).rejects.toMatchObject({
-      message: TOUR_STOP_NOT_PUBLISHED_ERROR,
-    } satisfies Partial<CmsContentIntegrityError>);
+    }, actorId, currentTour!.updatedAt.toISOString())).resolves.toMatchObject({
+      publicationStatus: "draft",
+    });
     expect((await getCmsTour(tour.id))?.stops.map(({ placeId }) => placeId))
-      .toEqual([firstPlace.id, secondPlace.id]);
+      .toEqual([firstPlace.id, draftPlace.id]);
+
+    const draftTour = await getCmsTour(tour.id);
+    await updateCmsTour(tour.id, {
+      cityId: city.id,
+      slug: "graph-tour",
+      publicationStatus: "draft",
+      localizations: [{ locale: "en", title: "Graph tour" }],
+      stops: [
+        { placeId: firstPlace.id, position: 1 },
+        { placeId: secondPlace.id, position: 2 },
+      ],
+    }, actorId, draftTour!.updatedAt.toISOString());
+    await publish("tour", tour.id);
 
     await expect(
       setCmsPublicationStatus("place", secondPlace.id, "archived", actorId),
@@ -425,6 +660,7 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
       localizations: [{ locale: "en", title: "Archived stop tour" }],
       stops: [{ placeId: secondPlace.id, position: 1 }],
     }, actorId);
+    await prepareForPublication("tour", archivedStopTour.id);
     await expect(
       setCmsPublicationStatus(
         "tour",

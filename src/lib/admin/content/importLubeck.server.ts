@@ -2,13 +2,17 @@ import { and, asc, eq, inArray } from "drizzle-orm";
 
 import { cities } from "@/data/cities";
 import { lubeckLandmarks, lubeckPlaces } from "@/data/places";
+import { getPlaceSources } from "@/data/placeSources";
 import { getDb } from "@/db/client";
 import {
   citiesTable,
   cityLocalizationsTable,
   contentTagsTable,
+  contentSourcesTable,
   placeContentTagsTable,
   placeLocalizationsTable,
+  placeRevisionsTable,
+  placeSourcesTable,
   placesTable,
   tourLocalizationsTable,
   toursTable,
@@ -16,6 +20,7 @@ import {
 } from "@/db/schema";
 import { getTranslations, locales } from "@/lib/i18n";
 import { canBootstrapCanonicalRecord } from "@/lib/admin/content/importPolicy";
+import { normalizeCanonicalSourceUrl } from "@/lib/admin/content/editorialWorkflow";
 
 export const LUBECK_EDITORIAL_TOUR_SLUG = "historic-center-walk";
 
@@ -142,6 +147,32 @@ export async function importCanonicalLubeckContent() {
           })
           .where(eq(placesTable.id, place.id));
       }
+      for (const canonicalSource of getPlaceSources(source.slug)) {
+        const canonicalUrl = normalizeCanonicalSourceUrl(canonicalSource.url);
+        const [createdSource] = await tx
+          .insert(contentSourcesTable)
+          .values({
+            publisher: new URL(canonicalUrl).hostname,
+            title: canonicalSource.label,
+            canonicalUrl,
+            verifiedAt: canonicalSource.verifiedAt,
+            notes: `Canonical CITYWALK ${canonicalSource.type} provenance.`,
+            createdAt: now,
+            updatedAt: now,
+          })
+          .onConflictDoNothing({ target: contentSourcesTable.canonicalUrl })
+          .returning();
+        const canonicalRecord = createdSource ?? (await tx
+          .select({ id: contentSourcesTable.id })
+          .from(contentSourcesTable)
+          .where(eq(contentSourcesTable.canonicalUrl, canonicalUrl))
+          .limit(1))[0];
+        if (!canonicalRecord) throw new Error(`Failed to import source ${canonicalUrl}.`);
+        await tx
+          .insert(placeSourcesTable)
+          .values({ placeId: place.id, sourceId: canonicalRecord.id, required: true, createdAt: now })
+          .onConflictDoNothing();
+      }
       if (!mayImportPlace) continue;
 
       for (const locale of locales) {
@@ -184,6 +215,50 @@ export async function importCanonicalLubeckContent() {
             .values({ placeId: place.id, tagId: tag.id })
             .onConflictDoNothing();
         }
+      }
+      const [currentRevision] = await tx
+        .select({ id: placeRevisionsTable.id })
+        .from(placeRevisionsTable)
+        .where(
+          and(
+            eq(placeRevisionsTable.placeId, place.id),
+            eq(placeRevisionsTable.isCurrent, true),
+          ),
+        )
+        .limit(1);
+      if (!currentRevision && place.publicationStatus === "published") {
+        await tx.insert(placeRevisionsTable).values({
+          placeId: place.id,
+          revisionNumber: 1,
+          isCurrent: true,
+          snapshot: {
+            category: source.category,
+            latitude: source.coordinates.lat,
+            longitude: source.coordinates.lng,
+            durationMinutes: source.durationMinutes,
+            environment: source.environment,
+            pricing: source.pricing,
+            ...(source.status ? { status: source.status } : {}),
+            ...(source.statusVerifiedAt ? { statusVerifiedAt: source.statusVerifiedAt } : {}),
+            ...(source.visitNoteVerifiedAt ? { visitNoteVerifiedAt: source.visitNoteVerifiedAt } : {}),
+            ...(source.visitNoteValidUntil ? { visitNoteValidUntil: source.visitNoteValidUntil } : {}),
+            ...(source.image ? { image: source.image } : {}),
+            tagSlugs: [...source.tags],
+            localizations: locales.flatMap((locale) => {
+              const content = source.content[locale];
+              return content ? [{
+                locale,
+                name: content.name,
+                shortDescription: content.shortDescription,
+                ...(content.description ? { description: content.description } : {}),
+                ...(content.story ? { story: content.story } : {}),
+                ...(content.visitNote ? { visitNotes: content.visitNote } : {}),
+                facts: content.facts ? [...content.facts] : [],
+              }] : [];
+            }),
+          },
+          publishedAt: now,
+        });
       }
     }
 

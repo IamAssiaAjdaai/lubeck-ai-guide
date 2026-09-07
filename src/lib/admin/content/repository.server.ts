@@ -1,19 +1,28 @@
 import "server-only";
 
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
   citiesTable,
   cityLocalizationsTable,
   contentTagsTable,
+  contentSourcesTable,
+  contentWorkflowEventsTable,
   placeContentTagsTable,
   placeLocalizationsTable,
+  placeRevisionsTable,
+  placeSourcesTable,
   placesTable,
   tourLocalizationsTable,
   toursTable,
   tourStopsTable,
 } from "@/db/schema";
+import {
+  getEditorialTransition,
+  isRequiredSourceValid,
+} from "@/lib/admin/content/editorialWorkflow";
+import type { ContentSourceInput } from "@/lib/admin/content/sources";
 import type {
   CityInput,
   PlaceInput,
@@ -27,6 +36,11 @@ import {
   hasCrossCityTourReference,
 } from "@/lib/admin/content/graphIntegrity";
 import { assertEntityMovePreservesMediaCity } from "@/lib/media/repository.server";
+import { isLocale } from "@/lib/i18n";
+import type {
+  PlaceRevisionLocalization,
+  PlaceRevisionSnapshot,
+} from "@/lib/admin/content/placeRevision";
 
 export class CmsContentNotFoundError extends Error {
   constructor(entity: string) {
@@ -122,13 +136,21 @@ export async function updateCmsCity(
 ) {
   const db = getDb();
   return db.transaction(async (tx) => {
+    const [current] = await tx
+      .select({ id: citiesTable.id, publicationStatus: citiesTable.publicationStatus })
+      .from(citiesTable)
+      .where(eq(citiesTable.id, id))
+      .for("update")
+      .limit(1);
+    if (!current) throw new CmsContentNotFoundError("City");
+    const publicationStatus = invalidatedStatus(current.publicationStatus);
     const now = new Date();
     const [city] = await tx
       .update(citiesTable)
       .set({
         slug: input.slug,
         name: input.localizations[0]?.name ?? input.slug,
-        publicationStatus: input.publicationStatus,
+        publicationStatus,
         updatedByUserId: actorId,
         updatedAt: now,
       })
@@ -169,6 +191,15 @@ export async function updateCmsCity(
           },
         });
     }
+    await recordMaterialEditIfNeeded(
+      tx,
+      "city",
+      id,
+      current.publicationStatus,
+      publicationStatus,
+      actorId,
+      now,
+    );
     return city;
   });
 }
@@ -204,7 +235,78 @@ export async function listCmsPlaces() {
 
 export async function getCmsPlace(id: number) {
   const places = await listCmsPlaces();
-  return places.find((place) => place.id === id);
+  const place = places.find((candidate) => candidate.id === id);
+  if (!place) return undefined;
+  const [sourceLinks, workflowEvents, publishedRevision] = await Promise.all([
+    getDb()
+      .select({
+        source: contentSourcesTable,
+        required: placeSourcesTable.required,
+      })
+      .from(placeSourcesTable)
+      .innerJoin(
+        contentSourcesTable,
+        eq(placeSourcesTable.sourceId, contentSourcesTable.id),
+      )
+      .where(eq(placeSourcesTable.placeId, id))
+      .orderBy(asc(contentSourcesTable.publisher), asc(contentSourcesTable.title)),
+    listCmsWorkflowEvents("place", id),
+    getDb()
+      .select()
+      .from(placeRevisionsTable)
+      .where(
+        and(
+          eq(placeRevisionsTable.placeId, id),
+          eq(placeRevisionsTable.isCurrent, true),
+        ),
+      )
+      .limit(1)
+      .then((rows) => rows[0]),
+  ]);
+  return { ...place, sourceLinks, workflowEvents, publishedRevision };
+}
+
+export async function listCmsWorkflowEvents(
+  entityType: "city" | "place" | "tour",
+  entityId: number,
+) {
+  return getDb()
+    .select()
+    .from(contentWorkflowEventsTable)
+    .where(
+      and(
+        eq(contentWorkflowEventsTable.entityType, entityType),
+        eq(contentWorkflowEventsTable.entityId, entityId),
+      ),
+    )
+    .orderBy(asc(contentWorkflowEventsTable.createdAt));
+}
+
+export async function createOrReuseCmsSourceForPlace(
+  placeId: number,
+  input: ContentSourceInput,
+  actorId: string,
+) {
+  return getDb().transaction(async (tx) => {
+    await lockCmsPlace(tx, placeId);
+    const now = new Date();
+    const [created] = await tx
+      .insert(contentSourcesTable)
+      .values({ ...input, createdByUserId: actorId, updatedByUserId: actorId, createdAt: now, updatedAt: now })
+      .onConflictDoNothing({ target: contentSourcesTable.canonicalUrl })
+      .returning();
+    const source = created ?? (await tx
+      .select()
+      .from(contentSourcesTable)
+      .where(eq(contentSourcesTable.canonicalUrl, input.canonicalUrl))
+      .limit(1))[0];
+    if (!source) throw new CmsContentIntegrityError("Source creation failed.");
+    await tx
+      .insert(placeSourcesTable)
+      .values({ placeId, sourceId: source.id, required: true, createdByUserId: actorId, createdAt: now })
+      .onConflictDoNothing();
+    return source;
+  });
 }
 
 export async function createCmsPlace(input: PlaceInput, actorId: string) {
@@ -255,8 +357,13 @@ export async function updateCmsPlace(
     const current = await lockCmsPlace(tx, id);
     if (current.cityId !== input.cityId) {
       await assertPlaceMovePreservesTourCities(tx, id, input.cityId);
+      await assertPlaceWithLiveRevisionCannotChangeIdentity(tx, id, "city");
       await assertEntityMovePreservesMediaCity(tx, "place", id, input.cityId);
     }
+    if (current.slug !== input.slug) {
+      await assertPlaceWithLiveRevisionCannotChangeIdentity(tx, id, "slug");
+    }
+    const publicationStatus = invalidatedStatus(current.publicationStatus);
     const now = new Date();
     const [place] = await tx
       .update(placesTable)
@@ -275,7 +382,7 @@ export async function updateCmsPlace(
         visitNoteValidUntil: input.visitNoteValidUntil,
         image: input.image,
         tags: [...input.tagSlugs],
-        publicationStatus: input.publicationStatus,
+        publicationStatus,
         updatedByUserId: actorId,
         updatedAt: now,
       })
@@ -297,6 +404,15 @@ export async function updateCmsPlace(
     }
     await savePlaceLocalizations(tx, id, input, actorId, now);
     await replacePlaceTags(tx, id, input.tagSlugs);
+    await recordMaterialEditIfNeeded(
+      tx,
+      "place",
+      id,
+      current.publicationStatus,
+      publicationStatus,
+      actorId,
+      now,
+    );
     return place;
   });
 }
@@ -358,14 +474,15 @@ export async function updateCmsTour(
     if (current.cityId !== input.cityId) {
       await assertEntityMovePreservesMediaCity(tx, "tour", id, input.cityId);
     }
-    await assertTourRelations(tx, input);
+    const publicationStatus = invalidatedStatus(current.publicationStatus);
+    await assertTourRelations(tx, { ...input, publicationStatus });
     const now = new Date();
     const [tour] = await tx
       .update(toursTable)
       .set({
         cityId: input.cityId,
         slug: input.slug,
-        publicationStatus: input.publicationStatus,
+        publicationStatus,
         estimatedDurationMinutes: input.estimatedDurationMinutes,
         updatedByUserId: actorId,
         updatedAt: now,
@@ -387,6 +504,15 @@ export async function updateCmsTour(
       throw new CmsContentConflictError();
     }
     await saveTourChildren(tx, id, input, actorId, now);
+    await recordMaterialEditIfNeeded(
+      tx,
+      "tour",
+      id,
+      current.publicationStatus,
+      publicationStatus,
+      actorId,
+      now,
+    );
     return tour;
   });
 }
@@ -398,11 +524,34 @@ export async function setCmsPublicationStatus(
   actorId: string,
 ) {
   return getDb().transaction(async (tx) => {
+    const current = await lockCmsEntity(tx, entity, id);
+    const transition = getEditorialTransition(current.publicationStatus, status);
+    if (!transition) {
+      throw new CmsContentIntegrityError(
+        `Cannot transition ${current.publicationStatus} to ${status}.`,
+      );
+    }
     if (entity === "tour" && status === "published") {
       await assertStoredTourCanBePublished(tx, id);
     }
+    if (status === "published") {
+      await assertStoredLocalizationExists(tx, entity, id);
+    }
+    if (entity === "place" && status === "published") {
+      await assertPlaceHasValidRequiredSource(tx, id);
+      await publishPlaceRevision(tx, id, actorId);
+    }
     if (entity === "place" && status === "archived") {
       await assertPlaceCanBeArchived(tx, id);
+      await tx
+        .update(placeRevisionsTable)
+        .set({ isCurrent: false })
+        .where(
+          and(
+            eq(placeRevisionsTable.placeId, id),
+            eq(placeRevisionsTable.isCurrent, true),
+          ),
+        );
     }
     const table =
       entity === "city"
@@ -410,16 +559,26 @@ export async function setCmsPublicationStatus(
         : entity === "place"
           ? placesTable
           : toursTable;
+    const now = new Date();
     const [record] = await tx
       .update(table)
       .set({
         publicationStatus: status,
         updatedByUserId: actorId,
-        updatedAt: new Date(),
+        updatedAt: now,
       })
       .where(eq(table.id, id))
       .returning();
     if (!record) throw new CmsContentNotFoundError(entity);
+    await tx.insert(contentWorkflowEventsTable).values({
+      entityType: entity,
+      entityId: id,
+      action: transition.action,
+      fromStatus: current.publicationStatus,
+      toStatus: status,
+      actorUserId: actorId,
+      createdAt: now,
+    });
     return record;
   });
 }
@@ -511,9 +670,23 @@ async function assertTourRelations(
     );
   }
   if (input.publicationStatus === "published") {
+    const currentRevisions = await tx
+      .select({ placeId: placeRevisionsTable.placeId })
+      .from(placeRevisionsTable)
+      .where(
+        and(
+          inArray(placeRevisionsTable.placeId, placeIds),
+          eq(placeRevisionsTable.isCurrent, true),
+        ),
+      );
+    const livePlaceIds = new Set(currentRevisions.map(({ placeId }) => placeId));
     const graphError = getPublishedTourGraphError(
       city.publicationStatus,
-      records.map(({ publicationStatus }) => publicationStatus),
+      records.map(({ id, publicationStatus }) =>
+        publicationStatus === "published" || livePlaceIds.has(id)
+          ? "published"
+          : publicationStatus,
+      ),
     );
     if (graphError) throw new CmsContentIntegrityError(graphError);
   }
@@ -525,7 +698,12 @@ type CmsTransaction = Parameters<
 
 async function lockCmsPlace(tx: CmsTransaction, placeId: number) {
   const [place] = await tx
-    .select({ id: placesTable.id, cityId: placesTable.cityId })
+    .select({
+      id: placesTable.id,
+      cityId: placesTable.cityId,
+      slug: placesTable.slug,
+      publicationStatus: placesTable.publicationStatus,
+    })
     .from(placesTable)
     .where(eq(placesTable.id, placeId))
     .for("update")
@@ -536,7 +714,11 @@ async function lockCmsPlace(tx: CmsTransaction, placeId: number) {
 
 async function lockCmsTour(tx: CmsTransaction, tourId: number) {
   const [tour] = await tx
-    .select({ id: toursTable.id, cityId: toursTable.cityId })
+    .select({
+      id: toursTable.id,
+      cityId: toursTable.cityId,
+      publicationStatus: toursTable.publicationStatus,
+    })
     .from(toursTable)
     .where(eq(toursTable.id, tourId))
     .for("update")
@@ -582,6 +764,252 @@ async function assertPlaceCanBeArchived(
       PUBLISHED_TOUR_PLACE_ARCHIVE_ERROR,
     );
   }
+}
+
+export async function approveAndPublishCmsContent(
+  entity: "city" | "place" | "tour",
+  id: number,
+  actorId: string,
+) {
+  return getDb().transaction(async (tx) => {
+    const current = await lockCmsEntity(tx, entity, id);
+    if (current.publicationStatus !== "in_review") {
+      throw new CmsContentIntegrityError(
+        "Only content waiting for review can be approved and published.",
+      );
+    }
+    await assertStoredLocalizationExists(tx, entity, id);
+    if (entity === "tour") await assertStoredTourCanBePublished(tx, id);
+    if (entity === "place") {
+      await assertPlaceHasValidRequiredSource(tx, id);
+      await publishPlaceRevision(tx, id, actorId);
+    }
+    const table = entity === "city" ? citiesTable : entity === "place" ? placesTable : toursTable;
+    const now = new Date();
+    const [record] = await tx
+      .update(table)
+      .set({ publicationStatus: "published", updatedByUserId: actorId, updatedAt: now })
+      .where(eq(table.id, id))
+      .returning();
+    if (!record) throw new CmsContentNotFoundError(entity);
+    await tx.insert(contentWorkflowEventsTable).values([
+      {
+        entityType: entity,
+        entityId: id,
+        action: "approved",
+        fromStatus: "in_review",
+        toStatus: "approved",
+        actorUserId: actorId,
+        createdAt: now,
+      },
+      {
+        entityType: entity,
+        entityId: id,
+        action: "published",
+        fromStatus: "approved",
+        toStatus: "published",
+        actorUserId: actorId,
+        createdAt: now,
+      },
+    ]);
+    return record;
+  });
+}
+
+async function assertPlaceWithLiveRevisionCannotChangeIdentity(
+  tx: CmsTransaction,
+  placeId: number,
+  field: "city" | "slug",
+) {
+  const [revision] = await tx
+    .select({ id: placeRevisionsTable.id })
+    .from(placeRevisionsTable)
+    .where(
+      and(
+        eq(placeRevisionsTable.placeId, placeId),
+        eq(placeRevisionsTable.isCurrent, true),
+      ),
+    )
+    .limit(1);
+  if (revision) {
+    throw new CmsContentIntegrityError(
+      field === "city"
+        ? "Archive this published place before moving it to another city."
+        : "Archive this published place before changing its slug.",
+    );
+  }
+}
+
+async function publishPlaceRevision(
+  tx: CmsTransaction,
+  placeId: number,
+  actorUserId: string,
+) {
+  const [place] = await tx
+    .select()
+    .from(placesTable)
+    .where(eq(placesTable.id, placeId))
+    .for("update")
+    .limit(1);
+  if (!place) throw new CmsContentNotFoundError("Place");
+  const [localizations, latestRevision] = await Promise.all([
+    tx
+      .select()
+      .from(placeLocalizationsTable)
+      .where(eq(placeLocalizationsTable.placeId, placeId))
+      .orderBy(asc(placeLocalizationsTable.locale)),
+    tx
+      .select({ revisionNumber: placeRevisionsTable.revisionNumber })
+      .from(placeRevisionsTable)
+      .where(eq(placeRevisionsTable.placeId, placeId))
+      .orderBy(desc(placeRevisionsTable.revisionNumber))
+      .limit(1)
+      .then((rows) => rows[0]),
+  ]);
+  if (localizations.length === 0) {
+    throw new CmsContentIntegrityError(
+      "Published content requires at least one authored localization.",
+    );
+  }
+  await tx
+    .update(placeRevisionsTable)
+    .set({ isCurrent: false })
+    .where(
+      and(
+        eq(placeRevisionsTable.placeId, placeId),
+        eq(placeRevisionsTable.isCurrent, true),
+      ),
+    );
+  const revisionLocalizations: PlaceRevisionLocalization[] = [];
+  for (const localization of localizations) {
+    if (!isLocale(localization.locale)) continue;
+    revisionLocalizations.push({
+      locale: localization.locale,
+      name: localization.name,
+      shortDescription: localization.shortDescription,
+      ...(localization.description ? { description: localization.description } : {}),
+      ...(localization.story ? { story: localization.story } : {}),
+      ...(localization.visitNotes ? { visitNotes: localization.visitNotes } : {}),
+      facts: localization.facts,
+    });
+  }
+  const snapshot: PlaceRevisionSnapshot = {
+    category: place.category,
+    latitude: place.latitude,
+    longitude: place.longitude,
+    durationMinutes: place.durationMinutes,
+    environment: place.environment,
+    pricing: place.pricing,
+    ...(place.status ? { status: place.status } : {}),
+    ...(place.statusVerifiedAt ? { statusVerifiedAt: place.statusVerifiedAt } : {}),
+    ...(place.visitNoteVerifiedAt ? { visitNoteVerifiedAt: place.visitNoteVerifiedAt } : {}),
+    ...(place.visitNoteValidUntil ? { visitNoteValidUntil: place.visitNoteValidUntil } : {}),
+    ...(place.image ? { image: place.image } : {}),
+    tagSlugs: place.tags,
+    localizations: revisionLocalizations,
+  };
+  await tx.insert(placeRevisionsTable).values({
+    placeId,
+    revisionNumber: (latestRevision?.revisionNumber ?? 0) + 1,
+    snapshot,
+    isCurrent: true,
+    publishedByUserId: actorUserId,
+    publishedAt: new Date(),
+  });
+}
+
+async function lockCmsEntity(
+  tx: CmsTransaction,
+  entity: "city" | "place" | "tour",
+  id: number,
+) {
+  const table = entity === "city" ? citiesTable : entity === "place" ? placesTable : toursTable;
+  const [record] = await tx
+    .select({ id: table.id, publicationStatus: table.publicationStatus })
+    .from(table)
+    .where(eq(table.id, id))
+    .for("update")
+    .limit(1);
+  if (!record) throw new CmsContentNotFoundError(entity);
+  return record;
+}
+
+async function assertStoredLocalizationExists(
+  tx: CmsTransaction,
+  entity: "city" | "place" | "tour",
+  id: number,
+) {
+  const table = entity === "city"
+    ? cityLocalizationsTable
+    : entity === "place"
+      ? placeLocalizationsTable
+      : tourLocalizationsTable;
+  const idColumn = entity === "city"
+    ? cityLocalizationsTable.cityId
+    : entity === "place"
+      ? placeLocalizationsTable.placeId
+      : tourLocalizationsTable.tourId;
+  const [localization] = await tx
+    .select({ id: table.id })
+    .from(table)
+    .where(eq(idColumn, id))
+    .limit(1);
+  if (!localization) {
+    throw new CmsContentIntegrityError(
+      "Published content requires at least one authored localization.",
+    );
+  }
+}
+
+async function assertPlaceHasValidRequiredSource(
+  tx: CmsTransaction,
+  placeId: number,
+) {
+  const sources = await tx
+    .select({
+      required: placeSourcesTable.required,
+      verifiedAt: contentSourcesTable.verifiedAt,
+      validUntil: contentSourcesTable.validUntil,
+    })
+    .from(placeSourcesTable)
+    .innerJoin(contentSourcesTable, eq(placeSourcesTable.sourceId, contentSourcesTable.id))
+    .where(eq(placeSourcesTable.placeId, placeId));
+  const required = sources.filter((source) => source.required);
+  if (required.length === 0) {
+    throw new CmsContentIntegrityError(
+      "Publishing a place requires at least one required canonical source.",
+    );
+  }
+  if (required.some((source) => !isRequiredSourceValid(source))) {
+    throw new CmsContentIntegrityError(
+      "Publishing is blocked because a required source is invalid or expired.",
+    );
+  }
+}
+
+function invalidatedStatus(status: PublicationStatus): PublicationStatus {
+  return status === "approved" || status === "published" ? "draft" : status;
+}
+
+async function recordMaterialEditIfNeeded(
+  tx: CmsTransaction,
+  entityType: "city" | "place" | "tour",
+  entityId: number,
+  fromStatus: PublicationStatus,
+  toStatus: PublicationStatus,
+  actorUserId: string,
+  createdAt: Date,
+) {
+  if (fromStatus === toStatus) return;
+  await tx.insert(contentWorkflowEventsTable).values({
+    entityType,
+    entityId,
+    action: "returned_to_draft",
+    fromStatus,
+    toStatus,
+    actorUserId,
+    createdAt,
+  });
 }
 
 async function assertPlaceMovePreservesTourCities(

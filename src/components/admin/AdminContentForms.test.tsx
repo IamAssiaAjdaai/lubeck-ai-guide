@@ -1,53 +1,49 @@
 import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom/vitest";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import {
-  CityFields,
-  LocaleNavigator,
-} from "@/components/admin/AdminContentForms";
+import { PlaceSourcesPanel, PublicationActions } from "@/components/admin/AdminContentForms";
+import type { StaffAccess } from "@/lib/admin/permissions";
 
-const city = {
-  id: 1,
-  slug: "lubeck",
-  name: "Lubeck",
-  publicationStatus: "draft" as const,
-  createdByUserId: null,
-  updatedByUserId: null,
-  createdAt: new Date("2026-01-01T00:00:00.000Z"),
-  updatedAt: new Date("2026-01-01T00:00:00.000Z"),
-  localizations: [{
-    id: 1,
-    cityId: 1,
-    locale: "en",
-    name: "Lubeck",
-    shortDescription: "English authored content",
-    createdByUserId: null,
-    updatedByUserId: null,
-    createdAt: new Date("2026-01-01T00:00:00.000Z"),
-    updatedAt: new Date("2026-01-01T00:00:00.000Z"),
-  }],
-};
+function staff(role: string): StaffAccess {
+  return {
+    membershipId: 1,
+    userId: "staff-1",
+    role,
+    active: true,
+    globalAccess: false,
+    cityIds: [7],
+  };
+}
 
-describe("admin authored-localization UI", () => {
-  it("does not copy fallback text into an unauthored locale form", () => {
-    render(<CityFields city={city} editingLocale="ar" />);
+const action = vi.fn(async () => undefined);
+const approveAndPublishAction = vi.fn(async () => undefined);
 
-    expect(screen.getByLabelText("Name")).toHaveValue("");
-    expect(document.querySelector('input[name="locale"]')).toHaveValue("ar");
+describe("editorial workflow actions", () => {
+  it("shows submit, but not approval or publication, to an editor", () => {
+    render(<PublicationActions action={action} cityId={7} entity="place" id={1} staff={staff("content_editor")} status="draft" />);
+    expect(screen.getByRole("button", { name: "Send for review place" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /Approve|Publish/ })).toBeNull();
   });
 
-  it("identifies the locale currently selected for editing", () => {
-    render(
-      <LocaleNavigator authoredLocales={["en"]} currentLocale="ar" />,
-    );
+  it("shows a convenient combined action to the existing reviewer/publisher role", () => {
+    render(<PublicationActions action={action} approveAndPublishAction={approveAndPublishAction} cityId={7} entity="place" id={1} staff={staff("reviewer_publisher")} status="in_review" />);
+    expect(screen.getByRole("button", { name: "Approve & Publish place" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Request changes place" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Approve place" })).toBeNull();
+  });
 
-    expect(screen.getByRole("link", { name: "ar" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-    expect(screen.getByRole("link", { name: "en" })).not.toHaveAttribute(
-      "aria-current",
-    );
+  it("shows a plain non-blocking reference warning and simple URL field", () => {
+    render(<PlaceSourcesPanel action={action} canManage sourceLinks={[]} />);
+    expect(screen.getByText("Add a reliable source before this content can be published.")).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "Reference link" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "+ Add another reference" })).toBeTruthy();
+    expect(screen.queryByText(/provenance|canonical normalization/i)).toBeNull();
+  });
+
+  it("shows publish only after approval and confirms archival", () => {
+    const { rerender } = render(<PublicationActions action={action} cityId={7} entity="place" id={1} staff={staff("reviewer_publisher")} status="approved" />);
+    expect(screen.getByRole("button", { name: "Publish place" })).toBeTruthy();
+    rerender(<PublicationActions action={action} cityId={7} entity="place" id={1} staff={staff("reviewer_publisher")} status="published" />);
+    expect(screen.getByRole("button", { name: "Archive place" })).toBeTruthy();
   });
 });

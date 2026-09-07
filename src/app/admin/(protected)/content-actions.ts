@@ -11,6 +11,8 @@ import {
 } from "@/lib/admin/content/formData";
 import {
   changeAuthorizedPublicationStatus,
+  addAuthorizedPlaceReference,
+  approveAndPublishAuthorizedContent,
   createAuthorizedCity,
   createAuthorizedPlace,
   createAuthorizedTour,
@@ -135,6 +137,33 @@ export async function changePublicationAction(
   redirect(destination);
 }
 
+export async function approveAndPublishAction(
+  entity: "city" | "place" | "tour",
+  id: number,
+) {
+  let destination = `/admin/${entity === "city" ? "cities" : `${entity}s`}/${id}`;
+  try {
+    await approveAndPublishAuthorizedContent(entity, id);
+    revalidatePath(destination);
+    destination += "?saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(actionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function addPlaceSourceAction(id: number, formData: FormData) {
+  let destination = `/admin/places/${id}`;
+  try {
+    await addAuthorizedPlaceReference(id, textField(formData, "referenceUrl"));
+    revalidatePath(destination);
+    destination += "?saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(actionError(error))}`;
+  }
+  redirect(destination);
+}
+
 export async function deleteDraftAction(
   entity: "city" | "place" | "tour",
   id: number,
@@ -171,4 +200,9 @@ function formLocale(formData: FormData): string | undefined {
 
 function localeQuery(locale: string | undefined): string {
   return locale ? `&locale=${encodeURIComponent(locale)}` : "";
+}
+
+function textField(formData: FormData, name: string): string {
+  const value = formData.get(name);
+  return typeof value === "string" ? value : "";
 }

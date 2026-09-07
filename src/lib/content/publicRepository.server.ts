@@ -18,6 +18,7 @@ import {
   contentTagsTable,
   placeContentTagsTable,
   placeLocalizationsTable,
+  placeRevisionsTable,
   placesTable,
   tourLocalizationsTable,
   toursTable,
@@ -202,7 +203,7 @@ async function loadPublishedDatabaseSnapshot(
   if (!city || city.publicationStatus !== "published") {
     throw new Error("Published city snapshot is unavailable.");
   }
-  const [cityLocalizations, placeRows, placeLocalizations, tagRelations, tags, tourRows, tourLocalizations, stopRows] =
+  const [cityLocalizations, placeRows, placeRevisions, placeLocalizations, tagRelations, tags, tourRows, tourLocalizations, stopRows] =
     await Promise.all([
       db
         .select()
@@ -213,6 +214,10 @@ async function loadPublishedDatabaseSnapshot(
         .from(placesTable)
         .where(eq(placesTable.cityId, city.id))
         .orderBy(asc(placesTable.id)),
+      db
+        .select()
+        .from(placeRevisionsTable)
+        .where(eq(placeRevisionsTable.isCurrent, true)),
       db.select().from(placeLocalizationsTable),
       db.select().from(placeContentTagsTable),
       db.select().from(contentTagsTable),
@@ -224,8 +229,12 @@ async function loadPublishedDatabaseSnapshot(
       db.select().from(tourLocalizationsTable),
       db.select().from(tourStopsTable).orderBy(asc(tourStopsTable.position)),
     ]);
-  const publishedPlaces = placeRows.filter(
-    ({ publicationStatus }) => publicationStatus === "published",
+  const currentRevisionByPlaceId = new Map(
+    placeRevisions.map((revision) => [revision.placeId, revision] as const),
+  );
+  const publishedPlaces = placeRows.filter((place) =>
+    place.publicationStatus !== "archived" &&
+    (place.publicationStatus === "published" || currentRevisionByPlaceId.has(place.id)),
   );
   const placeSlugById = new Map(
     publishedPlaces.map(({ id, slug }) => [id, slug] as const),
@@ -250,9 +259,13 @@ async function loadPublishedDatabaseSnapshot(
   }
   const tagById = new Map(tags.map(({ id, slug }) => [id, slug] as const));
   const places: Place[] = publishedPlaces.map((place) => {
+    const revision = currentRevisionByPlaceId.get(place.id);
+    const localizationRows = revision
+      ? revision.snapshot.localizations
+      : placeLocalizations.filter(({ placeId }) => placeId === place.id);
     const content = Object.fromEntries(
-      placeLocalizations
-        .filter(({ placeId, locale }) => placeId === place.id && isLocale(locale))
+      localizationRows
+        .filter(({ locale }) => isLocale(locale))
         .map((localization) => [
           localization.locale,
           {
@@ -271,12 +284,13 @@ async function loadPublishedDatabaseSnapshot(
           } satisfies PlaceContent,
         ]),
     ) as Partial<Record<Locale, PlaceContent>>;
-    const normalizedTags = tagRelations
-      .filter(({ placeId }) => placeId === place.id)
-      .flatMap(({ tagId }) => {
-        const slug = tagById.get(tagId);
-        return slug ? [slug] : [];
-      });
+    const normalizedTags = revision?.snapshot.tagSlugs ??
+      tagRelations
+        .filter(({ placeId }) => placeId === place.id)
+        .flatMap(({ tagId }) => {
+          const slug = tagById.get(tagId);
+          return slug ? [slug] : [];
+        });
     const canonical = getPlace(citySlug, place.slug);
     const cmsMedia = mediaSnapshot.places.get(place.id) ?? [];
     const cmsImage = cmsMedia.find(
@@ -293,25 +307,28 @@ async function loadPublishedDatabaseSnapshot(
     return {
       slug: place.slug,
       city: citySlug,
-      category: place.category,
-      coordinates: { lat: place.latitude, lng: place.longitude },
-      durationMinutes: place.durationMinutes,
-      environment: place.environment,
-      pricing: place.pricing,
-      ...(place.status ? { status: place.status } : {}),
-      ...(place.statusVerifiedAt
-        ? { statusVerifiedAt: place.statusVerifiedAt }
+      category: revision?.snapshot.category ?? place.category,
+      coordinates: {
+        lat: revision?.snapshot.latitude ?? place.latitude,
+        lng: revision?.snapshot.longitude ?? place.longitude,
+      },
+      durationMinutes: revision?.snapshot.durationMinutes ?? place.durationMinutes,
+      environment: revision?.snapshot.environment ?? place.environment,
+      pricing: revision?.snapshot.pricing ?? place.pricing,
+      ...((revision?.snapshot.status ?? place.status) ? { status: revision?.snapshot.status ?? place.status! } : {}),
+      ...((revision?.snapshot.statusVerifiedAt ?? place.statusVerifiedAt)
+        ? { statusVerifiedAt: revision?.snapshot.statusVerifiedAt ?? place.statusVerifiedAt! }
         : {}),
-      ...(place.visitNoteVerifiedAt
-        ? { visitNoteVerifiedAt: place.visitNoteVerifiedAt }
+      ...((revision?.snapshot.visitNoteVerifiedAt ?? place.visitNoteVerifiedAt)
+        ? { visitNoteVerifiedAt: revision?.snapshot.visitNoteVerifiedAt ?? place.visitNoteVerifiedAt! }
         : {}),
-      ...(place.visitNoteValidUntil
-        ? { visitNoteValidUntil: place.visitNoteValidUntil }
+      ...((revision?.snapshot.visitNoteValidUntil ?? place.visitNoteValidUntil)
+        ? { visitNoteValidUntil: revision?.snapshot.visitNoteValidUntil ?? place.visitNoteValidUntil! }
         : {}),
       ...(cmsImage?.url
         ? { image: cmsImage.url }
-        : place.image
-          ? { image: place.image }
+        : (revision?.snapshot.image ?? place.image)
+          ? { image: revision?.snapshot.image ?? place.image! }
           : {}),
       tags: normalizedTags,
       ...(canonical?.audio || Object.keys(cmsAudio).length > 0

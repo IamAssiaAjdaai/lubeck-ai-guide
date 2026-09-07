@@ -10,12 +10,12 @@ import {
   type PlaceStatus,
 } from "@/data/places";
 import { isLocale, type Locale } from "@/lib/i18n";
+import {
+  EDITORIAL_WORKFLOW_STATES,
+  getEditorialTransition,
+} from "@/lib/admin/content/editorialWorkflow";
 
-export const PUBLICATION_STATUSES = [
-  "draft",
-  "published",
-  "archived",
-] as const;
+export const PUBLICATION_STATUSES = EDITORIAL_WORKFLOW_STATES;
 
 export type PublicationStatus = (typeof PUBLICATION_STATUSES)[number];
 
@@ -291,19 +291,14 @@ export function canTransitionPublication(
   current: PublicationStatus,
   next: PublicationStatus,
 ): boolean {
-  return (
-    current === next ||
-    (current === "draft" && next === "published") ||
-    (current === "published" && next === "archived") ||
-    (current === "archived" && next === "draft")
-  );
+  return Boolean(getEditorialTransition(current, next));
 }
 
 function validatePublicationRequirements(
   status: PublicationStatus,
   localizations: readonly unknown[],
 ) {
-  if (status === "published" && localizations.length === 0) {
+  if (status !== "draft" && status !== "archived" && localizations.length === 0) {
     throw new CmsValidationError([
       "Published content requires at least one authored localization.",
     ]);

@@ -43,8 +43,17 @@ export function Cell({ children }: Readonly<{ children: ReactNode }>) {
 }
 
 export function StatusBadge({ status }: Readonly<{ status: string }>) {
-  const color = status === "published" || status === "open" ? "bg-emerald-50 text-emerald-700" : status === "archived" || status === "closed" || status === "renovation" ? "bg-amber-50 text-amber-800" : "bg-slate-100 text-slate-700";
-  return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${color}`}>{status}</span>;
+  const color = status === "published" || status === "open" || status === "approved"
+    ? "bg-emerald-50 text-emerald-700"
+    : status === "in_review"
+      ? "bg-blue-50 text-blue-700"
+      : status === "archived" || status === "closed" || status === "renovation"
+        ? "bg-amber-50 text-amber-800"
+        : "bg-slate-100 text-slate-700";
+  const label = status === "in_review"
+    ? "Waiting for review"
+    : `${status.charAt(0).toUpperCase()}${status.slice(1).replaceAll("_", " ")}`;
+  return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${color}`}>{label}</span>;
 }
 
 export function EmptyContent({ children }: Readonly<{ children: ReactNode }>) {
