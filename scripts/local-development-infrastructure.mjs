@@ -1,6 +1,6 @@
 import { execFile, spawn } from "node:child_process";
 import { access } from "node:fs/promises";
-import { join } from "node:path";
+import { win32 } from "node:path";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
@@ -158,7 +158,12 @@ export function getWindowsDockerDesktopPaths(localAppData) {
   const paths = [WINDOWS_DOCKER_DESKTOP_PATH];
   if (localAppData) {
     paths.push(
-      join(localAppData, "Programs", "DockerDesktop", "Docker Desktop.exe"),
+      win32.join(
+        localAppData,
+        "Programs",
+        "DockerDesktop",
+        "Docker Desktop.exe",
+      ),
     );
   }
   return [...new Set(paths)];
