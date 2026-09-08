@@ -52,7 +52,8 @@ describe("generic public city landing", () => {
     expect(screen.getByRole("heading", { name: "Ghent", level: 1 })).not.toBeNull();
     expect(screen.getByText("A compact published city description.")).not.toBeNull();
     expect(screen.getByRole("heading", { name: "Gravensteen", level: 3 })).not.toBeNull();
-    expect(screen.queryByRole("link", { name: "Gravensteen" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Gravensteen" }).getAttribute("href"))
+      .toBe("/en/ghent/gravensteen");
     expect(screen.getByRole("img", { name: "Ghent" }).getAttribute("src"))
       .toBe("/api/media/city-hero");
     expect(mocks.getPublicCitySnapshot).toHaveBeenCalledWith("ghent", "database");
