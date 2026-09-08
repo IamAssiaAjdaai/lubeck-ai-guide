@@ -16,6 +16,20 @@ export function resolveFeaturedCityImage(
   );
 }
 
+export function resolveCityHeroImage(
+  source: ContentSource,
+  media: readonly PublicMedia[] | undefined,
+  locale: Locale,
+  legacyImage?: string,
+): string | undefined {
+  if (source === "code") return legacyImage;
+  return (
+    findImage(media, "hero", locale)?.url ??
+    findImage(media, "card", locale)?.url ??
+    legacyImage
+  );
+}
+
 function findImage(
   media: readonly PublicMedia[] | undefined,
   purpose: "card" | "hero",
