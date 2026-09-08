@@ -117,19 +117,24 @@ export async function GenericCityContent({ params }: GenericCityPageProps) {
                 key={place.slug}
                 lang={resolvedLocale}
                 dir={getDirection(resolvedLocale)}
-                className="surface-card p-5"
+                className="surface-card overflow-hidden"
               >
-                <div className="flex items-start gap-3">
-                  <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent"
-                    aria-hidden="true"
-                  >
-                    <MapPin size={19} strokeWidth={1.8} />
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="text-lg font-semibold tracking-[-0.02em]">
-                      {content.name}
-                    </h3>
+                <Link
+                  href={`/${locale}/${citySlug}/${place.slug}`}
+                  aria-label={content.name}
+                  className="group block p-5 transition hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
+                >
+                  <div className="flex items-start gap-3">
+                    <span
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent transition group-hover:bg-blue-100"
+                      aria-hidden="true"
+                    >
+                      <MapPin size={19} strokeWidth={1.8} />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-semibold tracking-[-0.02em]">
+                        {content.name}
+                      </h3>
                     <p className="mt-1 text-sm text-text-secondary">
                       {categoryLabels.get(place.category)} · {formatMessage(
                         translations.placeCatalog.placeDuration,
@@ -143,8 +148,9 @@ export async function GenericCityContent({ params }: GenericCityPageProps) {
                     <p className="mt-2 text-[15px] leading-6 text-text-secondary">
                       {content.shortDescription}
                     </p>
+                    </div>
                   </div>
-                </div>
+                </Link>
               </article>
             ))}
           </div>
