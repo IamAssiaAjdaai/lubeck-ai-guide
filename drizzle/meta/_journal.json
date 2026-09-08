@@ -50,6 +50,13 @@
       "when": 1788824826769,
       "tag": "0006_ordinary_kulan_gath",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788870474184,
+      "tag": "0007_equal_black_tarantula",
+      "breakpoints": true
     }
   ]
 }

@@ -148,6 +148,14 @@ Do not infer RAG trust from:
 
 Verified source attribution and AskGuide/RAG filtering must remain intact unless a dedicated source/editorial workflow ticket explicitly changes them.
 
+`verified_knowledge_chunks` is the explicit database trust entity for CMS
+places. A chunk must reference an existing source already linked to the same
+place, be active, and match the server-selected city, place, and knowledge
+locale before it can enable or ground AskGuide. The static Lübeck corpus and
+the database corpus implement the same provider contract. Public CMS prose,
+source records, draft revisions, browser identifiers, and tour navigation
+state are never factual evidence by themselves.
+
 ## Audio trust boundary
 
 Approved audio is separate from CMS publication and separate from RAG trust.

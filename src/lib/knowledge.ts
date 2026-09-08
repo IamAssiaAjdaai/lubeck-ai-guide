@@ -1,8 +1,4 @@
 import type {
-  LubeckPlaceSlug,
-} from "@/data/places";
-
-import type {
   PlaceSource,
 } from "@/data/placeSources";
 
@@ -10,20 +6,13 @@ import type {
   Locale,
 } from "@/lib/i18n";
 
-export const KNOWLEDGE_CITIES = [
-  "lubeck",
-] as const;
-
-export type KnowledgeCity =
-  (typeof KNOWLEDGE_CITIES)[number];
-
 export type KnowledgeChunk =
   Readonly<{
     id: string;
 
-    city: KnowledgeCity;
+    citySlug: string;
 
-    placeSlug: LubeckPlaceSlug;
+    placeSlug: string;
 
     locale: Locale;
 
@@ -47,9 +36,9 @@ export type KnowledgeChunk =
 
 export type KnowledgeQuery =
   Readonly<{
-    city: KnowledgeCity;
+    citySlug: string;
 
-    placeSlug: LubeckPlaceSlug;
+    placeSlug: string;
 
     locale: Locale;
 

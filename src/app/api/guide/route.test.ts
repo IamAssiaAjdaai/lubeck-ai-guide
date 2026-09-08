@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("server-only", () => ({}));
+
 const { createCompletion, rateLimit } = vi.hoisted(() => ({
   createCompletion: vi.fn(),
 
@@ -126,7 +128,8 @@ describe("POST /api/guide", () => {
       body: JSON.stringify({
         question: "How does this connect to the earlier stops?",
 
-        landmark: "rathaus",
+        citySlug: "lubeck",
+        placeSlug: "rathaus",
 
         locale: "en",
 
@@ -171,7 +174,7 @@ describe("POST /api/guide", () => {
 
     for (const source of data.sources) {
       expect(Object.keys(source).sort()).toEqual(
-        ["chunkIds", "label", "placeSlug", "url", "verifiedAt"].sort(),
+        ["chunkIds", "citySlug", "label", "placeSlug", "url", "verifiedAt"].sort(),
       );
     }
     expect(
@@ -309,7 +312,8 @@ describe("POST /api/guide", () => {
         body: JSON.stringify({
           question: "When was this gate built?",
 
-          landmark: "holstentor",
+          citySlug: "lubeck",
+          placeSlug: "holstentor",
 
           locale: "en",
 
@@ -389,7 +393,8 @@ describe("POST /api/guide", () => {
         body: JSON.stringify({
           question: "When was this gate built?",
 
-          landmark: "holstentor",
+          citySlug: "lubeck",
+          placeSlug: "holstentor",
 
           locale: "en",
         }),
@@ -443,7 +448,8 @@ describe("POST /api/guide", () => {
         body: JSON.stringify({
           question: "When was this gate built?",
 
-          landmark: "holstentor",
+          citySlug: "lubeck",
+          placeSlug: "holstentor",
 
           locale: "en",
         }),
@@ -477,7 +483,8 @@ describe("POST /api/guide", () => {
         body: JSON.stringify({
           question: "What happened here yesterday?",
 
-          landmark: "holstentor",
+          citySlug: "lubeck",
+          placeSlug: "holstentor",
 
           locale: "en",
         }),
@@ -506,7 +513,8 @@ describe("POST /api/guide", () => {
       body: JSON.stringify({
         question: "Why is this gate important?",
 
-        landmark: "holstentor",
+        citySlug: "lubeck",
+        placeSlug: "holstentor",
 
         locale: "en",
 
@@ -540,7 +548,8 @@ describe("POST /api/guide", () => {
       body: JSON.stringify({
         question: "Tell me about this place.",
 
-        landmark: "holstentor",
+        citySlug: "lubeck",
+        placeSlug: "holstentor",
 
         locale: "en",
 
@@ -574,7 +583,8 @@ describe("POST /api/guide", () => {
       body: JSON.stringify({
         question: "Why is it famous?",
 
-        landmark: "heiligen-geist-hospital",
+        citySlug: "lubeck",
+        placeSlug: "heiligen-geist-hospital",
 
         locale: "en",
 

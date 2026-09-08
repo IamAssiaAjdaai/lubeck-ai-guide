@@ -148,8 +148,8 @@ export function retrieveVerifiedKnowledge(
   const candidates =
     chunks.filter(
       (chunk) =>
-        chunk.city ===
-          query.city &&
+        chunk.citySlug ===
+          query.citySlug &&
         chunk.placeSlug ===
           query.placeSlug &&
         chunk.locale ===

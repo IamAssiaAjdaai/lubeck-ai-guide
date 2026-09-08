@@ -1,60 +1,41 @@
 import Groq from "groq-sdk";
+import { NextResponse } from "next/server";
 
 import {
-  NextResponse,
-} from "next/server";
-
-import {
-  lubeckLandmarks as landmarks,
-  type LubeckPlaceSlug,
-} from "@/data/places";
-
-import {
-  getTranslations,
-  isLocale,
-} from "@/lib/i18n";
-
-import {
-  resolveTourContext,
-} from "@/lib/tourContext.server";
-
-import {
-  aiGuideRateLimit,
-} from "@/lib/rateLimit";
-
-import {
-  buildGuideSystemPrompt,
-} from "@/lib/guidePrompt.server";
-
+  getPublicCitySnapshot,
+  resolvePublicLocalization,
+} from "@/lib/content/publicRepository.server";
+import { getContentSource } from "@/lib/content/source";
 import {
   buildGuideSourceMetadata,
+  GUIDE_KNOWLEDGE_SOURCE_LOCALE,
   GUIDE_RESPONSE_FORMAT,
   parseGuideStructuredAnswer,
   retrieveGuideKnowledge,
 } from "@/lib/guideKnowledge.server";
+import { buildGuideSystemPrompt } from "@/lib/guidePrompt.server";
+import { getTranslations, isLocale } from "@/lib/i18n";
+import { aiGuideRateLimit } from "@/lib/rateLimit";
+import { resolveTourContext } from "@/lib/tourContext.server";
+import { getVerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 
-
-type GuideMessage = {
-  role:
-    | "user"
-    | "assistant";
-
+type GuideMessage = Readonly<{
+  role: "user" | "assistant";
   text: string;
-};
+}>;
 
-type GuideRequest = {
-  question: string;
-
-  landmark: string;
-
-  locale: string;
-
-  history?: GuideMessage[];
-
+type GuideRequest = Readonly<{
+  citySlug?: unknown;
+  placeSlug?: unknown;
+  question?: unknown;
+  locale?: unknown;
+  history?: unknown;
   tourContext?: unknown;
-};
+}>;
 
 const MAX_COMPLETION_ATTEMPTS = 2;
+const MAX_QUESTION_LENGTH = 500;
+const MAX_HISTORY_TEXT_LENGTH = 2_000;
 
 const ATTRIBUTION_RETRY_INSTRUCTION = `
 ATTRIBUTION CORRECTION:
@@ -66,220 +47,126 @@ ATTRIBUTION CORRECTION:
 - If no retrieved chunk supports the answer, set groundingStatus to "insufficient_evidence", use an empty usedChunkIds array, and do not make the unsupported factual claim.
 `.trim();
 
-export async function POST(
-  request: Request,
-) {
+export async function POST(request: Request) {
   try {
-    const apiKey =
-      process.env.GROQ_API_KEY;
+    let body: GuideRequest;
+    try {
+      body = await request.json() as GuideRequest;
+    } catch {
+      return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    }
 
-    if (!apiKey) {
+    const question = typeof body.question === "string"
+      ? body.question.trim()
+      : "";
+    const citySlug = typeof body.citySlug === "string"
+      ? body.citySlug.trim()
+      : "";
+    const placeSlug = typeof body.placeSlug === "string"
+      ? body.placeSlug.trim()
+      : "";
+
+    if (!question || question.length > MAX_QUESTION_LENGTH) {
+      return NextResponse.json({ error: "Question is required." }, { status: 400 });
+    }
+    if (!citySlug || !placeSlug) {
+      return NextResponse.json({ error: "City and place are required." }, { status: 400 });
+    }
+    if (!isLocale(body.locale)) {
+      return NextResponse.json({ error: "Invalid language." }, { status: 400 });
+    }
+
+    const locale = body.locale;
+    const contentSource = getContentSource();
+    let snapshot;
+    try {
+      snapshot = await getPublicCitySnapshot(citySlug, contentSource);
+    } catch {
+      return NextResponse.json({ error: "Place not found." }, { status: 404 });
+    }
+
+    if (snapshot.city.slug !== citySlug) {
+      return NextResponse.json({ error: "Place not found." }, { status: 404 });
+    }
+
+    const place = snapshot.places.find((candidate) => candidate.slug === placeSlug);
+    const placeContent = place
+      ? resolvePublicLocalization(place.content, locale)
+      : undefined;
+    const cityContent = resolvePublicLocalization(snapshot.city.content, locale);
+    if (!place || !placeContent || !cityContent) {
+      return NextResponse.json({ error: "Place not found." }, { status: 404 });
+    }
+
+    const provider = getVerifiedKnowledgeProvider(contentSource);
+    const currentTrustedChunks = await provider.listVerifiedChunks({
+      citySlug,
+      placeSlug,
+      locale: GUIDE_KNOWLEDGE_SOURCE_LOCALE,
+    });
+    if (currentTrustedChunks.length === 0) {
       return NextResponse.json(
-        {
-          error:
-            "AI service is not configured.",
-        },
-        {
-          status: 500,
-        },
+        { error: "AI Guide is unavailable for this place." },
+        { status: 404 },
       );
     }
 
-    const groq =
-      new Groq({
-        apiKey,
-      });
+    const tourContext = resolveTourContext({
+      input: body.tourContext,
+      locale,
+      expectedCurrentStop: placeSlug,
+      snapshot,
+    });
+    const knowledge = await retrieveGuideKnowledge({
+      citySlug,
+      currentPlaceSlug: placeSlug,
+      visitedPlaceSlugs:
+        tourContext?.visitedStops.map((stop) => stop.slug) ?? [],
+      question,
+      provider,
+      currentTrustedChunks,
+    });
 
-    const forwardedFor =
-      request.headers.get(
-        "x-forwarded-for",
-      );
-
-    const ip =
-      forwardedFor
-        ?.split(",")[0]
-        ?.trim() ??
-      "unknown";
-
-    const result =
-      await aiGuideRateLimit.limit(
-        ip,
-      );
-
-    if (!result.success) {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
       return NextResponse.json(
-        {
-          error:
-            "Too many AI questions. Please try again later.",
-        },
+        { error: "AI service is not configured." },
+        { status: 500 },
+      );
+    }
+
+    const forwardedFor = request.headers.get("x-forwarded-for");
+    const ip = forwardedFor?.split(",")[0]?.trim() ?? "unknown";
+    const rateLimit = await aiGuideRateLimit.limit(ip);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many AI questions. Please try again later." },
         {
           status: 429,
-
           headers: {
-            "X-RateLimit-Limit":
-              result.limit.toString(),
-
-            "X-RateLimit-Remaining":
-              result.remaining.toString(),
-
-            "X-RateLimit-Reset":
-              result.reset.toString(),
+            "X-RateLimit-Limit": rateLimit.limit.toString(),
+            "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+            "X-RateLimit-Reset": rateLimit.reset.toString(),
           },
         },
       );
     }
 
-    const body =
-      (await request.json()) as GuideRequest;
-
-    const question =
-      body.question?.trim();
-
-    const slug =
-      body.landmark;
-
-    const locale =
-      body.locale;
-
-    /*
-     * Keep only a bounded amount
-     * of conversation context.
-     */
-    const history =
-      Array.isArray(
-        body.history,
-      )
-        ? body.history.slice(
-            -6,
-          )
-        : [];
-
-    /*
-     * Validation
-     */
-    if (!question) {
-      return NextResponse.json(
-        {
-          error:
-            "Question is required.",
-        },
-        {
-          status: 400,
-        },
-      );
-    }
-
-    if (!isLocale(locale)) {
-      return NextResponse.json(
-        {
-          error:
-            "Invalid language.",
-        },
-        {
-          status: 400,
-        },
-      );
-    }
-
-    const landmark =
-      landmarks.find(
-        (item) =>
-          item.slug === slug,
-      );
-
-    if (!landmark) {
-      return NextResponse.json(
-        {
-          error:
-            "Landmark not found.",
-        },
-        {
-          status: 404,
-        },
-      );
-    }
-
-    const currentLocale =
-      locale;
-
-    /*
-     * Browser tour context is not
-     * authoritative.
-     *
-     * Validate it against the
-     * canonical server dataset first.
-     */
-    const tourContext =
-      resolveTourContext({
-        input:
-          body.tourContext,
-
-        locale:
-          currentLocale,
-
-        expectedCurrentStop:
-          landmark.slug,
-      });
-
-    /*
-     * RAG retrieval happens only
-     * after landmark and tour state
-     * have been validated server-side.
-     */
-    const knowledge =
-      retrieveGuideKnowledge({
-        currentPlaceSlug:
-          landmark.slug as
-            LubeckPlaceSlug,
-
-        visitedPlaceSlugs:
-          tourContext
-            ?.visitedStops
-            .map(
-              (stop) =>
-                stop.slug as
-                  LubeckPlaceSlug,
-            ) ?? [],
-
-        question,
-      });
-
-    const systemPrompt =
-      buildGuideSystemPrompt({
-        currentLandmark:
-          landmark,
-
-        locale:
-          currentLocale,
-
-        tourContext,
-
-        knowledge,
-      });
-
-    const conversationMessages =
-      history.map(
-        (message) => ({
-          role:
-            message.role,
-
-          content:
-            message.text,
-        }),
-      );
-
-    /*
-     * Current-stop anchoring prevents
-     * an ambiguous follow-up such as
-     * "Why is it famous?" from being
-     * resolved to an older stop in
-     * conversation history.
-     */
+    const history = parseGuideHistory(body.history);
+    const systemPrompt = buildGuideSystemPrompt({
+      citySlug,
+      cityName: cityContent.content.name,
+      currentPlace: {
+        slug: place.slug,
+        name: placeContent.content.name,
+      },
+      locale,
+      tourContext,
+      knowledge,
+    });
     const currentTurnQuestion = [
       "CURRENT STOP:",
-      landmark.content[
-        currentLocale
-      ].name,
+      placeContent.content.name,
       "",
       "REFERENCE RULE:",
       "Unless the tourist explicitly names another place,",
@@ -290,158 +177,89 @@ export async function POST(
       "CURRENT QUESTION:",
       question,
     ].join("\n");
+    const groq = new Groq({ apiKey });
+    let guideAnswer: ReturnType<typeof parseGuideStructuredAnswer> | undefined;
 
-    let guideAnswer:
-      | ReturnType<
-          typeof parseGuideStructuredAnswer
-        >
-      | undefined;
-
-    for (
-      let attempt = 0;
-      attempt < MAX_COMPLETION_ATTEMPTS;
-      attempt += 1
-    ) {
-      const completion =
-        await groq.chat.completions.create(
+    for (let attempt = 0; attempt < MAX_COMPLETION_ATTEMPTS; attempt += 1) {
+      const completion = await groq.chat.completions.create({
+        model: "openai/gpt-oss-20b",
+        temperature: 0.2,
+        reasoning_effort: "low",
+        include_reasoning: false,
+        max_completion_tokens: 1024,
+        response_format: GUIDE_RESPONSE_FORMAT,
+        messages: [
           {
-          model:
-            "openai/gpt-oss-20b",
-
-          temperature:
-            0.2,
-
-          /*
-           * Keep reasoning light:
-           * CITYWALK needs short,
-           * grounded answers.
-           */
-          reasoning_effort:
-            "low",
-
-          /*
-           * Do not expose model
-           * reasoning.
-           */
-          include_reasoning:
-            false,
-
-          /*
-           * Leave enough budget
-           * for reasoning + final answer.
-           */
-          max_completion_tokens:
-            1024,
-
-          response_format:
-            GUIDE_RESPONSE_FORMAT,
-
-          messages: [
-            {
-              role:
-                "system",
-
-              content:
-                attempt === 0
-                  ? systemPrompt
-                  : `${systemPrompt}\n\n${ATTRIBUTION_RETRY_INSTRUCTION}`,
-            },
-
-            ...conversationMessages,
-
-            {
-              role:
-                "user",
-
-              content:
-                currentTurnQuestion,
-            },
-          ],
+            role: "system",
+            content: attempt === 0
+              ? systemPrompt
+              : `${systemPrompt}\n\n${ATTRIBUTION_RETRY_INSTRUCTION}`,
           },
-        );
-
-      const rawAnswer =
-        completion
-          .choices[0]
-          ?.message
-          ?.content
-          ?.trim();
-
-      const parsedAnswer =
-        rawAnswer
-          ? parseGuideStructuredAnswer(
-              rawAnswer,
-              knowledge,
-            )
-          : null;
+          ...history.map((message) => ({
+            role: message.role,
+            content: message.text,
+          })),
+          { role: "user", content: currentTurnQuestion },
+        ],
+      });
+      const rawAnswer = completion.choices[0]?.message?.content?.trim();
+      const parsedAnswer = rawAnswer
+        ? parseGuideStructuredAnswer(rawAnswer, knowledge)
+        : null;
 
       if (
         parsedAnswer &&
-        (parsedAnswer.groundingStatus ===
-          "insufficient_evidence" ||
-          parsedAnswer.usedChunkIds.length > 0)
+        (
+          parsedAnswer.groundingStatus === "insufficient_evidence" ||
+          parsedAnswer.usedChunkIds.length > 0
+        )
       ) {
         guideAnswer = parsedAnswer;
-
         break;
       }
     }
 
-    const answer =
-      guideAnswer?.answer ??
-      getTranslations(currentLocale).ai
-        .insufficientEvidence;
+    const answer = guideAnswer?.answer ??
+      getTranslations(locale).ai.insufficientEvidence;
+    const usedChunkIds = guideAnswer?.usedChunkIds ?? [];
 
-    const usedChunkIds =
-      guideAnswer?.usedChunkIds ?? [];
-
-    const sources =
-      buildGuideSourceMetadata(
-        knowledge,
-        usedChunkIds,
-      );
     return NextResponse.json({
       answer,
-      sources,
+      sources: buildGuideSourceMetadata(knowledge, usedChunkIds),
     });
-  } catch
-    (error: unknown)
-  {
-    console.error(
-      "AI Guide error:",
-      error,
-    );
-
-    const message =
-      error instanceof Error
-        ? error.message
-        : "Unknown server error";
-
+  } catch (error: unknown) {
+    console.error("AI Guide error:", error);
     const status =
-      typeof error ===
-        "object" &&
+      typeof error === "object" &&
       error !== null &&
       "status" in error &&
-      typeof (
-        error as {
-          status?: unknown;
-        }
-      ).status ===
-        "number"
-        ? (
-            error as {
-              status: number;
-            }
-          ).status
+      typeof (error as { status?: unknown }).status === "number"
+        ? (error as { status: number }).status
         : 500;
+    const message = status < 500 && error instanceof Error
+      ? error.message
+      : "AI Guide is temporarily unavailable.";
 
-    return NextResponse.json(
-      {
-        error: message,
-      },
-      {
-        status,
-      },
-    );
+    return NextResponse.json({ error: message }, { status });
   }
+}
+
+function parseGuideHistory(value: unknown): readonly GuideMessage[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.slice(-6).flatMap((item): GuideMessage[] => {
+    if (
+      typeof item !== "object" ||
+      item === null ||
+      !("role" in item) ||
+      (item.role !== "user" && item.role !== "assistant") ||
+      !("text" in item) ||
+      typeof item.text !== "string"
+    ) {
+      return [];
+    }
+
+    const text = item.text.trim().slice(0, MAX_HISTORY_TEXT_LENGTH);
+    return text ? [{ role: item.role, text }] : [];
+  });
 }

@@ -367,6 +367,34 @@ export const placeSourcesTable = pgTable(
   ],
 );
 
+export const verifiedKnowledgeChunksTable = pgTable(
+  "verified_knowledge_chunks",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    placeId: integer("place_id")
+      .notNull()
+      .references(() => placesTable.id, { onDelete: "cascade" }),
+    sourceId: integer("source_id")
+      .notNull()
+      .references(() => contentSourcesTable.id, { onDelete: "restrict" }),
+    locale: text("locale").notNull(),
+    text: text("text").notNull(),
+    topics: text("topics").array().default([]).notNull(),
+    priority: integer("priority").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    ...actorColumns(),
+    ...contentTimestamps(),
+  },
+  (table) => [
+    index("verified_knowledge_chunks_place_locale_active_idx").on(
+      table.placeId,
+      table.locale,
+      table.isActive,
+    ),
+    index("verified_knowledge_chunks_source_id_idx").on(table.sourceId),
+  ],
+);
+
 export const contentWorkflowEventsTable = pgTable(
   "content_workflow_events",
   {
@@ -542,6 +570,8 @@ export type TourLocalizationRow = typeof tourLocalizationsTable.$inferSelect;
 export type TourStopRow = typeof tourStopsTable.$inferSelect;
 export type ContentSourceRow = typeof contentSourcesTable.$inferSelect;
 export type PlaceSourceRow = typeof placeSourcesTable.$inferSelect;
+export type VerifiedKnowledgeChunkRow =
+  typeof verifiedKnowledgeChunksTable.$inferSelect;
 export type ContentWorkflowEventRow = typeof contentWorkflowEventsTable.$inferSelect;
 export type MediaAssetRow = typeof mediaAssetsTable.$inferSelect;
 export type NewMediaAssetRow = typeof mediaAssetsTable.$inferInsert;

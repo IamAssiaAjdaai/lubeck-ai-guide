@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   connection: vi.fn(),
   getContentSource: vi.fn(),
   getPublicCitySnapshot: vi.fn(),
+  getGuideEligibility: vi.fn(),
   notFound: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
   }),
@@ -29,6 +30,9 @@ vi.mock("@/components/AudioPlayer", () => ({
 vi.mock("@/lib/content/source", () => ({
   getContentSource: mocks.getContentSource,
 }));
+vi.mock("@/lib/guideEligibility.server", () => ({
+  getGuideEligibility: mocks.getGuideEligibility,
+}));
 vi.mock("@/lib/content/publicRepository.server", async () => {
   const actual = await vi.importActual<
     typeof import("@/lib/content/publicRepository.server")
@@ -46,6 +50,7 @@ describe("generic public place detail", () => {
     mocks.connection.mockResolvedValue(undefined);
     mocks.getContentSource.mockReturnValue("database");
     mocks.getPublicCitySnapshot.mockResolvedValue(snapshot());
+    mocks.getGuideEligibility.mockResolvedValue(false);
   });
 
   afterEach(() => {
@@ -80,6 +85,18 @@ describe("generic public place detail", () => {
       city: "ghent",
       landmark: "gravensteen",
       locale: "en",
+    }));
+  });
+
+  it("shows the generic guide only when server eligibility is true", async () => {
+    mocks.getGuideEligibility.mockResolvedValue(true);
+    render(await renderPage("en", "gravensteen"));
+
+    expect(screen.getByRole("button", { name: "Ask your local guide" })).not.toBeNull();
+    expect(mocks.getGuideEligibility).toHaveBeenCalledWith(expect.objectContaining({
+      citySlug: "ghent",
+      placeSlug: "gravensteen",
+      source: "database",
     }));
   });
 

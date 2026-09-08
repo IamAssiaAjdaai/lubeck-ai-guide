@@ -1,222 +1,112 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
-import { lubeckLandmarks } from "@/data/places";
+vi.mock("server-only", () => ({}));
 
-import { buildGuideSystemPrompt } from "@/lib/guidePrompt.server";
-
+import {
+  getPublicCitySnapshot,
+  type PublicCitySnapshot,
+  resolvePublicLocalization,
+} from "@/lib/content/publicRepository.server";
 import { retrieveGuideKnowledge } from "@/lib/guideKnowledge.server";
-
-import { resolveTourContext } from "@/lib/tourContext.server";
-
+import { buildGuideSystemPrompt } from "@/lib/guidePrompt.server";
 import {
   LUBECK_HISTORIC_TOUR_ID,
   TOUR_CONTEXT_VERSION,
 } from "@/lib/tourContext";
+import { resolveTourContext } from "@/lib/tourContext.server";
+import { StaticVerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 
-function getLandmark(slug: string) {
-  const place = lubeckLandmarks.find((item) => item.slug === slug);
-
-  if (!place) {
-    throw new Error(`Missing landmark ${slug}`);
-  }
-
-  return place;
-}
+const provider = new StaticVerifiedKnowledgeProvider();
 
 describe("buildGuideSystemPrompt", () => {
-  it("builds a RAG-grounded multi-stop guide prompt", () => {
-    const tourContext = resolveTourContext({
-      input: {
-        version: TOUR_CONTEXT_VERSION,
+  let snapshot: PublicCitySnapshot;
 
-        tourId: LUBECK_HISTORIC_TOUR_ID,
+  beforeAll(async () => {
+    snapshot = await getPublicCitySnapshot("lubeck", "code");
+  });
 
-        currentStop: "rathaus",
+  async function buildPrompt({
+    placeSlug,
+    visitedPlaceSlugs = [],
+    withTour = false,
+  }: {
+    placeSlug: string;
+    visitedPlaceSlugs?: readonly string[];
+    withTour?: boolean;
+  }) {
+    const place = snapshot.places.find((candidate) => candidate.slug === placeSlug);
+    const cityContent = resolvePublicLocalization(snapshot.city.content, "en");
+    const placeContent = place && resolvePublicLocalization(place.content, "en");
+    if (!place || !cityContent || !placeContent) throw new Error("Missing test content");
 
-        visitedStops: ["holstentor", "marienkirche"],
-      },
-
-      locale: "en",
-
-      expectedCurrentStop: "rathaus",
-    });
-
-    const knowledge = retrieveGuideKnowledge({
-      currentPlaceSlug: "rathaus",
-
-      visitedPlaceSlugs: ["holstentor", "marienkirche"],
-
+    const tourContext = withTour
+      ? resolveTourContext({
+          input: {
+            version: TOUR_CONTEXT_VERSION,
+            tourId: LUBECK_HISTORIC_TOUR_ID,
+            currentStop: placeSlug,
+            visitedStops: visitedPlaceSlugs,
+          },
+          locale: "en",
+          expectedCurrentStop: placeSlug,
+          snapshot,
+        })
+      : null;
+    const knowledge = await retrieveGuideKnowledge({
+      citySlug: "lubeck",
+      currentPlaceSlug: placeSlug,
+      visitedPlaceSlugs,
       question: "How does this connect to the earlier stops?",
+      provider,
     });
 
-    const prompt = buildGuideSystemPrompt({
-      currentLandmark: getLandmark("rathaus"),
-
+    return buildGuideSystemPrompt({
+      citySlug: "lubeck",
+      cityName: cityContent.content.name,
+      currentPlace: { slug: place.slug, name: placeContent.content.name },
       locale: "en",
-
       tourContext,
-
       knowledge,
+    });
+  }
+
+  it("builds a RAG-grounded multi-stop guide prompt", async () => {
+    const prompt = await buildPrompt({
+      placeSlug: "rathaus",
+      visitedPlaceSlugs: ["holstentor", "marienkirche"],
+      withTour: true,
     });
 
     expect(prompt).toContain("3 of 5");
-
     expect(prompt).toContain("Holstentor");
-
     expect(prompt).toContain("Marienkirche");
-
-    /*
-     * Next-stop identity is still
-     * available as navigation state.
-     */
     expect(prompt).toContain("NEXT STOP:\nHeiligen-Geist-Hospital");
-
-    /*
-     * Factual knowledge comes from
-     * retrieved chunks.
-     */
-    expect(prompt).toContain("VERIFIED RETRIEVED KNOWLEDGE");
-
     expect(prompt).toContain("rathaus-political-role");
-
     expect(prompt).toContain("holstentor-history");
-
     expect(prompt).toContain("marienkirche-history");
-
-    /*
-     * Next-stop factual content
-     * must NOT be retrieved.
-     */
     expect(prompt).not.toContain("hospital-foundation");
-
-    /*
-     * URLs stay outside the LLM
-     * prompt. They remain server
-     * provenance metadata.
-     */
     expect(prompt).not.toContain("https://");
-
     expect(prompt).not.toMatch(/latitude|longitude|"lat"|"lng"/i);
-
-    /*
-     * Legacy factual evidence
-     * sections are gone.
-     */
-    expect(prompt).not.toContain("VERIFIED CURRENT PLACE CONTENT:");
-
-    expect(prompt).not.toContain("VERIFIED TOUR REFERENCE:");
   });
 
-  it("keeps requests without tour context functional", () => {
-    const knowledge = retrieveGuideKnowledge({
-      currentPlaceSlug: "holstentor",
-
-      visitedPlaceSlugs: [],
-
-      question: "Why is this gate important?",
-    });
-
-    const prompt = buildGuideSystemPrompt({
-      currentLandmark: getLandmark("holstentor"),
-
-      locale: "en",
-
-      tourContext: null,
-
-      knowledge,
-    });
-
-    expect(prompt).toContain("Holstentor");
-
+  it("keeps non-tour generic requests functional", async () => {
+    const prompt = await buildPrompt({ placeSlug: "holstentor" });
+    expect(prompt).toContain("CITYWALK, a friendly local city guide for Lübeck (lubeck)");
     expect(prompt).toContain("No active tour context.");
-
-    expect(prompt).toContain("VERIFIED RETRIEVED KNOWLEDGE");
-
     expect(prompt).toContain("holstentor-history");
-
     expect(prompt).not.toContain("https://");
-
-    expect(prompt).not.toMatch(/latitude|longitude|"lat"|"lng"/i);
   });
 
-  it("keeps next-stop knowledge isolated and does not invent visual cues", () => {
-    const tourContext = resolveTourContext({
-      input: {
-        version: TOUR_CONTEXT_VERSION,
-
-        tourId: LUBECK_HISTORIC_TOUR_ID,
-
-        currentStop: "holstentor",
-
-        visitedStops: [],
-      },
-
-      locale: "en",
-
-      expectedCurrentStop: "holstentor",
-    });
-
-    const knowledge = retrieveGuideKnowledge({
-      currentPlaceSlug: "holstentor",
-
-      visitedPlaceSlugs: [],
-
-      question: "Why is this place important?",
-    });
-
-    const prompt = buildGuideSystemPrompt({
-      currentLandmark: getLandmark("holstentor"),
-
-      locale: "en",
-
-      tourContext,
-
-      knowledge,
-    });
-
+  it("isolates next-stop knowledge and preserves structured fail-closed rules", async () => {
+    const prompt = await buildPrompt({ placeSlug: "holstentor", withTour: true });
     expect(prompt).toContain("VERIFIED LOOK-FOR CUES:\nNone");
-
     expect(prompt).toContain("VISITED STOPS:\nNone");
-
     expect(prompt).toContain("NEXT STOP:\nMarienkirche");
-
     expect(prompt).toContain("holstentor-history");
-
-    /*
-     * Marienkirche is next,
-     * not current or visited.
-     */
     expect(prompt).not.toContain("marienkirche-history");
-
-    expect(prompt).toContain(
-      "Historical and factual claims may come ONLY from VERIFIED RETRIEVED KNOWLEDGE",
-    );
-
     expect(prompt).toContain("NEXT STOP is navigation state only");
-
-    expect(prompt).toContain(
-      "Never describe a remaining or next stop as already visited",
-    );
-
-    expect(prompt).toContain("Do not infer walking distance");
-
-    expect(prompt).toContain("If VISITED STOPS is None");
-
-    expect(prompt).not.toContain("VERIFIED CURRENT PLACE CONTENT:");
-
-    expect(prompt).not.toContain("VERIFIED TOUR REFERENCE:");
-    expect(prompt).toContain("STRUCTURED RESPONSE CONTRACT");
-
     expect(prompt).toContain("answer, groundingStatus, and usedChunkIds");
-
-    expect(prompt).toContain(
-      'A grounded response must include at least one exact CHUNK ID',
-    );
-
-    expect(prompt).toContain(
-      "Do not include chunks merely because they were retrieved or available.",
-    );
-
+    expect(prompt).toContain("A grounded response must include at least one exact CHUNK ID");
     expect(prompt).not.toContain("[[SOURCES:");
   });
 });

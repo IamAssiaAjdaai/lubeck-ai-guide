@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import AudioPlayer from "@/components/AudioPlayer";
+import AskGuide from "@/components/AskGuide";
 import type { PlaceContent } from "@/data/places";
 import type { ResolvedPlaceAudio } from "@/lib/content/placeAudio";
 import { formatTime } from "@/lib/formatTime";
@@ -26,6 +27,7 @@ type PlaceExperienceProps = Readonly<{
   visitDurationLabel: string;
   backHref: string;
   translations: Translations;
+  guideEnabled?: boolean;
 }>;
 
 export function PlaceExperience({
@@ -40,6 +42,7 @@ export function PlaceExperience({
   visitDurationLabel,
   backHref,
   translations,
+  guideEnabled = false,
 }: PlaceExperienceProps) {
   const interfaceDirection = getDirection(locale);
   const contentDirection = getDirection(contentLocale);
@@ -164,6 +167,24 @@ export function PlaceExperience({
               ))}
             </div>
           </section>
+        ) : null}
+
+        {guideEnabled ? (
+          <AskGuide
+            citySlug={citySlug}
+            placeSlug={placeSlug}
+            placeName={content.name}
+            locale={locale}
+            direction={interfaceDirection}
+            buttonLabel={translations.ai.open}
+            closeLabel={translations.common.close}
+            labels={translations.ai}
+            suggestions={[
+              translations.ai.suggestionFamous,
+              translations.ai.suggestionBuilt,
+              translations.ai.suggestionStory,
+            ]}
+          />
         ) : null}
       </section>
     </main>

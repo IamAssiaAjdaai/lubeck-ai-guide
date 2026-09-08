@@ -40,6 +40,7 @@ import { resolveLandmarkPageAudio } from "@/lib/content/landmarkAudio";
 import { resolvePlaceImage } from "@/lib/content/placeMedia";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { formatTime } from "@/lib/formatTime";
+import { getGuideEligibility } from "@/lib/guideEligibility.server";
 
 type LandmarkPageProps = {
   params: Promise<{
@@ -139,6 +140,12 @@ export default async function LandmarkPage({
     "detail",
   );
   const isHiddenGem = landmark.tags.includes(HIDDEN_GEM_TAG);
+  const guideEnabled = isTourLandmark && await getGuideEligibility({
+    citySlug: "lubeck",
+    placeSlug: landmark.slug,
+    source: contentSource,
+    snapshot,
+  });
 
   /*
    * Find next landmark
@@ -356,11 +363,12 @@ export default async function LandmarkPage({
         ) : null}
 
         {/* AI Guide remains scoped to the verified canonical tour. */}
-        {isTourLandmark ? (
+        {guideEnabled ? (
           <AskGuide
             tourId={LUBECK_HISTORIC_TOUR_ID}
-            landmark={landmark.slug}
-            landmarkName={name}
+            citySlug="lubeck"
+            placeSlug={landmark.slug}
+            placeName={name}
             locale={currentLocale}
             direction={direction}
             buttonLabel={t.ai.open}

@@ -9,7 +9,7 @@ import { getPlaceSources } from "@/data/placeSources";
 describe("retrieveVerifiedKnowledge", () => {
   it("retrieves relevant knowledge for the current place", () => {
     const result = retrieveVerifiedKnowledge({
-      city: "lubeck",
+      citySlug: "lubeck",
 
       placeSlug: "heiligen-geist-hospital",
 
@@ -33,7 +33,7 @@ describe("retrieveVerifiedKnowledge", () => {
 
   it("uses priority fallback for generic questions", () => {
     const result = retrieveVerifiedKnowledge({
-      city: "lubeck",
+      citySlug: "lubeck",
 
       placeSlug: "heiligen-geist-hospital",
 
@@ -51,7 +51,7 @@ describe("retrieveVerifiedKnowledge", () => {
 
   it("never leaks knowledge from another place", () => {
     const result = retrieveVerifiedKnowledge({
-      city: "lubeck",
+      citySlug: "lubeck",
 
       placeSlug: "holstentor",
 
@@ -73,7 +73,7 @@ describe("retrieveVerifiedKnowledge", () => {
 
   it("does not silently use knowledge from another locale", () => {
     const result = retrieveVerifiedKnowledge({
-      city: "lubeck",
+      citySlug: "lubeck",
 
       placeSlug: "holstentor",
 
@@ -87,7 +87,7 @@ describe("retrieveVerifiedKnowledge", () => {
 
   it("returns provenance with every retrieved chunk", () => {
     const result = retrieveVerifiedKnowledge({
-      city: "lubeck",
+      citySlug: "lubeck",
 
       placeSlug: "buddenbrookhaus",
 
@@ -107,7 +107,7 @@ describe("retrieveVerifiedKnowledge", () => {
 
   it("respects the requested result limit", () => {
     const result = retrieveVerifiedKnowledge({
-      city: "lubeck",
+      citySlug: "lubeck",
 
       placeSlug: "rathaus",
 
