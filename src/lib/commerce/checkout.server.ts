@@ -1,10 +1,12 @@
 import { randomUUID } from "node:crypto";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, gt, isNull, or, sql } from "drizzle-orm";
 
 import {
   commerceOrders,
   commercePrices,
+  commerceEntitlements,
+  commerceProductGrants,
   commerceProducts,
 } from "@/db/commerceSchema";
 import { getDb } from "@/db/client";
@@ -24,6 +26,11 @@ export type CheckoutUser = Readonly<{
 
 type CheckoutDependencies = Readonly<{
   loadPrice: (priceId: number) => Promise<EligibleCommercePrice | undefined>;
+  hasActiveProductGrant: (input: {
+    userId: string;
+    productId: number;
+    now: Date;
+  }) => Promise<boolean>;
   createPendingOrder: (input: {
     orderId: string;
     userId: string;
@@ -41,6 +48,8 @@ export class CommerceCheckoutError extends Error {
     readonly code:
       | "INVALID_INPUT"
       | "PRICE_NOT_AVAILABLE"
+      | "ALREADY_ENTITLED"
+      | "CHECKOUT_ALREADY_PENDING"
       | "UNSUPPORTED_PROVIDER"
       | "PROVIDER_ERROR",
   ) {
@@ -106,16 +115,85 @@ async function loadEligiblePrice(
 
 const defaultDependencies: CheckoutDependencies = {
   loadPrice: loadEligiblePrice,
+  async hasActiveProductGrant({ userId, productId, now }) {
+    const [row] = await getDb()
+      .select({ id: commerceEntitlements.id })
+      .from(commerceEntitlements)
+      .innerJoin(
+        commerceProductGrants,
+        and(
+          eq(commerceProductGrants.productId, productId),
+          eq(commerceProductGrants.scopeType, commerceEntitlements.scopeType),
+          eq(commerceProductGrants.scopeKey, commerceEntitlements.scopeKey),
+        ),
+      )
+      .where(
+        and(
+          eq(commerceEntitlements.userId, userId),
+          eq(commerceEntitlements.status, "active"),
+          or(
+            isNull(commerceEntitlements.expiresAt),
+            gt(commerceEntitlements.expiresAt, now),
+          ),
+        ),
+      )
+      .limit(1);
+    return Boolean(row);
+  },
   async createPendingOrder({ orderId, userId, price }) {
-    await getDb().insert(commerceOrders).values({
-      id: orderId,
-      userId,
-      productId: price.productId,
-      priceId: price.priceId,
-      provider: price.provider,
-      currency: price.currency.toLowerCase(),
-      amountTotal: price.unitAmount,
-      status: "pending",
+    await getDb().transaction(async (tx) => {
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(hashtextextended(${`${userId}:${price.productId}`}, 0))`,
+      );
+      const [activeGrant] = await tx
+        .select({ id: commerceEntitlements.id })
+        .from(commerceEntitlements)
+        .innerJoin(
+          commerceProductGrants,
+          and(
+            eq(commerceProductGrants.productId, price.productId),
+            eq(commerceProductGrants.scopeType, commerceEntitlements.scopeType),
+            eq(commerceProductGrants.scopeKey, commerceEntitlements.scopeKey),
+          ),
+        )
+        .where(
+          and(
+            eq(commerceEntitlements.userId, userId),
+            eq(commerceEntitlements.status, "active"),
+            or(
+              isNull(commerceEntitlements.expiresAt),
+              gt(commerceEntitlements.expiresAt, new Date()),
+            ),
+          ),
+        )
+        .limit(1);
+      if (activeGrant) {
+        throw new CommerceCheckoutError("ALREADY_ENTITLED");
+      }
+      const [pending] = await tx
+        .select({ id: commerceOrders.id })
+        .from(commerceOrders)
+        .where(
+          and(
+            eq(commerceOrders.userId, userId),
+            eq(commerceOrders.productId, price.productId),
+            eq(commerceOrders.status, "pending"),
+          ),
+        )
+        .limit(1);
+      if (pending) {
+        throw new CommerceCheckoutError("CHECKOUT_ALREADY_PENDING");
+      }
+      await tx.insert(commerceOrders).values({
+        id: orderId,
+        userId,
+        productId: price.productId,
+        priceId: price.priceId,
+        provider: price.provider,
+        currency: price.currency.toLowerCase(),
+        amountTotal: price.unitAmount,
+        status: "pending",
+      });
     });
   },
   async attachProviderSession(orderId, sessionId) {
@@ -155,6 +233,15 @@ export async function startCommerceCheckout(
   const price = await dependencies.loadPrice(input.priceId);
   if (!price) {
     throw new CommerceCheckoutError("PRICE_NOT_AVAILABLE");
+  }
+  if (
+    await dependencies.hasActiveProductGrant({
+      userId: input.user.id,
+      productId: price.productId,
+      now: new Date(),
+    })
+  ) {
+    throw new CommerceCheckoutError("ALREADY_ENTITLED");
   }
 
   const orderId = dependencies.createOrderId();

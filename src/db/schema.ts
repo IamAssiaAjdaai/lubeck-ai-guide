@@ -87,6 +87,11 @@ export const mediaLifecycleEnum = pgEnum("media_lifecycle", [
   "archived",
 ]);
 
+export const mediaAccessLevelEnum = pgEnum("media_access_level", [
+  "public",
+  "premium",
+]);
+
 export const mediaSourceTypeEnum = pgEnum("media_source_type", [
   "upload",
   "external",
@@ -441,6 +446,9 @@ export const mediaAssetsTable = pgTable(
     locale: text("locale"),
     approvalStatus: mediaLifecycleEnum("approval_status")
       .default("uploading")
+      .notNull(),
+    accessLevel: mediaAccessLevelEnum("access_level")
+      .default("public")
       .notNull(),
     externalVideoProvider: externalVideoProviderEnum("external_video_provider"),
     externalVideoId: text("external_video_id"),

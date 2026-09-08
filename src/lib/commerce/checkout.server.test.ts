@@ -30,6 +30,7 @@ function dependencies(
       currency: "eur",
       unitAmount: 1200,
     }),
+    hasActiveProductGrant: vi.fn().mockResolvedValue(false),
     createPendingOrder: vi.fn().mockResolvedValue(undefined),
     attachProviderSession: vi.fn().mockResolvedValue(undefined),
     markOrderFailed: vi.fn().mockResolvedValue(undefined),
@@ -114,6 +115,25 @@ describe("commerce checkout", () => {
       code: "PRICE_NOT_AVAILABLE",
     });
     expect(deps.createPendingOrder).not.toHaveBeenCalled();
+  });
+
+  it("rejects checkout before order creation when the product grant is active", async () => {
+    const deps = dependencies({
+      hasActiveProductGrant: vi.fn().mockResolvedValue(true),
+    });
+
+    await expect(
+      startCommerceCheckout(
+        {
+          user: { id: "user-1", email: "traveler@example.com" },
+          priceId: 7,
+          locale: "en",
+        },
+        deps,
+      ),
+    ).rejects.toMatchObject({ code: "ALREADY_ENTITLED" });
+    expect(deps.createPendingOrder).not.toHaveBeenCalled();
+    expect(deps.getProvider).not.toHaveBeenCalled();
   });
 
   it("fails the pending order when the payment provider cannot start checkout", async () => {

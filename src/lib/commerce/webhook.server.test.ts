@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
+vi.mock("server-only", () => ({}));
+
 import {
   applyNormalizedProviderEvent,
   processVerifiedProviderEvent,
@@ -168,7 +170,7 @@ describe("commerce webhook processing", () => {
   it("short-circuits duplicate provider events before business mutations", async () => {
     const callbackInvoked = vi.fn();
     const dependencies: WebhookDependencies = {
-      runOnce: vi.fn().mockImplementation(async (_event, _apply) => {
+      runOnce: vi.fn().mockImplementation(async () => {
         callbackInvoked();
         return "duplicate" as const;
       }),

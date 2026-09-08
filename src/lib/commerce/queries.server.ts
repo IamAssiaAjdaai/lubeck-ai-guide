@@ -5,9 +5,11 @@ import {
   commerceEntitlements,
   commerceOrders,
   commercePrices,
+  commerceProductGrants,
   commerceProducts,
 } from "@/db/commerceSchema";
 import { getDb } from "@/db/client";
+import { LUBECK_CITY_PASS_PRODUCT_SLUG } from "@/lib/commerce/cityPassAccess.server";
 
 export async function listActiveCommerceOffers() {
   return getDb()
@@ -33,6 +35,40 @@ export async function listActiveCommerceOffers() {
       ),
     )
     .orderBy(commerceProducts.id, commercePrices.id);
+}
+
+export async function getLubeckCityPassOffer() {
+  const [offer] = await getDb()
+    .select({
+      priceId: commercePrices.id,
+      productSlug: commerceProducts.slug,
+      productName: commerceProducts.name,
+      description: commerceProducts.description,
+      currency: commercePrices.currency,
+      unitAmount: commercePrices.unitAmount,
+      durationDays: commerceProductGrants.durationDays,
+    })
+    .from(commercePrices)
+    .innerJoin(
+      commerceProducts,
+      eq(commercePrices.productId, commerceProducts.id),
+    )
+    .innerJoin(
+      commerceProductGrants,
+      eq(commerceProductGrants.productId, commerceProducts.id),
+    )
+    .where(
+      and(
+        eq(commerceProducts.slug, LUBECK_CITY_PASS_PRODUCT_SLUG),
+        eq(commerceProducts.kind, "city_pass"),
+        eq(commerceProducts.active, true),
+        eq(commercePrices.active, true),
+        eq(commerceProductGrants.scopeType, "city"),
+        eq(commerceProductGrants.scopeKey, "lubeck"),
+      ),
+    )
+    .limit(1);
+  return offer;
 }
 
 export async function listUserCommerceState(userId: string) {

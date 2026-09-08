@@ -2,6 +2,7 @@
 
 import { CreditCard } from "lucide-react";
 import { useState } from "react";
+import posthog from "posthog-js";
 
 export function CommerceCheckoutButton({
   priceId,
@@ -9,12 +10,16 @@ export function CommerceCheckoutButton({
   label,
   loadingLabel,
   errorLabel,
+  analytics,
+  resumePath,
 }: Readonly<{
   priceId: number;
   locale: string;
   label: string;
   loadingLabel: string;
   errorLabel: string;
+  analytics?: Readonly<Record<string, string | number>>;
+  resumePath?: string;
 }>) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +28,16 @@ export function CommerceCheckoutButton({
     setIsLoading(true);
     setError(null);
     try {
+      if (resumePath) {
+        try {
+          window.sessionStorage.setItem(
+            "citywalk:city-pass:return",
+            resumePath,
+          );
+        } catch {
+          // Storage is only a navigation convenience, never access authority.
+        }
+      }
       const response = await fetch("/api/commerce/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,6 +46,13 @@ export function CommerceCheckoutButton({
       if (!response.ok) throw new Error("checkout failed");
       const data = (await response.json()) as { checkoutUrl?: string };
       if (!data.checkoutUrl) throw new Error("checkout missing url");
+      if (analytics) {
+        try {
+          posthog.capture("checkout_started", analytics);
+        } catch {
+          // Analytics must never block the verified hosted checkout.
+        }
+      }
       window.location.assign(data.checkoutUrl);
     } catch {
       setError(errorLabel);

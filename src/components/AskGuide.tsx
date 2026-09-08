@@ -19,6 +19,7 @@ import type {
   TextDirection,
   Translations,
 } from "@/lib/i18n";
+import { getBrowserVisitorSessionIdentity } from "@/lib/visitorSession";
 
 import {
   createTourContextInput,
@@ -36,8 +37,6 @@ import {
   type GuideConversationScope,
   type StoredGuideMessage,
 } from "@/lib/tourConversation";
-
-const MAX_QUESTIONS = 5;
 
 type AskGuideProps = {
   citySlug: string;
@@ -129,10 +128,6 @@ export default function AskGuide({
       ? ChevronLeft
       : ChevronRight;
 
-  const limitReached =
-    questionCount >=
-    MAX_QUESTIONS;
-
   const handleOpen = () => {
     /*
      * Restore the successful conversation
@@ -177,21 +172,6 @@ export default function AskGuide({
       !cleanQuestion ||
       isLoading
     ) {
-      return;
-    }
-
-    if (limitReached) {
-      captureGuideEvent(
-        "ai_limit_reached",
-        {
-          city: citySlug,
-          place: placeSlug,
-          locale,
-          limit:
-            MAX_QUESTIONS,
-        },
-      );
-
       return;
     }
 
@@ -284,6 +264,9 @@ export default function AskGuide({
                  */
                 history:
                   conversationHistory,
+
+                visitorId:
+                  getBrowserVisitorSessionIdentity().visitorId,
               }),
           },
         );
@@ -667,23 +650,11 @@ export default function AskGuide({
               {
                 questionCount
               }
-              /
-              {
-                MAX_QUESTIONS
-              }{" "}
+              {" "}
               {
                 labels.questionsUsed
               }
             </p>
-
-            {/* Limit */}
-            {limitReached && (
-              <div className="mt-3 rounded-xl bg-surface p-3 text-center text-sm leading-6 text-text-secondary">
-                {
-                  labels.limit
-                }
-              </div>
-            )}
 
             {/* Input */}
             <form
@@ -704,13 +675,8 @@ export default function AskGuide({
                       .value,
                   )
                 }
-                disabled={
-                  limitReached
-                }
                 placeholder={
-                  limitReached
-                    ? labels.limit
-                    : labels.placeholder
+                  labels.placeholder
                 }
                 className="h-12 min-w-0 flex-1 rounded-xl border border-border bg-surface-elevated px-4 text-sm outline-none transition focus:border-accent disabled:cursor-not-allowed disabled:bg-surface"
               />
@@ -719,7 +685,6 @@ export default function AskGuide({
                 type="submit"
                 disabled={
                   isLoading ||
-                  limitReached ||
                   !question.trim()
                 }
                 aria-label={

@@ -16,6 +16,7 @@ import {
 import { buildGuideSystemPrompt } from "@/lib/guidePrompt.server";
 import { getTranslations, isLocale } from "@/lib/i18n";
 import { aiGuideRateLimit } from "@/lib/rateLimit";
+import { enforceGuideDailyAllowance } from "@/lib/guideAllowance.server";
 import { resolveTourContext } from "@/lib/tourContext.server";
 import { getVerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 
@@ -31,6 +32,7 @@ type GuideRequest = Readonly<{
   locale?: unknown;
   history?: unknown;
   tourContext?: unknown;
+  visitorId?: unknown;
 }>;
 
 const MAX_COMPLETION_ATTEMPTS = 2;
@@ -147,6 +149,25 @@ export async function POST(request: Request) {
             "X-RateLimit-Limit": rateLimit.limit.toString(),
             "X-RateLimit-Remaining": rateLimit.remaining.toString(),
             "X-RateLimit-Reset": rateLimit.reset.toString(),
+          },
+        },
+      );
+    }
+    const allowance = await enforceGuideDailyAllowance({
+      request,
+      citySlug,
+      visitorId: body.visitorId,
+      fallbackIdentity: ip,
+    });
+    if (!allowance.success) {
+      return NextResponse.json(
+        { error: "Daily AI Guide allowance reached. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": allowance.limit.toString(),
+            "X-RateLimit-Remaining": allowance.remaining.toString(),
+            "X-RateLimit-Reset": allowance.reset.toString(),
           },
         },
       );

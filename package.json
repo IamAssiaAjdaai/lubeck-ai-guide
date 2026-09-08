@@ -28,7 +28,8 @@
     "media:backfill-audio-duration": "node --conditions=react-server --import tsx scripts/backfill-audio-duration.ts",
     "admin:create-super": "tsx scripts/create-super-admin.ts",
     "knowledge:manage": "node --conditions=react-server --import tsx scripts/manage-verified-knowledge.ts",
-    "knowledge:test:integration": "node --import tsx scripts/run-knowledge-integration-tests.ts"
+    "knowledge:test:integration": "node --import tsx scripts/run-knowledge-integration-tests.ts",
+    "commerce:provision-lubeck-pass": "tsx scripts/provision-lubeck-city-pass.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1127.0",

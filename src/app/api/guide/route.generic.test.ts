@@ -17,6 +17,15 @@ vi.mock("groq-sdk", () => ({
 vi.mock("@/lib/rateLimit", () => ({
   aiGuideRateLimit: { limit: mocks.rateLimit },
 }));
+vi.mock("@/lib/guideAllowance.server", () => ({
+  enforceGuideDailyAllowance: vi.fn().mockResolvedValue({
+    success: true,
+    limit: 3,
+    remaining: 2,
+    reset: Date.now() + 86_400_000,
+    tier: "free",
+  }),
+}));
 vi.mock("@/lib/content/source", () => ({ getContentSource: () => "database" }));
 vi.mock("@/lib/content/publicRepository.server", async () => {
   const actual = await vi.importActual<

@@ -107,7 +107,7 @@ describe("AskGuide", () => {
         "https://museum-holstentor.de/about-holstentor",
       );
   });
-  it("disables new questions after five successful answers", async () => {
+  it("leaves the rolling allowance to the server instead of a stale client cap", async () => {
     const request = vi.fn().mockImplementation(() =>
       Promise.resolve(
         new Response(JSON.stringify({ answer: "A verified answer." }), {
@@ -138,14 +138,14 @@ describe("AskGuide", () => {
     fireEvent.click(screen.getByRole("button", { name: labels.open }));
     const input = screen.getByPlaceholderText(labels.placeholder) as HTMLInputElement;
 
-    for (let questionNumber = 1; questionNumber <= 5; questionNumber += 1) {
+    for (let questionNumber = 1; questionNumber <= 6; questionNumber += 1) {
       fireEvent.change(input, { target: { value: `Question ${questionNumber}` } });
       fireEvent.click(screen.getByRole("button", { name: labels.send }));
       await waitFor(() => expect(request).toHaveBeenCalledTimes(questionNumber));
-      await waitFor(() => expect(screen.getByText(`${questionNumber}/5 ${labels.questionsUsed}`)).not.toBeNull());
+      await waitFor(() => expect(screen.getByText(`${questionNumber} ${labels.questionsUsed}`)).not.toBeNull());
     }
 
-    expect(input.disabled).toBe(true);
+    expect(input.disabled).toBe(false);
   });
   it(
   "sends tour progress without coordinates",
@@ -380,7 +380,7 @@ describe("AskGuide", () => {
 
       expect(
         screen.getByText(
-          `1/5 ${labels.questionsUsed}`,
+          `1 ${labels.questionsUsed}`,
         ),
       ).not.toBeNull();
       expect(
@@ -488,13 +488,13 @@ describe("AskGuide", () => {
       */
       expect(
         screen.getByText(
-          `1/5 ${labels.questionsUsed}`,
+          `1 ${labels.questionsUsed}`,
         ),
       ).not.toBeNull();
     },
   );
   it(
-    "restores the five-question tour limit on another stop",
+    "restores conversation count without treating it as the rolling allowance",
     () => {
       const labels =
         getTranslations("en").ai;
@@ -546,24 +546,18 @@ describe("AskGuide", () => {
 
       expect(
         screen.getByText(
-          `5/5 ${labels.questionsUsed}`,
-        ),
-      ).not.toBeNull();
-
-      expect(
-        screen.getByText(
-          labels.limit,
+          `5 ${labels.questionsUsed}`,
         ),
       ).not.toBeNull();
 
       const input =
         screen.getByPlaceholderText(
-          labels.limit,
+          labels.placeholder,
         ) as HTMLInputElement;
 
       expect(
         input.disabled,
-      ).toBe(true);
+      ).toBe(false);
     },
   );
 

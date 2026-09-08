@@ -318,6 +318,19 @@ rejecting it requires `publishing:review`. An actively referenced approved asset
 must be safely detached or replaced before it can become non-public. Media
 management therefore does not grant content publication powers.
 
+Uploaded audio may additionally be classified as `premium`. Existing assets
+default to `public`. Premium audio never appears in public CMS snapshots or the
+public `/api/media` delivery route; it is streamed only through the separate
+authenticated commerce-media endpoint after PostgreSQL confirms an active city
+entitlement. The legacy files under `/public/audio` remain free.
+
+The Lübeck Digital Guide Pass catalog is provisioned only by the explicit
+`npm run commerce:provision-lubeck-pass` operational command documented in
+`scripts/README.md`. It is inactive by default, is never seeded or provisioned
+during a build, and requires an explicit provider Price ID and amount before it
+can be activated. The entitlement grant is `city:lubeck` for three days (72
+hours from the verified webhook grant timestamp).
+
 The allowlist and limits are:
 
 - JPEG, PNG, WebP, and AVIF images up to 15 MB; SVG is rejected.

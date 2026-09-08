@@ -40,6 +40,12 @@ export async function POST(request: Request) {
       if (error.code === "PRICE_NOT_AVAILABLE") {
         return NextResponse.json({ error: error.code }, { status: 404 });
       }
+      if (
+        error.code === "ALREADY_ENTITLED" ||
+        error.code === "CHECKOUT_ALREADY_PENDING"
+      ) {
+        return NextResponse.json({ error: error.code }, { status: 409 });
+      }
       return NextResponse.json({ error: error.code }, { status: 503 });
     }
     throw error;

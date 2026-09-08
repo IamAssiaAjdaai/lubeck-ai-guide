@@ -3,6 +3,7 @@ import { extname } from "node:path";
 import { isLocale } from "@/lib/i18n";
 import {
   MEDIA_KINDS,
+  MEDIA_ACCESS_LEVELS,
   MEDIA_LIFECYCLES,
   MEDIA_PURPOSES,
   MediaIntegrityError,
@@ -72,7 +73,14 @@ export function validateUploadIntent(input: UploadIntentInput): UploadIntentInpu
   if (input.locale !== undefined && !isLocale(input.locale)) {
     throw new MediaValidationError("Media locale is not supported.");
   }
-  return { ...input, originalFilename };
+  const accessLevel = input.accessLevel ?? "public";
+  if (!MEDIA_ACCESS_LEVELS.includes(accessLevel)) {
+    throw new MediaValidationError("Media access level is invalid.");
+  }
+  if (accessLevel === "premium" && input.kind !== "audio") {
+    throw new MediaValidationError("Only uploaded audio can be premium media.");
+  }
+  return { ...input, accessLevel, originalFilename };
 }
 
 export function validateUploadedObject(

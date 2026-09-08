@@ -27,6 +27,15 @@ vi.mock("@/lib/rateLimit", () => ({
     limit: rateLimit,
   },
 }));
+vi.mock("@/lib/guideAllowance.server", () => ({
+  enforceGuideDailyAllowance: vi.fn().mockResolvedValue({
+    success: true,
+    limit: 3,
+    remaining: 2,
+    reset: Date.now() + 86_400_000,
+    tier: "free",
+  }),
+}));
 
 import { POST } from "@/app/api/guide/route";
 

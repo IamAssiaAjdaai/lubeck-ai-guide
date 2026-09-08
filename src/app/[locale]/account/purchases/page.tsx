@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
 import { CommerceCheckoutButton } from "@/components/commerce/CommerceCheckoutButton";
+import { CheckoutReturnTracker } from "@/components/commerce/CheckoutReturnTracker";
 import { auth } from "@/lib/auth/server";
 import { getCommerceCopy } from "@/lib/commerce/copy";
 import {
@@ -12,6 +13,11 @@ import {
   listUserCommerceState,
 } from "@/lib/commerce/queries.server";
 import { getDirection, isLocale } from "@/lib/i18n";
+import {
+  getCityPassAccessState,
+  LUBECK_CITY_PASS_PRODUCT_SLUG,
+} from "@/lib/commerce/cityPassAccess.server";
+import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
 
 export default async function PurchasesPage({
   params,
@@ -35,14 +41,29 @@ export default async function PurchasesPage({
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
   const checkoutValue = (await searchParams).checkout;
   const checkout = Array.isArray(checkoutValue) ? checkoutValue[0] : checkoutValue;
-  const [offers, state] = await Promise.all([
+  const [allOffers, state, cityPassAccess] = await Promise.all([
     listActiveCommerceOffers(),
     listUserCommerceState(session.user.id),
+    getCityPassAccessState({ userId: session.user.id, citySlug: "lubeck" }),
   ]);
+  const offers = cityPassAccess.active
+    ? allOffers.filter(
+        ({ productSlug }) => productSlug !== LUBECK_CITY_PASS_PRODUCT_SLUG,
+      )
+    : allOffers;
+  const cityPassCopy = getCityPassCopy(locale);
 
   return (
     <main lang={locale} dir={direction} className="app-shell">
       <section className="content-container py-8 sm:py-12">
+        {checkout === "success" || checkout === "canceled" ? (
+          <CheckoutReturnTracker
+            outcome={checkout}
+            locale={locale}
+            accessActive={cityPassAccess.active}
+            returnLabel={cityPassCopy.continuePremium}
+          />
+        ) : null}
         <Link
           href={`/${locale}/account`}
           className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-white px-4 text-sm font-semibold text-text-secondary transition hover:border-blue-200 hover:text-primary"
@@ -110,6 +131,25 @@ export default async function PurchasesPage({
             </div>
           )}
         </section>
+
+        {cityPassAccess.active ? (
+          <section className="mt-8 rounded-2xl border border-violet-200 bg-violet-50 p-5" lang={cityPassCopy.actualLocale} dir={cityPassCopy.actualLocale === "ar" ? "rtl" : "ltr"}>
+            <p className="font-semibold">
+              {cityPassAccess.expiresAt
+                ? cityPassCopy.activeUntil.replace(
+                    "{date}",
+                    new Intl.DateTimeFormat(locale, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(cityPassAccess.expiresAt),
+                  )
+                : cityPassCopy.continuePremium}
+            </p>
+            <Link className="button-primary mt-4 w-full" href={`/${locale}/lubeck`}>
+              {cityPassCopy.continuePremium}
+            </Link>
+          </section>
+        ) : null}
 
         <section className="mt-9">
           <h2 className="text-xl font-semibold">{copy.currentAccess}</h2>

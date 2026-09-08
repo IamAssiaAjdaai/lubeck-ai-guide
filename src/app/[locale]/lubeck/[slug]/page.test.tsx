@@ -19,6 +19,10 @@ const {
   getPublicCitySnapshot,
   trackLandmarkView,
   askGuide,
+  getPremiumPlaceAudio,
+  getSession,
+  getCityPassAccessState,
+  getLubeckCityPassOffer,
 } = vi.hoisted(() => ({
   audioPlayer: vi.fn(),
   connection: vi.fn(),
@@ -26,6 +30,10 @@ const {
   getPublicCitySnapshot: vi.fn(),
   trackLandmarkView: vi.fn(),
   askGuide: vi.fn(),
+  getPremiumPlaceAudio: vi.fn(),
+  getSession: vi.fn(),
+  getCityPassAccessState: vi.fn(),
+  getLubeckCityPassOffer: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -40,6 +48,27 @@ vi.mock("@/lib/content/source", () => ({
 
 vi.mock("@/lib/content/publicRepository.server", () => ({
   getPublicCitySnapshot,
+}));
+
+vi.mock("@/lib/commerce/premiumMedia.server", () => ({
+  getPremiumPlaceAudio,
+}));
+
+vi.mock("@/lib/auth/server", () => ({
+  auth: { api: { getSession } },
+}));
+
+vi.mock("@/lib/commerce/cityPassAccess.server", () => ({
+  getCityPassAccessState,
+}));
+
+vi.mock("@/lib/commerce/queries.server", () => ({
+  getLubeckCityPassOffer,
+  formatMinorCurrency: vi.fn().mockReturnValue("€6.99"),
+}));
+
+vi.mock("next/headers", () => ({
+  headers: vi.fn().mockResolvedValue(new Headers()),
 }));
 
 vi.mock("next/image", () => ({
@@ -142,6 +171,10 @@ describe("LandmarkPage audio", () => {
     getContentSource.mockReturnValue("code");
     getPublicCitySnapshot.mockResolvedValue(createSnapshot());
     connection.mockResolvedValue(undefined);
+    getPremiumPlaceAudio.mockResolvedValue(undefined);
+    getSession.mockResolvedValue(null);
+    getCityPassAccessState.mockResolvedValue({ active: false });
+    getLubeckCityPassOffer.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -441,5 +474,63 @@ describe("LandmarkPage audio", () => {
       locale: "en",
       slug: "cafe-niederegger",
     });
+  });
+
+  it("shows a configured exact-locale premium trigger while keeping the free place open", async () => {
+    getContentSource.mockReturnValue("database");
+    getPremiumPlaceAudio.mockResolvedValue({
+      assetKey: "123e4567-e89b-42d3-a456-426614174000",
+      src: "/api/commerce/media/123e4567-e89b-42d3-a456-426614174000",
+      locale: "en",
+      durationSeconds: 87,
+    });
+    getLubeckCityPassOffer.mockResolvedValue({
+      priceId: 7,
+      productSlug: "lubeck-digital-guide-pass-72h",
+      currency: "eur",
+      unitAmount: 699,
+    });
+
+    render(
+      await LandmarkPage({
+        params: Promise.resolve({ locale: "en", slug: "fuechtingshof" }),
+      }),
+    );
+
+    expect(screen.getByRole("heading", { name: /F.chtingshof/i })).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Premium narration" })).not.toBeNull();
+    expect(screen.queryByText(/Unlock Hidden Lübeck/)).toBeNull();
+  });
+
+  it("bypasses the paywall and renders protected audio for an active entitlement", async () => {
+    getContentSource.mockReturnValue("database");
+    getPremiumPlaceAudio.mockResolvedValue({
+      assetKey: "123e4567-e89b-42d3-a456-426614174000",
+      src: "/api/commerce/media/123e4567-e89b-42d3-a456-426614174000",
+      locale: "en",
+      durationSeconds: 87,
+    });
+    getSession.mockResolvedValue({ user: { id: "user-1" } });
+    getCityPassAccessState.mockResolvedValue({
+      active: true,
+      expiresAt: new Date("2030-01-04T12:00:00Z"),
+    });
+
+    render(
+      await LandmarkPage({
+        params: Promise.resolve({ locale: "en", slug: "fuechtingshof" }),
+      }),
+    );
+
+    expect(screen.getByText("Hidden Lübeck premium audio")).not.toBeNull();
+    expect(audioPlayer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/api/commerce/media/123e4567-e89b-42d3-a456-426614174000",
+        premiumAnalytics: expect.objectContaining({
+          entitlement_scope: "city:lubeck",
+        }),
+      }),
+    );
+    expect(screen.queryByRole("button", { name: "Premium narration" })).toBeNull();
   });
 });

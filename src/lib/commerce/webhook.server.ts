@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 import {
   commerceCustomers,
@@ -13,6 +13,7 @@ import type {
   NormalizedProviderEvent,
   VerifiedProviderEvent,
 } from "@/lib/commerce/types";
+import { captureVerifiedEntitlementGrant } from "@/lib/commerce/analytics.server";
 
 export type CommerceWebhookResult = "processed" | "ignored" | "duplicate";
 
@@ -288,7 +289,10 @@ const defaultDependencies: WebhookDependencies = {
             .where(eq(commerceProductGrants.productId, productId));
         },
         async grantEntitlement(input) {
-          await tx
+          await tx.execute(
+            sql`select pg_advisory_xact_lock(hashtextextended(${`${input.userId}:${input.productId}`}, 0))`,
+          );
+          const [inserted] = await tx
             .insert(commerceEntitlements)
             .values({
               userId: input.userId,
@@ -300,7 +304,15 @@ const defaultDependencies: WebhookDependencies = {
               grantedAt: input.grantedAt,
               expiresAt: input.expiresAt,
             })
-            .onConflictDoNothing();
+            .onConflictDoNothing()
+            .returning({ id: commerceEntitlements.id });
+          if (inserted) {
+            void captureVerifiedEntitlementGrant({
+              scopeType: input.grant.scopeType,
+              scopeKey: input.grant.scopeKey,
+              durationDays: input.grant.durationDays,
+            });
+          }
         },
         async revokeOrderEntitlements(orderId, revokedAt, reason) {
           await tx
