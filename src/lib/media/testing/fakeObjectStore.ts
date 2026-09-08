@@ -22,6 +22,14 @@ export class FakeMediaObjectStore implements MediaObjectStore {
     return `https://upload.test.invalid/${encodeURIComponent(input.objectKey)}`;
   }
 
+  async writeObject(
+    objectKey: string,
+    bytes: Uint8Array,
+    contentType: string,
+  ): Promise<void> {
+    this.objects.set(objectKey, { bytes, contentType });
+  }
+
   async headObject(objectKey: string): Promise<StoredObjectMetadata | undefined> {
     const object = this.objects.get(objectKey);
     if (!object) return undefined;

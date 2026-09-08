@@ -396,7 +396,12 @@ export async function attachMedia(
     if (!Number.isInteger(position) || position < 0) {
       throw new MediaIntegrityError("Media position must be a non-negative integer.");
     }
-    if (!["gallery", "video"].includes(input.purpose) && position !== 0) {
+    const isAudioCandidate = input.purpose === "audio" && position === 1;
+    if (
+      !["gallery", "video"].includes(input.purpose) &&
+      position !== 0 &&
+      !isAudioCandidate
+    ) {
       throw new MediaIntegrityError("This media purpose does not support ordering.");
     }
     const table = attachmentTable(input.entityType);
@@ -414,6 +419,15 @@ export async function attachMedia(
       )
       .limit(1);
     const existingAttachment = existing[0];
+    if (existingAttachment?.mediaAssetId === input.mediaAssetId) {
+      const [sameAttachment] = await tx
+        .select()
+        .from(table)
+        .where(eq(table.id, existingAttachment.id))
+        .limit(1);
+      if (!sameAttachment) throw new MediaNotFoundError("Media attachment");
+      return sameAttachment;
+    }
     let replacesApprovedMedia = false;
     if (
       existingAttachment &&
@@ -429,8 +443,10 @@ export async function attachMedia(
       (!existingAttachment ||
         existingAttachment.mediaAssetId !== input.mediaAssetId) &&
       asset.approvalStatus === "approved";
+    const changesPublicOutput = input.purpose !== "audio" || position === 0;
     if (
       target.isPublic &&
+      changesPublicOutput &&
       (addsApprovedMedia || replacesApprovedMedia) &&
       !authorization.allowPublicMutation
     ) {
@@ -447,7 +463,7 @@ export async function attachMedia(
       [entityKey(input.entityType)]: input.entityId,
     };
     if (existingAttachment) {
-      if (["gallery", "video"].includes(input.purpose)) {
+      if (["gallery", "video"].includes(input.purpose) || isAudioCandidate) {
         throw new MediaIntegrityError("This ordered media position is already occupied.");
       }
       const [replacement] = await tx
@@ -465,6 +481,82 @@ export async function attachMedia(
     const [attachment] = await tx.insert(table).values(values as never).returning();
     if (!attachment) throw new MediaIntegrityError("Unable to attach media.");
     return attachment;
+  });
+}
+
+export async function promotePlaceAudioCandidate(
+  placeId: number,
+  locale: string,
+  actorId: string,
+) {
+  if (!isLocale(locale)) {
+    throw new MediaIntegrityError("Audio locale is not supported.");
+  }
+  return getDb().transaction(async (tx) => {
+    await lockEntityPublicationState(tx, "place", placeId);
+    const [candidate] = await tx
+      .select({ attachment: placeMediaTable, asset: mediaAssetsTable })
+      .from(placeMediaTable)
+      .innerJoin(
+        mediaAssetsTable,
+        eq(placeMediaTable.mediaAssetId, mediaAssetsTable.id),
+      )
+      .where(
+        and(
+          eq(placeMediaTable.placeId, placeId),
+          eq(placeMediaTable.purpose, "audio"),
+          eq(placeMediaTable.locale, locale),
+          eq(placeMediaTable.position, 1),
+        ),
+      )
+      .for("update")
+      .limit(1);
+    if (!candidate) {
+      throw new MediaIntegrityError("No replacement audio is ready for this language.");
+    }
+    if (
+      candidate.asset.kind !== "audio" ||
+      candidate.asset.locale !== locale ||
+      candidate.asset.approvalStatus !== "approved" ||
+      candidate.asset.archivedAt
+    ) {
+      throw new MediaIntegrityError(
+        "Replacement audio must be approved for this exact language before it can go live.",
+      );
+    }
+    const [current] = await tx
+      .select()
+      .from(placeMediaTable)
+      .where(
+        and(
+          eq(placeMediaTable.placeId, placeId),
+          eq(placeMediaTable.purpose, "audio"),
+          eq(placeMediaTable.locale, locale),
+          eq(placeMediaTable.position, 0),
+        ),
+      )
+      .for("update")
+      .limit(1);
+    if (current) {
+      await tx.delete(placeMediaTable).where(eq(placeMediaTable.id, current.id));
+    }
+    const [promoted] = await tx
+      .update(placeMediaTable)
+      .set({
+        position: 0,
+        createdByUserId: actorId,
+        createdAt: new Date(),
+      })
+      .where(eq(placeMediaTable.id, candidate.attachment.id))
+      .returning();
+    if (!promoted) {
+      throw new MediaIntegrityError("Replacement audio could not be made live.");
+    }
+    return {
+      attachment: promoted,
+      mediaAssetId: candidate.asset.id,
+      previousMediaAssetId: current?.mediaAssetId,
+    };
   });
 }
 

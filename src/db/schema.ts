@@ -432,6 +432,29 @@ export const mediaAssetsTable = pgTable(
   ],
 );
 
+export const audioGenerationMetadataTable = pgTable(
+  "audio_generation_metadata",
+  {
+    mediaAssetId: integer("media_asset_id")
+      .primaryKey()
+      .references(() => mediaAssetsTable.id, { onDelete: "cascade" }),
+    provider: text("provider").notNull(),
+    voiceId: text("voice_id"),
+    sourceLocale: text("source_locale").notNull(),
+    sourceField: text("source_field").notNull(),
+    sourceTextHash: text("source_text_hash").notNull(),
+    generatedAt: timestamp("generated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("audio_generation_metadata_source_idx").on(
+      table.sourceLocale,
+      table.sourceTextHash,
+    ),
+  ],
+);
+
 function mediaAttachmentColumns() {
   return {
     id: serial("id").primaryKey(),
@@ -522,6 +545,8 @@ export type PlaceSourceRow = typeof placeSourcesTable.$inferSelect;
 export type ContentWorkflowEventRow = typeof contentWorkflowEventsTable.$inferSelect;
 export type MediaAssetRow = typeof mediaAssetsTable.$inferSelect;
 export type NewMediaAssetRow = typeof mediaAssetsTable.$inferInsert;
+export type AudioGenerationMetadataRow =
+  typeof audioGenerationMetadataTable.$inferSelect;
 export type CityMediaRow = typeof cityMediaTable.$inferSelect;
 export type PlaceMediaRow = typeof placeMediaTable.$inferSelect;
 export type TourMediaRow = typeof tourMediaTable.$inferSelect;

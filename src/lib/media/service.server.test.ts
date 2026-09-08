@@ -17,6 +17,7 @@ const {
   requireAdminCapability,
   requireCityCapability,
   markMediaObjectDeleted,
+  promotePlaceAudioCandidate,
   setMediaLifecycle,
 } = vi.hoisted(() => ({
   requireCityCapability: vi.fn(),
@@ -30,6 +31,7 @@ const {
   getMediaAttachment: vi.fn(),
   finalizeMediaAsset: vi.fn(),
   markMediaObjectDeleted: vi.fn(),
+  promotePlaceAudioCandidate: vi.fn(),
   setMediaLifecycle: vi.fn(),
 }));
 
@@ -58,6 +60,7 @@ vi.mock("@/lib/media/repository.server", () => ({
   markStaleUploadArchived: vi.fn(),
   markMediaObjectDeleted,
   prepareMediaObjectDeletion: vi.fn(),
+  promotePlaceAudioCandidate,
   setMediaLifecycle,
 }));
 
@@ -67,6 +70,7 @@ import {
   createAuthorizedUploadIntent,
   detachAuthorizedMedia,
   finalizeAuthorizedUpload,
+  makeAuthorizedPlaceAudioLive,
   reviewAuthorizedMediaAsset,
   retryAuthorizedUploadFinalize,
 } from "@/lib/media/service.server";
@@ -424,6 +428,20 @@ describe("media service", () => {
     expect(detachMedia).toHaveBeenLastCalledWith("place", 41, {
       allowPublicMutation: false,
     });
+  });
+
+  it("requires city-scoped publishing authority to make exact-locale audio live", async () => {
+    getCmsPlace.mockResolvedValue({ id: 31, cityId: 7 });
+    promotePlaceAudioCandidate.mockResolvedValue({ mediaAssetId: 19 });
+    requireCityCapability.mockResolvedValue(reviewerContext);
+
+    await expect(makeAuthorizedPlaceAudioLive(31, "de")).resolves.toEqual({
+      mediaAssetId: 19,
+    });
+    expect(requireCityCapability).toHaveBeenCalledWith(7, "publishing:publish");
+    expect(promotePlaceAudioCandidate).toHaveBeenCalledWith(31, "de", "reviewer-1");
+
+    await expect(makeAuthorizedPlaceAudioLive(31, "xx")).rejects.toThrow(/not supported/);
   });
 
   it.each([

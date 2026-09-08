@@ -31,7 +31,7 @@ describe("admin navigation", () => {
     );
 
     expect(ids).toContain("places");
-    expect(ids).toContain("translations");
+    expect(ids).toContain("operations");
     expect(ids).not.toContain("staff");
     expect(ids).not.toContain("publishing");
   });

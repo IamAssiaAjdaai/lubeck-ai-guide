@@ -45,6 +45,21 @@ export class S3MediaObjectStore implements MediaObjectStore {
     );
   }
 
+  async writeObject(
+    objectKey: string,
+    bytes: Uint8Array,
+    contentType: string,
+  ): Promise<void> {
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.config.bucket,
+        Key: objectKey,
+        Body: bytes,
+        ContentType: contentType,
+      }),
+    );
+  }
+
   async headObject(objectKey: string): Promise<StoredObjectMetadata | undefined> {
     try {
       const result = await this.client.send(
