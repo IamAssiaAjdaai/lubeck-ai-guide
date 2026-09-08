@@ -8,4 +8,6 @@ import {
 
 export { AUTH_ROUTE_PATH, PUBLIC_EMAIL_SIGN_UP_ENABLED };
 
-export const auth = createCitywalkAuth();
+export const auth = createCitywalkAuth({
+  allowEmailSignUp: PUBLIC_EMAIL_SIGN_UP_ENABLED,
+});
