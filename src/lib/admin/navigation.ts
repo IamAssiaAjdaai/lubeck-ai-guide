@@ -10,6 +10,13 @@ export const ADMIN_SECTIONS = [
     capability: "admin:view",
   },
   {
+    id: "commerce",
+    label: "Commerce",
+    href: "/admin/commerce",
+    icon: "credit-card",
+    capability: "commerce:view",
+  },
+  {
     id: "cities",
     label: "Cities",
     href: "/admin/cities",

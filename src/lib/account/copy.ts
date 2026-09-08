@@ -20,6 +20,7 @@ export type AccountCopy = Readonly<{
   guestLinkError: string;
   signedInAs: string;
   preferredLanguage: string;
+  purchasesAndAccess: string;
   backToTrip: string;
 }>;
 
@@ -43,6 +44,7 @@ const en: AccountCopy = {
   guestLinkError: "You are signed in, but this guest trip could not be linked automatically.",
   signedInAs: "Signed in as",
   preferredLanguage: "Preferred language",
+  purchasesAndAccess: "Purchases & access",
   backToTrip: "Back to trip",
 };
 
@@ -66,6 +68,7 @@ const de: AccountCopy = {
   guestLinkError: "Du bist angemeldet, aber diese Gast-Reise konnte nicht automatisch verbunden werden.",
   signedInAs: "Angemeldet als",
   preferredLanguage: "Bevorzugte Sprache",
+  purchasesAndAccess: "Käufe & Zugriff",
   backToTrip: "Zurück zur Reise",
 };
 
@@ -89,6 +92,7 @@ const fr: AccountCopy = {
   guestLinkError: "Vous êtes connecté, mais ce voyage invité n’a pas pu être associé automatiquement.",
   signedInAs: "Connecté en tant que",
   preferredLanguage: "Langue préférée",
+  purchasesAndAccess: "Achats et accès",
   backToTrip: "Retour au voyage",
 };
 
@@ -113,6 +117,7 @@ const ar: AccountCopy = {
   guestLinkError: "تم تسجيل دخولك، لكن تعذر ربط رحلة الضيف هذه تلقائياً.",
   signedInAs: "تم تسجيل الدخول باسم",
   preferredLanguage: "اللغة المفضلة",
+  purchasesAndAccess: "المشتريات والصلاحيات",
   backToTrip: "العودة إلى الرحلة",
 };
 

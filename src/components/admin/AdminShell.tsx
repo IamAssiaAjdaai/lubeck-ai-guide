@@ -2,6 +2,7 @@ import {
   BadgeCheck,
   BookOpen,
   Building2,
+  CreditCard,
   Images,
   Languages,
   LayoutDashboard,
@@ -23,6 +24,7 @@ import type { AdminContext } from "@/lib/admin/authorization.server";
 
 const sectionIcons: Record<AdminSection["icon"], LucideIcon> = {
   "layout-dashboard": LayoutDashboard,
+  "credit-card": CreditCard,
   "building-2": Building2,
   "map-pin": MapPin,
   route: Route,

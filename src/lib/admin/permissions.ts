@@ -11,6 +11,7 @@ export const ADMIN_CAPABILITIES = [
   "admin:view",
   "staff:manage",
   "staff:manage_super_admin",
+  "commerce:view",
   "cities:view",
   "cities:manage",
   "places:view",
@@ -38,6 +39,7 @@ export const ROLE_CAPABILITIES: Readonly<
   admin: new Set([
     "admin:view",
     "staff:manage",
+    "commerce:view",
     "cities:view",
     "cities:manage",
     "places:view",
