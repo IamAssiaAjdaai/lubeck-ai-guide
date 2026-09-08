@@ -48,7 +48,8 @@
     "posthog-js": "^1.424.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "stripe": "^22.4.0"
   },
   "devDependencies": {
     "@google-cloud/text-to-speech": "^7.0.0",

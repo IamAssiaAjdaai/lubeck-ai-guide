@@ -1,6 +1,7 @@
 "use client";
 
-import { LogIn, LogOut, UserPlus } from "lucide-react";
+import { CreditCard, LogIn, LogOut, UserPlus } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
@@ -125,9 +126,16 @@ export function TravelerAccountPanel({
         <p className="mt-4 text-sm text-text-secondary">
           {copy.preferredLanguage}: {languages[locale].nativeName}
         </p>
+        <Link
+          href={`/${locale}/account/purchases`}
+          className="button-primary mt-5 w-full"
+        >
+          <CreditCard aria-hidden="true" size={18} />
+          {copy.purchasesAndAccess}
+        </Link>
         <button
           type="button"
-          className="button-secondary mt-5 w-full"
+          className="button-secondary mt-3 w-full"
           disabled={isLoading}
           onClick={() => void handleSignOut()}
         >

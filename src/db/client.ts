@@ -4,12 +4,14 @@ import { Pool } from "pg";
 import { getDatabaseUrl } from "@/db/env";
 import * as authSchema from "@/db/authSchema";
 import * as citywalkSchema from "@/db/schema";
+import * as commerceSchema from "@/db/commerceSchema";
 import * as travelerSchema from "@/db/travelerSchema";
 
 export const databaseSchema = {
   ...citywalkSchema,
   ...authSchema,
   ...travelerSchema,
+  ...commerceSchema,
 };
 
 let pool: Pool | undefined;
