@@ -22,7 +22,7 @@ function stripeEvent(
     pending_webhooks: 1,
     request: { id: null, idempotency_key: null },
     type,
-  } as Stripe.Event;
+  } as unknown as Stripe.Event;
 }
 
 describe("Stripe payment provider", () => {
