@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/server";
 import {
   CommerceCheckoutError,
+  parseCommerceCheckoutInput,
   startCommerceCheckout,
 } from "@/lib/commerce/checkout.server";
 
@@ -20,18 +21,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "INVALID_INPUT" }, { status: 400 });
   }
 
-  const value = body as { priceId?: unknown; locale?: unknown };
-  const priceId =
-    typeof value.priceId === "number"
-      ? value.priceId
-      : Number.parseInt(String(value.priceId ?? ""), 10);
-  const locale = String(value.locale ?? "");
+  const input = parseCommerceCheckoutInput(body);
+  if (!input) {
+    return NextResponse.json({ error: "INVALID_INPUT" }, { status: 400 });
+  }
 
   try {
     const checkout = await startCommerceCheckout({
       user: { id: session.user.id, email: session.user.email },
-      priceId,
-      locale,
+      ...input,
     });
     return NextResponse.json(checkout);
   } catch (error) {

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  parseCommerceCheckoutInput,
   startCommerceCheckout,
   type CheckoutDependencies,
 } from "@/lib/commerce/checkout.server";
@@ -40,6 +41,26 @@ function dependencies(
 }
 
 describe("commerce checkout", () => {
+  it("strictly accepts only a positive numeric CITYWALK price identifier", () => {
+    expect(parseCommerceCheckoutInput({ priceId: 7, locale: "en" })).toEqual({
+      priceId: 7,
+      locale: "en",
+    });
+
+    expect(
+      parseCommerceCheckoutInput({ priceId: "7tampered", locale: "en" }),
+    ).toBeUndefined();
+    expect(
+      parseCommerceCheckoutInput({ priceId: "7", locale: "en" }),
+    ).toBeUndefined();
+    expect(
+      parseCommerceCheckoutInput({ priceId: 7.5, locale: "en" }),
+    ).toBeUndefined();
+    expect(
+      parseCommerceCheckoutInput({ priceId: 7, locale: "invalid" }),
+    ).toBeUndefined();
+  });
+
   it("creates an order before redirecting to a server-selected hosted price", async () => {
     const deps = dependencies();
     const result = await startCommerceCheckout(

@@ -49,6 +49,28 @@ export class CommerceCheckoutError extends Error {
   }
 }
 
+export function parseCommerceCheckoutInput(
+  value: unknown,
+): Readonly<{ priceId: number; locale: Locale }> | undefined {
+  if (!value || typeof value !== "object") return undefined;
+
+  const input = value as Record<string, unknown>;
+  if (
+    typeof input.priceId !== "number" ||
+    !Number.isSafeInteger(input.priceId) ||
+    input.priceId <= 0 ||
+    typeof input.locale !== "string" ||
+    !isLocale(input.locale)
+  ) {
+    return undefined;
+  }
+
+  return {
+    priceId: input.priceId,
+    locale: input.locale,
+  };
+}
+
 async function loadEligiblePrice(
   priceId: number,
 ): Promise<EligibleCommercePrice | undefined> {
