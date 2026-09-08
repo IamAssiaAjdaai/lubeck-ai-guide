@@ -45,6 +45,11 @@ import { getGuideEligibility } from "@/lib/guideEligibility.server";
 import { auth } from "@/lib/auth/server";
 import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
 import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
+import {
+  getCityPassPaywallContext,
+  LUBECK_CITY_PASS,
+  type CityPassConfiguration,
+} from "@/lib/commerce/cityPassConfig";
 import { createCityPassReturnPath } from "@/lib/commerce/cityPassReturn";
 import { getCityPassAccessState } from "@/lib/commerce/cityPassAccess.server";
 import {
@@ -53,7 +58,7 @@ import {
 } from "@/lib/commerce/premiumMedia.server";
 import {
   formatMinorCurrency,
-  getLubeckCityPassOffer,
+  getActiveCityPassOffer,
 } from "@/lib/commerce/queries.server";
 
 type LandmarkPageProps = {
@@ -166,7 +171,7 @@ export default async function LandmarkPage({
   if (contentSource !== "code" && snapshot.media) {
     try {
       premiumAudio = await getPremiumPlaceAudio(
-        "lubeck",
+        LUBECK_CITY_PASS.citySlug,
         landmark.slug,
         currentLocale,
       );
@@ -174,12 +179,12 @@ export default async function LandmarkPage({
       if (contentSource === "database") throw error;
     }
   }
-  const premiumCopy = getCityPassCopy(currentLocale);
+  const premiumCopy = getCityPassCopy(LUBECK_CITY_PASS, currentLocale);
   const premiumValue = (await searchParams)?.premium;
   const premiumRequested =
     (Array.isArray(premiumValue) ? premiumValue[0] : premiumValue) === "1";
   const premiumState = premiumAudio
-    ? await resolvePremiumState(currentLocale)
+    ? await resolvePremiumState(currentLocale, LUBECK_CITY_PASS)
     : undefined;
 
   /*
@@ -380,10 +385,11 @@ export default async function LandmarkPage({
                   pauseLabel={t.common.pause}
                   unavailableLabel={t.landmark.audioUnavailable}
                   premiumAnalytics={{
-                    city_slug: "lubeck",
-                    feature_id: "hidden_lubeck_audio",
+                    city_slug: LUBECK_CITY_PASS.citySlug,
+                    feature_id:
+                      LUBECK_CITY_PASS.primaryPremiumFeature.id,
                     locale: currentLocale,
-                    entitlement_scope: "city:lubeck",
+                    entitlement_scope: `${LUBECK_CITY_PASS.entitlement.scopeType}:${LUBECK_CITY_PASS.entitlement.scopeKey}`,
                   }}
                 />
               </div>
@@ -392,7 +398,12 @@ export default async function LandmarkPage({
             <CityPassPaywall
               locale={currentLocale}
               copy={premiumCopy}
-              returnPath={createCityPassReturnPath(currentLocale, landmark.slug)}
+              pass={getCityPassPaywallContext(LUBECK_CITY_PASS)}
+              returnPath={createCityPassReturnPath(
+                currentLocale,
+                LUBECK_CITY_PASS.citySlug,
+                landmark.slug,
+              )}
               signedIn={premiumState?.signedIn ?? false}
               offer={premiumState?.offer}
               initiallyOpen={premiumRequested}
@@ -485,13 +496,18 @@ export default async function LandmarkPage({
   );
 }
 
-async function resolvePremiumState(locale: (typeof locales)[number]) {
+async function resolvePremiumState(
+  locale: (typeof locales)[number],
+  configuration: CityPassConfiguration,
+) {
   const session = await auth.api.getSession({ headers: await headers() });
   const access = await getCityPassAccessState({
     userId: session?.user.id,
-    citySlug: "lubeck",
+    citySlug: configuration.citySlug,
   });
-  const offer = access.active ? undefined : await getLubeckCityPassOffer();
+  const offer = access.active
+    ? undefined
+    : await getActiveCityPassOffer(configuration.citySlug);
   return {
     signedIn: Boolean(session),
     access,

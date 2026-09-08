@@ -1,21 +1,20 @@
 import "server-only";
 
-import { and, desc, eq, gt, isNull, or } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 import { commerceEntitlements } from "@/db/commerceSchema";
 import { getDb } from "@/db/client";
-
-export const LUBECK_CITY_PASS_PRODUCT_SLUG =
-  "lubeck-digital-guide-pass-72h";
-export const LUBECK_CITY_PASS_SCOPE = {
-  scopeType: "city",
-  scopeKey: "lubeck",
-} as const;
-export const LUBECK_CITY_PASS_DURATION_HOURS = 72;
+import { isCitySlug } from "@/lib/commerce/cityPassConfig";
 
 export type CityPassAccessState = Readonly<{
+  status: "active" | "expired" | "revoked" | "none";
   active: boolean;
   expiresAt?: Date;
+}>;
+
+export type CityPassEntitlementRecord = Readonly<{
+  status: "active" | "expired" | "revoked";
+  expiresAt: Date | null;
 }>;
 
 export type CityPassAccessDependencies = Readonly<{
@@ -28,31 +27,51 @@ export type CityPassAccessDependencies = Readonly<{
 
 const defaultDependencies: CityPassAccessDependencies = {
   async findAccess({ userId, citySlug, now }) {
-    const [row] = await getDb()
-      .select({ expiresAt: commerceEntitlements.expiresAt })
+    const rows = await getDb()
+      .select({
+        status: commerceEntitlements.status,
+        expiresAt: commerceEntitlements.expiresAt,
+      })
       .from(commerceEntitlements)
       .where(
         and(
           eq(commerceEntitlements.userId, userId),
           eq(commerceEntitlements.scopeType, "city"),
           eq(commerceEntitlements.scopeKey, citySlug),
-          eq(commerceEntitlements.status, "active"),
-          or(
-            isNull(commerceEntitlements.expiresAt),
-            gt(commerceEntitlements.expiresAt, now),
-          ),
         ),
       )
-      .orderBy(desc(commerceEntitlements.expiresAt))
-      .limit(1);
-    return row
-      ? {
-          active: true,
-          ...(row.expiresAt ? { expiresAt: row.expiresAt } : {}),
-        }
-      : { active: false };
+      .orderBy(
+        desc(commerceEntitlements.grantedAt),
+        desc(commerceEntitlements.id),
+      )
+      .limit(100);
+    return resolveCityPassAccessState(rows, now);
   },
 };
+
+export function resolveCityPassAccessState(
+  rows: readonly CityPassEntitlementRecord[],
+  now: Date,
+): CityPassAccessState {
+  const active = rows.find(
+    (row) =>
+      row.status === "active" &&
+      (!row.expiresAt || row.expiresAt.getTime() > now.getTime()),
+  );
+  if (active) {
+    return {
+      status: "active",
+      active: true,
+      ...(active.expiresAt ? { expiresAt: active.expiresAt } : {}),
+    };
+  }
+  const latest = rows[0];
+  if (!latest) return { status: "none", active: false };
+  const status = latest.status === "revoked" ? "revoked" : "expired";
+  return latest.expiresAt
+    ? { status, active: false, expiresAt: latest.expiresAt }
+    : { status, active: false };
+}
 
 export class CityPassRequiredError extends Error {
   constructor(readonly citySlug: string) {
@@ -65,7 +84,9 @@ export async function getCityPassAccessState(
   input: Readonly<{ userId?: string; citySlug: string; now?: Date }>,
   dependencies: CityPassAccessDependencies = defaultDependencies,
 ): Promise<CityPassAccessState> {
-  if (!input.userId) return { active: false };
+  if (!input.userId || !isCitySlug(input.citySlug)) {
+    return { status: "none", active: false };
+  }
   return dependencies.findAccess({
     userId: input.userId,
     citySlug: input.citySlug,
@@ -73,19 +94,33 @@ export async function getCityPassAccessState(
   });
 }
 
-export async function canUseCityPremiumFeature(
+export const getCityPassState = getCityPassAccessState;
+
+export async function hasActiveCityPass(
   input: Readonly<{ userId?: string; citySlug: string; now?: Date }>,
   dependencies: CityPassAccessDependencies = defaultDependencies,
 ): Promise<boolean> {
   return (await getCityPassAccessState(input, dependencies)).active;
 }
 
+export async function canUseCityPremiumFeature(
+  input: Readonly<{
+    userId?: string;
+    citySlug: string;
+    feature: string;
+    now?: Date;
+  }>,
+  dependencies: CityPassAccessDependencies = defaultDependencies,
+): Promise<boolean> {
+  if (!input.feature.trim()) return false;
+  return hasActiveCityPass(input, dependencies);
+}
+
 export async function requireCityPass(
   input: Readonly<{ userId?: string; citySlug: string; now?: Date }>,
   dependencies: CityPassAccessDependencies = defaultDependencies,
 ): Promise<void> {
-  if (!(await canUseCityPremiumFeature(input, dependencies))) {
+  if (!(await hasActiveCityPass(input, dependencies))) {
     throw new CityPassRequiredError(input.citySlug);
   }
 }
-

@@ -3,6 +3,7 @@
 import { CreditCard } from "lucide-react";
 import { useState } from "react";
 import posthog from "posthog-js";
+import { CITY_PASS_RETURN_STORAGE_KEY } from "@/lib/commerce/cityPassReturn";
 
 export function CommerceCheckoutButton({
   priceId,
@@ -31,7 +32,7 @@ export function CommerceCheckoutButton({
       if (resumePath) {
         try {
           window.sessionStorage.setItem(
-            "citywalk:city-pass:return",
+            CITY_PASS_RETURN_STORAGE_KEY,
             resumePath,
           );
         } catch {

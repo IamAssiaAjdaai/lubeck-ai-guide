@@ -1,10 +1,11 @@
 import { and, eq } from "drizzle-orm";
 
 import { loadDatabaseEnvironment } from "@/db/loadEnvironment";
+import { LUBECK_CITY_PASS } from "@/lib/commerce/cityPassConfig";
 
 loadDatabaseEnvironment();
 
-const PRODUCT_SLUG = "lubeck-digital-guide-pass-72h";
+const PRODUCT_SLUG = LUBECK_CITY_PASS.productSlug;
 
 async function main() {
   const options = parseOptions(process.argv.slice(2));
@@ -51,9 +52,9 @@ async function main() {
         .insert(commerce.commerceProductGrants)
         .values({
           productId: product.id,
-          scopeType: "city",
-          scopeKey: "lubeck",
-          durationDays: 3,
+          scopeType: LUBECK_CITY_PASS.entitlement.scopeType,
+          scopeKey: LUBECK_CITY_PASS.entitlement.scopeKey,
+          durationDays: LUBECK_CITY_PASS.durationDays,
         })
         .onConflictDoUpdate({
           target: [
@@ -61,7 +62,10 @@ async function main() {
             commerce.commerceProductGrants.scopeType,
             commerce.commerceProductGrants.scopeKey,
           ],
-          set: { durationDays: 3, updatedAt: new Date() },
+          set: {
+            durationDays: LUBECK_CITY_PASS.durationDays,
+            updatedAt: new Date(),
+          },
         });
 
       let priceId: number | undefined;
@@ -94,7 +98,7 @@ async function main() {
             productId: product.id,
             provider: "stripe",
             providerPriceId: options.providerPriceId,
-            currency: "eur",
+            currency: LUBECK_CITY_PASS.recommendedLaunchPrice.currency,
             unitAmount: options.unitAmount,
             active: options.activate || existingPrice?.active || false,
           })
@@ -105,7 +109,7 @@ async function main() {
             ],
             set: {
               productId: product.id,
-              currency: "eur",
+              currency: LUBECK_CITY_PASS.recommendedLaunchPrice.currency,
               unitAmount: options.unitAmount,
               active: options.activate || existingPrice?.active || false,
               updatedAt: new Date(),
@@ -125,8 +129,14 @@ async function main() {
         .where(
           and(
             eq(commerce.commerceProductGrants.productId, product.id),
-            eq(commerce.commerceProductGrants.scopeType, "city"),
-            eq(commerce.commerceProductGrants.scopeKey, "lubeck"),
+            eq(
+              commerce.commerceProductGrants.scopeType,
+              LUBECK_CITY_PASS.entitlement.scopeType,
+            ),
+            eq(
+              commerce.commerceProductGrants.scopeKey,
+              LUBECK_CITY_PASS.entitlement.scopeKey,
+            ),
           ),
         )
         .limit(1);
@@ -134,7 +144,7 @@ async function main() {
     });
 
     console.log(
-      `Provisioned ${PRODUCT_SLUG}: city:lubeck, ${result.grant?.durationDays ?? 0} days, ${result.active ? "active" : "inactive"}${result.priceId ? `, price ${result.priceId}` : ", no price"}.`,
+      `Provisioned ${PRODUCT_SLUG}: ${LUBECK_CITY_PASS.entitlement.scopeType}:${LUBECK_CITY_PASS.entitlement.scopeKey}, ${result.grant?.durationDays ?? 0} days, ${result.active ? "active" : "inactive"}${result.priceId ? `, price ${result.priceId}` : ", no price"}.`,
     );
   } finally {
     await closeDb();

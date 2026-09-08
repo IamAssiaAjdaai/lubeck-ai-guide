@@ -12,6 +12,7 @@ import {
 } from "@/db/schema";
 import { isLocale, type Locale } from "@/lib/i18n";
 import type { DeliverableMediaAsset } from "@/lib/media/mediaDelivery.server";
+import { isCitySlug } from "@/lib/commerce/cityPassConfig";
 
 export type PremiumPlaceAudio = Readonly<{
   assetKey: string;
@@ -25,6 +26,7 @@ export async function getPremiumPlaceAudio(
   placeSlug: string,
   locale: Locale,
 ): Promise<PremiumPlaceAudio | undefined> {
+  if (!isCitySlug(citySlug) || !PLACE_SLUG.test(placeSlug)) return undefined;
   const db = getDb();
   const [row] = await db
     .select({
@@ -73,7 +75,12 @@ export async function getPremiumPlaceAudio(
 }
 
 export type PremiumMediaDeliveryAsset = DeliverableMediaAsset &
-  Readonly<{ citySlug: string }>;
+  Readonly<{
+    requiredEntitlement: Readonly<{
+      scopeType: "city";
+      scopeKey: string;
+    }>;
+  }>;
 
 export async function getPremiumMediaDeliveryAsset(
   assetKey: string,
@@ -116,7 +123,10 @@ export async function getPremiumMediaDeliveryAsset(
     objectKey: row.objectKey,
     mimeType: row.mimeType,
     sizeBytes: row.sizeBytes,
-    citySlug: row.citySlug,
+    requiredEntitlement: {
+      scopeType: "city",
+      scopeKey: row.citySlug,
+    },
   };
 }
 
@@ -150,3 +160,4 @@ function isMediaAssetKey(value: string): boolean {
   );
 }
 
+const PLACE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

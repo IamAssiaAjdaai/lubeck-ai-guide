@@ -211,7 +211,10 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     ).toBeUndefined();
     expect(await getPremiumMediaDeliveryAsset(asset.assetKey)).toMatchObject({
       objectKey: asset.objectKey,
-      citySlug: `cms03-integration-${suffix}`,
+      requiredEntitlement: {
+        scopeType: "city",
+        scopeKey: `cms03-integration-${suffix}`,
+      },
     });
 
     await detachMedia("place", attachment.id, { allowPublicMutation: true });

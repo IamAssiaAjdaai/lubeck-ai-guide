@@ -3,7 +3,10 @@
 ## Lübeck City Pass provisioning
 
 `npm run commerce:provision-lubeck-pass` explicitly provisions the inactive
-72-hour `city:lubeck` product and grant. It does not create a price, activate a
+72-hour `city:lubeck` product and grant from the shared City Pass configuration.
+The same platform authorization remains keyed by the supplied city slug; this
+script is intentionally Lübeck-specific only because Lübeck is the first launch
+configuration. It does not create a price, activate a
 product, seed production data, or contact Stripe.
 
 After creating an approved Stripe **test-mode** Price, a trusted operator may

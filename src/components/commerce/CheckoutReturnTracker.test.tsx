@@ -14,6 +14,7 @@ vi.mock("next/link", () => ({
 }));
 
 import { CheckoutReturnTracker } from "@/components/commerce/CheckoutReturnTracker";
+import { CITY_PASS_RETURN_STORAGE_KEY } from "@/lib/commerce/cityPassReturn";
 
 describe("CheckoutReturnTracker", () => {
   afterEach(() => {
@@ -26,14 +27,14 @@ describe("CheckoutReturnTracker", () => {
 
   it("offers the validated original premium destination without granting access", async () => {
     window.sessionStorage.setItem(
-      "citywalk:city-pass:return",
+      CITY_PASS_RETURN_STORAGE_KEY,
       "/en/lubeck/fuechtingshof?premium=1#premium-audio",
     );
     render(
       <CheckoutReturnTracker
         outcome="success"
         locale="en"
-        accessActive={false}
+        activeCitySlugs={[]}
         returnLabel="Continue premium experience"
       />,
     );
@@ -51,23 +52,47 @@ describe("CheckoutReturnTracker", () => {
 
   it("never follows an external stored return path", async () => {
     window.sessionStorage.setItem(
-      "citywalk:city-pass:return",
+      CITY_PASS_RETURN_STORAGE_KEY,
       "https://evil.example/steal",
     );
     render(
       <CheckoutReturnTracker
         outcome="canceled"
         locale="en"
-        accessActive={false}
+        activeCitySlugs={[]}
         returnLabel="Continue premium experience"
       />,
     );
     await waitFor(() =>
       expect(
+        screen.queryByRole("link", { name: "Continue premium experience" }),
+      ).toBeNull(),
+    );
+  });
+
+  it("keeps checkout return analytics and active access city-scoped", async () => {
+    window.sessionStorage.setItem(
+      CITY_PASS_RETURN_STORAGE_KEY,
+      "/en/test-city/museum?premium=1#premium-audio",
+    );
+    render(
+      <CheckoutReturnTracker
+        outcome="success"
+        locale="en"
+        activeCitySlugs={["lubeck"]}
+        returnLabel="Continue premium experience"
+      />,
+    );
+
+    await waitFor(() =>
+      expect(
         screen.getByRole("link", { name: "Continue premium experience" })
           .getAttribute("href"),
-      ).toBe("/en/lubeck"),
+      ).toBe("/en/test-city/museum?premium=1#premium-audio"),
+    );
+    expect(capture).toHaveBeenCalledWith(
+      "checkout_returned",
+      expect.not.objectContaining({ city_slug: "lubeck" }),
     );
   });
 });
-

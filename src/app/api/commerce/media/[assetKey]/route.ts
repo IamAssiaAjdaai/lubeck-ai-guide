@@ -23,7 +23,7 @@ export async function GET(
   try {
     await requireCityPass({
       userId: session.user.id,
-      citySlug: asset.citySlug,
+      citySlug: asset.requiredEntitlement.scopeKey,
     });
   } catch {
     return mediaUnavailableResponse();
@@ -31,4 +31,3 @@ export async function GET(
 
   return deliverPrivateMediaObject(request, asset, "Premium media");
 }
-

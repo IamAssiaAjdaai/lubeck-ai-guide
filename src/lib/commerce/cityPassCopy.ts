@@ -1,4 +1,5 @@
 import type { Locale } from "@/lib/i18n";
+import type { CityPassConfiguration } from "@/lib/commerce/cityPassConfig";
 
 export type CityPassCopy = Readonly<{
   actualLocale: "en" | "de" | "fr" | "ar";
@@ -117,7 +118,13 @@ const ar: CityPassCopy = {
   close: "إغلاق",
 };
 
-export function getCityPassCopy(locale: Locale): CityPassCopy {
+export function getCityPassCopy(
+  configuration: Pick<CityPassConfiguration, "copyKey">,
+  locale: Locale,
+): CityPassCopy {
+  if (configuration.copyKey !== "hidden-lubeck") {
+    throw new Error("CITY_PASS_COPY_NOT_CONFIGURED");
+  }
   if (locale === "de") return de;
   if (locale === "fr") return fr;
   if (locale === "ar") return ar;

@@ -36,7 +36,7 @@ describe("premium media delivery", () => {
       objectKey: "private/internal-object.mp3",
       mimeType: "audio/mpeg",
       sizeBytes: 1234,
-      citySlug: "lubeck",
+      requiredEntitlement: { scopeType: "city", scopeKey: "lubeck" },
     });
     mocks.requirePass.mockResolvedValue(undefined);
     mocks.deliver.mockResolvedValue(new Response("audio", { status: 200 }));
@@ -75,5 +75,27 @@ describe("premium media delivery", () => {
     expect(await response.text()).toBe("audio");
     expect(response.headers.get("location")).toBeNull();
   });
-});
 
+  it("authorizes premium media using the asset's city scope", async () => {
+    mocks.getSession.mockResolvedValue({ user: { id: "user-1" } });
+    mocks.getAsset.mockResolvedValue({
+      objectKey: "private/test-city-audio.mp3",
+      mimeType: "audio/mpeg",
+      sizeBytes: 456,
+      requiredEntitlement: { scopeType: "city", scopeKey: "test-city" },
+    });
+    const request = new Request(
+      "https://citywalk.example/api/commerce/media/key",
+    );
+    const response = await GET(request, context);
+
+    expect(response.status).toBe(200);
+    expect(mocks.requirePass).toHaveBeenCalledWith({
+      userId: "user-1",
+      citySlug: "test-city",
+    });
+    expect(mocks.requirePass).not.toHaveBeenCalledWith(
+      expect.objectContaining({ citySlug: "lubeck" }),
+    );
+  });
+});

@@ -23,8 +23,7 @@ function dependencies(
   return {
     getAuthenticatedUserId: vi.fn().mockResolvedValue(undefined),
     hasPremiumAccess: vi.fn().mockResolvedValue(false),
-    limitFree: vi.fn().mockResolvedValue(allowed(3)),
-    limitPremium: vi.fn().mockResolvedValue(allowed(20)),
+    limitDaily: vi.fn(async ({ maxRequests }) => allowed(maxRequests)),
     ...overrides,
   };
 }
@@ -42,10 +41,12 @@ describe("verified AI daily allowance", () => {
       deps,
     );
     expect(result).toMatchObject({ tier: "free", limit: 3 });
-    expect(deps.limitFree).toHaveBeenCalledWith(
-      expect.stringMatching(/^visitor:[a-f0-9]{64}$/),
-    );
-    expect(deps.limitPremium).not.toHaveBeenCalled();
+    expect(deps.limitDaily).toHaveBeenCalledWith({
+      citySlug: "lubeck",
+      tier: "free",
+      key: expect.stringMatching(/^visitor:[a-f0-9]{64}$/),
+      maxRequests: 3,
+    });
   });
 
   it("uses the 20-answer allowance only for an authenticated active pass", async () => {
@@ -62,10 +63,13 @@ describe("verified AI daily allowance", () => {
       deps,
     );
     expect(result).toMatchObject({ tier: "premium", limit: 20 });
-    expect(deps.limitPremium).toHaveBeenCalledWith(
-      expect.stringMatching(/^user:[a-f0-9]{64}$/),
-    );
-    expect(JSON.stringify(vi.mocked(deps.limitPremium).mock.calls)).not.toContain(
+    expect(deps.limitDaily).toHaveBeenCalledWith({
+      citySlug: "lubeck",
+      tier: "premium",
+      key: expect.stringMatching(/^user:[a-f0-9]{64}$/),
+      maxRequests: 20,
+    });
+    expect(JSON.stringify(vi.mocked(deps.limitDaily).mock.calls)).not.toContain(
       "user-secret-id",
     );
   });
@@ -86,7 +90,64 @@ describe("verified AI daily allowance", () => {
         deps,
       );
       expect(result.tier).toBe("free");
-      expect(deps.limitFree).toHaveBeenCalledOnce();
+      expect(deps.limitDaily).toHaveBeenCalledWith(
+        expect.objectContaining({ citySlug: "lubeck", tier: "free" }),
+      );
     },
   );
+
+  it("keeps identifiers and quotas scoped to the requested city", async () => {
+    const deps = dependencies();
+    await enforceGuideDailyAllowance(
+      {
+        request: new Request("https://citywalk.example/api/guide"),
+        citySlug: "test-city",
+        visitorId: "123e4567-e89b-42d3-a456-426614174000",
+        fallbackIdentity: "127.0.0.1",
+      },
+      deps,
+    );
+    expect(deps.hasPremiumAccess).not.toHaveBeenCalled();
+    expect(deps.limitDaily).toHaveBeenCalledWith(
+      expect.objectContaining({
+        citySlug: "test-city",
+        tier: "free",
+        maxRequests: 3,
+      }),
+    );
+  });
+
+  it("uses premium AI allowance only for the requested entitled city", async () => {
+    const deps = dependencies({
+      getAuthenticatedUserId: vi.fn().mockResolvedValue("user-1"),
+      hasPremiumAccess: vi.fn(async ({ citySlug }) => citySlug === "test-city"),
+    });
+    const request = new Request("https://citywalk.example/api/guide");
+
+    await expect(
+      enforceGuideDailyAllowance(
+        {
+          request,
+          citySlug: "test-city",
+          fallbackIdentity: "127.0.0.1",
+        },
+        deps,
+      ),
+    ).resolves.toMatchObject({ tier: "premium", limit: 20 });
+    await expect(
+      enforceGuideDailyAllowance(
+        {
+          request,
+          citySlug: "lubeck",
+          fallbackIdentity: "127.0.0.1",
+        },
+        deps,
+      ),
+    ).resolves.toMatchObject({ tier: "free", limit: 3 });
+    expect(deps.hasPremiumAccess).toHaveBeenCalledWith({
+      userId: "user-1",
+      citySlug: "test-city",
+      feature: "verified_ai_guide",
+    });
+  });
 });

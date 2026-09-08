@@ -15,9 +15,12 @@ import {
 import { getDirection, isLocale } from "@/lib/i18n";
 import {
   getCityPassAccessState,
-  LUBECK_CITY_PASS_PRODUCT_SLUG,
 } from "@/lib/commerce/cityPassAccess.server";
 import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
+import {
+  cityPassDestination,
+  listCityPassConfigurations,
+} from "@/lib/commerce/cityPassConfig";
 
 export default async function PurchasesPage({
   params,
@@ -41,17 +44,33 @@ export default async function PurchasesPage({
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
   const checkoutValue = (await searchParams).checkout;
   const checkout = Array.isArray(checkoutValue) ? checkoutValue[0] : checkoutValue;
-  const [allOffers, state, cityPassAccess] = await Promise.all([
+  const cityPassConfigurations = listCityPassConfigurations();
+  const [allOffers, state, cityPassStates] = await Promise.all([
     listActiveCommerceOffers(),
     listUserCommerceState(session.user.id),
-    getCityPassAccessState({ userId: session.user.id, citySlug: "lubeck" }),
+    Promise.all(
+      cityPassConfigurations.map(async (configuration) => ({
+        configuration,
+        access: await getCityPassAccessState({
+          userId: session.user.id,
+          citySlug: configuration.citySlug,
+        }),
+      })),
+    ),
   ]);
-  const offers = cityPassAccess.active
-    ? allOffers.filter(
-        ({ productSlug }) => productSlug !== LUBECK_CITY_PASS_PRODUCT_SLUG,
-      )
-    : allOffers;
-  const cityPassCopy = getCityPassCopy(locale);
+  const activeCityPasses = cityPassStates.filter(({ access }) => access.active);
+  const activeCitySlugs = activeCityPasses.map(
+    ({ configuration }) => configuration.citySlug,
+  );
+  const activeCityPassProducts = new Set(
+    activeCityPasses.map(({ configuration }) => configuration.productSlug),
+  );
+  const offers = allOffers.filter(
+    ({ productSlug }) => !activeCityPassProducts.has(productSlug),
+  );
+  const defaultCityPassCopy = cityPassConfigurations[0]
+    ? getCityPassCopy(cityPassConfigurations[0], locale)
+    : undefined;
 
   return (
     <main lang={locale} dir={direction} className="app-shell">
@@ -60,8 +79,10 @@ export default async function PurchasesPage({
           <CheckoutReturnTracker
             outcome={checkout}
             locale={locale}
-            accessActive={cityPassAccess.active}
-            returnLabel={cityPassCopy.continuePremium}
+            activeCitySlugs={activeCitySlugs}
+            returnLabel={
+              defaultCityPassCopy?.continuePremium ?? copy.continueCheckout
+            }
           />
         ) : null}
         <Link
@@ -132,24 +153,35 @@ export default async function PurchasesPage({
           )}
         </section>
 
-        {cityPassAccess.active ? (
-          <section className="mt-8 rounded-2xl border border-violet-200 bg-violet-50 p-5" lang={cityPassCopy.actualLocale} dir={cityPassCopy.actualLocale === "ar" ? "rtl" : "ltr"}>
-            <p className="font-semibold">
-              {cityPassAccess.expiresAt
-                ? cityPassCopy.activeUntil.replace(
-                    "{date}",
-                    new Intl.DateTimeFormat(locale, {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    }).format(cityPassAccess.expiresAt),
-                  )
-                : cityPassCopy.continuePremium}
-            </p>
-            <Link className="button-primary mt-4 w-full" href={`/${locale}/lubeck`}>
-              {cityPassCopy.continuePremium}
-            </Link>
-          </section>
-        ) : null}
+        {activeCityPasses.map(({ access, configuration }) => {
+          const cityPassCopy = getCityPassCopy(configuration, locale);
+          return (
+            <section
+              className="mt-8 rounded-2xl border border-violet-200 bg-violet-50 p-5"
+              dir={cityPassCopy.actualLocale === "ar" ? "rtl" : "ltr"}
+              key={configuration.citySlug}
+              lang={cityPassCopy.actualLocale}
+            >
+              <p className="font-semibold">
+                {access.expiresAt
+                  ? cityPassCopy.activeUntil.replace(
+                      "{date}",
+                      new Intl.DateTimeFormat(locale, {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      }).format(access.expiresAt),
+                    )
+                  : cityPassCopy.continuePremium}
+              </p>
+              <Link
+                className="button-primary mt-4 w-full"
+                href={cityPassDestination(locale, configuration.citySlug)}
+              >
+                {cityPassCopy.continuePremium}
+              </Link>
+            </section>
+          );
+        })}
 
         <section className="mt-9">
           <h2 className="text-xl font-semibold">{copy.currentAccess}</h2>

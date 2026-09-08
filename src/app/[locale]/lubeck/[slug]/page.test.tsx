@@ -22,7 +22,7 @@ const {
   getPremiumPlaceAudio,
   getSession,
   getCityPassAccessState,
-  getLubeckCityPassOffer,
+  getActiveCityPassOffer,
 } = vi.hoisted(() => ({
   audioPlayer: vi.fn(),
   connection: vi.fn(),
@@ -33,7 +33,7 @@ const {
   getPremiumPlaceAudio: vi.fn(),
   getSession: vi.fn(),
   getCityPassAccessState: vi.fn(),
-  getLubeckCityPassOffer: vi.fn(),
+  getActiveCityPassOffer: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -63,7 +63,7 @@ vi.mock("@/lib/commerce/cityPassAccess.server", () => ({
 }));
 
 vi.mock("@/lib/commerce/queries.server", () => ({
-  getLubeckCityPassOffer,
+  getActiveCityPassOffer,
   formatMinorCurrency: vi.fn().mockReturnValue("€6.99"),
 }));
 
@@ -174,7 +174,7 @@ describe("LandmarkPage audio", () => {
     getPremiumPlaceAudio.mockResolvedValue(undefined);
     getSession.mockResolvedValue(null);
     getCityPassAccessState.mockResolvedValue({ active: false });
-    getLubeckCityPassOffer.mockResolvedValue(undefined);
+    getActiveCityPassOffer.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -484,7 +484,7 @@ describe("LandmarkPage audio", () => {
       locale: "en",
       durationSeconds: 87,
     });
-    getLubeckCityPassOffer.mockResolvedValue({
+    getActiveCityPassOffer.mockResolvedValue({
       priceId: 7,
       productSlug: "lubeck-digital-guide-pass-72h",
       currency: "eur",

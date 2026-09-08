@@ -1,43 +1,83 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { useEffect, useRef, useState } from "react";
-import { resolveCityPassReturnPath } from "@/lib/commerce/cityPassReturn";
+
+import { getCityPassConfiguration } from "@/lib/commerce/cityPassConfig";
+import {
+  CITY_PASS_RETURN_STORAGE_KEY,
+  parseCityPassReturnPath,
+  type CityPassReturnIntent,
+} from "@/lib/commerce/cityPassReturn";
 import type { Locale } from "@/lib/i18n";
 
 export function CheckoutReturnTracker({
   outcome,
   locale,
-  accessActive,
+  activeCitySlugs,
   returnLabel,
 }: Readonly<{
   outcome: "success" | "canceled";
   locale: Locale;
-  accessActive: boolean;
+  activeCitySlugs: readonly string[];
   returnLabel: string;
 }>) {
   const router = useRouter();
   const tracked = useRef(false);
-  const [returnPath, setReturnPath] = useState<string>();
+  const [returnIntent, setReturnIntent] = useState<
+    CityPassReturnIntent | null | undefined
+  >();
+  const destinationAccessActive = returnIntent
+    ? activeCitySlugs.includes(returnIntent.citySlug)
+    : false;
 
   useEffect(() => {
-    if (!tracked.current) {
-      tracked.current = true;
+    const timer = window.setTimeout(() => {
       try {
-        posthog.capture("checkout_returned", {
-          city_slug: "lubeck",
-          locale,
-          product_slug: "lubeck-digital-guide-pass-72h",
-          return_outcome: outcome,
-          pass_duration_hours: 72,
-        });
+        const stored = window.sessionStorage.getItem(
+          CITY_PASS_RETURN_STORAGE_KEY,
+        );
+        setReturnIntent(parseCityPassReturnPath(stored, locale) ?? null);
       } catch {
-        // Return-state rendering and entitlement polling remain functional.
+        setReturnIntent(null);
       }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [locale]);
+
+  useEffect(() => {
+    if (returnIntent === undefined || tracked.current) return;
+    tracked.current = true;
+    const configuration = returnIntent
+      ? getCityPassConfiguration(returnIntent.citySlug)
+      : undefined;
+    try {
+      posthog.capture("checkout_returned", {
+        locale,
+        return_outcome: outcome,
+        ...(configuration
+          ? {
+              city_slug: configuration.citySlug,
+              product_slug: configuration.productSlug,
+              pass_duration_hours: configuration.durationDays * 24,
+            }
+          : {}),
+      });
+    } catch {
+      // Return-state rendering and entitlement polling remain functional.
     }
-    if (outcome !== "success" || accessActive) return;
+  }, [locale, outcome, returnIntent]);
+
+  useEffect(() => {
+    if (
+      returnIntent === undefined ||
+      outcome !== "success" ||
+      destinationAccessActive
+    ) {
+      return;
+    }
     let refreshes = 0;
     const timer = window.setInterval(() => {
       refreshes += 1;
@@ -45,22 +85,10 @@ export function CheckoutReturnTracker({
       if (refreshes >= 5) window.clearInterval(timer);
     }, 2_000);
     return () => window.clearInterval(timer);
-  }, [accessActive, locale, outcome, router]);
+  }, [destinationAccessActive, outcome, returnIntent, router]);
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      try {
-        const stored = window.sessionStorage.getItem("citywalk:city-pass:return");
-        if (stored) setReturnPath(resolveCityPassReturnPath(stored, locale));
-      } catch {
-        // The purchases page remains usable without browser storage.
-      }
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [locale]);
-
-  return returnPath ? (
-    <Link className="button-secondary mt-4 w-full" href={returnPath}>
+  return returnIntent ? (
+    <Link className="button-secondary mt-4 w-full" href={returnIntent.path}>
       {returnLabel}
     </Link>
   ) : null;

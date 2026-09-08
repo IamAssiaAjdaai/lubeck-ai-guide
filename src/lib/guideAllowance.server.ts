@@ -4,10 +4,8 @@ import { createHash } from "node:crypto";
 
 import { auth } from "@/lib/auth/server";
 import { canUseCityPremiumFeature } from "@/lib/commerce/cityPassAccess.server";
-import {
-  aiGuideFreeDailyRateLimit,
-  aiGuidePremiumDailyRateLimit,
-} from "@/lib/rateLimit";
+import { getCityGuideAllowancePolicy } from "@/lib/commerce/cityPassConfig";
+import { getAiGuideDailyRateLimit } from "@/lib/rateLimit";
 
 type LimitResult = Readonly<{
   success: boolean;
@@ -21,9 +19,14 @@ export type GuideAllowanceDependencies = Readonly<{
   hasPremiumAccess: (input: {
     userId: string;
     citySlug: string;
+    feature: string;
   }) => Promise<boolean>;
-  limitFree: (key: string) => Promise<LimitResult>;
-  limitPremium: (key: string) => Promise<LimitResult>;
+  limitDaily: (input: {
+    citySlug: string;
+    tier: "free" | "premium";
+    key: string;
+    maxRequests: number;
+  }) => Promise<LimitResult>;
 }>;
 
 const defaultDependencies: GuideAllowanceDependencies = {
@@ -32,8 +35,8 @@ const defaultDependencies: GuideAllowanceDependencies = {
     return session?.user.id;
   },
   hasPremiumAccess: canUseCityPremiumFeature,
-  limitFree: (key) => aiGuideFreeDailyRateLimit.limit(key),
-  limitPremium: (key) => aiGuidePremiumDailyRateLimit.limit(key),
+  limitDaily: ({ citySlug, tier, key, maxRequests }) =>
+    getAiGuideDailyRateLimit(tier, maxRequests).limit(`${citySlug}:${key}`),
 };
 
 export type GuideAllowanceResult = LimitResult &
@@ -49,14 +52,22 @@ export async function enforceGuideDailyAllowance(
   dependencies: GuideAllowanceDependencies = defaultDependencies,
 ): Promise<GuideAllowanceResult> {
   const userId = await dependencies.getAuthenticatedUserId(input.request);
+  const policy = getCityGuideAllowancePolicy(input.citySlug);
   if (
     userId &&
-    await dependencies.hasPremiumAccess({ userId, citySlug: input.citySlug })
+    await dependencies.hasPremiumAccess({
+      userId,
+      citySlug: input.citySlug,
+      feature: "verified_ai_guide",
+    })
   ) {
     return {
-      ...(await dependencies.limitPremium(
-        `user:${pseudonymousKey(userId)}`,
-      )),
+      ...(await dependencies.limitDaily({
+        citySlug: input.citySlug,
+        tier: "premium",
+        key: `user:${pseudonymousKey(userId)}`,
+        maxRequests: policy.premiumAnswersPer24Hours,
+      })),
       tier: "premium",
     };
   }
@@ -65,9 +76,12 @@ export async function enforceGuideDailyAllowance(
     ? input.visitorId
     : `fallback:${input.fallbackIdentity}`;
   return {
-    ...(await dependencies.limitFree(
-      `visitor:${pseudonymousKey(visitorId)}`,
-    )),
+    ...(await dependencies.limitDaily({
+      citySlug: input.citySlug,
+      tier: "free",
+      key: `visitor:${pseudonymousKey(visitorId)}`,
+      maxRequests: policy.freeAnswersPer24Hours,
+    })),
     tier: "free",
   };
 }
@@ -82,4 +96,3 @@ function isVisitorId(value: unknown): value is string {
 function pseudonymousKey(value: string): string {
   return createHash("sha256").update(value).digest("hex");
 }
-

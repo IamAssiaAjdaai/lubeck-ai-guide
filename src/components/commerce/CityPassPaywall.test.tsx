@@ -11,6 +11,11 @@ vi.mock("next/link", () => ({
 
 import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
 import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
+import {
+  defineCityPassConfiguration,
+  getCityPassPaywallContext,
+  LUBECK_CITY_PASS,
+} from "@/lib/commerce/cityPassConfig";
 
 describe("CityPassPaywall", () => {
   afterEach(() => {
@@ -19,11 +24,12 @@ describe("CityPassPaywall", () => {
   });
 
   it("appears only after the deliberate premium selection and dismisses to free", () => {
-    const copy = getCityPassCopy("en");
+    const copy = getCityPassCopy(LUBECK_CITY_PASS, "en");
     render(
       <CityPassPaywall
         locale="en"
         copy={copy}
+        pass={getCityPassPaywallContext(LUBECK_CITY_PASS)}
         returnPath="/en/lubeck/glandorps-gang?premium=1#premium-audio"
         signedIn={false}
         offer={{ priceId: 7, formattedPrice: "€6.99", productSlug: "lubeck-digital-guide-pass-72h" }}
@@ -41,11 +47,12 @@ describe("CityPassPaywall", () => {
   });
 
   it("renders the Arabic value proposition RTL without inventing a price", () => {
-    const copy = getCityPassCopy("ar");
+    const copy = getCityPassCopy(LUBECK_CITY_PASS, "ar");
     const { container } = render(
       <CityPassPaywall
         locale="ar"
         copy={copy}
+        pass={getCityPassPaywallContext(LUBECK_CITY_PASS)}
         returnPath="/ar/lubeck/glandorps-gang?premium=1#premium-audio"
         signedIn={false}
         initiallyOpen
@@ -54,5 +61,37 @@ describe("CityPassPaywall", () => {
     expect(container.querySelector("section")?.getAttribute("dir")).toBe("rtl");
     expect(screen.getByText(copy.unavailable)).not.toBeNull();
     expect(screen.queryByText(/€6\.99/)).toBeNull();
+  });
+
+  it("uses supplied test-city scope for paywall and checkout analytics", () => {
+    const testCity = defineCityPassConfiguration({
+      ...LUBECK_CITY_PASS,
+      citySlug: "test-city",
+      productSlug: "test-city-pass",
+      entitlement: { scopeType: "city", scopeKey: "test-city" },
+      primaryPremiumFeature: {
+        id: "test_city_audio",
+        kind: "narrated_audio",
+        placement: "place_detail",
+      },
+    });
+    const copy = getCityPassCopy(testCity, "en");
+    render(
+      <CityPassPaywall
+        locale="en"
+        copy={copy}
+        pass={getCityPassPaywallContext(testCity)}
+        returnPath="/en/test-city/museum?premium=1#premium-audio"
+        signedIn={false}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: copy.premiumLabel }));
+    expect(capture).toHaveBeenCalledWith(
+      "premium_feature_selected",
+      expect.objectContaining({
+        city_slug: "test-city",
+        feature_id: "test_city_audio",
+      }),
+    );
   });
 });

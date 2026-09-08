@@ -8,10 +8,12 @@ import { useEffect, useState } from "react";
 import { CommerceCheckoutButton } from "@/components/commerce/CommerceCheckoutButton";
 import type { Locale } from "@/lib/i18n";
 import type { CityPassCopy } from "@/lib/commerce/cityPassCopy";
+import type { CityPassPaywallContext } from "@/lib/commerce/cityPassConfig";
 
 export function CityPassPaywall({
   locale,
   copy,
+  pass,
   returnPath,
   signedIn,
   offer,
@@ -19,6 +21,7 @@ export function CityPassPaywall({
 }: Readonly<{
   locale: Locale;
   copy: CityPassCopy;
+  pass: CityPassPaywallContext;
   returnPath: string;
   signedIn: boolean;
   offer?: Readonly<{ priceId: number; formattedPrice: string; productSlug: string }>;
@@ -29,19 +32,19 @@ export function CityPassPaywall({
   useEffect(() => {
     if (!open) return;
     capturePassEvent("paywall_viewed", {
-      city_slug: "lubeck",
-      feature_id: "hidden_lubeck_audio",
-      placement: "place_detail",
+      city_slug: pass.citySlug,
+      feature_id: pass.featureId,
+      placement: pass.placement,
       locale,
-      pass_duration_hours: 72,
+      pass_duration_hours: pass.durationHours,
     });
-  }, [locale, open]);
+  }, [locale, open, pass]);
 
   function selectPremium() {
     capturePassEvent("premium_feature_selected", {
-      city_slug: "lubeck",
-      feature_id: "hidden_lubeck_audio",
-      placement: "place_detail",
+      city_slug: pass.citySlug,
+      feature_id: pass.featureId,
+      placement: pass.placement,
       locale,
     });
     setOpen(true);
@@ -89,12 +92,12 @@ export function CityPassPaywall({
                 loadingLabel={copy.checkoutLoading}
                 errorLabel={copy.checkoutError}
                 analytics={{
-                  city_slug: "lubeck",
-                  feature_id: "hidden_lubeck_audio",
+                  city_slug: pass.citySlug,
+                  feature_id: pass.featureId,
                   locale,
                   product_slug: offer.productSlug,
                   price_variant: String(offer.priceId),
-                  pass_duration_hours: 72,
+                  pass_duration_hours: pass.durationHours,
                 }}
                 resumePath={returnPath}
               />
