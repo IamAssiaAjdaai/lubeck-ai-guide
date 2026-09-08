@@ -66,7 +66,7 @@ export const lubeckKnowledgeChunks =
   [
     {
       id: "holstentor-history",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug: "holstentor",
       locale: "en",
 
@@ -88,7 +88,7 @@ export const lubeckKnowledgeChunks =
 
     {
       id: "holstentor-architecture",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug: "holstentor",
       locale: "en",
 
@@ -109,7 +109,7 @@ export const lubeckKnowledgeChunks =
 
     {
       id: "marienkirche-history",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug: "marienkirche",
       locale: "en",
 
@@ -131,7 +131,7 @@ export const lubeckKnowledgeChunks =
 
     {
       id: "marienkirche-1942",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug: "marienkirche",
       locale: "en",
 
@@ -152,7 +152,7 @@ export const lubeckKnowledgeChunks =
 
     {
       id: "rathaus-construction",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug: "rathaus",
       locale: "en",
 
@@ -175,7 +175,7 @@ export const lubeckKnowledgeChunks =
 
     {
       id: "rathaus-political-role",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug: "rathaus",
       locale: "en",
 
@@ -197,7 +197,7 @@ export const lubeckKnowledgeChunks =
 
     {
       id: "hospital-foundation",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug:
         "heiligen-geist-hospital",
       locale: "en",
@@ -222,7 +222,7 @@ export const lubeckKnowledgeChunks =
 
     {
       id: "hospital-residents",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug:
         "heiligen-geist-hospital",
       locale: "en",
@@ -245,7 +245,7 @@ export const lubeckKnowledgeChunks =
 
     {
       id: "buddenbrookhaus-family",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug:
         "buddenbrookhaus",
       locale: "en",
@@ -268,7 +268,7 @@ export const lubeckKnowledgeChunks =
 
     {
       id: "buddenbrookhaus-literature",
-      city: "lubeck",
+      citySlug: "lubeck",
       placeSlug:
         "buddenbrookhaus",
       locale: "en",

@@ -30,24 +30,26 @@ import {
 } from "@/lib/tourSession";
 
 import {
-  getTourConversation,
+  getGuideConversation,
   isStoredGuideSource,
-  saveTourConversation,
+  saveGuideConversation,
+  type GuideConversationScope,
   type StoredGuideMessage,
 } from "@/lib/tourConversation";
 
 const MAX_QUESTIONS = 5;
 
 type AskGuideProps = {
-  landmark: string;
-  landmarkName: string;
+  citySlug: string;
+  placeSlug: string;
+  placeName: string;
   locale: Locale;
   direction: TextDirection;
   buttonLabel: string;
   closeLabel: string;
   labels: Translations["ai"];
   suggestions: readonly string[];
-  tourId: SupportedTourId;
+  tourId?: SupportedTourId;
 };
 
 type Message =
@@ -80,8 +82,9 @@ function captureGuideEvent(
 }
 
 export default function AskGuide({
-  landmark,
-  landmarkName,
+  citySlug,
+  placeSlug,
+  placeName,
   locale,
   direction,
   buttonLabel,
@@ -90,6 +93,9 @@ export default function AskGuide({
   suggestions,
   tourId,
 }: AskGuideProps) {
+  const conversationScope: GuideConversationScope = tourId
+    ? { kind: "tour", citySlug, tourId }
+    : { kind: "place", citySlug, placeSlug };
   const [
     isOpen,
     setIsOpen,
@@ -133,9 +139,7 @@ export default function AskGuide({
      * for this tour session.
      */
     const savedConversation =
-      getTourConversation(
-        tourId,
-      );
+      getGuideConversation(conversationScope);
 
     setMessages(
       [
@@ -153,8 +157,8 @@ export default function AskGuide({
     captureGuideEvent(
       "ai_guide_opened",
       {
-        city: "lubeck",
-        landmark,
+        city: citySlug,
+        place: placeSlug,
         locale,
       },
     );
@@ -180,8 +184,8 @@ export default function AskGuide({
       captureGuideEvent(
         "ai_limit_reached",
         {
-          city: "lubeck",
-          landmark,
+          city: citySlug,
+          place: placeSlug,
           locale,
           limit:
             MAX_QUESTIONS,
@@ -229,8 +233,8 @@ export default function AskGuide({
     captureGuideEvent(
       "ai_question_asked",
       {
-        city: "lubeck",
-        landmark,
+        city: citySlug,
+        place: placeSlug,
         locale,
         question_number:
           questionCount + 1,
@@ -238,16 +242,17 @@ export default function AskGuide({
     );
 
     try {
-      const tourContext =
-        createTourContextInput({
+      const tourContext = tourId
+        ? createTourContextInput({
           tourId,
           currentStop:
-            landmark,
+            placeSlug,
           visitedStops:
             getVisitedTourStops(
               tourId,
             ),
-        });
+        })
+        : undefined;
 
       const response =
         await fetch(
@@ -265,7 +270,9 @@ export default function AskGuide({
                 question:
                   cleanQuestion,
 
-                landmark,
+                citySlug,
+
+                placeSlug,
 
                 locale,
 
@@ -306,9 +313,8 @@ export default function AskGuide({
           captureGuideEvent(
             "ai_rate_limit_reached",
             {
-              city:
-                "lubeck",
-              landmark,
+              city: citySlug,
+              place: placeSlug,
               locale,
             },
           );
@@ -365,11 +371,11 @@ export default function AskGuide({
       );
 
       /*
-       * Persist across landmark
-       * navigation in the same tab.
+       * Persist across place navigation in the same tour,
+       * or within this standalone place, in the same tab.
        */
-      saveTourConversation(
-        tourId,
+      saveGuideConversation(
+        conversationScope,
         {
           messages:
             successfulMessages,
@@ -491,7 +497,7 @@ export default function AskGuide({
                     className="mt-1 text-xl font-semibold tracking-[-0.02em]"
                   >
                     {
-                      landmarkName
+                      placeName
                     }
                   </h2>
 

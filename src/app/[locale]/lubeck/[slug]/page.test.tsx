@@ -362,7 +362,10 @@ describe("LandmarkPage audio", () => {
       }),
     );
     expect(askGuide).toHaveBeenCalledWith(
-      expect.objectContaining({ landmark: "holstentor" }),
+      expect.objectContaining({
+        citySlug: "lubeck",
+        placeSlug: "holstentor",
+      }),
     );
   });
 

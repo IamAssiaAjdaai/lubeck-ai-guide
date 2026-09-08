@@ -1,8 +1,7 @@
-import type { LubeckPlaceSlug } from "@/data/places";
-
-import type { RetrievedKnowledge } from "@/lib/knowledge";
+import type { KnowledgeChunk, RetrievedKnowledge } from "@/lib/knowledge";
 
 import { retrieveVerifiedKnowledge } from "@/lib/knowledgeRetriever.server";
+import type { VerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 
 export const GUIDE_KNOWLEDGE_SOURCE_LOCALE = "en" as const;
 
@@ -11,7 +10,9 @@ export type GuideKnowledgeRole = "current" | "visited";
 export type GuideKnowledgeItem = Readonly<{
   role: GuideKnowledgeRole;
 
-  placeSlug: LubeckPlaceSlug;
+  citySlug: string;
+
+  placeSlug: string;
 
   retrieved: RetrievedKnowledge;
 }>;
@@ -23,7 +24,9 @@ export type GuideSourceMetadata = Readonly<{
 
   verifiedAt: string;
 
-  placeSlug: LubeckPlaceSlug;
+  citySlug: string;
+
+  placeSlug: string;
 
   chunkIds: readonly string[];
 }>;
@@ -101,7 +104,8 @@ export function buildGuideSourceMetadata(
       label: string;
       url: string;
       verifiedAt: string;
-      placeSlug: LubeckPlaceSlug;
+      citySlug: string;
+      placeSlug: string;
       chunkIds: string[];
     }
   >();
@@ -118,7 +122,7 @@ export function buildGuideSourceMetadata(
     }
     const source = item.retrieved.chunk.source;
 
-    const key = `${item.placeSlug}:${source.url}`;
+    const key = `${item.citySlug}:${item.placeSlug}:${source.url}`;
 
     const existing = grouped.get(key);
 
@@ -136,6 +140,8 @@ export function buildGuideSourceMetadata(
       url: source.url,
 
       verifiedAt: source.verifiedAt,
+
+      citySlug: item.citySlug,
 
       placeSlug: item.placeSlug,
 
@@ -200,63 +206,76 @@ export function parseGuideStructuredAnswer(
         : [],
   };
 }
-export function retrieveGuideKnowledge({
+export async function retrieveGuideKnowledge({
+  citySlug,
   currentPlaceSlug,
   visitedPlaceSlugs,
   question,
+  provider,
+  currentTrustedChunks,
+  knowledgeLocale = GUIDE_KNOWLEDGE_SOURCE_LOCALE,
 }: {
-  currentPlaceSlug: LubeckPlaceSlug;
+  citySlug: string;
 
-  visitedPlaceSlugs: readonly LubeckPlaceSlug[];
+  currentPlaceSlug: string;
+
+  visitedPlaceSlugs: readonly string[];
 
   question: string;
-}): readonly GuideKnowledgeItem[] {
-  const currentKnowledge = retrieveVerifiedKnowledge({
-    city: "lubeck",
 
-    placeSlug: currentPlaceSlug,
+  provider: VerifiedKnowledgeProvider;
 
-    /*
-     * RAG v1 uses English
-     * source chunks.
-     *
-     * The model may still answer
-     * in the visitor's locale.
-     */
-    locale: GUIDE_KNOWLEDGE_SOURCE_LOCALE,
+  currentTrustedChunks?: readonly KnowledgeChunk[];
 
-    question,
+  knowledgeLocale?: typeof GUIDE_KNOWLEDGE_SOURCE_LOCALE;
+}): Promise<readonly GuideKnowledgeItem[]> {
+  async function retrieveForPlace(placeSlug: string) {
+    const chunks = placeSlug === currentPlaceSlug && currentTrustedChunks
+      ? currentTrustedChunks
+      : await provider.listVerifiedChunks({
+          citySlug,
+          placeSlug,
+          locale: knowledgeLocale,
+        });
 
-    limit: 2,
-  }).map((retrieved) => ({
-    role: "current" as const,
+    return retrieveVerifiedKnowledge(
+      {
+        citySlug,
+        placeSlug,
+        locale: knowledgeLocale,
+        question,
+        limit: 2,
+      },
+      chunks,
+    );
+  }
 
-    placeSlug: currentPlaceSlug,
-
-    retrieved,
-  }));
+  const currentKnowledge = (await retrieveForPlace(currentPlaceSlug)).map(
+    (retrieved) => ({
+      role: "current" as const,
+      citySlug,
+      placeSlug: currentPlaceSlug,
+      retrieved,
+    }),
+  );
 
   const uniqueVisited = Array.from(new Set(visitedPlaceSlugs)).filter(
     (slug) => slug !== currentPlaceSlug,
   );
 
-  const visitedKnowledge = uniqueVisited.flatMap((placeSlug) =>
-    retrieveVerifiedKnowledge({
-      city: "lubeck",
-
-      placeSlug,
-
-      locale: GUIDE_KNOWLEDGE_SOURCE_LOCALE,
-
-      question,
-
-      limit: 2,
-    }).map((retrieved) => ({
+  const visitedKnowledge = (
+    await Promise.all(
+      uniqueVisited.map(async (placeSlug) => ({
+        placeSlug,
+        retrieved: await retrieveForPlace(placeSlug),
+      })),
+    )
+  ).flatMap(({ placeSlug, retrieved }) =>
+    retrieved.map((item) => ({
       role: "visited" as const,
-
+      citySlug,
       placeSlug,
-
-      retrieved,
+      retrieved: item,
     })),
   );
 

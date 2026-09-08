@@ -4,7 +4,7 @@ export const LUBECK_HISTORIC_TOUR_ID =
   "lubeck_historic_center" as const;
 
 export type SupportedTourId =
-  typeof LUBECK_HISTORIC_TOUR_ID;
+  string;
 
 /**
  * Minimal context sent from the browser.

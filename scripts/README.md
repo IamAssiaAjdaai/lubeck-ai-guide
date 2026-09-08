@@ -1,4 +1,20 @@
-# Landmark audio generation
+# Content production operations
+
+## Verified AI knowledge operations
+
+Verified AI evidence is stored separately from ordinary CMS content and source
+references. Adding a chunk requires an existing CMS place and an HTTPS source
+already linked to that place. These commands are local/server-only operations;
+there is no public mutation endpoint.
+
+- Add: `npm run knowledge:manage -- add --city=<slug> --place=<slug> --source=<https-url> --locale=en --text=<verified-text> --topics=history,architecture`
+- Remove: `npm run knowledge:manage -- remove --id=<chunk-uuid>`
+
+Only active chunks for the exact city, place, and knowledge locale can enable or
+ground the public AI Guide. Publishing CMS prose or attaching a source does not
+automatically make either one verified AI evidence.
+
+## Landmark audio generation
 
 This tooling runs only during development or content production. The Next.js runtime never calls a text-to-speech provider.
 

@@ -10,6 +10,7 @@ import {
   resolvePublicLocalization,
 } from "@/lib/content/publicRepository.server";
 import { getContentSource } from "@/lib/content/source";
+import { getGuideEligibility } from "@/lib/guideEligibility.server";
 import { formatMessage, getTranslations, isLocale } from "@/lib/i18n";
 
 type GenericPlacePageProps = Readonly<{
@@ -54,6 +55,12 @@ export async function GenericPlaceContent({ params }: GenericPlacePageProps) {
   const audio = contentSource === "code"
     ? undefined
     : resolveExactLocalePublicAudio(media, locale);
+  const guideEnabled = await getGuideEligibility({
+    citySlug,
+    placeSlug: place.slug,
+    source: contentSource,
+    snapshot,
+  });
 
   return (
     <PlaceExperience
@@ -73,6 +80,7 @@ export async function GenericPlaceContent({ params }: GenericPlacePageProps) {
       )}
       backHref={`/${locale}/${citySlug}`}
       translations={translations}
+      guideEnabled={guideEnabled}
     />
   );
 }

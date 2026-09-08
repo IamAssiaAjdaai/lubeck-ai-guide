@@ -67,8 +67,9 @@ describe("AskGuide", () => {
     render(
       <AskGuide
         tourId={LUBECK_HISTORIC_TOUR_ID}
-        landmark="holstentor"
-        landmarkName="Holstentor"
+        citySlug="lubeck"
+        placeSlug="holstentor"
+        placeName="Holstentor"
         locale="en"
         direction="ltr"
         buttonLabel={labels.open}
@@ -122,8 +123,9 @@ describe("AskGuide", () => {
     render(
       <AskGuide
         tourId={LUBECK_HISTORIC_TOUR_ID}
-        landmark="holstentor"
-        landmarkName="Holstentor"
+        citySlug="lubeck"
+        placeSlug="holstentor"
+        placeName="Holstentor"
         locale="en"
         direction="ltr"
         buttonLabel={labels.open}
@@ -189,8 +191,9 @@ describe("AskGuide", () => {
         tourId={
           LUBECK_HISTORIC_TOUR_ID
         }
-        landmark="marienkirche"
-        landmarkName="St. Mary's Church"
+        citySlug="lubeck"
+        placeSlug="marienkirche"
+        placeName="St. Mary's Church"
         locale="en"
         direction="ltr"
         buttonLabel={labels.open}
@@ -327,8 +330,9 @@ describe("AskGuide", () => {
           tourId={
             LUBECK_HISTORIC_TOUR_ID
           }
-          landmark="holstentor"
-          landmarkName="Holstentor"
+          citySlug="lubeck"
+          placeSlug="holstentor"
+          placeName="Holstentor"
           locale="en"
           direction="ltr"
           buttonLabel={labels.open}
@@ -405,8 +409,9 @@ describe("AskGuide", () => {
           tourId={
             LUBECK_HISTORIC_TOUR_ID
           }
-          landmark="marienkirche"
-          landmarkName="Marienkirche"
+          citySlug="lubeck"
+          placeSlug="marienkirche"
+          placeName="Marienkirche"
           locale="en"
           direction="ltr"
           buttonLabel={labels.open}
@@ -516,8 +521,9 @@ describe("AskGuide", () => {
           tourId={
             LUBECK_HISTORIC_TOUR_ID
           }
-          landmark="rathaus"
-          landmarkName="Lübeck Rathaus"
+          citySlug="lubeck"
+          placeSlug="rathaus"
+          placeName="Lübeck Rathaus"
           locale="en"
           direction="ltr"
           buttonLabel={labels.open}
@@ -560,4 +566,52 @@ describe("AskGuide", () => {
       ).toBe(true);
     },
   );
+
+  it("uses actual generic city/place identity and a place-scoped conversation", async () => {
+    const request = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ answer: "A verified generic answer.", sources: [] }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    ));
+    vi.stubGlobal("fetch", request);
+    const labels = getTranslations("en").ai;
+
+    render(
+      <AskGuide
+        citySlug="ghent"
+        placeSlug="gravensteen"
+        placeName="Gravensteen"
+        locale="en"
+        direction="ltr"
+        buttonLabel={labels.open}
+        closeLabel="Close"
+        labels={labels}
+        suggestions={[labels.suggestionFamous]}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: labels.open }));
+    fireEvent.change(screen.getByPlaceholderText(labels.placeholder), {
+      target: { value: "When was this built?" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: labels.send }));
+    await screen.findByText("A verified generic answer.");
+
+    const body = JSON.parse(request.mock.calls[0][1].body as string);
+    expect(body).toMatchObject({
+      citySlug: "ghent",
+      placeSlug: "gravensteen",
+      locale: "en",
+    });
+    expect(body.tourContext).toBeUndefined();
+    expect(capture).toHaveBeenCalledWith("ai_question_asked", expect.objectContaining({
+      city: "ghent",
+      place: "gravensteen",
+    }));
+    expect(JSON.stringify(capture.mock.calls)).not.toMatch(/latitude|longitude|"lat"|"lng"/i);
+    expect(window.sessionStorage.getItem(
+      "citywalk:guide:conversation:place:ghent:gravensteen",
+    )).toContain("A verified generic answer.");
+    expect(window.sessionStorage.getItem(
+      "citywalk:guide:conversation:place:ghent:other-place",
+    )).toBeNull();
+  });
 });

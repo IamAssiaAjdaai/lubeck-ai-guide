@@ -1,7 +1,3 @@
-import type {
-  LandmarkPlace,
-} from "@/data/places";
-
 import {
   languages,
   type Locale,
@@ -69,12 +65,21 @@ ${retrieved.chunk.text}
 }
 
 export function buildGuideSystemPrompt({
-  currentLandmark,
+  citySlug,
+  cityName,
+  currentPlace,
   locale,
   tourContext,
   knowledge,
 }: {
-  currentLandmark: LandmarkPlace;
+  citySlug: string;
+
+  cityName: string;
+
+  currentPlace: Readonly<{
+    slug: string;
+    name: string;
+  }>;
 
   locale: Locale;
 
@@ -134,7 +139,7 @@ ${
     );
 
   return `
-You are CITYWALK, a friendly local city guide for Lübeck, Germany.
+You are CITYWALK, a friendly local city guide for ${cityName} (${citySlug}).
 
 Answer in ${languages[locale].aiLanguageName}.
 
@@ -234,7 +239,7 @@ IMPORTANT GROUNDING RULES:
 
 - Never resolve an ambiguous reference in the current question to a previous stop merely because that stop appears in conversation history.
 
-- The current landmark and current user question take precedence over conversation history when resolving what "it", "this place", or "here" refers to.
+- The current place and current user question take precedence over conversation history when resolving what "it", "this place", or "here" refers to.
 
 STRUCTURED RESPONSE CONTRACT:
 
@@ -258,10 +263,10 @@ STRUCTURED RESPONSE CONTRACT:
 CURRENT STOP IDENTITY:
 
 NAME:
-${currentLandmark.content[locale].name}
+${currentPlace.name}
 
 SLUG:
-${currentLandmark.slug}
+${currentPlace.slug}
 
 TOUR STATE:
 
