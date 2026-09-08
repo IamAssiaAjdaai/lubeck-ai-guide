@@ -137,6 +137,6 @@ export function formatMinorCurrency(
     style: "currency",
     currency: currency.toUpperCase(),
   });
-  const digits = formatter.resolvedOptions().maximumFractionDigits;
+  const digits = formatter.resolvedOptions().maximumFractionDigits ?? 2;
   return formatter.format(amount / 10 ** digits);
 }
