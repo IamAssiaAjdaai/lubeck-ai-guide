@@ -17,12 +17,24 @@ vi.mock("next/navigation", () => ({
     throw new Error("not found");
   },
 }));
+vi.mock("next/image", () => ({
+  default: ({ alt, src }: { alt: string; src: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img alt={alt} src={src} />
+  ),
+}));
 vi.mock("@/lib/content/source", () => ({
   getContentSource: mocks.getContentSource,
 }));
-vi.mock("@/lib/content/publicRepository.server", () => ({
-  getPublicCitySnapshot: mocks.getPublicCitySnapshot,
-}));
+vi.mock("@/lib/content/publicRepository.server", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/lib/content/publicRepository.server")
+  >("@/lib/content/publicRepository.server");
+  return {
+    ...actual,
+    getPublicCitySnapshot: mocks.getPublicCitySnapshot,
+  };
+});
 vi.mock("@/components/travel/TourCard", () => ({
   default: (props: Record<string, unknown>) => {
     mocks.tourCard(props);
@@ -55,7 +67,7 @@ vi.mock("@/components/travel/PlaceDiscovery", () => ({
 }));
 
 import LubeckPage from "@/app/[locale]/lubeck/page";
-import { lubeckPlaces } from "@/data/places";
+import { lubeckLandmarks, lubeckPlaces } from "@/data/places";
 import { getTranslations } from "@/lib/i18n";
 
 describe("Lübeck Explore hierarchy", () => {
@@ -65,7 +77,18 @@ describe("Lübeck Explore hierarchy", () => {
     mocks.getPublicCitySnapshot.mockResolvedValue({
       city: { slug: "lubeck", content: { en: { name: "Lübeck" } } },
       places: lubeckPlaces,
-      tours: [],
+      tours: [{
+        slug: "historic-center-walk",
+        estimatedDurationMinutes: 45,
+        content: {
+          en: { title: "Lubeck Historic Center" },
+          ar: { title: "Lubeck Historic Center" },
+        },
+        stops: lubeckLandmarks.map((place, index) => ({
+          placeSlug: place.slug,
+          position: index + 1,
+        })),
+      }],
     });
   });
 
@@ -102,7 +125,16 @@ describe("Lübeck Explore hierarchy", () => {
     ).toBeTruthy();
     expect(mocks.customTourPlanner).toHaveBeenCalledWith(
       expect.objectContaining({
+        citySlug: "lubeck",
+        plannerId: "lubeck_historic_center",
         preferenceLabels: getTranslations("en").tourPreferences,
+      }),
+    );
+    expect(mocks.tourCard).toHaveBeenCalledWith(
+      expect.objectContaining({
+        href: "/en/lubeck/holstentor",
+        startLandmarkSlug: "holstentor",
+        tourId: "lubeck_historic_center",
       }),
     );
   });

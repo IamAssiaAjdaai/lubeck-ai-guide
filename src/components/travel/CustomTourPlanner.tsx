@@ -8,6 +8,7 @@ import TourBuilder from "@/components/travel/TourBuilder";
 import TourPreferences from "@/components/travel/TourPreferences";
 import type { LocalizedPlaceCategory } from "@/data/placeCategories";
 import type { Locale, Translations } from "@/lib/i18n";
+import { getCityScopedPlannerId } from "@/lib/tourIdentity";
 
 type CustomTourPlannerProps = Readonly<{
   places: readonly DiscoveryPlace[];
@@ -15,7 +16,8 @@ type CustomTourPlannerProps = Readonly<{
   preferenceLabels: Translations["tourPreferences"];
   builderLabels: Translations["tourBuilder"];
   locale: Locale;
-  tourId: string;
+  citySlug: string;
+  plannerId?: string;
   origin: Readonly<{
     lat: number;
     lng: number;
@@ -28,7 +30,8 @@ export default function CustomTourPlanner({
   preferenceLabels,
   builderLabels,
   locale,
-  tourId,
+  citySlug,
+  plannerId = getCityScopedPlannerId(citySlug),
   origin,
 }: CustomTourPlannerProps) {
   const panelId = useId();
@@ -62,7 +65,7 @@ export default function CustomTourPlanner({
             categories={categories}
             labels={preferenceLabels}
             locale={locale}
-            tourId={tourId}
+            tourId={plannerId}
             rankingOrigin={origin}
           />
           <TourBuilder
@@ -70,7 +73,7 @@ export default function CustomTourPlanner({
             categories={categories}
             labels={builderLabels}
             locale={locale}
-            tourId={tourId}
+            tourId={plannerId}
             origin={origin}
           />
         </div>
