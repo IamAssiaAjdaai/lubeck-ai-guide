@@ -10,11 +10,21 @@ type UploadState = "idle" | "preparing" | "uploading" | "verifying" | "failed";
 
 export function MediaUploadForm({
   cities,
-}: Readonly<{ cities: readonly Readonly<{ id: number; name: string }>[] }>) {
+  initialCityId,
+  initialKind = "image",
+  initialLocale = "de",
+  candidatePlaceId,
+}: Readonly<{
+  cities: readonly Readonly<{ id: number; name: string }>[];
+  initialCityId?: number;
+  initialKind?: MediaKind;
+  initialLocale?: (typeof locales)[number];
+  candidatePlaceId?: number;
+}>) {
   const router = useRouter();
   const [state, setState] = useState<UploadState>("idle");
   const [error, setError] = useState<string>();
-  const [kind, setKind] = useState<MediaKind>("image");
+  const [kind, setKind] = useState<MediaKind>(initialKind);
   const [selectedFile, setSelectedFile] = useState<File>();
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -55,6 +65,15 @@ export function MediaUploadForm({
       setState("verifying");
       const finalizeResponse = await fetch(`/api/admin/media/${intent.assetId}/finalize`, {
         method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(
+          candidatePlaceId && kind === "audio"
+            ? {
+                candidatePlaceId,
+                locale: form.get("locale"),
+              }
+            : {},
+        ),
       });
       const finalized = (await finalizeResponse.json()) as { error?: string };
       if (!finalizeResponse.ok) throw new Error(finalized.error || "Uploaded file could not be verified.");
@@ -71,7 +90,7 @@ export function MediaUploadForm({
     <form className="surface-card mt-6 space-y-5 p-5 sm:p-7" onSubmit={submit}>
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="City">
-          <select className={inputClass} disabled={busy} name="cityId" required>
+          <select className={inputClass} defaultValue={initialCityId} disabled={busy} name="cityId" required>
             {cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}
           </select>
         </Field>
@@ -83,7 +102,7 @@ export function MediaUploadForm({
       </div>
       {kind === "audio" ? (
         <Field label="Audio locale">
-          <select className={inputClass} disabled={busy} name="locale" required>
+          <select className={inputClass} defaultValue={initialLocale} disabled={busy} name="locale" required>
             {locales.map((locale) => <option key={locale}>{locale}</option>)}
           </select>
         </Field>

@@ -19,6 +19,11 @@ export type ReadableStoredObject = Readonly<{
 export interface MediaObjectStore {
   readonly providerId: string;
   createUploadUrl(input: CreateUploadUrlInput): Promise<string>;
+  writeObject(
+    objectKey: string,
+    bytes: Uint8Array,
+    contentType: string,
+  ): Promise<void>;
   headObject(objectKey: string): Promise<StoredObjectMetadata | undefined>;
   readObjectRange(objectKey: string, start: number, end: number): Promise<Uint8Array>;
   readObject(objectKey: string, range?: string): Promise<ReadableStoredObject | undefined>;

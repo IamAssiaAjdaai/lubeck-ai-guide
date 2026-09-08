@@ -6,7 +6,8 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import { closeDb, getDb } from "@/db/client";
-import { citiesTable, mediaAssetsTable, placesTable } from "@/db/schema";
+import { audioGenerationMetadataTable, citiesTable, mediaAssetsTable, placesTable } from "@/db/schema";
+import { saveAudioGenerationMetadata } from "@/lib/admin/operations/repository.server";
 import {
   attachMedia,
   assertEntityMovePreservesMediaCity,
@@ -16,6 +17,7 @@ import {
   finalizeMediaAsset,
   getMediaAssetWithUsages,
   markMediaObjectDeleted,
+  promotePlaceAudioCandidate,
   prepareMediaObjectDeletion,
   setMediaAssetDurationIfMissing,
   setMediaLifecycle,
@@ -156,6 +158,38 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     await setMediaLifecycle(asset.id, "archived", actorId);
     expect(await getPublicMediaForEntity("place", placeId)).toEqual([]);
     expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
+  });
+
+  it("keeps an approved replacement private until atomic make-live promotion", async () => {
+    const createAudio = async (name: string) => {
+      const asset = await createMediaUploadRecord({ assetKey: randomUUID(), cityId, kind: "audio", originalFilename: `${name}.mp3`, mimeType: "audio/mpeg", sizeBytes: 3, locale: "de", objectKey: `media/${suffix}/${name}.mp3`, storageProvider: "s3-test", uploadExpiresAt: new Date(Date.now() + 60_000) }, actorId);
+      assetIds.push(asset.id);
+      await finalizeMediaAsset(asset.id, { sizeBytes: 3, mimeType: "audio/mpeg" }, actorId);
+      return asset;
+    };
+    const live = await createAudio("live-de");
+    const candidate = await createAudio("candidate-de");
+    await saveAudioGenerationMetadata({ mediaAssetId: candidate.id, provider: "fake-integration-tts", sourceLocale: "de", sourceTextHash: "a".repeat(64) });
+    expect((await getDb().select().from(audioGenerationMetadataTable).where(eq(audioGenerationMetadataTable.mediaAssetId, candidate.id)))[0]).toMatchObject({ provider: "fake-integration-tts", sourceLocale: "de", sourceField: "story" });
+    const liveAttachment = await attachMedia({ entityType: "place", entityId: placeId, mediaAssetId: live.id, purpose: "audio", locale: "de", position: 0 }, actorId, { allowPublicMutation: false });
+    await setMediaLifecycle(live.id, "approved", actorId);
+    const candidateAttachment = await attachMedia({ entityType: "place", entityId: placeId, mediaAssetId: candidate.id, purpose: "audio", locale: "de", position: 1 }, actorId, { allowPublicMutation: false });
+    await setMediaLifecycle(candidate.id, "approved", actorId);
+
+    expect((await getPublicMediaForEntity("place", placeId)).map(({ assetKey }) => assetKey)).toEqual([live.assetKey]);
+    expect(await getPublicMediaDeliveryAsset(candidate.assetKey)).toBeUndefined();
+
+    const result = await promotePlaceAudioCandidate(placeId, "de", actorId);
+    expect(result.previousMediaAssetId).toBe(live.id);
+    expect(result.attachment.id).toBe(candidateAttachment.id);
+    expect((await getPublicMediaForEntity("place", placeId)).map(({ assetKey }) => assetKey)).toEqual([candidate.assetKey]);
+    expect(await getPublicMediaDeliveryAsset(live.assetKey)).toBeUndefined();
+    expect(await getPublicMediaDeliveryAsset(candidate.assetKey)).toBeDefined();
+
+    await detachMedia("place", candidateAttachment.id, { allowPublicMutation: true });
+    await setMediaLifecycle(candidate.id, "archived", actorId);
+    await setMediaLifecycle(live.id, "archived", actorId);
+    expect(liveAttachment.id).not.toBe(candidateAttachment.id);
   });
 
   it("exposes city media only through an approved published attachment", async () => {

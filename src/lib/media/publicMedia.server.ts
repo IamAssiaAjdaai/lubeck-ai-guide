@@ -103,6 +103,10 @@ export async function getPublicMediaDeliveryAsset(
         and(
           eq(cityMediaTable.mediaAssetId, asset.id),
           eq(cityMediaTable.cityId, asset.cityId),
+          or(
+            ne(cityMediaTable.purpose, "audio"),
+            eq(cityMediaTable.position, 0),
+          ),
           eq(citiesTable.publicationStatus, "published"),
         ),
       )
@@ -116,6 +120,10 @@ export async function getPublicMediaDeliveryAsset(
         and(
           eq(placeMediaTable.mediaAssetId, asset.id),
           eq(placesTable.cityId, asset.cityId),
+          or(
+            ne(placeMediaTable.purpose, "audio"),
+            eq(placeMediaTable.position, 0),
+          ),
           publicPlaceCondition(db),
           eq(citiesTable.publicationStatus, "published"),
         ),
@@ -130,6 +138,10 @@ export async function getPublicMediaDeliveryAsset(
         and(
           eq(tourMediaTable.mediaAssetId, asset.id),
           eq(toursTable.cityId, asset.cityId),
+          or(
+            ne(tourMediaTable.purpose, "audio"),
+            eq(tourMediaTable.position, 0),
+          ),
           eq(toursTable.publicationStatus, "published"),
           eq(citiesTable.publicationStatus, "published"),
         ),
@@ -166,6 +178,7 @@ export function resolvePlaceMedia(
 function rowsToPublicMedia(rows: readonly PublicMediaRow[]): PublicMedia[] {
   return rows.flatMap(({ attachment, asset }) => {
     if (asset.archivedAt) return [];
+    if (attachment.purpose === "audio" && attachment.position !== 0) return [];
     const locale = isLocale(attachment.locale) ? attachment.locale : undefined;
     let url: string | null | undefined;
     if (asset.sourceType === "external") url = asset.canonicalUrl;

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   cityMediaTable,
+  audioGenerationMetadataTable,
   mediaAssetsTable,
   mediaKindEnum,
   mediaLifecycleEnum,
@@ -22,6 +23,23 @@ describe("CMS media schema", () => {
     const columns = getTableConfig(mediaAssetsTable).columns.map(({ name }) => name);
     expect(columns).toEqual(expect.arrayContaining(["asset_key", "object_key", "mime_type", "size_bytes", "checksum_sha256", "created_by_user_id", "updated_by_user_id"]));
     expect(columns).not.toEqual(expect.arrayContaining(["content", "binary", "bytes"]));
+  });
+
+  it("stores one generated-audio provenance record per immutable asset", () => {
+    const config = getTableConfig(audioGenerationMetadataTable);
+    expect(config.columns.map(({ name }) => name)).toEqual(
+      expect.arrayContaining([
+        "media_asset_id",
+        "provider",
+        "voice_id",
+        "source_locale",
+        "source_field",
+        "source_text_hash",
+        "generated_at",
+      ]),
+    );
+    expect(config.primaryKeys).toHaveLength(0);
+    expect(config.columns.find(({ name }) => name === "media_asset_id")?.primary).toBe(true);
   });
 
   it.each([

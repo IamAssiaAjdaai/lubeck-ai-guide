@@ -3,18 +3,30 @@ import { AdminNotice } from "@/components/admin/AdminContentForms";
 import { AdminPageHeader } from "@/components/admin/AdminContentUi";
 import { MediaUploadForm } from "@/components/admin/MediaUploadForm";
 import { listAuthorizedCities } from "@/lib/admin/content/service.server";
-import { locales } from "@/lib/i18n";
+import { isLocale, locales } from "@/lib/i18n";
+import { MEDIA_KINDS, type MediaKind } from "@/lib/media/types";
 import { getAdminCapabilityOutcome } from "@/lib/admin/authorization.server";
 import { redirect } from "next/navigation";
 
-export default async function NewMediaPage({ searchParams }: Readonly<{ searchParams: Promise<{ error?: string }> }>) {
-  const [{ error }, cities, access] = await Promise.all([searchParams, listAuthorizedCities(), getAdminCapabilityOutcome("media:manage")]);
+export default async function NewMediaPage({ searchParams }: Readonly<{ searchParams: Promise<{ error?: string; cityId?: string; placeId?: string; kind?: string; locale?: string }> }>) {
+  const [query, cities, access] = await Promise.all([searchParams, listAuthorizedCities(), getAdminCapabilityOutcome("media:manage")]);
   if (access.kind !== "authorized") redirect("/admin/unauthorized?reason=capability");
   const options = cities.map((city) => ({ id: city.id, name: city.localizations[0]?.name ?? city.name }));
+  const initialKind = MEDIA_KINDS.includes(query.kind as MediaKind)
+    ? (query.kind as MediaKind)
+    : "image";
+  const initialCityId = Number(query.cityId);
+  const candidatePlaceId = Number(query.placeId);
   return <section>
     <AdminPageHeader description="Binary files upload directly to configured S3-compatible storage. Every asset is city-scoped and requires review before public use." eyebrow="Media" title="Add media" />
-    <AdminNotice error={error} />
-    <MediaUploadForm cities={options} />
+    <AdminNotice error={query.error} />
+    <MediaUploadForm
+      candidatePlaceId={Number.isInteger(candidatePlaceId) && candidatePlaceId > 0 ? candidatePlaceId : undefined}
+      cities={options}
+      initialCityId={options.some(({ id }) => id === initialCityId) ? initialCityId : undefined}
+      initialKind={initialKind}
+      initialLocale={isLocale(query.locale) ? query.locale : "de"}
+    />
     <form action={createExternalVideoAction} className="surface-card mt-6 space-y-5 p-5 sm:p-7">
       <div><h2 className="text-lg font-bold">Approved external video provider</h2><p className="mt-2 text-sm text-text-secondary">YouTube and Vimeo URLs are canonicalized server-side. Raw iframe HTML is never accepted.</p></div>
       <div className="grid gap-5 sm:grid-cols-2">

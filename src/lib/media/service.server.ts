@@ -41,6 +41,7 @@ import {
   markStaleUploadArchived,
   markMediaObjectDeleted,
   prepareMediaObjectDeletion,
+  promotePlaceAudioCandidate,
   setMediaLifecycle,
 } from "@/lib/media/repository.server";
 import { getMediaObjectStore } from "@/lib/media/storage/storage.server";
@@ -359,6 +360,22 @@ export async function listAuthorizedEntityMedia(
   const cityId = await getTargetCityId(entityType, entityId);
   await requireCityCapability(cityId, "media:view");
   return listEntityMedia(entityType, entityId);
+}
+
+export async function makeAuthorizedPlaceAudioLive(
+  placeId: number,
+  locale: unknown,
+) {
+  if (!isLocale(locale)) {
+    throw new MediaIntegrityError("Audio locale is not supported.");
+  }
+  const place = await getCmsPlace(placeId);
+  if (!place) throw new MediaNotFoundError("Place");
+  const context = await requireCityCapability(
+    place.cityId,
+    "publishing:publish",
+  );
+  return promotePlaceAudioCandidate(placeId, locale, context.user.id);
 }
 
 export async function cleanupAuthorizedStaleUploads(

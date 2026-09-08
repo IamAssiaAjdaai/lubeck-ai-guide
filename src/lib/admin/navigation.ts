@@ -45,9 +45,9 @@ export const ADMIN_SECTIONS = [
     capability: "sources:view",
   },
   {
-    id: "translations",
-    label: "Translations",
-    href: "/admin/translations",
+    id: "operations",
+    label: "Operations",
+    href: "/admin/operations",
     icon: "languages",
     capability: "translations:view",
   },

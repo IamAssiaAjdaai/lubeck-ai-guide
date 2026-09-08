@@ -43,6 +43,13 @@
       "when": 1788815109261,
       "tag": "0005_optimal_starfox",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788824826769,
+      "tag": "0006_ordinary_kulan_gath",
+      "breakpoints": true
     }
   ]
 }
