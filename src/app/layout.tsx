@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import TravelerAccountShortcut from "@/components/account/TravelerAccountShortcut";
 import VisitorJourneyTracker from "@/components/VisitorJourneyTracker";
 
 import "./globals.css";
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <VisitorJourneyTracker />
+        <TravelerAccountShortcut />
         {children}
       </body>
     </html>

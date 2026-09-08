@@ -6,7 +6,7 @@ import { getDb } from "@/db/client";
 import { getBetterAuthEnvironment } from "@/lib/auth/env";
 
 export const AUTH_ROUTE_PATH = "/api/auth";
-export const PUBLIC_EMAIL_SIGN_UP_ENABLED = false;
+export const PUBLIC_EMAIL_SIGN_UP_ENABLED = true;
 
 type CreateAuthOptions = Readonly<{
   allowEmailSignUp?: boolean;
@@ -18,7 +18,7 @@ export function createCitywalkAuth(
   const environment = getBetterAuthEnvironment();
 
   return betterAuth({
-    appName: "CITYWALK Admin",
+    appName: "CITYWALK",
     baseURL: environment.baseURL,
     basePath: AUTH_ROUTE_PATH,
     secret: environment.secret,
