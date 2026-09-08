@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
-  CommerceCheckoutError,
   startCommerceCheckout,
   type CheckoutDependencies,
 } from "@/lib/commerce/checkout.server";
@@ -90,7 +89,7 @@ describe("commerce checkout", () => {
         },
         deps,
       ),
-    ).rejects.toMatchObject<Partial<CommerceCheckoutError>>({
+    ).rejects.toMatchObject({
       code: "PRICE_NOT_AVAILABLE",
     });
     expect(deps.createPendingOrder).not.toHaveBeenCalled();
