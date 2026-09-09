@@ -3,7 +3,10 @@ import { closeDb } from "@/db/client";
 import { loadDatabaseEnvironment } from "@/db/loadEnvironment";
 import type { CityManifest } from "@/lib/admin/content/cityManifest";
 import { loadCityManifestFile } from "@/lib/admin/content/cityManifestFile.server";
-import { importCityManifest } from "@/lib/admin/content/importCityManifest.server";
+import {
+  importCityManifest,
+  importTrustedCityBootstrapManifest,
+} from "@/lib/admin/content/importCityManifest.server";
 
 loadDatabaseEnvironment();
 
@@ -21,6 +24,7 @@ async function main() {
   const citySlug = arguments_
     .find((argument) => argument.startsWith("--city="))
     ?.slice("--city=".length);
+  const isBootstrapFixture = !manifestPath && Boolean(citySlug);
   const manifest = manifestPath
     ? await loadCityManifestFile(manifestPath)
     : citySlug
@@ -33,7 +37,9 @@ async function main() {
     );
   }
 
-  const result = await importCityManifest(manifest);
+  const result = isBootstrapFixture
+    ? await importTrustedCityBootstrapManifest(manifest)
+    : await importCityManifest(manifest);
   console.log(
     `Imported ${result.citySlug}: ${result.placeCount} places, ${result.sourceLinkCount} source links, ${result.tourCount} tour, ${result.verifiedKnowledgeCount} verified knowledge chunks.`,
   );

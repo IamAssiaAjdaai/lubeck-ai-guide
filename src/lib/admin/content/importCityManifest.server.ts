@@ -43,10 +43,29 @@ export type CityManifestImportResult = Readonly<{
   verifiedKnowledgeCount: number;
 }>;
 
-export async function importCityManifest(
+type CityManifestImportMode = "external-draft" | "trusted-bootstrap";
+
+export function importCityManifest(
   uncheckedManifest: CityManifest,
 ): Promise<CityManifestImportResult> {
+  return importValidatedCityManifest(uncheckedManifest, "external-draft");
+}
+
+export function importTrustedCityBootstrapManifest(
+  uncheckedManifest: CityManifest,
+): Promise<CityManifestImportResult> {
+  return importValidatedCityManifest(uncheckedManifest, "trusted-bootstrap");
+}
+
+async function importValidatedCityManifest(
+  uncheckedManifest: CityManifest,
+  mode: CityManifestImportMode,
+): Promise<CityManifestImportResult> {
   const manifest = validateCityManifest(uncheckedManifest);
+  const isTrustedBootstrap = mode === "trusted-bootstrap";
+  const cityPublicationStatus = isTrustedBootstrap
+    ? manifest.city.publicationStatus
+    : "draft";
   const db = getDb();
 
   return db.transaction(async (tx) => {
@@ -58,7 +77,7 @@ export async function importCityManifest(
         name: manifest.city.name,
         countryCode: manifest.city.countryCode,
         timezone: manifest.city.timezone,
-        publicationStatus: manifest.city.publicationStatus,
+        publicationStatus: cityPublicationStatus,
         createdAt: now,
         updatedAt: now,
       })
@@ -86,7 +105,7 @@ export async function importCityManifest(
         name: manifest.city.name,
         countryCode: manifest.city.countryCode,
         timezone: manifest.city.timezone,
-        publicationStatus: manifest.city.publicationStatus,
+        publicationStatus: cityPublicationStatus,
         updatedAt: now,
       }).where(eq(citiesTable.id, city.id));
     }
@@ -151,14 +170,22 @@ export async function importCityManifest(
       cityId: city.id,
       targetPlaceCount: manifest.readiness.targetPlaceCount,
       requiredContentLocales: [...manifest.readiness.requiredContentLocales],
-      reviewedContentLocales: [...manifest.readiness.reviewedContentLocales],
+      reviewedContentLocales: isTrustedBootstrap
+        ? [...manifest.readiness.reviewedContentLocales]
+        : [],
       requiredAudioLocales: [...manifest.readiness.requiredAudioLocales],
       audioTargetPlaceCount: manifest.readiness.audioTargetPlaceCount,
       minimumVerifiedAiPlaceCount: manifest.readiness.minimumVerifiedAiPlaceCount,
-      webQaStatus: manifest.readiness.webQaStatus,
-      nativeQaStatus: manifest.readiness.nativeQaStatus,
-      travelerQaStatus: manifest.readiness.travelerQaStatus,
-      premiumContentStatus: manifest.readiness.premiumContentStatus,
+      webQaStatus: isTrustedBootstrap ? manifest.readiness.webQaStatus : "pending",
+      nativeQaStatus: isTrustedBootstrap ? manifest.readiness.nativeQaStatus : "pending",
+      travelerQaStatus: isTrustedBootstrap
+        ? manifest.readiness.travelerQaStatus
+        : "pending",
+      premiumContentStatus: isTrustedBootstrap
+        ? manifest.readiness.premiumContentStatus
+        : manifest.readiness.premiumContentStatus === "not_required"
+          ? "not_required"
+          : "pending",
       notes: manifest.readiness.notes,
       createdAt: now,
       updatedAt: now,
@@ -166,6 +193,9 @@ export async function importCityManifest(
 
     const importedPlaceIds = new Map<string, number>();
     for (const placeManifest of manifest.places) {
+      const placePublicationStatus = isTrustedBootstrap
+        ? placeManifest.publicationStatus
+        : "draft";
       const [createdPlace] = await tx.insert(placesTable).values({
         cityId: city.id,
         slug: placeManifest.slug,
@@ -178,7 +208,7 @@ export async function importCityManifest(
         status: placeManifest.status,
         statusVerifiedAt: placeManifest.statusVerifiedAt,
         tags: [...placeManifest.tags],
-        publicationStatus: placeManifest.publicationStatus,
+        publicationStatus: placePublicationStatus,
         createdAt: now,
         updatedAt: now,
       }).onConflictDoNothing({
@@ -217,7 +247,7 @@ export async function importCityManifest(
           status: placeManifest.status,
           statusVerifiedAt: placeManifest.statusVerifiedAt,
           tags: [...placeManifest.tags],
-          publicationStatus: placeManifest.publicationStatus,
+          publicationStatus: placePublicationStatus,
           updatedAt: now,
         }).where(eq(placesTable.id, place.id));
       }
@@ -290,7 +320,11 @@ export async function importCityManifest(
           eq(placeRevisionsTable.isCurrent, true),
         ))
         .limit(1);
-      if (!currentRevision && placeManifest.publicationStatus === "published") {
+      if (
+        isTrustedBootstrap &&
+        !currentRevision &&
+        placePublicationStatus === "published"
+      ) {
         await tx.insert(placeRevisionsTable).values({
           placeId: place.id,
           revisionNumber: 1,
@@ -345,7 +379,7 @@ export async function importCityManifest(
             text: chunk.text,
             topics: [...chunk.topics],
             priority: chunk.priority ?? 0,
-            isActive: true,
+            isActive: isTrustedBootstrap,
             createdAt: now,
             updatedAt: now,
           });
@@ -354,10 +388,13 @@ export async function importCityManifest(
     }
 
     for (const tourManifest of manifest.tours) {
+      const tourPublicationStatus = isTrustedBootstrap
+        ? tourManifest.publicationStatus
+        : "draft";
       const [createdTour] = await tx.insert(toursTable).values({
         cityId: city.id,
         slug: tourManifest.slug,
-        publicationStatus: tourManifest.publicationStatus,
+        publicationStatus: tourPublicationStatus,
         estimatedDurationMinutes: tourManifest.estimatedDurationMinutes,
         createdAt: now,
         updatedAt: now,
@@ -378,7 +415,7 @@ export async function importCityManifest(
       if (!mayImportTour) continue;
       if (!createdTour) {
         await tx.update(toursTable).set({
-          publicationStatus: tourManifest.publicationStatus,
+          publicationStatus: tourPublicationStatus,
           estimatedDurationMinutes: tourManifest.estimatedDurationMinutes,
           updatedAt: now,
         }).where(eq(toursTable.id, tour.id));

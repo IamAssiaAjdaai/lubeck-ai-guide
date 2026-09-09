@@ -35,6 +35,50 @@ describe("city onboarding manifest", () => {
     ]);
   });
 
+  it("derives city identity tokens generically for a synthetic non-German city", () => {
+    const sourcePlace = hamburgCityManifest.places[0]!;
+    const synthetic = {
+      ...hamburgCityManifest,
+      city: {
+        ...hamburgCityManifest.city,
+        slug: "marrakech",
+        name: "Marrakech",
+        countryCode: "MA",
+        timezone: "Africa/Casablanca",
+        content: {
+          de: {
+            name: "Marrakesch",
+            shortDescription: "Eine datenbasierte Stadtbeschreibung.",
+            description: "Eine vollstaendige Einfuehrung fuer den generischen Validierungstest.",
+          },
+          en: {
+            name: "Marrakech",
+            shortDescription: "A data-driven city description.",
+            description: "A complete introduction for the generic validation test.",
+          },
+        },
+      },
+      readiness: {
+        ...hamburgCityManifest.readiness,
+        targetPlaceCount: 1,
+        audioTargetPlaceCount: 0,
+        minimumVerifiedAiPlaceCount: 0,
+      },
+      places: [{
+        ...sourcePlace,
+        slug: "marrakech-medina",
+        content: {
+          de: { name: "Medina", shortDescription: "Ein Testort." },
+          en: { name: "Medina", shortDescription: "A test place." },
+        },
+      }],
+      tours: [],
+      knowledge: [],
+    } as CityManifest;
+
+    expect(validateCityManifest(synthetic).city.slug).toBe("marrakech");
+  });
+
   it("rejects missing city-level traveler content and provenance", () => {
     const invalid = {
       ...hamburgCityManifest,

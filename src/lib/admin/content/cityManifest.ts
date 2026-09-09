@@ -202,7 +202,11 @@ export function validateCityManifest(manifest: CityManifest): CityManifest {
     if (duplicate) issues.push(`${place.slug} duplicates coordinates with ${duplicate}`);
     coordinateKeys.set(coordinateKey, place.slug);
     validateLocalizedNames(place.content, `place ${place.slug}`, issues);
-    if (!hasPlausibleLocalizedIdentity(place.slug, place.content)) {
+    if (!hasPlausibleLocalizedIdentity(
+      manifest.city.slug,
+      place.slug,
+      place.content,
+    )) {
       issues.push(`${place.slug} has a suspicious localized place identity`);
     }
     for (const locale of manifest.readiness.requiredContentLocales) {
@@ -279,17 +283,33 @@ function validateSlug(value: string, label: string, issues: string[]) {
 }
 
 function hasPlausibleLocalizedIdentity(
+  citySlug: string,
   slug: string,
   content: Readonly<Record<string, { name?: string } | undefined>>,
 ): boolean {
+  const cityTokens = citySlug
+    .split("-")
+    .map(normalizeIdentityText)
+    .filter(Boolean);
   const tokens = slug.split("-").filter((token) =>
-    token.length >= 5 && token !== "hamburg" && token !== "hamburger",
+    token.length >= 5 && !isDerivedCityIdentityToken(token, cityTokens),
   );
   if (tokens.length === 0) return true;
   const names = Object.values(content)
     .map((value) => normalizeIdentityText(value?.name ?? ""))
     .join(" ");
   return tokens.some((token) => names.includes(normalizeIdentityText(token)));
+}
+
+function isDerivedCityIdentityToken(
+  value: string,
+  cityTokens: readonly string[],
+): boolean {
+  const token = normalizeIdentityText(value);
+  return cityTokens.some((cityToken) =>
+    token === cityToken ||
+    (token.startsWith(cityToken) && token.length <= cityToken.length + 3),
+  );
 }
 
 function normalizeIdentityText(value: string): string {

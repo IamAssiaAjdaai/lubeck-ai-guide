@@ -8,7 +8,8 @@ staff-authored records, or run automatically during deployment.
 ## Onboarding checklist
 
 1. **City identity** — choose a stable lowercase slug, display name, ISO
-   country code, IANA timezone and explicit draft/published state.
+   country code and IANA timezone. Normal external imports always create new
+   records as drafts; the manifest cannot grant publication state.
 2. **Localized city content** — author a name, concise discovery summary and
    fuller traveler introduction for every launch locale independently. Do not
    label fallback content as translated.
@@ -103,14 +104,18 @@ tourism or encyclopedia pages without an explicit, reviewed usage right.
 2. Research canonical sources and write independent launch-locale content.
 3. Set a broad coordinate QA envelope that catches mistakes without becoming
    a product navigation boundary.
-4. Define honest targets and pending manual gates in the readiness profile.
+4. Define objective launch targets in the readiness profile. Values that claim
+   content review, device/traveler QA or premium approval are ignored by normal
+   external import and initialized conservatively.
 5. Run unit validation before touching the database.
 6. Apply committed migrations, then explicitly run
    `npm run city:import -- ./content-imports/berlin.json`.
-7. Run the importer twice and confirm counts/revisions/knowledge remain stable.
+7. Run the importer twice and confirm counts remain stable. New places have no
+   current published revision, and supplied knowledge is inactive.
 8. Run `npm run content:readiness -- --city=<slug>` and resolve blockers via
    normal CMS/media/knowledge workflows.
-9. Verify `/api/content/cities` and `/api/content/cities/<slug>` in Web and
+9. Use the existing CMS draft → in review → approved → published workflow,
+   then verify `/api/content/cities` and `/api/content/cities/<slug>` in Web and
    Expo. Never add a client-side city switch.
 10. Record Web/native/traveler QA and make the launch decision. Import is not
     launch approval.
@@ -120,6 +125,21 @@ or rebuilding application code. Public discovery, routing, media, localization
 and mobile parsing remain city-generic. The TypeScript Lübeck and Hamburg
 manifests are bootstrap/reference fixtures for existing canonical content;
 they are not the production onboarding contract for future cities.
+
+### External import safety
+
+`npm run city:import -- ./content-imports/<city>.json` is data ingestion, not
+publication authority. For newly ingested content it enforces draft city,
+place and tour states; records no workflow events; creates no current published
+place revisions; clears claimed reviewed locales; sets Web, native and traveler
+QA to pending; and never accepts `ready` as premium approval. Objective targets
+remain usable for readiness planning. Source-backed knowledge supplied in the
+file is stored inactive and cannot ground public AI responses. An authorized
+operator must use the existing verified-knowledge operation after review.
+
+The named bundled `--city=hamburg` path is a separate trusted bootstrap mode
+for the existing canonical fixture. It is deliberately unavailable for
+arbitrary external JSON and must not be used as a normal editor workflow.
 
 ### Manual CMS workflow
 

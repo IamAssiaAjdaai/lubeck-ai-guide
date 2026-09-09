@@ -13,19 +13,27 @@ import { hamburgCityManifest, HAMBURG_PLACE_COUNT } from "@/data/cities/hamburg"
 import { closeDb, getDb } from "@/db/client";
 import {
   citiesTable,
+  cityLaunchReadinessTable,
   cityLocalizationsTable,
   citySourcesTable,
   contentSourcesTable,
+  contentWorkflowEventsTable,
   placeLocalizationsTable,
   placeRevisionsTable,
   placeSourcesTable,
   placesTable,
+  toursTable,
   verifiedKnowledgeChunksTable,
 } from "@/db/schema";
 import { GET as getPublicCityIndex } from "@/app/api/content/cities/route";
 import { GET as getPublicCity } from "@/app/api/content/cities/[citySlug]/route";
 import { loadCityManifestFile } from "@/lib/admin/content/cityManifestFile.server";
-import { importCityManifest } from "@/lib/admin/content/importCityManifest.server";
+import {
+  importCityManifest,
+  importTrustedCityBootstrapManifest,
+} from "@/lib/admin/content/importCityManifest.server";
+import { setCmsPublicationStatus } from "@/lib/admin/content/repository.server";
+import { DatabaseVerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 import { getCityPassConfiguration } from "@/lib/commerce/cityPassConfig";
 import {
   getPublicCitySnapshot,
@@ -79,14 +87,14 @@ function createNoCodeManifest() {
     readiness: {
       targetPlaceCount: 2,
       requiredContentLocales: ["de", "en"],
-      reviewedContentLocales: [],
+      reviewedContentLocales: ["de", "en"],
       requiredAudioLocales: [],
       audioTargetPlaceCount: 0,
       minimumVerifiedAiPlaceCount: 0,
-      webQaStatus: "pending",
-      nativeQaStatus: "pending",
-      travelerQaStatus: "pending",
-      premiumContentStatus: "not_required",
+      webQaStatus: "passed",
+      nativeQaStatus: "passed",
+      travelerQaStatus: "passed",
+      premiumContentStatus: "ready",
     },
     places: [
       {
@@ -132,17 +140,45 @@ function createNoCodeManifest() {
         }],
       },
     ],
-    tours: [],
-    knowledge: [],
+    tours: [{
+      slug: "no-code-introduction",
+      publicationStatus: "published",
+      estimatedDurationMinutes: 60,
+      content: {
+        de: { title: "No-Code-Einfuehrung" },
+        en: { title: "No-code introduction" },
+      },
+      stops: [
+        { placeSlug: "json-museum", visitDurationMinutes: 30 },
+        { placeSlug: "data-garden", visitDurationMinutes: 20 },
+      ],
+    }],
+    knowledge: [{
+      placeSlug: "json-museum",
+      sourceUrl: NO_CODE_SOURCE_URLS[1],
+      locale: "en",
+      text: "Reviewed facts must not become active merely because JSON supplied them.",
+      topics: ["history"],
+    }],
   } as const;
+}
+
+async function publishThroughCmsWorkflow(
+  entity: "city" | "place" | "tour",
+  id: number,
+) {
+  const actorId = "city-import-integration-reviewer";
+  await setCmsPublicationStatus(entity, id, "in_review", actorId);
+  await setCmsPublicationStatus(entity, id, "approved", actorId);
+  await setCmsPublicationStatus(entity, id, "published", actorId);
 }
 
 describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
   afterAll(async () => closeDb());
 
   it("imports Hamburg idempotently through CMS tables and published revisions", async () => {
-    const first = await importCityManifest(hamburgCityManifest);
-    const second = await importCityManifest(hamburgCityManifest);
+    const first = await importTrustedCityBootstrapManifest(hamburgCityManifest);
+    const second = await importTrustedCityBootstrapManifest(hamburgCityManifest);
 
     expect(first).toMatchObject({
       citySlug: "hamburg",
@@ -193,7 +229,7 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
   });
 
   it("does not overwrite staff-edited city localization content on rerun", async () => {
-    await importCityManifest(hamburgCityManifest);
+    await importTrustedCityBootstrapManifest(hamburgCityManifest);
     const db = getDb();
     const [city] = await db.select().from(citiesTable)
       .where(eq(citiesTable.slug, "hamburg"));
@@ -211,7 +247,7 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
         updatedByUserId: "integration-test-editor",
       }).where(eq(cityLocalizationsTable.id, english!.id));
 
-      await importCityManifest(hamburgCityManifest);
+      await importTrustedCityBootstrapManifest(hamburgCityManifest);
 
       const [protectedLocalization] = await db.select()
         .from(cityLocalizationsTable)
@@ -316,7 +352,7 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
     }
   });
 
-  it("onboards, discovers, and removes a third city from data-only JSON", async () => {
+  it("ingests external JSON as draft and exposes it only after the CMS workflow", async () => {
     const db = getDb();
     const beforeHamburg = await getPublicCitySnapshot("hamburg", "database");
     const beforeLubeck = await getPublicCitySnapshot("lubeck", "database");
@@ -338,9 +374,97 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
         citySlug: NO_CODE_CITY_SLUG,
         placeCount: 2,
         placeLocalizationCount: 4,
-        currentRevisionCount: 2,
+        currentRevisionCount: 0,
+        tourCount: 1,
+        verifiedKnowledgeCount: 1,
       });
       expect(second).toEqual(first);
+
+      const [testCity] = await db.select().from(citiesTable)
+        .where(eq(citiesTable.slug, NO_CODE_CITY_SLUG));
+      const importedPlaces = await db.select().from(placesTable)
+        .where(eq(placesTable.cityId, testCity!.id));
+      const [importedTour] = await db.select().from(toursTable)
+        .where(eq(toursTable.cityId, testCity!.id));
+      const [readinessProfile] = await db.select().from(cityLaunchReadinessTable)
+        .where(eq(cityLaunchReadinessTable.cityId, testCity!.id));
+      const importedKnowledge = await db.select().from(verifiedKnowledgeChunksTable)
+        .innerJoin(placesTable, eq(verifiedKnowledgeChunksTable.placeId, placesTable.id))
+        .where(eq(placesTable.cityId, testCity!.id));
+
+      expect(testCity!.publicationStatus).toBe("draft");
+      expect(importedPlaces).toHaveLength(2);
+      expect(importedPlaces.every(({ publicationStatus }) =>
+        publicationStatus === "draft"
+      )).toBe(true);
+      expect(importedTour!.publicationStatus).toBe("draft");
+      expect(readinessProfile).toMatchObject({
+        reviewedContentLocales: [],
+        webQaStatus: "pending",
+        nativeQaStatus: "pending",
+        travelerQaStatus: "pending",
+        premiumContentStatus: "pending",
+      });
+      expect(importedKnowledge).toHaveLength(1);
+      expect(importedKnowledge[0]!.verified_knowledge_chunks.isActive).toBe(false);
+      expect(await db.select().from(contentWorkflowEventsTable)
+        .where(and(
+          eq(contentWorkflowEventsTable.entityType, "city"),
+          eq(contentWorkflowEventsTable.entityId, testCity!.id),
+        )))
+        .toHaveLength(0);
+      expect(await new DatabaseVerifiedKnowledgeProvider().listVerifiedChunks({
+        citySlug: NO_CODE_CITY_SLUG,
+        placeSlug: "json-museum",
+        locale: "en",
+      })).toEqual([]);
+
+      const draftRevisions = await db.select().from(placeRevisionsTable)
+        .innerJoin(placesTable, eq(placeRevisionsTable.placeId, placesTable.id))
+        .where(and(
+          eq(placesTable.cityId, testCity!.id),
+          eq(placeRevisionsTable.isCurrent, true),
+        ));
+      expect(draftRevisions).toHaveLength(0);
+
+      process.env.CITYWALK_CONTENT_SOURCE = "database";
+      const draftIndexResponse = await getPublicCityIndex(
+        new Request("http://localhost/api/content/cities?locale=en"),
+      );
+      expect(draftIndexResponse.status).toBe(200);
+      expect((await draftIndexResponse.json()).cities).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ slug: NO_CODE_CITY_SLUG }),
+        ]),
+      );
+      expect((await getPublicCity(
+        new Request(`http://localhost/api/content/cities/${NO_CODE_CITY_SLUG}?locale=de`),
+        { params: Promise.resolve({ citySlug: NO_CODE_CITY_SLUG }) },
+      )).status).toBe(404);
+
+      const [englishCityContent] = await db.select().from(cityLocalizationsTable)
+        .where(and(
+          eq(cityLocalizationsTable.cityId, testCity!.id),
+          eq(cityLocalizationsTable.locale, "en"),
+        ));
+      const staffDescription = "Staff-reviewed draft introduction.";
+      await db.update(cityLocalizationsTable).set({
+        description: staffDescription,
+        updatedByUserId: "city-import-integration-editor",
+      }).where(eq(cityLocalizationsTable.id, englishCityContent!.id));
+      await importCityManifest(manifest);
+      expect((await db.select().from(cityLocalizationsTable)
+        .where(eq(cityLocalizationsTable.id, englishCityContent!.id)))[0])
+        .toMatchObject({
+          description: staffDescription,
+          updatedByUserId: "city-import-integration-editor",
+        });
+
+      await publishThroughCmsWorkflow("city", testCity!.id);
+      for (const place of importedPlaces) {
+        await publishThroughCmsWorkflow("place", place.id);
+      }
+      await publishThroughCmsWorkflow("tour", importedTour!.id);
 
       const [untrackedCity] = await db.insert(citiesTable).values({
         slug: UNTRACKED_CITY_SLUG,
@@ -350,7 +474,6 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
         publicationStatus: "published",
       }).onConflictDoNothing({ target: citiesTable.slug }).returning();
 
-      process.env.CITYWALK_CONTENT_SOURCE = "database";
       const indexResponse = await getPublicCityIndex(
         new Request("http://localhost/api/content/cities?locale=en"),
       );
@@ -376,13 +499,14 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
         "json-museum",
         "data-garden",
       ]);
+      expect(detailPayload.tours).toEqual([
+        expect.objectContaining({ slug: "no-code-introduction" }),
+      ]);
 
       const readiness = await getCityReadinessMatrix();
       expect(readiness.map(({ citySlug }) => citySlug)).toContain(NO_CODE_CITY_SLUG);
       expect(readiness.map(({ citySlug }) => citySlug)).not.toContain(UNTRACKED_CITY_SLUG);
 
-      const [testCity] = await db.select().from(citiesTable)
-        .where(eq(citiesTable.slug, NO_CODE_CITY_SLUG));
       const revisions = await db.select().from(placeRevisionsTable)
         .innerJoin(placesTable, eq(placeRevisionsTable.placeId, placesTable.id))
         .where(and(
@@ -390,6 +514,21 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
           eq(placeRevisionsTable.isCurrent, true),
         ));
       expect(revisions).toHaveLength(2);
+      await importCityManifest(manifest);
+      const revisionsAfterReimport = await db.select().from(placeRevisionsTable)
+        .innerJoin(placesTable, eq(placeRevisionsTable.placeId, placesTable.id))
+        .where(and(
+          eq(placesTable.cityId, testCity!.id),
+          eq(placeRevisionsTable.isCurrent, true),
+        ));
+      expect(revisionsAfterReimport).toHaveLength(2);
+      expect((await db.select().from(citiesTable)
+        .where(eq(citiesTable.id, testCity!.id)))[0]!.publicationStatus)
+        .toBe("published");
+      expect((await db.select().from(placesTable)
+        .where(eq(placesTable.cityId, testCity!.id)))
+        .every(({ publicationStatus }) => publicationStatus === "published"))
+        .toBe(true);
 
       if (untrackedCity) {
         await db.delete(citiesTable).where(eq(citiesTable.id, untrackedCity.id));
@@ -403,6 +542,7 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
       const [testCity] = await db.select({ id: citiesTable.id }).from(citiesTable)
         .where(eq(citiesTable.slug, NO_CODE_CITY_SLUG));
       if (testCity) {
+        await db.delete(toursTable).where(eq(toursTable.cityId, testCity.id));
         await db.delete(citiesTable).where(eq(citiesTable.id, testCity.id));
       }
       const [untrackedCity] = await db.select({ id: citiesTable.id }).from(citiesTable)

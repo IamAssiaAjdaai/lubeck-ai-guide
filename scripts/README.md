@@ -3,16 +3,21 @@
 ## Generic city onboarding
 
 `npm run city:import -- ./content-imports/berlin.json` validates a data-only
-JSON city manifest and imports it through the existing CMS tables in one
-transaction. `--manifest=<path>` remains an equivalent explicit form. The
-command is idempotent: it does not run during builds, does not reset data, and
-will not overwrite a record that has staff-authored localizations or an editor
-actor.
+JSON city manifest and ingests it through the existing CMS tables in one
+transaction. `--manifest=<path>` remains an equivalent explicit form. New
+cities, places and tours always enter as drafts, regardless of publication
+claims in the file. Manual review/QA fields are initialized conservatively and
+supplied knowledge is staged inactive; publication and verified-knowledge
+activation remain explicit CMS/operator workflows. The command is idempotent:
+it does not run during builds, does not reset data, and will not overwrite a
+record that has staff-authored localizations or an editor actor.
 
-The bundled `--city=hamburg` convenience input is retained only as a
-bootstrap/reference fixture for existing reviewed content. Adding a normal
-future city must use an external JSON manifest or the Admin CMS; it must not
-require a new TypeScript module or a traveler application rebuild.
+The bundled `--city=hamburg` convenience input is retained only as an explicit
+trusted bootstrap/reference fixture for existing canonical content. That mode
+is selected only by the named bundled fixture and is not available for an
+arbitrary manifest path. Adding a normal future city must use an external JSON
+manifest or the Admin CMS; it must not require a new TypeScript module or a
+traveler application rebuild.
 
 After import, run `npm run content:readiness -- --city=<slug>` to derive the
 automatic launch metrics and combine them with persisted editorial/device QA
