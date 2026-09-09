@@ -109,3 +109,6 @@ jobs:
 
       - name: Run CMS media integration tests
         run: npm run media:test:integration
+
+      - name: Run commerce webhook integration tests
+        run: npm run commerce:test:integration

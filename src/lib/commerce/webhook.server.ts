@@ -13,7 +13,10 @@ import type {
   NormalizedProviderEvent,
   VerifiedProviderEvent,
 } from "@/lib/commerce/types";
-import { captureVerifiedEntitlementGrant } from "@/lib/commerce/analytics.server";
+import {
+  captureVerifiedEntitlementGrant,
+  type VerifiedEntitlementGrantAnalytics,
+} from "@/lib/commerce/analytics.server";
 
 export type CommerceWebhookResult = "processed" | "ignored" | "duplicate";
 
@@ -84,6 +87,13 @@ type WebhookDependencies = Readonly<{
     event: VerifiedProviderEvent,
     apply: (store: CommerceMutationStore, now: Date) => Promise<void>,
   ) => Promise<CommerceWebhookResult>;
+}>;
+
+type DatabaseWebhookDependencyOptions = Readonly<{
+  captureEntitlementGrant?: (
+    grant: VerifiedEntitlementGrantAnalytics,
+  ) => Promise<void>;
+  afterApplyInTransaction?: () => Promise<void>;
 }>;
 
 export class CommerceWebhookError extends Error {
@@ -191,25 +201,32 @@ export async function applyNormalizedProviderEvent(
   }
 }
 
-const defaultDependencies: WebhookDependencies = {
-  async runOnce(event, apply) {
-    const db = getDb();
-    return db.transaction(async (tx) => {
-      const [inserted] = await tx
-        .insert(commerceProviderEvents)
-        .values({
-          provider: event.provider,
-          providerEventId: event.eventId,
-          eventType: event.eventType,
-          outcome: event.normalized ? "processed" : "ignored",
-        })
-        .onConflictDoNothing()
-        .returning({ id: commerceProviderEvents.id });
+export function createDatabaseWebhookDependencies(
+  options: DatabaseWebhookDependencyOptions = {},
+): WebhookDependencies {
+  const captureEntitlementGrant =
+    options.captureEntitlementGrant ?? captureVerifiedEntitlementGrant;
 
-      if (!inserted) return "duplicate" as const;
-      if (!event.normalized) return "ignored" as const;
+  return {
+    async runOnce(event, apply) {
+      const db = getDb();
+      const committedGrants: VerifiedEntitlementGrantAnalytics[] = [];
+      const result = await db.transaction(async (tx) => {
+        const [inserted] = await tx
+          .insert(commerceProviderEvents)
+          .values({
+            provider: event.provider,
+            providerEventId: event.eventId,
+            eventType: event.eventType,
+            outcome: event.normalized ? "processed" : "ignored",
+          })
+          .onConflictDoNothing()
+          .returning({ id: commerceProviderEvents.id });
 
-      const store: CommerceMutationStore = {
+        if (!inserted) return "duplicate" as const;
+        if (!event.normalized) return "ignored" as const;
+
+        const store: CommerceMutationStore = {
         async loadOrderById(orderId) {
           const [order] = await tx
             .select({
@@ -307,7 +324,7 @@ const defaultDependencies: WebhookDependencies = {
             .onConflictDoNothing()
             .returning({ id: commerceEntitlements.id });
           if (inserted) {
-            void captureVerifiedEntitlementGrant({
+            committedGrants.push({
               scopeType: input.grant.scopeType,
               scopeKey: input.grant.scopeKey,
               durationDays: input.grant.durationDays,
@@ -329,13 +346,24 @@ const defaultDependencies: WebhookDependencies = {
               ),
             );
         },
-      };
+        };
 
-      await apply(store, new Date());
-      return "processed" as const;
-    });
-  },
-};
+        await apply(store, new Date());
+        await options.afterApplyInTransaction?.();
+        return "processed" as const;
+      });
+
+      // A grant event describes committed access. Keep this side effect outside
+      // the transaction so a later rollback can never emit a false grant.
+      await Promise.allSettled(
+        committedGrants.map((grant) => captureEntitlementGrant(grant)),
+      );
+      return result;
+    },
+  };
+}
+
+const defaultDependencies = createDatabaseWebhookDependencies();
 
 export async function processVerifiedProviderEvent(
   event: VerifiedProviderEvent,
@@ -347,4 +375,8 @@ export async function processVerifiedProviderEvent(
   });
 }
 
-export type { CommerceMutationStore, WebhookDependencies };
+export type {
+  CommerceMutationStore,
+  DatabaseWebhookDependencyOptions,
+  WebhookDependencies,
+};

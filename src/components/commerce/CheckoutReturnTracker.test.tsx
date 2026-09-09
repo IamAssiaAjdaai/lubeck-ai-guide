@@ -44,9 +44,11 @@ describe("CheckoutReturnTracker", () => {
     expect(link.getAttribute("href")).toBe(
       "/en/lubeck/fuechtingshof?premium=1#premium-audio",
     );
-    expect(capture).toHaveBeenCalledWith(
-      "checkout_returned",
-      expect.objectContaining({ return_outcome: "success" }),
+    await waitFor(() =>
+      expect(capture).toHaveBeenCalledWith(
+        "checkout_returned",
+        expect.objectContaining({ return_outcome: "success" }),
+      ),
     );
   });
 
@@ -90,9 +92,11 @@ describe("CheckoutReturnTracker", () => {
           .getAttribute("href"),
       ).toBe("/en/test-city/museum?premium=1#premium-audio"),
     );
-    expect(capture).toHaveBeenCalledWith(
-      "checkout_returned",
-      expect.not.objectContaining({ city_slug: "lubeck" }),
+    await waitFor(() =>
+      expect(capture).toHaveBeenCalledWith(
+        "checkout_returned",
+        expect.not.objectContaining({ city_slug: "lubeck" }),
+      ),
     );
   });
 });

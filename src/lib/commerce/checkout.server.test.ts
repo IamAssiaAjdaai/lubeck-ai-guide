@@ -57,6 +57,9 @@ describe("commerce checkout", () => {
     expect(
       parseCommerceCheckoutInput({ priceId: 7.5, locale: "en" }),
     ).toBeUndefined();
+    for (const priceId of ["1.5", "-1", "0", "arbitrary", 0, -1, Number.MAX_SAFE_INTEGER + 1]) {
+      expect(parseCommerceCheckoutInput({ priceId, locale: "en" })).toBeUndefined();
+    }
     expect(
       parseCommerceCheckoutInput({ priceId: 7, locale: "invalid" }),
     ).toBeUndefined();

@@ -25,6 +25,7 @@
     "cms:import-lubeck": "tsx scripts/import-lubeck-cms.ts",
     "cms:test:integration": "tsx scripts/run-cms-integration-tests.ts",
     "media:test:integration": "tsx scripts/run-media-integration-tests.ts",
+    "commerce:test:integration": "tsx scripts/run-commerce-integration-tests.ts",
     "media:backfill-audio-duration": "node --conditions=react-server --import tsx scripts/backfill-audio-duration.ts",
     "admin:create-super": "tsx scripts/create-super-admin.ts",
     "knowledge:manage": "node --conditions=react-server --import tsx scripts/manage-verified-knowledge.ts",

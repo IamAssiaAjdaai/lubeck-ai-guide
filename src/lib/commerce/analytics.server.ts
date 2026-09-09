@@ -1,11 +1,13 @@
 import "server-only";
 
+export type VerifiedEntitlementGrantAnalytics = Readonly<{
+  scopeType: "city" | "feature";
+  scopeKey: string;
+  durationDays: number | null;
+}>;
+
 export async function captureVerifiedEntitlementGrant(
-  input: Readonly<{
-    scopeType: "city" | "feature";
-    scopeKey: string;
-    durationDays: number | null;
-  }>,
+  input: VerifiedEntitlementGrantAnalytics,
   environment: Readonly<Record<string, string | undefined>> = process.env,
   send: typeof fetch = fetch,
 ): Promise<void> {
@@ -39,4 +41,3 @@ export async function captureVerifiedEntitlementGrant(
     // Analytics delivery must never affect an entitlement transaction.
   }
 }
-

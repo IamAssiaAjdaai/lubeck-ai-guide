@@ -21,6 +21,11 @@ describe("city pass return destinations", () => {
     "//evil.example/path",
     "/en/lubeck/place?premium=1#premium-audio",
     "/de/lubeck/../../admin?premium=1#premium-audio",
+    "/de/bad_city/place?premium=1#premium-audio",
+    "/de/lubeck/bad_place?premium=1#premium-audio",
+    "/de/lubeck\\place?premium=1#premium-audio",
+    "/de/lubeck/place?premium=1&extra=1#premium-audio",
+    "/de/lubeck/place?premium=1#unexpected",
   ])("rejects malformed or external destination %s", (value) => {
     expect(resolveCityPassReturnPath(value, "de")).toBe("/de");
   });

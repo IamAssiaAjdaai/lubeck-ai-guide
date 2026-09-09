@@ -113,7 +113,7 @@ async function loadEligiblePrice(
   return { ...row, provider: "stripe" };
 }
 
-const defaultDependencies: CheckoutDependencies = {
+export const databaseCheckoutDependencies: CheckoutDependencies = {
   loadPrice: loadEligiblePrice,
   async hasActiveProductGrant({ userId, productId, now }) {
     const [row] = await getDb()
@@ -224,7 +224,7 @@ export async function startCommerceCheckout(
     priceId: number;
     locale: string;
   }>,
-  dependencies: CheckoutDependencies = defaultDependencies,
+  dependencies: CheckoutDependencies = databaseCheckoutDependencies,
 ): Promise<Readonly<{ orderId: string; checkoutUrl: string }>> {
   if (!Number.isSafeInteger(input.priceId) || input.priceId <= 0 || !isLocale(input.locale)) {
     throw new CommerceCheckoutError("INVALID_INPUT");
