@@ -30,12 +30,18 @@
     "admin:create-super": "tsx scripts/create-super-admin.ts",
     "knowledge:manage": "node --conditions=react-server --import tsx scripts/manage-verified-knowledge.ts",
     "knowledge:test:integration": "node --import tsx scripts/run-knowledge-integration-tests.ts",
-    "commerce:provision-lubeck-pass": "tsx scripts/provision-lubeck-city-pass.ts"
+    "commerce:provision-lubeck-pass": "tsx scripts/provision-lubeck-city-pass.ts",
+    "mobile:start": "npm --prefix mobile run start",
+    "mobile:test": "npm --prefix mobile run test:run",
+    "mobile:lint": "npm --prefix mobile run lint",
+    "mobile:typecheck": "npm --prefix mobile run typecheck",
+    "mobile:config": "npm --prefix mobile run config:validate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1127.0",
     "@aws-sdk/s3-request-presigner": "^3.1127.0",
     "@better-auth/drizzle-adapter": "^1.7.2",
+    "@better-auth/expo": "^1.7.2",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.3",
     "better-auth": "^1.7.2",
