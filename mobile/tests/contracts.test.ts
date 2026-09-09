@@ -62,4 +62,60 @@ describe("public content contracts", () => {
       },
     });
   });
+
+  it("parses a future CMS city and its places without city-specific code", () => {
+    const city = parseCityResponse({
+      city: {
+        slug: "no-code-pipeline-test",
+        countryCode: "DE",
+        timezone: "Europe/Berlin",
+        requestedLocale: "en",
+        resolvedLocale: "en",
+        didFallback: false,
+        content: {
+          name: "No-code Pipeline Test",
+          shortDescription: "A temporary API-discovered city.",
+          description: "This city is supplied by the generic public API.",
+        },
+        media: [],
+      },
+      places: [
+        {
+          slug: "json-museum",
+          category: "see",
+          coordinates: { lat: 52.51, lng: 10.01 },
+          durationMinutes: 30,
+          requestedLocale: "en",
+          resolvedLocale: "en",
+          didFallback: false,
+          content: {
+            name: "JSON Museum",
+            shortDescription: "A temporary test place.",
+          },
+          media: [],
+        },
+        {
+          slug: "data-garden",
+          category: "fun",
+          coordinates: { lat: 52.52, lng: 10.02 },
+          durationMinutes: 20,
+          requestedLocale: "en",
+          resolvedLocale: "en",
+          didFallback: false,
+          content: {
+            name: "Data Garden",
+            shortDescription: "A second temporary test place.",
+          },
+          media: [],
+        },
+      ],
+      tours: [],
+    });
+
+    expect(city.city.slug).toBe("no-code-pipeline-test");
+    expect(city.places.map(({ slug }) => slug)).toEqual([
+      "json-museum",
+      "data-garden",
+    ]);
+  });
 });

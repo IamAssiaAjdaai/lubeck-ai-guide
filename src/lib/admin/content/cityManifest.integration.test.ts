@@ -36,10 +36,6 @@ import {
   getCityReadinessMatrix,
   getCityReadinessReport,
 } from "@/lib/content/cityReadiness.server";
-import {
-  parseCityIndexResponse,
-  parseCityResponse,
-} from "../../../../mobile/src/lib/api/contracts";
 
 const shouldRun = process.env.CITY_CONTENT_DB_INTEGRATION === "1";
 
@@ -360,8 +356,7 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
       );
       expect(indexResponse.status).toBe(200);
       const indexPayload = await indexResponse.json();
-      const nativeIndex = parseCityIndexResponse(indexPayload);
-      expect(nativeIndex.cities).toEqual(expect.arrayContaining([
+      expect(indexPayload.cities).toEqual(expect.arrayContaining([
         expect.objectContaining({ slug: NO_CODE_CITY_SLUG, name: "No-code Pipeline Test" }),
       ]));
 
@@ -371,14 +366,13 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
       );
       expect(detailResponse.status).toBe(200);
       const detailPayload = await detailResponse.json();
-      const nativeCity = parseCityResponse(detailPayload);
-      expect(nativeCity.city).toMatchObject({
+      expect(detailPayload.city).toMatchObject({
         slug: NO_CODE_CITY_SLUG,
         requestedLocale: "de",
         resolvedLocale: "de",
         didFallback: false,
       });
-      expect(nativeCity.places.map(({ slug }) => slug)).toEqual([
+      expect(detailPayload.places.map(({ slug }: { slug: string }) => slug)).toEqual([
         "json-museum",
         "data-garden",
       ]);
