@@ -238,6 +238,9 @@ Design direction:
 
 Future native-quality mobile work is planned around React Native + Expo rather than a WebView wrapper.
 
+CW-18 establishes the isolated Expo traveler client and its shared-backend boundaries in
+`docs/agent/NATIVE_APP_SHELL.md`.
+
 The Next.js app remains useful for:
 
 - Admin

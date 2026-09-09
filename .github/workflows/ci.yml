@@ -10,6 +10,41 @@ on:
       - develop
 
 jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install mobile dependencies
+        run: npm ci
+
+      - name: Run mobile tests
+        run: npm run test:run
+
+      - name: Run mobile lint
+        run: npm run lint
+
+      - name: Run mobile TypeScript
+        run: npm run typecheck
+
+      - name: Validate Expo configuration
+        run: npm run config:validate
+
+      - name: Run Expo Doctor
+        run: npm run doctor
+
   build:
     runs-on: ubuntu-latest
     env:
