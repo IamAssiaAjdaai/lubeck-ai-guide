@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 
 import {
   citiesTable,
+  cityLaunchReadinessTable,
   cityLocalizationsTable,
+  citySourcesTable,
   contentSourcesTable,
   contentWorkflowEventsTable,
   contentTagsTable,
@@ -84,5 +86,28 @@ describe("CMS content schema", () => {
         ]),
       );
     }
+  });
+
+  it("stores city-level traveler introductions and canonical provenance", () => {
+    expect(getTableConfig(cityLocalizationsTable).columns.map(({ name }) => name))
+      .toContain("description");
+    expect(getTableConfig(citySourcesTable).primaryKeys).toHaveLength(1);
+  });
+
+  it("stores reusable city identity and manual launch quality gates", () => {
+    expect(getTableConfig(citiesTable).columns.map(({ name }) => name)).toEqual(
+      expect.arrayContaining(["country_code", "timezone"]),
+    );
+    expect(getTableConfig(cityLaunchReadinessTable).columns.map(({ name }) => name))
+      .toEqual(expect.arrayContaining([
+        "target_place_count",
+        "required_content_locales",
+        "reviewed_content_locales",
+        "required_audio_locales",
+        "web_qa_status",
+        "native_qa_status",
+        "traveler_qa_status",
+        "premium_content_status",
+      ]));
   });
 });

@@ -2,8 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   createCmsPlace: vi.fn(),
+  createOrReuseCmsSourceForCity: vi.fn(),
   createOrReuseCmsSourceForPlace: vi.fn(),
   approveAndPublishCmsContent: vi.fn(),
+  getCmsCity: vi.fn(),
   updateCmsPlace: vi.fn(),
   getCmsPlace: vi.fn(),
   setCmsPublicationStatus: vi.fn(),
@@ -21,8 +23,10 @@ vi.mock("@/lib/admin/content/repository.server", async (importOriginal) => {
   return {
     ...original,
     createCmsPlace: mocks.createCmsPlace,
+    createOrReuseCmsSourceForCity: mocks.createOrReuseCmsSourceForCity,
     createOrReuseCmsSourceForPlace: mocks.createOrReuseCmsSourceForPlace,
     approveAndPublishCmsContent: mocks.approveAndPublishCmsContent,
+    getCmsCity: mocks.getCmsCity,
     getCmsPlace: mocks.getCmsPlace,
     setCmsPublicationStatus: mocks.setCmsPublicationStatus,
     updateCmsPlace: mocks.updateCmsPlace,
@@ -30,6 +34,7 @@ vi.mock("@/lib/admin/content/repository.server", async (importOriginal) => {
 });
 
 import {
+  addAuthorizedCitySource,
   changeAuthorizedPublicationStatus,
   approveAndPublishAuthorizedContent,
   addAuthorizedPlaceSource,
@@ -235,6 +240,26 @@ describe("CMS content service authorization", () => {
     expect(mocks.createOrReuseCmsSourceForPlace).toHaveBeenCalledWith(
       11,
       expect.objectContaining({ canonicalUrl: "https://example.com/place" }),
+      "editor-1",
+    );
+  });
+
+  it("normalizes city sources and enforces the existing city scope", async () => {
+    mocks.getCmsCity.mockResolvedValue({ id: 7, publicationStatus: "draft" });
+    mocks.createOrReuseCmsSourceForCity.mockResolvedValue({ id: 13 });
+
+    await addAuthorizedCitySource(7, {
+      publisher: "Official source",
+      title: "City page",
+      canonicalUrl: "https://EXAMPLE.com/city/",
+      verifiedAt: "2026-09-01",
+    });
+
+    expect(mocks.requireAdminCapability).toHaveBeenCalledWith("sources:manage");
+    expect(mocks.requireCityCapability).toHaveBeenCalledWith(7, "sources:manage");
+    expect(mocks.createOrReuseCmsSourceForCity).toHaveBeenCalledWith(
+      7,
+      expect.objectContaining({ canonicalUrl: "https://example.com/city" }),
       "editor-1",
     );
   });

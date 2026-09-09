@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin/content/formData";
 import {
   changeAuthorizedPublicationStatus,
+  addAuthorizedCityReference,
   addAuthorizedPlaceReference,
   approveAndPublishAuthorizedContent,
   createAuthorizedCity,
@@ -156,6 +157,18 @@ export async function addPlaceSourceAction(id: number, formData: FormData) {
   let destination = `/admin/places/${id}`;
   try {
     await addAuthorizedPlaceReference(id, textField(formData, "referenceUrl"));
+    revalidatePath(destination);
+    destination += "?saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(actionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function addCitySourceAction(id: number, formData: FormData) {
+  let destination = `/admin/cities/${id}`;
+  try {
+    await addAuthorizedCityReference(id, textField(formData, "referenceUrl"));
     revalidatePath(destination);
     destination += "?saved=1";
   } catch (error) {

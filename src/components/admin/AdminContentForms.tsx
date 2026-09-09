@@ -87,12 +87,24 @@ export function CityFields({
       <Field label="Slug">
         <input className={inputClass} defaultValue={city?.slug} name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required />
       </Field>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field label="Country code">
+          <input className={inputClass} defaultValue={city?.countryCode ?? ""} maxLength={2} name="countryCode" pattern="[A-Za-z]{2}" placeholder="DE" required />
+        </Field>
+        <Field label="Timezone">
+          <input className={inputClass} defaultValue={city?.timezone ?? ""} name="timezone" placeholder="Europe/Berlin" required />
+        </Field>
+      </div>
       <LocalizationFields
         editingLocale={editingLocale}
         locale={localization?.locale}
         name={localization?.name}
         shortDescription={localization?.shortDescription ?? undefined}
-      />
+      >
+        <Field label="Traveler introduction">
+          <textarea className={inputClass} defaultValue={localization?.description ?? ""} name="description" rows={7} />
+        </Field>
+      </LocalizationFields>
       <AuthoredLocales rows={city?.localizations} />
     </>
   );
@@ -341,20 +353,22 @@ export function PublicationActions({
   );
 }
 
-export function PlaceSourcesPanel({
+export function ContentSourcesPanel({
   action,
   canManage,
   sourceLinks,
+  subject,
 }: Readonly<{
   action: FormAction;
   canManage: boolean;
   sourceLinks: readonly Readonly<{ source: ContentSourceRow; required: boolean }>[];
+  subject: "city" | "place";
 }>) {
   return (
     <section className="surface-card mt-6 p-5 sm:p-7">
       <h2 className="text-xl font-extrabold">References</h2>
       <p className="mt-2 text-sm text-text-secondary">
-        Add links that editors and reviewers can use to verify this place.
+        Add links that editors and reviewers can use to verify this {subject}.
       </p>
       {sourceLinks.length ? (
         <ul className="mt-4 space-y-3">
@@ -378,6 +392,12 @@ export function PlaceSourcesPanel({
       ) : null}
     </section>
   );
+}
+
+export function PlaceSourcesPanel(
+  props: Omit<Parameters<typeof ContentSourcesPanel>[0], "subject">,
+) {
+  return <ContentSourcesPanel {...props} subject="place" />;
 }
 
 function transitionLabel(

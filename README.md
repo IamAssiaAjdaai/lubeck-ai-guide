@@ -84,7 +84,8 @@ npm run db:verify
 Expected verification:
 
 ```text
-Verified Lübeck: 1 city, 25 places (17 See, 5 Eat, 3 Fun; 5 curated Hidden Gems)
+Verified database catalog: 1 city, 25 places.
+- lubeck: 25 places (17 See, 5 Eat, 3 Fun; 5 curated Hidden Gems)
 ```
 
 The seed is deterministic. Verify idempotency by repeating:
@@ -94,7 +95,10 @@ npm run db:seed
 npm run db:verify
 ```
 
-The result must remain one Lübeck city and 25 places.
+The seed-only result must remain one Lübeck city and 25 places. The verifier is
+catalog-aware: after additional cities are provisioned it reports every city
+and validates generic identity, coordinate, category, duration, and
+city/place-slug invariants while retaining the strict canonical Lübeck check.
 
 ### Database commands
 

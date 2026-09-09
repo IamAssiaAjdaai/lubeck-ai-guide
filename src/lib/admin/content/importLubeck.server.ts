@@ -1,12 +1,19 @@
 import { and, asc, eq, inArray } from "drizzle-orm";
 
 import { cities } from "@/data/cities";
+import {
+  lubeckCityContent,
+  lubeckCitySources,
+  lubeckReadinessProfile,
+} from "@/data/cities/lubeck";
 import { lubeckLandmarks, lubeckPlaces } from "@/data/places";
 import { getPlaceSources } from "@/data/placeSources";
 import { getDb } from "@/db/client";
 import {
   citiesTable,
+  cityLaunchReadinessTable,
   cityLocalizationsTable,
+  citySourcesTable,
   contentTagsTable,
   contentSourcesTable,
   placeContentTagsTable,
@@ -19,7 +26,10 @@ import {
   tourStopsTable,
 } from "@/db/schema";
 import { getTranslations, locales } from "@/lib/i18n";
-import { canBootstrapCanonicalRecord } from "@/lib/admin/content/importPolicy";
+import {
+  canBootstrapCanonicalRecord,
+  canRefreshCanonicalLocalization,
+} from "@/lib/admin/content/importPolicy";
 import { normalizeCanonicalSourceUrl } from "@/lib/admin/content/editorialWorkflow";
 
 export const LUBECK_EDITORIAL_TOUR_SLUG = "historic-center-walk";
@@ -33,6 +43,8 @@ export async function importCanonicalLubeckContent() {
       .values({
         slug: cities.lubeck.slug,
         name: cities.lubeck.name,
+        countryCode: "DE",
+        timezone: "Europe/Berlin",
         publicationStatus: "published",
         createdAt: now,
         updatedAt: now,
@@ -51,7 +63,7 @@ export async function importCanonicalLubeckContent() {
     if (!city) throw new Error("Canonical Lubeck city import failed.");
 
     const existingCityLocalizations = await tx
-      .select({ id: cityLocalizationsTable.id })
+      .select()
       .from(cityLocalizationsTable)
       .where(eq(cityLocalizationsTable.cityId, city.id));
     const mayImportCity = canBootstrapCanonicalRecord({
@@ -59,24 +71,76 @@ export async function importCanonicalLubeckContent() {
       existingLocalizationCount: existingCityLocalizations.length,
       updatedByUserId: city.updatedByUserId,
     });
-    if (mayImportCity && !createdCity) {
+    const mayRefreshCanonicalCity = Boolean(createdCity) || !city.updatedByUserId;
+    if (mayRefreshCanonicalCity && !createdCity) {
       await tx
         .update(citiesTable)
         .set({
           name: cities.lubeck.name,
+          countryCode: "DE",
+          timezone: "Europe/Berlin",
           publicationStatus: "published",
           updatedAt: now,
         })
         .where(eq(citiesTable.id, city.id));
     }
-    if (mayImportCity) {
-      await tx
-        .insert(cityLocalizationsTable)
-        .values([
-          { cityId: city.id, locale: "de", name: "Lübeck" },
-          { cityId: city.id, locale: "en", name: "Lübeck" },
-        ])
-        .onConflictDoNothing();
+    if (mayRefreshCanonicalCity) {
+      for (const [locale, content] of Object.entries(lubeckCityContent)) {
+        const existing = existingCityLocalizations.find(
+          (localization) => localization.locale === locale,
+        );
+        if (!existing) {
+          await tx.insert(cityLocalizationsTable).values({
+            cityId: city.id,
+            locale,
+            ...content,
+          });
+        } else if (canRefreshCanonicalLocalization({
+          recordUpdatedByUserId: city.updatedByUserId,
+          localizationUpdatedByUserId: existing.updatedByUserId,
+        })) {
+          await tx.update(cityLocalizationsTable).set({
+            ...content,
+            updatedAt: now,
+          }).where(eq(cityLocalizationsTable.id, existing.id));
+        }
+      }
+
+      for (const source of lubeckCitySources) {
+        const canonicalUrl = normalizeCanonicalSourceUrl(source.canonicalUrl);
+        const [createdSource] = await tx.insert(contentSourcesTable).values({
+          ...source,
+          canonicalUrl,
+          createdAt: now,
+          updatedAt: now,
+        }).onConflictDoNothing({
+          target: contentSourcesTable.canonicalUrl,
+        }).returning();
+        const sourceRecord = createdSource ?? (await tx
+          .select({ id: contentSourcesTable.id })
+          .from(contentSourcesTable)
+          .where(eq(contentSourcesTable.canonicalUrl, canonicalUrl))
+          .limit(1))[0];
+        if (!sourceRecord) throw new Error(`Unable to import source ${canonicalUrl}.`);
+        await tx.insert(citySourcesTable).values({
+          cityId: city.id,
+          sourceId: sourceRecord.id,
+          required: true,
+          createdAt: now,
+        }).onConflictDoNothing();
+      }
+    }
+
+    if (mayImportCity || mayRefreshCanonicalCity) {
+      await tx.insert(cityLaunchReadinessTable).values({
+        cityId: city.id,
+        ...lubeckReadinessProfile,
+        requiredContentLocales: [...lubeckReadinessProfile.requiredContentLocales],
+        reviewedContentLocales: [...lubeckReadinessProfile.reviewedContentLocales],
+        requiredAudioLocales: [...lubeckReadinessProfile.requiredAudioLocales],
+        createdAt: now,
+        updatedAt: now,
+      }).onConflictDoNothing({ target: cityLaunchReadinessTable.cityId });
     }
 
     for (const source of lubeckPlaces) {

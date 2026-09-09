@@ -154,6 +154,15 @@ export default function CityExperience({
                 {city.content.shortDescription}
               </p>
             ) : null}
+            {city.content.description ? (
+              <p
+                lang={city.resolvedLocale}
+                dir={getDirection(city.resolvedLocale)}
+                className="mt-3 text-[15px] leading-7 text-text-secondary"
+              >
+                {city.content.description}
+              </p>
+            ) : null}
           </div>
         </header>
 

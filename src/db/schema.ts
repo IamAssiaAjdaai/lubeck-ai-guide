@@ -72,6 +72,17 @@ export const placeStatusEnum = pgEnum("place_status", [
   "unknown",
 ]);
 
+export const cityQualityGateStatusEnum = pgEnum("city_quality_gate_status", [
+  "pending",
+  "passed",
+  "failed",
+]);
+
+export const cityPremiumReadinessStatusEnum = pgEnum(
+  "city_premium_readiness_status",
+  ["not_required", "pending", "ready"],
+);
+
 export const mediaKindEnum = pgEnum("media_kind", [
   "image",
   "audio",
@@ -116,9 +127,40 @@ export const citiesTable = pgTable("cities", {
   id: serial("id").primaryKey(),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
+  countryCode: text("country_code"),
+  timezone: text("timezone"),
   publicationStatus: publicationStatusEnum("publication_status")
     .default("draft")
     .notNull(),
+  ...actorColumns(),
+  ...contentTimestamps(),
+});
+
+export const cityLaunchReadinessTable = pgTable("city_launch_readiness", {
+  cityId: integer("city_id")
+    .primaryKey()
+    .references(() => citiesTable.id, { onDelete: "cascade" }),
+  targetPlaceCount: integer("target_place_count").notNull(),
+  requiredContentLocales: text("required_content_locales").array().notNull(),
+  reviewedContentLocales: text("reviewed_content_locales").array().notNull(),
+  requiredAudioLocales: text("required_audio_locales").array().notNull(),
+  audioTargetPlaceCount: integer("audio_target_place_count").notNull(),
+  minimumVerifiedAiPlaceCount: integer("minimum_verified_ai_place_count").notNull(),
+  webQaStatus: cityQualityGateStatusEnum("web_qa_status")
+    .default("pending")
+    .notNull(),
+  nativeQaStatus: cityQualityGateStatusEnum("native_qa_status")
+    .default("pending")
+    .notNull(),
+  travelerQaStatus: cityQualityGateStatusEnum("traveler_qa_status")
+    .default("pending")
+    .notNull(),
+  premiumContentStatus: cityPremiumReadinessStatusEnum(
+    "premium_content_status",
+  )
+    .default("not_required")
+    .notNull(),
+  notes: text("notes"),
   ...actorColumns(),
   ...contentTimestamps(),
 });
@@ -133,6 +175,7 @@ export const cityLocalizationsTable = pgTable(
     locale: text("locale").notNull(),
     name: text("name").notNull(),
     shortDescription: text("short_description"),
+    description: text("description"),
     ...actorColumns(),
     ...contentTimestamps(),
   },
@@ -372,6 +415,27 @@ export const placeSourcesTable = pgTable(
   ],
 );
 
+export const citySourcesTable = pgTable(
+  "city_sources",
+  {
+    cityId: integer("city_id")
+      .notNull()
+      .references(() => citiesTable.id, { onDelete: "cascade" }),
+    sourceId: integer("source_id")
+      .notNull()
+      .references(() => contentSourcesTable.id, { onDelete: "restrict" }),
+    required: boolean("required").default(true).notNull(),
+    createdByUserId: text("created_by_user_id"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.cityId, table.sourceId] }),
+    index("city_sources_source_id_idx").on(table.sourceId),
+  ],
+);
+
 export const verifiedKnowledgeChunksTable = pgTable(
   "verified_knowledge_chunks",
   {
@@ -566,10 +630,13 @@ export const tourMediaTable = pgTable(
 
 export type CityRow = typeof citiesTable.$inferSelect;
 export type NewCityRow = typeof citiesTable.$inferInsert;
+export type CityLaunchReadinessRow =
+  typeof cityLaunchReadinessTable.$inferSelect;
 
 export type PlaceRow = typeof placesTable.$inferSelect;
 export type NewPlaceRow = typeof placesTable.$inferInsert;
 export type CityLocalizationRow = typeof cityLocalizationsTable.$inferSelect;
+export type CitySourceRow = typeof citySourcesTable.$inferSelect;
 export type PlaceLocalizationRow = typeof placeLocalizationsTable.$inferSelect;
 export type PlaceRevisionRow = typeof placeRevisionsTable.$inferSelect;
 export type ContentTagRow = typeof contentTagsTable.$inferSelect;

@@ -1,7 +1,12 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { PlaceSourcesPanel, PublicationActions } from "@/components/admin/AdminContentForms";
+import {
+  CityFields,
+  ContentSourcesPanel,
+  PlaceSourcesPanel,
+  PublicationActions,
+} from "@/components/admin/AdminContentForms";
 import type { StaffAccess } from "@/lib/admin/permissions";
 
 function staff(role: string): StaffAccess {
@@ -18,7 +23,34 @@ function staff(role: string): StaffAccess {
 const action = vi.fn(async () => undefined);
 const approveAndPublishAction = vi.fn(async () => undefined);
 
+afterEach(cleanup);
+
 describe("editorial workflow actions", () => {
+  it("exposes the complete city identity and traveler-content workflow", () => {
+    render(<CityFields editingLocale="en" />);
+
+    expect(screen.getByRole("textbox", { name: "Slug" }).hasAttribute("required")).toBe(true);
+    expect(screen.getByRole("textbox", { name: "Country code" }).hasAttribute("required")).toBe(true);
+    expect(screen.getByRole("textbox", { name: "Timezone" }).hasAttribute("required")).toBe(true);
+    expect(screen.getByRole("textbox", { name: "Name" }).hasAttribute("required")).toBe(true);
+    expect(screen.getByRole("textbox", { name: "Short description" })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "Traveler introduction" })).toBeTruthy();
+  });
+
+  it("supports city-level provenance through the shared source workflow", () => {
+    render(
+      <ContentSourcesPanel
+        action={action}
+        canManage
+        sourceLinks={[]}
+        subject="city"
+      />,
+    );
+
+    expect(screen.getByText(/verify this city/i)).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "Reference link" })).toBeTruthy();
+  });
+
   it("shows submit, but not approval or publication, to an editor", () => {
     render(<PublicationActions action={action} cityId={7} entity="place" id={1} staff={staff("content_editor")} status="draft" />);
     expect(screen.getByRole("button", { name: "Send for review place" })).toBeTruthy();

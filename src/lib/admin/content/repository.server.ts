@@ -6,6 +6,7 @@ import { getDb } from "@/db/client";
 import {
   citiesTable,
   cityLocalizationsTable,
+  citySourcesTable,
   contentTagsTable,
   contentSourcesTable,
   contentWorkflowEventsTable,
@@ -87,12 +88,73 @@ export async function getCmsCity(id: number) {
     .where(eq(citiesTable.id, id))
     .limit(1);
   if (!city) return undefined;
-  const localizations = await db
-    .select()
-    .from(cityLocalizationsTable)
-    .where(eq(cityLocalizationsTable.cityId, id))
-    .orderBy(asc(cityLocalizationsTable.locale));
-  return { ...city, localizations };
+  const [localizations, sourceLinks] = await Promise.all([
+    db
+      .select()
+      .from(cityLocalizationsTable)
+      .where(eq(cityLocalizationsTable.cityId, id))
+      .orderBy(asc(cityLocalizationsTable.locale)),
+    db
+      .select({
+        source: contentSourcesTable,
+        required: citySourcesTable.required,
+      })
+      .from(citySourcesTable)
+      .innerJoin(
+        contentSourcesTable,
+        eq(citySourcesTable.sourceId, contentSourcesTable.id),
+      )
+      .where(eq(citySourcesTable.cityId, id))
+      .orderBy(asc(contentSourcesTable.publisher), asc(contentSourcesTable.title)),
+  ]);
+  return { ...city, localizations, sourceLinks };
+}
+
+export async function createOrReuseCmsSourceForCity(
+  cityId: number,
+  input: ContentSourceInput,
+  actorId: string,
+) {
+  return getDb().transaction(async (tx) => {
+    const [city] = await tx
+      .select({ id: citiesTable.id })
+      .from(citiesTable)
+      .where(eq(citiesTable.id, cityId))
+      .for("update")
+      .limit(1);
+    if (!city) throw new CmsContentNotFoundError("City");
+
+    const now = new Date();
+    const [created] = await tx
+      .insert(contentSourcesTable)
+      .values({
+        ...input,
+        createdByUserId: actorId,
+        updatedByUserId: actorId,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onConflictDoNothing({ target: contentSourcesTable.canonicalUrl })
+      .returning();
+    const source = created ?? (await tx
+      .select()
+      .from(contentSourcesTable)
+      .where(eq(contentSourcesTable.canonicalUrl, input.canonicalUrl))
+      .limit(1))[0];
+    if (!source) throw new CmsContentIntegrityError("Source creation failed.");
+
+    await tx
+      .insert(citySourcesTable)
+      .values({
+        cityId,
+        sourceId: source.id,
+        required: true,
+        createdByUserId: actorId,
+        createdAt: now,
+      })
+      .onConflictDoNothing();
+    return source;
+  });
 }
 
 export async function createCmsCity(input: CityInput, actorId: string) {
@@ -104,6 +166,8 @@ export async function createCmsCity(input: CityInput, actorId: string) {
       .values({
         slug: input.slug,
         name: input.localizations[0]?.name ?? input.slug,
+        countryCode: input.countryCode,
+        timezone: input.timezone,
         publicationStatus: input.publicationStatus,
         createdByUserId: actorId,
         updatedByUserId: actorId,
@@ -150,6 +214,8 @@ export async function updateCmsCity(
       .set({
         slug: input.slug,
         name: input.localizations[0]?.name ?? input.slug,
+        countryCode: input.countryCode,
+        timezone: input.timezone,
         publicationStatus,
         updatedByUserId: actorId,
         updatedAt: now,
@@ -186,6 +252,7 @@ export async function updateCmsCity(
           set: {
             name: localization.name,
             shortDescription: localization.shortDescription,
+            description: localization.description,
             updatedByUserId: actorId,
             updatedAt: now,
           },

@@ -23,6 +23,7 @@ export type CityLocalizationInput = Readonly<{
   locale: Locale;
   name: string;
   shortDescription?: string;
+  description?: string;
 }>;
 
 export type PlaceLocalizationInput = Readonly<{
@@ -44,6 +45,8 @@ export type TourLocalizationInput = Readonly<{
 
 export type CityInput = Readonly<{
   slug: string;
+  countryCode?: string;
+  timezone?: string;
   publicationStatus: PublicationStatus;
   localizations: readonly CityLocalizationInput[];
 }>;
@@ -163,8 +166,24 @@ export function validateTagSlugs(value: unknown): readonly string[] {
 }
 
 export function validateCityInput(value: CityInput): CityInput {
+  const countryCode = optionalText(value.countryCode, "countryCode", 2)?.toUpperCase();
+  if (countryCode && !/^[A-Z]{2}$/.test(countryCode)) {
+    throw new CmsValidationError([
+      "countryCode must be an ISO 3166-1 alpha-2 code.",
+    ]);
+  }
+  const timezone = optionalText(value.timezone, "timezone", 100);
+  if (timezone) {
+    try {
+      new Intl.DateTimeFormat("en", { timeZone: timezone });
+    } catch {
+      throw new CmsValidationError(["timezone must be a valid IANA timezone."]);
+    }
+  }
   const result: CityInput = {
     slug: validateSlug(value.slug),
+    countryCode,
+    timezone,
     publicationStatus: validatePublicationStatus(value.publicationStatus),
     localizations: validateUniqueLocalizations(
       value.localizations,
@@ -175,6 +194,11 @@ export function validateCityInput(value: CityInput): CityInput {
           localization.shortDescription,
           "shortDescription",
           1_000,
+        ),
+        description: optionalText(
+          localization.description,
+          "description",
+          20_000,
         ),
       }),
     ),

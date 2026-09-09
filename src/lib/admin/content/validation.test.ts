@@ -88,6 +88,25 @@ describe("CMS content validation", () => {
     ).toThrow(/unique/);
   });
 
+  it("validates optional ISO country and IANA timezone city metadata", () => {
+    const input = {
+      slug: "test-city",
+      countryCode: "de",
+      timezone: "Europe/Berlin",
+      publicationStatus: "draft" as const,
+      localizations: [{ locale: "en" as const, name: "Test City" }],
+    };
+
+    expect(validateCityInput(input)).toMatchObject({
+      countryCode: "DE",
+      timezone: "Europe/Berlin",
+    });
+    expect(() => validateCityInput({ ...input, countryCode: "Germany" }))
+      .toThrow(/countryCode/);
+    expect(() => validateCityInput({ ...input, timezone: "Mars/Olympus" }))
+      .toThrow(/IANA timezone/);
+  });
+
   it("validates bounded structured facts", () => {
     expect(validateFacts([{ label: "Built", value: "1478" }])).toEqual([
       { label: "Built", value: "1478" },

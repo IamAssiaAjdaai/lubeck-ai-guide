@@ -32,6 +32,7 @@ import type { PublicMedia } from "@/lib/media/types";
 export type PublicCityLocalization = Readonly<{
   name: string;
   shortDescription?: string;
+  description?: string;
 }>;
 
 export type PublicTourLocalization = Readonly<{
@@ -54,6 +55,8 @@ export type PublicTour = Readonly<{
 export type PublicCitySnapshot = Readonly<{
   city: Readonly<{
     slug: string;
+    countryCode?: string;
+    timezone?: string;
     content: Readonly<Partial<Record<Locale, PublicCityLocalization>>>;
   }>;
   places: readonly Place[];
@@ -68,6 +71,8 @@ export type PublicCitySnapshot = Readonly<{
 export type PublicCitySummary = Readonly<{
   city: Readonly<{
     slug: string;
+    countryCode?: string;
+    timezone?: string;
     content: Readonly<Partial<Record<Locale, PublicCityLocalization>>>;
   }>;
   media?: readonly PublicMedia[];
@@ -166,6 +171,8 @@ export function toLocalizedPublicCityResponse(
   return {
     city: {
       slug: snapshot.city.slug,
+      ...(snapshot.city.countryCode ? { countryCode: snapshot.city.countryCode } : {}),
+      ...(snapshot.city.timezone ? { timezone: snapshot.city.timezone } : {}),
       ...city,
       media: publicMediaForLocale(snapshot.media?.city ?? [], requestedLocale),
     },
@@ -222,6 +229,8 @@ export function toLocalizedPublicCityIndexResponse(
       if (!resolved) return [];
       return [{
         slug: summary.city.slug,
+        ...(summary.city.countryCode ? { countryCode: summary.city.countryCode } : {}),
+        ...(summary.city.timezone ? { timezone: summary.city.timezone } : {}),
         name: resolved.content.name,
         ...(resolved.content.shortDescription
           ? { shortDescription: resolved.content.shortDescription }
@@ -439,12 +448,17 @@ async function loadPublishedDatabaseSnapshot(
   return {
     city: {
       slug: city.slug,
+      ...(city.countryCode ? { countryCode: city.countryCode } : {}),
+      ...(city.timezone ? { timezone: city.timezone } : {}),
       content: Object.fromEntries(
         validCityLocalizations
           .map((localization) => [localization.locale, {
             name: localization.name,
             ...(localization.shortDescription
               ? { shortDescription: localization.shortDescription }
+              : {}),
+            ...(localization.description
+              ? { description: localization.description }
               : {}),
           }]),
       ),
@@ -519,6 +533,8 @@ async function loadPublishedDatabaseCitySummaries(): Promise<readonly PublicCity
     const summary = {
       city: {
         slug: city.slug,
+        ...(city.countryCode ? { countryCode: city.countryCode } : {}),
+        ...(city.timezone ? { timezone: city.timezone } : {}),
         content: Object.fromEntries(
           localizations
             .filter(
@@ -533,6 +549,9 @@ async function loadPublishedDatabaseCitySummaries(): Promise<readonly PublicCity
                 name: localization.name,
                 ...(localization.shortDescription
                   ? { shortDescription: localization.shortDescription }
+                  : {}),
+                ...(localization.description
+                  ? { description: localization.description }
                   : {}),
               },
             ]),
@@ -551,9 +570,10 @@ function getCodeSnapshot(citySlug: string): PublicCitySnapshot {
   return {
     city: {
       slug: "lubeck",
+      countryCode: cities.lubeck.countryCode,
+      timezone: cities.lubeck.timezone,
       content: {
-        de: { name: cities.lubeck.name },
-        en: { name: cities.lubeck.name },
+        ...cities.lubeck.legacyContent,
       },
     },
     places: lubeckPlaces,
@@ -582,6 +602,8 @@ function getCodeCitySummary(): PublicCitySummary {
   return {
     city: {
       slug: cities.lubeck.slug,
+      countryCode: cities.lubeck.countryCode,
+      timezone: cities.lubeck.timezone,
       content: Object.fromEntries(
         locales.map((locale) => {
           const translations = getTranslations(locale);
@@ -590,6 +612,16 @@ function getCodeCitySummary(): PublicCitySummary {
             {
               name: cities.lubeck.name,
               shortDescription: translations.home.featuredCityDescription,
+              ...(cities.lubeck.legacyContent[
+                locale as keyof typeof cities.lubeck.legacyContent
+              ]
+                ? {
+                    description:
+                      cities.lubeck.legacyContent[
+                        locale as keyof typeof cities.lubeck.legacyContent
+                      ].description,
+                  }
+                : {}),
             },
           ];
         }),

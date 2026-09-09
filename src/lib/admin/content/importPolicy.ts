@@ -12,3 +12,13 @@ export function canBootstrapCanonicalRecord({
     (!updatedByUserId && existingLocalizationCount === 0)
   );
 }
+
+export function canRefreshCanonicalLocalization({
+  recordUpdatedByUserId,
+  localizationUpdatedByUserId,
+}: Readonly<{
+  recordUpdatedByUserId: string | null;
+  localizationUpdatedByUserId: string | null;
+}>): boolean {
+  return !recordUpdatedByUserId && !localizationUpdatedByUserId;
+}
