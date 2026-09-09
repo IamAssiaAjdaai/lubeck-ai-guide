@@ -1,11 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  lubeckCitySeed,
-  lubeckPlaceSeeds,
-} from "@/db/seedData";
+import { lubeckCitySeed, lubeckPlaceSeeds } from "@/db/seedData";
 import {
   DatabaseVerificationError,
+  verifyDatabaseCatalogSnapshot,
   verifyLubeckDatabaseSnapshot,
   type DatabaseCitySnapshot,
   type DatabasePlaceSnapshot,
@@ -91,5 +89,57 @@ describe("database runtime verification", () => {
     expect(() =>
       verifyLubeckDatabaseSnapshot([city, { ...city, id: 2 }], places),
     ).toThrow(/expected 1 Lübeck city, found 2/);
+  });
+
+  it("validates and reports a future-safe multi-city catalog", () => {
+    const { city, places } = createSnapshot();
+    const secondCity = { id: 2, slug: "test-city", name: "Test City" };
+    const secondCityPlace = {
+      ...places[0],
+      cityId: secondCity.id,
+      slug: "test-place",
+    };
+
+    expect(
+      verifyDatabaseCatalogSnapshot(
+        [city, secondCity],
+        [...places, secondCityPlace],
+      ),
+    ).toEqual({
+      cityCount: 2,
+      placeCount: 26,
+      cities: [
+        {
+          slug: "lubeck",
+          name: "Lübeck",
+          placeCount: 25,
+          curatedHiddenGemCount: 5,
+          categoryCounts: { see: 17, eat: 5, fun: 3 },
+        },
+        {
+          slug: "test-city",
+          name: "Test City",
+          placeCount: 1,
+          curatedHiddenGemCount: 0,
+          categoryCounts: { see: 1, eat: 0, fun: 0 },
+        },
+      ],
+    });
+  });
+
+  it("rejects orphaned and geographically invalid catalog records", () => {
+    const { city, places } = createSnapshot();
+
+    expect(() =>
+      verifyDatabaseCatalogSnapshot([city], [
+        ...places,
+        {
+          ...places[0],
+          cityId: 999,
+          slug: "orphan",
+          latitude: 91,
+        },
+      ]),
+    ).toThrow(/references unknown city 999.*invalid latitude/);
   });
 });

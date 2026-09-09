@@ -1,5 +1,30 @@
 # Content production operations
 
+## Generic city onboarding
+
+`npm run city:import -- ./content-imports/berlin.json` validates a data-only
+JSON city manifest and imports it through the existing CMS tables in one
+transaction. `--manifest=<path>` remains an equivalent explicit form. The
+command is idempotent: it does not run during builds, does not reset data, and
+will not overwrite a record that has staff-authored localizations or an editor
+actor.
+
+The bundled `--city=hamburg` convenience input is retained only as a
+bootstrap/reference fixture for existing reviewed content. Adding a normal
+future city must use an external JSON manifest or the Admin CMS; it must not
+require a new TypeScript module or a traveler application rebuild.
+
+After import, run `npm run content:readiness -- --city=<slug>` to derive the
+automatic launch metrics and combine them with persisted editorial/device QA
+gates. See `docs/agent/CITY_ONBOARDING.md` for the full checklist and the
+interpretation of blockers.
+
+Run `npm run content:readiness` without `--city` for the shared readiness
+matrix. This audits every city with an explicit launch-readiness profile,
+including Lübeck and Hamburg, using the same city-content and public-media
+rules. Publication alone does not enroll an unrelated local/test city in the
+launch portfolio, and the matrix has no hardcoded city total.
+
 ## Lübeck City Pass provisioning
 
 `npm run commerce:provision-lubeck-pass` explicitly provisions the inactive

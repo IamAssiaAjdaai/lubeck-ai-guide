@@ -29,11 +29,13 @@ describe("public city index API", () => {
       },
       {
         city: {
-          slug: "ghent",
+          slug: "hamburg",
+          countryCode: "DE",
+          timezone: "Europe/Berlin",
           content: {
             en: {
-              name: "Ghent",
-              shortDescription: "Canals and history",
+              name: "Hamburg",
+              shortDescription: "Harbour and history",
             },
           },
         },
@@ -52,7 +54,9 @@ describe("public city index API", () => {
     expect(mocks.getPublicCitySummaries).toHaveBeenCalledOnce();
     expect(body.cities).toHaveLength(2);
     expect(body.cities[1]).toMatchObject({
-      slug: "ghent",
+      slug: "hamburg",
+      countryCode: "DE",
+      timezone: "Europe/Berlin",
       requestedLocale: "ar",
       resolvedLocale: "en",
       didFallback: true,
@@ -81,7 +85,7 @@ describe("public city index API", () => {
       requestedLocale: "en",
       resolvedLocale: "en",
       didFallback: false,
-      name: "Ghent",
+      name: "Hamburg",
     });
   });
 

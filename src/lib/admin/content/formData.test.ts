@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { placeInputFromFormData } from "@/lib/admin/content/formData";
+import {
+  cityInputFromFormData,
+  placeInputFromFormData,
+} from "@/lib/admin/content/formData";
 
 function validPlaceFormData() {
   const data = new FormData();
@@ -33,6 +36,27 @@ function validPlaceFormData() {
 }
 
 describe("CMS form payload parsing", () => {
+  it("keeps the full traveler-facing city introduction", () => {
+    const formData = new FormData();
+    for (const [name, value] of Object.entries({
+      slug: "test-city",
+      countryCode: "DE",
+      timezone: "Europe/Berlin",
+      publicationStatus: "draft",
+      locale: "en",
+      name: "Test City",
+      shortDescription: "A short city summary.",
+      description: "A fuller traveler-facing city introduction.",
+    })) formData.set(name, value);
+
+    expect(cityInputFromFormData(formData)).toMatchObject({
+      countryCode: "DE",
+      timezone: "Europe/Berlin",
+      localizations: [{
+        description: "A fuller traveler-facing city introduction.",
+      }],
+    });
+  });
   it("maps only supported content fields and ignores client actor or role claims", () => {
     const formData = validPlaceFormData();
     formData.set("actorId", "attacker-controlled-user");

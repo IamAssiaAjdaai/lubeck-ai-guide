@@ -183,6 +183,16 @@ describe("public content repository", () => {
 
   it("adapts the complete canonical Lubeck snapshot", async () => {
     const snapshot = await getPublicCitySnapshot("lubeck", "code");
+    expect(snapshot.city.content.de).toMatchObject({
+      name: "Lübeck",
+      shortDescription: expect.any(String),
+      description: expect.any(String),
+    });
+    expect(snapshot.city.content.en).toMatchObject({
+      name: "Lübeck",
+      shortDescription: expect.any(String),
+      description: expect.any(String),
+    });
     expect(snapshot.places).toHaveLength(25);
     expect(snapshot.tours[0]?.stops).toHaveLength(5);
     expect(snapshot.places.filter(
@@ -207,6 +217,7 @@ describe("public content repository", () => {
       "en",
     );
     expect(response.city.requestedLocale).toBe("en");
+    expect(response.city.content.description).toBeTruthy();
     expect(response.places).toHaveLength(25);
     expect(response.places[0]).not.toHaveProperty("id");
     expect(response.places[0]).not.toHaveProperty("createdByUserId");
@@ -234,6 +245,26 @@ describe("public content repository", () => {
       resolvedLocale: "en",
       didFallback: true,
     })]);
+  });
+
+  it("keeps generic country and timezone identity in public city DTOs", () => {
+    const response = toLocalizedPublicCityIndexResponse(
+      [{
+        city: {
+          slug: "hamburg",
+          countryCode: "DE",
+          timezone: "Europe/Berlin",
+          content: { en: { name: "Hamburg" } },
+        },
+      }],
+      "en",
+    );
+
+    expect(response.cities[0]).toMatchObject({
+      slug: "hamburg",
+      countryCode: "DE",
+      timezone: "Europe/Berlin",
+    });
   });
 
   it("falls back wholesale to code when auto cannot load the database", async () => {

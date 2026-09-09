@@ -13,14 +13,16 @@ import { GET } from "@/app/api/content/cities/[citySlug]/route";
 describe("public city content API", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.getPublicCitySnapshot.mockResolvedValue({ city: { slug: "lubeck" } });
+    mocks.getPublicCitySnapshot.mockResolvedValue({ city: { slug: "hamburg" } });
     mocks.toLocalizedPublicCityResponse.mockReturnValue({
       city: {
-        slug: "lubeck",
+        slug: "hamburg",
+        countryCode: "DE",
+        timezone: "Europe/Berlin",
         requestedLocale: "ar",
         resolvedLocale: "en",
         didFallback: true,
-        content: { name: "Lubeck" },
+        content: { name: "Hamburg" },
       },
       places: [],
       tours: [],
@@ -29,19 +31,22 @@ describe("public city content API", () => {
 
   it("returns published public DTOs with explicit locale fallback metadata", async () => {
     const response = await GET(
-      new Request("https://citywalk.example/api/content/cities/lubeck?locale=ar"),
-      { params: Promise.resolve({ citySlug: "lubeck" }) },
+      new Request("https://citywalk.example/api/content/cities/hamburg?locale=ar"),
+      { params: Promise.resolve({ citySlug: "hamburg" }) },
     );
     const body = await response.json();
 
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-    expect(mocks.getPublicCitySnapshot).toHaveBeenCalledWith("lubeck");
+    expect(mocks.getPublicCitySnapshot).toHaveBeenCalledWith("hamburg");
     expect(mocks.toLocalizedPublicCityResponse).toHaveBeenCalledWith(
       expect.anything(),
       "ar",
     );
     expect(body.city).toMatchObject({
+      slug: "hamburg",
+      countryCode: "DE",
+      timezone: "Europe/Berlin",
       requestedLocale: "ar",
       resolvedLocale: "en",
       didFallback: true,

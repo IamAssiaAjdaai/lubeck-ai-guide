@@ -78,6 +78,20 @@
       "when": 1788893957643,
       "tag": "0010_fluffy_runaways",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1788981746364,
+      "tag": "0011_calm_fenris",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1788991260910,
+      "tag": "0012_equal_vampiro",
+      "breakpoints": true
     }
   ]
 }

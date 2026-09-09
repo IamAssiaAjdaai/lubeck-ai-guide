@@ -142,6 +142,9 @@ jobs:
       - name: Run CMS content integration tests
         run: npm run cms:test:integration
 
+      - name: Run generic city content integration tests
+        run: npm run content:test:integration
+
       - name: Run CMS media integration tests
         run: npm run media:test:integration
 

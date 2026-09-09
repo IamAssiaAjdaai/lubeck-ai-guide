@@ -19,6 +19,8 @@ export type LocalizedContent<TContent> = Readonly<{
 
 export type PublicCitySummary = Readonly<{
   slug: string;
+  countryCode?: string;
+  timezone?: string;
   name: string;
   shortDescription?: string;
   requestedLocale: string;
@@ -36,6 +38,8 @@ export type PublicPlace = LocalizedContent<Readonly<{
   facts?: readonly string[];
 }>> & Readonly<{
   slug: string;
+  countryCode?: string;
+  timezone?: string;
   category: "see" | "eat" | "fun";
   coordinates: Readonly<{ lat: number; lng: number }>;
   durationMinutes: number;
@@ -46,6 +50,7 @@ export type PublicPlace = LocalizedContent<Readonly<{
 export type PublicCity = LocalizedContent<Readonly<{
   name: string;
   shortDescription?: string;
+  description?: string;
 }>> & Readonly<{
   slug: string;
   media: readonly PublicMedia[];
@@ -85,6 +90,8 @@ function parseCitySummary(value: unknown): PublicCitySummary {
   const object = asObject(value, "city summary");
   return {
     slug: asString(object.slug, "city slug"),
+    ...(typeof object.countryCode === "string" ? { countryCode: object.countryCode } : {}),
+    ...(typeof object.timezone === "string" ? { timezone: object.timezone } : {}),
     name: asString(object.name, "city name"),
     ...(typeof object.shortDescription === "string"
       ? { shortDescription: object.shortDescription }
@@ -102,11 +109,16 @@ function parseCity(value: unknown): PublicCity {
   const content = asObject(localized.content, "city content");
   return {
     slug: asString(object.slug, "city slug"),
+    ...(typeof object.countryCode === "string" ? { countryCode: object.countryCode } : {}),
+    ...(typeof object.timezone === "string" ? { timezone: object.timezone } : {}),
     ...localized,
     content: {
       name: asString(content.name, "city name"),
       ...(typeof content.shortDescription === "string"
         ? { shortDescription: content.shortDescription }
+        : {}),
+      ...(typeof content.description === "string"
+        ? { description: content.description }
         : {}),
     },
     media: parseMediaArray(object.media),

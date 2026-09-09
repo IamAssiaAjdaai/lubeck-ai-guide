@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { canBootstrapCanonicalRecord } from "@/lib/admin/content/importPolicy";
+import {
+  canBootstrapCanonicalRecord,
+  canRefreshCanonicalLocalization,
+} from "@/lib/admin/content/importPolicy";
 
 describe("canonical CMS import policy", () => {
   it("imports newly created and empty legacy records", () => {
@@ -26,6 +29,21 @@ describe("canonical CMS import policy", () => {
       created: false,
       existingLocalizationCount: 1,
       updatedByUserId: null,
+    })).toBe(false);
+  });
+
+  it("refreshes only city localizations that remain canonical bootstrap data", () => {
+    expect(canRefreshCanonicalLocalization({
+      recordUpdatedByUserId: null,
+      localizationUpdatedByUserId: null,
+    })).toBe(true);
+    expect(canRefreshCanonicalLocalization({
+      recordUpdatedByUserId: "staff-user",
+      localizationUpdatedByUserId: null,
+    })).toBe(false);
+    expect(canRefreshCanonicalLocalization({
+      recordUpdatedByUserId: null,
+      localizationUpdatedByUserId: "staff-user",
     })).toBe(false);
   });
 });

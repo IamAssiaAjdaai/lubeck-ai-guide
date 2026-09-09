@@ -32,6 +32,9 @@ export default function CityScreen() {
         {city.content.shortDescription ? (
           <AppText style={{ writingDirection: cityDirection, color: colors.textMuted }}>{city.content.shortDescription}</AppText>
         ) : null}
+        {city.content.description ? (
+          <AppText style={{ writingDirection: cityDirection, color: colors.textMuted }}>{city.content.description}</AppText>
+        ) : null}
       </View>
 
       <SectionTitle>{messages.map}</SectionTitle>

@@ -10,6 +10,7 @@ import {
   createCmsPlace,
   createCmsTour,
   approveAndPublishCmsContent,
+  createOrReuseCmsSourceForCity,
   createOrReuseCmsSourceForPlace,
   deleteCmsDraft,
   getCmsCity,
@@ -246,6 +247,40 @@ export async function addAuthorizedPlaceSource(
     validateContentSourceInput(input),
     context.user.id,
   );
+}
+
+export async function addAuthorizedCitySource(
+  cityId: number,
+  input: ContentSourceInput,
+) {
+  await requireAdminCapability("sources:manage");
+  const city = await getCmsCity(cityId);
+  if (!city) throw new CmsContentNotFoundError("City");
+  const context = await requireCityCapability(city.id, "sources:manage");
+  return createOrReuseCmsSourceForCity(
+    cityId,
+    validateContentSourceInput(input),
+    context.user.id,
+  );
+}
+
+export async function addAuthorizedCityReference(
+  cityId: number,
+  rawUrl: string,
+) {
+  let canonicalUrl: string;
+  try {
+    canonicalUrl = normalizeCanonicalSourceUrl(rawUrl);
+  } catch {
+    throw new CmsContentIntegrityError("Enter a valid HTTP or HTTPS reference link.");
+  }
+  const hostname = new URL(canonicalUrl).hostname;
+  return addAuthorizedCitySource(cityId, {
+    publisher: hostname,
+    title: `Reference from ${hostname}`,
+    canonicalUrl,
+    verifiedAt: new Date().toISOString().slice(0, 10),
+  });
 }
 
 export async function addAuthorizedPlaceReference(

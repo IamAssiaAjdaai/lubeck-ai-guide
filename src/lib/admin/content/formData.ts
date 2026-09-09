@@ -9,11 +9,14 @@ import { CmsValidationError } from "@/lib/admin/content/validation";
 export function cityInputFromFormData(formData: FormData): CityInput {
   return {
     slug: field(formData, "slug"),
+    countryCode: optionalField(formData, "countryCode"),
+    timezone: optionalField(formData, "timezone"),
     publicationStatus: statusField(formData),
     localizations: [{
       locale: field(formData, "locale") as CityInput["localizations"][number]["locale"],
       name: field(formData, "name"),
       shortDescription: field(formData, "shortDescription"),
+      description: optionalField(formData, "description"),
     }],
   };
 }
