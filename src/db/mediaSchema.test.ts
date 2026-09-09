@@ -7,6 +7,7 @@ import {
   mediaAssetsTable,
   mediaKindEnum,
   mediaLifecycleEnum,
+  mediaAccessLevelEnum,
   mediaPurposeEnum,
   placeMediaTable,
   tourMediaTable,
@@ -17,11 +18,12 @@ describe("CMS media schema", () => {
     expect(mediaKindEnum.enumValues).toEqual(["image", "audio", "video", "document"]);
     expect(mediaLifecycleEnum.enumValues).toEqual(["uploading", "pending_review", "approved", "rejected", "archived"]);
     expect(mediaPurposeEnum.enumValues).toContain("gallery");
+    expect(mediaAccessLevelEnum.enumValues).toEqual(["public", "premium"]);
   });
 
   it("stores metadata rather than binary content", () => {
     const columns = getTableConfig(mediaAssetsTable).columns.map(({ name }) => name);
-    expect(columns).toEqual(expect.arrayContaining(["asset_key", "object_key", "mime_type", "size_bytes", "checksum_sha256", "created_by_user_id", "updated_by_user_id"]));
+    expect(columns).toEqual(expect.arrayContaining(["asset_key", "object_key", "mime_type", "size_bytes", "checksum_sha256", "access_level", "created_by_user_id", "updated_by_user_id"]));
     expect(columns).not.toEqual(expect.arrayContaining(["content", "binary", "bytes"]));
   });
 

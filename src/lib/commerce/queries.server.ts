@@ -1,13 +1,17 @@
-import { and, desc, eq } from "drizzle-orm";
+import "server-only";
+
+import { and, asc, desc, eq } from "drizzle-orm";
 
 import { user } from "@/db/authSchema";
 import {
   commerceEntitlements,
   commerceOrders,
   commercePrices,
+  commerceProductGrants,
   commerceProducts,
 } from "@/db/commerceSchema";
 import { getDb } from "@/db/client";
+import { isCitySlug } from "@/lib/commerce/cityPassConfig";
 
 export async function listActiveCommerceOffers() {
   return getDb()
@@ -33,6 +37,66 @@ export async function listActiveCommerceOffers() {
       ),
     )
     .orderBy(commerceProducts.id, commercePrices.id);
+}
+
+export type ActiveCityPassOffer = Readonly<{
+  priceId: number;
+  productSlug: string;
+  productName: string;
+  description: string | null;
+  currency: string;
+  unitAmount: number;
+  durationDays: number | null;
+}>;
+
+export type CityPassOfferDependencies = Readonly<{
+  findActiveOffer: (
+    citySlug: string,
+  ) => Promise<ActiveCityPassOffer | undefined>;
+}>;
+
+const cityPassOfferDependencies: CityPassOfferDependencies = {
+  async findActiveOffer(citySlug) {
+    const [offer] = await getDb()
+      .select({
+        priceId: commercePrices.id,
+        productSlug: commerceProducts.slug,
+        productName: commerceProducts.name,
+        description: commerceProducts.description,
+        currency: commercePrices.currency,
+        unitAmount: commercePrices.unitAmount,
+        durationDays: commerceProductGrants.durationDays,
+      })
+      .from(commercePrices)
+      .innerJoin(
+        commerceProducts,
+        eq(commercePrices.productId, commerceProducts.id),
+      )
+      .innerJoin(
+        commerceProductGrants,
+        eq(commerceProductGrants.productId, commerceProducts.id),
+      )
+      .where(
+        and(
+          eq(commerceProducts.kind, "city_pass"),
+          eq(commerceProducts.active, true),
+          eq(commercePrices.active, true),
+          eq(commerceProductGrants.scopeType, "city"),
+          eq(commerceProductGrants.scopeKey, citySlug),
+        ),
+      )
+      .orderBy(asc(commerceProducts.id), asc(commercePrices.id))
+      .limit(1);
+    return offer;
+  },
+};
+
+export async function getActiveCityPassOffer(
+  citySlug: string,
+  dependencies: CityPassOfferDependencies = cityPassOfferDependencies,
+): Promise<ActiveCityPassOffer | undefined> {
+  if (!isCitySlug(citySlug)) return undefined;
+  return dependencies.findActiveOffer(citySlug);
 }
 
 export async function listUserCommerceState(userId: string) {

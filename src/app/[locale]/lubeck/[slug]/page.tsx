@@ -5,6 +5,7 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
+import { headers } from "next/headers";
 import {
   ArrowLeft,
   ArrowRight,
@@ -41,12 +42,31 @@ import { resolvePlaceImage } from "@/lib/content/placeMedia";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { formatTime } from "@/lib/formatTime";
 import { getGuideEligibility } from "@/lib/guideEligibility.server";
+import { auth } from "@/lib/auth/server";
+import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
+import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
+import {
+  getCityPassPaywallContext,
+  LUBECK_CITY_PASS,
+  type CityPassConfiguration,
+} from "@/lib/commerce/cityPassConfig";
+import { createCityPassReturnPath } from "@/lib/commerce/cityPassReturn";
+import { getCityPassAccessState } from "@/lib/commerce/cityPassAccess.server";
+import {
+  getPremiumPlaceAudio,
+  type PremiumPlaceAudio,
+} from "@/lib/commerce/premiumMedia.server";
+import {
+  formatMinorCurrency,
+  getActiveCityPassOffer,
+} from "@/lib/commerce/queries.server";
 
 type LandmarkPageProps = {
   params: Promise<{
     locale: string;
     slug: string;
   }>;
+  searchParams?: Promise<{ premium?: string | string[] }>;
 };
 
 /*
@@ -70,6 +90,7 @@ export function generateStaticParams() {
 
 export default async function LandmarkPage({
   params,
+  searchParams,
 }: LandmarkPageProps) {
   const { locale, slug } = await params;
 
@@ -146,6 +167,25 @@ export default async function LandmarkPage({
     source: contentSource,
     snapshot,
   });
+  let premiumAudio: PremiumPlaceAudio | undefined;
+  if (contentSource !== "code" && snapshot.media) {
+    try {
+      premiumAudio = await getPremiumPlaceAudio(
+        LUBECK_CITY_PASS.citySlug,
+        landmark.slug,
+        currentLocale,
+      );
+    } catch (error) {
+      if (contentSource === "database") throw error;
+    }
+  }
+  const premiumCopy = getCityPassCopy(LUBECK_CITY_PASS, currentLocale);
+  const premiumValue = (await searchParams)?.premium;
+  const premiumRequested =
+    (Array.isArray(premiumValue) ? premiumValue[0] : premiumValue) === "1";
+  const premiumState = premiumAudio
+    ? await resolvePremiumState(currentLocale, LUBECK_CITY_PASS)
+    : undefined;
 
   /*
    * Find next landmark
@@ -317,6 +357,60 @@ export default async function LandmarkPage({
           </div>
         ) : null}
 
+        {premiumAudio ? (
+          premiumState?.access.active ? (
+            <section id="premium-audio" className="mt-8 scroll-mt-6 rounded-3xl border border-violet-200 bg-violet-50/70 p-5" lang={premiumCopy.actualLocale} dir={premiumCopy.actualLocale === "ar" ? "rtl" : "ltr"}>
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-violet-700">CITYWALK PASS</p>
+              <h2 className="mt-2 text-xl font-semibold">{premiumCopy.premiumAudio}</h2>
+              {premiumState.access.expiresAt ? (
+                <p className="mt-2 text-sm text-text-secondary">
+                  {premiumCopy.activeUntil.replace(
+                    "{date}",
+                    new Intl.DateTimeFormat(currentLocale, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(premiumState.access.expiresAt),
+                  )}
+                </p>
+              ) : null}
+              <div className="mt-4">
+                <AudioPlayer
+                  src={premiumAudio.src}
+                  title={`${name} ${premiumCopy.premiumAudio}`}
+                  city="lubeck"
+                  landmark={landmark.slug}
+                  locale={currentLocale}
+                  listenLabel={premiumCopy.continuePremium}
+                  playLabel={t.common.play}
+                  pauseLabel={t.common.pause}
+                  unavailableLabel={t.landmark.audioUnavailable}
+                  premiumAnalytics={{
+                    city_slug: LUBECK_CITY_PASS.citySlug,
+                    feature_id:
+                      LUBECK_CITY_PASS.primaryPremiumFeature.id,
+                    locale: currentLocale,
+                    entitlement_scope: `${LUBECK_CITY_PASS.entitlement.scopeType}:${LUBECK_CITY_PASS.entitlement.scopeKey}`,
+                  }}
+                />
+              </div>
+            </section>
+          ) : (
+            <CityPassPaywall
+              locale={currentLocale}
+              copy={premiumCopy}
+              pass={getCityPassPaywallContext(LUBECK_CITY_PASS)}
+              returnPath={createCityPassReturnPath(
+                currentLocale,
+                LUBECK_CITY_PASS.citySlug,
+                landmark.slug,
+              )}
+              signedIn={premiumState?.signedIn ?? false}
+              offer={premiumState?.offer}
+              initiallyOpen={premiumRequested}
+            />
+          )
+        ) : null}
+
         {/* Story */}
         {story ? (
           <section className="mt-9">
@@ -400,4 +494,33 @@ export default async function LandmarkPage({
       </section>
     </main>
   );
+}
+
+async function resolvePremiumState(
+  locale: (typeof locales)[number],
+  configuration: CityPassConfiguration,
+) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const access = await getCityPassAccessState({
+    userId: session?.user.id,
+    citySlug: configuration.citySlug,
+  });
+  const offer = access.active
+    ? undefined
+    : await getActiveCityPassOffer(configuration.citySlug);
+  return {
+    signedIn: Boolean(session),
+    access,
+    offer: offer
+      ? {
+          priceId: offer.priceId,
+          productSlug: offer.productSlug,
+          formattedPrice: formatMinorCurrency(
+            offer.unitAmount,
+            offer.currency,
+            locale,
+          ),
+        }
+      : undefined,
+  };
 }

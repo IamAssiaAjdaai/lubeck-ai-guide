@@ -75,6 +75,7 @@ export async function createMediaUploadRecord(
         expectedSizeBytes: input.sizeBytes,
         locale: input.locale,
         approvalStatus: "uploading",
+        accessLevel: input.accessLevel ?? "public",
         uploadExpiresAt: input.uploadExpiresAt,
         createdByUserId: actorId,
         updatedByUserId: actorId,

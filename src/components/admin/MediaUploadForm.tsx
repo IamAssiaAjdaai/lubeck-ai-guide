@@ -49,6 +49,7 @@ export function MediaUploadForm({
           mimeType: file.type,
           sizeBytes: file.size,
           ...(kind === "audio" ? { locale: form.get("locale") } : {}),
+          ...(kind === "audio" ? { accessLevel: form.get("accessLevel") } : {}),
         }),
       });
       const intent = (await intentResponse.json()) as { assetId?: number; uploadUrl?: string; error?: string };
@@ -101,11 +102,19 @@ export function MediaUploadForm({
         </Field>
       </div>
       {kind === "audio" ? (
-        <Field label="Audio locale">
-          <select className={inputClass} defaultValue={initialLocale} disabled={busy} name="locale" required>
-            {locales.map((locale) => <option key={locale}>{locale}</option>)}
-          </select>
-        </Field>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field label="Audio locale">
+            <select className={inputClass} defaultValue={initialLocale} disabled={busy} name="locale" required>
+              {locales.map((locale) => <option key={locale}>{locale}</option>)}
+            </select>
+          </Field>
+          <Field label="Access">
+            <select className={inputClass} defaultValue="public" disabled={busy} name="accessLevel">
+              <option value="public">Public / free</option>
+              <option value="premium">City Pass premium</option>
+            </select>
+          </Field>
+        </div>
       ) : null}
       <Field label="File">
         <input className={inputClass} disabled={busy} name="file" onChange={(event) => setSelectedFile(event.target.files?.[0])} required type="file" />

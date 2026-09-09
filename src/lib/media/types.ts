@@ -12,6 +12,9 @@ export const MEDIA_LIFECYCLES = [
 ] as const;
 export type MediaLifecycle = (typeof MEDIA_LIFECYCLES)[number];
 
+export const MEDIA_ACCESS_LEVELS = ["public", "premium"] as const;
+export type MediaAccessLevel = (typeof MEDIA_ACCESS_LEVELS)[number];
+
 export const MEDIA_PURPOSES = [
   "hero",
   "card",
@@ -34,6 +37,7 @@ export type UploadIntentInput = Readonly<{
   mimeType: string;
   sizeBytes: number;
   locale?: Locale;
+  accessLevel?: MediaAccessLevel;
 }>;
 
 export type MediaAttachmentInput = Readonly<{

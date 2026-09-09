@@ -24,6 +24,10 @@ import {
 } from "@/lib/media/repository.server";
 import { getPublicMediaDeliveryAsset, getPublicMediaForEntity } from "@/lib/media/publicMedia.server";
 import { FakeMediaObjectStore } from "@/lib/media/testing/fakeObjectStore";
+import {
+  getPremiumMediaDeliveryAsset,
+  getPremiumPlaceAudio,
+} from "@/lib/commerce/premiumMedia.server";
 
 const runIntegration = process.env.MEDIA_DB_INTEGRATION === "1";
 
@@ -158,6 +162,63 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     await setMediaLifecycle(asset.id, "archived", actorId);
     expect(await getPublicMediaForEntity("place", placeId)).toEqual([]);
     expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
+  });
+
+  it("keeps approved premium audio out of public delivery while resolving exact locale", async () => {
+    const asset = await createMediaUploadRecord({
+      assetKey: randomUUID(),
+      cityId,
+      kind: "audio",
+      originalFilename: "premium-en.mp3",
+      mimeType: "audio/mpeg",
+      sizeBytes: 3,
+      locale: "en",
+      accessLevel: "premium",
+      objectKey: `media/${suffix}/premium-en.mp3`,
+      storageProvider: "s3-test",
+      uploadExpiresAt: new Date(Date.now() + 60_000),
+    }, actorId);
+    assetIds.push(asset.id);
+    await finalizeMediaAsset(asset.id, { sizeBytes: 3, mimeType: "audio/mpeg", durationSeconds: 87 }, actorId);
+    const attachment = await attachMedia({
+      entityType: "place",
+      entityId: placeId,
+      mediaAssetId: asset.id,
+      purpose: "audio",
+      locale: "en",
+    }, actorId, { allowPublicMutation: false });
+    await setMediaLifecycle(asset.id, "approved", actorId);
+
+    expect(await getPublicMediaForEntity("place", placeId)).toEqual([]);
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
+    expect(
+      await getPremiumPlaceAudio(
+        `cms03-integration-${suffix}`,
+        `cms03-place-${suffix}`,
+        "en",
+      ),
+    ).toEqual(expect.objectContaining({
+      src: `/api/commerce/media/${asset.assetKey}`,
+      durationSeconds: 87,
+      locale: "en",
+    }));
+    expect(
+      await getPremiumPlaceAudio(
+        `cms03-integration-${suffix}`,
+        `cms03-place-${suffix}`,
+        "de",
+      ),
+    ).toBeUndefined();
+    expect(await getPremiumMediaDeliveryAsset(asset.assetKey)).toMatchObject({
+      objectKey: asset.objectKey,
+      requiredEntitlement: {
+        scopeType: "city",
+        scopeKey: `cms03-integration-${suffix}`,
+      },
+    });
+
+    await detachMedia("place", attachment.id, { allowPublicMutation: true });
+    await setMediaLifecycle(asset.id, "archived", actorId);
   });
 
   it("keeps an approved replacement private until atomic make-live promotion", async () => {

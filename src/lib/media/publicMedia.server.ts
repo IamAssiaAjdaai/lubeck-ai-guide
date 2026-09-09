@@ -34,11 +34,11 @@ export async function getPublicMediaForEntity(
   const db = getDb();
   let rows: PublicMediaRow[];
   if (entityType === "city") {
-    rows = await db.select({ attachment: cityMediaTable, asset: mediaAssetsTable }).from(cityMediaTable).innerJoin(mediaAssetsTable, eq(cityMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(eq(cityMediaTable.cityId, entityId), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"))).orderBy(asc(cityMediaTable.purpose), asc(cityMediaTable.locale), asc(cityMediaTable.position));
+    rows = await db.select({ attachment: cityMediaTable, asset: mediaAssetsTable }).from(cityMediaTable).innerJoin(mediaAssetsTable, eq(cityMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(eq(cityMediaTable.cityId, entityId), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"), eq(mediaAssetsTable.accessLevel, "public"))).orderBy(asc(cityMediaTable.purpose), asc(cityMediaTable.locale), asc(cityMediaTable.position));
   } else if (entityType === "place") {
-    rows = await db.select({ attachment: placeMediaTable, asset: mediaAssetsTable }).from(placeMediaTable).innerJoin(mediaAssetsTable, eq(placeMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(eq(placeMediaTable.placeId, entityId), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"))).orderBy(asc(placeMediaTable.purpose), asc(placeMediaTable.locale), asc(placeMediaTable.position));
+    rows = await db.select({ attachment: placeMediaTable, asset: mediaAssetsTable }).from(placeMediaTable).innerJoin(mediaAssetsTable, eq(placeMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(eq(placeMediaTable.placeId, entityId), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"), eq(mediaAssetsTable.accessLevel, "public"))).orderBy(asc(placeMediaTable.purpose), asc(placeMediaTable.locale), asc(placeMediaTable.position));
   } else {
-    rows = await db.select({ attachment: tourMediaTable, asset: mediaAssetsTable }).from(tourMediaTable).innerJoin(mediaAssetsTable, eq(tourMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(eq(tourMediaTable.tourId, entityId), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"))).orderBy(asc(tourMediaTable.purpose), asc(tourMediaTable.locale), asc(tourMediaTable.position));
+    rows = await db.select({ attachment: tourMediaTable, asset: mediaAssetsTable }).from(tourMediaTable).innerJoin(mediaAssetsTable, eq(tourMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(eq(tourMediaTable.tourId, entityId), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"), eq(mediaAssetsTable.accessLevel, "public"))).orderBy(asc(tourMediaTable.purpose), asc(tourMediaTable.locale), asc(tourMediaTable.position));
   }
   return rowsToPublicMedia(rows);
 }
@@ -50,9 +50,9 @@ export async function getPublicMediaSnapshot(
 ) {
   const db = getDb();
   const [cityRows, placeRows, tourRows] = await Promise.all([
-    db.select({ attachment: cityMediaTable, asset: mediaAssetsTable }).from(cityMediaTable).innerJoin(mediaAssetsTable, eq(cityMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(eq(cityMediaTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"))).orderBy(asc(cityMediaTable.purpose), asc(cityMediaTable.locale), asc(cityMediaTable.position)),
-    placeIds.length === 0 ? Promise.resolve([]) : db.select({ attachment: placeMediaTable, asset: mediaAssetsTable }).from(placeMediaTable).innerJoin(mediaAssetsTable, eq(placeMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(inArray(placeMediaTable.placeId, [...placeIds]), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"))).orderBy(asc(placeMediaTable.placeId), asc(placeMediaTable.purpose), asc(placeMediaTable.locale), asc(placeMediaTable.position)),
-    tourIds.length === 0 ? Promise.resolve([]) : db.select({ attachment: tourMediaTable, asset: mediaAssetsTable }).from(tourMediaTable).innerJoin(mediaAssetsTable, eq(tourMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(inArray(tourMediaTable.tourId, [...tourIds]), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"))).orderBy(asc(tourMediaTable.tourId), asc(tourMediaTable.purpose), asc(tourMediaTable.locale), asc(tourMediaTable.position)),
+    db.select({ attachment: cityMediaTable, asset: mediaAssetsTable }).from(cityMediaTable).innerJoin(mediaAssetsTable, eq(cityMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(eq(cityMediaTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"), eq(mediaAssetsTable.accessLevel, "public"))).orderBy(asc(cityMediaTable.purpose), asc(cityMediaTable.locale), asc(cityMediaTable.position)),
+    placeIds.length === 0 ? Promise.resolve([]) : db.select({ attachment: placeMediaTable, asset: mediaAssetsTable }).from(placeMediaTable).innerJoin(mediaAssetsTable, eq(placeMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(inArray(placeMediaTable.placeId, [...placeIds]), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"), eq(mediaAssetsTable.accessLevel, "public"))).orderBy(asc(placeMediaTable.placeId), asc(placeMediaTable.purpose), asc(placeMediaTable.locale), asc(placeMediaTable.position)),
+    tourIds.length === 0 ? Promise.resolve([]) : db.select({ attachment: tourMediaTable, asset: mediaAssetsTable }).from(tourMediaTable).innerJoin(mediaAssetsTable, eq(tourMediaTable.mediaAssetId, mediaAssetsTable.id)).where(and(inArray(tourMediaTable.tourId, [...tourIds]), eq(mediaAssetsTable.cityId, cityId), eq(mediaAssetsTable.approvalStatus, "approved"), eq(mediaAssetsTable.accessLevel, "public"))).orderBy(asc(tourMediaTable.tourId), asc(tourMediaTable.purpose), asc(tourMediaTable.locale), asc(tourMediaTable.position)),
   ]);
   return {
     city: rowsToPublicMedia(cityRows),
@@ -86,6 +86,7 @@ export async function getPublicMediaDeliveryAsset(
         eq(mediaAssetsTable.assetKey, assetKey),
         eq(mediaAssetsTable.sourceType, "upload"),
         eq(mediaAssetsTable.approvalStatus, "approved"),
+        eq(mediaAssetsTable.accessLevel, "public"),
         isNull(mediaAssetsTable.archivedAt),
       ),
     )
@@ -177,7 +178,7 @@ export function resolvePlaceMedia(
 
 function rowsToPublicMedia(rows: readonly PublicMediaRow[]): PublicMedia[] {
   return rows.flatMap(({ attachment, asset }) => {
-    if (asset.archivedAt) return [];
+    if (asset.archivedAt || asset.accessLevel !== "public") return [];
     if (attachment.purpose === "audio" && attachment.position !== 0) return [];
     const locale = isLocale(attachment.locale) ? attachment.locale : undefined;
     let url: string | null | undefined;

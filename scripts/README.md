@@ -1,5 +1,23 @@
 # Content production operations
 
+## Lübeck City Pass provisioning
+
+`npm run commerce:provision-lubeck-pass` explicitly provisions the inactive
+72-hour `city:lubeck` product and grant from the shared City Pass configuration.
+The same platform authorization remains keyed by the supplied city slug; this
+script is intentionally Lübeck-specific only because Lübeck is the first launch
+configuration. It does not create a price, activate a
+product, seed production data, or contact Stripe.
+
+After creating an approved Stripe **test-mode** Price, a trusted operator may
+configure it explicitly:
+
+`npm run commerce:provision-lubeck-pass -- --provider-price-id=price_test_... --unit-amount=699`
+
+Add `--activate` only when the test catalog is intentionally ready. The amount
+is display/catalog metadata and never participates in entitlement checks. Never
+put live provider identifiers or secrets in this repository.
+
 ## Verified AI knowledge operations
 
 Verified AI evidence is stored separately from ordinary CMS content and source

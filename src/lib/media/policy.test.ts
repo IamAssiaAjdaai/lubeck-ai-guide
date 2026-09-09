@@ -31,6 +31,12 @@ describe("media upload policy", () => {
     expect(validateUploadIntent({ cityId: 1, kind: "audio", originalFilename: "story.mp3", mimeType: "audio/mpeg", sizeBytes: 100, locale: "ar" }).locale).toBe("ar");
   });
 
+  it("defaults existing media to public and permits premium only for audio", () => {
+    expect(validateUploadIntent({ cityId: 1, kind: "audio", originalFilename: "story.mp3", mimeType: "audio/mpeg", sizeBytes: 100, locale: "en" }).accessLevel).toBe("public");
+    expect(validateUploadIntent({ cityId: 1, kind: "audio", originalFilename: "story.mp3", mimeType: "audio/mpeg", sizeBytes: 100, locale: "en", accessLevel: "premium" }).accessLevel).toBe("premium");
+    expect(() => validateUploadIntent({ cityId: 1, kind: "image", originalFilename: "gate.jpg", mimeType: "image/jpeg", sizeBytes: 100, accessLevel: "premium" })).toThrow(/Only uploaded audio/);
+  });
+
   it("recognizes supported file signatures", () => {
     expect(matchesMagicBytes("image/jpeg", Uint8Array.from([0xff, 0xd8, 0xff]))).toBe(true);
     expect(matchesMagicBytes("image/png", Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))).toBe(true);

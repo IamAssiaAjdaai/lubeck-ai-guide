@@ -30,6 +30,7 @@ function dependencies(
       currency: "eur",
       unitAmount: 1200,
     }),
+    hasActiveProductGrant: vi.fn().mockResolvedValue(false),
     createPendingOrder: vi.fn().mockResolvedValue(undefined),
     attachProviderSession: vi.fn().mockResolvedValue(undefined),
     markOrderFailed: vi.fn().mockResolvedValue(undefined),
@@ -56,6 +57,9 @@ describe("commerce checkout", () => {
     expect(
       parseCommerceCheckoutInput({ priceId: 7.5, locale: "en" }),
     ).toBeUndefined();
+    for (const priceId of ["1.5", "-1", "0", "arbitrary", 0, -1, Number.MAX_SAFE_INTEGER + 1]) {
+      expect(parseCommerceCheckoutInput({ priceId, locale: "en" })).toBeUndefined();
+    }
     expect(
       parseCommerceCheckoutInput({ priceId: 7, locale: "invalid" }),
     ).toBeUndefined();
@@ -114,6 +118,25 @@ describe("commerce checkout", () => {
       code: "PRICE_NOT_AVAILABLE",
     });
     expect(deps.createPendingOrder).not.toHaveBeenCalled();
+  });
+
+  it("rejects checkout before order creation when the product grant is active", async () => {
+    const deps = dependencies({
+      hasActiveProductGrant: vi.fn().mockResolvedValue(true),
+    });
+
+    await expect(
+      startCommerceCheckout(
+        {
+          user: { id: "user-1", email: "traveler@example.com" },
+          priceId: 7,
+          locale: "en",
+        },
+        deps,
+      ),
+    ).rejects.toMatchObject({ code: "ALREADY_ENTITLED" });
+    expect(deps.createPendingOrder).not.toHaveBeenCalled();
+    expect(deps.getProvider).not.toHaveBeenCalled();
   });
 
   it("fails the pending order when the payment provider cannot start checkout", async () => {

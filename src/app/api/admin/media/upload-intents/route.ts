@@ -15,6 +15,7 @@ export async function POST(request: Request): Promise<Response> {
       mimeType: String(body.mimeType ?? ""),
       sizeBytes: Number(body.sizeBytes),
       ...(body.locale ? { locale: body.locale } : {}),
+      ...(body.accessLevel ? { accessLevel: body.accessLevel } : {}),
     });
     return Response.json(result, { status: 201 });
   } catch (error) {
