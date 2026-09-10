@@ -1,0 +1,940 @@
+{
+  "schemaVersion": 1,
+  "city": {
+    "slug": "berlin",
+    "name": "Berlin",
+    "countryCode": "DE",
+    "timezone": "Europe/Berlin",
+    "publicationStatus": "draft",
+    "content": {
+      "de": {
+        "name": "Berlin",
+        "shortDescription": "Deutschlands Hauptstadt verbindet prägende Geschichte, Museumslandschaften, großzügige Parks und eigenständige Kieze.",
+        "description": "Berlin verbindet sichtbare Spuren preußischer Geschichte, Nationalsozialismus, Teilung und Wiedervereinigung mit Museen, Kultur und lebendigem Kiezalltag. Zwischen Regierungsviertel, UNESCO-Welterbe Museumsinsel und ehemaligen Grenzräumen bleibt die Vergangenheit im heutigen Stadtbild erfahrbar. Große Parks und unterschiedliche Stadtviertel zeigen den vielfältigen Charakter der Hauptstadt jenseits ihrer bekannten Wahrzeichen."
+      },
+      "en": {
+        "name": "Berlin",
+        "shortDescription": "Germany’s capital brings together defining history, museum landscapes, spacious parks and distinctive neighbourhoods.",
+        "description": "Berlin brings visible traces of Prussian history, National Socialism, division and reunification into a city shaped by museums, culture and everyday neighbourhood life. Around the government district, UNESCO-listed Museum Island and former border spaces, the past remains part of the present-day streetscape. Large parks and distinctive neighbourhoods reveal the varied character of the capital beyond its major landmarks."
+      }
+    },
+    "sources": [
+      {
+        "publisher": "Berlin Tourismus & Kongress GmbH",
+        "title": "Berlin's official travel website",
+        "canonicalUrl": "https://www.visitberlin.de/en",
+        "verifiedAt": "2026-09-10"
+      },
+      {
+        "publisher": "Berlin Tourismus & Kongress GmbH",
+        "title": "Historic places in Berlin",
+        "canonicalUrl": "https://www.visitberlin.de/en/berlin-history",
+        "verifiedAt": "2026-09-10"
+      },
+      {
+        "publisher": "Berlin Tourismus & Kongress GmbH",
+        "title": "Neighbourhoods and districts in Berlin",
+        "canonicalUrl": "https://www.visitberlin.de/en/neighbourhoods-berlin",
+        "verifiedAt": "2026-09-10"
+      },
+      {
+        "publisher": "UNESCO World Heritage Centre",
+        "title": "Museumsinsel (Museum Island), Berlin",
+        "canonicalUrl": "https://whc.unesco.org/en/list/896/",
+        "verifiedAt": "2026-09-10"
+      }
+    ]
+  },
+  "coordinateQa": {
+    "latitude": [52.33, 52.68],
+    "longitude": [13.08, 13.77]
+  },
+  "readiness": {
+    "targetPlaceCount": 20,
+    "requiredContentLocales": ["de", "en"],
+    "reviewedContentLocales": [],
+    "requiredAudioLocales": ["de", "en"],
+    "audioTargetPlaceCount": 7,
+    "minimumVerifiedAiPlaceCount": 5,
+    "webQaStatus": "pending",
+    "nativeQaStatus": "pending",
+    "travelerQaStatus": "pending",
+    "premiumContentStatus": "not_required",
+    "notes": "Berlin remains a draft launch candidate until editorial review, approved key imagery, exact-locale audio, verified knowledge activation and traveler QA are complete."
+  },
+  "places": [
+    {
+      "slug": "brandenburger-tor",
+      "category": "see",
+      "coordinates": { "lat": 52.516275, "lng": 13.377704 },
+      "durationMinutes": 20,
+      "environment": "outdoor",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["history", "architecture", "landmark", "reunification"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Brandenburger Tor",
+          "shortDescription": "Historisches Stadttor und Symbol der deutschen Teilung und Wiedervereinigung.",
+          "description": "Das klassizistische Tor am Pariser Platz ist Berlins einziges erhaltenes historisches Stadttor. Während der Teilung lag es unmittelbar im Grenzraum der Berliner Mauer; heute erinnert es an die Überwindung der deutschen Teilung und die Wiedervereinigung.",
+          "visitNotes": "Das Tor lässt sich gut zu Fuß mit dem Reichstagsgebäude, dem Tiergarten und dem Denkmal für die ermordeten Juden Europas verbinden.",
+          "story": "Carl Gotthard Langhans entwarf den Sandsteinbau, der 1791 eröffnet wurde. Die Quadriga von Johann Gottfried Schadow kam wenig später hinzu.",
+          "facts": [
+            { "label": "Bauzeit", "value": "1788–1791" },
+            { "label": "Architekt", "value": "Carl Gotthard Langhans" }
+          ]
+        },
+        "en": {
+          "name": "Brandenburg Gate",
+          "shortDescription": "A historic city gate and symbol of German division and reunification.",
+          "description": "The Neoclassical gate on Pariser Platz is Berlin's only surviving historic city gate. During the city's division it stood within the restricted zone beside the Berlin Wall; today it recalls the overcoming of Germany's division and reunification.",
+          "visitNotes": "The gate is easy to combine on foot with the Reichstag Building, Tiergarten and the Memorial to the Murdered Jews of Europe.",
+          "story": "Carl Gotthard Langhans designed the sandstone structure, which opened in 1791. Johann Gottfried Schadow's Quadriga followed shortly afterwards.",
+          "facts": [
+            { "label": "Built", "value": "1788–1791" },
+            { "label": "Architect", "value": "Carl Gotthard Langhans" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Berlin Tourismus & Kongress GmbH",
+          "title": "Brandenburg Gate",
+          "canonicalUrl": "https://www.visitberlin.de/en/brandenburg-gate",
+          "verifiedAt": "2026-09-10"
+        },
+        {
+          "publisher": "Stadtmuseum Berlin",
+          "title": "The horse’s head from the Quadriga",
+          "canonicalUrl": "https://www.berlin.museum/en/article/horse-head-from-the-quadriga",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "reichstagsgebaeude",
+      "category": "see",
+      "coordinates": { "lat": 52.5186538, "lng": 13.3761015 },
+      "durationMinutes": 60,
+      "environment": "mixed",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["history", "architecture", "politics", "landmark"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Reichstagsgebäude",
+          "shortDescription": "Sitz des Deutschen Bundestages mit historischer Substanz und moderner Glaskuppel.",
+          "description": "Das Reichstagsgebäude verbindet deutsche Parlamentsgeschichte mit dem Umbau von Norman Foster. Sichtachsen und die begehbare Glaskuppel machen demokratische Transparenz auch architektonisch erfahrbar.",
+          "visitNotes": "Den Besuch im Voraus planen und vorab die aktuellen Anmelde- und Zugangsregeln des Bundestages prüfen.",
+          "story": "Paul Wallots Bau wurde 1894 vollendet. Nach Kriegsschäden und späteren Umbauten wurde das von Norman Foster erneuerte Gebäude 1999 wieder als Parlamentssitz übergeben.",
+          "facts": [
+            { "label": "Vollendet", "value": "1894" },
+            { "label": "Für parlamentarische Nutzung übergeben", "value": "1999" }
+          ]
+        },
+        "en": {
+          "name": "Reichstag Building",
+          "shortDescription": "Home of the German Bundestag, combining historic fabric with a modern glass dome.",
+          "description": "The Reichstag Building connects the history of German parliamentarianism with Norman Foster's reconstruction. Its sightlines and accessible glass dome give architectural expression to democratic transparency.",
+          "visitNotes": "Plan ahead and check the Bundestag's current advance-registration and access guidance before visiting.",
+          "story": "Paul Wallot's building was completed in 1894. After wartime damage and later reconstruction, Norman Foster's renewed parliament building was handed over in 1999.",
+          "facts": [
+            { "label": "Completed", "value": "1894" },
+            { "label": "Handed over for parliamentary use", "value": "1999" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Deutscher Bundestag",
+          "title": "Geschichte des Gebäudes",
+          "canonicalUrl": "https://www.bundestag.de/besuche/architektur/reichstag/geschichte",
+          "verifiedAt": "2026-09-10"
+        },
+        {
+          "publisher": "Deutscher Bundestag",
+          "title": "Registering to visit the dome of the Reichstag Building",
+          "canonicalUrl": "https://www.bundestag.de/en/visittheBundestag/dome/registration-245686",
+          "verifiedAt": "2026-09-10",
+          "notes": "Visitor procedures may change; editors must recheck before publication."
+        }
+      ]
+    },
+    {
+      "slug": "denkmal-ermordete-juden-europas",
+      "category": "see",
+      "coordinates": { "lat": 52.5138731, "lng": 13.3787346 },
+      "durationMinutes": 45,
+      "environment": "mixed",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["history", "memorial", "remembrance"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Denkmal für die ermordeten Juden Europas",
+          "shortDescription": "Zentraler Erinnerungsort mit Stelenfeld und unterirdischem Ort der Information.",
+          "description": "Das Stelenfeld und der Ort der Information erinnern an die ermordeten Jüdinnen und Juden Europas. Die Ausstellung unter dem Denkmal ergänzt den abstrakten Außenraum um dokumentierte Biografien und Familiengeschichten.",
+          "visitNotes": "Dies ist ein Ort des Gedenkens. Rücksichtsvoll verhalten und die aktuellen Hinweise der Stiftung beachten.",
+          "facts": [
+            { "label": "Architekt", "value": "Peter Eisenman" },
+            { "label": "Offiziell eröffnet", "value": "10. Mai 2005" }
+          ]
+        },
+        "en": {
+          "name": "Memorial to the Murdered Jews of Europe",
+          "shortDescription": "A central place of remembrance with a field of stelae and underground information centre.",
+          "description": "The field of stelae and the Place of Information commemorate the murdered Jews of Europe. The exhibition beneath the memorial adds documented biographies and family histories to the abstract outdoor space.",
+          "visitNotes": "This is a place of remembrance. Behave respectfully and follow the foundation's current visitor guidance.",
+          "facts": [
+            { "label": "Architect", "value": "Peter Eisenman" },
+            { "label": "Officially opened", "value": "10 May 2005" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Foundation Memorial to the Murdered Jews of Europe",
+          "title": "Memorial to the Murdered Jews of Europe",
+          "canonicalUrl": "https://www.stiftung-denkmal.de/en/memorials/memorial-to-the-murdered-jews-of-europe/",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "tiergarten",
+      "category": "fun",
+      "coordinates": { "lat": 52.5163027, "lng": 13.3618184 },
+      "durationMinutes": 60,
+      "environment": "outdoor",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["park", "nature", "walking", "family"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Großer Tiergarten",
+          "shortDescription": "Weitläufiger innerstädtischer Park zwischen Regierungsviertel und City West.",
+          "description": "Breite Wege, Wiesen, Teiche und unterschiedliche Gartenbereiche bilden Berlins bekannteste zentrale Parklandschaft. Der ehemalige kurfürstliche Jagdgrund wurde über Jahrhunderte zu einem öffentlichen Erholungsraum umgestaltet."
+        },
+        "en": {
+          "name": "Tiergarten",
+          "shortDescription": "A broad inner-city park between the government district and City West.",
+          "description": "Wide paths, lawns, ponds and varied garden areas form Berlin's best-known central park landscape. The former electoral hunting ground evolved over centuries into a public space for recreation."
+        }
+      },
+      "sources": [
+        {
+          "publisher": "State of Berlin",
+          "title": "Tiergarten",
+          "canonicalUrl": "https://www.berlin.de/en/attractions-and-sights/3560778-3104052-tiergarten.en.html",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "siegessaeule",
+      "category": "see",
+      "coordinates": { "lat": 52.5145082, "lng": 13.3501108 },
+      "durationMinutes": 45,
+      "environment": "mixed",
+      "pricing": "paid",
+      "status": "unknown",
+      "tags": ["history", "architecture", "viewpoint", "landmark"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Siegessäule",
+          "shortDescription": "Historisches Monument am Großen Stern mit Aussichtsplattform über dem Tiergarten.",
+          "description": "Die von Johann Heinrich Strack entworfene Säule erinnert ursprünglich an preußische Siege des 19. Jahrhunderts. Heute ist sie ein weithin sichtbares Berliner Wahrzeichen im Zentrum des Tiergartens.",
+          "visitNotes": "Zur Aussichtsplattform führen 285 Stufen. Vor dem Besuch die aktuellen Zugangs- und Ticketinformationen prüfen.",
+          "facts": [
+            { "label": "Bauzeit", "value": "1865–1873" },
+            { "label": "Stufen zur Plattform", "value": "285" }
+          ]
+        },
+        "en": {
+          "name": "Victory Column",
+          "shortDescription": "A historic monument at the Großer Stern with a viewing platform above Tiergarten.",
+          "description": "Designed by Johann Heinrich Strack, the column originally commemorated Prussian victories in the nineteenth century. It is now a prominent Berlin landmark at the centre of Tiergarten.",
+          "visitNotes": "The viewing platform is reached by 285 steps. Check current access and ticket information before visiting.",
+          "facts": [
+            { "label": "Built", "value": "1865–1873" },
+            { "label": "Steps to platform", "value": "285" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "State of Berlin",
+          "title": "Victory Column",
+          "canonicalUrl": "https://www.berlin.de/en/attractions-and-sights/3560160-3104052-victory-column.en.html",
+          "verifiedAt": "2026-09-10",
+          "notes": "Prices and opening times are intentionally not copied because they can change."
+        }
+      ]
+    },
+    {
+      "slug": "museumsinsel",
+      "category": "see",
+      "coordinates": { "lat": 52.5172626, "lng": 13.3988844 },
+      "durationMinutes": 90,
+      "environment": "mixed",
+      "pricing": "mixed",
+      "status": "unknown",
+      "tags": ["museum", "architecture", "history", "unesco"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Museumsinsel",
+          "shortDescription": "UNESCO-Welterbe aus fünf Museumsbauten im historischen Zentrum Berlins.",
+          "description": "Die Museumsinsel vereint fünf zwischen 1824 und 1930 errichtete Museen zu einem außergewöhnlichen städtebaulichen und architektonischen Ensemble. Sammlungen und Gebäude zeigen zugleich die Entwicklung moderner Museumskonzepte.",
+          "visitNotes": "Den Besuch für jedes Museum einzeln planen und aktuelle Zugangs- und Ticketinformationen bei den Staatlichen Museen prüfen.",
+          "facts": [
+            { "label": "Museumsbauten", "value": "5" },
+            { "label": "UNESCO-Welterbe", "value": "Seit 1999" }
+          ]
+        },
+        "en": {
+          "name": "Museum Island",
+          "shortDescription": "A UNESCO World Heritage ensemble of five museum buildings in Berlin's historic centre.",
+          "description": "Museum Island brings together five museums built between 1824 and 1930 in an exceptional urban and architectural ensemble. The collections and buildings also trace the evolution of modern museum design.",
+          "visitNotes": "Plan each museum visit separately and check current access and ticket information with the State Museums.",
+          "facts": [
+            { "label": "Museum buildings", "value": "5" },
+            { "label": "UNESCO World Heritage", "value": "Since 1999" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "UNESCO World Heritage Centre",
+          "title": "Museumsinsel (Museum Island), Berlin",
+          "canonicalUrl": "https://whc.unesco.org/en/list/896/",
+          "verifiedAt": "2026-09-10"
+        },
+        {
+          "publisher": "Staatliche Museen zu Berlin",
+          "title": "Opening Hours of the Staatliche Museen zu Berlin",
+          "canonicalUrl": "https://www.smb.museum/en/plan-your-visit/opening-hours/",
+          "verifiedAt": "2026-09-10",
+          "notes": "Operational information changes; editors must recheck it before publication."
+        },
+        {
+          "publisher": "Staatliche Museen zu Berlin",
+          "title": "Tickets and Admission",
+          "canonicalUrl": "https://www.smb.museum/en/plan-your-visit/prices-tickets/",
+          "verifiedAt": "2026-09-10",
+          "notes": "Operational information changes; editors must recheck it before publication."
+        }
+      ]
+    },
+    {
+      "slug": "berliner-dom",
+      "category": "see",
+      "coordinates": { "lat": 52.5190822, "lng": 13.4010942 },
+      "durationMinutes": 60,
+      "environment": "indoor",
+      "pricing": "paid",
+      "status": "unknown",
+      "tags": ["architecture", "history", "church", "landmark"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Berliner Dom",
+          "shortDescription": "Monumentaler evangelischer Kirchenbau an Lustgarten und Museumsinsel.",
+          "description": "Der heutige Dom wurde nach Entwürfen Julius Carl Raschdorffs errichtet und 1905 eingeweiht. Kriegsschäden, Wiederaufbau und die Geschichte seiner Vorgängerbauten verbinden den Ort eng mit der Berliner Stadt- und Kirchengeschichte.",
+          "visitNotes": "Als aktiven Kirchenraum respektvoll besuchen und die aktuellen Besuchsinformationen des Doms vorab prüfen.",
+          "facts": [
+            { "label": "Einweihung des heutigen Baus", "value": "1905" },
+            { "label": "Architekt", "value": "Julius Carl Raschdorff" }
+          ]
+        },
+        "en": {
+          "name": "Berlin Cathedral",
+          "shortDescription": "A monumental Protestant church beside the Lustgarten and Museum Island.",
+          "description": "The present cathedral was built to plans by Julius Carl Raschdorff and inaugurated in 1905. Wartime damage, reconstruction and the history of earlier churches connect the site closely to Berlin's civic and religious history.",
+          "visitNotes": "Visit respectfully as an active place of worship and check the cathedral's current visitor information beforehand.",
+          "facts": [
+            { "label": "Present building inaugurated", "value": "1905" },
+            { "label": "Architect", "value": "Julius Carl Raschdorff" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Oberpfarr- und Domkirche zu Berlin",
+          "title": "Construction history up to 1905",
+          "canonicalUrl": "https://www.berlinerdom.de/en/visiting/about-the-cathedral/construction-history-up-to-1905/",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "fernsehturm-berlin",
+      "category": "see",
+      "coordinates": { "lat": 52.5208279, "lng": 13.4094214 },
+      "durationMinutes": 60,
+      "environment": "indoor",
+      "pricing": "paid",
+      "status": "unknown",
+      "tags": ["architecture", "viewpoint", "cold-war", "landmark"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Berliner Fernsehturm",
+          "shortDescription": "Markanter Fernsehturm der DDR-Zeit mit Aussicht über die Stadt.",
+          "description": "Der Fernsehturm am Alexanderplatz entstand in den 1960er Jahren als Rundfunkbau und politisches Prestigeprojekt der DDR. Seine Kugel und der schlanke Betonschaft prägen bis heute die Berliner Skyline.",
+          "visitNotes": "Den Besuch im Voraus planen und aktuelle Zugangs- und Ticketinformationen direkt beim Betreiber prüfen."
+        },
+        "en": {
+          "name": "Berlin TV Tower",
+          "shortDescription": "A landmark television tower from the GDR era with views across the city.",
+          "description": "The TV Tower at Alexanderplatz was constructed in the 1960s as a broadcasting structure and a prestige project of the GDR. Its sphere and slender concrete shaft still define Berlin's skyline.",
+          "visitNotes": "Plan ahead and check current access and ticket information directly with the operator."
+        }
+      },
+      "sources": [
+        {
+          "publisher": "TV-Turm Alexanderplatz Gastronomiegesellschaft mbH",
+          "title": "History of the Berlin TV Tower",
+          "canonicalUrl": "https://tv-turm.de/en/history/",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "gendarmenmarkt",
+      "category": "see",
+      "coordinates": { "lat": 52.5135698, "lng": 13.392297 },
+      "durationMinutes": 30,
+      "environment": "outdoor",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["architecture", "history", "square", "walking"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Gendarmenmarkt",
+          "shortDescription": "Historischer Platz mit Konzerthaus, Deutschem Dom und Französischem Dom.",
+          "description": "Das Bauensemble aus Konzerthaus und den beiden Dombauten macht den Gendarmenmarkt zu einem markanten Architekturraum der Friedrichstadt. Seine Gestaltung entwickelte sich seit dem späten 17. Jahrhundert mehrfach weiter."
+        },
+        "en": {
+          "name": "Gendarmenmarkt",
+          "shortDescription": "A historic square framed by the Konzerthaus and the German and French Cathedrals.",
+          "description": "The ensemble of the Konzerthaus and two domed buildings makes Gendarmenmarkt a distinctive architectural space in Friedrichstadt. Its design has evolved repeatedly since the late seventeenth century."
+        }
+      },
+      "sources": [
+        {
+          "publisher": "State of Berlin",
+          "title": "Gendarmenmarkt",
+          "canonicalUrl": "https://www.berlin.de/en/attractions-and-sights/3560277-3104052-gendarmenmarkt.en.html",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "bebelplatz",
+      "category": "see",
+      "coordinates": { "lat": 52.5164872, "lng": 13.3938262 },
+      "durationMinutes": 20,
+      "environment": "outdoor",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["history", "memorial", "architecture", "square"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Bebelplatz",
+          "shortDescription": "Historischer Platz mit dem Denkmal zur Bücherverbrennung von 1933.",
+          "description": "Der im 18. Jahrhundert als Teil des Forum Fridericianum angelegte Platz wird von Staatsoper, St.-Hedwigs-Kathedrale und historischen Universitätsgebäuden gerahmt. Micha Ullmans unterirdische „Bibliothek“ erinnert an die Bücherverbrennung vom 10. Mai 1933.",
+          "visitNotes": "Das Denkmal liegt unter einer Glasplatte im Platz. Es ist ein Erinnerungsort; bitte rücksichtsvoll besuchen.",
+          "facts": [
+            { "label": "Bücherverbrennung", "value": "10. Mai 1933" }
+          ]
+        },
+        "en": {
+          "name": "Bebelplatz",
+          "shortDescription": "A historic square with the memorial to the 1933 book burning.",
+          "description": "Laid out in the eighteenth century as part of the Forum Fridericianum, the square is framed by the State Opera, St Hedwig's Cathedral and historic university buildings. Micha Ullman's underground “Library” commemorates the book burning of 10 May 1933.",
+          "visitNotes": "The memorial sits beneath a glass panel in the square. This is a place of remembrance; visit respectfully.",
+          "facts": [
+            { "label": "Book burning", "value": "10 May 1933" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "State of Berlin",
+          "title": "Bebelplatz",
+          "canonicalUrl": "https://www.berlin.de/en/attractions-and-sights/3561138-3104052-bebelplatz.en.html",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "gedenkstaette-berliner-mauer",
+      "category": "see",
+      "coordinates": { "lat": 52.5375133, "lng": 13.3946755 },
+      "durationMinutes": 75,
+      "environment": "mixed",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["history", "cold-war", "memorial", "reunification"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Gedenkstätte Berliner Mauer",
+          "shortDescription": "Zentraler Erinnerungsort zur deutschen Teilung an der Bernauer Straße.",
+          "description": "Die Gedenkstätte bewahrt an der Bernauer Straße Spuren des Grenzsystems und erzählt von Teilung, Flucht, Überwachung und Protest. Ein erhaltener Abschnitt macht den Aufbau des ehemaligen Grenzstreifens räumlich nachvollziehbar.",
+          "visitNotes": "Für das weitläufige Gelände mit Außenstationen sowie Besucher- und Dokumentationszentrum aktuelle Besuchsinformationen der Stiftung prüfen.",
+          "facts": [
+            { "label": "Erhaltener Mauerabschnitt", "value": "220 Meter" }
+          ]
+        },
+        "en": {
+          "name": "Berlin Wall Memorial",
+          "shortDescription": "The central memorial to German division on Bernauer Strasse.",
+          "description": "The memorial preserves traces of the border system on Bernauer Strasse and tells stories of division, escape, surveillance and protest. A surviving section makes the former border strip's structure spatially legible.",
+          "visitNotes": "For the extensive site, outdoor stations, visitor centre and documentation centre, check the foundation's current visitor information.",
+          "facts": [
+            { "label": "Preserved Wall section", "value": "220 metres" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Berlin Wall Foundation",
+          "title": "Remembering the Division of Berlin on Bernauer Strasse",
+          "canonicalUrl": "https://www.stiftung-berliner-mauer.de/en/berlin-wall-memorial",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "east-side-gallery",
+      "category": "see",
+      "coordinates": { "lat": 52.5044542, "lng": 13.4408392 },
+      "durationMinutes": 60,
+      "environment": "outdoor",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["history", "cold-war", "art", "reunification"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "East Side Gallery",
+          "shortDescription": "Langer bemalter Mauerabschnitt und Denkmal des politischen Umbruchs von 1989/90.",
+          "description": "Mehr als hundert Kunstwerke entstanden 1990 auf der Ostseite eines erhaltenen Abschnitts der Berliner Mauer. Die Open-Air-Galerie verbindet die Geschichte der Teilung mit künstlerischen Reaktionen auf Mauerfall und friedlichen Umbruch.",
+          "visitNotes": "Die Kunstwerke stehen unter Denkmalschutz. Oberflächen nicht berühren oder beschädigen und den stark frequentierten Weg rücksichtsvoll nutzen.",
+          "facts": [
+            { "label": "Eröffnung der Galerie", "value": "28. September 1990" },
+            { "label": "Denkmalliste", "value": "Seit 1991" }
+          ]
+        },
+        "en": {
+          "name": "East Side Gallery",
+          "shortDescription": "A long painted Wall section and monument to the political transformation of 1989–90.",
+          "description": "More than one hundred artworks were painted in 1990 on the eastern side of a surviving section of the Berlin Wall. The open-air gallery connects the history of division with artistic responses to the Wall's fall and peaceful change.",
+          "visitNotes": "The artworks are protected monuments. Do not touch or damage the surfaces, and use the busy path considerately.",
+          "facts": [
+            { "label": "Gallery opened", "value": "28 September 1990" },
+            { "label": "Protected monument", "value": "Since 1991" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Berlin Wall Foundation",
+          "title": "East Side Gallery: Art on the Wall",
+          "canonicalUrl": "https://www.stiftung-berliner-mauer.de/en/east-side-gallery",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "topographie-des-terrors",
+      "category": "see",
+      "coordinates": { "lat": 52.5062137, "lng": 13.3841548 },
+      "durationMinutes": 90,
+      "environment": "mixed",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["history", "museum", "memorial", "remembrance"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Topographie des Terrors",
+          "shortDescription": "Dokumentationszentrum am historischen Ort zentraler NS-Terrorinstitutionen.",
+          "description": "Auf dem Gelände lagen während der NS-Zeit zentrale Dienststellen von Gestapo und SS; ab 1939 befand sich hier auch das Reichssicherheitshauptamt. Innen- und Außenausstellungen dokumentieren die Institutionen, Täter und europaweit verübten Verbrechen.",
+          "visitNotes": "Die Ausstellungen behandeln Verfolgung und Massenverbrechen. Für einen konzentrierten und respektvollen Besuch ausreichend Zeit einplanen."
+        },
+        "en": {
+          "name": "Topography of Terror",
+          "shortDescription": "A documentation centre on the historic site of central Nazi terror institutions.",
+          "description": "During the Nazi period, the site housed central offices of the Gestapo and SS; from 1939 it also housed the Reich Security Main Office. Indoor and outdoor exhibitions document the institutions, perpetrators and crimes committed across Europe.",
+          "visitNotes": "The exhibitions address persecution and mass crimes. Allow enough time for a focused and respectful visit."
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Topography of Terror Foundation",
+          "title": "Permanent exhibitions",
+          "canonicalUrl": "https://www.topographie.de/en/exhibitions/",
+          "verifiedAt": "2026-09-10"
+        },
+        {
+          "publisher": "Topography of Terror Foundation",
+          "title": "History before 1945",
+          "canonicalUrl": "https://www.topographie.de/en/the-hoistoric-site/history-before-1945",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "juedisches-museum-berlin",
+      "category": "see",
+      "coordinates": { "lat": 52.5022467, "lng": 13.3951467 },
+      "durationMinutes": 120,
+      "environment": "indoor",
+      "pricing": "mixed",
+      "status": "unknown",
+      "tags": ["museum", "history", "architecture", "remembrance"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Jüdisches Museum Berlin",
+          "shortDescription": "Museum für jüdisches Leben in Deutschland in einem eindrucksvollen Architekturensemble.",
+          "description": "Die Dauerausstellung erzählt jüdische Geschichte und Gegenwart in Deutschland. Daniel Libeskinds zickzackförmiger Erweiterungsbau mit Achsen und Leerräumen macht Architektur selbst zu einem Teil der historischen Auseinandersetzung.",
+          "visitNotes": "Den Museumsbesuch im Voraus planen und aktuelle Zugangs- und Ticketinformationen direkt beim Museum prüfen."
+        },
+        "en": {
+          "name": "Jewish Museum Berlin",
+          "shortDescription": "A museum of Jewish life in Germany within a powerful architectural ensemble.",
+          "description": "The core exhibition presents Jewish history and the present in Germany. Daniel Libeskind's zigzag extension, with axes and voids, makes the architecture itself part of the historical encounter.",
+          "visitNotes": "Plan the museum visit in advance and check current access and ticket information directly with the museum."
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Jewish Museum Berlin",
+          "title": "Museum Architecture",
+          "canonicalUrl": "https://www.jmberlin.de/en/architecture-buildings",
+          "verifiedAt": "2026-09-10"
+        },
+        {
+          "publisher": "Jewish Museum Berlin",
+          "title": "Jewish Life in Germany: Past and Present",
+          "canonicalUrl": "https://www.jmberlin.de/en/core-exhibition",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "schloss-charlottenburg",
+      "category": "see",
+      "coordinates": { "lat": 52.5206424, "lng": 13.2927104 },
+      "durationMinutes": 120,
+      "environment": "mixed",
+      "pricing": "paid",
+      "status": "unknown",
+      "tags": ["history", "architecture", "palace", "garden"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Schloss Charlottenburg",
+          "shortDescription": "Berlins größte erhaltene Schlossanlage der Hohenzollern mit historischem Garten.",
+          "description": "Altes Schloss, Neuer Flügel und Garten zeigen wechselnde Wohn- und Repräsentationsformen vom Barock bis ins frühe 20. Jahrhundert. Nach schweren Kriegsschäden wurde die Anlage weitgehend wiederaufgebaut und neu ausgestattet.",
+          "visitNotes": "Den Besuch der einzelnen Gebäude und Gartenbereiche vorab mit den aktuellen Zugangs- und Ticketinformationen der SPSG planen."
+        },
+        "en": {
+          "name": "Charlottenburg Palace",
+          "shortDescription": "Berlin's largest surviving Hohenzollern palace complex with a historic garden.",
+          "description": "The Old Palace, New Wing and gardens reveal changing forms of royal domestic and ceremonial life from the Baroque era to the early twentieth century. After severe wartime damage, the complex was largely rebuilt and refurnished.",
+          "visitNotes": "Plan visits to the individual buildings and garden areas using SPSG's current access and ticket information."
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Prussian Palaces and Gardens Foundation Berlin-Brandenburg",
+          "title": "Charlottenburg Palace – Old Palace",
+          "canonicalUrl": "https://www.spsg.de/en/palaces-gardens/object/charlottenburg-palace-old-palace/",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "tempelhofer-feld",
+      "category": "fun",
+      "coordinates": { "lat": 52.4744192, "lng": 13.4026007 },
+      "durationMinutes": 90,
+      "environment": "outdoor",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["park", "recreation", "aviation", "family"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Tempelhofer Feld",
+          "shortDescription": "Ehemaliges Flughafengelände, heute weitläufiger Park auf historischen Startbahnen.",
+          "description": "Nach dem Ende des Flugbetriebs 2008 wurde das rund 300 Hektar große Flugfeld 2010 als öffentlicher Park geöffnet. Ehemalige Start- und Landebahnen bieten Raum für Bewegung, Picknick und weite Blicke.",
+          "visitNotes": "Vor dem Besuch die aktuell geltenden Torzeiten und Zugangshinweise des Betreibers prüfen.",
+          "facts": [
+            { "label": "Als Park geöffnet", "value": "2010" },
+            { "label": "Fläche", "value": "Rund 300 Hektar" }
+          ]
+        },
+        "en": {
+          "name": "Tempelhofer Feld",
+          "shortDescription": "A former airfield transformed into a vast park across historic runways.",
+          "description": "After flight operations ended in 2008, the roughly 300-hectare airfield opened as a public park in 2010. Former runways provide space for exercise, picnics and broad city views.",
+          "visitNotes": "Before visiting, check the operator's current gate times and access guidance.",
+          "facts": [
+            { "label": "Opened as a park", "value": "2010" },
+            { "label": "Area", "value": "Around 300 hectares" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "State of Berlin",
+          "title": "Park Tempelhofer Feld",
+          "canonicalUrl": "https://www.berlin.de/en/parks-and-gardens/3561883-4407152-park-tempelhofer-feld.en.html",
+          "verifiedAt": "2026-09-10",
+          "notes": "Seasonal gate times are not copied into structured status data."
+        }
+      ]
+    },
+    {
+      "slug": "teufelsberg",
+      "category": "see",
+      "coordinates": { "lat": 52.4977183, "lng": 13.2429543 },
+      "durationMinutes": 90,
+      "environment": "mixed",
+      "pricing": "paid",
+      "status": "unknown",
+      "tags": ["cold-war", "history", "viewpoint", "hidden-gem"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Teufelsberg",
+          "shortDescription": "Trümmerberg im Grunewald mit der ehemaligen alliierten Abhörstation.",
+          "description": "Auf dem künstlich aufgeschütteten Teufelsberg entstand während des Kalten Krieges eine amerikanisch-britische Abhörstation. Die markanten Radarkuppeln erinnern an Berlins Rolle im Ost-West-Konflikt.",
+          "visitNotes": "Vor dem Besuch die aktuellen Zugangs-, Veranstaltungs- und Ticketinformationen des Betreibers prüfen."
+        },
+        "en": {
+          "name": "Teufelsberg",
+          "shortDescription": "A rubble hill in Grunewald topped by a former Allied listening station.",
+          "description": "An American-British listening station was developed on the artificial Teufelsberg during the Cold War. Its distinctive radar domes recall Berlin's role in the East-West conflict.",
+          "visitNotes": "Before visiting, check the operator's current access, event and ticket information."
+        }
+      },
+      "sources": [
+        {
+          "publisher": "State of Berlin",
+          "title": "NSG/GCHQ Field Station",
+          "canonicalUrl": "https://www.berlin.de/landesdenkmalamt/denkmale/highlight-denkmale-der-alliierten/usa/charlottenburg-wilmersdorf/abhoerstation-teufelsberg-1415079.php",
+          "verifiedAt": "2026-09-10"
+        },
+        {
+          "publisher": "Teufelsberg Berlin",
+          "title": "Geschichtlicher Überblick",
+          "canonicalUrl": "https://www.teufelsberg-berlin.de/geschichte/geschichtlicher-ueberblick/",
+          "verifiedAt": "2026-09-10",
+          "notes": "Operational access information must be rechecked before publication."
+        }
+      ]
+    },
+    {
+      "slug": "kaiser-wilhelm-gedaechtniskirche",
+      "category": "see",
+      "coordinates": { "lat": 52.5047055, "lng": 13.3350322 },
+      "durationMinutes": 30,
+      "environment": "mixed",
+      "pricing": "free",
+      "status": "unknown",
+      "tags": ["history", "architecture", "church", "memorial"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Kaiser-Wilhelm-Gedächtniskirche",
+          "shortDescription": "Kriegsbeschädigte Turmruine und moderner Kirchenbau als Mahnmal in der City West.",
+          "description": "Die 1895 eingeweihte Kirche wurde im Zweiten Weltkrieg schwer zerstört. Die erhaltene Turmruine und Egon Eiermanns 1961 vollendetes modernes Ensemble bilden gemeinsam einen Erinnerungsort gegen Krieg und Zerstörung.",
+          "visitNotes": "Die Anlage ist weiterhin ein aktiver kirchlicher Ort. Gottesdienste respektieren und aktuelle Besuchshinweise beachten.",
+          "facts": [
+            { "label": "Historische Kirche eingeweiht", "value": "1895" },
+            { "label": "Neues Ensemble", "value": "1961" }
+          ]
+        },
+        "en": {
+          "name": "Kaiser Wilhelm Memorial Church",
+          "shortDescription": "A war-damaged tower ruin and modern church ensemble serving as a memorial in City West.",
+          "description": "The church inaugurated in 1895 was severely damaged during the Second World War. Its surviving tower ruin and Egon Eiermann's modern ensemble, completed in 1961, together form a place of remembrance against war and destruction.",
+          "visitNotes": "The complex remains an active religious site. Respect services and follow current visitor guidance.",
+          "facts": [
+            { "label": "Historic church inaugurated", "value": "1895" },
+            { "label": "New ensemble", "value": "1961" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Kaiser-Wilhelm-Gedächtnis-Kirchengemeinde",
+          "title": "Geschichte",
+          "canonicalUrl": "https://www.gedaechtniskirche-berlin.de/gebaeude/geschichte",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "humboldt-forum",
+      "category": "see",
+      "coordinates": { "lat": 52.5170316, "lng": 13.4012274 },
+      "durationMinutes": 90,
+      "environment": "indoor",
+      "pricing": "mixed",
+      "status": "unknown",
+      "tags": ["museum", "history", "architecture", "culture"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Humboldt Forum",
+          "shortDescription": "Kultur- und Wissenschaftsforum in einem Neubau mit rekonstruierten Schlossfassaden.",
+          "description": "Das Humboldt Forum verbindet Sammlungen, Ausstellungen und Debatten zu Kunst, Kultur und Wissenschaft. Der 2020 fertiggestellte Bau kombiniert moderne Architektur mit rekonstruierten barocken Fassaden und steht an einem politisch vielschichtigen historischen Ort.",
+          "visitNotes": "Den Besuch mit dem aktuellen Programm sowie den Zugangs- und Ticketinformationen des Humboldt Forums planen."
+        },
+        "en": {
+          "name": "Humboldt Forum",
+          "shortDescription": "A forum for culture and science in a new building with reconstructed palace façades.",
+          "description": "The Humboldt Forum brings together collections, exhibitions and debate around art, culture and science. Completed in 2020, the building combines modern architecture with reconstructed Baroque façades on a politically layered historic site.",
+          "visitNotes": "Plan the visit using the Humboldt Forum's current programme, access and ticket information."
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Stiftung Humboldt Forum im Berliner Schloss",
+          "title": "History of the Site",
+          "canonicalUrl": "https://www.humboldtforum.org/en/programm/feature/history-of-the-site-74591/",
+          "verifiedAt": "2026-09-10"
+        },
+        {
+          "publisher": "Stiftung Humboldt Forum im Berliner Schloss",
+          "title": "The Humboldt Forum",
+          "canonicalUrl": "https://www.humboldtforum.org/en/presse/dossiers/das-humboldt-forum/",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "slug": "markthalle-neun",
+      "category": "eat",
+      "coordinates": { "lat": 52.5021661, "lng": 13.4314886 },
+      "durationMinutes": 60,
+      "environment": "indoor",
+      "pricing": "paid",
+      "status": "unknown",
+      "tags": ["food", "market", "history", "neighbourhood"],
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "name": "Markthalle Neun",
+          "shortDescription": "Historische Kreuzberger Markthalle mit Lebensmitteln und wechselnden Marktformaten.",
+          "description": "Die 1891 eröffnete Markthalle IX gehört zu den wenigen erhaltenen Berliner Markthallen des 19. Jahrhunderts. Heute verbindet sie Lebensmittelhandel, Gastronomie und Veranstaltungen in der historischen Hallenstruktur.",
+          "visitNotes": "Vor einem gezielten Besuch den aktuellen Markt- und Veranstaltungskalender der Markthalle prüfen.",
+          "facts": [
+            { "label": "Eröffnet", "value": "1. Oktober 1891" }
+          ]
+        },
+        "en": {
+          "name": "Markthalle Neun",
+          "shortDescription": "A historic Kreuzberg market hall with food vendors and changing market formats.",
+          "description": "Market Hall IX opened in 1891 and is one of the surviving nineteenth-century Berlin market halls. Today it combines food retail, places to eat and events within the historic hall structure.",
+          "visitNotes": "Before making a dedicated visit, check the market hall's current market and event calendar.",
+          "facts": [
+            { "label": "Opened", "value": "1 October 1891" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "publisher": "Markthalle Neun",
+          "title": "History",
+          "canonicalUrl": "https://markthalleneun.de/en/ueber/history",
+          "verifiedAt": "2026-09-10"
+        }
+      ]
+    }
+  ],
+  "tours": [
+    {
+      "slug": "berlin-history-and-landmarks-walk",
+      "publicationStatus": "draft",
+      "content": {
+        "de": {
+          "title": "Berliner Geschichte und Wahrzeichen",
+          "shortDescription": "Eine kuratierte Reihenfolge zentraler Orte zwischen Regierungsviertel und Alexanderplatz.",
+          "description": "Die Entwurfsroute verbindet Politik, Erinnerungskultur, historische Plätze und Museumsarchitektur. Gehzeiten und tatsächliche Wege müssen vor einer Veröffentlichung noch redaktionell und vor Ort geprüft werden."
+        },
+        "en": {
+          "title": "Berlin History and Landmarks Walk",
+          "shortDescription": "A curated sequence of central sites between the government district and Alexanderplatz.",
+          "description": "This draft route connects politics, remembrance, historic squares and museum architecture. Walking times and actual pedestrian paths still require editorial and on-site review before publication."
+        }
+      },
+      "stops": [
+        { "placeSlug": "reichstagsgebaeude", "visitDurationMinutes": 60 },
+        { "placeSlug": "brandenburger-tor", "visitDurationMinutes": 20 },
+        { "placeSlug": "denkmal-ermordete-juden-europas", "visitDurationMinutes": 45 },
+        { "placeSlug": "bebelplatz", "visitDurationMinutes": 20 },
+        { "placeSlug": "museumsinsel", "visitDurationMinutes": 90 },
+        { "placeSlug": "berliner-dom", "visitDurationMinutes": 60 },
+        { "placeSlug": "fernsehturm-berlin", "visitDurationMinutes": 60 }
+      ]
+    }
+  ],
+  "knowledge": [
+    {
+      "placeSlug": "brandenburger-tor",
+      "sourceUrl": "https://www.berlin.museum/en/article/horse-head-from-the-quadriga",
+      "locale": "en",
+      "text": "The current sandstone Brandenburg Gate was designed by Carl Gotthard Langhans and opened to the public in August 1791; Johann Gottfried Schadow designed the Quadriga that crowns it.",
+      "topics": ["history", "architecture", "construction"],
+      "priority": 10
+    },
+    {
+      "placeSlug": "reichstagsgebaeude",
+      "sourceUrl": "https://www.bundestag.de/besuche/architektur/reichstag/geschichte",
+      "locale": "en",
+      "text": "Architect Paul Wallot designed the Reichstag Building in the 1880s, and its final stone was laid in 1894. After reconstruction by Norman Foster, the renewed building was handed over for parliamentary use in 1999.",
+      "topics": ["history", "architecture", "parliament"],
+      "priority": 10
+    },
+    {
+      "placeSlug": "museumsinsel",
+      "sourceUrl": "https://whc.unesco.org/en/list/896/",
+      "locale": "en",
+      "text": "UNESCO describes Berlin's Museum Island as an ensemble of five museums built between 1824 and 1930 that demonstrates the evolution of modern museum design over more than a century.",
+      "topics": ["unesco", "architecture", "museum", "history"],
+      "priority": 10
+    },
+    {
+      "placeSlug": "gedenkstaette-berliner-mauer",
+      "sourceUrl": "https://www.stiftung-berliner-mauer.de/en/berlin-wall-memorial",
+      "locale": "en",
+      "text": "At the Berlin Wall Memorial on Bernauer Strasse, 220 metres of the Wall are preserved, including the only location where the former border strip remains visible in its full depth.",
+      "topics": ["history", "cold-war", "division", "memorial"],
+      "priority": 10
+    },
+    {
+      "placeSlug": "east-side-gallery",
+      "sourceUrl": "https://www.stiftung-berliner-mauer.de/en/east-side-gallery",
+      "locale": "en",
+      "text": "More than one hundred murals were painted on the eastern side of this surviving Wall section in spring 1990. The East Side Gallery officially opened on 28 September 1990 and entered Berlin's monument register in November 1991.",
+      "topics": ["history", "cold-war", "art", "reunification"],
+      "priority": 10
+    }
+  ]
+}
