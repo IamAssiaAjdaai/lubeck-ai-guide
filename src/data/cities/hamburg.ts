@@ -1,14 +1,22 @@
 import type { CityManifest } from "@/lib/admin/content/cityManifest";
 
 const verifiedAt = "2026-09-09";
+const remediationVerifiedAt = "2026-09-11";
 
 function source(
   publisher: string,
   title: string,
   canonicalUrl: string,
   notes?: string,
+  sourceVerifiedAt = verifiedAt,
 ) {
-  return { publisher, title, canonicalUrl, verifiedAt, ...(notes ? { notes } : {}) };
+  return {
+    publisher,
+    title,
+    canonicalUrl,
+    verifiedAt: sourceVerifiedAt,
+    ...(notes ? { notes } : {}),
+  };
 }
 
 export const hamburgCityManifest = {
@@ -177,21 +185,38 @@ export const hamburgCityManifest = {
         de: {
           name: "Internationales Maritimes Museum",
           shortDescription: "Maritime Sammlung auf neun Decks im historischen Kaispeicher B.",
-          description: "Das Museum zeigt Schifffahrtsgeschichte, Modelle, Karten und maritime Kunst in einem der ältesten erhaltenen Speicher der HafenCity.",
-          facts: [{ label: "Gebäude", value: "Kaispeicher B" }],
+          description: "Das Museum zeigt Schifffahrtsgeschichte, Modelle, Karten und maritime Kunst im historischen, 1878/79 erbauten Kaispeicher B.",
+          story: "Neun Decks im Kaispeicher B erzählen Schifffahrtsgeschichte aus vielen Blickwinkeln. Modelle zeigen, wie sich Schiffe und Schiffbau veränderten; Karten, Kunst und Navigationsobjekte öffnen weitere Perspektiven auf das Leben auf See. Auch der Meeresforschung ist ein eigener Bereich gewidmet. Das Backsteingebäude wurde 1878/79 als Speicher errichtet und später behutsam zum Museum umgebaut. Beim Rundgang wechseln deshalb Sammlung und Baugeschichte miteinander: Hinter den Exponaten bleibt die frühere Hafenfunktion des Hauses sichtbar.",
+          facts: [
+            { label: "Gebäude", value: "Kaispeicher B" },
+            { label: "Erbaut", value: "1878/79" },
+          ],
         },
         en: {
           name: "International Maritime Museum",
           shortDescription: "A maritime collection across nine decks in historic Kaispeicher B.",
-          description: "The museum presents shipping history, models, maps and maritime art inside one of HafenCity's oldest surviving warehouses.",
-          facts: [{ label: "Building", value: "Kaispeicher B" }],
+          description: "The museum presents shipping history, models, maps and maritime art inside historic Kaispeicher B, built in 1878/79.",
+          story: "Nine decks inside Kaispeicher B tell maritime history from many angles. Models trace changes in ships and shipbuilding, while maps, art and navigation objects open further perspectives on life at sea. One section is also devoted to ocean research. The brick building was constructed as a warehouse in 1878/79 and later carefully converted into a museum. As you move through it, the collection and the building's history meet, with its former harbour function still visible behind the exhibits.",
+          facts: [
+            { label: "Building", value: "Kaispeicher B" },
+            { label: "Built", value: "1878/79" },
+          ],
         },
       },
-      sources: [source(
-        "International Maritime Museum Hamburg",
-        "The collection",
-        "https://imm-hamburg.de/sammlung/",
-      )],
+      sources: [
+        source(
+          "International Maritime Museum Hamburg",
+          "The collection",
+          "https://imm-hamburg.de/sammlung/",
+        ),
+        source(
+          "International Maritime Museum Hamburg",
+          "Press kit 2025: Kaispeicher B and museum overview",
+          "https://www.imm-hamburg.de/wp-content/uploads/Pressemappe_IMMH_2025.pdf",
+          undefined,
+          remediationVerifiedAt,
+        ),
+      ],
     },
     {
       slug: "hafencity",
@@ -208,20 +233,38 @@ export const hamburgCityManifest = {
           name: "HafenCity",
           shortDescription: "Neues Stadtquartier zwischen historischen Hafenbecken und moderner Architektur.",
           description: "Promenaden, Plätze und neue Gebäude zeigen den langfristigen Umbau ehemaliger Hafenflächen zu einem innerstädtischen Quartier.",
+          story: "Wo heute Promenaden, Wohnungen und Kulturorte liegen, prägten früher Hafenbecken, Kais und Lagerflächen das Gebiet. Mit der Verlagerung des Containerumschlags verlor der innenstadtnahe Hafenraum an Bedeutung. 1997 stellte Hamburg die Vision für ein neues Stadtviertel vor, 2000 beschloss der Senat den Masterplan. Alte Hafenbecken und einzelne Speicher blieben Teil des Entwurfs. So lässt sich beim Spaziergang ablesen, wie Hafeninfrastruktur Schritt für Schritt in ein gemischt genutztes Quartier am Wasser überführt wird.",
           visitNotes: "Die HafenCity ist weitläufig; für diesen Stopp eignet sich ein kompakter Abschnitt rund um die westlichen Promenaden.",
         },
         en: {
           name: "HafenCity",
           shortDescription: "A new urban district shaped by historic harbour basins and modern architecture.",
           description: "Promenades, squares and new buildings reveal the long-term transformation of former port land into an inner-city district.",
+          story: "Where promenades, homes and cultural venues now stand, harbour basins, quays and storage areas once shaped the site. As container handling moved elsewhere, this inner-city port area lost importance. Hamburg presented its vision for a new district in 1997, and the Senate approved the masterplan in 2000. Historic basins and selected warehouses remained part of the design. A walk here reveals how former port infrastructure is gradually becoming a mixed urban neighbourhood beside the water.",
           visitNotes: "HafenCity is extensive; this stop works best as a compact walk along the western promenades.",
         },
       },
-      sources: [source(
-        "HafenCity Hamburg GmbH",
-        "HafenCity overview",
-        "https://www.hafencity.com/en/overview",
-      )],
+      sources: [
+        source(
+          "HafenCity Hamburg GmbH",
+          "HafenCity overview",
+          "https://www.hafencity.com/en/overview",
+        ),
+        source(
+          "HafenCity Hamburg GmbH",
+          "The history of the site",
+          "https://www.hafencity.com/en/overview/history",
+          undefined,
+          remediationVerifiedAt,
+        ),
+        source(
+          "HafenCity Hamburg GmbH",
+          "The genesis of an idea",
+          "https://www.hafencity.com/en/overview/genesis-of-idea",
+          undefined,
+          remediationVerifiedAt,
+        ),
+      ],
     },
     {
       slug: "elbphilharmonie-plaza",
@@ -231,6 +274,7 @@ export const hamburgCityManifest = {
       environment: "mixed",
       pricing: "unknown",
       status: "unknown",
+      visitNoteVerifiedAt: remediationVerifiedAt,
       tags: ["architecture", "music", "waterfront", "viewpoint"],
       publicationStatus: "published",
       content: {
@@ -238,30 +282,41 @@ export const hamburgCityManifest = {
           name: "Elbphilharmonie und Plaza",
           shortDescription: "Konzerthaus am Hafen mit öffentlicher Plaza zwischen Speicher und Glasaufbau.",
           description: "Die Elbphilharmonie verbindet den ehemaligen Kaispeicher A mit einem geschwungenen Glasbau. Die Plaza bildet die öffentlich zugängliche Ebene dazwischen.",
-          story: "Die Plaza öffnete im November 2016; der Große Konzertsaal wurde im Januar 2017 eingeweiht.",
-          visitNotes: "Für Plaza und Konzerte gelten eigene Zugangs- und Ticketregeln; aktuelle Angaben bitte vor dem Besuch auf der offiziellen Seite prüfen.",
+          story: "Die Plaza öffnete am 4. November 2016 für die Öffentlichkeit; die Elbphilharmonie wurde am 11. Januar 2017 eingeweiht.",
+          visitNotes: "Zugang und Ticketregeln können sich ändern. Vor der Anreise die aktuellen offiziellen Besucherinformationen prüfen.",
           facts: [
-            { label: "Plaza eröffnet", value: "2016" },
-            { label: "Konzerthaus eingeweiht", value: "2017" },
+            { label: "Plaza eröffnet", value: "4. November 2016" },
+            { label: "Elbphilharmonie eingeweiht", value: "11. Januar 2017" },
           ],
         },
         en: {
           name: "Elbphilharmonie and Plaza",
           shortDescription: "A harbour concert hall with a public plaza between warehouse and glass structure.",
           description: "The Elbphilharmonie combines the former Kaispeicher A with a sweeping glass building. The public Plaza sits between the two.",
-          story: "The Plaza opened in November 2016 and the Grand Hall was inaugurated in January 2017.",
-          visitNotes: "The Plaza and concerts have separate access and ticket arrangements; check the official site before visiting.",
+          story: "The Plaza opened to the public on 4 November 2016, and the Elbphilharmonie was inaugurated on 11 January 2017.",
+          visitNotes: "Access and ticket arrangements can change. Check the current official visitor information before travelling.",
           facts: [
-            { label: "Plaza opened", value: "2016" },
-            { label: "Concert hall inaugurated", value: "2017" },
+            { label: "Plaza opened", value: "4 November 2016" },
+            { label: "Elbphilharmonie inaugurated", value: "11 January 2017" },
           ],
         },
       },
-      sources: [source(
-        "Elbphilharmonie Hamburg",
-        "Elbphilharmonie history and halls",
-        "https://www.elbphilharmonie.de/en/the-halls",
-      )],
+      sources: [
+        source(
+          "Elbphilharmonie Hamburg",
+          "Elbphilharmonie history and halls",
+          "https://www.elbphilharmonie.de/en/the-halls",
+          undefined,
+          remediationVerifiedAt,
+        ),
+        source(
+          "Elbphilharmonie Hamburg",
+          "Plan your visit",
+          "https://www.elbphilharmonie.de/en/plan-your-visit",
+          undefined,
+          remediationVerifiedAt,
+        ),
+      ],
     },
     {
       slug: "landungsbruecken",
@@ -301,6 +356,7 @@ export const hamburgCityManifest = {
       environment: "indoor",
       pricing: "free",
       status: "unknown",
+      visitNoteVerifiedAt: remediationVerifiedAt,
       tags: ["engineering", "history", "harbour", "hidden-gem"],
       publicationStatus: "published",
       content: {
@@ -308,7 +364,7 @@ export const hamburgCityManifest = {
           name: "Alter Elbtunnel",
           shortDescription: "Historischer Tunnel unter der Elbe mit zwei gekachelten Röhren.",
           description: "Der 1911 eröffnete Tunnel führt von St. Pauli unter der Elbe hindurch. Keramikreliefs und die technische Anlage machen den Weg selbst zum Erlebnis.",
-          visitNotes: "Betriebs- und Fahrzeugregelungen können sich ändern; vor dem Besuch bitte die aktuellen offiziellen Hinweise prüfen.",
+          visitNotes: "Zugang und Betriebsregeln können sich ändern. Vor der Anreise die aktuellen offiziellen Besucherinformationen prüfen.",
           facts: [
             { label: "Eröffnet", value: "1911" },
             { label: "Länge", value: "426,5 Meter" },
@@ -318,18 +374,27 @@ export const hamburgCityManifest = {
           name: "Old Elbe Tunnel",
           shortDescription: "A historic tunnel beneath the Elbe with two tiled tubes.",
           description: "Opened in 1911, the tunnel runs beneath the Elbe from St. Pauli. Ceramic reliefs and the engineering structure make the passage an experience in itself.",
-          visitNotes: "Operating and vehicle access rules can change; check current official guidance before visiting.",
+          visitNotes: "Access and operating rules can change. Check the current official visitor information before travelling.",
           facts: [
             { label: "Opened", value: "1911" },
             { label: "Length", value: "426.5 metres" },
           ],
         },
       },
-      sources: [source(
-        "Hamburg Tourism",
-        "Old Elbe Tunnel",
-        "https://www.hamburg-tourism.de/sehen-erleben/hamburg-maritim/alter-elbtunnel/",
-      )],
+      sources: [
+        source(
+          "Hamburg Tourism",
+          "Old Elbe Tunnel",
+          "https://www.hamburg-tourism.de/sehen-erleben/hamburg-maritim/alter-elbtunnel/",
+        ),
+        source(
+          "Free and Hanseatic City of Hamburg",
+          "Old Elbe Tunnel visitor information",
+          "https://www.hamburg.de/tourismus/sehenswuerdigkeiten/alter-elbtunnel-298708",
+          undefined,
+          remediationVerifiedAt,
+        ),
+      ],
     },
     {
       slug: "st-michaelis-michel",
@@ -339,6 +404,7 @@ export const hamburgCityManifest = {
       environment: "mixed",
       pricing: "unknown",
       status: "unknown",
+      visitNoteVerifiedAt: remediationVerifiedAt,
       tags: ["church", "history", "architecture", "viewpoint"],
       publicationStatus: "published",
       content: {
@@ -346,22 +412,38 @@ export const hamburgCityManifest = {
           name: "Hauptkirche St. Michaelis",
           shortDescription: "Hamburgs barocke Hauptkirche, bekannt als der Michel.",
           description: "Der Michel ist seit Jahrhunderten ein Orientierungspunkt der Stadt. Kirchraum, Krypta und Turm erzählen unterschiedliche Kapitel seiner Geschichte.",
-          visitNotes: "Zugang zu Kirche, Krypta und Turm kann unterschiedlichen Zeiten und Bedingungen folgen; aktuelle Hinweise bitte offiziell prüfen.",
-          facts: [{ label: "Tradition", value: "Mehr als 350 Jahre" }],
+          visitNotes: "Öffnungszeiten und Zugang zu Kirche, Krypta und Turm können sich je nach Saison, Gottesdienst oder Veranstaltung ändern. Vor der Anreise die aktuellen offiziellen Besucherinformationen prüfen.",
+          facts: [{ label: "Erste große Kirche", value: "1661 eingeweiht" }],
         },
         en: {
           name: "St Michael's Church",
           shortDescription: "Hamburg's Baroque landmark church, known locally as the Michel.",
           description: "The Michel has guided the city skyline for centuries. Its church interior, crypt and tower present different chapters of its history.",
-          visitNotes: "The church, crypt and tower may follow different access times and conditions; check current official information.",
-          facts: [{ label: "Tradition", value: "More than 350 years" }],
+          visitNotes: "Opening and access to the church, crypt and tower can change with the season, services or events. Check the current official visitor information before travelling.",
+          facts: [{ label: "First large church", value: "Consecrated in 1661" }],
         },
       },
-      sources: [source(
-        "Hauptkirche St. Michaelis",
-        "History of St Michael's",
-        "https://www.st-michaelis.de/michel-besuch/bauwerk/geschichte",
-      )],
+      sources: [
+        source(
+          "Hauptkirche St. Michaelis",
+          "History of St Michael's",
+          "https://www.st-michaelis.de/michel-besuch/bauwerk/geschichte",
+        ),
+        source(
+          "Hauptkirche St. Michaelis",
+          "Michel tower experience and history",
+          "https://www.st-michaelis.de/turmerlebnis",
+          undefined,
+          remediationVerifiedAt,
+        ),
+        source(
+          "Hauptkirche St. Michaelis",
+          "Opening hours and prices",
+          "https://www.st-michaelis.de/michel-besuch/oeffnungszeiten-und-preise",
+          undefined,
+          remediationVerifiedAt,
+        ),
+      ],
     },
     {
       slug: "mahnmal-st-nikolai",
@@ -461,6 +543,7 @@ export const hamburgCityManifest = {
       environment: "indoor",
       pricing: "paid",
       status: "unknown",
+      visitNoteVerifiedAt: remediationVerifiedAt,
       tags: ["family", "museum", "model-railway"],
       publicationStatus: "published",
       content: {
@@ -469,21 +552,30 @@ export const hamburgCityManifest = {
           shortDescription: "Große Modellwelt in der Speicherstadt mit detaillierten Landschaften und Bahnen.",
           description: "Die Ausstellung verbindet Modellbahn, Miniaturlandschaften und inszenierte Alltagsszenen in mehreren Themenwelten.",
           story: "Das Miniatur Wunderland eröffnete am 16. August 2001 und wurde seitdem schrittweise erweitert.",
-          visitNotes: "Die Ausstellung ist stark nachgefragt; aktuelle Ticket- und Einlassinformationen bitte direkt beim Anbieter prüfen.",
+          visitNotes: "Einlasszeiten und Ticketverfügbarkeit können sich ändern. Vor der Anreise die aktuellen offiziellen Besucherinformationen prüfen.",
         },
         en: {
           name: "Miniatur Wunderland",
           shortDescription: "A vast miniature world in Speicherstadt with detailed landscapes and railways.",
           description: "The exhibition combines model railways, miniature landscapes and staged everyday scenes across multiple themed worlds.",
           story: "Miniatur Wunderland opened on 16 August 2001 and has expanded in stages ever since.",
-          visitNotes: "The exhibition is popular; check current ticket and admission information directly with the venue.",
+          visitNotes: "Admission times and ticket availability can change. Check the current official visitor information before travelling.",
         },
       },
-      sources: [source(
-        "Miniatur Wunderland Hamburg",
-        "History of Miniatur Wunderland",
-        "https://www.miniatur-wunderland.com/exchange/about/history/",
-      )],
+      sources: [
+        source(
+          "Miniatur Wunderland Hamburg",
+          "History of Miniatur Wunderland",
+          "https://www.miniatur-wunderland.com/exchange/about/history/",
+        ),
+        source(
+          "Miniatur Wunderland Hamburg",
+          "Current opening and admission information",
+          "https://www.miniatur-wunderland.de/besuchen/planen/oeffnungszeiten/",
+          undefined,
+          remediationVerifiedAt,
+        ),
+      ],
     },
     {
       slug: "hamburger-kunsthalle",
@@ -523,6 +615,7 @@ export const hamburgCityManifest = {
       environment: "indoor",
       pricing: "paid",
       status: "unknown",
+      visitNoteVerifiedAt: remediationVerifiedAt,
       tags: ["art", "photography", "architecture", "culture"],
       publicationStatus: "published",
       content: {
@@ -531,21 +624,30 @@ export const hamburgCityManifest = {
           shortDescription: "Historische Markthallen für zeitgenössische Kunst und Fotografie.",
           description: "Die lichtdurchfluteten Hallen verbinden Industriearchitektur mit großformatigen Ausstellungen zeitgenössischer Kunst und Fotografie.",
           story: "Die Hallen wurden zwischen 1911 und 1914 als Markthallen errichtet.",
-          visitNotes: "Ausstellungsorte können wegen Umbauten unterschiedlich verfügbar sein; aktuelle Hinweise bitte auf der offiziellen Seite prüfen.",
+          visitNotes: "Ausstellungen und die Verfügbarkeit der einzelnen Häuser können sich ändern. Vor der Anreise die aktuellen offiziellen Besucherinformationen prüfen.",
         },
         en: {
           name: "Deichtorhallen",
           shortDescription: "Historic market halls dedicated to contemporary art and photography.",
           description: "The light-filled halls combine industrial architecture with large-scale exhibitions of contemporary art and photography.",
           story: "The buildings were constructed as market halls between 1911 and 1914.",
-          visitNotes: "Individual exhibition venues may have changing availability during works; check the official site for current details.",
+          visitNotes: "Exhibitions and the availability of individual venues can change. Check the current official visitor information before travelling.",
         },
       },
-      sources: [source(
-        "Deichtorhallen Hamburg",
-        "About the Deichtorhallen",
-        "https://www.deichtorhallen.de/en/deichtorhallen/ueber-die-deichtorhallen/",
-      )],
+      sources: [
+        source(
+          "Deichtorhallen Hamburg",
+          "About the Deichtorhallen",
+          "https://www.deichtorhallen.de/en/deichtorhallen/ueber-die-deichtorhallen/",
+        ),
+        source(
+          "Deichtorhallen Hamburg",
+          "Current visitor information",
+          "https://www.deichtorhallen.de/de/besuch/",
+          undefined,
+          remediationVerifiedAt,
+        ),
+      ],
     },
     {
       slug: "hamburger-fischmarkt",
@@ -555,7 +657,8 @@ export const hamburgCityManifest = {
       environment: "outdoor",
       pricing: "mixed",
       status: "seasonal",
-      statusVerifiedAt: verifiedAt,
+      statusVerifiedAt: remediationVerifiedAt,
+      visitNoteVerifiedAt: remediationVerifiedAt,
       tags: ["market", "food", "harbour", "history"],
       publicationStatus: "published",
       content: {
@@ -564,14 +667,14 @@ export const hamburgCityManifest = {
           shortDescription: "Traditionsreicher Markt am Elbufer mit maritimer Atmosphäre.",
           description: "Der Fischmarkt verbindet Marktstände, Hafenblick und eine lange lokale Handelstradition.",
           story: "Der Markt besteht seit 1703.",
-          visitNotes: "Der Markt findet nicht täglich statt. Aktuelle Marktzeiten und mögliche saisonale Änderungen bitte offiziell prüfen.",
+          visitNotes: "Der Markt findet sonntagmorgens mit saisonal wechselnden Zeiten statt. Vor der Anreise die aktuellen offiziellen Besucherinformationen prüfen.",
         },
         en: {
           name: "Hamburg Fish Market",
           shortDescription: "A long-running market on the Elbe with a distinctly maritime atmosphere.",
           description: "The fish market brings together market stalls, harbour views and a long local trading tradition.",
           story: "The market dates back to 1703.",
-          visitNotes: "The market does not operate daily. Check official information for current market times and seasonal changes.",
+          visitNotes: "The market operates on Sunday mornings with seasonally changing times. Check the current official visitor information before travelling.",
         },
       },
       sources: [source(
@@ -660,7 +763,7 @@ export const hamburgCityManifest = {
           visitNotes: "Dies ist ein aktiver Friedhof. Rücksichtsvoll verhalten, Zeremonien nicht stören und ausgewiesene Wege nutzen.",
           facts: [
             { label: "Eröffnet", value: "1877" },
-            { label: "Fläche", value: "Rund 389 Hektar" },
+            { label: "Gesamtfläche", value: "389 Hektar" },
           ],
         },
         en: {
@@ -670,32 +773,41 @@ export const hamburgCityManifest = {
           visitNotes: "This is an active cemetery. Be respectful, do not disturb ceremonies and remain on designated paths.",
           facts: [
             { label: "Opened", value: "1877" },
-            { label: "Area", value: "Around 389 hectares" },
+            { label: "Total area", value: "389 hectares" },
           ],
         },
       },
-      sources: [source(
-        "Free and Hanseatic City of Hamburg",
-        "Ohlsdorf Cemetery",
-        "https://www.hamburg.de/tourismus/sehenswuerdigkeiten/friedhof-ohlsdorf-314168",
-      )],
+      sources: [
+        source(
+          "Free and Hanseatic City of Hamburg",
+          "Ohlsdorf Cemetery",
+          "https://www.hamburg.de/tourismus/sehenswuerdigkeiten/friedhof-ohlsdorf-314168",
+        ),
+        source(
+          "Hamburger Friedhöfe",
+          "Ohlsdorf Cemetery facts",
+          "https://www.friedhof-hamburg.de/die-friedhoefe/ohlsdorf/fakten/",
+          undefined,
+          remediationVerifiedAt,
+        ),
+      ],
     },
   ],
   tours: [
     {
       slug: "harbour-heritage-walk",
       publicationStatus: "published",
-      estimatedDurationMinutes: 250,
+      estimatedDurationMinutes: 274,
       content: {
         de: {
           title: "Hafen- und Speicherstadt-Spaziergang",
-          shortDescription: "Ein kompakter Weg vom Rathaus durch das Welterbe bis zu Elbphilharmonie und Landungsbrücken.",
+          shortDescription: "Ein Weg vom Rathaus durch das Welterbe bis zu Elbphilharmonie und Landungsbrücken.",
           description: "Die Route verbindet zentrale Stadtgeschichte, Lagerhäuser, moderne HafenCity und den offenen Elbraum, ohne entfernte Außenbezirke einzubeziehen.",
         },
         en: {
           title: "Harbour and Warehouse District Walk",
-          shortDescription: "A compact route from City Hall through the World Heritage district to the Elbphilharmonie and Landing Bridges.",
-          description: "The route links civic history, warehouses, modern HafenCity and the open Elbe waterfront without pretending to cover Hamburg's distant districts on foot.",
+          shortDescription: "A route from City Hall through the World Heritage district to the Elbphilharmonie and Landing Bridges.",
+          description: "The route links civic history, warehouses, modern HafenCity and the open Elbe waterfront while staying within the central harbour districts.",
         },
       },
       stops: [

@@ -56,6 +56,7 @@ already linked to that place. These commands are local/server-only operations;
 there is no public mutation endpoint.
 
 - Add: `npm run knowledge:manage -- add --city=<slug> --place=<slug> --source=<https-url> --locale=en --text=<verified-text> --topics=history,architecture`
+- Relink reviewed text to a replacement source already attached to the same place: `npm run knowledge:manage -- relink --id=<chunk-uuid> --source=<https-url>` (the active/inactive state is preserved)
 - Remove: `npm run knowledge:manage -- remove --id=<chunk-uuid>`
 
 Only active chunks for the exact city, place, and knowledge locale can enable or

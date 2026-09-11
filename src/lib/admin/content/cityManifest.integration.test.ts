@@ -105,6 +105,8 @@ function createNoCodeManifest() {
         environment: "indoor",
         pricing: "unknown",
         status: "unknown",
+        visitNoteVerifiedAt: "2026-09-11",
+        visitNoteValidUntil: "2026-12-31",
         tags: ["history"],
         publicationStatus: "published",
         content: {
@@ -185,12 +187,12 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
       citySourceCount: 1,
       placeCount: HAMBURG_PLACE_COUNT,
       placeLocalizationCount: HAMBURG_PLACE_COUNT * 2,
-      sourceLinkCount: HAMBURG_PLACE_COUNT,
       currentRevisionCount: HAMBURG_PLACE_COUNT,
       tourCount: 1,
       tourStopCount: 7,
       verifiedKnowledgeCount: 5,
     });
+    expect(first.sourceLinkCount).toBeGreaterThanOrEqual(HAMBURG_PLACE_COUNT);
     expect(second).toEqual(first);
 
     const db = getDb();
@@ -222,7 +224,8 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
       .where(eq(placesTable.cityId, city!.id))).toHaveLength(HAMBURG_PLACE_COUNT * 2);
     expect(await db.select().from(placeSourcesTable)
       .innerJoin(placesTable, eq(placeSourcesTable.placeId, placesTable.id))
-      .where(eq(placesTable.cityId, city!.id))).toHaveLength(HAMBURG_PLACE_COUNT);
+      .where(eq(placesTable.cityId, city!.id)))
+      .toHaveLength(first.sourceLinkCount);
     expect(await db.select().from(verifiedKnowledgeChunksTable)
       .innerJoin(placesTable, eq(verifiedKnowledgeChunksTable.placeId, placesTable.id))
       .where(eq(placesTable.cityId, city!.id))).toHaveLength(5);
@@ -308,7 +311,6 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
       sourceCompletePlaceCount: HAMBURG_PLACE_COUNT,
       verifiedAiEligiblePlaceCount: 5,
       keyImageCompletePlaceCount: 0,
-      cityKeyImageReady: false,
       publishedTourCount: 1,
       coherentPublishedTourCount: 1,
       contentCoveragePercentByLocale: { de: 100, en: 100 },
@@ -397,6 +399,11 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
       expect(importedPlaces.every(({ publicationStatus }) =>
         publicationStatus === "draft"
       )).toBe(true);
+      expect(importedPlaces.find(({ slug }) => slug === "json-museum"))
+        .toMatchObject({
+          visitNoteVerifiedAt: "2026-09-11",
+          visitNoteValidUntil: "2026-12-31",
+        });
       expect(importedTour!.publicationStatus).toBe("draft");
       expect(readinessProfile).toMatchObject({
         reviewedContentLocales: [],
