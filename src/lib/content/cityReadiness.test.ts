@@ -14,7 +14,9 @@ const complete: CityReadinessInput = {
   publishedPlaceCount: 2,
   sourceCompletePlaceCount: 2,
   keyImageCompletePlaceCount: 2,
+  rightsClearedKeyImagePlaceCount: 2,
   cityKeyImageReady: true,
+  cityKeyImageRightsReady: true,
   publishedTourCount: 1,
   coherentPublishedTourCount: 1,
   minimumVerifiedAiPlaceCount: 1,
@@ -38,6 +40,7 @@ describe("city launch readiness", () => {
       blockers: [],
       sourceCoveragePercent: 100,
       keyImageryCoveragePercent: 100,
+      rightsClearedKeyImageryCoveragePercent: 100,
       cityContentCoveragePercentByLocale: { de: 100, en: 100 },
     });
   });
@@ -61,7 +64,9 @@ describe("city launch readiness", () => {
     const report = evaluateCityReadiness({
       ...complete,
       keyImageCompletePlaceCount: 0,
+      rightsClearedKeyImagePlaceCount: 0,
       cityKeyImageReady: false,
+      cityKeyImageRightsReady: false,
       reviewedContentLocales: [],
       audioReadyPlaceCountByLocale: { de: 0, en: 0 },
       webQaStatus: "pending",
@@ -72,6 +77,7 @@ describe("city launch readiness", () => {
     expect(report.launchReady).toBe(false);
     expect(report.blockers).toEqual(expect.arrayContaining([
       "approved_key_imagery_incomplete",
+      "rights_cleared_key_imagery_incomplete",
       "content_review_pending:de",
       "content_review_pending:en",
       "exact_locale_audio_incomplete:de",
@@ -80,6 +86,19 @@ describe("city launch readiness", () => {
       "native_qa_pending",
       "traveler_qa_pending",
     ]));
+  });
+
+  it("does not count technical image approval as legal rights clearance", () => {
+    const report = evaluateCityReadiness({
+      ...complete,
+      rightsClearedKeyImagePlaceCount: 1,
+      cityKeyImageRightsReady: false,
+    });
+
+    expect(report.keyImageryCoveragePercent).toBe(100);
+    expect(report.rightsClearedKeyImageryCoveragePercent).toBe(33);
+    expect(report.launchReady).toBe(false);
+    expect(report.blockers).toContain("rights_cleared_key_imagery_incomplete");
   });
 
   it("tracks source, tour and verified-AI readiness independently", () => {

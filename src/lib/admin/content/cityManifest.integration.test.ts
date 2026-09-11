@@ -311,6 +311,9 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
       sourceCompletePlaceCount: HAMBURG_PLACE_COUNT,
       verifiedAiEligiblePlaceCount: 5,
       keyImageCompletePlaceCount: 0,
+      rightsClearedKeyImagePlaceCount: 0,
+      cityKeyImageRightsReady: false,
+      rightsClearedKeyImageryCoveragePercent: 0,
       publishedTourCount: 1,
       coherentPublishedTourCount: 1,
       contentCoveragePercentByLocale: { de: 100, en: 100 },
@@ -320,6 +323,7 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
     });
     expect(report.blockers).toEqual(expect.arrayContaining([
       "approved_key_imagery_incomplete",
+      "rights_cleared_key_imagery_incomplete",
       "content_review_pending:de",
       "content_review_pending:en",
       "exact_locale_audio_incomplete:de",

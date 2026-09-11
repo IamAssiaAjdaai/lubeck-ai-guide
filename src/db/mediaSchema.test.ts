@@ -5,10 +5,12 @@ import {
   cityMediaTable,
   audioGenerationMetadataTable,
   mediaAssetsTable,
+  mediaAssetRightsTable,
   mediaKindEnum,
   mediaLifecycleEnum,
   mediaAccessLevelEnum,
   mediaPurposeEnum,
+  mediaRightsBasisEnum,
   placeMediaTable,
   tourMediaTable,
 } from "@/db/schema";
@@ -42,6 +44,35 @@ describe("CMS media schema", () => {
     );
     expect(config.primaryKeys).toHaveLength(0);
     expect(config.columns.find(({ name }) => name === "media_asset_id")?.primary).toBe(true);
+  });
+
+  it("stores at most one structured rights record per immutable asset", () => {
+    const config = getTableConfig(mediaAssetRightsTable);
+    expect(mediaRightsBasisEnum.enumValues).toEqual([
+      "owned",
+      "commissioned",
+      "licensed",
+      "creative_commons",
+      "public_domain",
+      "partner_supplied",
+      "other",
+    ]);
+    expect(config.columns.map(({ name }) => name)).toEqual(
+      expect.arrayContaining([
+        "media_asset_id",
+        "rights_basis",
+        "creator",
+        "rights_holder",
+        "attribution_required",
+        "attribution_text",
+        "evidence_reference",
+        "rights_notes",
+        "verified_at",
+        "verified_by_user_id",
+      ]),
+    );
+    expect(config.columns.find(({ name }) => name === "media_asset_id")?.primary)
+      .toBe(true);
   });
 
   it.each([
