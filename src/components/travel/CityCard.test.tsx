@@ -2,8 +2,13 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/image", () => ({
-  default: ({ alt, src }: { alt: string; src: string }) => (
-    <div aria-label={alt} data-src={src} role="img" />
+  default: ({ alt, src, unoptimized }: { alt: string; src: string; unoptimized?: boolean }) => (
+    <div
+      aria-label={alt}
+      data-src={src}
+      data-unoptimized={unoptimized ? "true" : "false"}
+      role="img"
+    />
   ),
 }));
 
@@ -50,6 +55,25 @@ describe("FeaturedCityCard", () => {
     expect(image.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(name.compareDocumentPosition(description) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(description.compareDocumentPosition(action) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(image.getAttribute("data-unoptimized")).toBe("false");
+  });
+
+  it("renders application-served media directly without the Next image optimizer", () => {
+    render(
+      <FeaturedCityCard
+        actionLabel="Explore Hamburg"
+        contentDirection="ltr"
+        contentLocale="en"
+        href="/en/hamburg"
+        image="/api/media/0193c9be-62d1-7f9d-8ff2-08fc48fcb771"
+        interfaceDirection="ltr"
+        interfaceLocale="en"
+        name="Hamburg"
+      />,
+    );
+
+    expect(screen.getByRole("img", { name: "Hamburg" }).getAttribute("data-unoptimized"))
+      .toBe("true");
   });
 
   it("keeps optional missing information out of the hierarchy", () => {

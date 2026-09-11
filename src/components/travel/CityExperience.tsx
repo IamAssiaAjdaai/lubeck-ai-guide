@@ -27,6 +27,7 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { prepareMapPlaces } from "@/lib/mapPlaces";
+import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 import {
   getCityScopedPlannerId,
   getCityScopedTourId,
@@ -132,6 +133,7 @@ export default function CityExperience({
                 alt={city.content.name}
                 fill
                 priority
+                unoptimized={isApplicationMediaPath(cityImage)}
                 sizes="(max-width: 480px) calc(100vw - 48px), 432px"
                 className="object-cover"
               />

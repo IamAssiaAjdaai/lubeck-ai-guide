@@ -61,6 +61,7 @@ import type {
 } from "@/lib/i18n";
 
 import type { MapPlace } from "@/lib/mapPlaces";
+import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 
 const CityMap = dynamic(
   () => import("@/components/map/CityMap"),
@@ -202,6 +203,7 @@ function PlaceCard({
             src={place.image}
             alt=""
             fill
+            unoptimized={isApplicationMediaPath(place.image)}
             sizes="96px"
             className="object-cover transition duration-300 group-hover:scale-105"
           />

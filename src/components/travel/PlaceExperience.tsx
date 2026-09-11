@@ -14,6 +14,7 @@ import type { PlaceContent } from "@/data/places";
 import type { ResolvedPlaceAudio } from "@/lib/content/placeAudio";
 import { formatTime } from "@/lib/formatTime";
 import { getDirection, type Locale, type Translations } from "@/lib/i18n";
+import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 
 type PlaceExperienceProps = Readonly<{
   locale: Locale;
@@ -68,6 +69,7 @@ export function PlaceExperience({
               alt={content.name}
               fill
               priority
+              unoptimized={isApplicationMediaPath(image)}
               sizes="(max-width: 448px) 100vw, 448px"
               className="object-cover"
             />

@@ -43,6 +43,7 @@ import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { formatTime } from "@/lib/formatTime";
 import { getGuideEligibility } from "@/lib/guideEligibility.server";
 import { auth } from "@/lib/auth/server";
+import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
 import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
 import {
@@ -257,6 +258,7 @@ export default async function LandmarkPage({
               alt={name}
               fill
               priority={isTourLandmark && currentIndex === 0}
+              unoptimized={isApplicationMediaPath(image)}
               sizes="(max-width: 448px) 100vw, 448px"
               className="object-cover"
             />
