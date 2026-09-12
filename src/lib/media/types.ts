@@ -64,6 +64,10 @@ export type PublicMedia = Readonly<{
   height?: number;
   durationSeconds?: number;
   locale?: Locale;
+  attribution?: Readonly<{
+    text: string;
+    creator?: string;
+  }>;
   externalVideo?: Readonly<{
     provider: ExternalVideoProvider;
     videoId: string;

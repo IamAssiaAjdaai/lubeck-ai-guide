@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { resolvePlaceImage } from "@/lib/content/placeMedia";
+import { resolvePlaceImage, resolvePlaceImageMedia } from "@/lib/content/placeMedia";
 import type { PublicMedia } from "@/lib/media/types";
 
 const media = (
   purpose: "card" | "hero",
   locale?: "de" | "en",
+  attribution?: PublicMedia["attribution"],
 ): PublicMedia => ({
   assetKey: `${purpose}-${locale ?? "neutral"}`,
   kind: "image",
@@ -13,6 +14,7 @@ const media = (
   url: `/api/media/${purpose}-${locale ?? "neutral"}`,
   mimeType: "image/jpeg",
   ...(locale ? { locale } : {}),
+  ...(attribution ? { attribution } : {}),
 });
 
 describe("place image resolution", () => {
@@ -52,5 +54,22 @@ describe("place image resolution", () => {
         "detail",
       ),
     ).toBe("/legacy.jpg");
+  });
+
+  it("returns the selected public media attribution without exposing another locale", () => {
+    const attribution = {
+      text: "Photo: Example · https://creativecommons.org/licenses/by-sa/4.0/",
+      creator: "Example",
+    };
+    const selected = resolvePlaceImageMedia(
+      "database",
+      [media("hero", "de"), media("hero", "en", attribution)],
+      "en",
+      "detail",
+    );
+
+    expect(selected?.url).toBe("/api/media/hero-en");
+    expect(selected?.attribution).toEqual(attribution);
+    expect(resolvePlaceImageMedia("code", [media("hero", "en", attribution)], "en", "detail")).toBeUndefined();
   });
 });

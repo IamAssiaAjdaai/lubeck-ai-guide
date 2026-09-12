@@ -4,7 +4,7 @@ import { connection } from "next/server";
 
 import { PlaceExperience } from "@/components/travel/PlaceExperience";
 import { resolveExactLocalePublicAudio } from "@/lib/content/placeAudio";
-import { resolvePlaceImage } from "@/lib/content/placeMedia";
+import { resolvePlaceImage, resolvePlaceImageMedia } from "@/lib/content/placeMedia";
 import {
   getPublicCitySnapshot,
   resolvePublicLocalization,
@@ -45,7 +45,13 @@ export async function GenericPlaceContent({ params }: GenericPlacePageProps) {
 
   const translations = getTranslations(locale);
   const media = snapshot.media?.places[place.slug];
-  const image = resolvePlaceImage(
+  const selectedImage = resolvePlaceImageMedia(
+    contentSource,
+    media,
+    locale,
+    "detail",
+  );
+  const image = selectedImage?.url ?? resolvePlaceImage(
     contentSource,
     media,
     locale,
@@ -70,6 +76,7 @@ export async function GenericPlaceContent({ params }: GenericPlacePageProps) {
       contentLocale={resolvedContent.resolvedLocale}
       content={resolvedContent.content}
       image={image}
+      imageAttribution={selectedImage?.attribution}
       audio={audio}
       categoryLabel={translations.placeCategories[place.category]}
       visitDurationLabel={formatMessage(

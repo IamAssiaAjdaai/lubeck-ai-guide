@@ -22,6 +22,7 @@ import {
   type CityReadinessReport,
 } from "@/lib/content/cityReadiness";
 import { getPublicMediaSnapshot } from "@/lib/media/publicMedia.server";
+import { getRightsClearedAssetKeys } from "@/lib/media/rightsRepository.server";
 import { isLocale } from "@/lib/i18n";
 
 export async function getCityReadinessReport(
@@ -86,6 +87,19 @@ export async function getCityReadinessReport(
     publishedPlaceIds,
     publishedTours.map(({ id }) => id),
   );
+  const cityKeyImages = media.city.filter(isKeyImage);
+  const placeKeyImages = new Map(
+    publishedPlaceIds.map((id) => [
+      id,
+      (media.places.get(id) ?? []).filter(isKeyImage),
+    ] as const),
+  );
+  const rightsClearedAssetKeys = await getRightsClearedAssetKeys([
+    ...cityKeyImages.map(({ assetKey }) => assetKey),
+    ...[...placeKeyImages.values()].flatMap((items) =>
+      items.map(({ assetKey }) => assetKey),
+    ),
+  ]);
   const sourceCompletePlaceCount = publishedPlaces.filter(({ id }) => {
     const required = sourceRows.filter((sourceRow) =>
       sourceRow.placeId === id && sourceRow.required,
@@ -93,8 +107,11 @@ export async function getCityReadinessReport(
     return required.length > 0 && required.every((row) => isRequiredSourceValid(row));
   }).length;
   const keyImageCompletePlaceCount = publishedPlaces.filter(({ id }) =>
-    (media.places.get(id) ?? []).some(({ kind, purpose }) =>
-      kind === "image" && (purpose === "hero" || purpose === "card"),
+    (placeKeyImages.get(id) ?? []).length > 0,
+  ).length;
+  const rightsClearedKeyImagePlaceCount = publishedPlaces.filter(({ id }) =>
+    (placeKeyImages.get(id) ?? []).some(({ assetKey }) =>
+      rightsClearedAssetKeys.has(assetKey),
     ),
   ).length;
   const contentCompletePlaceCountByLocale = Object.fromEntries(
@@ -165,8 +182,10 @@ export async function getCityReadinessReport(
     publishedPlaceCount: publishedPlaces.length,
     sourceCompletePlaceCount,
     keyImageCompletePlaceCount,
-    cityKeyImageReady: media.city.some(({ kind, purpose }) =>
-      kind === "image" && (purpose === "hero" || purpose === "card"),
+    rightsClearedKeyImagePlaceCount,
+    cityKeyImageReady: cityKeyImages.length > 0,
+    cityKeyImageRightsReady: cityKeyImages.some(({ assetKey }) =>
+      rightsClearedAssetKeys.has(assetKey),
     ),
     publishedTourCount: publishedTours.length,
     coherentPublishedTourCount,
@@ -183,6 +202,13 @@ export async function getCityReadinessReport(
     nativeQaStatus: profile.nativeQaStatus,
     travelerQaStatus: profile.travelerQaStatus,
   });
+}
+
+function isKeyImage({
+  kind,
+  purpose,
+}: Readonly<{ kind: string; purpose: string }>): boolean {
+  return kind === "image" && (purpose === "hero" || purpose === "card");
 }
 
 export async function getCityReadinessMatrix(

@@ -26,6 +26,7 @@ import {
 import TrackedLink from "@/components/TrackedLink";
 import ArrivalNotice from "@/components/travel/ArrivalNotice";
 import PlaceDistanceLabel from "@/components/travel/PlaceDistanceLabel";
+import { MediaAttribution } from "@/components/travel/MediaAttribution";
 
 import {
   filterPlacesByCategory,
@@ -61,6 +62,8 @@ import type {
 } from "@/lib/i18n";
 
 import type { MapPlace } from "@/lib/mapPlaces";
+import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
+import type { PublicMedia } from "@/lib/media/types";
 
 const CityMap = dynamic(
   () => import("@/components/map/CityMap"),
@@ -91,6 +94,7 @@ export type DiscoveryPlace =
       duration: string;
       fallbackLabel?: string;
       distance?: PlaceDistance;
+      imageAttribution?: PublicMedia["attribution"];
     }>;
 
 type PlaceDiscoveryProps = Readonly<{
@@ -202,6 +206,7 @@ function PlaceCard({
             src={place.image}
             alt=""
             fill
+            unoptimized={isApplicationMediaPath(place.image)}
             sizes="96px"
             className="object-cover transition duration-300 group-hover:scale-105"
           />
@@ -284,27 +289,33 @@ function PlaceCard({
   );
 
   const cardClassName =
-    "group surface-card flex items-center gap-3 p-3 text-start";
+    "surface-card block p-3 text-start";
 
   if (place.detailHref) {
     return (
-      <TrackedLink
-        href={place.detailHref}
-        eventName="landmark_selected"
-        properties={{
-          landmark_slug: place.slug,
-          locale,
-        }}
-        className={`${cardClassName} transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-sm`}
-      >
-        {cardContent}
-      </TrackedLink>
+      <article className={`${cardClassName} transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-sm`}>
+        <TrackedLink
+          href={place.detailHref}
+          eventName="landmark_selected"
+          properties={{
+            landmark_slug: place.slug,
+            locale,
+          }}
+          className="group flex items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          {cardContent}
+        </TrackedLink>
+        <MediaAttribution attribution={place.imageAttribution} className="mt-2" />
+      </article>
     );
   }
 
   return (
     <article className={cardClassName}>
-      {cardContent}
+      <div className="group flex items-center gap-3">
+        {cardContent}
+      </div>
+      <MediaAttribution attribution={place.imageAttribution} className="mt-2" />
     </article>
   );
 }

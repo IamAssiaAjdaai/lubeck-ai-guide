@@ -43,6 +43,8 @@ export type CityManifestPlace = Readonly<{
   pricing: PlacePricing;
   status?: PlaceStatus;
   statusVerifiedAt?: string;
+  visitNoteVerifiedAt?: string;
+  visitNoteValidUntil?: string;
   tags: readonly string[];
   publicationStatus: "draft" | "published";
   content: Readonly<Partial<Record<Locale, CityManifestPlaceLocalization>>>;
@@ -179,6 +181,28 @@ export function validateCityManifest(manifest: CityManifest): CityManifest {
     if (place.status && !PLACE_STATUSES.includes(place.status)) {
       issues.push(`${place.slug} has invalid status`);
     }
+    validateOptionalDate(
+      place.statusVerifiedAt,
+      `${place.slug} statusVerifiedAt`,
+      issues,
+    );
+    validateOptionalDate(
+      place.visitNoteVerifiedAt,
+      `${place.slug} visitNoteVerifiedAt`,
+      issues,
+    );
+    validateOptionalDate(
+      place.visitNoteValidUntil,
+      `${place.slug} visitNoteValidUntil`,
+      issues,
+    );
+    if (
+      place.visitNoteVerifiedAt &&
+      place.visitNoteValidUntil &&
+      place.visitNoteValidUntil < place.visitNoteVerifiedAt
+    ) {
+      issues.push(`${place.slug} visitNoteValidUntil cannot precede visitNoteVerifiedAt`);
+    }
     if (!Number.isInteger(place.durationMinutes) || place.durationMinutes <= 0) {
       issues.push(`${place.slug} has invalid visit duration`);
     }
@@ -275,6 +299,16 @@ function validateSource(source: CityManifestSource, subject: string, issues: str
   }
   if (!ISO_DATE_PATTERN.test(source.verifiedAt)) {
     issues.push(`${subject} source verifiedAt must use YYYY-MM-DD`);
+  }
+}
+
+function validateOptionalDate(
+  value: string | undefined,
+  field: string,
+  issues: string[],
+) {
+  if (value && !ISO_DATE_PATTERN.test(value)) {
+    issues.push(`${field} must use YYYY-MM-DD`);
   }
 }
 

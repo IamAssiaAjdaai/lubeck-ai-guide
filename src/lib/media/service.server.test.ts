@@ -9,6 +9,7 @@ const {
   createMediaUploadRecord,
   attachMedia,
   cancelMediaUpload,
+  deleteMediaAssetRights,
   detachMedia,
   finalizeMediaAsset,
   getCmsPlace,
@@ -18,13 +19,16 @@ const {
   requireCityCapability,
   markMediaObjectDeleted,
   promotePlaceAudioCandidate,
+  saveMediaAssetRights,
   setMediaLifecycle,
+  verifyMediaAssetRights,
 } = vi.hoisted(() => ({
   requireCityCapability: vi.fn(),
   requireAdminCapability: vi.fn(),
   createMediaUploadRecord: vi.fn(),
   attachMedia: vi.fn(),
   cancelMediaUpload: vi.fn(),
+  deleteMediaAssetRights: vi.fn(),
   detachMedia: vi.fn(),
   getCmsPlace: vi.fn(),
   getMediaAsset: vi.fn(),
@@ -32,7 +36,9 @@ const {
   finalizeMediaAsset: vi.fn(),
   markMediaObjectDeleted: vi.fn(),
   promotePlaceAudioCandidate: vi.fn(),
+  saveMediaAssetRights: vi.fn(),
   setMediaLifecycle: vi.fn(),
+  verifyMediaAssetRights: vi.fn(),
 }));
 
 vi.mock("@/lib/admin/authorization.server", () => ({
@@ -63,16 +69,25 @@ vi.mock("@/lib/media/repository.server", () => ({
   promotePlaceAudioCandidate,
   setMediaLifecycle,
 }));
+vi.mock("@/lib/media/rightsRepository.server", () => ({
+  deleteMediaAssetRights,
+  getMediaAssetRights: vi.fn(),
+  saveMediaAssetRights,
+  verifyMediaAssetRights,
+}));
 
 import {
   attachAuthorizedMedia,
   cancelAuthorizedMediaUpload,
   createAuthorizedUploadIntent,
+  deleteAuthorizedMediaRights,
   detachAuthorizedMedia,
   finalizeAuthorizedUpload,
   makeAuthorizedPlaceAudioLive,
   reviewAuthorizedMediaAsset,
   retryAuthorizedUploadFinalize,
+  saveAuthorizedMediaRights,
+  verifyAuthorizedMediaRights,
 } from "@/lib/media/service.server";
 import { FakeMediaObjectStore } from "@/lib/media/testing/fakeObjectStore";
 
@@ -399,6 +414,80 @@ describe("media service", () => {
     requireCityCapability.mockRejectedValueOnce(new Error("FORBIDDEN"));
     await expect(createAuthorizedUploadIntent({ cityId: 7, kind: "image", originalFilename: "gate.jpg", mimeType: "image/jpeg", sizeBytes: 3 }, new FakeMediaObjectStore())).rejects.toThrow("FORBIDDEN");
     expect(requireCityCapability).toHaveBeenLastCalledWith(7, "media:manage");
+  });
+
+  it("lets editors prepare rights metadata without accepting reviewer identity", async () => {
+    getMediaAsset.mockResolvedValue({ id: 19, cityId: 7 });
+    saveMediaAssetRights.mockResolvedValue({ mediaAssetId: 19 });
+
+    await saveAuthorizedMediaRights(19, {
+      rightsBasis: "licensed",
+      creator: "Photographer",
+      attributionRequired: true,
+      attributionText: "Photo: Photographer",
+      evidenceReference: "License agreement 42",
+      verifiedByUserId: "attacker-controlled",
+    } as unknown as Parameters<typeof saveAuthorizedMediaRights>[1]);
+
+    expect(requireCityCapability).toHaveBeenCalledWith(7, "media:manage");
+    expect(saveMediaAssetRights).toHaveBeenCalledWith(
+      19,
+      expect.not.objectContaining({ verifiedByUserId: expect.anything() }),
+      "actor-1",
+    );
+  });
+
+  it("fails closed when the caller cannot edit rights for the asset city", async () => {
+    getMediaAsset.mockResolvedValue({ id: 19, cityId: 99 });
+    requireCityCapability.mockRejectedValue(new Error("FORBIDDEN"));
+
+    await expect(saveAuthorizedMediaRights(19, {
+      rightsBasis: "owned",
+      creator: "CITYWALK",
+      attributionRequired: false,
+      evidenceReference: "Internal asset register 42",
+    })).rejects.toThrow("FORBIDDEN");
+    expect(saveMediaAssetRights).not.toHaveBeenCalled();
+  });
+
+  it("deletes only rights metadata through city-scoped media management", async () => {
+    getMediaAsset.mockResolvedValue({ id: 19, cityId: 7 });
+    deleteMediaAssetRights.mockResolvedValue(true);
+
+    await expect(deleteAuthorizedMediaRights(19)).resolves.toBe(true);
+    expect(requireCityCapability).toHaveBeenCalledWith(7, "media:manage");
+    expect(deleteMediaAssetRights).toHaveBeenCalledWith(19);
+
+    vi.clearAllMocks();
+    getMediaAsset.mockResolvedValue({ id: 19, cityId: 99 });
+    requireCityCapability.mockRejectedValue(new Error("FORBIDDEN"));
+    await expect(deleteAuthorizedMediaRights(19)).rejects.toThrow("FORBIDDEN");
+    expect(deleteMediaAssetRights).not.toHaveBeenCalled();
+  });
+
+  it("derives the rights reviewer from a city-scoped publisher session", async () => {
+    getMediaAsset.mockResolvedValue({ id: 19, cityId: 7 });
+    requireCityCapability.mockResolvedValue(reviewerContext);
+    verifyMediaAssetRights.mockResolvedValue({
+      mediaAssetId: 19,
+      verifiedByUserId: "reviewer-1",
+    });
+
+    await verifyAuthorizedMediaRights(19);
+
+    expect(requireCityCapability).toHaveBeenCalledWith(
+      7,
+      "publishing:publish",
+    );
+    expect(verifyMediaAssetRights).toHaveBeenCalledWith(19, "reviewer-1");
+  });
+
+  it("fails closed when the caller cannot verify rights for the asset city", async () => {
+    getMediaAsset.mockResolvedValue({ id: 19, cityId: 99 });
+    requireCityCapability.mockRejectedValue(new Error("FORBIDDEN"));
+
+    await expect(verifyAuthorizedMediaRights(19)).rejects.toThrow("FORBIDDEN");
+    expect(verifyMediaAssetRights).not.toHaveBeenCalled();
   });
 
   it("passes a fail-closed public mutation decision for editors and publishers", async () => {

@@ -31,6 +31,7 @@
     "media:test:integration": "tsx scripts/run-media-integration-tests.ts",
     "commerce:test:integration": "tsx scripts/run-commerce-integration-tests.ts",
     "media:backfill-audio-duration": "node --conditions=react-server --import tsx scripts/backfill-audio-duration.ts",
+    "media:migrate-storage": "node --conditions=react-server --import tsx scripts/migrate-media-object-storage.ts",
     "admin:create-super": "tsx scripts/create-super-admin.ts",
     "knowledge:manage": "node --conditions=react-server --import tsx scripts/manage-verified-knowledge.ts",
     "knowledge:test:integration": "node --import tsx scripts/run-knowledge-integration-tests.ts",

@@ -69,6 +69,9 @@ describe("generic public place detail", () => {
     expect(screen.getByText("1180")).not.toBeNull();
     expect(screen.getByRole("img", { name: "Published castle" }).getAttribute("src"))
       .toBe("/api/media/castle-hero");
+    expect(screen.getByText(/Photo: Castle Photographer/)).not.toBeNull();
+    expect(screen.getByRole("link", { name: "https://example.com/castle" }))
+      .not.toBeNull();
     expect(screen.getByRole("link", { name: "Back" }).getAttribute("href"))
       .toBe("/en/ghent");
     expect(screen.queryByText("Working draft v2")).toBeNull();
@@ -239,6 +242,10 @@ function snapshot() {
             purpose: "hero",
             url: "/api/media/castle-hero",
             mimeType: "image/jpeg",
+            attribution: {
+              creator: "Castle Photographer",
+              text: "Photo: Castle Photographer · https://example.com/castle · CC BY-SA 4.0",
+            },
           },
           {
             assetKey: "castle-audio-en",

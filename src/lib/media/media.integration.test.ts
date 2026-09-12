@@ -6,7 +6,13 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import { closeDb, getDb } from "@/db/client";
-import { audioGenerationMetadataTable, citiesTable, mediaAssetsTable, placesTable } from "@/db/schema";
+import {
+  audioGenerationMetadataTable,
+  citiesTable,
+  mediaAssetRightsTable,
+  mediaAssetsTable,
+  placesTable,
+} from "@/db/schema";
 import { saveAudioGenerationMetadata } from "@/lib/admin/operations/repository.server";
 import {
   attachMedia,
@@ -24,6 +30,10 @@ import {
 } from "@/lib/media/repository.server";
 import { getPublicMediaDeliveryAsset, getPublicMediaForEntity } from "@/lib/media/publicMedia.server";
 import { FakeMediaObjectStore } from "@/lib/media/testing/fakeObjectStore";
+import {
+  saveMediaAssetRights,
+  verifyMediaAssetRights,
+} from "@/lib/media/rightsRepository.server";
 import {
   getPremiumMediaDeliveryAsset,
   getPremiumPlaceAudio,
@@ -285,5 +295,92 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     expect(await getPublicMediaDeliveryAsset(draftCityAsset.assetKey)).toBeUndefined();
     await detachMedia("city", draftAttachment.id, { allowPublicMutation: false });
     await setMediaLifecycle(draftCityAsset.id, "archived", actorId);
+  });
+
+  it("keeps technical approval separate from one-to-one rights verification", async () => {
+    const asset = await createMediaUploadRecord({
+      assetKey: randomUUID(),
+      cityId,
+      kind: "image",
+      originalFilename: "licensed-place.jpg",
+      mimeType: "image/jpeg",
+      sizeBytes: 3,
+      objectKey: `media/${suffix}/licensed-place.jpg`,
+      storageProvider: "s3-test",
+      uploadExpiresAt: new Date(Date.now() + 60_000),
+    }, actorId);
+    assetIds.push(asset.id);
+    await finalizeMediaAsset(asset.id, { sizeBytes: 3, mimeType: "image/jpeg" }, actorId);
+    const rightsAttachment = await attachMedia({
+      entityType: "place",
+      entityId: placeId,
+      mediaAssetId: asset.id,
+      purpose: "gallery",
+      position: 4,
+    }, actorId, { allowPublicMutation: false });
+    await setMediaLifecycle(asset.id, "approved", actorId);
+
+    const technicallyApproved = await getPublicMediaForEntity("place", placeId);
+    expect(technicallyApproved.find(({ assetKey }) => assetKey === asset.assetKey))
+      .not.toHaveProperty("attribution");
+
+    const prepared = await saveMediaAssetRights(asset.id, {
+      rightsBasis: "licensed",
+      creator: "Integration Photographer",
+      rightsHolder: "Integration Archive",
+      attributionRequired: true,
+      attributionText: "Photo: Integration Photographer / Integration Archive",
+      evidenceReference: "Private contract integration-42",
+      rightsNotes: "Internal review note",
+    }, actorId);
+    expect(prepared.verifiedAt).toBeNull();
+    const verified = await verifyMediaAssetRights(
+      asset.id,
+      `reviewer-${suffix}`,
+      new Date("2026-09-11T12:00:00.000Z"),
+    );
+    expect(verified.verifiedByUserId).toBe(`reviewer-${suffix}`);
+
+    const publicAsset = (await getPublicMediaForEntity("place", placeId))
+      .find(({ assetKey }) => assetKey === asset.assetKey);
+    expect(publicAsset?.attribution).toEqual({
+      text: "Photo: Integration Photographer / Integration Archive",
+      creator: "Integration Photographer",
+    });
+    expect(JSON.stringify(publicAsset)).not.toMatch(
+      /evidence|reviewer|rightsNotes|Private contract|Internal review note/i,
+    );
+
+    const unchanged = await saveMediaAssetRights(asset.id, {
+      rightsBasis: "licensed",
+      creator: "Integration Photographer",
+      rightsHolder: "Integration Archive",
+      attributionRequired: true,
+      attributionText: "Photo: Integration Photographer / Integration Archive",
+      evidenceReference: "Private contract integration-42",
+      rightsNotes: "Internal review note",
+    }, actorId);
+    expect(unchanged.verifiedAt).not.toBeNull();
+
+    const changed = await saveMediaAssetRights(asset.id, {
+      rightsBasis: "licensed",
+      creator: "Different Photographer",
+      rightsHolder: "Integration Archive",
+      attributionRequired: true,
+      attributionText: "Photo: Different Photographer / Integration Archive",
+      evidenceReference: "Private contract integration-42",
+      rightsNotes: "Internal review note",
+    }, actorId);
+    expect(changed).toMatchObject({
+      verifiedAt: null,
+      verifiedByUserId: null,
+    });
+    const invalidatedPublicAsset = (await getPublicMediaForEntity("place", placeId))
+      .find(({ assetKey }) => assetKey === asset.assetKey);
+    expect(invalidatedPublicAsset).not.toHaveProperty("attribution");
+    expect(await getDb().select().from(mediaAssetRightsTable)
+      .where(eq(mediaAssetRightsTable.mediaAssetId, asset.id)))
+      .toHaveLength(1);
+    await detachMedia("place", rightsAttachment.id, { allowPublicMutation: true });
   });
 });
