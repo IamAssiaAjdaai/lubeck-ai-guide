@@ -67,6 +67,35 @@ describe("generic public city landing", () => {
     expect(mocks.getPublicCitySnapshot).toHaveBeenCalledTimes(1);
   });
 
+  it("renders only public-safe attribution for database-backed city hero media", async () => {
+    const data = snapshot();
+    mocks.getPublicCitySnapshot.mockResolvedValue(snapshot({
+      media: {
+        ...data.media,
+        city: [{
+          ...data.media.city[0],
+          attribution: {
+            text: "Photo: Example · CC BY 4.0 · https://creativecommons.org/licenses/by/4.0/",
+            creator: "Example",
+          },
+        }],
+      },
+    }));
+
+    render(await renderPage("en", "ghent"));
+
+    expect(screen.getByText(/Photo: Example/).closest("figcaption")).not.toBeNull();
+    expect(
+      screen
+        .getByRole("link", {
+          name: "https://creativecommons.org/licenses/by/4.0/",
+        })
+        .getAttribute("rel"),
+    ).toBe("noreferrer");
+    expect(document.body.textContent).not.toContain("reviewer");
+    expect(document.body.textContent).not.toContain("evidence");
+  });
+
   it("keeps a city with no published tour complete without rendering an empty tour card", async () => {
     render(await renderPage("en", "ghent"));
 

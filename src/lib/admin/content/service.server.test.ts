@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   updateCmsPlace: vi.fn(),
   getCmsPlace: vi.fn(),
   setCmsPublicationStatus: vi.fn(),
+  withdrawCmsPublishedPlaceRevision: vi.fn(),
   requireAdminCapability: vi.fn(),
   requireCityCapability: vi.fn(),
 }));
@@ -29,6 +30,7 @@ vi.mock("@/lib/admin/content/repository.server", async (importOriginal) => {
     getCmsCity: mocks.getCmsCity,
     getCmsPlace: mocks.getCmsPlace,
     setCmsPublicationStatus: mocks.setCmsPublicationStatus,
+    withdrawCmsPublishedPlaceRevision: mocks.withdrawCmsPublishedPlaceRevision,
     updateCmsPlace: mocks.updateCmsPlace,
   };
 });
@@ -40,6 +42,7 @@ import {
   addAuthorizedPlaceSource,
   createAuthorizedPlace,
   updateAuthorizedPlace,
+  withdrawAuthorizedPublishedPlaceRevision,
 } from "@/lib/admin/content/service.server";
 
 const editorContext = {
@@ -208,6 +211,30 @@ describe("CMS content service authorization", () => {
     await changeAuthorizedPublicationStatus("place", 11, "published");
 
     expect(mocks.requireCityCapability).toHaveBeenCalledWith(7, "publishing:publish");
+  });
+
+  it("requires city-scoped publish capability to withdraw a live revision", async () => {
+    mocks.getCmsPlace.mockResolvedValue({
+      id: 11,
+      cityId: 7,
+      publicationStatus: "draft",
+      publishedRevision: { id: 4 },
+    });
+    mocks.withdrawCmsPublishedPlaceRevision.mockResolvedValue({
+      placeId: 11,
+      revisionId: 4,
+    });
+
+    await withdrawAuthorizedPublishedPlaceRevision(11);
+
+    expect(mocks.requireCityCapability).toHaveBeenCalledWith(
+      7,
+      "publishing:publish",
+    );
+    expect(mocks.withdrawCmsPublishedPlaceRevision).toHaveBeenCalledWith(
+      11,
+      "editor-1",
+    );
   });
 
   it("rejects workflow shortcuts before mutation", async () => {

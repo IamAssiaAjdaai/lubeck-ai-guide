@@ -650,6 +650,51 @@ export async function setCmsPublicationStatus(
   });
 }
 
+export async function withdrawCmsPublishedPlaceRevision(
+  id: number,
+  actorId: string,
+) {
+  return getDb().transaction(async (tx) => {
+    const place = await lockCmsEntity(tx, "place", id);
+    if (place.publicationStatus !== "draft") {
+      throw new CmsContentIntegrityError(
+        "Only a working draft may withdraw its current published revision.",
+      );
+    }
+    await assertPlaceCanBeArchived(tx, id);
+    const [revision] = await tx
+      .select({ id: placeRevisionsTable.id })
+      .from(placeRevisionsTable)
+      .where(
+        and(
+          eq(placeRevisionsTable.placeId, id),
+          eq(placeRevisionsTable.isCurrent, true),
+        ),
+      )
+      .for("update")
+      .limit(1);
+    if (!revision) {
+      throw new CmsContentIntegrityError(
+        "This draft has no current published revision to withdraw.",
+      );
+    }
+    await tx
+      .update(placeRevisionsTable)
+      .set({ isCurrent: false })
+      .where(eq(placeRevisionsTable.id, revision.id));
+    await tx.insert(contentWorkflowEventsTable).values({
+      entityType: "place",
+      entityId: id,
+      action: "published_revision_withdrawn",
+      fromStatus: "draft",
+      toStatus: "draft",
+      actorUserId: actorId,
+      createdAt: new Date(),
+    });
+    return { placeId: id, revisionId: revision.id };
+  });
+}
+
 export async function deleteCmsDraft(
   entity: "city" | "place" | "tour",
   id: number,
