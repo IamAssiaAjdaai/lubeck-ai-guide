@@ -38,12 +38,13 @@ import {
 } from "@/lib/i18n";
 import { getContentSource } from "@/lib/content/source";
 import { resolveLandmarkPageAudio } from "@/lib/content/landmarkAudio";
-import { resolvePlaceImage } from "@/lib/content/placeMedia";
+import { resolvePlaceImage, resolvePlaceImageMedia } from "@/lib/content/placeMedia";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { formatTime } from "@/lib/formatTime";
 import { getGuideEligibility } from "@/lib/guideEligibility.server";
 import { auth } from "@/lib/auth/server";
 import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
+import { MediaAttribution } from "@/components/travel/MediaAttribution";
 import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
 import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
 import {
@@ -154,9 +155,16 @@ export default async function LandmarkPage({
     ? undefined
     : formatTime(audio.durationSeconds);
   const facts = content.facts ?? [];
-  const image = resolvePlaceImage(
+  const placeMedia = snapshot.media?.places[landmark.slug];
+  const selectedImage = resolvePlaceImageMedia(
     contentSource,
-    snapshot.media?.places[landmark.slug],
+    placeMedia,
+    currentLocale,
+    "detail",
+  );
+  const image = selectedImage?.url ?? resolvePlaceImage(
+    contentSource,
+    placeMedia,
     currentLocale,
     landmark.image,
     "detail",
@@ -252,17 +260,20 @@ export default async function LandmarkPage({
 
         {/* Landmark image */}
         {image ? (
-          <div className="relative mt-6 aspect-[4/3] overflow-hidden rounded-[var(--radius-lg)] bg-surface">
-            <Image
-              src={image}
-              alt={name}
-              fill
-              priority={isTourLandmark && currentIndex === 0}
-              unoptimized={isApplicationMediaPath(image)}
-              sizes="(max-width: 448px) 100vw, 448px"
-              className="object-cover"
-            />
-          </div>
+          <figure className="mt-6">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-lg)] bg-surface">
+              <Image
+                src={image}
+                alt={name}
+                fill
+                priority={isTourLandmark && currentIndex === 0}
+                unoptimized={isApplicationMediaPath(image)}
+                sizes="(max-width: 448px) 100vw, 448px"
+                className="object-cover"
+              />
+            </div>
+            <MediaAttribution as="figcaption" attribution={selectedImage?.attribution} className="mt-2 px-1" />
+          </figure>
         ) : null}
 
         {/* Landmark header */}

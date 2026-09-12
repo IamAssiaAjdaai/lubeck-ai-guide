@@ -12,7 +12,7 @@ import TourCard, {
 import { localizePlaceCategories } from "@/data/placeCategories";
 import type { Place, PlaceCoordinates } from "@/data/places";
 import { resolveCityHeroImage } from "@/lib/content/homeMedia";
-import { resolvePlaceImage } from "@/lib/content/placeMedia";
+import { resolvePlaceImage, resolvePlaceImageMedia } from "@/lib/content/placeMedia";
 import {
   resolvePublicLocalization,
   type PublicCitySnapshot,
@@ -78,16 +78,29 @@ export default function CityExperience({
   const preparedPlaces = prepareMapPlaces(snapshot.places, locale, {
     getDetailHref: (place) =>
       `/${locale}/${snapshot.city.slug}/${place.slug}`,
-  }).map((place) => ({
-    ...place,
-    image: resolvePlaceImage(
+  }).map((place) => {
+    const media = snapshot.media?.places[place.slug];
+    const selectedImage = resolvePlaceImageMedia(
       contentSource,
-      snapshot.media?.places[place.slug],
+      media,
       locale,
-      place.image,
       "card",
-    ),
-  }));
+    );
+
+    return {
+      ...place,
+      image: selectedImage?.url ?? resolvePlaceImage(
+        contentSource,
+        media,
+        locale,
+        place.image,
+        "card",
+      ),
+      ...(selectedImage?.attribution
+        ? { imageAttribution: selectedImage.attribution }
+        : {}),
+    };
+  });
   const catalogPlaces: readonly DiscoveryPlace[] = preparedPlaces.map(
     (place) => ({
       ...place,

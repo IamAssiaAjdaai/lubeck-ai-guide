@@ -10,11 +10,13 @@ import {
 
 import AudioPlayer from "@/components/AudioPlayer";
 import AskGuide from "@/components/AskGuide";
+import { MediaAttribution } from "@/components/travel/MediaAttribution";
 import type { PlaceContent } from "@/data/places";
 import type { ResolvedPlaceAudio } from "@/lib/content/placeAudio";
 import { formatTime } from "@/lib/formatTime";
 import { getDirection, type Locale, type Translations } from "@/lib/i18n";
 import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
+import type { PublicMedia } from "@/lib/media/types";
 
 type PlaceExperienceProps = Readonly<{
   locale: Locale;
@@ -23,6 +25,7 @@ type PlaceExperienceProps = Readonly<{
   contentLocale: Locale;
   content: PlaceContent;
   image?: string;
+  imageAttribution?: PublicMedia["attribution"];
   audio?: ResolvedPlaceAudio;
   categoryLabel: string;
   visitDurationLabel: string;
@@ -38,6 +41,7 @@ export function PlaceExperience({
   contentLocale,
   content,
   image,
+  imageAttribution,
   audio,
   categoryLabel,
   visitDurationLabel,
@@ -63,17 +67,20 @@ export function PlaceExperience({
         </Link>
 
         {image ? (
-          <div className="relative mt-6 aspect-[4/3] overflow-hidden rounded-[var(--radius-lg)] bg-surface">
-            <Image
-              src={image}
-              alt={content.name}
-              fill
-              priority
-              unoptimized={isApplicationMediaPath(image)}
-              sizes="(max-width: 448px) 100vw, 448px"
-              className="object-cover"
-            />
-          </div>
+          <figure className="mt-6">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-lg)] bg-surface">
+              <Image
+                src={image}
+                alt={content.name}
+                fill
+                priority
+                unoptimized={isApplicationMediaPath(image)}
+                sizes="(max-width: 448px) 100vw, 448px"
+                className="object-cover"
+              />
+            </div>
+            <MediaAttribution as="figcaption" attribution={imageAttribution} className="mt-2 px-1" />
+          </figure>
         ) : null}
 
         <header className="mt-6">
