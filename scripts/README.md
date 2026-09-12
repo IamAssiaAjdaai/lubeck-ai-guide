@@ -74,6 +74,20 @@ This tooling runs only during development or content production. The Next.js run
 - `npm run audio:generate` (or `--provider=google`) generates only missing targets using Google Application Default Credentials.
 - `npm run audio:generate -- --provider=edge` generates test-review audio through Edge TTS without an API key.
 - `npm run media:backfill-audio-duration` reads private uploaded audio through the configured storage adapter and fills only missing, reliably extracted duration metadata.
+- `npm run media:migrate-storage -- --inventory` lists the DB-referenced stored-media inventory without reading object bytes.
+- `npm run media:migrate-storage -- --probe-source` performs one bounded source range read and stops cleanly when a provider cap blocks migration.
+- `npm run media:migrate-storage -- --connectivity` verifies destination Put, Head, Get, range Get, Delete, and presigned PUT behavior using disposable objects that are removed afterward.
+- `npm run media:migrate-storage -- --copy` copies every DB-referenced object under its exact existing key, verifies size/content type/bytes, and never deletes source objects or mutates media rows.
+
+Storage migration commands use two explicit server-only profiles:
+`CITYWALK_MEDIA_MIGRATION_SOURCE_S3_*` and
+`CITYWALK_MEDIA_MIGRATION_DESTINATION_S3_*`. They intentionally do not fall
+back to `CITYWALK_MEDIA_S3_*`, preventing an ambiguous source/destination or
+accidental runtime cutover. For Cloudflare R2, use the account S3 endpoint and
+region `auto`. Inventory first, verify destination connectivity, copy and reach
+full verification, then change the normal runtime variables in a non-production
+environment. Keep the old source objects during acceptance; rollback consists
+only of restoring the previous runtime environment configuration.
 
 Google Cloud remains the intended production provider. Set `GOOGLE_APPLICATION_CREDENTIALS` to an approved service-account JSON file stored outside this repository before Google generation. Edge output is development/test audio only: manifest entries are explicitly marked `"provider": "edge-tts-test"` and are not production-approved. Existing recordings are never overwritten by either provider.
 
