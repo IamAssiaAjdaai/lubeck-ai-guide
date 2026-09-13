@@ -27,6 +27,49 @@ describe("CITYWALK native API client", () => {
     );
   });
 
+  it("loads guide eligibility from the server-owned boundary", async () => {
+    const fetchImpl = vi.fn(async () =>
+      new Response(JSON.stringify({ eligible: true })));
+    const client = createCitywalkApiClient({ origin: "https://citywalk.example", fetchImpl });
+
+    await expect(client.getGuideEligibility("lubeck", "holstentor"))
+      .resolves.toEqual({ eligible: true });
+    expect(fetchImpl).toHaveBeenCalledWith(
+      new URL("https://citywalk.example/api/guide/eligibility?citySlug=lubeck&placeSlug=holstentor"),
+      expect.objectContaining({ headers: { Accept: "application/json" } }),
+    );
+  });
+
+  it("posts one native question through the existing guide API with an optional auth cookie", async () => {
+    const fetchImpl = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(JSON.stringify({
+      answer: "The gate was completed in 1478.",
+      sources: [{
+        label: "Official source", url: "https://example.com/source",
+        verifiedAt: "2026-09-13", citySlug: "lubeck", placeSlug: "holstentor",
+        chunkIds: ["holstentor-history"],
+      }],
+    })));
+    const client = createCitywalkApiClient({
+      origin: "https://citywalk.example",
+      fetchImpl,
+      getAuthCookie: async () => "better-auth.session_token=opaque",
+    });
+
+    await expect(client.askGuide({
+      citySlug: "lubeck", placeSlug: "holstentor", locale: "en",
+      question: "When was this built?",
+    })).resolves.toMatchObject({ answer: "The gate was completed in 1478." });
+    const [url, init] = fetchImpl.mock.calls[0]!;
+    expect(url).toEqual(new URL("https://citywalk.example/api/guide"));
+    expect(init?.method).toBe("POST");
+    expect(new Headers(init?.headers).get("Cookie"))
+      .toBe("better-auth.session_token=opaque");
+    expect(init?.body).toBe(JSON.stringify({
+      citySlug: "lubeck", placeSlug: "holstentor", locale: "en",
+      question: "When was this built?",
+    }));
+  });
+
   it("adds the SecureStore-managed Better Auth cookie only to authenticated requests", async () => {
     const fetchImpl = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) =>
       new Response(null, { status: 204 }));

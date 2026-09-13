@@ -2,6 +2,7 @@ import type { ExpoConfig } from "expo/config";
 import { describe, expect, it } from "vitest";
 
 import { createCitywalkExpoConfig } from "../app.config";
+import appJson from "../app.json";
 
 const baseConfig: ExpoConfig = {
   name: "CITYWALK",
@@ -33,5 +34,18 @@ describe("CITYWALK native app configuration", () => {
   it("fails closed for an unknown build environment", () => {
     expect(() => createCitywalkExpoConfig(baseConfig, "other"))
       .toThrow("Unsupported CITYWALK mobile environment");
+  });
+
+  it("configures expo-audio for playback without recording or background permissions", () => {
+    const plugin = appJson.expo.plugins.find((entry) =>
+      Array.isArray(entry) && entry[0] === "expo-audio",
+    );
+
+    expect(plugin).toEqual(["expo-audio", {
+      microphonePermission: false,
+      recordAudioAndroid: false,
+      enableBackgroundRecording: false,
+      enableBackgroundPlayback: false,
+    }]);
   });
 });

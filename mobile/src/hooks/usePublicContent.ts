@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { citywalkApi } from "../lib/api/instance";
 import type {
   NativeLocale,
+  GuideEligibilityResponse,
   PublicCityIndexResponse,
   PublicCityResponse,
 } from "../lib/api/contracts";
@@ -18,6 +19,16 @@ export function usePublicCities(locale: NativeLocale): RemoteState<PublicCityInd
 
 export function usePublicCity(citySlug: string, locale: NativeLocale): RemoteState<PublicCityResponse> {
   return useRemoteContent(() => citywalkApi.getCity(citySlug, locale), [citySlug, locale]);
+}
+
+export function useGuideEligibility(
+  citySlug: string,
+  placeSlug: string,
+): RemoteState<GuideEligibilityResponse> {
+  return useRemoteContent(
+    () => citywalkApi.getGuideEligibility(citySlug, placeSlug),
+    [citySlug, placeSlug],
+  );
 }
 
 function useRemoteContent<T>(load: () => Promise<T>, dependencies: readonly unknown[]): RemoteState<T> {
