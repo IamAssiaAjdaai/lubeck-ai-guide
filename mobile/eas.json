@@ -17,6 +17,18 @@
         "EXPO_PUBLIC_CITYWALK_ENV": "preview"
       }
     },
+    "store-beta": {
+      "distribution": "store",
+      "environment": "preview",
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_CITYWALK_ENV": "preview",
+        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://lubeck-ai-guide-git-beta-store-iamassiaajdaais-projects.vercel.app"
+      }
+    },
     "production": {
       "autoIncrement": true,
       "env": {
@@ -25,6 +37,13 @@
     }
   },
   "submit": {
+    "store-beta": {
+      "android": {
+        "track": "internal",
+        "releaseStatus": "draft"
+      },
+      "ios": {}
+    },
     "production": {}
   }
 }
