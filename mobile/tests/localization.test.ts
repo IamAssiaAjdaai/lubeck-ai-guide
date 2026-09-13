@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { getNativeDirection, getNativeMessages } from "../src/lib/localization";
+import {
+  getNativeDirection,
+  getNativeMessages,
+  getNativeTextAlignment,
+} from "../src/lib/localization";
 
 describe("native localization foundation", () => {
   it("provides English, German, and Arabic messages", () => {
@@ -13,5 +17,7 @@ describe("native localization foundation", () => {
     expect(getNativeDirection("ar")).toBe("rtl");
     expect(getNativeDirection("de")).toBe("ltr");
     expect(getNativeDirection("en")).toBe("ltr");
+    expect(getNativeTextAlignment("ar")).toBe("right");
+    expect(getNativeTextAlignment("en")).toBe("left");
   });
 });

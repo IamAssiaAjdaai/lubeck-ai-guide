@@ -1,5 +1,10 @@
 export type NativeLocale = "en" | "de" | "ar";
 
+export type PublicMediaAttribution = Readonly<{
+  text: string;
+  creator?: string;
+}>;
+
 export type PublicMedia = Readonly<{
   assetKey: string;
   kind: "image" | "audio" | "video" | "document";
@@ -8,6 +13,7 @@ export type PublicMedia = Readonly<{
   mimeType: string;
   durationSeconds?: number;
   locale?: string;
+  attribution?: PublicMediaAttribution;
 }>;
 
 export type LocalizedContent<TContent> = Readonly<{
@@ -35,7 +41,7 @@ export type PublicPlace = LocalizedContent<Readonly<{
   description?: string;
   story?: string;
   visitNote?: string;
-  facts?: readonly string[];
+  facts?: readonly PublicFact[];
 }>> & Readonly<{
   slug: string;
   countryCode?: string;
@@ -44,6 +50,28 @@ export type PublicPlace = LocalizedContent<Readonly<{
   coordinates: Readonly<{ lat: number; lng: number }>;
   durationMinutes: number;
   image?: string;
+  media: readonly PublicMedia[];
+}>;
+
+export type PublicFact = Readonly<{
+  label: string;
+  value: string;
+}>;
+
+export type PublicTourStop = Readonly<{
+  placeSlug: string;
+  position: number;
+  visitDurationMinutes?: number;
+}>;
+
+export type PublicTour = LocalizedContent<Readonly<{
+  title: string;
+  shortDescription?: string;
+  description?: string;
+}>> & Readonly<{
+  slug: string;
+  estimatedDurationMinutes?: number;
+  stops: readonly PublicTourStop[];
   media: readonly PublicMedia[];
 }>;
 
@@ -63,7 +91,25 @@ export type PublicCityIndexResponse = Readonly<{
 export type PublicCityResponse = Readonly<{
   city: PublicCity;
   places: readonly PublicPlace[];
-  tours: readonly unknown[];
+  tours: readonly PublicTour[];
+}>;
+
+export type GuideEligibilityResponse = Readonly<{
+  eligible: boolean;
+}>;
+
+export type GuideSource = Readonly<{
+  label: string;
+  url: string;
+  verifiedAt: string;
+  citySlug: string;
+  placeSlug: string;
+  chunkIds: readonly string[];
+}>;
+
+export type GuideAnswerResponse = Readonly<{
+  answer: string;
+  sources: readonly GuideSource[];
 }>;
 
 export function parseCityIndexResponse(value: unknown): PublicCityIndexResponse {
@@ -82,7 +128,21 @@ export function parseCityResponse(value: unknown): PublicCityResponse {
   return {
     city: parseCity(object.city),
     places: object.places.map((place) => parsePlace(place)),
-    tours: object.tours,
+    tours: object.tours.map((tour) => parseTour(tour)),
+  };
+}
+
+export function parseGuideEligibilityResponse(value: unknown): GuideEligibilityResponse {
+  const object = asObject(value, "guide eligibility");
+  return { eligible: asBoolean(object.eligible, "guide eligibility") };
+}
+
+export function parseGuideAnswerResponse(value: unknown): GuideAnswerResponse {
+  const object = asObject(value, "guide answer");
+  if (!Array.isArray(object.sources)) throw new Error("Invalid guide sources.");
+  return {
+    answer: asString(object.answer, "guide answer"),
+    sources: object.sources.map(parseGuideSource),
   };
 }
 
@@ -151,11 +211,73 @@ function parsePlace(value: unknown): PublicPlace {
       ...(typeof content.description === "string" ? { description: content.description } : {}),
       ...(typeof content.story === "string" ? { story: content.story } : {}),
       ...(typeof content.visitNote === "string" ? { visitNote: content.visitNote } : {}),
-      ...(Array.isArray(content.facts) && content.facts.every((fact) => typeof fact === "string")
-        ? { facts: content.facts }
+      ...(content.facts === undefined ? {} : { facts: parseFacts(content.facts) }),
+    },
+  };
+}
+
+function parseTour(value: unknown): PublicTour {
+  const object = asObject(value, "tour");
+  const localized = parseLocalizedContent(object);
+  const content = asObject(localized.content, "tour content");
+  if (!Array.isArray(object.stops)) throw new Error("Invalid tour stops.");
+  return {
+    slug: asString(object.slug, "tour slug"),
+    ...(object.estimatedDurationMinutes === undefined
+      ? {}
+      : {
+          estimatedDurationMinutes: asPositiveNumber(
+            object.estimatedDurationMinutes,
+            "tour duration",
+          ),
+        }),
+    stops: object.stops.map(parseTourStop),
+    media: parseMediaArray(object.media),
+    ...localized,
+    content: {
+      title: asString(content.title, "tour title"),
+      ...(typeof content.shortDescription === "string"
+        ? { shortDescription: content.shortDescription }
+        : {}),
+      ...(typeof content.description === "string"
+        ? { description: content.description }
         : {}),
     },
   };
+}
+
+function parseTourStop(value: unknown): PublicTourStop {
+  const object = asObject(value, "tour stop");
+  const position = asFiniteNumber(object.position, "tour stop position");
+  if (!Number.isInteger(position) || position < 0) {
+    throw new Error("Invalid tour stop position.");
+  }
+  return {
+    placeSlug: asString(object.placeSlug, "tour stop place slug"),
+    position,
+    ...(object.visitDurationMinutes === undefined
+      ? {}
+      : {
+          visitDurationMinutes: asPositiveNumber(
+            object.visitDurationMinutes,
+            "tour stop visit duration",
+          ),
+        }),
+  };
+}
+
+function parseFacts(value: unknown): readonly PublicFact[] {
+  if (!Array.isArray(value)) throw new Error("Invalid place facts.");
+  return value.map((fact) => {
+    if (typeof fact === "string") {
+      return { label: "", value: asString(fact, "legacy place fact") };
+    }
+    const object = asObject(fact, "place fact");
+    return {
+      label: asString(object.label, "place fact label"),
+      value: asString(object.value, "place fact value"),
+    };
+  });
 }
 
 function parseLocalizedContent(object: Record<string, unknown>) {
@@ -172,15 +294,67 @@ function parseMediaArray(value: unknown): readonly PublicMedia[] {
   return value.flatMap((entry) => {
     if (!entry || typeof entry !== "object") return [];
     const media = entry as Record<string, unknown>;
+    if (!isMediaKind(media.kind) || !isMediaPurpose(media.purpose)) return [];
     if (
-      typeof media.assetKey !== "string" ||
-      typeof media.kind !== "string" ||
-      typeof media.purpose !== "string" ||
-      typeof media.url !== "string" ||
-      typeof media.mimeType !== "string"
+      typeof media.assetKey !== "string" || !media.assetKey.trim() ||
+      typeof media.url !== "string" || !media.url.trim() ||
+      typeof media.mimeType !== "string" || !media.mimeType.trim()
     ) return [];
-    return [media as PublicMedia];
+    const attribution = parseMediaAttribution(media.attribution);
+    return [{
+      assetKey: media.assetKey,
+      kind: media.kind,
+      purpose: media.purpose,
+      url: media.url,
+      mimeType: media.mimeType,
+      ...(typeof media.durationSeconds === "number" &&
+      Number.isFinite(media.durationSeconds) && media.durationSeconds > 0
+        ? { durationSeconds: media.durationSeconds }
+        : {}),
+      ...(typeof media.locale === "string" && media.locale
+        ? { locale: media.locale }
+        : {}),
+      ...(attribution ? { attribution } : {}),
+    }];
   });
+}
+
+function parseMediaAttribution(value: unknown): PublicMediaAttribution | undefined {
+  if (value === undefined) return undefined;
+  const object = asObject(value, "media attribution");
+  return {
+    text: asString(object.text, "media attribution text"),
+    ...(typeof object.creator === "string" && object.creator.trim()
+      ? { creator: object.creator }
+      : {}),
+  };
+}
+
+function parseGuideSource(value: unknown): GuideSource {
+  const object = asObject(value, "guide source");
+  if (!Array.isArray(object.chunkIds)) throw new Error("Invalid guide source chunks.");
+  const url = asString(object.url, "guide source URL");
+  const protocol = new URL(url).protocol;
+  if (protocol !== "https:" && protocol !== "http:") {
+    throw new Error("Invalid guide source URL.");
+  }
+  return {
+    label: asString(object.label, "guide source label"),
+    url,
+    verifiedAt: asString(object.verifiedAt, "guide source verification date"),
+    citySlug: asString(object.citySlug, "guide source city"),
+    placeSlug: asString(object.placeSlug, "guide source place"),
+    chunkIds: object.chunkIds.map((id) => asString(id, "guide source chunk")),
+  };
+}
+
+function isMediaKind(value: unknown): value is PublicMedia["kind"] {
+  return value === "image" || value === "audio" || value === "video" || value === "document";
+}
+
+function isMediaPurpose(value: unknown): value is PublicMedia["purpose"] {
+  return value === "hero" || value === "card" || value === "gallery" ||
+    value === "thumbnail" || value === "audio" || value === "video" || value === "document";
 }
 
 function asObject(value: unknown, label: string): Record<string, unknown> {
@@ -203,4 +377,10 @@ function asBoolean(value: unknown, label: string): boolean {
 function asFiniteNumber(value: unknown, label: string): number {
   if (typeof value !== "number" || !Number.isFinite(value)) throw new Error(`Invalid ${label}.`);
   return value;
+}
+
+function asPositiveNumber(value: unknown, label: string): number {
+  const number = asFiniteNumber(value, label);
+  if (number <= 0) throw new Error(`Invalid ${label}.`);
+  return number;
 }

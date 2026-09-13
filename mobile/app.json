@@ -32,6 +32,16 @@
       "expo-dev-client",
       "expo-secure-store",
       "@maplibre/maplibre-react-native",
+      "expo-asset",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundRecording": false,
+          "enableBackgroundPlayback": false
+        }
+      ],
       [
         "expo-location",
         {

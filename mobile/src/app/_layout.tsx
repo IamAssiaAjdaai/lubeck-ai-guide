@@ -24,6 +24,8 @@ export default function RootLayout() {
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="city/[citySlug]/index" options={{ title: "CITYWALK" }} />
             <Stack.Screen name="city/[citySlug]/place/[placeSlug]" options={{ title: "CITYWALK" }} />
+            <Stack.Screen name="city/[citySlug]/tour/[tourSlug]" options={{ title: "CITYWALK" }} />
+            <Stack.Screen name="city/[citySlug]/guide/[placeSlug]" options={{ title: "CITYWALK" }} />
             <Stack.Screen name="account/index" options={{ title: "CITYWALK" }} />
           </Stack>
         </NativeLocaleProvider>

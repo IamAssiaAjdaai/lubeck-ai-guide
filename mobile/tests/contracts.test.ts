@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { parseCityIndexResponse, parseCityResponse } from "../src/lib/api/contracts";
+import {
+  parseCityIndexResponse,
+  parseCityResponse,
+  parseGuideAnswerResponse,
+  parseGuideEligibilityResponse,
+} from "../src/lib/api/contracts";
 
 describe("public content contracts", () => {
   it("retains server-declared localization fallback semantics", () => {
@@ -118,4 +123,103 @@ describe("public content contracts", () => {
       "data-garden",
     ]);
   });
+
+  it("parses structured facts and retains safe legacy string compatibility", () => {
+    const city = parseCityResponse(cityPayload({
+      facts: [
+        { label: "Built", value: "1478" },
+        "Legacy fact",
+      ],
+    }));
+
+    expect(city.places[0]?.content.facts).toEqual([
+      { label: "Built", value: "1478" },
+      { label: "", value: "Legacy fact" },
+    ]);
+    expect(() => parseCityResponse(cityPayload({ facts: [{ label: "Missing value" }] })))
+      .toThrow("place fact value");
+  });
+
+  it("parses the published tour contract and fails closed for malformed stops", () => {
+    const payload = cityPayload();
+    payload.tours = [{
+      slug: "historic-walk",
+      estimatedDurationMinutes: 90,
+      requestedLocale: "de",
+      resolvedLocale: "en",
+      didFallback: true,
+      content: {
+        title: "Historic walk",
+        shortDescription: "A compact route.",
+        description: "Follow the published places in order.",
+      },
+      stops: [{ placeSlug: "old-gate", position: 1, visitDurationMinutes: 20 }],
+      media: [],
+    }];
+
+    expect(parseCityResponse(payload).tours[0]).toMatchObject({
+      slug: "historic-walk",
+      estimatedDurationMinutes: 90,
+      requestedLocale: "de",
+      resolvedLocale: "en",
+      didFallback: true,
+      stops: [{ placeSlug: "old-gate", position: 1, visitDurationMinutes: 20 }],
+    });
+    payload.tours[0]!.stops[0]!.position = -1;
+    expect(() => parseCityResponse(payload)).toThrow("tour stop position");
+  });
+
+  it("parses guide eligibility and source-safe answers", () => {
+    expect(parseGuideEligibilityResponse({ eligible: true })).toEqual({ eligible: true });
+    expect(parseGuideAnswerResponse({
+      answer: "The gate was completed in 1478.",
+      sources: [{
+        label: "Official source",
+        url: "https://example.com/source",
+        verifiedAt: "2026-09-13",
+        citySlug: "lubeck",
+        placeSlug: "holstentor",
+        chunkIds: ["holstentor-history"],
+      }],
+    }).sources[0]?.chunkIds).toEqual(["holstentor-history"]);
+    expect(() => parseGuideAnswerResponse({
+      answer: "Unsafe",
+      sources: [{
+        label: "Unsafe source", url: "javascript:alert(1)", verifiedAt: "today",
+        citySlug: "x", placeSlug: "y", chunkIds: ["z"],
+      }],
+    })).toThrow("source URL");
+  });
 });
+
+function cityPayload(content: Record<string, unknown> = {}) {
+  return {
+    city: {
+      slug: "test-city", requestedLocale: "en", resolvedLocale: "en",
+      didFallback: false, content: { name: "Test City" }, media: [],
+    },
+    places: [{
+      slug: "old-gate", category: "see", coordinates: { lat: 1, lng: 2 },
+      durationMinutes: 20, requestedLocale: "en", resolvedLocale: "en",
+      didFallback: false,
+      content: { name: "Old Gate", shortDescription: "A public place.", ...content },
+      media: [],
+    }],
+    tours: [] as MutableTourPayload[],
+  };
+}
+
+type MutableTourPayload = {
+  slug: string;
+  estimatedDurationMinutes?: number;
+  requestedLocale: string;
+  resolvedLocale: string;
+  didFallback: boolean;
+  content: Record<string, unknown>;
+  stops: Array<{
+    placeSlug: string;
+    position: number;
+    visitDurationMinutes?: number;
+  }>;
+  media: unknown[];
+};

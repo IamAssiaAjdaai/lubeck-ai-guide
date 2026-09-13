@@ -3,12 +3,13 @@ import { Link } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { LocaleSelector } from "../components/LocaleSelector";
+import { MediaAttribution } from "../components/MediaAttribution";
 import { AppText, Card, PrimaryButton, Screen, SectionTitle, StatusMessage } from "../components/ui";
 import { colors, radius, spacing } from "../design/tokens";
 import { usePublicCities } from "../hooks/usePublicContent";
 import { citywalkApi } from "../lib/api/instance";
-import { selectPrimaryImage } from "../lib/api/media";
-import { getNativeDirection } from "../lib/localization";
+import { selectPrimaryImageMedia } from "../lib/api/media";
+import { getNativeDirection, getNativeTextAlignment } from "../lib/localization";
 import { useNativeLocale } from "../localization/LocaleProvider";
 
 export default function HomeScreen() {
@@ -40,22 +41,29 @@ export default function HomeScreen() {
       {cities.status === "loading" ? <AppText>{messages.loading}</AppText> : null}
       {cities.status === "error" ? <StatusMessage>{messages.unavailable}</StatusMessage> : null}
       {cities.status === "available" ? cities.data.cities.map((city) => {
-        const image = selectPrimaryImage(city.media);
+        const image = selectPrimaryImageMedia(city.media);
         const contentDirection = getNativeDirection(city.resolvedLocale);
+        const contentTextStyle = {
+          writingDirection: contentDirection,
+          textAlign: getNativeTextAlignment(city.resolvedLocale),
+        } as const;
         return (
           <Card key={city.slug}>
             {image ? (
-              <Image
-                source={{ uri: citywalkApi.resolveUrl(image) }}
-                contentFit="cover"
-                style={styles.cityImage}
-                accessibilityLabel={city.name}
-              />
+              <View>
+                <Image
+                  source={{ uri: citywalkApi.resolveUrl(image.url) }}
+                  contentFit="cover"
+                  style={styles.cityImage}
+                  accessibilityLabel={city.name}
+                />
+                <MediaAttribution attribution={image.attribution} />
+              </View>
             ) : <View style={styles.imageFallback} />}
             <View style={{ direction: contentDirection }}>
-              <AppText variant="title" style={{ writingDirection: contentDirection }}>{city.name}</AppText>
+              <AppText variant="title" style={contentTextStyle}>{city.name}</AppText>
               {city.shortDescription ? (
-                <AppText style={{ writingDirection: contentDirection }}>{city.shortDescription}</AppText>
+                <AppText style={contentTextStyle}>{city.shortDescription}</AppText>
               ) : null}
             </View>
             <Link href={{ pathname: "/city/[citySlug]", params: { citySlug: city.slug } }} asChild>
