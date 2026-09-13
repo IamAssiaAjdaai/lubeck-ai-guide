@@ -9,6 +9,8 @@ const {
   listAuthorizedMediaAssets,
   cancelAuthorizedMediaUpload,
   retryAuthorizedUploadFinalize,
+  saveAuthorizedMediaRights,
+  verifyAuthorizedMediaRights,
 } = vi.hoisted(() => ({
   redirect: vi.fn(),
   revalidatePath: vi.fn(),
@@ -16,6 +18,8 @@ const {
   listAuthorizedMediaAssets: vi.fn(),
   cancelAuthorizedMediaUpload: vi.fn(),
   retryAuthorizedUploadFinalize: vi.fn(),
+  saveAuthorizedMediaRights: vi.fn(),
+  verifyAuthorizedMediaRights: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -38,16 +42,21 @@ vi.mock("@/lib/media/service.server", () => ({
   cancelAuthorizedMediaUpload,
   createAuthorizedExternalVideo: vi.fn(),
   deleteAuthorizedArchivedMediaObject: vi.fn(),
+  deleteAuthorizedMediaRights: vi.fn(),
   detachAuthorizedMedia: vi.fn(),
   listAuthorizedMediaAssets,
   reviewAuthorizedMediaAsset,
   retryAuthorizedUploadFinalize,
+  saveAuthorizedMediaRights,
+  verifyAuthorizedMediaRights,
 }));
 
 import {
   cancelUploadAction,
   reviewMediaAction,
   retryFinalizeMediaAction,
+  saveMediaRightsAction,
+  verifyMediaRightsAction,
 } from "@/app/admin/(protected)/media-actions";
 import MediaLibraryPage from "@/app/admin/(protected)/media/page";
 
@@ -113,6 +122,35 @@ describe("admin media review workflow", () => {
     expect(redirect).toHaveBeenCalledWith(
       "/admin/media?status=archived&saved=1",
     );
+  });
+
+  it("saves rights preparation fields without accepting reviewer metadata", async () => {
+    const formData = new FormData();
+    formData.set("rightsBasis", "licensed");
+    formData.set("creator", "Photographer");
+    formData.set("evidenceReference", "Contract 42");
+    formData.set("attributionRequired", "on");
+    formData.set("attributionText", "Photo: Photographer");
+
+    await saveMediaRightsAction(17, formData);
+
+    expect(saveAuthorizedMediaRights).toHaveBeenCalledWith(17, {
+      rightsBasis: "licensed",
+      creator: "Photographer",
+      rightsHolder: null,
+      attributionRequired: true,
+      attributionText: "Photo: Photographer",
+      evidenceReference: "Contract 42",
+      rightsNotes: null,
+    });
+    expect(redirect).toHaveBeenCalledWith("/admin/media/17?saved=1");
+  });
+
+  it("routes deliberate rights verification through the server service", async () => {
+    await verifyMediaRightsAction(17);
+
+    expect(verifyAuthorizedMediaRights).toHaveBeenCalledWith(17);
+    expect(redirect).toHaveBeenCalledWith("/admin/media/17?saved=1");
   });
 });
 

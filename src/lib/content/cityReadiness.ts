@@ -12,7 +12,9 @@ export type CityReadinessInput = Readonly<{
   publishedPlaceCount: number;
   sourceCompletePlaceCount: number;
   keyImageCompletePlaceCount: number;
+  rightsClearedKeyImagePlaceCount: number;
   cityKeyImageReady: boolean;
+  cityKeyImageRightsReady: boolean;
   publishedTourCount: number;
   coherentPublishedTourCount: number;
   minimumVerifiedAiPlaceCount: number;
@@ -32,6 +34,7 @@ export type CityReadinessInput = Readonly<{
 export type CityReadinessReport = CityReadinessInput & Readonly<{
   sourceCoveragePercent: number;
   keyImageryCoveragePercent: number;
+  rightsClearedKeyImageryCoveragePercent: number;
   contentCoveragePercentByLocale: Readonly<Partial<Record<Locale, number>>>;
   cityContentCoveragePercentByLocale: Readonly<Partial<Record<Locale, number>>>;
   audioCoveragePercentByLocale: Readonly<Partial<Record<Locale, number>>>;
@@ -58,6 +61,12 @@ export function evaluateCityReadiness(
     input.keyImageCompletePlaceCount < input.publishedPlaceCount
   ) {
     blockers.push("approved_key_imagery_incomplete");
+  }
+  if (
+    !input.cityKeyImageRightsReady ||
+    input.rightsClearedKeyImagePlaceCount < input.publishedPlaceCount
+  ) {
+    blockers.push("rights_cleared_key_imagery_incomplete");
   }
   if (input.publishedTourCount === 0 || input.coherentPublishedTourCount === 0) {
     blockers.push("published_walking_tour_missing_or_incoherent");
@@ -98,6 +107,11 @@ export function evaluateCityReadiness(
     ),
     keyImageryCoveragePercent: percentage(
       input.keyImageCompletePlaceCount + (input.cityKeyImageReady ? 1 : 0),
+      input.publishedPlaceCount + 1,
+    ),
+    rightsClearedKeyImageryCoveragePercent: percentage(
+      input.rightsClearedKeyImagePlaceCount +
+        (input.cityKeyImageRightsReady ? 1 : 0),
       input.publishedPlaceCount + 1,
     ),
     contentCoveragePercentByLocale: Object.fromEntries(

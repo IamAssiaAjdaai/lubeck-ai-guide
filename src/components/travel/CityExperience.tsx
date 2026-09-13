@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import CustomTourPlanner from "@/components/travel/CustomTourPlanner";
+import { MediaAttribution } from "@/components/travel/MediaAttribution";
 import PlaceDiscovery, {
   type DiscoveryPlace,
 } from "@/components/travel/PlaceDiscovery";
@@ -11,8 +12,8 @@ import TourCard, {
 } from "@/components/travel/TourCard";
 import { localizePlaceCategories } from "@/data/placeCategories";
 import type { Place, PlaceCoordinates } from "@/data/places";
-import { resolveCityHeroImage } from "@/lib/content/homeMedia";
-import { resolvePlaceImage } from "@/lib/content/placeMedia";
+import { resolveCityHeroImage, resolveCityHeroMedia } from "@/lib/content/homeMedia";
+import { resolvePlaceImage, resolvePlaceImageMedia } from "@/lib/content/placeMedia";
 import {
   resolvePublicLocalization,
   type PublicCitySnapshot,
@@ -27,6 +28,7 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { prepareMapPlaces } from "@/lib/mapPlaces";
+import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 import {
   getCityScopedPlannerId,
   getCityScopedTourId,
@@ -77,16 +79,29 @@ export default function CityExperience({
   const preparedPlaces = prepareMapPlaces(snapshot.places, locale, {
     getDetailHref: (place) =>
       `/${locale}/${snapshot.city.slug}/${place.slug}`,
-  }).map((place) => ({
-    ...place,
-    image: resolvePlaceImage(
+  }).map((place) => {
+    const media = snapshot.media?.places[place.slug];
+    const selectedImage = resolvePlaceImageMedia(
       contentSource,
-      snapshot.media?.places[place.slug],
+      media,
       locale,
-      place.image,
       "card",
-    ),
-  }));
+    );
+
+    return {
+      ...place,
+      image: selectedImage?.url ?? resolvePlaceImage(
+        contentSource,
+        media,
+        locale,
+        place.image,
+        "card",
+      ),
+      ...(selectedImage?.attribution
+        ? { imageAttribution: selectedImage.attribution }
+        : {}),
+    };
+  });
   const catalogPlaces: readonly DiscoveryPlace[] = preparedPlaces.map(
     (place) => ({
       ...place,
@@ -105,7 +120,12 @@ export default function CityExperience({
   );
   const tours = resolveTours(snapshot, locale, translations);
   const plannerOrigin = resolveCityPlannerOrigin(snapshot);
-  const cityImage = resolveCityHeroImage(
+  const cityHeroMedia = resolveCityHeroMedia(
+    contentSource,
+    snapshot.media?.city,
+    locale,
+  );
+  const cityImage = cityHeroMedia?.url ?? resolveCityHeroImage(
     contentSource,
     snapshot.media?.city,
     locale,
@@ -126,16 +146,24 @@ export default function CityExperience({
 
         <header className="mt-5 overflow-hidden rounded-3xl border border-border bg-white">
           {cityImage ? (
-            <div className="relative aspect-[16/9] bg-surface">
-              <Image
-                src={cityImage}
-                alt={city.content.name}
-                fill
-                priority
-                sizes="(max-width: 480px) calc(100vw - 48px), 432px"
-                className="object-cover"
+            <figure>
+              <div className="relative aspect-[16/9] bg-surface">
+                <Image
+                  src={cityImage}
+                  alt={city.content.name}
+                  fill
+                  priority
+                  unoptimized={isApplicationMediaPath(cityImage)}
+                  sizes="(max-width: 480px) calc(100vw - 48px), 432px"
+                  className="object-cover"
+                />
+              </div>
+              <MediaAttribution
+                as="figcaption"
+                attribution={cityHeroMedia?.attribution}
+                className="px-6 pt-3"
               />
-            </div>
+            </figure>
           ) : null}
           <div className="p-6">
             <h1

@@ -44,8 +44,20 @@ async function main() {
       return;
     }
 
+    if (action === "relink") {
+      const result = await operations.relinkVerifiedKnowledgeChunkSource({
+        id: options.get("id") ?? "",
+        sourceUrl: options.get("source") ?? "",
+      });
+      console.log(
+        `Relinked verified knowledge chunk ${result.id}; active state remains ${result.isActive}.`,
+      );
+      return;
+    }
+
     throw new Error(
       "Usage: knowledge:manage -- add --city=<slug> --place=<slug> --source=<https-url> --locale=en --text=<verified-text> [--topics=a,b] [--priority=0]\n" +
+      "   or: knowledge:manage -- relink --id=<uuid> --source=<attached-https-url>\n" +
       "   or: knowledge:manage -- remove --id=<uuid>",
     );
   } finally {

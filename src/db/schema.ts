@@ -108,6 +108,16 @@ export const mediaSourceTypeEnum = pgEnum("media_source_type", [
   "external",
 ]);
 
+export const mediaRightsBasisEnum = pgEnum("media_rights_basis", [
+  "owned",
+  "commissioned",
+  "licensed",
+  "creative_commons",
+  "public_domain",
+  "partner_supplied",
+  "other",
+]);
+
 export const externalVideoProviderEnum = pgEnum("external_video_provider", [
   "youtube",
   "vimeo",
@@ -532,6 +542,28 @@ export const mediaAssetsTable = pgTable(
   ],
 );
 
+export const mediaAssetRightsTable = pgTable(
+  "media_asset_rights",
+  {
+    mediaAssetId: integer("media_asset_id")
+      .primaryKey()
+      .references(() => mediaAssetsTable.id, { onDelete: "cascade" }),
+    rightsBasis: mediaRightsBasisEnum("rights_basis").notNull(),
+    creator: text("creator"),
+    rightsHolder: text("rights_holder"),
+    attributionRequired: boolean("attribution_required")
+      .default(false)
+      .notNull(),
+    attributionText: text("attribution_text"),
+    evidenceReference: text("evidence_reference"),
+    rightsNotes: text("rights_notes"),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    verifiedByUserId: text("verified_by_user_id"),
+    ...actorColumns(),
+    ...contentTimestamps(),
+  },
+);
+
 export const audioGenerationMetadataTable = pgTable(
   "audio_generation_metadata",
   {
@@ -650,6 +682,8 @@ export type VerifiedKnowledgeChunkRow =
 export type ContentWorkflowEventRow = typeof contentWorkflowEventsTable.$inferSelect;
 export type MediaAssetRow = typeof mediaAssetsTable.$inferSelect;
 export type NewMediaAssetRow = typeof mediaAssetsTable.$inferInsert;
+export type MediaAssetRightsRow = typeof mediaAssetRightsTable.$inferSelect;
+export type NewMediaAssetRightsRow = typeof mediaAssetRightsTable.$inferInsert;
 export type AudioGenerationMetadataRow =
   typeof audioGenerationMetadataTable.$inferSelect;
 export type CityMediaRow = typeof cityMediaTable.$inferSelect;

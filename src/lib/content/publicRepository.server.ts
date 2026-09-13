@@ -662,7 +662,32 @@ function publicMediaForLocale(
   media: readonly PublicMedia[],
   requestedLocale: Locale,
 ): readonly PublicMedia[] {
-  return media.filter(
-    ({ locale }) => locale === undefined || locale === requestedLocale,
-  );
+  return media.flatMap((item) => {
+    if (item.locale !== undefined && item.locale !== requestedLocale) return [];
+    return [{
+      assetKey: item.assetKey,
+      kind: item.kind,
+      purpose: item.purpose,
+      url: item.url,
+      mimeType: item.mimeType,
+      ...(item.sizeBytes !== undefined ? { sizeBytes: item.sizeBytes } : {}),
+      ...(item.width !== undefined ? { width: item.width } : {}),
+      ...(item.height !== undefined ? { height: item.height } : {}),
+      ...(item.durationSeconds !== undefined
+        ? { durationSeconds: item.durationSeconds }
+        : {}),
+      ...(item.locale ? { locale: item.locale } : {}),
+      ...(item.attribution
+        ? {
+            attribution: {
+              text: item.attribution.text,
+              ...(item.attribution.creator
+                ? { creator: item.attribution.creator }
+                : {}),
+            },
+          }
+        : {}),
+      ...(item.externalVideo ? { externalVideo: item.externalVideo } : {}),
+    } satisfies PublicMedia];
+  });
 }

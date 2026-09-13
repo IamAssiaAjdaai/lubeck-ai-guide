@@ -13,6 +13,9 @@ import {
   detachAuthorizedMedia,
   reviewAuthorizedMediaAsset,
   retryAuthorizedUploadFinalize,
+  saveAuthorizedMediaRights,
+  verifyAuthorizedMediaRights,
+  deleteAuthorizedMediaRights,
 } from "@/lib/media/service.server";
 import {
   MediaIntegrityError,
@@ -123,6 +126,50 @@ export async function deleteMediaObjectFromLibraryAction(id: number) {
     destination += "&saved=1";
   } catch (error) {
     destination += `&error=${encodeURIComponent(mediaActionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function saveMediaRightsAction(id: number, formData: FormData) {
+  let destination = `/admin/media/${id}`;
+  try {
+    await saveAuthorizedMediaRights(id, {
+      rightsBasis: formData.get("rightsBasis"),
+      creator: formData.get("creator"),
+      rightsHolder: formData.get("rightsHolder"),
+      attributionRequired: formData.get("attributionRequired") === "on",
+      attributionText: formData.get("attributionText"),
+      evidenceReference: formData.get("evidenceReference"),
+      rightsNotes: formData.get("rightsNotes"),
+    });
+    revalidatePath(destination);
+    destination += "?saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(mediaActionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function verifyMediaRightsAction(id: number) {
+  let destination = `/admin/media/${id}`;
+  try {
+    await verifyAuthorizedMediaRights(id);
+    revalidatePath(destination);
+    destination += "?saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(mediaActionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function deleteMediaRightsAction(id: number) {
+  let destination = `/admin/media/${id}`;
+  try {
+    await deleteAuthorizedMediaRights(id);
+    revalidatePath(destination);
+    destination += "?saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(mediaActionError(error))}`;
   }
   redirect(destination);
 }

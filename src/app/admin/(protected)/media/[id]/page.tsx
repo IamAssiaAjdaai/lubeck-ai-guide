@@ -1,10 +1,18 @@
 import { notFound } from "next/navigation";
 
-import { archiveMediaAction, deleteMediaObjectAction, reviewMediaAction } from "@/app/admin/(protected)/media-actions";
+import {
+  archiveMediaAction,
+  deleteMediaObjectAction,
+  deleteMediaRightsAction,
+  reviewMediaAction,
+  saveMediaRightsAction,
+  verifyMediaRightsAction,
+} from "@/app/admin/(protected)/media-actions";
 import { AdminNotice } from "@/components/admin/AdminContentForms";
 import { AdminMediaPreview } from "@/components/admin/AdminMediaPreview";
 import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
+import { MediaRightsPanel } from "@/components/admin/MediaRightsPanel";
 import { getAuthorizedMediaAsset } from "@/lib/media/service.server";
 import { requireStaff } from "@/lib/admin/authorization.server";
 import { hasActiveStaffCapability } from "@/lib/admin/permissions";
@@ -29,6 +37,15 @@ export default async function MediaDetailPage({ params, searchParams }: Readonly
       <Meta label="Stable asset key" value={asset.assetKey} mono /><Meta label="Object key" value={asset.objectKey ?? "External provider asset"} mono /><Meta label="City" value={`#${asset.cityId}`} /><Meta label="Kind" value={asset.kind} /><Meta label="MIME" value={asset.mimeType} /><Meta label="Size" value={asset.sizeBytes === null ? "Not finalized" : `${asset.sizeBytes} bytes`} /><Meta label="Locale" value={asset.locale ?? "Locale-neutral"} /><Meta label="Checksum" value={asset.checksumSha256 ?? "Not supplied by storage"} mono /><Meta label="Usage count" value={String(asset.usageCount)} /><Meta label="Created by" value={asset.createdByUserId ?? "Unknown actor"} mono /><Meta label="Updated by" value={asset.updatedByUserId ?? "Unknown actor"} mono /><Meta label="Updated" value={asset.updatedAt.toLocaleString("en")} />
     </dl>
     <section className="surface-card mt-6 p-5 sm:p-7"><h2 className="text-lg font-bold">Usages</h2>{asset.usages.length === 0 ? <p className="mt-3 text-sm text-text-secondary">Not attached to content.</p> : <ul className="mt-3 space-y-2 text-sm">{asset.usages.map(({ attachment, entitySlug, entityType }) => <li key={`${entityType}-${attachment.id}`}><strong>{entityType}</strong> · {entitySlug} · {attachment.purpose}{attachment.locale ? ` · ${attachment.locale}` : ""}</li>)}</ul>}</section>
+    <MediaRightsPanel
+      canManage={canManage}
+      canVerify={canApprove}
+      deleteAction={deleteMediaRightsAction.bind(null, id)}
+      rights={asset.rights}
+      rightsStatus={asset.rightsStatus}
+      saveAction={saveMediaRightsAction.bind(null, id)}
+      verifyAction={verifyMediaRightsAction.bind(null, id)}
+    />
     <div className="mt-6 flex flex-wrap gap-3">
       {canApprove && asset.approvalStatus !== "uploading" && asset.approvalStatus !== "archived" ? <form action={reviewMediaAction.bind(null, id, "approved")}><button className="button-primary min-h-11 px-4" type="submit">Approve</button></form> : null}
       {canReview && asset.approvalStatus !== "uploading" && asset.approvalStatus !== "archived" ? <form action={reviewMediaAction.bind(null, id, "rejected")}><button className="button-secondary min-h-11 px-4" type="submit">Reject</button></form> : null}

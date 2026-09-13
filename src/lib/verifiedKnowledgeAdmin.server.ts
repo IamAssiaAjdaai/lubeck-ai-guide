@@ -22,6 +22,14 @@ export type AddVerifiedKnowledgeChunkInput = Readonly<{
   priority?: number;
 }>;
 
+export type RelinkVerifiedKnowledgeChunkSourceInput = Readonly<{
+  id: string;
+  sourceUrl: string;
+}>;
+
+const KNOWLEDGE_CHUNK_ID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 function requireSlug(value: string, label: string): string {
   const normalized = value.trim();
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(normalized)) {
@@ -88,7 +96,7 @@ export async function addVerifiedKnowledgeChunk(
 }
 
 export async function removeVerifiedKnowledgeChunk(id: string): Promise<boolean> {
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+  if (!KNOWLEDGE_CHUNK_ID_PATTERN.test(id)) {
     throw new Error("A valid knowledge chunk UUID is required.");
   }
 
@@ -97,4 +105,57 @@ export async function removeVerifiedKnowledgeChunk(id: string): Promise<boolean>
     .where(eq(verifiedKnowledgeChunksTable.id, id))
     .returning({ id: verifiedKnowledgeChunksTable.id });
   return deleted.length === 1;
+}
+
+export async function relinkVerifiedKnowledgeChunkSource(
+  input: RelinkVerifiedKnowledgeChunkSourceInput,
+) {
+  if (!KNOWLEDGE_CHUNK_ID_PATTERN.test(input.id)) {
+    throw new Error("A valid knowledge chunk UUID is required.");
+  }
+  const sourceUrl = input.sourceUrl.trim();
+  if (!/^https:\/\//.test(sourceUrl)) {
+    throw new Error("Source URL must use HTTPS.");
+  }
+
+  return getDb().transaction(async (transaction) => {
+    const [chunk] = await transaction
+      .select({
+        id: verifiedKnowledgeChunksTable.id,
+        placeId: verifiedKnowledgeChunksTable.placeId,
+        isActive: verifiedKnowledgeChunksTable.isActive,
+      })
+      .from(verifiedKnowledgeChunksTable)
+      .where(eq(verifiedKnowledgeChunksTable.id, input.id))
+      .limit(1);
+    if (!chunk) throw new Error("Knowledge chunk not found.");
+
+    const [source] = await transaction
+      .select({ sourceId: contentSourcesTable.id })
+      .from(placeSourcesTable)
+      .innerJoin(
+        contentSourcesTable,
+        eq(placeSourcesTable.sourceId, contentSourcesTable.id),
+      )
+      .where(and(
+        eq(placeSourcesTable.placeId, chunk.placeId),
+        eq(contentSourcesTable.canonicalUrl, sourceUrl),
+      ))
+      .limit(1);
+    if (!source) {
+      throw new Error("The replacement source must already be linked to this place.");
+    }
+
+    const [updated] = await transaction
+      .update(verifiedKnowledgeChunksTable)
+      .set({ sourceId: source.sourceId, updatedAt: new Date() })
+      .where(eq(verifiedKnowledgeChunksTable.id, chunk.id))
+      .returning({
+        id: verifiedKnowledgeChunksTable.id,
+        sourceId: verifiedKnowledgeChunksTable.sourceId,
+        isActive: verifiedKnowledgeChunksTable.isActive,
+      });
+    if (!updated) throw new Error("Knowledge source relink failed.");
+    return updated;
+  });
 }

@@ -8,6 +8,7 @@ vi.mock("server-only", () => ({}));
 import { closeDb, getDb } from "@/db/client";
 import {
   citiesTable,
+  contentWorkflowEventsTable,
   contentTagsTable,
   contentSourcesTable,
   placeContentTagsTable,
@@ -34,6 +35,7 @@ import {
   updateCmsCity,
   updateCmsPlace,
   updateCmsTour,
+  withdrawCmsPublishedPlaceRevision,
 } from "@/lib/admin/content/repository.server";
 import {
   CROSS_CITY_PLACE_MOVE_ERROR,
@@ -52,6 +54,7 @@ const shouldRun = process.env.CMS_DB_INTEGRATION === "1";
 const citySlug = "cms02-integration-city";
 const graphCitySlug = "cms02-graph-city";
 const graphOtherCitySlug = "cms02-graph-other-city";
+const withdrawalCitySlug = "cms02-withdrawal-city";
 const actorId = "cms02-integration-actor";
 
 async function prepareForPublication(
@@ -88,6 +91,7 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
         citySlug,
         graphCitySlug,
         graphOtherCitySlug,
+        withdrawalCitySlug,
       ]));
     for (const city of testCities) {
       await db.delete(toursTable).where(eq(toursTable.cityId, city.id));
@@ -491,6 +495,73 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
         "published",
         "returned_to_draft",
       ]));
+  });
+
+  it("withdraws a live revision while preserving its working draft", async () => {
+    const city = await createCmsCity({
+      slug: withdrawalCitySlug,
+      publicationStatus: "draft",
+      localizations: [{ locale: "en", name: "Withdrawal city" }],
+    }, actorId);
+    await publish("city", city.id);
+    const place = await createCmsPlace({
+      cityId: city.id,
+      slug: "deferred-place",
+      category: "see",
+      latitude: 53.55,
+      longitude: 9.99,
+      durationMinutes: 20,
+      environment: "outdoor",
+      pricing: "free",
+      publicationStatus: "draft",
+      tagSlugs: [],
+      localizations: [{
+        locale: "en",
+        name: "Deferred place",
+        shortDescription: "Published version one.",
+        facts: [],
+      }],
+    }, actorId);
+    await publish("place", place.id);
+
+    const publishedPlace = await getCmsPlace(place.id);
+    await updateCmsPlace(place.id, {
+      cityId: city.id,
+      slug: "deferred-place",
+      category: "see",
+      latitude: 53.55,
+      longitude: 9.99,
+      durationMinutes: 25,
+      environment: "outdoor",
+      pricing: "free",
+      publicationStatus: "published",
+      tagSlugs: [],
+      localizations: [{
+        locale: "en",
+        name: "Deferred place draft",
+        shortDescription: "Unpublished working content remains editable.",
+        facts: [],
+      }],
+    }, actorId, publishedPlace!.updatedAt.toISOString());
+
+    await expect(withdrawCmsPublishedPlaceRevision(place.id, actorId))
+      .resolves.toMatchObject({ placeId: place.id });
+
+    const preservedDraft = await getCmsPlace(place.id);
+    expect(preservedDraft?.publicationStatus).toBe("draft");
+    expect(preservedDraft?.localizations[0]?.name).toBe("Deferred place draft");
+    expect(preservedDraft?.publishedRevision).toBeUndefined();
+    await expect(getPublicCitySnapshot(withdrawalCitySlug, "database"))
+      .rejects.toThrow("Published city is not traveler-discoverable");
+    const [event] = await getDb()
+      .select({ action: contentWorkflowEventsTable.action })
+      .from(contentWorkflowEventsTable)
+      .where(and(
+        eq(contentWorkflowEventsTable.entityType, "place"),
+        eq(contentWorkflowEventsTable.entityId, place.id),
+        eq(contentWorkflowEventsTable.action, "published_revision_withdrawn"),
+      ));
+    expect(event?.action).toBe("published_revision_withdrawn");
   });
 
   it("prevents publication graph corruption across every write path", async () => {

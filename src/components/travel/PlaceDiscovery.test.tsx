@@ -187,6 +187,43 @@ describe("PlaceDiscovery", () => {
     expect(eatButton.getAttribute("aria-pressed")).toBe("true");
   });
 
+  it("renders public image attribution outside the place navigation link", () => {
+    const attributedPlace = {
+      ...places[0],
+      image: "/api/media/museum-hero",
+      imageAttribution: {
+        creator: "Example Photographer",
+        text: "Photo: Example Photographer · https://example.com/source · CC BY-SA 4.0 · https://creativecommons.org/licenses/by-sa/4.0/",
+      },
+    } as const satisfies DiscoveryPlace;
+
+    const t = getTranslations("en");
+    render(
+      <section>
+        <h2 id="attributed-places-heading">Places</h2>
+        <PlaceDiscovery
+          places={[attributedPlace]}
+          categories={localizePlaceCategories(t)}
+          locale="en"
+          city="test-city"
+          direction="ltr"
+          labelledBy="attributed-places-heading"
+          locationLabels={t.location}
+          mapLabels={t.map}
+          distanceLabels={t.distance}
+          storyLabel={t.landmark.listenStory}
+        />
+      </section>,
+    );
+
+    const placeLink = screen.getByRole("link", { name: /Museum/ });
+    const sourceLink = screen.getByRole("link", { name: "https://example.com/source" });
+
+    expect(sourceLink.closest("article")).toBe(placeLink.closest("article"));
+    expect(sourceLink.closest("a")).toBe(sourceLink);
+    expect(placeLink.contains(sourceLink)).toBe(false);
+  });
+
   it("keeps Arabic chrome RTL while English fallback content is LTR", () => {
     const englishFallback = {
       ...places[1],
@@ -406,7 +443,9 @@ describe("PlaceDiscovery", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Map" }));
 
-    fireEvent.click(screen.getByRole("button", { name: "Use my location" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Use my location" }),
+    );
 
     const retryControl = await screen.findByRole("button", {
       name: "Try again",
@@ -419,9 +458,11 @@ describe("PlaceDiscovery", () => {
         "Location permission was denied. Allow it in your browser settings and try again.",
       ),
     ).not.toBeNull();
-    expect(capture).toHaveBeenCalledWith("location_permission_denied", {
-      city: "test-city",
-      locale: "en",
+    await waitFor(() => {
+      expect(capture).toHaveBeenCalledWith("location_permission_denied", {
+        city: "test-city",
+        locale: "en",
+      });
     });
 
     fireEvent.click(screen.getByRole("button", { name: "List" }));

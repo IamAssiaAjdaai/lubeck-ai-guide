@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, MapPin } from "lucide-react";
 
 import type { Locale, TextDirection } from "@/lib/i18n";
+import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 
 type FeaturedCityCardProps = {
   image?: string;
@@ -32,7 +33,7 @@ export function FeaturedCityCard({
     <article className="surface-card w-full overflow-hidden shadow-[0_14px_36px_rgb(23_23_23_/_0.06)]">
       <div className="relative aspect-[16/9] bg-surface">
         {image ? (
-          <Image src={image} alt={name} fill sizes="(max-width: 480px) calc(100vw - 48px), 432px" className="object-cover" />
+          <Image src={image} alt={name} fill unoptimized={isApplicationMediaPath(image)} sizes="(max-width: 480px) calc(100vw - 48px), 432px" className="object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center bg-[linear-gradient(135deg,var(--color-surface),var(--color-background))] text-primary" aria-hidden="true">
             <MapPin size={42} strokeWidth={1.4} />

@@ -22,12 +22,16 @@ export function resolveCityHeroImage(
   locale: Locale,
   legacyImage?: string,
 ): string | undefined {
-  if (source === "code") return legacyImage;
-  return (
-    findImage(media, "hero", locale)?.url ??
-    findImage(media, "card", locale)?.url ??
-    legacyImage
-  );
+  return resolveCityHeroMedia(source, media, locale)?.url ?? legacyImage;
+}
+
+export function resolveCityHeroMedia(
+  source: ContentSource,
+  media: readonly PublicMedia[] | undefined,
+  locale: Locale,
+): PublicMedia | undefined {
+  if (source === "code") return undefined;
+  return findImage(media, "hero", locale) ?? findImage(media, "card", locale);
 }
 
 function findImage(

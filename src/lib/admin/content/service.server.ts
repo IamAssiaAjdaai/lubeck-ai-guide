@@ -24,6 +24,7 @@ import {
   updateCmsCity,
   updateCmsPlace,
   updateCmsTour,
+  withdrawCmsPublishedPlaceRevision,
   CmsContentIntegrityError,
   CmsContentNotFoundError,
 } from "@/lib/admin/content/repository.server";
@@ -232,6 +233,17 @@ export async function approveAndPublishAuthorizedContent(
   const reviewContext = await requireCityCapability(cityId, "publishing:review");
   await requireCityCapability(cityId, "publishing:publish");
   return approveAndPublishCmsContent(entity, id, reviewContext.user.id);
+}
+
+export async function withdrawAuthorizedPublishedPlaceRevision(id: number) {
+  await requireAdminCapability("admin:view");
+  const place = await getCmsPlace(id);
+  if (!place) throw new CmsContentNotFoundError("Place");
+  const context = await requireCityCapability(
+    place.cityId,
+    "publishing:publish",
+  );
+  return withdrawCmsPublishedPlaceRevision(id, context.user.id);
 }
 
 export async function addAuthorizedPlaceSource(

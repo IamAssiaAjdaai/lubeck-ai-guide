@@ -207,6 +207,8 @@ async function importValidatedCityManifest(
         pricing: placeManifest.pricing,
         status: placeManifest.status,
         statusVerifiedAt: placeManifest.statusVerifiedAt,
+        visitNoteVerifiedAt: placeManifest.visitNoteVerifiedAt,
+        visitNoteValidUntil: placeManifest.visitNoteValidUntil,
         tags: [...placeManifest.tags],
         publicationStatus: placePublicationStatus,
         createdAt: now,
@@ -246,6 +248,8 @@ async function importValidatedCityManifest(
           pricing: placeManifest.pricing,
           status: placeManifest.status,
           statusVerifiedAt: placeManifest.statusVerifiedAt,
+          visitNoteVerifiedAt: placeManifest.visitNoteVerifiedAt,
+          visitNoteValidUntil: placeManifest.visitNoteValidUntil,
           tags: [...placeManifest.tags],
           publicationStatus: placePublicationStatus,
           updatedAt: now,
@@ -339,6 +343,12 @@ async function importValidatedCityManifest(
             ...(placeManifest.status ? { status: placeManifest.status } : {}),
             ...(placeManifest.statusVerifiedAt
               ? { statusVerifiedAt: placeManifest.statusVerifiedAt }
+              : {}),
+            ...(placeManifest.visitNoteVerifiedAt
+              ? { visitNoteVerifiedAt: placeManifest.visitNoteVerifiedAt }
+              : {}),
+            ...(placeManifest.visitNoteValidUntil
+              ? { visitNoteValidUntil: placeManifest.visitNoteValidUntil }
               : {}),
             tagSlugs: [...placeManifest.tags],
             localizations: Object.entries(placeManifest.content).flatMap(

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   resolveCityHeroImage,
+  resolveCityHeroMedia,
   resolveFeaturedCityImage,
 } from "@/lib/content/homeMedia";
 import type { PublicMedia } from "@/lib/media/types";
@@ -34,5 +35,19 @@ describe("public city image resolution", () => {
   it("keeps code mode on its trusted legacy image", () => {
     expect(resolveCityHeroImage("code", media, "en", "/legacy.jpg"))
       .toBe("/legacy.jpg");
+    expect(resolveCityHeroMedia("code", media, "en")).toBeUndefined();
+  });
+
+  it("retains public attribution on the selected database hero", () => {
+    const attributedHero: PublicMedia = {
+      ...media[1]!,
+      attribution: {
+        text: "Photo: Example · CC BY 4.0 · https://creativecommons.org/licenses/by/4.0/",
+        creator: "Example",
+      },
+    };
+
+    expect(resolveCityHeroMedia("database", [media[0]!, attributedHero], "en"))
+      .toEqual(attributedHero);
   });
 });

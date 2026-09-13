@@ -35,6 +35,24 @@ describe("city onboarding manifest", () => {
     ]);
   });
 
+  it("rejects invalid visitor-note freshness metadata", () => {
+    const place = hamburgCityManifest.places[0]!;
+    const invalid = {
+      ...hamburgCityManifest,
+      places: [{
+        ...place,
+        visitNoteVerifiedAt: "2026-09-11",
+        visitNoteValidUntil: "2026-09-10",
+      }],
+      tours: [],
+      knowledge: [],
+    } as CityManifest;
+
+    expect(() => validateCityManifest(invalid)).toThrow(
+      /visitNoteValidUntil cannot precede visitNoteVerifiedAt/,
+    );
+  });
+
   it("derives city identity tokens generically for a synthetic non-German city", () => {
     const sourcePlace = hamburgCityManifest.places[0]!;
     const synthetic = {

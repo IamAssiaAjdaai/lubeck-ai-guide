@@ -31,4 +31,32 @@ describe("public media legacy migration", () => {
     }, "ar");
     expect(response.city.media).toEqual([]);
   });
+
+  it("exposes required attribution without leaking internal rights evidence", () => {
+    const media = {
+      assetKey: "licensed-image",
+      kind: "image" as const,
+      purpose: "hero" as const,
+      url: "/api/media/licensed-image",
+      mimeType: "image/jpeg",
+      attribution: {
+        text: "Photo: Example Photographer",
+        creator: "Example Photographer",
+      },
+      evidenceReference: "Private contract 42",
+      verifiedByUserId: "reviewer-1",
+      rightsNotes: "Internal only",
+    };
+    const response = toLocalizedPublicCityResponse({
+      city: { slug: "test", content: { en: { name: "Test" } } },
+      places: [],
+      tours: [],
+      media: { city: [media], places: {}, tours: {} },
+    }, "en");
+
+    expect(response.city.media[0]?.attribution).toEqual(media.attribution);
+    expect(JSON.stringify(response)).not.toMatch(
+      /evidenceReference|verifiedByUserId|rightsNotes|Private contract|Internal only/,
+    );
+  });
 });

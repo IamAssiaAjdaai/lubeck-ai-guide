@@ -54,6 +54,16 @@ import {
   type MediaEntityType,
   type UploadIntentInput,
 } from "@/lib/media/types";
+import {
+  getMediaRightsStatus,
+  parseMediaRightsInput,
+} from "@/lib/media/rights";
+import {
+  deleteMediaAssetRights,
+  getMediaAssetRights,
+  saveMediaAssetRights,
+  verifyMediaAssetRights,
+} from "@/lib/media/rightsRepository.server";
 
 const UPLOAD_URL_SECONDS = 10 * 60;
 const SIGNATURE_RANGE_END = 63;
@@ -278,7 +288,41 @@ export async function getAuthorizedMediaAsset(id: number) {
   ) {
     previewUrl = await getMediaObjectStore().getAdminPreviewUrl(asset.objectKey);
   }
-  return { ...asset, previewUrl };
+  const rights = await getMediaAssetRights(id);
+  return {
+    ...asset,
+    previewUrl,
+    rights,
+    rightsStatus: getMediaRightsStatus(rights),
+  };
+}
+
+export async function saveAuthorizedMediaRights(
+  id: number,
+  input: Parameters<typeof parseMediaRightsInput>[0],
+) {
+  const asset = await getRequiredMediaAsset(id);
+  const context = await requireCityCapability(asset.cityId, "media:manage");
+  return saveMediaAssetRights(
+    id,
+    parseMediaRightsInput(input),
+    context.user.id,
+  );
+}
+
+export async function verifyAuthorizedMediaRights(id: number) {
+  const asset = await getRequiredMediaAsset(id);
+  const context = await requireCityCapability(
+    asset.cityId,
+    "publishing:publish",
+  );
+  return verifyMediaAssetRights(id, context.user.id);
+}
+
+export async function deleteAuthorizedMediaRights(id: number) {
+  const asset = await getRequiredMediaAsset(id);
+  await requireCityCapability(asset.cityId, "media:manage");
+  return deleteMediaAssetRights(id);
 }
 
 export async function reviewAuthorizedMediaAsset(
