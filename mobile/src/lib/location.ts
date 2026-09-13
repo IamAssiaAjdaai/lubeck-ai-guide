@@ -41,7 +41,7 @@ export async function requestForegroundLocation(
 
   let permission: Awaited<ReturnType<ForegroundLocationAdapter["requestPermission"]>>;
   try {
-    permission = await withTimeout(adapter.requestPermission(), timeoutMs);
+    permission = await adapter.requestPermission();
   } catch {
     return { status: "error" };
   }
@@ -50,7 +50,7 @@ export async function requestForegroundLocation(
 
   try {
     if (adapter.prepareProvider) {
-      const provider = await withTimeout(adapter.prepareProvider(), timeoutMs);
+      const provider = await adapter.prepareProvider();
       if (provider !== "ready") return { status: provider };
     }
   } catch {

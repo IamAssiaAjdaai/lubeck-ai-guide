@@ -23,6 +23,55 @@ describe("foreground-only native location", () => {
     expect(getCurrentPosition).not.toHaveBeenCalled();
   });
 
+  it("does not apply the location-fix timeout while permission UI is pending", async () => {
+    vi.useFakeTimers();
+    try {
+      let resolvePermission!: (permission: "granted") => void;
+      const permission = new Promise<"granted">((resolve) => {
+        resolvePermission = resolve;
+      });
+      const request = requestForegroundLocation({
+        requestPermission: () => permission,
+        getCurrentPosition: async () => ({ latitude: 53.55, longitude: 10.01 }),
+      }, { timeoutMs: 5 });
+
+      await vi.advanceTimersByTimeAsync(50);
+      resolvePermission("granted");
+
+      await expect(request).resolves.toEqual({
+        status: "available",
+        location: { latitude: 53.55, longitude: 10.01 },
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not apply the location-fix timeout while provider UI is pending", async () => {
+    vi.useFakeTimers();
+    try {
+      let resolveProvider!: (provider: "ready") => void;
+      const provider = new Promise<"ready">((resolve) => {
+        resolveProvider = resolve;
+      });
+      const request = requestForegroundLocation({
+        requestPermission: async () => "granted",
+        prepareProvider: () => provider,
+        getCurrentPosition: async () => ({ latitude: 53.55, longitude: 10.01 }),
+      }, { timeoutMs: 5 });
+
+      await vi.advanceTimersByTimeAsync(50);
+      resolveProvider("ready");
+
+      await expect(request).resolves.toEqual({
+        status: "available",
+        location: { latitude: 53.55, longitude: 10.01 },
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("returns a recent last-known fix without waiting for a new provider fix", async () => {
     const getCurrentPosition = vi.fn();
     await expect(requestForegroundLocation({
