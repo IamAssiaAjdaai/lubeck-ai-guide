@@ -4,6 +4,8 @@ const MOBILE_ENVIRONMENTS = ["development", "preview", "production"] as const;
 type MobileEnvironment = (typeof MOBILE_ENVIRONMENTS)[number];
 
 const DEVELOPMENT_HTTP_PLUGIN = "./plugins/with-development-http.js";
+export const CITYWALK_STORE_IDENTIFIER = "com.citywalk.app";
+export const CITYWALK_DEVELOPMENT_IDENTIFIER = `${CITYWALK_STORE_IDENTIFIER}.dev`;
 
 export function createCitywalkExpoConfig(
   config: Partial<ExpoConfig>,
@@ -17,10 +19,21 @@ export function createCitywalkExpoConfig(
     throw new Error("CITYWALK Expo configuration requires a name and slug.");
   }
 
+  const applicationIdentifier = environment === "development"
+    ? CITYWALK_DEVELOPMENT_IDENTIFIER
+    : CITYWALK_STORE_IDENTIFIER;
   const completeConfig: ExpoConfig = {
     ...config,
     name: config.name,
     slug: config.slug,
+    ios: {
+      ...config.ios,
+      bundleIdentifier: applicationIdentifier,
+    },
+    android: {
+      ...config.android,
+      package: applicationIdentifier,
+    },
   };
 
   if (environment !== "development") return completeConfig;
