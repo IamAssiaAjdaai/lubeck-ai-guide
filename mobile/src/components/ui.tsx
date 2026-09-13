@@ -13,12 +13,19 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
+import { getScreenSafeAreaEdges, SCREEN_TOP_SPACING } from "../lib/screenLayout";
 import { useNativeLocale } from "../localization/LocaleProvider";
 
-export function Screen({ children }: PropsWithChildren) {
+export function Screen({
+  children,
+  includeTopSafeArea = false,
+}: PropsWithChildren<{ includeTopSafeArea?: boolean }>) {
   const { direction } = useNativeLocale();
   return (
-    <SafeAreaView style={[styles.safeArea, { direction }]} edges={["bottom", "left", "right"]}>
+    <SafeAreaView
+      style={[styles.safeArea, { direction }]}
+      edges={getScreenSafeAreaEdges(includeTopSafeArea)}
+    >
       <ScrollView
         contentContainerStyle={styles.screenContent}
         keyboardShouldPersistTaps="handled"
@@ -87,7 +94,12 @@ export function StatusMessage({ children }: { children: ReactNode }) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.background },
-  screenContent: { padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xxl },
+  screenContent: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: SCREEN_TOP_SPACING,
+    gap: spacing.lg,
+    paddingBottom: spacing.xxl,
+  },
   text: { color: colors.text },
   card: {
     backgroundColor: colors.surface,

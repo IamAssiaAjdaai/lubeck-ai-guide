@@ -87,6 +87,18 @@ describe("CITYWALK native app configuration", () => {
     });
   });
 
+  it("configures internal preview builds against the stable Beta API", () => {
+    expect(easJson.build.preview).toEqual({
+      distribution: "internal",
+      environment: "preview",
+      env: {
+        EXPO_PUBLIC_CITYWALK_ENV: "preview",
+        EXPO_PUBLIC_CITYWALK_API_ORIGIN:
+          "https://lubeck-ai-guide-git-beta-store-iamassiaajdaais-projects.vercel.app",
+      },
+    });
+  });
+
   it("keeps store beta submission limited to Google Play internal and TestFlight", () => {
     expect(easJson.submit["store-beta"]).toEqual({
       android: { track: "internal", releaseStatus: "draft" },
