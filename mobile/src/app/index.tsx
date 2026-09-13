@@ -1,7 +1,10 @@
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { useRef } from "react";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
+import citywalkHero from "../../assets/images/citywalk-hero.png";
+import { CitywalkLoading } from "../components/CitywalkLoading";
 import { LocaleSelector } from "../components/LocaleSelector";
 import { MediaAttribution } from "../components/MediaAttribution";
 import { AppText, Card, PrimaryButton, Screen, SectionTitle, StatusMessage } from "../components/ui";
@@ -15,9 +18,11 @@ import { useNativeLocale } from "../localization/LocaleProvider";
 export default function HomeScreen() {
   const { locale, messages } = useNativeLocale();
   const cities = usePublicCities(locale);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const availableCitiesY = useRef(0);
 
   return (
-    <Screen includeTopSafeArea>
+    <Screen includeTopSafeArea scrollViewRef={scrollViewRef}>
       <View style={styles.header}>
         <View style={styles.brandRow}>
           <AppText variant="label" style={styles.brand}>CITYWALK</AppText>
@@ -31,14 +36,29 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.hero}>
-        <View style={styles.orbit} />
-        <View style={styles.pin} />
-        <AppText variant="hero" style={styles.heroTitle}>{messages.discoverCities}</AppText>
-        <AppText style={styles.heroCopy}>{messages.appTagline}</AppText>
+        <Image
+          accessibilityLabel={messages.homeHeroTitle}
+          contentFit="cover"
+          source={citywalkHero}
+          style={styles.heroImage}
+        />
+        <AppText variant="hero" style={styles.heroTitle}>{messages.homeHeroTitle}</AppText>
+        <AppText style={styles.heroCopy}>{messages.homeHeroSubtitle}</AppText>
+        <PrimaryButton
+          label={messages.discoverCity}
+          onPress={() => scrollViewRef.current?.scrollTo({ y: availableCitiesY.current, animated: true })}
+          style={styles.discoverButton}
+        />
+        <View style={styles.reassurance}>
+          <AppText accessibilityElementsHidden style={styles.check}>✓</AppText>
+          <AppText variant="caption" style={styles.reassuranceText}>{messages.noSignUpRequired}</AppText>
+        </View>
       </View>
 
-      <SectionTitle>{messages.availableCities}</SectionTitle>
-      {cities.status === "loading" ? <AppText>{messages.loading}</AppText> : null}
+      <View onLayout={({ nativeEvent }) => { availableCitiesY.current = nativeEvent.layout.y; }}>
+        <SectionTitle>{messages.availableCities}</SectionTitle>
+      </View>
+      {cities.status === "loading" ? <CitywalkLoading compact /> : null}
       {cities.status === "error" ? <StatusMessage>{messages.unavailable}</StatusMessage> : null}
       {cities.status === "available" ? cities.data.cities.map((city) => {
         const image = selectPrimaryImageMedia(city.media);
@@ -81,11 +101,21 @@ const styles = StyleSheet.create({
   brandRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   brand: { color: colors.primary, letterSpacing: 2 },
   account: { color: colors.textMuted },
-  hero: { minHeight: 290, alignItems: "center", justifyContent: "center", gap: spacing.md, position: "relative" },
+  hero: { alignItems: "center", gap: spacing.md },
+  heroImage: {
+    aspectRatio: 5 / 4,
+    backgroundColor: colors.surface,
+    borderColor: "#DBEAFE",
+    borderRadius: radius.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+    width: "100%",
+  },
   heroTitle: { textAlign: "center", maxWidth: 330 },
   heroCopy: { textAlign: "center", color: colors.textMuted, maxWidth: 320 },
-  orbit: { position: "absolute", width: 210, height: 118, borderWidth: 2, borderStyle: "dashed", borderColor: "#BFDBFE", borderRadius: radius.pill, transform: [{ rotate: "-14deg" }] },
-  pin: { width: 48, height: 48, borderRadius: 24, backgroundColor: colors.primary, borderWidth: 10, borderColor: "#DBEAFE" },
+  discoverButton: { alignSelf: "stretch" },
+  reassurance: { alignItems: "center", flexDirection: "row", gap: spacing.xs },
+  check: { color: colors.teal, fontWeight: "800" },
+  reassuranceText: { color: colors.textMuted },
   cityImage: { width: "100%", height: 180, borderRadius: radius.md, backgroundColor: "#EEF2FF" },
   imageFallback: { width: "100%", height: 120, borderRadius: radius.md, backgroundColor: "#EEF2FF" },
 });

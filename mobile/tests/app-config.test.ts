@@ -71,6 +71,15 @@ describe("CITYWALK native app configuration", () => {
     }]);
   });
 
+  it("keeps the approved launcher artwork wired for standard and adaptive icons", () => {
+    expect(appJson.expo.icon).toBe("./assets/images/icon.png");
+    expect(appJson.expo.android.adaptiveIcon).toMatchObject({
+      foregroundImage: "./assets/images/android-icon-foreground.png",
+      backgroundImage: "./assets/images/android-icon-background.png",
+      monochromeImage: "./assets/images/android-icon-monochrome.png",
+    });
+  });
+
   it("configures store beta as store-distributed builds against the stable Beta API", () => {
     const storeBeta = easJson.build["store-beta"];
 

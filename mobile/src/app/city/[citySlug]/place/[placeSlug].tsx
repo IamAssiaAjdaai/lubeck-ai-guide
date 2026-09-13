@@ -4,6 +4,7 @@ import { StyleSheet, View } from "react-native";
 
 import { NativeAudioPlayer } from "../../../../components/NativeAudioPlayer";
 import { MediaAttribution } from "../../../../components/MediaAttribution";
+import { CitywalkLoading } from "../../../../components/CitywalkLoading";
 import { AppText, Card, PrimaryButton, Screen, SectionTitle, StatusMessage } from "../../../../components/ui";
 import { colors, radius, spacing } from "../../../../design/tokens";
 import { useGuideEligibility, usePublicCity } from "../../../../hooks/usePublicContent";
@@ -28,7 +29,7 @@ export default function PlaceScreen() {
   );
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
-  if (cityState.status === "loading") return <Screen><AppText>{messages.loading}</AppText></Screen>;
+  if (cityState.status === "loading") return <Screen><CitywalkLoading /></Screen>;
   if (cityState.status === "error") return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
 
   const place = resolvePlaceForRoute(cityState.data, identity);

@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 
 import { NativeCityMap } from "../../../components/NativeCityMap";
 import { MediaAttribution } from "../../../components/MediaAttribution";
+import { CitywalkLoading } from "../../../components/CitywalkLoading";
 import { AppText, Card, Screen, SectionTitle, StatusMessage } from "../../../components/ui";
 import { colors, radius, spacing } from "../../../design/tokens";
 import { usePublicCity } from "../../../hooks/usePublicContent";
@@ -20,7 +21,7 @@ export default function CityScreen() {
   const cityState = usePublicCity(identity?.citySlug ?? "invalid", locale);
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
-  if (cityState.status === "loading") return <Screen><AppText>{messages.loading}</AppText></Screen>;
+  if (cityState.status === "loading") return <Screen><CitywalkLoading /></Screen>;
   if (cityState.status === "error") return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
 
   const { city, places, tours } = cityState.data;

@@ -1,4 +1,4 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import type { PropsWithChildren, ReactNode, Ref } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -19,7 +19,11 @@ import { useNativeLocale } from "../localization/LocaleProvider";
 export function Screen({
   children,
   includeTopSafeArea = false,
-}: PropsWithChildren<{ includeTopSafeArea?: boolean }>) {
+  scrollViewRef,
+}: PropsWithChildren<{
+  includeTopSafeArea?: boolean;
+  scrollViewRef?: Ref<ScrollView>;
+}>) {
   const { direction } = useNativeLocale();
   return (
     <SafeAreaView
@@ -27,6 +31,7 @@ export function Screen({
       edges={getScreenSafeAreaEdges(includeTopSafeArea)}
     >
       <ScrollView
+        ref={scrollViewRef}
         contentContainerStyle={styles.screenContent}
         keyboardShouldPersistTaps="handled"
       >

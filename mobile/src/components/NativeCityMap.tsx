@@ -4,10 +4,12 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
 import type { PublicPlace } from "../lib/api/contracts";
+import type { NativeMessages } from "../lib/localization";
 import { requestForegroundLocation, type NativeLocationStatus, type NativeUserLocation } from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import { resolveMapStyleUrl } from "../lib/mapStyle";
 import { useNativeLocale } from "../localization/LocaleProvider";
+import { AppText } from "./ui";
 
 const MAP_STYLE_URL = resolveMapStyleUrl();
 
@@ -22,6 +24,7 @@ export function NativeCityMap({ places }: Readonly<{
   const initialCenter: [number, number] = places[0]
     ? [places[0].coordinates.lng, places[0].coordinates.lat]
     : [0, 0];
+  const statusMessage = getLocationStatusMessage(locationStatus, messages);
 
   async function handleLocationRequest() {
     if (userLocation) {
@@ -41,7 +44,7 @@ export function NativeCityMap({ places }: Readonly<{
     <View style={styles.shell}>
       {mapFailed ? (
         <View accessibilityRole="alert" style={styles.fallback}>
-          <Text style={styles.statusText}>{messages.locationUnavailable}</Text>
+          <AppText variant="caption" style={styles.statusText}>{messages.locationUnavailable}</AppText>
         </View>
       ) : (
         <Map
@@ -84,12 +87,29 @@ export function NativeCityMap({ places }: Readonly<{
           {locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}
         </Text>
       </Pressable>
-      {locationStatus === "denied" ? <Text style={styles.statusText}>{messages.locationDenied}</Text> : null}
-      {locationStatus === "unavailable" || locationStatus === "error" ? (
-        <Text style={styles.statusText}>{messages.locationUnavailable}</Text>
-      ) : null}
+      {statusMessage ? <AppText variant="caption" style={styles.statusText}>{statusMessage}</AppText> : null}
     </View>
   );
+}
+
+function getLocationStatusMessage(
+  status: NativeLocationStatus,
+  messages: NativeMessages,
+): string | undefined {
+  switch (status) {
+    case "denied":
+      return messages.locationDenied;
+    case "services_disabled":
+      return messages.locationServicesDisabled;
+    case "provider_unavailable":
+      return messages.locationProviderUnavailable;
+    case "fix_failed":
+      return messages.locationFixFailed;
+    case "error":
+      return messages.locationUnavailable;
+    default:
+      return undefined;
+  }
 }
 
 const styles = StyleSheet.create({

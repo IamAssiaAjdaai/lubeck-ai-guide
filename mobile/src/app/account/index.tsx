@@ -3,6 +3,7 @@ import { useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 
 import { AppText, Card, PrimaryButton, Screen, StatusMessage } from "../../components/ui";
+import { CitywalkLoading } from "../../components/CitywalkLoading";
 import { colors, radius, spacing, typography } from "../../design/tokens";
 import { nativeAuthClient } from "../../lib/auth/client";
 import { useNativeLocale } from "../../localization/LocaleProvider";
@@ -41,7 +42,7 @@ export default function AccountScreen() {
       <AppText>{messages.guestMode}</AppText>
       <PrimaryButton label={messages.continueAsGuest} onPress={() => router.back()} />
 
-      {isPending ? <AppText>{messages.loading}</AppText> : null}
+      {isPending ? <CitywalkLoading compact /> : null}
       {session ? (
         <Card>
           <AppText variant="heading">{messages.signedIn}</AppText>
