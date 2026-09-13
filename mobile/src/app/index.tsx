@@ -17,7 +17,7 @@ export default function HomeScreen() {
   const cities = usePublicCities(locale);
 
   return (
-    <Screen>
+    <Screen includeTopSafeArea>
       <View style={styles.header}>
         <View style={styles.brandRow}>
           <AppText variant="label" style={styles.brand}>CITYWALK</AppText>
