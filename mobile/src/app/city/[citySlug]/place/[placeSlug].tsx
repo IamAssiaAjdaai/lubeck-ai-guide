@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { NativeAudioPlayer } from "../../../../components/NativeAudioPlayer";
 import { MediaAttribution } from "../../../../components/MediaAttribution";
 import { CitywalkLoading } from "../../../../components/CitywalkLoading";
+import { NativeIcon } from "../../../../components/NativeIcon";
 import { AppText, Card, PrimaryButton, Screen, SectionTitle, StatusMessage } from "../../../../components/ui";
 import { colors, radius, spacing } from "../../../../design/tokens";
 import { useGuideEligibility, usePublicCity } from "../../../../hooks/usePublicContent";
@@ -104,7 +105,10 @@ export default function PlaceScreen() {
           }}
           asChild
         >
-          <PrimaryButton label={messages.askCitywalk} />
+          <PrimaryButton
+            label={messages.askCitywalk}
+            leadingIcon={<NativeIcon ios="sparkles" android="auto_awesome" color="#FFFFFF" size={19} />}
+          />
         </Link>
       ) : null}
     </Screen>

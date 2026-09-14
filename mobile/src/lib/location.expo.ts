@@ -1,5 +1,5 @@
 import * as Location from "expo-location";
-import { Platform } from "react-native";
+import { Linking, Platform } from "react-native";
 
 import type { ForegroundLocationAdapter } from "./location";
 
@@ -23,16 +23,21 @@ export const expoForegroundLocationAdapter: ForegroundLocationAdapter = {
       }
     }
 
-    const reportedProviders = [
-      provider.gpsAvailable,
-      provider.networkAvailable,
-      provider.passiveAvailable,
-    ].filter((available): available is boolean => typeof available === "boolean");
-    if (Platform.OS === "android" && reportedProviders.length > 0 && !reportedProviders.some(Boolean)) {
-      return "provider_unavailable";
-    }
-
+    // Samsung and other Android devices can report stale/uncertain individual
+    // provider flags. When Location Services are enabled, let the bounded fresh
+    // fix determine whether a foreground position is actually available.
     return "ready";
+  },
+  async checkProvider() {
+    const provider = await Location.getProviderStatusAsync();
+    return provider.locationServicesEnabled ? "ready" : "services_disabled";
+  },
+  async openLocationSettings() {
+    if (Platform.OS === "android") {
+      await Linking.sendIntent("android.settings.LOCATION_SOURCE_SETTINGS");
+      return;
+    }
+    await Linking.openSettings();
   },
   async getLastKnownPosition() {
     const result = await Location.getLastKnownPositionAsync({

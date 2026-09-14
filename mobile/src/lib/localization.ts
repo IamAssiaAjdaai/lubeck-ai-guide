@@ -24,7 +24,10 @@ export type NativeMessages = Readonly<{
   locationServicesDisabled: string;
   locationProviderUnavailable: string;
   locationFixFailed: string;
+  turnOnLocationServices: string;
   retry: string;
+  language: string;
+  close: string;
   loading: string;
   unavailable: string;
   visitMinutes: string;
@@ -60,6 +63,33 @@ export type NativeMessages = Readonly<{
   homeHeroSubtitle: string;
   discoverCity: string;
   noSignUpRequired: string;
+  buildYourTrip: string;
+  plannerDescription: string;
+  interests: string;
+  history: string;
+  architecture: string;
+  hiddenGems: string;
+  family: string;
+  walkingPreference: string;
+  standardWalking: string;
+  lessWalking: string;
+  recommendedForYou: string;
+  availableTime: string;
+  minutes60: string;
+  minutes90: string;
+  hours2: string;
+  hours3: string;
+  buildTrip: string;
+  rebuildTrip: string;
+  yourRoute: string;
+  totalTime: string;
+  walkingTime: string;
+  approximateDistance: string;
+  distanceDisclaimer: string;
+  noRoute: string;
+  saveTrip: string;
+  tripSavedLocally: string;
+  tripSaveFailed: string;
 }>;
 
 const messages: Record<NativeLocale, NativeMessages> = {
@@ -74,7 +104,8 @@ const messages: Record<NativeLocale, NativeMessages> = {
     locationServicesDisabled: "Location services are turned off. Turn them on and try again.",
     locationProviderUnavailable: "No location provider is available. Check your device settings and try again.",
     locationFixFailed: "CITYWALK could not get a location fix. Move outdoors or try again.",
-    retry: "Try again", loading: "Loading…",
+    turnOnLocationServices: "Turn on location services",
+    retry: "Try again", language: "Language", close: "Close", loading: "Loading…",
     unavailable: "This content is temporarily unavailable.", visitMinutes: "min visit", story: "Story", facts: "Facts",
     visitorNote: "Visitor note", audioGuide: "Audio guide", playAudio: "Play", pauseAudio: "Pause",
     replayAudio: "Replay", loadingAudio: "Loading audio…", audioUnavailable: "Audio is currently unavailable.",
@@ -89,6 +120,15 @@ const messages: Record<NativeLocale, NativeMessages> = {
     homeHeroTitle: "Discover cities one step at a time.",
     homeHeroSubtitle: "Explore local stories, audio guides and hidden places in your language.",
     discoverCity: "Discover a city", noSignUpRequired: "No sign-up required",
+    buildYourTrip: "Build your own trip", plannerDescription: "Choose what interests you and build a route that fits your time.",
+    interests: "Interests", history: "History", architecture: "Architecture", hiddenGems: "Hidden gems", family: "Family",
+    walkingPreference: "Walking preference", standardWalking: "Standard", lessWalking: "Less walking",
+    recommendedForYou: "Recommended for you", availableTime: "Available time", minutes60: "60 min", minutes90: "90 min",
+    hours2: "2 hours", hours3: "3 hours", buildTrip: "Build my trip", rebuildTrip: "Rebuild trip", yourRoute: "Your route",
+    totalTime: "Total time", walkingTime: "Walking time", approximateDistance: "Approx. distance",
+    distanceDisclaimer: "Distance is estimated between stops and may differ from the actual walking route.",
+    noRoute: "No suitable route fits this time and your current preferences.", saveTrip: "Save your trip",
+    tripSavedLocally: "Saved on this device. Account sync is not available yet.", tripSaveFailed: "This trip could not be saved on this device.",
   },
   de: {
     appTagline: "Gehen. Entdecken. Städte hören.", discoverCities: "Stadt entdecken",
@@ -101,7 +141,8 @@ const messages: Record<NativeLocale, NativeMessages> = {
     locationServicesDisabled: "Die Standortdienste sind ausgeschaltet. Schalte sie ein und versuche es erneut.",
     locationProviderUnavailable: "Kein Standortanbieter ist verfügbar. Prüfe deine Geräteeinstellungen und versuche es erneut.",
     locationFixFailed: "CITYWALK konnte deinen Standort nicht ermitteln. Gehe ins Freie oder versuche es erneut.",
-    retry: "Erneut versuchen", loading: "Wird geladen…",
+    turnOnLocationServices: "Standortdienste einschalten",
+    retry: "Erneut versuchen", language: "Sprache", close: "Schließen", loading: "Wird geladen…",
     unavailable: "Dieser Inhalt ist vorübergehend nicht verfügbar.", visitMinutes: "Min. Besuch", story: "Geschichte", facts: "Fakten",
     visitorNote: "Besuchshinweis", audioGuide: "Audioguide", playAudio: "Abspielen", pauseAudio: "Pause",
     replayAudio: "Erneut abspielen", loadingAudio: "Audio wird geladen…", audioUnavailable: "Audio ist derzeit nicht verfügbar.",
@@ -116,6 +157,15 @@ const messages: Record<NativeLocale, NativeMessages> = {
     homeHeroTitle: "Städte entdecken, Schritt für Schritt.",
     homeHeroSubtitle: "Entdecke lokale Geschichten, Audioguides und verborgene Orte in deiner Sprache.",
     discoverCity: "Entdecke eine Stadt", noSignUpRequired: "Keine Anmeldung erforderlich",
+    buildYourTrip: "Eigene Tour planen", plannerDescription: "Wähle deine Interessen und plane eine Route passend zu deiner Zeit.",
+    interests: "Interessen", history: "Geschichte", architecture: "Architektur", hiddenGems: "Geheimtipps", family: "Familie",
+    walkingPreference: "Gehpräferenz", standardWalking: "Standard", lessWalking: "Weniger gehen",
+    recommendedForYou: "Für dich empfohlen", availableTime: "Verfügbare Zeit", minutes60: "60 Min.", minutes90: "90 Min.",
+    hours2: "2 Stunden", hours3: "3 Stunden", buildTrip: "Meine Tour planen", rebuildTrip: "Tour neu planen", yourRoute: "Deine Route",
+    totalTime: "Gesamtzeit", walkingTime: "Gehzeit", approximateDistance: "Ca. Entfernung",
+    distanceDisclaimer: "Die Entfernung wird zwischen den Stopps geschätzt und kann vom tatsächlichen Fußweg abweichen.",
+    noRoute: "Für diese Zeit und deine aktuellen Wünsche passt keine geeignete Route.", saveTrip: "Tour speichern",
+    tripSavedLocally: "Auf diesem Gerät gespeichert. Kontosynchronisierung ist noch nicht verfügbar.", tripSaveFailed: "Diese Tour konnte auf dem Gerät nicht gespeichert werden.",
   },
   ar: {
     appTagline: "امشِ. اكتشف. واستمع إلى كل مدينة.", discoverCities: "اكتشف مدينة",
@@ -128,7 +178,8 @@ const messages: Record<NativeLocale, NativeMessages> = {
     locationServicesDisabled: "خدمات الموقع متوقفة. فعّلها ثم حاول مجددًا.",
     locationProviderUnavailable: "لا يتوفر مزود للموقع. تحقق من إعدادات جهازك وحاول مجددًا.",
     locationFixFailed: "تعذر على CITYWALK تحديد موقعك. انتقل إلى مكان مفتوح أو حاول مجددًا.",
-    retry: "حاول مجددًا", loading: "جارٍ التحميل…",
+    turnOnLocationServices: "شغّل خدمات الموقع",
+    retry: "حاول مجددًا", language: "اللغة", close: "إغلاق", loading: "جارٍ التحميل…",
     unavailable: "هذا المحتوى غير متاح مؤقتًا.", visitMinutes: "دقيقة للزيارة", story: "القصة", facts: "حقائق",
     visitorNote: "ملاحظة للزيارة", audioGuide: "الدليل الصوتي", playAudio: "تشغيل", pauseAudio: "إيقاف مؤقت",
     replayAudio: "إعادة التشغيل", loadingAudio: "جارٍ تحميل الصوت…", audioUnavailable: "الصوت غير متاح حاليًا.",
@@ -143,6 +194,15 @@ const messages: Record<NativeLocale, NativeMessages> = {
     homeHeroTitle: "اكتشف المدن خطوة بخطوة.",
     homeHeroSubtitle: "استكشف القصص المحلية والأدلة الصوتية والأماكن الخفية بلغتك.",
     discoverCity: "اكتشف مدينة", noSignUpRequired: "لا يلزم التسجيل",
+    buildYourTrip: "خطط رحلتك", plannerDescription: "اختر اهتماماتك وأنشئ مسارًا يناسب وقتك.",
+    interests: "الاهتمامات", history: "التاريخ", architecture: "العمارة", hiddenGems: "الجواهر الخفية", family: "العائلة",
+    walkingPreference: "تفضيل المشي", standardWalking: "عادي", lessWalking: "مشي أقل",
+    recommendedForYou: "مقترح لك", availableTime: "الوقت المتاح", minutes60: "60 دقيقة", minutes90: "90 دقيقة",
+    hours2: "ساعتان", hours3: "3 ساعات", buildTrip: "أنشئ رحلتي", rebuildTrip: "أعد بناء الرحلة", yourRoute: "مسارك",
+    totalTime: "الوقت الإجمالي", walkingTime: "وقت المشي", approximateDistance: "المسافة التقريبية",
+    distanceDisclaimer: "المسافة تقديرية بين المحطات وقد تختلف عن مسار المشي الفعلي.",
+    noRoute: "لا يوجد مسار مناسب لهذا الوقت والتفضيلات الحالية.", saveTrip: "احفظ رحلتك",
+    tripSavedLocally: "حُفظت على هذا الجهاز. مزامنة الحساب غير متاحة بعد.", tripSaveFailed: "تعذر حفظ الرحلة على هذا الجهاز.",
   },
 };
 

@@ -1,11 +1,16 @@
 import { Camera, Map, Marker, type CameraRef } from "@maplibre/maplibre-react-native";
-import { useRef, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
 import type { PublicPlace } from "../lib/api/contracts";
 import type { NativeMessages } from "../lib/localization";
-import { requestForegroundLocation, type NativeLocationStatus, type NativeUserLocation } from "../lib/location";
+import {
+  recheckForegroundLocationProvider,
+  requestForegroundLocation,
+  type NativeLocationStatus,
+  type NativeUserLocation,
+} from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import { resolveMapStyleUrl } from "../lib/mapStyle";
 import { useNativeLocale } from "../localization/LocaleProvider";
@@ -21,10 +26,27 @@ export function NativeCityMap({ places }: Readonly<{
   const [locationStatus, setLocationStatus] = useState<NativeLocationStatus>("idle");
   const [userLocation, setUserLocation] = useState<NativeUserLocation>();
   const [mapFailed, setMapFailed] = useState(false);
+  const appState = useRef(AppState.currentState);
   const initialCenter: [number, number] = places[0]
     ? [places[0].coordinates.lng, places[0].coordinates.lat]
     : [0, 0];
   const statusMessage = getLocationStatusMessage(locationStatus, messages);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      const returningToForeground = appState.current !== "active" && nextState === "active";
+      appState.current = nextState;
+      if (!returningToForeground || (
+        locationStatus !== "services_disabled" && locationStatus !== "provider_unavailable"
+      )) return;
+
+      void recheckForegroundLocationProvider(expoForegroundLocationAdapter)
+        .then((provider) => {
+          setLocationStatus(provider === "ready" ? "idle" : provider);
+        });
+    });
+    return () => subscription.remove();
+  }, [locationStatus]);
 
   async function handleLocationRequest() {
     if (userLocation) {
@@ -37,6 +59,14 @@ export function NativeCityMap({ places }: Readonly<{
     if (result.status === "available") {
       setUserLocation(result.location);
       cameraRef.current?.easeTo({ center: [result.location.longitude, result.location.latitude], zoom: 15, duration: 350 });
+    }
+  }
+
+  async function handleLocationSettings() {
+    try {
+      await expoForegroundLocationAdapter.openLocationSettings?.();
+    } catch {
+      setLocationStatus("error");
     }
   }
 
@@ -87,6 +117,16 @@ export function NativeCityMap({ places }: Readonly<{
           {locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}
         </Text>
       </Pressable>
+      {locationStatus === "services_disabled" ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={messages.turnOnLocationServices}
+          onPress={() => void handleLocationSettings()}
+          style={({ pressed }) => [styles.settingsButton, pressed && styles.locationButtonPressed]}
+        >
+          <Text style={styles.settingsButtonText}>{messages.turnOnLocationServices}</Text>
+        </Pressable>
+      ) : null}
       {statusMessage ? <AppText variant="caption" style={styles.statusText}>{statusMessage}</AppText> : null}
     </View>
   );
@@ -121,5 +161,7 @@ const styles = StyleSheet.create({
   locationButton: { minHeight: 48, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.md },
   locationButtonPressed: { backgroundColor: "#F3F4F6" },
   locationButtonText: { ...typography.label, color: colors.text },
+  settingsButton: { minHeight: 44, alignItems: "center", justifyContent: "center" },
+  settingsButtonText: { ...typography.label, color: colors.primary, textAlign: "center" },
   statusText: { ...typography.caption, color: colors.textMuted },
 });

@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 
 import expoAdapterSource from "../src/lib/location.expo.ts?raw";
-import { requestForegroundLocation } from "../src/lib/location";
+import {
+  LAST_KNOWN_LOCATION_TIMEOUT_MS,
+  recheckForegroundLocationProvider,
+  requestForegroundLocation,
+} from "../src/lib/location";
 
 describe("foreground-only native location", () => {
   it("requests permission only when explicitly called and returns a one-shot position", async () => {
@@ -100,6 +104,27 @@ describe("foreground-only native location", () => {
     expect(getCurrentPosition).toHaveBeenCalledOnce();
   });
 
+  it("treats a slow cached lookup as optional before requesting a fresh fix", async () => {
+    vi.useFakeTimers();
+    try {
+      const getCurrentPosition = vi.fn(async () => ({ latitude: 53.55, longitude: 10.01 }));
+      const request = requestForegroundLocation({
+        requestPermission: async () => "granted",
+        getLastKnownPosition: () => new Promise(() => undefined),
+        getCurrentPosition,
+      });
+
+      await vi.advanceTimersByTimeAsync(LAST_KNOWN_LOCATION_TIMEOUT_MS);
+      await expect(request).resolves.toEqual({
+        status: "available",
+        location: { latitude: 53.55, longitude: 10.01 },
+      });
+      expect(getCurrentPosition).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it.each([
     ["services_disabled", "services_disabled"],
     ["provider_unavailable", "provider_unavailable"],
@@ -111,6 +136,51 @@ describe("foreground-only native location", () => {
       getCurrentPosition,
     })).resolves.toEqual({ status });
     expect(getCurrentPosition).not.toHaveBeenCalled();
+  });
+
+  it("rechecks disabled services after the app returns from settings", async () => {
+    const checkProvider = vi.fn()
+      .mockResolvedValueOnce("services_disabled")
+      .mockResolvedValueOnce("ready");
+    const adapter = {
+      requestPermission: async () => "granted" as const,
+      checkProvider,
+      getCurrentPosition: async () => ({ latitude: 53.55, longitude: 10.01 }),
+    };
+
+    await expect(recheckForegroundLocationProvider(adapter))
+      .resolves.toBe("services_disabled");
+    await expect(recheckForegroundLocationProvider(adapter))
+      .resolves.toBe("ready");
+  });
+
+  it("allows a fresh fix when Android provider flags are uncertain", async () => {
+    await expect(requestForegroundLocation({
+      requestPermission: async () => "granted",
+      prepareProvider: async () => "ready",
+      getLastKnownPosition: async () => undefined,
+      getCurrentPosition: async () => ({ latitude: 53.55, longitude: 10.01 }),
+    })).resolves.toEqual({
+      status: "available",
+      location: { latitude: 53.55, longitude: 10.01 },
+    });
+    expect(expoAdapterSource).not.toContain("reportedProviders");
+  });
+
+  it("remains retryable after a failed fix", async () => {
+    const getCurrentPosition = vi.fn()
+      .mockRejectedValueOnce(new Error("temporary failure"))
+      .mockResolvedValueOnce({ latitude: 53.55, longitude: 10.01 });
+    const adapter = {
+      requestPermission: async () => "granted" as const,
+      getCurrentPosition,
+    };
+
+    await expect(requestForegroundLocation(adapter)).resolves.toEqual({ status: "fix_failed" });
+    await expect(requestForegroundLocation(adapter)).resolves.toEqual({
+      status: "available",
+      location: { latitude: 53.55, longitude: 10.01 },
+    });
   });
 
   it("degrades safely for unavailable providers, errors, and invalid coordinates", async () => {
@@ -141,5 +211,6 @@ describe("foreground-only native location", () => {
     expect(expoAdapterSource).toContain("getLastKnownPositionAsync");
     expect(expoAdapterSource).toContain("getCurrentPositionAsync");
     expect(expoAdapterSource).toContain("mayShowUserSettingsDialog: true");
+    expect(expoAdapterSource).toContain("android.settings.LOCATION_SOURCE_SETTINGS");
   });
 });

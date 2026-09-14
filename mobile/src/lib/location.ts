@@ -16,6 +16,8 @@ export type NativeUserLocation = Readonly<{
 export type ForegroundLocationAdapter = Readonly<{
   requestPermission(): Promise<"granted" | "denied" | "unavailable">;
   prepareProvider?(): Promise<"ready" | "services_disabled" | "provider_unavailable">;
+  checkProvider?(): Promise<"ready" | "services_disabled" | "provider_unavailable">;
+  openLocationSettings?(): Promise<void>;
   getLastKnownPosition?(): Promise<NativeUserLocation | undefined>;
   getCurrentPosition(): Promise<NativeUserLocation>;
 }>;
@@ -32,6 +34,19 @@ export type NativeLocationResult =
     }>;
 
 export const LOCATION_FIX_TIMEOUT_MS = 15_000;
+export const LAST_KNOWN_LOCATION_TIMEOUT_MS = 2_000;
+
+export async function recheckForegroundLocationProvider(
+  adapter: ForegroundLocationAdapter,
+): Promise<"ready" | "services_disabled" | "provider_unavailable" | "error"> {
+  if (!adapter.checkProvider) return "ready";
+
+  try {
+    return await adapter.checkProvider();
+  } catch {
+    return "error";
+  }
+}
 
 export async function requestForegroundLocation(
   adapter: ForegroundLocationAdapter,
@@ -59,7 +74,10 @@ export async function requestForegroundLocation(
 
   if (adapter.getLastKnownPosition) {
     try {
-      const lastKnown = await withTimeout(adapter.getLastKnownPosition(), timeoutMs);
+      const lastKnown = await withTimeout(
+        adapter.getLastKnownPosition(),
+        Math.min(timeoutMs, LAST_KNOWN_LOCATION_TIMEOUT_MS),
+      );
       if (lastKnown && isValidLocation(lastKnown)) {
         return { status: "available", location: lastKnown };
       }

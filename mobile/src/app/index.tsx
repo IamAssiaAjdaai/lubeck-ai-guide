@@ -1,12 +1,12 @@
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useRef } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 import citywalkHero from "../../assets/images/citywalk-hero.png";
 import { CitywalkLoading } from "../components/CitywalkLoading";
-import { LocaleSelector } from "../components/LocaleSelector";
 import { MediaAttribution } from "../components/MediaAttribution";
+import { NativeHeaderActions } from "../components/NativeHeaderActions";
 import { AppText, Card, PrimaryButton, Screen, SectionTitle, StatusMessage } from "../components/ui";
 import { colors, radius, spacing } from "../design/tokens";
 import { usePublicCities } from "../hooks/usePublicContent";
@@ -26,13 +26,8 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.brandRow}>
           <AppText variant="label" style={styles.brand}>CITYWALK</AppText>
-          <Link href="/account" asChild>
-            <Pressable accessibilityRole="button" hitSlop={8}>
-              <AppText variant="label" style={styles.account}>{messages.account}</AppText>
-            </Pressable>
-          </Link>
+          <NativeHeaderActions />
         </View>
-        <LocaleSelector />
       </View>
 
       <View style={styles.hero}>
@@ -100,7 +95,6 @@ const styles = StyleSheet.create({
   header: { gap: spacing.md },
   brandRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   brand: { color: colors.primary, letterSpacing: 2 },
-  account: { color: colors.textMuted },
   hero: { alignItems: "center", gap: spacing.md },
   heroImage: {
     aspectRatio: 5 / 4,

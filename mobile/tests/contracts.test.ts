@@ -140,6 +140,23 @@ describe("public content contracts", () => {
       .toThrow("place fact value");
   });
 
+  it("retains trusted place tags and availability metadata used by native planning", () => {
+    const payload = cityPayload();
+    Object.assign(payload.places[0]!, {
+      environment: "outdoor",
+      pricing: "free",
+      status: "open",
+      tags: ["history", "architecture", "", 42],
+    });
+
+    expect(parseCityResponse(payload).places[0]).toMatchObject({
+      environment: "outdoor",
+      pricing: "free",
+      status: "open",
+      tags: ["history", "architecture"],
+    });
+  });
+
   it("parses the published tour contract and fails closed for malformed stops", () => {
     const payload = cityPayload();
     payload.tours = [{
