@@ -5,11 +5,11 @@ import { Linking, Pressable, StyleSheet, TextInput, View } from "react-native";
 import { AppText, Card, PrimaryButton, Screen, SectionTitle, StatusMessage } from "../../../../components/ui";
 import { CitywalkLoading } from "../../../../components/CitywalkLoading";
 import { colors, radius, spacing, typography } from "../../../../design/tokens";
-import { useGuideEligibility, usePublicCity } from "../../../../hooks/usePublicContent";
+import { useGuideEligibility, usePublicPlace } from "../../../../hooks/usePublicContent";
 import type { GuideAnswerResponse } from "../../../../lib/api/contracts";
 import { CitywalkApiError } from "../../../../lib/api/client";
 import { citywalkApi } from "../../../../lib/api/instance";
-import { parsePlaceRouteIdentity, resolvePlaceForRoute } from "../../../../lib/routing";
+import { parsePlaceRouteIdentity } from "../../../../lib/routing";
 import { useNativeLocale } from "../../../../localization/LocaleProvider";
 
 export default function GuideScreen() {
@@ -19,7 +19,11 @@ export default function GuideScreen() {
   }>();
   const identity = parsePlaceRouteIdentity(params.citySlug, params.placeSlug);
   const { direction, locale, messages } = useNativeLocale();
-  const cityState = usePublicCity(identity?.citySlug ?? "invalid", locale);
+  const placeState = usePublicPlace(
+    identity?.citySlug ?? "invalid",
+    identity?.placeSlug ?? "invalid",
+    locale,
+  );
   const guideState = useGuideEligibility(
     identity?.citySlug ?? "invalid",
     identity?.placeSlug ?? "invalid",
@@ -30,15 +34,19 @@ export default function GuideScreen() {
   const [error, setError] = useState<string>();
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
-  if (cityState.status === "loading" || guideState.status === "loading") {
+  if (placeState.status === "loading" || guideState.status === "loading") {
     return <Screen><CitywalkLoading /></Screen>;
   }
-  if (cityState.status === "error" || guideState.status === "error") {
+  if (placeState.status === "error" || guideState.status === "error") {
     return <Screen><StatusMessage>{messages.guideUnavailable}</StatusMessage></Screen>;
   }
 
-  const place = resolvePlaceForRoute(cityState.data, identity);
-  if (!place || !guideState.data.eligible) {
+  const place = placeState.data.place;
+  if (
+    placeState.data.city.slug !== identity.citySlug ||
+    place.slug !== identity.placeSlug ||
+    !guideState.data.eligible
+  ) {
     return <Screen><StatusMessage>{messages.guideUnavailable}</StatusMessage></Screen>;
   }
   const { citySlug, placeSlug } = identity;

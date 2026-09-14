@@ -30,6 +30,15 @@ export const EXTERNAL_VIDEO_PROVIDERS = ["youtube", "vimeo"] as const;
 export type ExternalVideoProvider = (typeof EXTERNAL_VIDEO_PROVIDERS)[number];
 export type MediaEntityType = "city" | "place" | "tour";
 
+export const PUBLIC_IMAGE_VARIANTS = [
+  "thumbnail",
+  "card",
+  "detail",
+  "hero",
+] as const;
+export type PublicImageVariant = (typeof PUBLIC_IMAGE_VARIANTS)[number];
+export type PublicImageVariantUrls = Readonly<Record<PublicImageVariant, string>>;
+
 export type UploadIntentInput = Readonly<{
   cityId: number;
   kind: MediaKind;
@@ -62,6 +71,7 @@ export type PublicMedia = Readonly<{
   sizeBytes?: number;
   width?: number;
   height?: number;
+  variants?: PublicImageVariantUrls;
   durationSeconds?: number;
   locale?: Locale;
   attribution?: Readonly<{

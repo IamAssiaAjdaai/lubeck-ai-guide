@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
-import type { PublicPlace } from "../lib/api/contracts";
+import type { PublicPlaceCard } from "../lib/api/contracts";
 import type { NativeMessages } from "../lib/localization";
 import {
   recheckForegroundLocationProvider,
@@ -19,7 +19,7 @@ import { AppText } from "./ui";
 const MAP_STYLE_URL = resolveMapStyleUrl();
 
 export function NativeCityMap({ places }: Readonly<{
-  places: readonly PublicPlace[];
+  places: readonly PublicPlaceCard[];
 }>) {
   const { messages } = useNativeLocale();
   const cameraRef = useRef<CameraRef>(null);

@@ -7,10 +7,13 @@ import plannerSource from "../src/components/NativeTourPlanner.tsx?raw";
 
 describe("native city experience parity", () => {
   it("renders city hero, published tour stops, and the personalized planner", () => {
-    expect(citySource).toContain("cityImage.url");
+    expect(citySource).toContain('selectImageUrl(cityImage, undefined, undefined, "hero")');
     expect(citySource).toContain("stopNames.map");
     expect(citySource).toContain("messages.startTour");
     expect(citySource).toContain("<NativeTourPlanner");
+    expect(citySource).toContain("<VirtualizedScreen");
+    expect(citySource).toContain("initialNumToRender={4}");
+    expect(citySource).toContain('cachePolicy="memory-disk"');
   });
 
   it("uses compact accessible language and account header actions", () => {

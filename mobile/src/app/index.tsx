@@ -9,9 +9,9 @@ import { MediaAttribution } from "../components/MediaAttribution";
 import { NativeHeaderActions } from "../components/NativeHeaderActions";
 import { AppText, Card, PrimaryButton, Screen, SectionTitle, StatusMessage } from "../components/ui";
 import { colors, radius, spacing } from "../design/tokens";
-import { usePublicCities } from "../hooks/usePublicContent";
+import { prefetchPublicCity, usePublicCities } from "../hooks/usePublicContent";
 import { citywalkApi } from "../lib/api/instance";
-import { selectPrimaryImageMedia } from "../lib/api/media";
+import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
 import { getNativeDirection, getNativeTextAlignment } from "../lib/localization";
 import { useNativeLocale } from "../localization/LocaleProvider";
 
@@ -57,6 +57,7 @@ export default function HomeScreen() {
       {cities.status === "error" ? <StatusMessage>{messages.unavailable}</StatusMessage> : null}
       {cities.status === "available" ? cities.data.cities.map((city) => {
         const image = selectPrimaryImageMedia(city.media);
+        const imageUrl = selectImageUrl(image, undefined, undefined, "card");
         const contentDirection = getNativeDirection(city.resolvedLocale);
         const contentTextStyle = {
           writingDirection: contentDirection,
@@ -64,10 +65,11 @@ export default function HomeScreen() {
         } as const;
         return (
           <Card key={city.slug}>
-            {image ? (
+            {image && imageUrl ? (
               <View>
                 <Image
-                  source={{ uri: citywalkApi.resolveUrl(image.url) }}
+                  source={{ uri: citywalkApi.resolveUrl(imageUrl) }}
+                  cachePolicy="memory-disk"
                   contentFit="cover"
                   style={styles.cityImage}
                   accessibilityLabel={city.name}
@@ -82,7 +84,12 @@ export default function HomeScreen() {
               ) : null}
             </View>
             <Link href={{ pathname: "/city/[citySlug]", params: { citySlug: city.slug } }} asChild>
-              <PrimaryButton label={`${messages.exploreCity} — ${city.name}`} />
+              <PrimaryButton
+                label={`${messages.exploreCity} — ${city.name}`}
+                onPressIn={() => {
+                  void prefetchPublicCity(city.slug, locale).catch(() => undefined);
+                }}
+              />
             </Link>
           </Card>
         );

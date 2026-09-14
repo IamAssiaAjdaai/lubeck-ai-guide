@@ -1,4 +1,9 @@
-import type { PublicCityResponse, PublicPlace, PublicTour } from "./api/contracts";
+import type {
+  PublicCityResponse,
+  PublicCitySummaryResponse,
+  PublicPlace,
+  PublicTour,
+} from "./api/contracts";
 
 export type CityRouteIdentity = Readonly<{ citySlug: string }>;
 export type PlaceRouteIdentity = Readonly<{ citySlug: string; placeSlug: string }>;
@@ -58,7 +63,7 @@ export function resolvePlaceForRoute(
 }
 
 export function resolveTourForRoute(
-  response: PublicCityResponse,
+  response: PublicCityResponse | PublicCitySummaryResponse,
   identity: TourRouteIdentity,
 ): PublicTour | undefined {
   if (response.city.slug !== identity.citySlug) return undefined;

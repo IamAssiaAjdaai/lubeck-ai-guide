@@ -162,7 +162,7 @@ export default async function LandmarkPage({
     currentLocale,
     "detail",
   );
-  const image = selectedImage?.url ?? resolvePlaceImage(
+  const image = resolvePlaceImage(
     contentSource,
     placeMedia,
     currentLocale,

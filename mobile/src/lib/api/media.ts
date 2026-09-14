@@ -1,4 +1,6 @@
-import type { PublicMedia } from "./contracts";
+import type { PublicImageVariantUrls, PublicMedia, PublicPlace } from "./contracts";
+
+export type NativeImageUse = keyof PublicImageVariantUrls;
 
 export function selectPrimaryImageMedia(
   media: readonly PublicMedia[],
@@ -13,6 +15,15 @@ export function selectPrimaryImage(
   fallback?: string,
 ): string | undefined {
   return selectPrimaryImageMedia(media)?.url ?? fallback;
+}
+
+export function selectImageUrl(
+  media: PublicMedia | undefined,
+  fallback: string | undefined,
+  fallbackVariants: PublicPlace["imageVariants"],
+  use: NativeImageUse,
+): string | undefined {
+  return media?.variants?.[use] ?? fallbackVariants?.[use] ?? media?.url ?? fallback;
 }
 
 export function selectExactLocaleAudio(

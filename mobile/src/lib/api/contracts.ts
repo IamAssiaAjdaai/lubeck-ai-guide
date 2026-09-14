@@ -13,7 +13,15 @@ export type PublicMedia = Readonly<{
   mimeType: string;
   durationSeconds?: number;
   locale?: string;
+  variants?: PublicImageVariantUrls;
   attribution?: PublicMediaAttribution;
+}>;
+
+export type PublicImageVariantUrls = Readonly<{
+  thumbnail: string;
+  card: string;
+  detail: string;
+  hero: string;
 }>;
 
 export type LocalizedContent<TContent> = Readonly<{
@@ -54,8 +62,14 @@ export type PublicPlace = LocalizedContent<Readonly<{
   status?: "open" | "closed" | "renovation" | "seasonal" | "unknown";
   tags?: readonly string[];
   image?: string;
+  imageVariants?: PublicImageVariantUrls;
   media: readonly PublicMedia[];
 }>;
+
+export type PublicPlaceCard = LocalizedContent<Readonly<{
+  name: string;
+  shortDescription: string;
+}>> & Omit<PublicPlace, keyof LocalizedContent<unknown> | "content">;
 
 export type PublicFact = Readonly<{
   label: string;
@@ -98,6 +112,17 @@ export type PublicCityResponse = Readonly<{
   tours: readonly PublicTour[];
 }>;
 
+export type PublicCitySummaryResponse = Readonly<{
+  city: PublicCity;
+  places: readonly PublicPlaceCard[];
+  tours: readonly PublicTour[];
+}>;
+
+export type PublicPlaceResponse = Readonly<{
+  city: PublicCity;
+  place: PublicPlace;
+}>;
+
 export type GuideEligibilityResponse = Readonly<{
   eligible: boolean;
 }>;
@@ -134,6 +159,23 @@ export function parseCityResponse(value: unknown): PublicCityResponse {
     places: object.places.map((place) => parsePlace(place)),
     tours: object.tours.map((tour) => parseTour(tour)),
   };
+}
+
+export function parseCitySummaryResponse(value: unknown): PublicCitySummaryResponse {
+  const object = asObject(value, "city summary");
+  if (!Array.isArray(object.places) || !Array.isArray(object.tours)) {
+    throw new Error("Invalid city summary response.");
+  }
+  return {
+    city: parseCity(object.city),
+    places: object.places.map((place) => parsePlaceCard(place)),
+    tours: object.tours.map((tour) => parseTour(tour)),
+  };
+}
+
+export function parsePlaceResponse(value: unknown): PublicPlaceResponse {
+  const object = asObject(value, "place detail");
+  return { city: parseCity(object.city), place: parsePlace(object.place) };
 }
 
 export function parseGuideEligibilityResponse(value: unknown): GuideEligibilityResponse {
@@ -190,6 +232,22 @@ function parseCity(value: unknown): PublicCity {
 }
 
 function parsePlace(value: unknown): PublicPlace {
+  const card = parsePlaceCard(value);
+  const object = asObject(value, "place");
+  const content = asObject(object.content, "place content");
+  return {
+    ...card,
+    content: {
+      ...card.content,
+      ...(typeof content.description === "string" ? { description: content.description } : {}),
+      ...(typeof content.story === "string" ? { story: content.story } : {}),
+      ...(typeof content.visitNote === "string" ? { visitNote: content.visitNote } : {}),
+      ...(content.facts === undefined ? {} : { facts: parseFacts(content.facts) }),
+    },
+  };
+}
+
+function parsePlaceCard(value: unknown): PublicPlaceCard {
   const object = asObject(value, "place");
   const localized = parseLocalizedContent(object);
   const content = asObject(localized.content, "place content");
@@ -213,15 +271,14 @@ function parsePlace(value: unknown): PublicPlace {
       ? object.tags.flatMap((tag) => typeof tag === "string" && tag.trim() ? [tag] : [])
       : [],
     ...(typeof object.image === "string" ? { image: object.image } : {}),
+    ...(parseImageVariants(object.imageVariants)
+      ? { imageVariants: parseImageVariants(object.imageVariants) }
+      : {}),
     media: parseMediaArray(object.media),
     ...localized,
     content: {
       name: asString(content.name, "place name"),
       shortDescription: asString(content.shortDescription, "place description"),
-      ...(typeof content.description === "string" ? { description: content.description } : {}),
-      ...(typeof content.story === "string" ? { story: content.story } : {}),
-      ...(typeof content.visitNote === "string" ? { visitNote: content.visitNote } : {}),
-      ...(content.facts === undefined ? {} : { facts: parseFacts(content.facts) }),
     },
   };
 }
@@ -324,9 +381,26 @@ function parseMediaArray(value: unknown): readonly PublicMedia[] {
       ...(typeof media.locale === "string" && media.locale
         ? { locale: media.locale }
         : {}),
+      ...(parseImageVariants(media.variants)
+        ? { variants: parseImageVariants(media.variants) }
+        : {}),
       ...(attribution ? { attribution } : {}),
     }];
   });
+}
+
+function parseImageVariants(value: unknown): PublicImageVariantUrls | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const variants = value as Record<string, unknown>;
+  if (!["thumbnail", "card", "detail", "hero"].every(
+    (name) => typeof variants[name] === "string" && variants[name] !== "",
+  )) return undefined;
+  return {
+    thumbnail: variants.thumbnail as string,
+    card: variants.card as string,
+    detail: variants.detail as string,
+    hero: variants.hero as string,
+  };
 }
 
 function parseMediaAttribution(value: unknown): PublicMediaAttribution | undefined {

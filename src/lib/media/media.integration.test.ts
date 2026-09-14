@@ -92,7 +92,12 @@ describe.skipIf(!runIntegration)("CMS-03 PostgreSQL media integration", () => {
     expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toBeUndefined();
     await setMediaLifecycle(asset.id, "approved", actorId);
     expect((await getPublicMediaForEntity("place", placeId))[0]).toMatchObject({ kind: "image", purpose: "hero", url: `/api/media/${asset.assetKey}` });
-    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toEqual({ objectKey: asset.objectKey, mimeType: "image/jpeg", sizeBytes: 3 });
+    expect(await getPublicMediaDeliveryAsset(asset.assetKey)).toEqual({
+      objectKey: asset.objectKey,
+      mimeType: "image/jpeg",
+      sizeBytes: 3,
+      kind: "image",
+    });
     await expect(setMediaLifecycle(asset.id, "rejected", actorId)).rejects.toThrow(/Detach or replace/);
     await expect(setMediaLifecycle(asset.id, "archived", actorId)).rejects.toThrow(/Detach or replace/);
     const replacement = await createMediaUploadRecord({ assetKey: randomUUID(), cityId, kind: "image", originalFilename: "new-gate.jpg", mimeType: "image/jpeg", sizeBytes: 3, objectKey: `media/${suffix}/new-original.jpg`, storageProvider: "s3-test", uploadExpiresAt: new Date(Date.now() + 60_000) }, actorId);

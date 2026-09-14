@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { colors, radius, spacing } from "../design/tokens";
-import type { PublicPlace } from "../lib/api/contracts";
+import type { PublicPlaceCard } from "../lib/api/contracts";
 import {
   DEFAULT_NATIVE_TOUR_PREFERENCES,
   TOUR_INTERESTS,
@@ -41,8 +41,8 @@ export function NativeTourPlanner({
   origin,
 }: Readonly<{
   citySlug: string;
-  places: readonly PublicPlace[];
-  origin: PublicPlace["coordinates"];
+  places: readonly PublicPlaceCard[];
+  origin: PublicPlaceCard["coordinates"];
 }>) {
   const { direction, locale, messages } = useNativeLocale();
   const [open, setOpen] = useState(false);

@@ -8,40 +8,46 @@ import { CitywalkLoading } from "../../../../components/CitywalkLoading";
 import { NativeIcon } from "../../../../components/NativeIcon";
 import { AppText, Card, PrimaryButton, Screen, SectionTitle, StatusMessage } from "../../../../components/ui";
 import { colors, radius, spacing } from "../../../../design/tokens";
-import { useGuideEligibility, usePublicCity } from "../../../../hooks/usePublicContent";
+import { useGuideEligibility, usePublicPlace } from "../../../../hooks/usePublicContent";
 import { citywalkApi } from "../../../../lib/api/instance";
 import {
   selectExactLocaleAudio,
-  selectPrimaryImage,
+  selectImageUrl,
   selectPrimaryImageMedia,
 } from "../../../../lib/api/media";
 import { getNativeDirection, getNativeTextAlignment } from "../../../../lib/localization";
-import { parsePlaceRouteIdentity, resolvePlaceForRoute } from "../../../../lib/routing";
+import { parsePlaceRouteIdentity } from "../../../../lib/routing";
 import { useNativeLocale } from "../../../../localization/LocaleProvider";
 
 export default function PlaceScreen() {
   const params = useLocalSearchParams<{ citySlug?: string | string[]; placeSlug?: string | string[] }>();
   const identity = parsePlaceRouteIdentity(params.citySlug, params.placeSlug);
   const { locale, messages } = useNativeLocale();
-  const cityState = usePublicCity(identity?.citySlug ?? "invalid", locale);
+  const placeState = usePublicPlace(
+    identity?.citySlug ?? "invalid",
+    identity?.placeSlug ?? "invalid",
+    locale,
+  );
   const guideState = useGuideEligibility(
     identity?.citySlug ?? "invalid",
     identity?.placeSlug ?? "invalid",
   );
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
-  if (cityState.status === "loading") return <Screen><CitywalkLoading /></Screen>;
-  if (cityState.status === "error") return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
+  if (placeState.status === "loading") return <Screen><CitywalkLoading /></Screen>;
+  if (placeState.status === "error") return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
 
-  const place = resolvePlaceForRoute(cityState.data, identity);
-  if (!place) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
+  const place = placeState.data.place;
+  if (placeState.data.city.slug !== identity.citySlug || place.slug !== identity.placeSlug) {
+    return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
+  }
   const contentDirection = getNativeDirection(place.resolvedLocale);
   const contentTextStyle = {
     writingDirection: contentDirection,
     textAlign: getNativeTextAlignment(place.resolvedLocale),
   } as const;
-  const image = selectPrimaryImage(place.media, place.image);
   const imageMedia = selectPrimaryImageMedia(place.media);
+  const image = selectImageUrl(imageMedia, place.image, place.imageVariants, "detail");
   const audio = selectExactLocaleAudio(place.media, locale);
 
   return (
@@ -51,6 +57,7 @@ export default function PlaceScreen() {
         <View>
           <Image
             source={{ uri: citywalkApi.resolveUrl(image) }}
+            cachePolicy="memory-disk"
             contentFit="cover"
             style={styles.hero}
             accessibilityLabel={place.content.name}

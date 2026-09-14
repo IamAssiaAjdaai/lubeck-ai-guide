@@ -1,6 +1,8 @@
 import {
   parseCityIndexResponse,
   parseCityResponse,
+  parseCitySummaryResponse,
+  parsePlaceResponse,
   parseGuideAnswerResponse,
   parseGuideEligibilityResponse,
   type GuideAnswerResponse,
@@ -8,7 +10,10 @@ import {
   type NativeLocale,
   type PublicCityIndexResponse,
   type PublicCityResponse,
+  type PublicCitySummaryResponse,
+  type PublicPlaceResponse,
 } from "./contracts";
+import type { PublicContentFetch } from "../publicContentCache";
 import { getConfiguredApiOrigin } from "./environment";
 
 export type AuthCookieProvider = () => Promise<string>;
@@ -24,6 +29,11 @@ export type CitywalkApiClient = Readonly<{
   origin: string;
   getCities(locale: NativeLocale): Promise<PublicCityIndexResponse>;
   getCity(citySlug: string, locale: NativeLocale): Promise<PublicCityResponse>;
+  getCitySummary(citySlug: string, locale: NativeLocale): Promise<PublicCitySummaryResponse>;
+  getPlace(citySlug: string, placeSlug: string, locale: NativeLocale): Promise<PublicPlaceResponse>;
+  loadCities(locale: NativeLocale, etag?: string, signal?: AbortSignal): Promise<PublicContentFetch<PublicCityIndexResponse>>;
+  loadCitySummary(citySlug: string, locale: NativeLocale, etag?: string, signal?: AbortSignal): Promise<PublicContentFetch<PublicCitySummaryResponse>>;
+  loadPlace(citySlug: string, placeSlug: string, locale: NativeLocale, etag?: string, signal?: AbortSignal): Promise<PublicContentFetch<PublicPlaceResponse>>;
   getGuideEligibility(citySlug: string, placeSlug: string): Promise<GuideEligibilityResponse>;
   askGuide(input: GuideQuestionInput): Promise<GuideAnswerResponse>;
   fetchAuthenticated(path: string, init?: RequestInit): Promise<Response>;
@@ -44,6 +54,27 @@ export function createCitywalkApiClient(input: Readonly<{
     });
     if (!response.ok) throw new Error(`CITYWALK API request failed (${response.status}).`);
     return response.json();
+  }
+
+  async function getPublicJson<T>(
+    path: string,
+    parse: (value: unknown) => T,
+    etag?: string,
+    signal?: AbortSignal,
+  ): Promise<PublicContentFetch<T>> {
+    const headers = new Headers({ Accept: "application/json" });
+    if (etag) headers.set("If-None-Match", etag);
+    const response = await fetchImpl(new URL(path, origin), { headers, signal });
+    const responseEtag = response.headers.get("etag") ?? undefined;
+    if (response.status === 304) {
+      return { status: 304, ...(responseEtag ? { etag: responseEtag } : {}) };
+    }
+    if (!response.ok) throw new Error(`CITYWALK API request failed (${response.status}).`);
+    return {
+      status: 200,
+      data: parse(await response.json()),
+      ...(responseEtag ? { etag: responseEtag } : {}),
+    };
   }
 
   async function fetchAuthenticated(path: string, init: RequestInit = {}): Promise<Response> {
@@ -71,9 +102,43 @@ export function createCitywalkApiClient(input: Readonly<{
         await getJson(`/api/content/cities?locale=${encodeURIComponent(locale)}`),
       );
     },
+    async loadCities(locale, etag, signal) {
+      return getPublicJson(
+        `/api/content/cities?locale=${encodeURIComponent(locale)}`,
+        parseCityIndexResponse,
+        etag,
+        signal,
+      );
+    },
     async getCity(citySlug, locale) {
       return parseCityResponse(
         await getJson(`/api/content/cities/${encodeURIComponent(citySlug)}?locale=${encodeURIComponent(locale)}`),
+      );
+    },
+    async getCitySummary(citySlug, locale) {
+      return parseCitySummaryResponse(await getJson(
+        `/api/content/cities/${encodeURIComponent(citySlug)}/summary?locale=${encodeURIComponent(locale)}`,
+      ));
+    },
+    async loadCitySummary(citySlug, locale, etag, signal) {
+      return getPublicJson(
+        `/api/content/cities/${encodeURIComponent(citySlug)}/summary?locale=${encodeURIComponent(locale)}`,
+        parseCitySummaryResponse,
+        etag,
+        signal,
+      );
+    },
+    async getPlace(citySlug, placeSlug, locale) {
+      return parsePlaceResponse(await getJson(
+        `/api/content/cities/${encodeURIComponent(citySlug)}/places/${encodeURIComponent(placeSlug)}?locale=${encodeURIComponent(locale)}`,
+      ));
+    },
+    async loadPlace(citySlug, placeSlug, locale, etag, signal) {
+      return getPublicJson(
+        `/api/content/cities/${encodeURIComponent(citySlug)}/places/${encodeURIComponent(placeSlug)}?locale=${encodeURIComponent(locale)}`,
+        parsePlaceResponse,
+        etag,
+        signal,
       );
     },
     async getGuideEligibility(citySlug, placeSlug) {

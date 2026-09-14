@@ -15,6 +15,9 @@ const cityResponse = {
   tours: [],
 };
 
+const citySummaryResponse = cityResponse;
+const placeResponse = { city: cityResponse.city, place: cityResponse.places[0] };
+
 describe("CITYWALK native API client", () => {
   it("loads and validates the existing generic city endpoint", async () => {
     const fetchImpl = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) =>
@@ -25,6 +28,37 @@ describe("CITYWALK native API client", () => {
       new URL("https://citywalk.example/api/content/cities/lubeck?locale=en"),
       expect.objectContaining({ headers: { Accept: "application/json" } }),
     );
+  });
+
+  it("loads the compact city contract with ETag revalidation and no credentials", async () => {
+    const fetchImpl = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) =>
+      new Response(JSON.stringify(citySummaryResponse), { headers: { ETag: '"city-v1"' } }));
+    const client = createCitywalkApiClient({ origin: "https://citywalk.example", fetchImpl });
+
+    await expect(client.loadCitySummary("hamburg", "de", '"city-v0"'))
+      .resolves.toMatchObject({ status: 200, etag: '"city-v1"' });
+    const [url, init] = fetchImpl.mock.calls[0]!;
+    expect(url).toEqual(new URL(
+      "https://citywalk.example/api/content/cities/hamburg/summary?locale=de",
+    ));
+    expect(new Headers(init?.headers).get("If-None-Match")).toBe('"city-v0"');
+    expect(new Headers(init?.headers).has("Cookie")).toBe(false);
+  });
+
+  it("loads a place detail only when requested and accepts a 304", async () => {
+    const fetchImpl = vi
+      .fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response())
+      .mockResolvedValueOnce(new Response(JSON.stringify(placeResponse)))
+      .mockResolvedValueOnce(new Response(null, { status: 304, headers: { ETag: '"place-v1"' } }));
+    const client = createCitywalkApiClient({ origin: "https://citywalk.example", fetchImpl });
+
+    await expect(client.getPlace("lubeck", "holstentor", "en"))
+      .resolves.toMatchObject({ place: { slug: "holstentor" } });
+    await expect(client.loadPlace("lubeck", "holstentor", "en", '"place-v1"'))
+      .resolves.toEqual({ status: 304, etag: '"place-v1"' });
+    expect(fetchImpl.mock.calls[0]?.[0]).toEqual(new URL(
+      "https://citywalk.example/api/content/cities/lubeck/places/holstentor?locale=en",
+    ));
   });
 
   it("loads guide eligibility from the server-owned boundary", async () => {

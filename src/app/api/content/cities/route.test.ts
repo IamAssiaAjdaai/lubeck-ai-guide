@@ -50,7 +50,9 @@ describe("public city index API", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+    expect(response.headers.get("Cache-Control")).toContain("s-maxage=60");
+    expect(response.headers.get("ETag")).toMatch(/^"[A-Za-z0-9_-]+"$/);
+    expect(response.headers.get("Server-Timing")).toContain("citywalk-content;dur=");
     expect(mocks.getPublicCitySummaries).toHaveBeenCalledOnce();
     expect(body.cities).toHaveLength(2);
     expect(body.cities[1]).toMatchObject({
@@ -99,8 +101,20 @@ describe("public city index API", () => {
     );
 
     expect(response.status).toBe(503);
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
     await expect(response.json()).resolves.toEqual({
       error: "City discovery is temporarily unavailable.",
     });
+  });
+
+  it("returns 304 for a matching content version", async () => {
+    const first = await GET(new Request("https://citywalk.example/api/content/cities?locale=en"));
+    const etag = first.headers.get("ETag")!;
+    const second = await GET(new Request("https://citywalk.example/api/content/cities?locale=en", {
+      headers: { "If-None-Match": etag },
+    }));
+
+    expect(second.status).toBe(304);
+    expect(await second.text()).toBe("");
   });
 });

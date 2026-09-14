@@ -51,7 +51,7 @@ export async function GenericPlaceContent({ params }: GenericPlacePageProps) {
     locale,
     "detail",
   );
-  const image = selectedImage?.url ?? resolvePlaceImage(
+  const image = resolvePlaceImage(
     contentSource,
     media,
     locale,

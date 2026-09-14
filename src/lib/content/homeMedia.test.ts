@@ -38,6 +38,23 @@ describe("public city image resolution", () => {
     expect(resolveCityHeroMedia("code", media, "en")).toBeUndefined();
   });
 
+  it("uses bounded delivery variants when public media provides them", () => {
+    const variantMedia: readonly PublicMedia[] = media.map((item) => ({
+      ...item,
+      variants: {
+        thumbnail: `${item.url}?variant=thumbnail`,
+        card: `${item.url}?variant=card`,
+        detail: `${item.url}?variant=detail`,
+        hero: `${item.url}?variant=hero`,
+      },
+    }));
+
+    expect(resolveFeaturedCityImage("database", variantMedia, "en"))
+      .toBe("/api/media/card?variant=card");
+    expect(resolveCityHeroImage("database", variantMedia, "en"))
+      .toBe("/api/media/hero?variant=hero");
+  });
+
   it("retains public attribution on the selected database hero", () => {
     const attributedHero: PublicMedia = {
       ...media[1]!,

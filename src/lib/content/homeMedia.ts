@@ -10,8 +10,8 @@ export function resolveFeaturedCityImage(
 ): string | undefined {
   if (source === "code") return legacyImage;
   return (
-    findImage(media, "card", locale)?.url ??
-    findImage(media, "hero", locale)?.url ??
+    resolveVariant(findImage(media, "card", locale), "card") ??
+    resolveVariant(findImage(media, "hero", locale), "card") ??
     legacyImage
   );
 }
@@ -22,7 +22,14 @@ export function resolveCityHeroImage(
   locale: Locale,
   legacyImage?: string,
 ): string | undefined {
-  return resolveCityHeroMedia(source, media, locale)?.url ?? legacyImage;
+  return resolveVariant(resolveCityHeroMedia(source, media, locale), "hero") ?? legacyImage;
+}
+
+function resolveVariant(
+  media: PublicMedia | undefined,
+  variant: "card" | "hero",
+): string | undefined {
+  return media?.variants?.[variant] ?? media?.url;
 }
 
 export function resolveCityHeroMedia(

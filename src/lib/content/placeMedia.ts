@@ -40,5 +40,6 @@ export function resolvePlaceImage(
   legacyImage: string | undefined,
   context: PlaceImageContext,
 ): string | undefined {
-  return resolvePlaceImageMedia(source, media, locale, context)?.url ?? legacyImage;
+  const selected = resolvePlaceImageMedia(source, media, locale, context);
+  return selected?.variants?.[context] ?? selected?.url ?? legacyImage;
 }

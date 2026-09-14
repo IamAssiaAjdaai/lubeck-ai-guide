@@ -8,7 +8,7 @@ import { CitywalkLoading } from "../../../../components/CitywalkLoading";
 import { colors, radius, spacing } from "../../../../design/tokens";
 import { usePublicCity } from "../../../../hooks/usePublicContent";
 import { citywalkApi } from "../../../../lib/api/instance";
-import { selectPrimaryImageMedia } from "../../../../lib/api/media";
+import { selectImageUrl, selectPrimaryImageMedia } from "../../../../lib/api/media";
 import { getNativeDirection, getNativeTextAlignment } from "../../../../lib/localization";
 import {
   parseTourRouteIdentity,
@@ -45,14 +45,16 @@ export default function TourScreen() {
     textAlign: getNativeTextAlignment(tour.resolvedLocale),
   } as const;
   const image = selectPrimaryImageMedia(tour.media);
+  const imageUrl = selectImageUrl(image, undefined, undefined, "detail");
 
   return (
     <Screen>
       <Stack.Screen options={{ title: tour.content.title }} />
-      {image ? (
+      {image && imageUrl ? (
         <View>
           <Image
-            source={{ uri: citywalkApi.resolveUrl(image.url) }}
+            source={{ uri: citywalkApi.resolveUrl(imageUrl) }}
+            cachePolicy="memory-disk"
             contentFit="cover"
             style={styles.hero}
             accessibilityLabel={tour.content.title}

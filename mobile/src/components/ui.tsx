@@ -1,12 +1,14 @@
 import type { PropsWithChildren, ReactNode, Ref } from "react";
 import {
   ActivityIndicator,
+  FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
   type PressableProps,
+  type FlatListProps,
   type TextProps,
   type ViewStyle,
 } from "react-native";
@@ -37,6 +39,26 @@ export function Screen({
       >
         {children}
       </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+export function VirtualizedScreen<T>({
+  includeTopSafeArea = false,
+  contentContainerStyle,
+  ...props
+}: FlatListProps<T> & { includeTopSafeArea?: boolean }) {
+  const { direction } = useNativeLocale();
+  return (
+    <SafeAreaView
+      style={[styles.safeArea, { direction }]}
+      edges={getScreenSafeAreaEdges(includeTopSafeArea)}
+    >
+      <FlatList
+        {...props}
+        contentContainerStyle={[styles.screenContent, contentContainerStyle]}
+        keyboardShouldPersistTaps="handled"
+      />
     </SafeAreaView>
   );
 }

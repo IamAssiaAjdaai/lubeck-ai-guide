@@ -13,6 +13,32 @@ describe("public media legacy migration", () => {
     expect(applicationMediaPath("asset-key")).toBe("/api/media/asset-key");
   });
 
+  it("publishes bounded variant URLs for approved images without storage details", () => {
+    const response = toLocalizedPublicCityResponse({
+      city: { slug: "test", content: { en: { name: "Test" } } },
+      places: [],
+      tours: [],
+      media: {
+        city: [{
+          assetKey: "public-image",
+          kind: "image",
+          purpose: "hero",
+          url: "/api/media/public-image",
+          mimeType: "image/jpeg",
+        }],
+        places: {},
+        tours: {},
+      },
+    }, "en");
+
+    expect(response.city.media[0]?.variants).toEqual({
+      thumbnail: "/api/media/public-image?variant=thumbnail",
+      card: "/api/media/public-image?variant=card",
+      detail: "/api/media/public-image?variant=detail",
+      hero: "/api/media/public-image?variant=hero",
+    });
+  });
+
   it("prefers approved CMS media and otherwise keeps legacy media", () => {
     const place = { image: "/legacy.jpg", audio: { en: "/legacy-en.mp3", ar: "/legacy-ar.mp3" } };
     expect(resolvePlaceMedia(place, [{ assetKey: "i", kind: "image", purpose: "hero", url: "https://cdn.example/hero.jpg", mimeType: "image/jpeg" }], "en").image).toBe("https://cdn.example/hero.jpg");

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   parseCityIndexResponse,
   parseCityResponse,
+  parseCitySummaryResponse,
   parseGuideAnswerResponse,
   parseGuideEligibilityResponse,
 } from "../src/lib/api/contracts";
@@ -154,6 +155,23 @@ describe("public content contracts", () => {
       pricing: "free",
       status: "open",
       tags: ["history", "architecture"],
+    });
+  });
+
+  it("parses compact city cards and public image variants", () => {
+    const payload = cityPayload();
+    Object.assign(payload.places[0]!, { imageVariants: {
+      thumbnail: "/thumbnail",
+      card: "/card",
+      detail: "/detail",
+      hero: "/hero",
+    } });
+    const response = parseCitySummaryResponse(payload);
+
+    expect(response.places[0]?.imageVariants?.card).toBe("/card");
+    expect(response.places[0]?.content).toEqual({
+      name: "Old Gate",
+      shortDescription: "A public place.",
     });
   });
 
