@@ -71,6 +71,33 @@ describe("CITYWALK native app configuration", () => {
     }]);
   });
 
+  it("keeps the approved launcher artwork wired for standard and adaptive icons", () => {
+    expect(appJson.expo.icon).toBe("./assets/images/icon.png");
+    expect(appJson.expo.android.adaptiveIcon).toMatchObject({
+      foregroundImage: "./assets/images/android-icon-foreground.png",
+      backgroundImage: "./assets/images/android-icon-background.png",
+      monochromeImage: "./assets/images/android-icon-monochrome.png",
+    });
+  });
+
+  it("uses the approved CITYWALK artwork for a true native launch splash", () => {
+    const plugin = appJson.expo.plugins.find((entry) =>
+      Array.isArray(entry) && entry[0] === "expo-splash-screen",
+    );
+
+    expect(plugin).toEqual(["expo-splash-screen", {
+      backgroundColor: "#FAFAF8",
+      image: "./assets/images/icon.png",
+      imageWidth: 168,
+      resizeMode: "contain",
+    }]);
+    expect(appJson.expo.androidStatusBar).toMatchObject({
+      backgroundColor: "#FAFAF8",
+      barStyle: "dark-content",
+    });
+    expect(appJson.expo.plugins).toContain("expo-font");
+  });
+
   it("configures store beta as store-distributed builds against the stable Beta API", () => {
     const storeBeta = easJson.build["store-beta"];
 

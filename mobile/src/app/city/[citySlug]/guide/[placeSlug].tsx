@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Linking, Pressable, StyleSheet, TextInput, View } from "react-native";
 
 import { AppText, Card, PrimaryButton, Screen, SectionTitle, StatusMessage } from "../../../../components/ui";
+import { CitywalkLoading } from "../../../../components/CitywalkLoading";
 import { colors, radius, spacing, typography } from "../../../../design/tokens";
 import { useGuideEligibility, usePublicCity } from "../../../../hooks/usePublicContent";
 import type { GuideAnswerResponse } from "../../../../lib/api/contracts";
@@ -30,7 +31,7 @@ export default function GuideScreen() {
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
   if (cityState.status === "loading" || guideState.status === "loading") {
-    return <Screen><AppText>{messages.loading}</AppText></Screen>;
+    return <Screen><CitywalkLoading /></Screen>;
   }
   if (cityState.status === "error" || guideState.status === "error") {
     return <Screen><StatusMessage>{messages.guideUnavailable}</StatusMessage></Screen>;

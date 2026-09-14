@@ -41,4 +41,15 @@ describe("native media attribution", () => {
       },
     ]);
   });
+
+  it("keeps one tappable Commons label when stored credit already names Commons", () => {
+    expect(formatMediaAttribution({
+      creator: "Example Photographer",
+      text: "Photo: Example Photographer · Wikimedia Commons · https://commons.wikimedia.org/wiki/File:Example.jpg · CC BY-SA 4.0 · https://creativecommons.org/licenses/by-sa/4.0/",
+    })).toEqual([
+      { label: "Photo: Example Photographer" },
+      { label: "Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Example.jpg" },
+      { label: "CC BY-SA 4.0", url: "https://creativecommons.org/licenses/by-sa/4.0/" },
+    ]);
+  });
 });

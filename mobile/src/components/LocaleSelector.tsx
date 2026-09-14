@@ -1,34 +1,97 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
 import { NATIVE_LOCALES } from "../lib/localization";
 import { useNativeLocale } from "../localization/LocaleProvider";
+import { NativeIcon } from "./NativeIcon";
+import { AppText } from "./ui";
 
 const labels = { en: "EN", de: "DE", ar: "العربية" } as const;
 
 export function LocaleSelector() {
-  const { locale, setLocale } = useNativeLocale();
+  const { locale, messages, setLocale } = useNativeLocale();
+  const [open, setOpen] = useState(false);
+
   return (
-    <View accessibilityRole="radiogroup" style={styles.group}>
-      {NATIVE_LOCALES.map((candidate) => (
+    <>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={messages.language}
+        accessibilityState={{ expanded: open }}
+        hitSlop={6}
+        onPress={() => setOpen(true)}
+        style={({ pressed }) => [styles.trigger, pressed && styles.pressed]}
+      >
+        <NativeIcon ios="globe" android="language" />
+      </Pressable>
+      <Modal animationType="fade" onRequestClose={() => setOpen(false)} transparent visible={open}>
         <Pressable
-          key={candidate}
-          accessibilityRole="radio"
-          accessibilityState={{ checked: candidate === locale }}
-          onPress={() => setLocale(candidate)}
-          style={[styles.option, candidate === locale && styles.selected]}
+          accessibilityLabel={messages.close}
+          accessibilityRole="button"
+          onPress={() => setOpen(false)}
+          style={styles.backdrop}
         >
-          <Text style={[styles.label, candidate === locale && styles.selectedLabel]}>{labels[candidate]}</Text>
+          <View accessibilityRole="radiogroup" style={styles.menu}>
+            <AppText variant="heading">{messages.language}</AppText>
+            {NATIVE_LOCALES.map((candidate) => (
+              <Pressable
+                key={candidate}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: candidate === locale }}
+                onPress={() => {
+                  setLocale(candidate);
+                  setOpen(false);
+                }}
+                style={[styles.option, candidate === locale && styles.selected]}
+              >
+                <Text style={[styles.label, candidate === locale && styles.selectedLabel]}>
+                  {labels[candidate]}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
         </Pressable>
-      ))}
-    </View>
+      </Modal>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  group: { flexDirection: "row", gap: spacing.xs, alignSelf: "flex-start" },
-  option: { minHeight: 40, minWidth: 44, paddingHorizontal: spacing.sm, borderRadius: radius.pill, alignItems: "center", justifyContent: "center" },
+  trigger: {
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    height: 44,
+    justifyContent: "center",
+    width: 44,
+  },
+  pressed: { backgroundColor: "#F3F4F6" },
+  backdrop: {
+    alignItems: "flex-end",
+    backgroundColor: "rgba(23, 23, 23, 0.35)",
+    flex: 1,
+    justifyContent: "flex-start",
+    paddingHorizontal: spacing.lg,
+    paddingTop: 88,
+  },
+  menu: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    gap: spacing.xs,
+    minWidth: 210,
+    padding: spacing.md,
+  },
+  option: {
+    alignItems: "center",
+    borderRadius: radius.md,
+    justifyContent: "center",
+    minHeight: 48,
+    paddingHorizontal: spacing.md,
+  },
   selected: { backgroundColor: colors.text },
-  label: { ...typography.caption, color: colors.textMuted },
+  label: { ...typography.label, color: colors.text },
   selectedLabel: { color: colors.surface },
 });

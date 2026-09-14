@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 
 import { AppText, Card, PrimaryButton, Screen, StatusMessage } from "../../../../components/ui";
 import { MediaAttribution } from "../../../../components/MediaAttribution";
+import { CitywalkLoading } from "../../../../components/CitywalkLoading";
 import { colors, radius, spacing } from "../../../../design/tokens";
 import { usePublicCity } from "../../../../hooks/usePublicContent";
 import { citywalkApi } from "../../../../lib/api/instance";
@@ -25,7 +26,7 @@ export default function TourScreen() {
   const cityState = usePublicCity(identity?.citySlug ?? "invalid", locale);
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
-  if (cityState.status === "loading") return <Screen><AppText>{messages.loading}</AppText></Screen>;
+  if (cityState.status === "loading") return <Screen><CitywalkLoading /></Screen>;
   if (cityState.status === "error") return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
 
   const tour = resolveTourForRoute(cityState.data, identity);

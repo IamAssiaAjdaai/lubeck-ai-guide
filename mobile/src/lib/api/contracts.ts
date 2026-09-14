@@ -49,6 +49,10 @@ export type PublicPlace = LocalizedContent<Readonly<{
   category: "see" | "eat" | "fun";
   coordinates: Readonly<{ lat: number; lng: number }>;
   durationMinutes: number;
+  environment?: "indoor" | "outdoor" | "mixed";
+  pricing?: "free" | "paid" | "mixed" | "unknown";
+  status?: "open" | "closed" | "renovation" | "seasonal" | "unknown";
+  tags?: readonly string[];
   image?: string;
   media: readonly PublicMedia[];
 }>;
@@ -202,6 +206,12 @@ function parsePlace(value: unknown): PublicPlace {
       lng: asFiniteNumber(coordinates.lng, "longitude"),
     },
     durationMinutes: asFiniteNumber(object.durationMinutes, "visit duration"),
+    ...(isEnvironment(object.environment) ? { environment: object.environment } : {}),
+    ...(isPricing(object.pricing) ? { pricing: object.pricing } : {}),
+    ...(isPlaceStatus(object.status) ? { status: object.status } : {}),
+    tags: Array.isArray(object.tags)
+      ? object.tags.flatMap((tag) => typeof tag === "string" && tag.trim() ? [tag] : [])
+      : [],
     ...(typeof object.image === "string" ? { image: object.image } : {}),
     media: parseMediaArray(object.media),
     ...localized,
@@ -350,6 +360,19 @@ function parseGuideSource(value: unknown): GuideSource {
 
 function isMediaKind(value: unknown): value is PublicMedia["kind"] {
   return value === "image" || value === "audio" || value === "video" || value === "document";
+}
+
+function isEnvironment(value: unknown): value is NonNullable<PublicPlace["environment"]> {
+  return value === "indoor" || value === "outdoor" || value === "mixed";
+}
+
+function isPricing(value: unknown): value is NonNullable<PublicPlace["pricing"]> {
+  return value === "free" || value === "paid" || value === "mixed" || value === "unknown";
+}
+
+function isPlaceStatus(value: unknown): value is NonNullable<PublicPlace["status"]> {
+  return value === "open" || value === "closed" || value === "renovation" ||
+    value === "seasonal" || value === "unknown";
 }
 
 function isMediaPurpose(value: unknown): value is PublicMedia["purpose"] {

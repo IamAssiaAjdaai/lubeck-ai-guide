@@ -3,7 +3,9 @@ import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { NativeCityMap } from "../../../components/NativeCityMap";
+import { NativeTourPlanner } from "../../../components/NativeTourPlanner";
 import { MediaAttribution } from "../../../components/MediaAttribution";
+import { CitywalkLoading } from "../../../components/CitywalkLoading";
 import { AppText, Card, Screen, SectionTitle, StatusMessage } from "../../../components/ui";
 import { colors, radius, spacing } from "../../../design/tokens";
 import { usePublicCity } from "../../../hooks/usePublicContent";
@@ -20,7 +22,7 @@ export default function CityScreen() {
   const cityState = usePublicCity(identity?.citySlug ?? "invalid", locale);
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
-  if (cityState.status === "loading") return <Screen><AppText>{messages.loading}</AppText></Screen>;
+  if (cityState.status === "loading") return <Screen><CitywalkLoading /></Screen>;
   if (cityState.status === "error") return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
 
   const { city, places, tours } = cityState.data;
@@ -29,9 +31,26 @@ export default function CityScreen() {
     writingDirection: cityDirection,
     textAlign: getNativeTextAlignment(city.resolvedLocale),
   } as const;
+  const cityImage = selectPrimaryImageMedia(city.media);
+  const firstTourStop = tours[0]
+    ? [...tours[0].stops].sort((first, second) => first.position - second.position)[0]
+    : undefined;
+  const plannerOrigin = places.find(({ slug }) => slug === firstTourStop?.placeSlug)?.coordinates ??
+    places[0]?.coordinates;
   return (
     <Screen>
       <Stack.Screen options={{ title: city.content.name }} />
+      {cityImage ? (
+        <View>
+          <Image
+            source={{ uri: citywalkApi.resolveUrl(cityImage.url) }}
+            contentFit="cover"
+            style={styles.cityHero}
+            accessibilityLabel={city.content.name}
+          />
+          <MediaAttribution attribution={cityImage.attribution} />
+        </View>
+      ) : null}
       <View style={{ direction: cityDirection }}>
         <AppText variant="title" style={cityTextStyle}>{city.content.name}</AppText>
         {city.content.shortDescription ? (
@@ -41,9 +60,6 @@ export default function CityScreen() {
           <AppText style={[cityTextStyle, { color: colors.textMuted }]}>{city.content.description}</AppText>
         ) : null}
       </View>
-
-      <SectionTitle>{messages.map}</SectionTitle>
-      <NativeCityMap places={places} />
 
       {tours.length > 0 ? (
         <View>
@@ -55,6 +71,12 @@ export default function CityScreen() {
               writingDirection: tourDirection,
               textAlign: getNativeTextAlignment(tour.resolvedLocale),
             } as const;
+            const stopNames = [...tour.stops]
+              .sort((first, second) => first.position - second.position)
+              .flatMap((stop) => {
+                const place = places.find(({ slug }) => slug === stop.placeSlug);
+                return place ? [place.content.name] : [];
+              });
             return (
               <Link
                 key={tour.slug}
@@ -89,6 +111,12 @@ export default function CityScreen() {
                           : ""}
                         {tour.stops.length} {messages.stops}
                       </AppText>
+                      {stopNames.map((name, index) => (
+                        <AppText key={`${tour.slug}-${index}`} variant="caption" style={styles.stopName}>
+                          {index + 1}. {name}
+                        </AppText>
+                      ))}
+                      <AppText variant="label" style={styles.startTour}>{messages.startTour} →</AppText>
                       {tour.didFallback ? (
                         <AppText variant="caption" style={styles.fallback}>
                           {messages.fallbackContent}
@@ -103,6 +131,13 @@ export default function CityScreen() {
           })}
         </View>
       ) : null}
+
+      {plannerOrigin ? (
+        <NativeTourPlanner citySlug={city.slug} places={places} origin={plannerOrigin} />
+      ) : null}
+
+      <SectionTitle>{messages.map}</SectionTitle>
+      <NativeCityMap places={places} />
 
       <SectionTitle>{messages.places}</SectionTitle>
       {places.map((place) => {
@@ -147,8 +182,11 @@ export default function CityScreen() {
 }
 
 const styles = StyleSheet.create({
+  cityHero: { width: "100%", height: 210, borderRadius: radius.lg, backgroundColor: "#EEF2FF" },
   placeImage: { width: "100%", height: 150, borderRadius: radius.md, backgroundColor: "#EEF2FF" },
   metadata: { color: colors.textMuted, marginTop: spacing.sm },
   tourLink: { marginTop: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
+  stopName: { color: colors.textMuted, marginTop: spacing.xs },
+  startTour: { color: colors.primary, marginTop: spacing.md },
 });

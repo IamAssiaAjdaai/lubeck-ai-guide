@@ -105,12 +105,18 @@ function includesIgnoreCase(value: string, expected: string): boolean {
 function deduplicateSegments(
   segments: readonly MediaAttributionSegment[],
 ): readonly MediaAttributionSegment[] {
-  return segments.filter(
-    (segment, index) =>
-      !segments.slice(0, index).some(
-        (candidate) =>
-          candidate.label.toLocaleLowerCase() === segment.label.toLocaleLowerCase() &&
-          candidate.url === segment.url,
-      ),
-  );
+  const output: MediaAttributionSegment[] = [];
+  for (const segment of segments) {
+    const duplicateIndex = output.findIndex(
+      ({ label }) => label.toLocaleLowerCase() === segment.label.toLocaleLowerCase(),
+    );
+    if (duplicateIndex < 0) {
+      output.push(segment);
+      continue;
+    }
+    if (!output[duplicateIndex]?.url && segment.url) {
+      output[duplicateIndex] = segment;
+    }
+  }
+  return output;
 }

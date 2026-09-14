@@ -1,4 +1,4 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import type { PropsWithChildren, ReactNode, Ref } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -19,7 +19,11 @@ import { useNativeLocale } from "../localization/LocaleProvider";
 export function Screen({
   children,
   includeTopSafeArea = false,
-}: PropsWithChildren<{ includeTopSafeArea?: boolean }>) {
+  scrollViewRef,
+}: PropsWithChildren<{
+  includeTopSafeArea?: boolean;
+  scrollViewRef?: Ref<ScrollView>;
+}>) {
   const { direction } = useNativeLocale();
   return (
     <SafeAreaView
@@ -27,6 +31,7 @@ export function Screen({
       edges={getScreenSafeAreaEdges(includeTopSafeArea)}
     >
       <ScrollView
+        ref={scrollViewRef}
         contentContainerStyle={styles.screenContent}
         keyboardShouldPersistTaps="handled"
       >
@@ -62,8 +67,9 @@ export function Card({ children, style }: PropsWithChildren<{ style?: ViewStyle 
 export function PrimaryButton({
   label,
   busy = false,
+  leadingIcon,
   ...props
-}: PressableProps & { label: string; busy?: boolean }) {
+}: PressableProps & { label: string; busy?: boolean; leadingIcon?: ReactNode }) {
   return (
     <Pressable
       accessibilityRole="button"
@@ -75,7 +81,14 @@ export function PrimaryButton({
         (busy || props.disabled) && styles.disabled,
       ]}
     >
-      {busy ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.buttonText}>{label}</Text>}
+      {busy ? (
+        <ActivityIndicator color="#FFFFFF" />
+      ) : (
+        <View style={styles.buttonContent}>
+          {leadingIcon}
+          <Text numberOfLines={1} adjustsFontSizeToFit style={styles.buttonText}>{label}</Text>
+        </View>
+      )}
     </Pressable>
   );
 }
@@ -124,6 +137,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonPressed: { backgroundColor: colors.primaryPressed },
   buttonText: { color: "#FFFFFF", ...typography.label },
+  buttonContent: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
   disabled: { opacity: 0.55 },
   sectionTitle: { marginTop: spacing.sm },
   status: { borderRadius: radius.md, backgroundColor: "#EEF2FF", padding: spacing.md },
