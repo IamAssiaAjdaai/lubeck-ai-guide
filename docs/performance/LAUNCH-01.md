@@ -66,6 +66,25 @@ The first transformation can include private-object download and encoding time; 
 responses are then CDN-cacheable for seven days with 30 days of stale-while-revalidate. Final
 Preview measurements must confirm warm CDN behavior.
 
+## Exact-head Preview sample
+
+Commit `6bc6a6d741db6e49a50144a93e120bb0bf524fca` was measured on its READY Vercel
+Preview. Vercel removes `s-maxage` from the client-visible `Cache-Control` value after using
+it for CDN policy, so the observed `public, max-age=0` plus `X-Vercel-Cache: HIT` confirms
+the public CDN path.
+
+| Endpoint | Bytes | No-cache request | Warm median | CDN result |
+| --- | ---: | ---: | ---: | --- |
+| `/api/content/cities?locale=en` | 253 | 1,564 ms | 69 ms | HIT |
+| `/api/content/cities/lubeck?locale=en` | 19,368 | 164 ms | 66 ms | HIT |
+| `/api/content/cities/lubeck/summary?locale=en` | 14,398 | 209 ms | 69 ms | HIT |
+
+The deployed compact Lübeck response is 25.7% smaller than the compatibility response.
+Its five available legacy card images returned `image/webp`; the largest was 120,580 bytes.
+Hamburg was intentionally not present in this Preview database and returned a private,
+non-cacheable 404. Hamburg post-change evidence therefore remains the local authoritative
+content measurement above; a Hamburg-backed Preview measurement is still required before merge.
+
 ## Cache and publication freshness contract
 
 Public city index, compact city, full compatibility city, and place-detail responses use a
