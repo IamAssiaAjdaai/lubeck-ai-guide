@@ -16,7 +16,8 @@ import {
   type TourInterest,
   type TourTimeBudget,
 } from "../lib/tourPlanning";
-import { saveLocalTripDraft } from "../lib/tripStorage";
+import { saveLocalTrip } from "../lib/tripStorage";
+import { createMobileTripId, createMobileTripPlaceParams } from "../lib/tripNavigation";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { NativeIcon } from "./NativeIcon";
 import { AppText, Card, PrimaryButton, StatusMessage } from "./ui";
@@ -51,6 +52,7 @@ export function NativeTourPlanner({
   );
   const [timeBudget, setTimeBudget] = useState<TourTimeBudget>(90);
   const [result, setResult] = useState<NativeTourResult>();
+  const [tripId, setTripId] = useState<string>();
   const [saveState, setSaveState] = useState<"saved" | "error">();
   const recommendations = useMemo(
     () => rankNativePlaces(places, preferences, origin).slice(0, 3),
@@ -75,13 +77,14 @@ export function NativeTourPlanner({
       timeBudgetMinutes: timeBudget,
       origin,
     }));
+    setTripId(createMobileTripId("personalized"));
     setSaveState(undefined);
   }
 
   async function saveTrip() {
     if (!result) return;
     try {
-      await saveLocalTripDraft({ citySlug, preferences, result, timeBudgetMinutes: timeBudget });
+      await saveLocalTrip({ citySlug, preferences, result, timeBudgetMinutes: timeBudget });
       setSaveState("saved");
     } catch {
       setSaveState("error");
@@ -203,6 +206,22 @@ export function NativeTourPlanner({
                     </View>
                   ))}
                   <AppText variant="caption" style={styles.muted}>{messages.distanceDisclaimer}</AppText>
+                  {tripId ? (
+                    <Link
+                      href={{
+                        pathname: "/city/[citySlug]/place/[placeSlug]",
+                        params: createMobileTripPlaceParams({
+                          id: tripId,
+                          citySlug,
+                          stopSlugs: result.stops.map(({ place }) => place.slug),
+                          source: "personalized",
+                        }, 0),
+                      }}
+                      asChild
+                    >
+                      <PrimaryButton label={messages.startTrip} />
+                    </Link>
+                  ) : null}
                   <PrimaryButton label={messages.saveTrip} onPress={() => void saveTrip()} />
                   {saveState === "saved" ? <StatusMessage>{messages.tripSavedLocally}</StatusMessage> : null}
                   {saveState === "error" ? <StatusMessage>{messages.tripSaveFailed}</StatusMessage> : null}

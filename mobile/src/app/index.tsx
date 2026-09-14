@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useRef } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import citywalkHero from "../../assets/images/citywalk-hero.png";
 import { CitywalkLoading } from "../components/CitywalkLoading";
@@ -65,32 +65,33 @@ export default function HomeScreen() {
         } as const;
         return (
           <Card key={city.slug}>
-            {image && imageUrl ? (
-              <View>
-                <Image
-                  source={{ uri: citywalkApi.resolveUrl(imageUrl) }}
-                  cachePolicy="memory-disk"
-                  contentFit="cover"
-                  style={styles.cityImage}
-                  accessibilityLabel={city.name}
-                />
-                <MediaAttribution attribution={image.attribution} />
-              </View>
-            ) : <View style={styles.imageFallback} />}
-            <View style={{ direction: contentDirection }}>
-              <AppText variant="title" style={contentTextStyle}>{city.name}</AppText>
-              {city.shortDescription ? (
-                <AppText style={contentTextStyle}>{city.shortDescription}</AppText>
-              ) : null}
-            </View>
             <Link href={{ pathname: "/city/[citySlug]", params: { citySlug: city.slug } }} asChild>
-              <PrimaryButton
-                label={`${messages.exploreCity} — ${city.name}`}
+              <Pressable
+                accessibilityLabel={`${messages.exploreCity}: ${city.name}`}
+                accessibilityRole="link"
                 onPressIn={() => {
                   void prefetchPublicCity(city.slug, locale).catch(() => undefined);
                 }}
-              />
+                style={({ pressed }) => [styles.cityLink, pressed && styles.cityLinkPressed]}
+              >
+                {image && imageUrl ? (
+                  <Image
+                    source={{ uri: citywalkApi.resolveUrl(imageUrl) }}
+                    cachePolicy="memory-disk"
+                    contentFit="cover"
+                    style={styles.cityImage}
+                    accessibilityLabel={city.name}
+                  />
+                ) : <View style={styles.imageFallback} />}
+                <View style={{ direction: contentDirection }}>
+                  <AppText variant="title" style={contentTextStyle}>{city.name}</AppText>
+                  {city.shortDescription ? (
+                    <AppText style={contentTextStyle}>{city.shortDescription}</AppText>
+                  ) : null}
+                </View>
+              </Pressable>
             </Link>
+            <MediaAttribution attribution={image?.attribution} />
           </Card>
         );
       }) : null}
@@ -117,6 +118,8 @@ const styles = StyleSheet.create({
   reassurance: { alignItems: "center", flexDirection: "row", gap: spacing.xs },
   check: { color: colors.teal, fontWeight: "800" },
   reassuranceText: { color: colors.textMuted },
+  cityLink: { borderRadius: radius.md, gap: spacing.sm },
+  cityLinkPressed: { opacity: 0.82 },
   cityImage: { width: "100%", height: 180, borderRadius: radius.md, backgroundColor: "#EEF2FF" },
   imageFallback: { width: "100%", height: 120, borderRadius: radius.md, backgroundColor: "#EEF2FF" },
 });

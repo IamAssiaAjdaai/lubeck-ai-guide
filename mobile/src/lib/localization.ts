@@ -14,6 +14,11 @@ export type NativeMessages = Readonly<{
   minutes: string;
   estimatedDuration: string;
   startTour: string;
+  startTrip: string;
+  stopProgress: string;
+  nextStop: string;
+  previousStop: string;
+  finishTrip: string;
   fallbackContent: string;
   places: string;
   map: string;
@@ -59,6 +64,12 @@ export type NativeMessages = Readonly<{
   signedIn: string;
   signOut: string;
   authError: string;
+  invalidEmail: string;
+  passwordTooShort: string;
+  accountExists: string;
+  accountCreated: string;
+  invalidCredentials: string;
+  authNetworkError: string;
   homeHeroTitle: string;
   homeHeroSubtitle: string;
   discoverCity: string;
@@ -90,13 +101,17 @@ export type NativeMessages = Readonly<{
   saveTrip: string;
   tripSavedLocally: string;
   tripSaveFailed: string;
+  savedTrips: string;
+  resumeTrip: string;
+  noSavedTrips: string;
 }>;
 
 const messages: Record<NativeLocale, NativeMessages> = {
   en: {
     appTagline: "Walk. Discover. Hear every city.", discoverCities: "Discover a city",
     availableCities: "Available cities", exploreCity: "Explore city", tours: "Tours", stops: "stops",
-    minutes: "min", estimatedDuration: "Estimated duration", startTour: "Start tour",
+    minutes: "min", estimatedDuration: "Estimated duration", startTour: "Start tour", startTrip: "Start trip",
+    stopProgress: "Stop {current} of {total}", nextStop: "Next stop", previousStop: "Previous stop", finishTrip: "Finish trip",
     fallbackContent: "This content is shown in its available language.", places: "Places", map: "City map",
     useLocation: "Use my location", locationRequesting: "Finding your location…",
     locationDenied: "Location permission was denied. The map remains available.",
@@ -117,6 +132,10 @@ const messages: Record<NativeLocale, NativeMessages> = {
     account: "Account", guestMode: "CITYWALK works without an account.",
     continueAsGuest: "Continue as guest", signIn: "Sign in", signUp: "Create account", email: "Email",
     password: "Password", signedIn: "Signed in", signOut: "Sign out", authError: "Authentication could not be completed.",
+    invalidEmail: "Enter a valid email address.", passwordTooShort: "Password must be at least 12 characters.",
+    accountExists: "An account already exists for this email. Try signing in.",
+    accountCreated: "Account created. You can now sign in.",
+    invalidCredentials: "Email or password is incorrect.", authNetworkError: "CITYWALK could not reach the account service. Try again.",
     homeHeroTitle: "Discover cities one step at a time.",
     homeHeroSubtitle: "Explore local stories, audio guides and hidden places in your language.",
     discoverCity: "Discover a city", noSignUpRequired: "No sign-up required",
@@ -129,11 +148,13 @@ const messages: Record<NativeLocale, NativeMessages> = {
     distanceDisclaimer: "Distance is estimated between stops and may differ from the actual walking route.",
     noRoute: "No suitable route fits this time and your current preferences.", saveTrip: "Save your trip",
     tripSavedLocally: "Saved on this device. Account sync is not available yet.", tripSaveFailed: "This trip could not be saved on this device.",
+    savedTrips: "Saved trips", resumeTrip: "Resume trip", noSavedTrips: "No trips are saved on this device yet.",
   },
   de: {
     appTagline: "Gehen. Entdecken. Städte hören.", discoverCities: "Stadt entdecken",
     availableCities: "Verfügbare Städte", exploreCity: "Stadt erkunden", tours: "Touren", stops: "Stopps",
-    minutes: "Min.", estimatedDuration: "Geschätzte Dauer", startTour: "Tour starten",
+    minutes: "Min.", estimatedDuration: "Geschätzte Dauer", startTour: "Tour starten", startTrip: "Tour starten",
+    stopProgress: "Stopp {current} von {total}", nextStop: "Nächster Stopp", previousStop: "Vorheriger Stopp", finishTrip: "Tour beenden",
     fallbackContent: "Dieser Inhalt wird in der verfügbaren Sprache angezeigt.", places: "Orte", map: "Stadtplan",
     useLocation: "Meinen Standort verwenden", locationRequesting: "Standort wird ermittelt…",
     locationDenied: "Der Standortzugriff wurde abgelehnt. Die Karte bleibt verfügbar.",
@@ -154,6 +175,10 @@ const messages: Record<NativeLocale, NativeMessages> = {
     account: "Konto", guestMode: "CITYWALK funktioniert ohne Konto.",
     continueAsGuest: "Als Gast fortfahren", signIn: "Anmelden", signUp: "Konto erstellen", email: "E-Mail",
     password: "Passwort", signedIn: "Angemeldet", signOut: "Abmelden", authError: "Anmeldung konnte nicht abgeschlossen werden.",
+    invalidEmail: "Gib eine gültige E-Mail-Adresse ein.", passwordTooShort: "Das Passwort muss mindestens 12 Zeichen lang sein.",
+    accountExists: "Für diese E-Mail-Adresse gibt es bereits ein Konto. Versuche dich anzumelden.",
+    accountCreated: "Konto erstellt. Du kannst dich jetzt anmelden.",
+    invalidCredentials: "E-Mail-Adresse oder Passwort ist falsch.", authNetworkError: "CITYWALK konnte den Kontodienst nicht erreichen. Versuche es erneut.",
     homeHeroTitle: "Städte entdecken, Schritt für Schritt.",
     homeHeroSubtitle: "Entdecke lokale Geschichten, Audioguides und verborgene Orte in deiner Sprache.",
     discoverCity: "Entdecke eine Stadt", noSignUpRequired: "Keine Anmeldung erforderlich",
@@ -166,11 +191,13 @@ const messages: Record<NativeLocale, NativeMessages> = {
     distanceDisclaimer: "Die Entfernung wird zwischen den Stopps geschätzt und kann vom tatsächlichen Fußweg abweichen.",
     noRoute: "Für diese Zeit und deine aktuellen Wünsche passt keine geeignete Route.", saveTrip: "Tour speichern",
     tripSavedLocally: "Auf diesem Gerät gespeichert. Kontosynchronisierung ist noch nicht verfügbar.", tripSaveFailed: "Diese Tour konnte auf dem Gerät nicht gespeichert werden.",
+    savedTrips: "Gespeicherte Touren", resumeTrip: "Tour fortsetzen", noSavedTrips: "Auf diesem Gerät sind noch keine Touren gespeichert.",
   },
   ar: {
     appTagline: "امشِ. اكتشف. واستمع إلى كل مدينة.", discoverCities: "اكتشف مدينة",
     availableCities: "المدن المتاحة", exploreCity: "استكشف المدينة", tours: "الجولات", stops: "محطات",
-    minutes: "دقيقة", estimatedDuration: "المدة التقديرية", startTour: "ابدأ الجولة",
+    minutes: "دقيقة", estimatedDuration: "المدة التقديرية", startTour: "ابدأ الجولة", startTrip: "ابدأ الرحلة",
+    stopProgress: "المحطة {current} من {total}", nextStop: "المحطة التالية", previousStop: "المحطة السابقة", finishTrip: "إنهاء الرحلة",
     fallbackContent: "يُعرض هذا المحتوى باللغة المتاحة.", places: "الأماكن", map: "خريطة المدينة",
     useLocation: "استخدام موقعي", locationRequesting: "جارٍ تحديد موقعك…",
     locationDenied: "تم رفض إذن الموقع. تظل الخريطة متاحة.",
@@ -191,6 +218,10 @@ const messages: Record<NativeLocale, NativeMessages> = {
     account: "الحساب", guestMode: "يعمل CITYWALK دون حساب.",
     continueAsGuest: "المتابعة كضيف", signIn: "تسجيل الدخول", signUp: "إنشاء حساب", email: "البريد الإلكتروني",
     password: "كلمة المرور", signedIn: "تم تسجيل الدخول", signOut: "تسجيل الخروج", authError: "تعذّر إكمال المصادقة.",
+    invalidEmail: "أدخل عنوان بريد إلكتروني صالحًا.", passwordTooShort: "يجب ألا تقل كلمة المرور عن 12 حرفًا.",
+    accountExists: "يوجد حساب لهذا البريد الإلكتروني بالفعل. حاول تسجيل الدخول.",
+    accountCreated: "تم إنشاء الحساب. يمكنك الآن تسجيل الدخول.",
+    invalidCredentials: "البريد الإلكتروني أو كلمة المرور غير صحيحة.", authNetworkError: "تعذر على CITYWALK الوصول إلى خدمة الحساب. حاول مرة أخرى.",
     homeHeroTitle: "اكتشف المدن خطوة بخطوة.",
     homeHeroSubtitle: "استكشف القصص المحلية والأدلة الصوتية والأماكن الخفية بلغتك.",
     discoverCity: "اكتشف مدينة", noSignUpRequired: "لا يلزم التسجيل",
@@ -203,6 +234,7 @@ const messages: Record<NativeLocale, NativeMessages> = {
     distanceDisclaimer: "المسافة تقديرية بين المحطات وقد تختلف عن مسار المشي الفعلي.",
     noRoute: "لا يوجد مسار مناسب لهذا الوقت والتفضيلات الحالية.", saveTrip: "احفظ رحلتك",
     tripSavedLocally: "حُفظت على هذا الجهاز. مزامنة الحساب غير متاحة بعد.", tripSaveFailed: "تعذر حفظ الرحلة على هذا الجهاز.",
+    savedTrips: "الرحلات المحفوظة", resumeTrip: "متابعة الرحلة", noSavedTrips: "لا توجد رحلات محفوظة على هذا الجهاز بعد.",
   },
 };
 

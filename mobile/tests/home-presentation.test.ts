@@ -19,4 +19,10 @@ describe("native Home presentation", () => {
     expect(homeSource).toContain("prefetchPublicCity(city.slug, locale)");
     expect(homeSource).toContain('cachePolicy="memory-disk"');
   });
+
+  it("makes each city card navigable without a redundant Explore City button", () => {
+    expect(homeSource).toContain('accessibilityRole="link"');
+    expect(homeSource).toContain('accessibilityLabel={`${messages.exploreCity}: ${city.name}`}');
+    expect(homeSource).not.toContain('label={`${messages.exploreCity} — ${city.name}`}');
+  });
 });

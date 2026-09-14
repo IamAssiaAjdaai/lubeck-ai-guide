@@ -14,6 +14,7 @@ import {
   parseTourRouteIdentity,
   resolveTourForRoute,
 } from "../../../../lib/routing";
+import { createMobileTripPlaceParams } from "../../../../lib/tripNavigation";
 import { useNativeLocale } from "../../../../localization/LocaleProvider";
 
 export default function TourScreen() {
@@ -46,6 +47,12 @@ export default function TourScreen() {
   } as const;
   const image = selectPrimaryImageMedia(tour.media);
   const imageUrl = selectImageUrl(image, undefined, undefined, "detail");
+  const tripIdentity = {
+    id: `published-${tour.slug}`,
+    citySlug: identity.citySlug,
+    stopSlugs: stops.map(({ place }) => place.slug),
+    source: "published" as const,
+  };
 
   return (
     <Screen>
@@ -95,7 +102,7 @@ export default function TourScreen() {
             key={`${tour.slug}-${stop.position}-${place.slug}`}
             href={{
               pathname: "/city/[citySlug]/place/[placeSlug]",
-              params: { citySlug: identity.citySlug, placeSlug: place.slug },
+              params: createMobileTripPlaceParams(tripIdentity, index),
             }}
             asChild
           >
@@ -122,7 +129,7 @@ export default function TourScreen() {
         <Link
           href={{
             pathname: "/city/[citySlug]/place/[placeSlug]",
-            params: { citySlug: identity.citySlug, placeSlug: stops[0].place.slug },
+            params: createMobileTripPlaceParams(tripIdentity, 0),
           }}
           asChild
         >

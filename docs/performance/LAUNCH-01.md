@@ -66,24 +66,40 @@ The first transformation can include private-object download and encoding time; 
 responses are then CDN-cacheable for seven days with 30 days of stale-while-revalidate. Final
 Preview measurements must confirm warm CDN behavior.
 
-## Exact-head Preview sample
+## Exact-head acceptance Preview (2026-09-14)
 
-Commit `6bc6a6d741db6e49a50144a93e120bb0bf524fca` was measured on its READY Vercel
-Preview. Vercel removes `s-maxage` from the client-visible `Cache-Control` value after using
-it for CDN policy, so the observed `public, max-age=0` plus `X-Vercel-Cache: HIT` confirms
-the public CDN path.
+Final PR head `43f0084f171caa5f9a238c5edb2ef69c198b8900` was deployed from an exact
+`git archive` to an isolated Vercel Preview using the non-production Store Beta content and
+R2 media environment. The acceptance origin was
+`https://lubeck-ai-guide-rhdga4bzx-iamassiaajdaais-projects.vercel.app`.
+No Production environment, database, storage, or deployment was changed.
 
-| Endpoint | Bytes | No-cache request | Warm median | CDN result |
-| --- | ---: | ---: | ---: | --- |
-| `/api/content/cities?locale=en` | 253 | 1,564 ms | 69 ms | HIT |
-| `/api/content/cities/lubeck?locale=en` | 19,368 | 164 ms | 66 ms | HIT |
-| `/api/content/cities/lubeck/summary?locale=en` | 14,398 | 209 ms | 69 ms | HIT |
+Vercel removes `s-maxage` from the client-visible `Cache-Control` value after using it for CDN
+policy. The observed `public, max-age=0` plus `X-Vercel-Cache: HIT` after the first request
+confirms the public CDN path. A stale response may report `STALE` while Vercel revalidates it;
+the following request returns `HIT`.
 
-The deployed compact Lübeck response is 25.7% smaller than the compatibility response.
-Its five available legacy card images returned `image/webp`; the largest was 120,580 bytes.
-Hamburg was intentionally not present in this Preview database and returned a private,
-non-cacheable 404. Hamburg post-change evidence therefore remains the local authoritative
-content measurement above; a Hamburg-backed Preview measurement is still required before merge.
+| Endpoint | Bytes | No-cache request | Warm median | Server content timing | Warm CDN |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `/api/content/cities?locale=en` | 2,706 | 206.1 ms | 65.6 ms | 2,266.3 ms | HIT |
+| `/api/content/cities/hamburg?locale=en` | 19,612 | 63.4 ms | 55.2 ms | 505.9 ms | HIT |
+| `/api/content/cities/hamburg/summary?locale=en` | 16,910 | 65.5 ms | 61.2 ms | 480.0 ms | HIT |
+| `/api/content/cities/lubeck?locale=en` | 44,563 | 82.4 ms | 58.3 ms | 1,063.6 ms | HIT |
+| `/api/content/cities/lubeck/summary?locale=en` | 39,357 | 69.6 ms | 63.6 ms | 663.3 ms | HIT |
+
+Representative place-detail contracts were also verified. Lübeck Holstentor returned 4,446
+bytes and Hamburg Rathaus returned 3,017 bytes; both transitioned from `X-Vercel-Cache: MISS`
+to `HIT` on the immediate second request.
+
+| City | Variant sample | Assets measured | Total bytes | Largest response | Over 350 KB |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Hamburg | card (720 px WebP) | 10 | 592,730 | 98,714 | 0 |
+| Hamburg | hero (1600 px WebP) | 1 | 318,246 | 318,246 | 0 |
+| Lübeck | card (720 px WebP) | 21 | 1,840,160 | 170,374 | 0 |
+| Lübeck | hero (1600 px WebP) | 1 | 321,942 | 321,942 | 0 |
+
+Every measured image returned HTTP 200 with `image/webp`; list cards did not download the
+multi-megabyte originals.
 
 ## Cache and publication freshness contract
 
@@ -113,11 +129,33 @@ hardware:
    immediate. Record the physical device, Android version, network, and samples with the PR.
 
 Automated tests cover cache source timing, persistence, request deduplication, revalidation,
-and cancellation. A physical-device result is still required because emulators and CI cannot
-represent launch hardware or mobile-radio conditions.
+and cancellation.
+
+### Exact-head Android acceptance status (2026-09-14)
+
+An internal standalone Android build was produced from final PR head
+`43f0084f171caa5f9a238c5edb2ef69c198b8900` with a one-off
+`launch01-qa-standalone` profile pointing to the isolated acceptance origin above:
+
+- EAS build: `27398035-3d7e-48b7-88bc-be5f366c1ed6`
+- APK: `https://expo.dev/artifacts/eas/8Owfn_mDYE95WiqV1TxVAh5SbI_g7RUpDUmYSYOVjPk.apk`
+- Distribution: internal
+- Development client: disabled
+
+The temporary profile was removed after upload, so normal `preview`, `store-beta`, and
+Production configuration remain unchanged. On an OPPO CPH2061 running Android 11, the APK was
+installed and launched with Metro stopped and port 8081 closed. It opened CITYWALK directly,
+rendered Available Cities and Hamburg, showed no Expo development-client UI, and produced no
+launch/API-origin error. It does not require `npx expo start`.
+
+The detailed cold, persisted-cache, and memory-cache timing sequence above still needs a separate
+instrumented physical run; no device performance timing is inferred from the successful
+standalone launch or API measurements.
 
 ## Saved-trip production boundary
 
-The Beta local save remains device-only. Production account work still needs server-backed
-load/list/delete operations, conflict/version handling, and authenticated cross-device sync.
+The Beta local save remains device-only. It uses a versioned identifier-only collection so
+multiple trips can be listed and resumed locally without copying place content or coordinates.
+Production account work still needs server-backed load/list/delete operations, conflict/version
+handling, and authenticated cross-device sync.
 Public-content caching never stores account data or raw GPS.
