@@ -1,4 +1,4 @@
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -22,11 +22,13 @@ import { CitywalkApiError } from "../../../../lib/api/client";
 import { citywalkApi } from "../../../../lib/api/instance";
 import {
   appendGuideAnswer,
-  appendGuideError,
   createGuideWelcome,
   startGuideTurn,
   type GuideConversationMessage,
 } from "../../../../lib/guideConversation";
+import { guideConversationStore } from "../../../../lib/guideConversationStorage";
+import { classifyGuideFailure, isGuideAllowanceExhausted, type GuideFailure } from "../../../../lib/guideFailure";
+import { guideUpgradePath } from "../../../../lib/guideUpgrade";
 import { parsePlaceRouteIdentity } from "../../../../lib/routing";
 import { triggerCitywalkHaptic } from "../../../../lib/haptics";
 import { getScreenSafeAreaEdges, SCREEN_TOP_SPACING } from "../../../../lib/screenLayout";
@@ -37,7 +39,12 @@ export default function GuideScreen() {
     citySlug?: string | string[];
     placeSlug?: string | string[];
   }>();
+  const router = useRouter();
   const identity = parsePlaceRouteIdentity(params.citySlug, params.placeSlug);
+  const identityCitySlug = identity?.citySlug;
+  const identityPlaceSlug = identity?.placeSlug;
+  const conversationKey = identityCitySlug && identityPlaceSlug
+    ? `${identityCitySlug}:${identityPlaceSlug}` : "";
   const { direction, locale, messages } = useNativeLocale();
   const placeState = usePublicPlace(
     identity?.citySlug ?? "invalid",
@@ -53,9 +60,26 @@ export default function GuideScreen() {
     createGuideWelcome(messages.guideWelcome),
   ]);
   const [allowance, setAllowance] = useState<GuideAllowance>();
+  const [failure, setFailure] = useState<GuideFailure>();
+  const [hydratedKey, setHydratedKey] = useState("");
+  const hydrated = Boolean(conversationKey && hydratedKey === conversationKey);
   const [busy, setBusy] = useState(false);
   const messageSequence = useRef(0);
   const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    let active = true;
+    if (!identityCitySlug || !identityPlaceSlug) return () => { active = false; };
+    void guideConversationStore.load(identityCitySlug, identityPlaceSlug).then((stored) => {
+      if (!active) return;
+      setAllowance(undefined);
+      setFailure(undefined);
+      setQuestion("");
+      setConversation([createGuideWelcome(messages.guideWelcome), ...stored]);
+      setHydratedKey(`${identityCitySlug}:${identityPlaceSlug}`);
+    });
+    return () => { active = false; };
+  }, [identityCitySlug, identityPlaceSlug, messages.guideWelcome]);
 
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: conversation.length > 1 });
@@ -95,18 +119,26 @@ export default function GuideScreen() {
   }
   const { citySlug, placeSlug } = identity;
 
+  if (!hydrated) return <Screen><CitywalkLoading variant="place" /></Screen>;
+
   function nextMessageId(role: "user" | "assistant"): string {
-    messageSequence.current += 1;
-    return `${role}-${messageSequence.current}`;
+    const existing = new Set(conversation.map(({ id }) => id));
+    let id: string;
+    do {
+      messageSequence.current += 1;
+      id = `${role}-${messageSequence.current}`;
+    } while (existing.has(id));
+    return id;
   }
 
   async function submitQuestion() {
-    if (busy) return;
+    if (busy || !hydrated || isGuideAllowanceExhausted(allowance) || failure === "daily_allowance") return;
     const turn = startGuideTurn(conversation, question, nextMessageId("user"));
     if (!turn) return;
 
     setConversation(turn.messages);
     setQuestion("");
+    setFailure(undefined);
     setBusy(true);
     void triggerCitywalkHaptic("light");
     try {
@@ -118,34 +150,34 @@ export default function GuideScreen() {
         history: turn.history,
       });
       setAllowance(result.allowance);
-      setConversation(appendGuideAnswer(turn.messages, {
+      const completed = appendGuideAnswer(turn.messages, {
         id: nextMessageId("assistant"),
         text: result.answer,
         sources: result.sources,
-      }));
+      });
+      setConversation(completed);
+      void guideConversationStore.save(citySlug, placeSlug, completed);
     } catch (requestError) {
       const apiError = requestError instanceof CitywalkApiError ? requestError : undefined;
       if (apiError?.allowance) setAllowance(apiError.allowance);
-      const errorText = apiError?.code === "guide_daily_allowance_reached"
-        ? messages.guideRateLimited
-        : apiError?.code === "guide_abuse_rate_limited"
-          ? messages.guideAbuseLimited
-          : messages.guideError;
-      setConversation(appendGuideError(turn.messages, {
-        id: nextMessageId("assistant"),
-        text: errorText,
-      }));
+      setConversation(conversation);
+      setQuestion(turn.question);
+      setFailure(classifyGuideFailure(requestError));
       void triggerCitywalkHaptic("error");
     } finally {
       setBusy(false);
     }
   }
 
+  const limitReached = isGuideAllowanceExhausted(allowance) || failure === "daily_allowance";
+  const upgradePath = allowance?.tier === "free" ? guideUpgradePath(citySlug, locale) : undefined;
+  const sendDisabled = busy || !hydrated || limitReached || !question.trim();
+
   return (
     <SafeAreaView edges={getScreenSafeAreaEdges(false)} style={[styles.safeArea, { direction }]}>
       <Stack.Screen options={{ title: messages.askGuideTitle }} />
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <ScrollView
@@ -194,19 +226,52 @@ export default function GuideScreen() {
                 <AppText variant="caption" style={styles.thinkingText}>{messages.guideThinking}</AppText>
               </View>
             ) : null}
+            {limitReached ? (
+              <View accessibilityLiveRegion="polite" style={styles.limitCard}>
+                <AppText variant="heading" style={styles.limitTitle}>
+                  {allowance?.tier === "premium" ? messages.guidePremiumLimitTitle : messages.guideFreeLimitTitle}
+                </AppText>
+                <AppText style={styles.limitDescription}>
+                  {allowance?.tier === "premium"
+                    ? messages.guidePremiumLimitBody.replace("{count}", String(allowance.limit))
+                    : allowance
+                      ? messages.guideFreeLimitBody.replace("{count}", String(allowance.limit))
+                      : messages.guideRateLimited}
+                </AppText>
+                {upgradePath ? (
+                  <Pressable
+                    accessibilityRole="link"
+                    onPress={() => void Linking.openURL(citywalkApi.resolveUrl(upgradePath))}
+                    style={({ pressed }) => [styles.upgradeButton, pressed && styles.sendButtonPressed]}
+                  >
+                    <AppText variant="label" style={styles.upgradeText}>{messages.guideUnlockPass}</AppText>
+                  </Pressable>
+                ) : null}
+                <Pressable accessibilityRole="button" onPress={() => router.back()} style={styles.maybeLaterButton}>
+                  <AppText variant="caption" style={styles.limitFootnote}>{messages.guideMaybeLater}</AppText>
+                </Pressable>
+              </View>
+            ) : failure ? (
+              <View accessibilityLiveRegion="polite" style={styles.retryNotice}>
+                <AppText style={styles.retryText}>
+                  {failure === "abuse_limit" ? messages.guideAbuseLimited : messages.guideError}
+                </AppText>
+              </View>
+            ) : null}
           </View>
         </ScrollView>
 
         <View style={styles.composer}>
           <TextInput
             accessibilityLabel={messages.questionPlaceholder}
-            editable={!busy}
+            editable={!busy && hydrated && !limitReached}
             multiline
             onChangeText={setQuestion}
             onSubmitEditing={() => void submitQuestion()}
             placeholder={messages.questionPlaceholder}
             placeholderTextColor={colors.textMuted}
             returnKeyType="send"
+            submitBehavior="submit"
             style={[styles.input, {
               writingDirection: direction,
               textAlign: direction === "rtl" ? "right" : "left",
@@ -216,12 +281,12 @@ export default function GuideScreen() {
           <Pressable
             accessibilityLabel={messages.sendQuestion}
             accessibilityRole="button"
-            disabled={busy || !question.trim()}
+            disabled={sendDisabled}
             onPress={() => void submitQuestion()}
             style={({ pressed }) => [
               styles.sendButton,
               pressed && styles.sendButtonPressed,
-              (busy || !question.trim()) && styles.sendButtonDisabled,
+              sendDisabled && styles.sendButtonDisabled,
             ]}
           >
             <NativeIcon ios="paperplane.fill" android="send" color="#FFFFFF" size={20} />
@@ -342,6 +407,15 @@ const styles = StyleSheet.create({
   errorBubble: { backgroundColor: "#FEF2F2", borderColor: "#FECACA" },
   thinkingBubble: { alignItems: "center", flexDirection: "row" },
   thinkingText: { color: colors.textMuted },
+  limitCard: { backgroundColor: colors.primarySoft, borderColor: colors.border, borderRadius: radius.lg, borderWidth: StyleSheet.hairlineWidth, gap: spacing.sm, padding: spacing.md },
+  limitTitle: { color: colors.primary },
+  limitDescription: { color: colors.text },
+  limitFootnote: { color: colors.textMuted },
+  maybeLaterButton: { alignItems: "center", minHeight: 40, justifyContent: "center" },
+  upgradeButton: { alignItems: "center", backgroundColor: colors.primary, borderRadius: radius.md, minHeight: 48, justifyContent: "center", paddingHorizontal: spacing.md },
+  upgradeText: { color: "#FFFFFF" },
+  retryNotice: { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radius.md, borderWidth: StyleSheet.hairlineWidth, padding: spacing.md },
+  retryText: { color: colors.textMuted },
   sources: {
     borderTopColor: colors.border,
     borderTopWidth: StyleSheet.hairlineWidth,

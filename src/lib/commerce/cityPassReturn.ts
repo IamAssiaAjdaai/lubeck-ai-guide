@@ -7,8 +7,12 @@ export const CITY_PASS_RETURN_STORAGE_KEY = "citywalk:city-pass:return";
 export type CityPassReturnIntent = Readonly<{
   path: string;
   citySlug: string;
-  placeSlug: string;
+  placeSlug?: string;
 }>;
+
+export function createCityPassLandingPath(locale: Locale, citySlug: string): string {
+  return isCitySlug(citySlug) ? `/${locale}/pass/${citySlug}` : `/${locale}`;
+}
 
 export function createCityPassReturnPath(
   locale: Locale,
@@ -31,6 +35,10 @@ export function parseCityPassReturnPath(
     value.startsWith("//")
   ) {
     return undefined;
+  }
+  const landing = /^\/([a-z]{2})\/pass\/([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(value);
+  if (landing && isLocale(landing[1]) && landing[1] === locale && isCitySlug(landing[2])) {
+    return { path: value, citySlug: landing[2] };
   }
   const match = /^\/([a-z]{2})\/([a-z0-9]+(?:-[a-z0-9]+)*)\/([a-z0-9]+(?:-[a-z0-9]+)*)\?premium=1#premium-audio$/.exec(
     value,

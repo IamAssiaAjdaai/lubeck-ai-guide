@@ -246,9 +246,6 @@ function PlaceCard({
               {place.category.toUpperCase()} · {place.durationMinutes} {visitMinutes}
             </AppText>
           </View>
-          <View accessibilityElementsHidden style={styles.placeChevron}>
-            <NativeIcon ios={direction === "rtl" ? "chevron.left" : "chevron.right"} android={direction === "rtl" ? "chevron_left" : "chevron_right"} color={colors.textSubtle} size={18} />
-          </View>
         </PressableSurface>
       </Link>
       <View style={styles.cardAttribution}><MediaAttribution attribution={imageMedia?.attribution} /></View>
@@ -262,17 +259,18 @@ const styles = StyleSheet.create({
   cityIntroduction: { gap: spacing.sm },
   section: { gap: spacing.md },
   placeImage: { width: "100%", height: 170, backgroundColor: colors.primarySoft },
-  placeThumbnail: { alignSelf: "stretch", backgroundColor: colors.primarySoft, width: 116 },
+  placeThumbnail: { alignSelf: "stretch", backgroundColor: colors.primarySoft, width: 108 },
   placeCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderColor: colors.border,
+    borderWidth: StyleSheet.hairlineWidth,
     marginBottom: spacing.md,
     overflow: "hidden",
   },
-  placeLink: { alignItems: "center", flexDirection: "row", minHeight: 132 },
-  placeContent: { flex: 1, gap: spacing.xs, padding: spacing.md },
-  placeChevron: { paddingEnd: spacing.sm },
-  metadata: { color: colors.textMuted, marginTop: spacing.sm },
+  placeLink: { alignItems: "center", flexDirection: "row", minHeight: 120 },
+  placeContent: { flex: 1, gap: spacing.xs, paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
+  metadata: { color: colors.textMuted, marginTop: spacing.xs },
   muted: { color: colors.textMuted },
   description: { color: colors.textMuted },
   tourCard: { backgroundColor: colors.surface, borderRadius: radius.lg, marginTop: spacing.md, overflow: "hidden" },

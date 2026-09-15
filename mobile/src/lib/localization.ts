@@ -59,6 +59,12 @@ export type NativeMessages = Readonly<{
   guideError: string;
   guideRateLimited: string;
   guideAbuseLimited: string;
+  guideFreeLimitTitle: string;
+  guideFreeLimitBody: string;
+  guidePremiumLimitTitle: string;
+  guidePremiumLimitBody: string;
+  guideUnlockPass: string;
+  guideMaybeLater: string;
   guideWelcome: string;
   guideThinking: string;
   guideQuestionRemaining: string;
@@ -142,6 +148,12 @@ const messages: Record<NativeLocale, NativeMessages> = {
     guideError: "CITYWALK could not answer right now. Please try again.",
     guideRateLimited: "Your AI Guide allowance has been reached. Please try again later.",
     guideAbuseLimited: "CITYWALK is receiving too many questions right now. Please try again shortly.",
+    guideFreeLimitTitle: "You've used today's free AI questions",
+    guideFreeLimitBody: "Your {count} free questions for today are used. Unlock more verified AI Guide questions with CITYWALK Pass.",
+    guidePremiumLimitTitle: "Today's AI Guide questions are used",
+    guidePremiumLimitBody: "Your {count} City Pass questions for this 24-hour window are used. Please return after the allowance resets.",
+    guideUnlockPass: "Unlock CITYWALK Pass",
+    guideMaybeLater: "Maybe later",
     guideWelcome: "I’m your verified CITYWALK guide. Ask me anything about this place.",
     guideThinking: "CITYWALK is checking verified sources…",
     guideQuestionRemaining: "1 free question remaining today",
@@ -192,6 +204,12 @@ const messages: Record<NativeLocale, NativeMessages> = {
     guideError: "CITYWALK kann gerade nicht antworten. Bitte versuche es erneut.",
     guideRateLimited: "Dein Kontingent für den KI-Guide ist erreicht. Bitte versuche es später erneut.",
     guideAbuseLimited: "CITYWALK erhält gerade zu viele Fragen. Bitte versuche es gleich noch einmal.",
+    guideFreeLimitTitle: "Deine kostenlosen KI-Fragen für heute sind aufgebraucht",
+    guideFreeLimitBody: "Deine {count} kostenlosen Fragen für heute sind aufgebraucht. Mit dem CITYWALK Pass kannst du weitere verifizierte Fragen stellen.",
+    guidePremiumLimitTitle: "Deine KI-Fragen für heute sind aufgebraucht",
+    guidePremiumLimitBody: "Deine {count} City-Pass-Fragen für diesen 24-Stunden-Zeitraum sind aufgebraucht. Bitte warte, bis das Kontingent zurückgesetzt wird.",
+    guideUnlockPass: "CITYWALK Pass freischalten",
+    guideMaybeLater: "Vielleicht später",
     guideWelcome: "Ich bin dein verifizierter CITYWALK-Guide. Frag mich etwas über diesen Ort.",
     guideThinking: "CITYWALK prüft verifizierte Quellen…",
     guideQuestionRemaining: "Heute noch 1 kostenlose Frage",
@@ -242,6 +260,12 @@ const messages: Record<NativeLocale, NativeMessages> = {
     guideError: "يتعذر على CITYWALK الإجابة الآن. حاول مرة أخرى.",
     guideRateLimited: "لقد وصلت إلى الحد المسموح به لدليل الذكاء الاصطناعي. حاول لاحقًا.",
     guideAbuseLimited: "يتلقى CITYWALK عددًا كبيرًا من الأسئلة الآن. حاول مرة أخرى بعد قليل.",
+    guideFreeLimitTitle: "استخدمت أسئلتك المجانية لليوم",
+    guideFreeLimitBody: "استخدمت أسئلتك المجانية الـ {count} لهذا اليوم. افتح مزيدًا من أسئلة الدليل الموثقة باستخدام تصريح CITYWALK.",
+    guidePremiumLimitTitle: "استخدمت أسئلة الدليل لهذا اليوم",
+    guidePremiumLimitBody: "استخدمت أسئلة تصريح CITYWALK الـ {count} لهذه الفترة من 24 ساعة. عد بعد تجديد الحد.",
+    guideUnlockPass: "افتح تصريح CITYWALK",
+    guideMaybeLater: "ربما لاحقًا",
     guideWelcome: "أنا دليلك الموثق من CITYWALK. اسألني عن هذا المكان.",
     guideThinking: "يتحقق CITYWALK من المصادر الموثقة…",
     guideQuestionRemaining: "متبقي سؤال مجاني واحد اليوم",

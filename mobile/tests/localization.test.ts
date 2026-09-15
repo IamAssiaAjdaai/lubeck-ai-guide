@@ -18,6 +18,11 @@ describe("native localization foundation", () => {
         guideQuestionRemaining: expect.any(String),
         guideQuestionsRemaining: expect.stringContaining("{count}"),
         guideAbuseLimited: expect.any(String),
+        guideFreeLimitTitle: expect.any(String),
+        guideFreeLimitBody: expect.stringContaining("{count}"),
+        guidePremiumLimitBody: expect.stringContaining("{count}"),
+        guideUnlockPass: expect.any(String),
+        guideMaybeLater: expect.any(String),
       });
     }
   });
