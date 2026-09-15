@@ -1,5 +1,9 @@
 import { getPublicCitySnapshot, toLocalizedPublicCityResponse } from "@/lib/content/publicRepository.server";
 import { isLocale } from "@/lib/i18n";
+import {
+  publicContentErrorResponse,
+  publicContentJsonResponse,
+} from "@/lib/content/publicHttp";
 
 export async function GET(
   request: Request,
@@ -8,15 +12,17 @@ export async function GET(
   const { citySlug } = await params;
   const requestedLocale = new URL(request.url).searchParams.get("locale") ?? "en";
   if (!isLocale(requestedLocale)) {
-    return Response.json({ error: "Unsupported locale." }, { status: 400 });
+    return publicContentErrorResponse("Unsupported locale.", 400);
   }
   try {
+    const startedAt = performance.now();
     const snapshot = await getPublicCitySnapshot(citySlug);
-    return Response.json(
+    return publicContentJsonResponse(
+      request,
       toLocalizedPublicCityResponse(snapshot, requestedLocale),
-      { headers: { "Cache-Control": "private, no-store" } },
+      performance.now() - startedAt,
     );
   } catch {
-    return Response.json({ error: "Published city not found." }, { status: 404 });
+    return publicContentErrorResponse("Published city not found.", 404);
   }
 }

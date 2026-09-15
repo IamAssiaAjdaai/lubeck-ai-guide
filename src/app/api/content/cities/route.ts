@@ -3,24 +3,27 @@ import {
   toLocalizedPublicCityIndexResponse,
 } from "@/lib/content/publicRepository.server";
 import { isLocale } from "@/lib/i18n";
+import {
+  publicContentErrorResponse,
+  publicContentJsonResponse,
+} from "@/lib/content/publicHttp";
 
 export async function GET(request: Request) {
   const requestedLocale =
     new URL(request.url).searchParams.get("locale") ?? "en";
   if (!isLocale(requestedLocale)) {
-    return Response.json({ error: "Unsupported locale." }, { status: 400 });
+    return publicContentErrorResponse("Unsupported locale.", 400);
   }
 
   try {
+    const startedAt = performance.now();
     const summaries = await getPublicCitySummaries();
-    return Response.json(
+    return publicContentJsonResponse(
+      request,
       toLocalizedPublicCityIndexResponse(summaries, requestedLocale),
-      { headers: { "Cache-Control": "private, no-store" } },
+      performance.now() - startedAt,
     );
   } catch {
-    return Response.json(
-      { error: "City discovery is temporarily unavailable." },
-      { status: 503 },
-    );
+    return publicContentErrorResponse("City discovery is temporarily unavailable.", 503);
   }
 }

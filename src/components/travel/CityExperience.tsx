@@ -90,7 +90,7 @@ export default function CityExperience({
 
     return {
       ...place,
-      image: selectedImage?.url ?? resolvePlaceImage(
+      image: resolvePlaceImage(
         contentSource,
         media,
         locale,
@@ -125,7 +125,7 @@ export default function CityExperience({
     snapshot.media?.city,
     locale,
   );
-  const cityImage = cityHeroMedia?.url ?? resolveCityHeroImage(
+  const cityImage = resolveCityHeroImage(
     contentSource,
     snapshot.media?.city,
     locale,

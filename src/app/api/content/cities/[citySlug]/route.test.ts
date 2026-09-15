@@ -37,7 +37,8 @@ describe("public city content API", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+    expect(response.headers.get("Cache-Control")).toContain("s-maxage=60");
+    expect(response.headers.get("ETag")).toMatch(/^"[A-Za-z0-9_-]+"$/);
     expect(mocks.getPublicCitySnapshot).toHaveBeenCalledWith("hamburg");
     expect(mocks.toLocalizedPublicCityResponse).toHaveBeenCalledWith(
       expect.anything(),

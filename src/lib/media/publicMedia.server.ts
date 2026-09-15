@@ -19,6 +19,7 @@ import {
 } from "@/db/schema";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { isMediaRightsCleared } from "@/lib/media/rights";
+import { publicMediaImageVariants } from "@/lib/media/imageVariants";
 import type { MediaEntityType, MediaPurpose, PublicMedia } from "@/lib/media/types";
 
 type PublicAttachment = Readonly<{
@@ -70,6 +71,7 @@ export async function getPublicMediaSnapshot(
 
 export type PublicMediaDeliveryAsset = Readonly<{
   objectKey: string;
+  kind: MediaAssetRow["kind"];
   mimeType: string;
   sizeBytes: number;
 }>;
@@ -84,6 +86,7 @@ export async function getPublicMediaDeliveryAsset(
       id: mediaAssetsTable.id,
       cityId: mediaAssetsTable.cityId,
       objectKey: mediaAssetsTable.objectKey,
+      kind: mediaAssetsTable.kind,
       mimeType: mediaAssetsTable.mimeType,
       sizeBytes: mediaAssetsTable.sizeBytes,
     })
@@ -159,6 +162,7 @@ export async function getPublicMediaDeliveryAsset(
   if (!cityUsage[0] && !placeUsage[0] && !tourUsage[0]) return undefined;
   return {
     objectKey: asset.objectKey,
+    kind: asset.kind,
     mimeType: asset.mimeType,
     sizeBytes: asset.sizeBytes,
   };
@@ -201,6 +205,9 @@ function rowsToPublicMedia(rows: readonly PublicMediaRow[]): PublicMedia[] {
       ...(asset.sizeBytes !== null ? { sizeBytes: asset.sizeBytes } : {}),
       ...(asset.width !== null ? { width: asset.width } : {}),
       ...(asset.height !== null ? { height: asset.height } : {}),
+      ...(asset.kind === "image" && asset.sourceType === "upload"
+        ? { variants: publicMediaImageVariants(asset.assetKey) }
+        : {}),
       ...(asset.durationSeconds !== null ? { durationSeconds: asset.durationSeconds } : {}),
       ...(locale ? { locale } : {}),
       ...(isMediaRightsCleared(rights) && rights?.attributionRequired && rights.attributionText

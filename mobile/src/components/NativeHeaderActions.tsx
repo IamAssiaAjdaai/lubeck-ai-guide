@@ -38,5 +38,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 44,
   },
-  pressed: { backgroundColor: "#F3F4F6" },
+  pressed: { backgroundColor: colors.surfaceMuted, transform: [{ scale: 0.96 }] },
 });

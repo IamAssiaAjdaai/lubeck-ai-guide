@@ -16,6 +16,8 @@ import {
   resolvePublicLocalization,
   toLocalizedPublicCityIndexResponse,
   toLocalizedPublicCityResponse,
+  toLocalizedPublicCitySummaryResponse,
+  toLocalizedPublicPlaceResponse,
 } from "@/lib/content/publicRepository.server";
 
 describe("public content repository", () => {
@@ -222,6 +224,24 @@ describe("public content repository", () => {
     expect(response.places[0]).not.toHaveProperty("id");
     expect(response.places[0]).not.toHaveProperty("createdByUserId");
     expect(response.places[0]).not.toHaveProperty("publicationStatus");
+  });
+
+  it("keeps compact city cards light and fetches rich place content separately", async () => {
+    const snapshot = await getPublicCitySnapshot("lubeck", "code");
+    const compact = toLocalizedPublicCitySummaryResponse(snapshot, "en");
+    const detail = toLocalizedPublicPlaceResponse(snapshot, "holstentor", "en");
+
+    expect(compact.places).toHaveLength(25);
+    expect(compact.places[0]?.content).toEqual({
+      name: expect.any(String),
+      shortDescription: expect.any(String),
+    });
+    expect(compact.places[0]?.content).not.toHaveProperty("story");
+    expect(compact.places[0]?.content).not.toHaveProperty("facts");
+    expect(compact.places[0]?.media.every(({ kind }) => kind === "image")).toBe(true);
+    expect(detail.place.slug).toBe("holstentor");
+    expect(detail.place.content.story).toBeTruthy();
+    expect(detail.place.content.facts?.length).toBeGreaterThan(0);
   });
 
   it("localizes city index DTOs with explicit fallback metadata", () => {

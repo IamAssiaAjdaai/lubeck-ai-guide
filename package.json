@@ -26,6 +26,7 @@
     "cms:import-city": "node --conditions=react-server --import tsx scripts/import-city-cms.ts",
     "city:import": "node --conditions=react-server --import tsx scripts/import-city-cms.ts",
     "content:readiness": "node --conditions=react-server --import tsx scripts/report-city-readiness.ts",
+    "performance:measure": "tsx scripts/measure-public-performance.ts",
     "cms:test:integration": "tsx scripts/run-cms-integration-tests.ts",
     "content:test:integration": "tsx scripts/run-city-content-integration-tests.ts",
     "media:test:integration": "tsx scripts/run-media-integration-tests.ts",
@@ -43,6 +44,7 @@
     "mobile:config": "npm --prefix mobile run config:validate"
   },
   "dependencies": {
+    "@citywalk/traveler-core": "file:packages/traveler-core",
     "@aws-sdk/client-s3": "^3.1127.0",
     "@aws-sdk/s3-request-presigner": "^3.1127.0",
     "@better-auth/drizzle-adapter": "^1.7.2",
@@ -62,6 +64,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
+    "sharp": "^0.35.4",
     "stripe": "^22.4.0"
   },
   "devDependencies": {

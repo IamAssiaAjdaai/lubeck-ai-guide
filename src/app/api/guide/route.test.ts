@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-const { createCompletion, rateLimit } = vi.hoisted(() => ({
+const { createCompletion, enforceAllowance, rateLimit } = vi.hoisted(() => ({
   createCompletion: vi.fn(),
-
+  enforceAllowance: vi.fn(),
   rateLimit: vi.fn(),
 }));
 
@@ -28,13 +28,7 @@ vi.mock("@/lib/rateLimit", () => ({
   },
 }));
 vi.mock("@/lib/guideAllowance.server", () => ({
-  enforceGuideDailyAllowance: vi.fn().mockResolvedValue({
-    success: true,
-    limit: 3,
-    remaining: 2,
-    reset: Date.now() + 86_400_000,
-    tier: "free",
-  }),
+  enforceGuideDailyAllowance: enforceAllowance,
 }));
 
 import { POST } from "@/app/api/guide/route";
@@ -80,6 +74,14 @@ describe("POST /api/guide", () => {
       reset: Date.now() + 60_000,
     });
 
+    enforceAllowance.mockResolvedValue({
+      success: true,
+      limit: 3,
+      remaining: 2,
+      reset: 1_800_000_000_000,
+      tier: "free",
+    });
+
     createCompletion.mockResolvedValue({
       choices: [
         {
@@ -98,6 +100,71 @@ describe("POST /api/guide", () => {
       ],
 
       usage: {},
+    });
+  });
+
+  it("returns authoritative daily allowance metadata separately from abuse limits", async () => {
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({
+        question: "When was this built?",
+        citySlug: "lubeck",
+        placeSlug: "holstentor",
+        locale: "en",
+        visitorId: "123e4567-e89b-42d3-a456-426614174000",
+      }),
+    }));
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      allowance: {
+        kind: "daily_guide",
+        tier: "free",
+        limit: 3,
+        remaining: 2,
+        resetAt: 1_800_000_000_000,
+      },
+    });
+    expect(enforceAllowance).toHaveBeenCalledWith(expect.objectContaining({
+      citySlug: "lubeck",
+      visitorId: "123e4567-e89b-42d3-a456-426614174000",
+    }));
+  });
+
+  it("labels daily exhaustion without conflating it with the IP abuse limiter", async () => {
+    enforceAllowance.mockResolvedValueOnce({
+      success: false,
+      limit: 3,
+      remaining: 0,
+      reset: 1_800_000_000_000,
+      tier: "free",
+    });
+    const daily = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question: "Question", citySlug: "lubeck", placeSlug: "holstentor", locale: "en",
+      }),
+    }));
+    expect(daily.status).toBe(429);
+    await expect(daily.json()).resolves.toMatchObject({
+      code: "guide_daily_allowance_reached",
+      allowance: { kind: "daily_guide", remaining: 0 },
+    });
+
+    rateLimit.mockResolvedValueOnce({ success: false, limit: 10, remaining: 0, reset: 123 });
+    const abuse = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question: "Question", citySlug: "lubeck", placeSlug: "holstentor", locale: "en",
+      }),
+    }));
+    expect(abuse.status).toBe(429);
+    await expect(abuse.json()).resolves.toEqual({
+      error: "Too many AI questions. Please try again later.",
+      code: "guide_abuse_rate_limited",
     });
   });
 

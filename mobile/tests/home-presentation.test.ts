@@ -16,5 +16,13 @@ describe("native Home presentation", () => {
   it("keeps available cities data-driven and makes the primary action scroll to them", () => {
     expect(homeSource).toContain("cities.data.cities.map");
     expect(homeSource).toContain("scrollViewRef.current?.scrollTo");
+    expect(homeSource).toContain("prefetchPublicCity(city.slug, locale)");
+    expect(homeSource).toContain('cachePolicy="memory-disk"');
+  });
+
+  it("makes each city card navigable without a redundant Explore City button", () => {
+    expect(homeSource).toContain('accessibilityRole="link"');
+    expect(homeSource).toContain('accessibilityLabel={`${messages.exploreCity}: ${city.name}`}');
+    expect(homeSource).not.toContain('label={`${messages.exploreCity} — ${city.name}`}');
   });
 });

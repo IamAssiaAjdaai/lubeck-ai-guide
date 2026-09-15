@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   parseCityIndexResponse,
   parseCityResponse,
+  parseCitySummaryResponse,
   parseGuideAnswerResponse,
   parseGuideEligibilityResponse,
 } from "../src/lib/api/contracts";
@@ -157,6 +158,23 @@ describe("public content contracts", () => {
     });
   });
 
+  it("parses compact city cards and public image variants", () => {
+    const payload = cityPayload();
+    Object.assign(payload.places[0]!, { imageVariants: {
+      thumbnail: "/thumbnail",
+      card: "/card",
+      detail: "/detail",
+      hero: "/hero",
+    } });
+    const response = parseCitySummaryResponse(payload);
+
+    expect(response.places[0]?.imageVariants?.card).toBe("/card");
+    expect(response.places[0]?.content).toEqual({
+      name: "Old Gate",
+      shortDescription: "A public place.",
+    });
+  });
+
   it("parses the published tour contract and fails closed for malformed stops", () => {
     const payload = cityPayload();
     payload.tours = [{
@@ -188,7 +206,7 @@ describe("public content contracts", () => {
 
   it("parses guide eligibility and source-safe answers", () => {
     expect(parseGuideEligibilityResponse({ eligible: true })).toEqual({ eligible: true });
-    expect(parseGuideAnswerResponse({
+    const guideAnswer = parseGuideAnswerResponse({
       answer: "The gate was completed in 1478.",
       sources: [{
         label: "Official source",
@@ -198,7 +216,13 @@ describe("public content contracts", () => {
         placeSlug: "holstentor",
         chunkIds: ["holstentor-history"],
       }],
-    }).sources[0]?.chunkIds).toEqual(["holstentor-history"]);
+      allowance: {
+        kind: "daily_guide", tier: "free", limit: 3, remaining: 2,
+        resetAt: 1_800_000_000_000,
+      },
+    });
+    expect(guideAnswer.sources[0]?.chunkIds).toEqual(["holstentor-history"]);
+    expect(guideAnswer.allowance).toMatchObject({ tier: "free", remaining: 2 });
     expect(() => parseGuideAnswerResponse({
       answer: "Unsafe",
       sources: [{

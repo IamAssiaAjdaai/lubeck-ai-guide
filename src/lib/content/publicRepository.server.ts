@@ -1,6 +1,6 @@
 import "server-only";
 
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 
 import { cities } from "@/data/cities";
 import {
@@ -27,6 +27,10 @@ import {
 import { getContentSource, type ContentSource } from "@/lib/content/source";
 import { getTranslations, isLocale, locales, type Locale } from "@/lib/i18n";
 import { getPublicMediaSnapshot } from "@/lib/media/publicMedia.server";
+import {
+  publicLegacyImageVariants,
+  publicMediaImageVariants,
+} from "@/lib/media/imageVariants";
 import type { PublicMedia } from "@/lib/media/types";
 
 export type PublicCityLocalization = Readonly<{
@@ -76,6 +80,27 @@ export type PublicCitySummary = Readonly<{
     content: Readonly<Partial<Record<Locale, PublicCityLocalization>>>;
   }>;
   media?: readonly PublicMedia[];
+}>;
+
+export type PublicPlaceCard = Readonly<{
+  slug: string;
+  category: Place["category"];
+  coordinates: Place["coordinates"];
+  durationMinutes: number;
+  environment: Place["environment"];
+  pricing: Place["pricing"];
+  status?: Place["status"];
+  tags: readonly string[];
+  image?: string;
+  imageVariants?: ReturnType<typeof publicLegacyImageVariants>;
+  media: readonly PublicMedia[];
+  requestedLocale: Locale;
+  resolvedLocale: Locale;
+  didFallback: boolean;
+  content: Readonly<{
+    name: string;
+    shortDescription: string;
+  }>;
 }>;
 
 export type ResolvedPublicContent<TContent> = Readonly<{
@@ -191,6 +216,7 @@ export function toLocalizedPublicCityResponse(
         visitNoteVerifiedAt: place.visitNoteVerifiedAt,
         visitNoteValidUntil: place.visitNoteValidUntil,
         image: place.image,
+        ...(place.image ? { imageVariants: publicLegacyImageVariants(place.image) } : {}),
         tags: place.tags,
         media: publicMediaForLocale(
           snapshot.media?.places[place.slug] ?? [],
@@ -214,6 +240,63 @@ export function toLocalizedPublicCityResponse(
       }];
     }),
   };
+}
+
+export function toLocalizedPublicCitySummaryResponse(
+  snapshot: PublicCitySnapshot,
+  requestedLocale: Locale,
+) {
+  const full = toLocalizedPublicCityResponse(snapshot, requestedLocale);
+  return {
+    city: full.city,
+    places: full.places.map((place): PublicPlaceCard => ({
+      slug: place.slug,
+      category: place.category,
+      coordinates: place.coordinates,
+      durationMinutes: place.durationMinutes,
+      environment: place.environment,
+      pricing: place.pricing,
+      ...(place.status ? { status: place.status } : {}),
+      tags: place.tags,
+      ...(place.image ? { image: place.image } : {}),
+      ...(place.imageVariants ? { imageVariants: place.imageVariants } : {}),
+      media: place.media.filter(
+        ({ kind, purpose }) =>
+          kind === "image" && ["card", "hero", "thumbnail"].includes(purpose),
+      ),
+      requestedLocale: place.requestedLocale,
+      resolvedLocale: place.resolvedLocale,
+      didFallback: place.didFallback,
+      content: {
+        name: place.content.name,
+        shortDescription: place.content.shortDescription,
+      },
+    })),
+    tours: full.tours.map((tour) => ({
+      ...tour,
+      content: {
+        title: tour.content.title,
+        ...(tour.content.shortDescription
+          ? { shortDescription: tour.content.shortDescription }
+          : {}),
+      },
+      media: tour.media.filter(
+        ({ kind, purpose }) =>
+          kind === "image" && ["card", "hero", "thumbnail"].includes(purpose),
+      ),
+    })),
+  };
+}
+
+export function toLocalizedPublicPlaceResponse(
+  snapshot: PublicCitySnapshot,
+  placeSlug: string,
+  requestedLocale: Locale,
+) {
+  const full = toLocalizedPublicCityResponse(snapshot, requestedLocale);
+  const place = full.places.find(({ slug }) => slug === placeSlug);
+  if (!place) throw new Error("Published place not found.");
+  return { city: full.city, place };
 }
 
 export function toLocalizedPublicCityIndexResponse(
@@ -256,31 +339,67 @@ async function loadPublishedDatabaseSnapshot(
   if (!city || city.publicationStatus !== "published") {
     throw new Error("Published city snapshot is unavailable.");
   }
-  const [cityLocalizations, placeRows, placeRevisions, placeLocalizations, tagRelations, tags, tourRows, tourLocalizations, stopRows] =
+  const [cityLocalizations, placeRows, tourRows] = await Promise.all([
+    db
+      .select()
+      .from(cityLocalizationsTable)
+      .where(eq(cityLocalizationsTable.cityId, city.id)),
+    db
+      .select()
+      .from(placesTable)
+      .where(eq(placesTable.cityId, city.id))
+      .orderBy(asc(placesTable.id)),
+    db
+      .select()
+      .from(toursTable)
+      .where(eq(toursTable.cityId, city.id))
+      .orderBy(asc(toursTable.id)),
+  ]);
+  const placeIds = placeRows.map(({ id }) => id);
+  const tourIds = tourRows.map(({ id }) => id);
+  const [placeRevisions, placeLocalizations, tagRelations, tourLocalizations, stopRows] =
     await Promise.all([
-      db
-        .select()
-        .from(cityLocalizationsTable)
-        .where(eq(cityLocalizationsTable.cityId, city.id)),
-      db
-        .select()
-        .from(placesTable)
-        .where(eq(placesTable.cityId, city.id))
-        .orderBy(asc(placesTable.id)),
-      db
-        .select()
-        .from(placeRevisionsTable)
-        .where(eq(placeRevisionsTable.isCurrent, true)),
-      db.select().from(placeLocalizationsTable),
-      db.select().from(placeContentTagsTable),
-      db.select().from(contentTagsTable),
-      db
-        .select()
-        .from(toursTable)
-        .where(eq(toursTable.cityId, city.id))
-        .orderBy(asc(toursTable.id)),
-      db.select().from(tourLocalizationsTable),
-      db.select().from(tourStopsTable).orderBy(asc(tourStopsTable.position)),
+      placeIds.length === 0
+        ? Promise.resolve([])
+        : db
+            .select()
+            .from(placeRevisionsTable)
+            .where(and(
+              eq(placeRevisionsTable.isCurrent, true),
+              inArray(placeRevisionsTable.placeId, placeIds),
+            )),
+      placeIds.length === 0
+        ? Promise.resolve([])
+        : db
+            .select()
+            .from(placeLocalizationsTable)
+            .where(inArray(placeLocalizationsTable.placeId, placeIds)),
+      placeIds.length === 0
+        ? Promise.resolve([])
+        : db
+            .select({
+              placeId: placeContentTagsTable.placeId,
+              slug: contentTagsTable.slug,
+            })
+            .from(placeContentTagsTable)
+            .innerJoin(
+              contentTagsTable,
+              eq(placeContentTagsTable.tagId, contentTagsTable.id),
+            )
+            .where(inArray(placeContentTagsTable.placeId, placeIds)),
+      tourIds.length === 0
+        ? Promise.resolve([])
+        : db
+            .select()
+            .from(tourLocalizationsTable)
+            .where(inArray(tourLocalizationsTable.tourId, tourIds)),
+      tourIds.length === 0
+        ? Promise.resolve([])
+        : db
+            .select()
+            .from(tourStopsTable)
+            .where(inArray(tourStopsTable.tourId, tourIds))
+            .orderBy(asc(tourStopsTable.position)),
     ]);
   const currentRevisionByPlaceId = new Map(
     placeRevisions.map((revision) => [revision.placeId, revision] as const),
@@ -329,7 +448,6 @@ async function loadPublishedDatabaseSnapshot(
   ) {
     throw new Error("Published tour references unpublished content.");
   }
-  const tagById = new Map(tags.map(({ id, slug }) => [id, slug] as const));
   const places: Place[] = publishedPlaces.map((place) => {
     const revision = currentRevisionByPlaceId.get(place.id);
     const localizationRows = revision
@@ -361,10 +479,7 @@ async function loadPublishedDatabaseSnapshot(
     const normalizedTags = revision?.snapshot.tagSlugs ??
       tagRelations
         .filter(({ placeId }) => placeId === place.id)
-        .flatMap(({ tagId }) => {
-          const slug = tagById.get(tagId);
-          return slug ? [slug] : [];
-        });
+        .map(({ slug }) => slug);
     const canonical = getPlace(citySlug, place.slug);
     const cmsMedia = mediaSnapshot.places.get(place.id) ?? [];
     const cmsImage = cmsMedia.find(
@@ -673,6 +788,9 @@ function publicMediaForLocale(
       ...(item.sizeBytes !== undefined ? { sizeBytes: item.sizeBytes } : {}),
       ...(item.width !== undefined ? { width: item.width } : {}),
       ...(item.height !== undefined ? { height: item.height } : {}),
+      ...(item.kind === "image" && item.url.startsWith("/api/media/")
+        ? { variants: item.variants ?? publicMediaImageVariants(item.assetKey) }
+        : item.variants ? { variants: item.variants } : {}),
       ...(item.durationSeconds !== undefined
         ? { durationSeconds: item.durationSeconds }
         : {}),

@@ -1,6 +1,14 @@
 import "server-only";
 
 import { getMediaObjectStore } from "@/lib/media/storage/storage.server";
+import {
+  publicImageResponse,
+  transformPublicImage,
+} from "@/lib/media/imageTransform.server";
+import type { PublicImageVariant } from "@/lib/media/types";
+
+export const PUBLIC_MEDIA_CACHE_CONTROL =
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
 
 export type DeliverableMediaAsset = Readonly<{
   objectKey: string;
@@ -12,13 +20,14 @@ export async function deliverPrivateMediaObject(
   request: Request,
   asset: DeliverableMediaAsset,
   diagnosticLabel: string,
+  cacheControl = "private, no-store",
 ): Promise<Response> {
   const range = normalizeRange(request.headers.get("range"), asset.sizeBytes);
   if (range === null) {
     return new Response(null, {
       status: 416,
       headers: {
-        "Cache-Control": "private, no-store",
+        "Cache-Control": cacheControl,
         "Content-Range": `bytes */${asset.sizeBytes}`,
       },
     });
@@ -32,7 +41,7 @@ export async function deliverPrivateMediaObject(
     if (!object) return mediaUnavailableResponse();
     const headers = new Headers({
       "Accept-Ranges": "bytes",
-      "Cache-Control": "private, no-store",
+      "Cache-Control": cacheControl,
       "Content-Type": asset.mimeType,
       "X-Content-Type-Options": "nosniff",
     });
@@ -48,6 +57,32 @@ export async function deliverPrivateMediaObject(
     if (process.env.NODE_ENV === "development") {
       console.error(
         `${diagnosticLabel} delivery failed`,
+        error instanceof Error ? error.name : "unknown_error",
+      );
+    }
+    return new Response("Media delivery is temporarily unavailable.", {
+      status: 502,
+      headers: {
+        "Cache-Control": "private, no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+      },
+    });
+  }
+}
+
+export async function deliverPublicImageVariant(
+  asset: DeliverableMediaAsset,
+  variant: PublicImageVariant,
+): Promise<Response> {
+  try {
+    const object = await getMediaObjectStore().readObject(asset.objectKey);
+    if (!object) return mediaUnavailableResponse();
+    const source = await new Response(object.body).arrayBuffer();
+    return publicImageResponse(await transformPublicImage(source, variant));
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.error(
+        "Public image variant delivery failed",
         error instanceof Error ? error.name : "unknown_error",
       );
     }

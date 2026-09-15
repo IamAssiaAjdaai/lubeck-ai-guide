@@ -56,6 +56,23 @@ describe("place image resolution", () => {
     ).toBe("/legacy.jpg");
   });
 
+  it("selects card and detail variants instead of multi-megabyte originals", () => {
+    const hero = {
+      ...media("hero", "en"),
+      variants: {
+        thumbnail: "/thumbnail.webp",
+        card: "/card.webp",
+        detail: "/detail.webp",
+        hero: "/hero.webp",
+      },
+    } satisfies PublicMedia;
+
+    expect(resolvePlaceImage("database", [hero], "en", undefined, "card"))
+      .toBe("/card.webp");
+    expect(resolvePlaceImage("database", [hero], "en", undefined, "detail"))
+      .toBe("/detail.webp");
+  });
+
   it("returns the selected public media attribution without exposing another locale", () => {
     const attribution = {
       text: "Photo: Example · https://creativecommons.org/licenses/by-sa/4.0/",

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
-import type { PublicPlace } from "../lib/api/contracts";
+import type { PublicPlaceCard } from "../lib/api/contracts";
 import type { NativeMessages } from "../lib/localization";
 import {
   recheckForegroundLocationProvider,
@@ -13,13 +13,15 @@ import {
 } from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import { resolveMapStyleUrl } from "../lib/mapStyle";
+import { triggerCitywalkHaptic } from "../lib/haptics";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { AppText } from "./ui";
+import { NativeIcon } from "./NativeIcon";
 
 const MAP_STYLE_URL = resolveMapStyleUrl();
 
 export function NativeCityMap({ places }: Readonly<{
-  places: readonly PublicPlace[];
+  places: readonly PublicPlaceCard[];
 }>) {
   const { messages } = useNativeLocale();
   const cameraRef = useRef<CameraRef>(null);
@@ -49,6 +51,7 @@ export function NativeCityMap({ places }: Readonly<{
   }, [locationStatus]);
 
   async function handleLocationRequest() {
+    void triggerCitywalkHaptic("light");
     if (userLocation) {
       cameraRef.current?.easeTo({ center: [userLocation.longitude, userLocation.latitude], zoom: 15, duration: 350 });
       return;
@@ -113,6 +116,7 @@ export function NativeCityMap({ places }: Readonly<{
         onPress={() => void handleLocationRequest()}
         style={({ pressed }) => [styles.locationButton, pressed && styles.locationButtonPressed]}
       >
+        <NativeIcon ios="location.fill" android="my_location" color={colors.primary} size={18} />
         <Text style={styles.locationButtonText} numberOfLines={1} adjustsFontSizeToFit>
           {locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}
         </Text>
@@ -158,7 +162,7 @@ const styles = StyleSheet.create({
   fallback: { height: 320, borderRadius: radius.lg, backgroundColor: "#EEF2FF", alignItems: "center", justifyContent: "center", padding: spacing.lg },
   placeMarker: { width: 22, height: 22, borderRadius: radius.pill, backgroundColor: colors.mapMarker, borderWidth: 3, borderColor: colors.surface },
   userMarker: { width: 24, height: 24, borderRadius: radius.pill, backgroundColor: colors.userMarker, borderWidth: 4, borderColor: colors.surface },
-  locationButton: { minHeight: 48, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.md },
+  locationButton: { minHeight: 48, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, alignItems: "center", flexDirection: "row", gap: spacing.sm, justifyContent: "center", paddingHorizontal: spacing.md },
   locationButtonPressed: { backgroundColor: "#F3F4F6" },
   locationButtonText: { ...typography.label, color: colors.text },
   settingsButton: { minHeight: 44, alignItems: "center", justifyContent: "center" },

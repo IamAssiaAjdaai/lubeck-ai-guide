@@ -3,9 +3,10 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { formatAudioTime } from "../lib/audio";
-import { colors, spacing } from "../design/tokens";
+import { colors, radius, spacing } from "../design/tokens";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { AppText, Card, PrimaryButton, StatusMessage } from "./ui";
+import { NativeIcon } from "./NativeIcon";
 
 type NativeAudioPlayerProps = Readonly<{
   source: string;
@@ -51,21 +52,33 @@ export function NativeAudioPlayer({
     : status.playing
       ? messages.pauseAudio
       : messages.playAudio;
+  const progress = duration > 0 ? Math.min(currentTime / duration, 1) : 0;
 
   return (
-    <Card>
-      <View accessible accessibilityLabel={title} style={styles.row}>
-        <AppText variant="heading">{messages.audioGuide}</AppText>
-        <AppText variant="caption" style={styles.time}>
-          {formatAudioTime(currentTime)} / {formatAudioTime(duration)}
-        </AppText>
+    <Card style={styles.player}>
+      <View accessible accessibilityLabel={title} style={styles.header}>
+        <View style={styles.audioIcon}>
+          <NativeIcon ios="waveform" android="graphic_eq" color={colors.violet} size={22} />
+        </View>
+        <View style={styles.titleBlock}>
+          <AppText variant="heading">{messages.audioGuide}</AppText>
+          <AppText variant="caption" style={styles.time}>
+            {formatAudioTime(currentTime)} / {formatAudioTime(duration)}
+          </AppText>
+        </View>
+      </View>
+      <View accessibilityElementsHidden style={styles.track}>
+        <View style={[styles.progress, { width: `${progress * 100}%` }]} />
       </View>
       <PrimaryButton
         label={busy ? messages.loadingAudio : actionLabel}
         accessibilityLabel={`${actionLabel}: ${title}`}
         accessibilityState={{ busy, disabled: busy }}
         busy={busy}
+        haptic="light"
+        leadingIcon={<NativeIcon ios={status.playing ? "pause.fill" : "play.fill"} android={status.playing ? "pause" : "play_arrow"} color={colors.violet} size={19} />}
         onPress={() => void togglePlayback()}
+        tone="secondary"
       />
     </Card>
   );
@@ -78,11 +91,15 @@ function positiveDuration(value: number | undefined): number | undefined {
 }
 
 const styles = StyleSheet.create({
-  row: {
+  player: { backgroundColor: colors.violetSoft, borderColor: "transparent" },
+  header: {
     alignItems: "center",
     flexDirection: "row",
-    justifyContent: "space-between",
-    gap: spacing.md,
+    gap: spacing.sm,
   },
+  audioIcon: { alignItems: "center", backgroundColor: colors.surface, borderRadius: radius.pill, height: 44, justifyContent: "center", width: 44 },
+  titleBlock: { flex: 1 },
   time: { color: colors.textMuted },
+  track: { backgroundColor: "#DDD3F7", borderRadius: radius.pill, height: 4, overflow: "hidden" },
+  progress: { backgroundColor: colors.violet, borderRadius: radius.pill, height: "100%" },
 });

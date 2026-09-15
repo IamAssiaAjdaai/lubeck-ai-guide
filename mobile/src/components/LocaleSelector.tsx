@@ -3,6 +3,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
 import { NATIVE_LOCALES } from "../lib/localization";
+import { triggerCitywalkHaptic } from "../lib/haptics";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { NativeIcon } from "./NativeIcon";
 import { AppText } from "./ui";
@@ -40,6 +41,7 @@ export function LocaleSelector() {
                 accessibilityRole="radio"
                 accessibilityState={{ checked: candidate === locale }}
                 onPress={() => {
+                  void triggerCitywalkHaptic("light");
                   setLocale(candidate);
                   setOpen(false);
                 }}
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 44,
   },
-  pressed: { backgroundColor: "#F3F4F6" },
+  pressed: { backgroundColor: colors.surfaceMuted, transform: [{ scale: 0.96 }] },
   backdrop: {
     alignItems: "flex-end",
     backgroundColor: "rgba(23, 23, 23, 0.35)",
