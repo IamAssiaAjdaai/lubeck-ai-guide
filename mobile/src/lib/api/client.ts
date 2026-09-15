@@ -166,7 +166,14 @@ export function createCitywalkApiClient(input: Readonly<{
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...questionInput, visitorId }),
       });
-      const data: unknown = await response.json();
+      let data: unknown;
+      try {
+        data = await response.json();
+      } catch {
+        // A proxy/runtime failure may return HTML. Preserve its HTTP status
+        // as a technical failure; never mislabel it as a daily allowance.
+        throw new CitywalkApiError(response.status, "CITYWALK API response unavailable.");
+      }
       if (!response.ok) {
         const error = readPublicError(data);
         throw new CitywalkApiError(response.status, error.message, error.code, error.allowance);

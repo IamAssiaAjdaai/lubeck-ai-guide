@@ -27,6 +27,7 @@
     },
     "android": {
       "package": "com.citywalk.app.dev",
+      "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "backgroundColor": "#0787BE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

@@ -1,12 +1,21 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  createCityPassLandingPath,
   createCityPassReturnPath,
   parseCityPassReturnPath,
   resolveCityPassReturnPath,
 } from "@/lib/commerce/cityPassReturn";
 
 describe("city pass return destinations", () => {
+  it("allows a city-scoped pass landing intent without admitting arbitrary paths", () => {
+    expect(createCityPassLandingPath("en", "lubeck")).toBe("/en/pass/lubeck");
+    expect(parseCityPassReturnPath("/en/pass/test-city", "en")).toEqual({
+      path: "/en/pass/test-city", citySlug: "test-city",
+    });
+    expect(resolveCityPassReturnPath("/en/pass/test-city", "de")).toBe("/de");
+    expect(resolveCityPassReturnPath("/en/pass/../../admin", "en")).toBe("/en");
+  });
   it("creates an allowlisted localized destination for any valid city", () => {
     expect(
       createCityPassReturnPath("de", "lubeck", "glandorps-gang"),

@@ -148,6 +148,19 @@ describe("CITYWALK native API client", () => {
     });
   });
 
+  it("preserves a non-JSON gateway status as technical rather than inventing an allowance", async () => {
+    const client = createCitywalkApiClient({
+      origin: "https://citywalk.example",
+      fetchImpl: vi.fn(async () => new Response("<html>Gateway error</html>", { status: 502 })),
+      getAuthCookie: async () => "",
+      getVisitorId: async () => "123e4567-e89b-42d3-a456-426614174000",
+    });
+    const error = await client.askGuide({
+      citySlug: "lubeck", placeSlug: "holstentor", locale: "en", question: "Why?",
+    }).catch((caught: unknown) => caught);
+    expect(error).toMatchObject({ status: 502, code: undefined, allowance: undefined });
+  });
+
   it("adds the SecureStore-managed Better Auth cookie only to authenticated requests", async () => {
     const fetchImpl = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) =>
       new Response(null, { status: 204 }));

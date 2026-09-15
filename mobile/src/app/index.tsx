@@ -18,7 +18,7 @@ import { getNativeDirection, getNativeTextAlignment } from "../lib/localization"
 import { useNativeLocale } from "../localization/LocaleProvider";
 
 export default function HomeScreen() {
-  const { direction, locale, messages } = useNativeLocale();
+  const { locale, messages } = useNativeLocale();
   const cities = usePublicCities(locale);
   const scrollViewRef = useRef<ScrollView>(null);
   const availableCitiesY = useRef(0);
@@ -105,15 +105,10 @@ export default function HomeScreen() {
                   />
                 ) : <View style={styles.imageFallback} />}
                 <View style={[styles.cityContent, { direction: contentDirection }]}>
-                  <View style={styles.cityText}>
-                    <AppText variant="title" style={contentTextStyle}>{city.name}</AppText>
-                    {city.shortDescription ? (
-                      <AppText numberOfLines={3} style={[contentTextStyle, styles.cityDescription]}>{city.shortDescription}</AppText>
-                    ) : null}
-                  </View>
-                  <View accessibilityElementsHidden style={styles.cityAffordance}>
-                    <NativeIcon ios={direction === "rtl" ? "arrow.up.left" : "arrow.up.right"} android={direction === "rtl" ? "arrow_back" : "arrow_forward"} color={colors.primary} size={20} />
-                  </View>
+                  <AppText variant="title" style={contentTextStyle}>{city.name}</AppText>
+                  {city.shortDescription ? (
+                    <AppText numberOfLines={2} style={[contentTextStyle, styles.cityDescription]}>{city.shortDescription}</AppText>
+                  ) : null}
                 </View>
               </PressableSurface>
             </Link>
@@ -147,7 +142,9 @@ const styles = StyleSheet.create({
   cityCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
-    elevation: 2,
+    borderColor: colors.border,
+    borderWidth: StyleSheet.hairlineWidth,
+    elevation: 3,
     overflow: "hidden",
     shadowColor: colors.text,
     shadowOffset: { width: 0, height: 6 },
@@ -155,18 +152,9 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
   },
   cityLink: { borderRadius: radius.lg, overflow: "hidden" },
-  cityImage: { width: "100%", height: 205, backgroundColor: colors.primarySoft },
-  imageFallback: { width: "100%", height: 160, backgroundColor: colors.primarySoft },
-  cityContent: { alignItems: "center", flexDirection: "row", gap: spacing.md, padding: spacing.md },
-  cityText: { flex: 1, gap: spacing.xs },
-  cityDescription: { color: colors.textMuted },
-  cityAffordance: {
-    alignItems: "center",
-    backgroundColor: colors.primarySoft,
-    borderRadius: radius.pill,
-    height: 44,
-    justifyContent: "center",
-    width: 44,
-  },
+  cityImage: { width: "100%", height: 176, backgroundColor: colors.primarySoft },
+  imageFallback: { width: "100%", height: 150, backgroundColor: colors.primarySoft },
+  cityContent: { gap: spacing.xs, paddingHorizontal: spacing.md, paddingTop: spacing.md, paddingBottom: spacing.xs },
+  cityDescription: { color: colors.textMuted, lineHeight: 21 },
   attribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
 });

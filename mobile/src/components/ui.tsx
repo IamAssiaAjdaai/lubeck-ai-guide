@@ -234,7 +234,13 @@ export function InlineLoadingDots() {
     return () => animation.stop();
   }, [opacity, reducedMotion]);
 
-  return <Animated.Text accessibilityElementsHidden style={[styles.loadingDots, { opacity }]}>â€¢ â€¢ â€¢</Animated.Text>;
+  return (
+    <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={styles.loadingDots}>
+      {[0, 1, 2].map((dot) => (
+        <Animated.View key={dot} style={[styles.loadingDot, { opacity }]} />
+      ))}
+    </View>
+  );
 }
 
 export function SectionTitle({ children }: { children: ReactNode }) {
@@ -316,5 +322,6 @@ const styles = StyleSheet.create({
   },
   emptyTitle: { textAlign: "center" },
   emptyDescription: { color: colors.textMuted, maxWidth: 300, textAlign: "center" },
-  loadingDots: { color: colors.primary, fontSize: 18, fontWeight: "700", letterSpacing: 1 },
+  loadingDots: { alignItems: "center", flexDirection: "row", gap: 4 },
+  loadingDot: { backgroundColor: colors.primary, borderRadius: 4, height: 6, width: 6 },
 });

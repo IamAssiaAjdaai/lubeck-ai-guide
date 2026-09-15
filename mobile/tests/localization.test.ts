@@ -18,6 +18,11 @@ describe("native localization foundation", () => {
         guideQuestionRemaining: expect.any(String),
         guideQuestionsRemaining: expect.stringContaining("{count}"),
         guideAbuseLimited: expect.any(String),
+        guideFreeLimitTitle: expect.any(String),
+        guideFreeLimitBody: expect.stringContaining("{count}"),
+        guidePremiumLimitBody: expect.stringContaining("{count}"),
+        guideUnlockPass: expect.any(String),
+        guideMaybeLater: expect.any(String),
       });
     }
   });
@@ -45,5 +50,21 @@ describe("native localization foundation", () => {
     expect(getNativeDirection("en")).toBe("ltr");
     expect(getNativeTextAlignment("ar")).toBe("right");
     expect(getNativeTextAlignment("en")).toBe("left");
+  });
+
+  it("keeps allowance, retry, composer and City Pass copy distinct in EN/DE/AR", () => {
+    for (const locale of ["en", "de", "ar"] as const) {
+      const copy = getNativeMessages(locale);
+      expect(copy.guideFreeLimitBody).toContain("{count}");
+      expect(copy.guidePremiumLimitBody).toContain("{count}");
+      expect(copy.guideFreeLimitTitle).toBeTruthy();
+      expect(copy.guideUnlockPass).toBeTruthy();
+      expect(copy.guideMaybeLater).toBeTruthy();
+      expect(copy.questionPlaceholder).toBeTruthy();
+      expect(copy.sendQuestion).toBeTruthy();
+      expect(copy.guideAbuseLimited).not.toBe(copy.guideError);
+      expect(copy.guideRateLimited).not.toBe(copy.guideError);
+      expect(copy.guideUnlockPass).not.toBe(copy.guideAbuseLimited);
+    }
   });
 });
