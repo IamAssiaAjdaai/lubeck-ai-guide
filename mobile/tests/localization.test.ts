@@ -11,6 +11,15 @@ describe("native localization foundation", () => {
     expect(getNativeMessages("en").discoverCities).toBeTruthy();
     expect(getNativeMessages("de").discoverCities).toBeTruthy();
     expect(getNativeMessages("ar").discoverCities).toBeTruthy();
+    for (const locale of ["en", "de", "ar"] as const) {
+      expect(getNativeMessages(locale)).toMatchObject({
+        guideWelcome: expect.any(String),
+        guideThinking: expect.any(String),
+        guideQuestionRemaining: expect.any(String),
+        guideQuestionsRemaining: expect.stringContaining("{count}"),
+        guideAbuseLimited: expect.any(String),
+      });
+    }
   });
 
   it("matches the web Home product copy in every native locale", () => {

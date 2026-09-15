@@ -54,6 +54,11 @@ export type NativeMessages = Readonly<{
   guideUnavailable: string;
   guideError: string;
   guideRateLimited: string;
+  guideAbuseLimited: string;
+  guideWelcome: string;
+  guideThinking: string;
+  guideQuestionRemaining: string;
+  guideQuestionsRemaining: string;
   account: string;
   guestMode: string;
   continueAsGuest: string;
@@ -129,6 +134,11 @@ const messages: Record<NativeLocale, NativeMessages> = {
     guideUnavailable: "The verified AI guide is not available for this place.",
     guideError: "CITYWALK could not answer right now. Please try again.",
     guideRateLimited: "Your AI Guide allowance has been reached. Please try again later.",
+    guideAbuseLimited: "CITYWALK is receiving too many questions right now. Please try again shortly.",
+    guideWelcome: "I’m your verified CITYWALK guide. Ask me anything about this place.",
+    guideThinking: "CITYWALK is checking verified sources…",
+    guideQuestionRemaining: "1 free question remaining today",
+    guideQuestionsRemaining: "{count} free questions remaining today",
     account: "Account", guestMode: "CITYWALK works without an account.",
     continueAsGuest: "Continue as guest", signIn: "Sign in", signUp: "Create account", email: "Email",
     password: "Password", signedIn: "Signed in", signOut: "Sign out", authError: "Authentication could not be completed.",
@@ -172,6 +182,11 @@ const messages: Record<NativeLocale, NativeMessages> = {
     guideUnavailable: "Der verifizierte KI-Guide ist für diesen Ort nicht verfügbar.",
     guideError: "CITYWALK kann gerade nicht antworten. Bitte versuche es erneut.",
     guideRateLimited: "Dein Kontingent für den KI-Guide ist erreicht. Bitte versuche es später erneut.",
+    guideAbuseLimited: "CITYWALK erhält gerade zu viele Fragen. Bitte versuche es gleich noch einmal.",
+    guideWelcome: "Ich bin dein verifizierter CITYWALK-Guide. Frag mich etwas über diesen Ort.",
+    guideThinking: "CITYWALK prüft verifizierte Quellen…",
+    guideQuestionRemaining: "Heute noch 1 kostenlose Frage",
+    guideQuestionsRemaining: "Heute noch {count} kostenlose Fragen",
     account: "Konto", guestMode: "CITYWALK funktioniert ohne Konto.",
     continueAsGuest: "Als Gast fortfahren", signIn: "Anmelden", signUp: "Konto erstellen", email: "E-Mail",
     password: "Passwort", signedIn: "Angemeldet", signOut: "Abmelden", authError: "Anmeldung konnte nicht abgeschlossen werden.",
@@ -215,6 +230,11 @@ const messages: Record<NativeLocale, NativeMessages> = {
     guideUnavailable: "دليل الذكاء الاصطناعي الموثق غير متاح لهذا المكان.",
     guideError: "يتعذر على CITYWALK الإجابة الآن. حاول مرة أخرى.",
     guideRateLimited: "لقد وصلت إلى الحد المسموح به لدليل الذكاء الاصطناعي. حاول لاحقًا.",
+    guideAbuseLimited: "يتلقى CITYWALK عددًا كبيرًا من الأسئلة الآن. حاول مرة أخرى بعد قليل.",
+    guideWelcome: "أنا دليلك الموثق من CITYWALK. اسألني عن هذا المكان.",
+    guideThinking: "يتحقق CITYWALK من المصادر الموثقة…",
+    guideQuestionRemaining: "متبقي سؤال مجاني واحد اليوم",
+    guideQuestionsRemaining: "متبقي {count} من الأسئلة المجانية اليوم",
     account: "الحساب", guestMode: "يعمل CITYWALK دون حساب.",
     continueAsGuest: "المتابعة كضيف", signIn: "تسجيل الدخول", signUp: "إنشاء حساب", email: "البريد الإلكتروني",
     password: "كلمة المرور", signedIn: "تم تسجيل الدخول", signOut: "تسجيل الخروج", authError: "تعذّر إكمال المصادقة.",

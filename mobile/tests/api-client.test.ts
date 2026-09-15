@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createCitywalkApiClient } from "../src/lib/api/client";
+import { CitywalkApiError, createCitywalkApiClient } from "../src/lib/api/client";
 
 const cityResponse = {
   city: {
@@ -87,11 +87,13 @@ describe("CITYWALK native API client", () => {
       origin: "https://citywalk.example",
       fetchImpl,
       getAuthCookie: async () => "better-auth.session_token=opaque",
+      getVisitorId: async () => "123e4567-e89b-42d3-a456-426614174000",
     });
 
     await expect(client.askGuide({
       citySlug: "lubeck", placeSlug: "holstentor", locale: "en",
       question: "When was this built?",
+      history: [{ role: "assistant", text: "Ask me about this place." }],
     })).resolves.toMatchObject({ answer: "The gate was completed in 1478." });
     const [url, init] = fetchImpl.mock.calls[0]!;
     expect(url).toEqual(new URL("https://citywalk.example/api/guide"));
@@ -101,7 +103,49 @@ describe("CITYWALK native API client", () => {
     expect(init?.body).toBe(JSON.stringify({
       citySlug: "lubeck", placeSlug: "holstentor", locale: "en",
       question: "When was this built?",
+      history: [{ role: "assistant", text: "Ask me about this place." }],
+      visitorId: "123e4567-e89b-42d3-a456-426614174000",
     }));
+  });
+
+  it("requires a native visitor identity before a guide request", async () => {
+    const fetchImpl = vi.fn();
+    const client = createCitywalkApiClient({
+      origin: "https://citywalk.example",
+      fetchImpl,
+      getAuthCookie: async () => "",
+    });
+    await expect(client.askGuide({
+      citySlug: "lubeck", placeSlug: "holstentor", locale: "en", question: "Why?",
+    })).rejects.toThrow("visitor identity");
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("retains server-authoritative daily allowance details on a 429", async () => {
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
+      error: "Daily AI Guide allowance reached.",
+      code: "guide_daily_allowance_reached",
+      allowance: {
+        kind: "daily_guide", tier: "free", limit: 3, remaining: 0,
+        resetAt: 1_800_000_000_000,
+      },
+    }), { status: 429 }));
+    const client = createCitywalkApiClient({
+      origin: "https://citywalk.example",
+      fetchImpl,
+      getAuthCookie: async () => "",
+      getVisitorId: async () => "123e4567-e89b-42d3-a456-426614174000",
+    });
+
+    const error = await client.askGuide({
+      citySlug: "lubeck", placeSlug: "holstentor", locale: "en", question: "Why?",
+    }).catch((caught: unknown) => caught);
+    expect(error).toBeInstanceOf(CitywalkApiError);
+    expect(error).toMatchObject({
+      status: 429,
+      code: "guide_daily_allowance_reached",
+      allowance: { remaining: 0, limit: 3 },
+    });
   });
 
   it("adds the SecureStore-managed Better Auth cookie only to authenticated requests", async () => {

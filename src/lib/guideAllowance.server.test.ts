@@ -49,6 +49,59 @@ describe("verified AI daily allowance", () => {
     });
   });
 
+  it("allows the first three free answers and rejects the fourth", async () => {
+    const counts = new Map<string, number>();
+    const deps = dependencies({
+      limitDaily: vi.fn(async ({ key, maxRequests }) => {
+        const next = (counts.get(key) ?? 0) + 1;
+        counts.set(key, next);
+        return {
+          success: next <= maxRequests,
+          limit: maxRequests,
+          remaining: Math.max(0, maxRequests - next),
+          reset: 1234,
+        };
+      }),
+    });
+    const input = {
+      request: new Request("https://citywalk.example/api/guide"),
+      citySlug: "lubeck",
+      visitorId: "123e4567-e89b-42d3-a456-426614174000",
+      fallbackIdentity: "shared-network",
+    } as const;
+
+    await expect(enforceGuideDailyAllowance(input, deps)).resolves.toMatchObject({ success: true, remaining: 2 });
+    await expect(enforceGuideDailyAllowance(input, deps)).resolves.toMatchObject({ success: true, remaining: 1 });
+    await expect(enforceGuideDailyAllowance(input, deps)).resolves.toMatchObject({ success: true, remaining: 0 });
+    await expect(enforceGuideDailyAllowance(input, deps)).resolves.toMatchObject({ success: false, remaining: 0 });
+  });
+
+  it("does not share a free allowance between valid visitors on the same IP", async () => {
+    const seenKeys: string[] = [];
+    const deps = dependencies({
+      limitDaily: vi.fn(async ({ key, maxRequests }) => {
+        seenKeys.push(key);
+        return allowed(maxRequests);
+      }),
+    });
+    const base = {
+      request: new Request("https://citywalk.example/api/guide"),
+      citySlug: "lubeck",
+      fallbackIdentity: "203.0.113.10",
+    } as const;
+    await enforceGuideDailyAllowance({
+      ...base,
+      visitorId: "123e4567-e89b-42d3-a456-426614174000",
+    }, deps);
+    await enforceGuideDailyAllowance({
+      ...base,
+      visitorId: "7f1f9f32-3f5d-4ec2-bb20-a7ef7ff19022",
+    }, deps);
+
+    expect(seenKeys).toHaveLength(2);
+    expect(seenKeys[0]).not.toBe(seenKeys[1]);
+  });
+
   it("uses the 20-answer allowance only for an authenticated active pass", async () => {
     const deps = dependencies({
       getAuthenticatedUserId: vi.fn().mockResolvedValue("user-secret-id"),

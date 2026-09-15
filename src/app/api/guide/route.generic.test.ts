@@ -106,6 +106,13 @@ describe("POST /api/guide generic CMS place", () => {
         placeSlug: "sample-place",
         chunkIds: ["generic-place-history"],
       }],
+      allowance: {
+        kind: "daily_guide",
+        tier: "free",
+        limit: 3,
+        remaining: 2,
+        resetAt: expect.any(Number),
+      },
     });
     expect(mocks.createCompletion.mock.calls[0][0].messages[0].content)
       .toContain("sample-city");

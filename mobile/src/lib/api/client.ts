@@ -4,8 +4,10 @@ import {
   parseCitySummaryResponse,
   parsePlaceResponse,
   parseGuideAnswerResponse,
+  parseGuideAllowance,
   parseGuideEligibilityResponse,
   type GuideAnswerResponse,
+  type GuideAllowance,
   type GuideEligibilityResponse,
   type NativeLocale,
   type PublicCityIndexResponse,
@@ -17,12 +19,19 @@ import type { PublicContentFetch } from "../publicContentCache";
 import { getConfiguredApiOrigin } from "./environment";
 
 export type AuthCookieProvider = () => Promise<string>;
+export type VisitorIdProvider = () => Promise<string>;
+
+export type GuideHistoryInput = Readonly<{
+  role: "user" | "assistant";
+  text: string;
+}>;
 
 export type GuideQuestionInput = Readonly<{
   citySlug: string;
   placeSlug: string;
   locale: NativeLocale;
   question: string;
+  history?: readonly GuideHistoryInput[];
 }>;
 
 export type CitywalkApiClient = Readonly<{
@@ -44,6 +53,7 @@ export function createCitywalkApiClient(input: Readonly<{
   origin?: string;
   fetchImpl?: typeof fetch;
   getAuthCookie?: AuthCookieProvider;
+  getVisitorId?: VisitorIdProvider;
 }> = {}): CitywalkApiClient {
   const origin = input.origin ?? getConfiguredApiOrigin();
   const fetchImpl = input.fetchImpl ?? fetch;
@@ -147,14 +157,19 @@ export function createCitywalkApiClient(input: Readonly<{
       ));
     },
     async askGuide(questionInput) {
+      if (!input.getVisitorId) {
+        throw new Error("Anonymous visitor identity is not configured.");
+      }
+      const visitorId = await input.getVisitorId();
       const response = await fetchAuthenticated("/api/guide", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(questionInput),
+        body: JSON.stringify({ ...questionInput, visitorId }),
       });
       const data: unknown = await response.json();
       if (!response.ok) {
-        throw new CitywalkApiError(response.status, readPublicError(data));
+        const error = readPublicError(data);
+        throw new CitywalkApiError(response.status, error.message, error.code, error.allowance);
       }
       return parseGuideAnswerResponse(data);
     },
@@ -166,18 +181,40 @@ export function createCitywalkApiClient(input: Readonly<{
 }
 
 export class CitywalkApiError extends Error {
-  constructor(readonly status: number, message: string) {
+  constructor(
+    readonly status: number,
+    message: string,
+    readonly code?: string,
+    readonly allowance?: GuideAllowance,
+  ) {
     super(message);
     this.name = "CitywalkApiError";
   }
 }
 
-function readPublicError(value: unknown): string {
+function readPublicError(value: unknown): Readonly<{
+  message: string;
+  code?: string;
+  allowance?: GuideAllowance;
+}> {
   if (value && typeof value === "object" && "error" in value &&
       typeof value.error === "string" && value.error.trim()) {
-    return value.error;
+    const object = value as Record<string, unknown>;
+    let allowance: GuideAllowance | undefined;
+    try {
+      allowance = object.allowance === undefined
+        ? undefined
+        : parseGuideAllowance(object.allowance);
+    } catch {
+      allowance = undefined;
+    }
+    return {
+      message: value.error,
+      ...(typeof object.code === "string" ? { code: object.code } : {}),
+      ...(allowance ? { allowance } : {}),
+    };
   }
-  return "CITYWALK API request failed.";
+  return { message: "CITYWALK API request failed." };
 }
 
 function resolveAuthenticatedRequestUrl(path: string, origin: string): URL {

@@ -139,6 +139,15 @@ export type GuideSource = Readonly<{
 export type GuideAnswerResponse = Readonly<{
   answer: string;
   sources: readonly GuideSource[];
+  allowance?: GuideAllowance;
+}>;
+
+export type GuideAllowance = Readonly<{
+  kind: "daily_guide";
+  tier: "free" | "premium";
+  limit: number;
+  remaining: number;
+  resetAt: number;
 }>;
 
 export function parseCityIndexResponse(value: unknown): PublicCityIndexResponse {
@@ -189,7 +198,25 @@ export function parseGuideAnswerResponse(value: unknown): GuideAnswerResponse {
   return {
     answer: asString(object.answer, "guide answer"),
     sources: object.sources.map(parseGuideSource),
+    ...(object.allowance === undefined
+      ? {}
+      : { allowance: parseGuideAllowance(object.allowance) }),
   };
+}
+
+export function parseGuideAllowance(value: unknown): GuideAllowance {
+  const object = asObject(value, "guide allowance");
+  if (
+    object.kind !== "daily_guide" ||
+    (object.tier !== "free" && object.tier !== "premium")
+  ) {
+    throw new Error("Invalid guide allowance.");
+  }
+  const limit = asNonNegativeInteger(object.limit, "guide allowance limit");
+  const remaining = asNonNegativeInteger(object.remaining, "guide allowance remaining");
+  const resetAt = asNonNegativeInteger(object.resetAt, "guide allowance reset");
+  if (limit < 1 || remaining > limit) throw new Error("Invalid guide allowance.");
+  return { kind: "daily_guide", tier: object.tier, limit, remaining, resetAt };
 }
 
 function parseCitySummary(value: unknown): PublicCitySummary {
@@ -479,5 +506,11 @@ function asFiniteNumber(value: unknown, label: string): number {
 function asPositiveNumber(value: unknown, label: string): number {
   const number = asFiniteNumber(value, label);
   if (number <= 0) throw new Error(`Invalid ${label}.`);
+  return number;
+}
+
+function asNonNegativeInteger(value: unknown, label: string): number {
+  const number = asFiniteNumber(value, label);
+  if (!Number.isSafeInteger(number) || number < 0) throw new Error(`Invalid ${label}.`);
   return number;
 }

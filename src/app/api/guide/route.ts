@@ -142,7 +142,10 @@ export async function POST(request: Request) {
     const rateLimit = await aiGuideRateLimit.limit(ip);
     if (!rateLimit.success) {
       return NextResponse.json(
-        { error: "Too many AI questions. Please try again later." },
+        {
+          error: "Too many AI questions. Please try again later.",
+          code: "guide_abuse_rate_limited",
+        },
         {
           status: 429,
           headers: {
@@ -161,7 +164,11 @@ export async function POST(request: Request) {
     });
     if (!allowance.success) {
       return NextResponse.json(
-        { error: "Daily AI Guide allowance reached. Please try again later." },
+        {
+          error: "Daily AI Guide allowance reached. Please try again later.",
+          code: "guide_daily_allowance_reached",
+          allowance: toPublicGuideAllowance(allowance),
+        },
         {
           status: 429,
           headers: {
@@ -247,6 +254,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       answer,
       sources: buildGuideSourceMetadata(knowledge, usedChunkIds),
+      allowance: toPublicGuideAllowance(allowance),
     });
   } catch (error: unknown) {
     console.error("AI Guide error:", error);
@@ -263,6 +271,23 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ error: message }, { status });
   }
+}
+
+function toPublicGuideAllowance(
+  allowance: Readonly<{
+    tier: "free" | "premium";
+    limit: number;
+    remaining: number;
+    reset: number;
+  }>,
+) {
+  return {
+    kind: "daily_guide" as const,
+    tier: allowance.tier,
+    limit: allowance.limit,
+    remaining: Math.max(0, allowance.remaining),
+    resetAt: allowance.reset,
+  };
 }
 
 function parseGuideHistory(value: unknown): readonly GuideMessage[] {

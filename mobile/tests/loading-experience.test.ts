@@ -30,5 +30,14 @@ describe("CITYWALK loading experience", () => {
     expect(loadingSource).toContain('accessibilityRole="progressbar"');
     expect(loadingSource).toContain("messages.loading");
     expect(loadingSource).not.toMatch(/progress\s*=/iu);
+    expect(loadingSource).toContain("heroPlaceholder");
+    expect(loadingSource).toContain("cardPlaceholder");
+    expect(loadingSource).not.toMatch(/setTimeout|delay/);
+  });
+
+  it("uses inline chat thinking after a question instead of a full-screen loader", () => {
+    expect(guideSource).toContain("messages.guideThinking");
+    expect(guideSource).toContain("styles.thinkingBubble");
+    expect(guideSource).toContain("setConversation(turn.messages)");
   });
 });

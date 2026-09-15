@@ -30,7 +30,7 @@ export default function CityScreen() {
   const cityState = usePublicCity(identity?.citySlug ?? "invalid", locale);
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
-  if (cityState.status === "loading") return <Screen><CitywalkLoading /></Screen>;
+  if (cityState.status === "loading") return <Screen><CitywalkLoading variant="city" /></Screen>;
   if (cityState.status === "error") return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
 
   const { city, places, tours } = cityState.data;

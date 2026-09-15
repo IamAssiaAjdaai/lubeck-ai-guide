@@ -4,14 +4,22 @@ import { colors, radius, spacing } from "../design/tokens";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { AppText } from "./ui";
 
-export function CitywalkLoading({ compact = false }: Readonly<{ compact?: boolean }>) {
+type LoadingVariant = "default" | "compact" | "home" | "city" | "place";
+
+export function CitywalkLoading({
+  compact = false,
+  variant = compact ? "compact" : "default",
+}: Readonly<{ compact?: boolean; variant?: LoadingVariant }>) {
   const { messages } = useNativeLocale();
+  const isCompact = variant === "compact";
+  const hasHero = variant === "city" || variant === "place";
+  const hasCards = variant === "home" || variant === "city";
 
   return (
     <View
       accessibilityLabel={messages.loading}
       accessibilityRole="progressbar"
-      style={[styles.container, compact && styles.compact]}
+      style={[styles.container, isCompact && styles.compact]}
     >
       <View
         accessibilityElementsHidden
@@ -21,8 +29,21 @@ export function CitywalkLoading({ compact = false }: Readonly<{ compact?: boolea
         <View style={styles.route} />
         <View style={styles.pin} />
       </View>
-      <ActivityIndicator color={colors.primary} size="small" />
-      <AppText variant="caption" style={styles.label}>{messages.loading}</AppText>
+      <View
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+        style={[styles.skeleton, isCompact && styles.compactSkeleton]}
+      >
+        {hasHero ? <View style={styles.heroPlaceholder} /> : null}
+        <View style={styles.titlePlaceholder} />
+        <View style={styles.copyPlaceholder} />
+        {!isCompact ? <View style={styles.shortCopyPlaceholder} /> : null}
+        {hasCards ? <View style={styles.cardPlaceholder} /> : null}
+      </View>
+      <View style={styles.loadingLabel}>
+        <ActivityIndicator color={colors.primary} size="small" />
+        <AppText variant="caption" style={styles.label}>{messages.loading}</AppText>
+      </View>
     </View>
   );
 }
@@ -39,6 +60,40 @@ const styles = StyleSheet.create({
     minHeight: 96,
     paddingVertical: spacing.md,
   },
+  skeleton: { alignSelf: "stretch", gap: spacing.sm },
+  compactSkeleton: { alignItems: "center" },
+  heroPlaceholder: {
+    aspectRatio: 16 / 9,
+    backgroundColor: "#E8EEF8",
+    borderRadius: radius.lg,
+    width: "100%",
+  },
+  titlePlaceholder: {
+    backgroundColor: "#DCE6F4",
+    borderRadius: radius.pill,
+    height: 18,
+    width: "62%",
+  },
+  copyPlaceholder: {
+    backgroundColor: "#E8EEF8",
+    borderRadius: radius.pill,
+    height: 12,
+    width: "88%",
+  },
+  shortCopyPlaceholder: {
+    backgroundColor: "#E8EEF8",
+    borderRadius: radius.pill,
+    height: 12,
+    width: "70%",
+  },
+  cardPlaceholder: {
+    backgroundColor: "#EEF2F7",
+    borderRadius: radius.lg,
+    height: 110,
+    marginTop: spacing.sm,
+    width: "100%",
+  },
+  loadingLabel: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
   mark: {
     alignItems: "center",
     height: 28,

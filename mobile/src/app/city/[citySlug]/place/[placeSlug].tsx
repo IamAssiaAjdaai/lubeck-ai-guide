@@ -44,7 +44,7 @@ export default function PlaceScreen() {
   );
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
-  if (placeState.status === "loading") return <Screen><CitywalkLoading /></Screen>;
+  if (placeState.status === "loading") return <Screen><CitywalkLoading variant="place" /></Screen>;
   if (placeState.status === "error") return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
 
   const place = placeState.data.place;

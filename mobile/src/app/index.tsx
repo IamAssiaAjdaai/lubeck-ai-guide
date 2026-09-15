@@ -53,7 +53,7 @@ export default function HomeScreen() {
       <View onLayout={({ nativeEvent }) => { availableCitiesY.current = nativeEvent.layout.y; }}>
         <SectionTitle>{messages.availableCities}</SectionTitle>
       </View>
-      {cities.status === "loading" ? <CitywalkLoading compact /> : null}
+      {cities.status === "loading" ? <CitywalkLoading variant="home" /> : null}
       {cities.status === "error" ? <StatusMessage>{messages.unavailable}</StatusMessage> : null}
       {cities.status === "available" ? cities.data.cities.map((city) => {
         const image = selectPrimaryImageMedia(city.media);
