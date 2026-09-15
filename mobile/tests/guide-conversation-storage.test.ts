@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { appendGuideAnswer, createGuideWelcome, startGuideTurn } from "../src/lib/guideConversation";
+import { appendGuideAnswer, appendGuideError, createGuideWelcome, startGuideTurn } from "../src/lib/guideConversation";
 import { createGuideConversationStore } from "../src/lib/guideConversationStorage";
 
 function storageFixture() {
@@ -80,5 +80,53 @@ describe("versioned native guide conversation storage", () => {
     const restored = await store.load("lubeck", "holstentor");
     expect(restored).toHaveLength(40);
     expect(restored[0]?.text).toBe("message-20");
+  });
+
+  it("never saves busy/typing state or failed technical requests as completed history", async () => {
+    const fixture = storageFixture();
+    const store = createGuideConversationStore(fixture.storage);
+    const first = startGuideTurn([createGuideWelcome("Welcome")], "First", "u1")!;
+    const answered = appendGuideAnswer(first.messages, { id: "a1", text: "Verified answer", sources: [source] });
+    const failed = startGuideTurn(answered, "Technical failure", "u2")!;
+    await store.save("lubeck", "holstentor", [...appendGuideError(failed.messages, {
+      id: "e2", text: "Retry",
+    }), { id: "a3", role: "assistant", kind: "welcome", text: "typing" }]);
+    const raw = fixture.records.get("citywalk:guide:1:lubeck:holstentor")!;
+    expect(raw).not.toContain("Technical failure");
+    expect(raw).not.toContain("typing");
+    expect(raw).not.toContain("Retry");
+    expect(raw).not.toContain("busy");
+    expect(await createGuideConversationStore(fixture.storage).load("lubeck", "holstentor"))
+      .toMatchObject([{ text: "First" }, { text: "Verified answer", sources: [source] }]);
+  });
+
+  it("sanitizes malformed message/source fields and never stores extra private properties", async () => {
+    const fixture = storageFixture();
+    const store = createGuideConversationStore(fixture.storage);
+    const messages = [
+      { id: "u", role: "user", kind: "message", text: "Question", authToken: "private" },
+      { id: "a", role: "assistant", kind: "message", text: "Answer", latitude: 53.86,
+        sources: [{ ...source, url: "javascript:alert(1)", storageKey: "private-object" }, source] },
+    ] as unknown as Parameters<typeof store.save>[2];
+    await store.save("lubeck", "holstentor", messages);
+    const raw = fixture.records.get("citywalk:guide:1:lubeck:holstentor")!;
+    expect(raw).not.toContain("authToken");
+    expect(raw).not.toContain("latitude");
+    expect(raw).not.toContain("private-object");
+    expect(raw).not.toContain("javascript:");
+    expect((await store.load("lubeck", "holstentor"))[1]?.sources).toEqual([source]);
+  });
+
+  it("recovers from version and role corruption without leaking another conversation", async () => {
+    const fixture = storageFixture();
+    const store = createGuideConversationStore(fixture.storage);
+    const key = "citywalk:guide:1:hamburg:hamburg-rathaus";
+    fixture.records.set(key, JSON.stringify({ version: 99, citySlug: "hamburg", placeSlug: "hamburg-rathaus", messages: [] }));
+    expect(await store.load("hamburg", "hamburg-rathaus")).toEqual([]);
+    fixture.records.set(key, JSON.stringify({ version: 1, citySlug: "hamburg", placeSlug: "hamburg-rathaus", messages: [
+      { id: "a", role: "assistant", kind: "message", text: "Unpaired answer" },
+      { id: "u", role: "user", kind: "message", text: "Unanswered question" },
+    ] }));
+    expect(await createGuideConversationStore(fixture.storage).load("hamburg", "hamburg-rathaus")).toEqual([]);
   });
 });

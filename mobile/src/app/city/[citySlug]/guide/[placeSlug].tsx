@@ -27,7 +27,7 @@ import {
   type GuideConversationMessage,
 } from "../../../../lib/guideConversation";
 import { guideConversationStore } from "../../../../lib/guideConversationStorage";
-import { classifyGuideFailure, isGuideAllowanceExhausted, type GuideFailure } from "../../../../lib/guideFailure";
+import { canSubmitGuideQuestion, classifyGuideFailure, isGuideAllowanceExhausted, type GuideFailure } from "../../../../lib/guideFailure";
 import { guideUpgradePath } from "../../../../lib/guideUpgrade";
 import { parsePlaceRouteIdentity } from "../../../../lib/routing";
 import { triggerCitywalkHaptic } from "../../../../lib/haptics";
@@ -121,6 +121,8 @@ export default function GuideScreen() {
 
   if (!hydrated) return <Screen><CitywalkLoading variant="place" /></Screen>;
 
+  const canSend = canSubmitGuideQuestion({ busy, hydrated, allowance, failure, question });
+
   function nextMessageId(role: "user" | "assistant"): string {
     const existing = new Set(conversation.map(({ id }) => id));
     let id: string;
@@ -132,7 +134,7 @@ export default function GuideScreen() {
   }
 
   async function submitQuestion() {
-    if (busy || !hydrated || isGuideAllowanceExhausted(allowance) || failure === "daily_allowance") return;
+    if (!canSend) return;
     const turn = startGuideTurn(conversation, question, nextMessageId("user"));
     if (!turn) return;
 
@@ -171,7 +173,7 @@ export default function GuideScreen() {
 
   const limitReached = isGuideAllowanceExhausted(allowance) || failure === "daily_allowance";
   const upgradePath = allowance?.tier === "free" ? guideUpgradePath(citySlug, locale) : undefined;
-  const sendDisabled = busy || !hydrated || limitReached || !question.trim();
+  const sendDisabled = !canSend;
 
   return (
     <SafeAreaView edges={getScreenSafeAreaEdges(false)} style={[styles.safeArea, { direction }]}>

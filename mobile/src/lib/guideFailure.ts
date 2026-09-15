@@ -16,3 +16,15 @@ export function classifyGuideFailure(error: unknown): GuideFailure {
 export function isGuideAllowanceExhausted(allowance: GuideAllowance | undefined): boolean {
   return allowance?.remaining === 0;
 }
+
+export function canSubmitGuideQuestion(input: Readonly<{
+  busy: boolean;
+  hydrated: boolean;
+  allowance?: GuideAllowance;
+  failure?: GuideFailure;
+  question: string;
+}>): boolean {
+  return !input.busy && input.hydrated &&
+    !isGuideAllowanceExhausted(input.allowance) &&
+    input.failure !== "daily_allowance" && Boolean(input.question.trim());
+}

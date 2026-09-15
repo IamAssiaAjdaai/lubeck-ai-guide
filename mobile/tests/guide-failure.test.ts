@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { CitywalkApiError } from "../src/lib/api/client";
-import { classifyGuideFailure, isGuideAllowanceExhausted } from "../src/lib/guideFailure";
+import { canSubmitGuideQuestion, classifyGuideFailure, isGuideAllowanceExhausted } from "../src/lib/guideFailure";
 import { guideUpgradePath } from "../src/lib/guideUpgrade";
 
 const free = { kind: "daily_guide", tier: "free", limit: 3, remaining: 0, resetAt: 1_800_000_000_000 } as const;
@@ -28,5 +28,17 @@ describe("native guide limit and retry policy", () => {
     expect(guideUpgradePath("lubeck", "de")).toBe("/de/pass/lubeck");
     expect(guideUpgradePath("test-city", "en")).toBeUndefined();
     expect(guideUpgradePath("../admin", "en")).toBeUndefined();
+  });
+
+  it("suppresses repeated daily submits but keeps abuse and technical retries available", () => {
+    const base = { busy: false, hydrated: true, question: "Can you explain?" } as const;
+    expect(canSubmitGuideQuestion({ ...base, allowance: free })).toBe(false);
+    expect(canSubmitGuideQuestion({ ...base, failure: "daily_allowance" })).toBe(false);
+    expect(canSubmitGuideQuestion({ ...base, allowance: premium })).toBe(false);
+    expect(canSubmitGuideQuestion({ ...base, failure: "abuse_limit" })).toBe(true);
+    expect(canSubmitGuideQuestion({ ...base, failure: "technical" })).toBe(true);
+    expect(canSubmitGuideQuestion({ ...base, busy: true })).toBe(false);
+    expect(canSubmitGuideQuestion({ ...base, hydrated: false })).toBe(false);
+    expect(canSubmitGuideQuestion({ ...base, question: "  " })).toBe(false);
   });
 });
