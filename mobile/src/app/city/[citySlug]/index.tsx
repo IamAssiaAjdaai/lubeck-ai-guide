@@ -1,24 +1,27 @@
 import { Image } from "expo-image";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { CitywalkLoading } from "../../../components/CitywalkLoading";
 import { MediaAttribution } from "../../../components/MediaAttribution";
 import { NativeCityMap } from "../../../components/NativeCityMap";
+import { NativeIcon } from "../../../components/NativeIcon";
 import { NativeTourPlanner } from "../../../components/NativeTourPlanner";
 import {
   AppText,
-  Card,
+  MotionView,
+  PressableSurface,
   Screen,
   SectionTitle,
   StatusMessage,
   VirtualizedScreen,
 } from "../../../components/ui";
-import { colors, radius, spacing } from "../../../design/tokens";
+import { colors, motion, radius, spacing } from "../../../design/tokens";
 import { prefetchPublicPlace, usePublicCity } from "../../../hooks/usePublicContent";
 import type { PublicPlaceCard, PublicTour } from "../../../lib/api/contracts";
 import { citywalkApi } from "../../../lib/api/instance";
 import { selectImageUrl, selectPrimaryImageMedia } from "../../../lib/api/media";
+import { triggerCitywalkHaptic } from "../../../lib/haptics";
 import { getNativeDirection, getNativeTextAlignment } from "../../../lib/localization";
 import { parseCityRouteIdentity } from "../../../lib/routing";
 import { useNativeLocale } from "../../../localization/LocaleProvider";
@@ -26,7 +29,7 @@ import { useNativeLocale } from "../../../localization/LocaleProvider";
 export default function CityScreen() {
   const params = useLocalSearchParams<{ citySlug?: string | string[] }>();
   const identity = parseCityRouteIdentity(params.citySlug);
-  const { locale, messages } = useNativeLocale();
+  const { direction: appDirection, locale, messages } = useNativeLocale();
   const cityState = usePublicCity(identity?.citySlug ?? "invalid", locale);
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
@@ -57,7 +60,7 @@ export default function CityScreen() {
         maxToRenderPerBatch={5}
         windowSize={5}
         ListHeaderComponent={(
-          <View style={styles.headerContent}>
+          <MotionView duration={motion.screen} style={styles.headerContent}>
             {cityImage && cityImageUrl ? (
               <View>
                 <Image
@@ -66,12 +69,13 @@ export default function CityScreen() {
                   contentFit="cover"
                   style={styles.cityHero}
                   accessibilityLabel={city.content.name}
+                  transition={motion.component}
                 />
                 <MediaAttribution attribution={cityImage.attribution} />
               </View>
             ) : null}
-            <View style={{ direction: cityDirection }}>
-              <AppText variant="title" style={cityTextStyle}>{city.content.name}</AppText>
+            <View style={[styles.cityIntroduction, { direction: cityDirection }]}>
+              <AppText variant="screenTitle" style={cityTextStyle}>{city.content.name}</AppText>
               {city.content.shortDescription ? (
                 <AppText style={[cityTextStyle, styles.muted]}>{city.content.shortDescription}</AppText>
               ) : null}
@@ -81,7 +85,7 @@ export default function CityScreen() {
             </View>
 
             {tours.length > 0 ? (
-              <View>
+              <View style={styles.section}>
                 <SectionTitle>{messages.tours}</SectionTitle>
                 {tours.map((tour) => (
                   <TourCard
@@ -90,6 +94,7 @@ export default function CityScreen() {
                     tour={tour}
                     places={places}
                     messages={messages}
+                    appDirection={appDirection}
                   />
                 ))}
               </View>
@@ -99,10 +104,12 @@ export default function CityScreen() {
               <NativeTourPlanner citySlug={city.slug} places={places} origin={plannerOrigin} />
             ) : null}
 
-            <SectionTitle>{messages.map}</SectionTitle>
-            <NativeCityMap places={places} />
+            <View style={styles.section}>
+              <SectionTitle>{messages.map}</SectionTitle>
+              <NativeCityMap places={places} />
+            </View>
             <SectionTitle>{messages.places}</SectionTitle>
-          </View>
+          </MotionView>
         )}
         renderItem={({ item }) => (
           <PlaceCard
@@ -122,11 +129,13 @@ function TourCard({
   tour,
   places,
   messages,
+  appDirection,
 }: Readonly<{
   citySlug: string;
   tour: PublicTour;
   places: readonly PublicPlaceCard[];
   messages: ReturnType<typeof useNativeLocale>["messages"];
+  appDirection: "ltr" | "rtl";
 }>) {
   const image = selectPrimaryImageMedia(tour.media);
   const imageUrl = selectImageUrl(image, undefined, undefined, "card");
@@ -142,12 +151,16 @@ function TourCard({
       return place ? [place.content.name] : [];
     });
   return (
-    <Link
-      href={{ pathname: "/city/[citySlug]/tour/[tourSlug]", params: { citySlug, tourSlug: tour.slug } }}
-      asChild
-    >
-      <Pressable accessibilityRole="link" style={styles.tourLink}>
-        <Card>
+    <MotionView style={styles.tourCard}>
+      <Link
+        href={{ pathname: "/city/[citySlug]/tour/[tourSlug]", params: { citySlug, tourSlug: tour.slug } }}
+        asChild
+      >
+        <PressableSurface
+          accessibilityRole="link"
+          onPress={() => { void triggerCitywalkHaptic("medium"); }}
+          style={styles.tourLink}
+        >
           {image && imageUrl ? (
             <Image
               source={{ uri: citywalkApi.resolveUrl(imageUrl) }}
@@ -155,31 +168,33 @@ function TourCard({
               contentFit="cover"
               style={styles.placeImage}
               accessibilityLabel={tour.content.title}
+              transition={motion.component}
             />
           ) : null}
-          <View style={{ direction }}>
+          <View style={[styles.tourContent, { direction }]}>
             <AppText variant="heading" style={textStyle}>{tour.content.title}</AppText>
             {tour.content.shortDescription || tour.content.description ? (
-              <AppText style={textStyle}>{tour.content.shortDescription ?? tour.content.description}</AppText>
+              <AppText numberOfLines={3} style={[textStyle, styles.description]}>{tour.content.shortDescription ?? tour.content.description}</AppText>
             ) : null}
             <AppText variant="caption" style={styles.metadata}>
               {tour.estimatedDurationMinutes ? `${tour.estimatedDurationMinutes} ${messages.minutes} · ` : ""}
               {tour.stops.length} {messages.stops}
             </AppText>
-            {stopNames.map((name, index) => (
-              <AppText key={`${tour.slug}-${index}`} variant="caption" style={styles.stopName}>
-                {index + 1}. {name}
-              </AppText>
-            ))}
-            <AppText variant="label" style={styles.startTour}>{messages.startTour} →</AppText>
+            <AppText numberOfLines={2} variant="caption" style={styles.stopName}>
+              {stopNames.join(" · ")}
+            </AppText>
+            <View style={styles.startTourRow}>
+              <AppText variant="label" style={styles.startTour}>{messages.startTour}</AppText>
+              <NativeIcon ios={appDirection === "rtl" ? "arrow.left" : "arrow.right"} android={appDirection === "rtl" ? "arrow_back" : "arrow_forward"} color={colors.primary} size={18} />
+            </View>
             {tour.didFallback ? (
               <AppText variant="caption" style={styles.fallback}>{messages.fallbackContent}</AppText>
             ) : null}
-            <MediaAttribution attribution={image?.attribution} />
           </View>
-        </Card>
-      </Pressable>
-    </Link>
+        </PressableSurface>
+      </Link>
+      <View style={styles.cardAttribution}><MediaAttribution attribution={image?.attribution} /></View>
+    </MotionView>
   );
 }
 
@@ -202,51 +217,70 @@ function PlaceCard({
     textAlign: getNativeTextAlignment(place.resolvedLocale),
   } as const;
   return (
-    <Link
-      href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }}
-      asChild
-    >
-      <Pressable
-        accessibilityRole="link"
-        onPressIn={() => { void prefetchPublicPlace(citySlug, place.slug, locale).catch(() => undefined); }}
-        style={styles.placeLink}
+    <View style={styles.placeCard}>
+      <Link
+        href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }}
+        asChild
       >
-        <Card>
+        <PressableSurface
+          accessibilityRole="link"
+          onPress={() => { void triggerCitywalkHaptic("light"); }}
+          onPressIn={() => { void prefetchPublicPlace(citySlug, place.slug, locale).catch(() => undefined); }}
+          style={styles.placeLink}
+        >
           {image ? (
-            <View>
-              <Image
-                source={{ uri: citywalkApi.resolveUrl(image) }}
-                cachePolicy="memory-disk"
-                contentFit="cover"
-                recyclingKey={`${citySlug}:${place.slug}`}
-                style={styles.placeImage}
-                accessibilityLabel={place.content.name}
-              />
-              <MediaAttribution attribution={imageMedia?.attribution} />
-            </View>
+            <Image
+              source={{ uri: citywalkApi.resolveUrl(image) }}
+              cachePolicy="memory-disk"
+              contentFit="cover"
+              recyclingKey={`${citySlug}:${place.slug}`}
+              style={styles.placeThumbnail}
+              accessibilityLabel={place.content.name}
+              transition={motion.press}
+            />
           ) : null}
-          <View style={{ direction }}>
-            <AppText variant="heading" style={textStyle}>{place.content.name}</AppText>
-            <AppText style={textStyle}>{place.content.shortDescription}</AppText>
+          <View style={[styles.placeContent, { direction }]}>
+            <AppText numberOfLines={2} variant="cardTitle" style={textStyle}>{place.content.name}</AppText>
+            <AppText numberOfLines={2} style={[textStyle, styles.description]}>{place.content.shortDescription}</AppText>
             <AppText variant="caption" style={styles.metadata}>
               {place.category.toUpperCase()} · {place.durationMinutes} {visitMinutes}
             </AppText>
           </View>
-        </Card>
-      </Pressable>
-    </Link>
+          <View accessibilityElementsHidden style={styles.placeChevron}>
+            <NativeIcon ios={direction === "rtl" ? "chevron.left" : "chevron.right"} android={direction === "rtl" ? "chevron_left" : "chevron_right"} color={colors.textSubtle} size={18} />
+          </View>
+        </PressableSurface>
+      </Link>
+      <View style={styles.cardAttribution}><MediaAttribution attribution={imageMedia?.attribution} /></View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  headerContent: { gap: spacing.lg },
-  cityHero: { width: "100%", height: 210, borderRadius: radius.lg, backgroundColor: "#EEF2FF" },
-  placeImage: { width: "100%", height: 150, borderRadius: radius.md, backgroundColor: "#EEF2FF" },
-  placeLink: { marginBottom: spacing.lg },
+  headerContent: { gap: spacing.xl },
+  cityHero: { width: "100%", height: 235, borderRadius: radius.hero, backgroundColor: colors.primarySoft },
+  cityIntroduction: { gap: spacing.sm },
+  section: { gap: spacing.md },
+  placeImage: { width: "100%", height: 170, backgroundColor: colors.primarySoft },
+  placeThumbnail: { alignSelf: "stretch", backgroundColor: colors.primarySoft, width: 116 },
+  placeCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    marginBottom: spacing.md,
+    overflow: "hidden",
+  },
+  placeLink: { alignItems: "center", flexDirection: "row", minHeight: 132 },
+  placeContent: { flex: 1, gap: spacing.xs, padding: spacing.md },
+  placeChevron: { paddingEnd: spacing.sm },
   metadata: { color: colors.textMuted, marginTop: spacing.sm },
   muted: { color: colors.textMuted },
-  tourLink: { marginTop: spacing.md },
+  description: { color: colors.textMuted },
+  tourCard: { backgroundColor: colors.surface, borderRadius: radius.lg, marginTop: spacing.md, overflow: "hidden" },
+  tourLink: { overflow: "hidden" },
+  tourContent: { gap: spacing.xs, padding: spacing.md },
+  cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
   stopName: { color: colors.textMuted, marginTop: spacing.xs },
   startTour: { color: colors.primary, marginTop: spacing.md },
+  startTourRow: { alignItems: "center", flexDirection: "row", gap: spacing.xs },
 });

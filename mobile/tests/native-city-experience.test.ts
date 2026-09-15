@@ -11,7 +11,7 @@ import accountSource from "../src/app/account/index.tsx?raw";
 describe("native city experience parity", () => {
   it("renders city hero, published tour stops, and the personalized planner", () => {
     expect(citySource).toContain('selectImageUrl(cityImage, undefined, undefined, "hero")');
-    expect(citySource).toContain("stopNames.map");
+    expect(citySource).toContain('stopNames.join(" · ")');
     expect(citySource).toContain("messages.startTour");
     expect(citySource).toContain("<NativeTourPlanner");
     expect(citySource).toContain("<VirtualizedScreen");

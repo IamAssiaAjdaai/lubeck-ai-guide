@@ -1,7 +1,9 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Animated, StyleSheet, View } from "react-native";
 
 import { colors, radius, spacing } from "../design/tokens";
 import { useNativeLocale } from "../localization/LocaleProvider";
+import { useReducedMotion } from "../lib/motion";
 import { AppText } from "./ui";
 
 type LoadingVariant = "default" | "compact" | "home" | "city" | "place";
@@ -11,9 +13,24 @@ export function CitywalkLoading({
   variant = compact ? "compact" : "default",
 }: Readonly<{ compact?: boolean; variant?: LoadingVariant }>) {
   const { messages } = useNativeLocale();
+  const reducedMotion = useReducedMotion();
+  const [pulse] = useState(() => new Animated.Value(0.62));
   const isCompact = variant === "compact";
   const hasHero = variant === "city" || variant === "place";
   const hasCards = variant === "home" || variant === "city";
+
+  useEffect(() => {
+    if (reducedMotion) {
+      pulse.setValue(0.78);
+      return;
+    }
+    const animation = Animated.loop(Animated.sequence([
+      Animated.timing(pulse, { duration: 650, toValue: 0.9, useNativeDriver: true }),
+      Animated.timing(pulse, { duration: 650, toValue: 0.55, useNativeDriver: true }),
+    ]));
+    animation.start();
+    return () => animation.stop();
+  }, [pulse, reducedMotion]);
 
   return (
     <View
@@ -29,17 +46,17 @@ export function CitywalkLoading({
         <View style={styles.route} />
         <View style={styles.pin} />
       </View>
-      <View
+      <Animated.View
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
-        style={[styles.skeleton, isCompact && styles.compactSkeleton]}
+        style={[styles.skeleton, isCompact && styles.compactSkeleton, { opacity: pulse }]}
       >
         {hasHero ? <View style={styles.heroPlaceholder} /> : null}
         <View style={styles.titlePlaceholder} />
         <View style={styles.copyPlaceholder} />
         {!isCompact ? <View style={styles.shortCopyPlaceholder} /> : null}
         {hasCards ? <View style={styles.cardPlaceholder} /> : null}
-      </View>
+      </Animated.View>
       <View style={styles.loadingLabel}>
         <ActivityIndicator color={colors.primary} size="small" />
         <AppText variant="caption" style={styles.label}>{messages.loading}</AppText>

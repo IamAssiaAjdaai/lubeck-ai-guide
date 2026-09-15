@@ -18,9 +18,10 @@ import {
 } from "../lib/tourPlanning";
 import { saveLocalTrip } from "../lib/tripStorage";
 import { createMobileTripId, createMobileTripPlaceParams } from "../lib/tripNavigation";
+import { triggerCitywalkHaptic } from "../lib/haptics";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { NativeIcon } from "./NativeIcon";
-import { AppText, Card, PrimaryButton, StatusMessage } from "./ui";
+import { AppText, EmptyState, MotionView, PrimaryButton, StatusMessage } from "./ui";
 
 const interestLabels = {
   history: "history",
@@ -60,6 +61,7 @@ export function NativeTourPlanner({
   );
 
   function toggleInterest(interest: TourInterest) {
+    void triggerCitywalkHaptic("light");
     setPreferences((current) => ({
       ...current,
       interests: TOUR_INTERESTS.filter((candidate) =>
@@ -86,8 +88,10 @@ export function NativeTourPlanner({
     try {
       await saveLocalTrip({ citySlug, preferences, result, timeBudgetMinutes: timeBudget });
       setSaveState("saved");
+      void triggerCitywalkHaptic("success");
     } catch {
       setSaveState("error");
+      void triggerCitywalkHaptic("error");
     }
   }
 
@@ -96,7 +100,10 @@ export function NativeTourPlanner({
       <Pressable
         accessibilityRole="button"
         accessibilityState={{ expanded: open }}
-        onPress={() => setOpen((current) => !current)}
+        onPress={() => {
+          void triggerCitywalkHaptic("light");
+          setOpen((current) => !current);
+        }}
         style={({ pressed }) => [styles.disclosure, pressed && styles.pressed]}
       >
         <View style={styles.disclosureLabel}>
@@ -107,11 +114,18 @@ export function NativeTourPlanner({
       </Pressable>
 
       {open ? (
-        <Card style={styles.panel}>
-          <AppText variant="heading">{messages.buildYourTrip}</AppText>
-          <AppText style={styles.muted}>{messages.plannerDescription}</AppText>
+        <MotionView style={styles.panel}>
+          <View style={styles.plannerIntro}>
+            <View style={styles.plannerIcon}>
+              <NativeIcon ios="sparkles" android="auto_awesome" color={colors.violet} size={20} />
+            </View>
+            <View style={styles.plannerHeading}>
+              <AppText variant="heading">{messages.buildYourTrip}</AppText>
+              <AppText style={styles.muted}>{messages.plannerDescription}</AppText>
+            </View>
+          </View>
 
-          <AppText variant="label">{messages.interests}</AppText>
+          <PlannerStep label={messages.interests} number={1} />
           <View style={[styles.chips, { direction }]}>
             {TOUR_INTERESTS.map((interest) => {
               const selected = preferences.interests.includes(interest);
@@ -131,7 +145,7 @@ export function NativeTourPlanner({
             })}
           </View>
 
-          <AppText variant="label">{messages.walkingPreference}</AppText>
+          <PlannerStep label={messages.walkingPreference} number={2} />
           <View accessibilityRole="radiogroup" style={styles.twoColumns}>
             {(["standard", "less-walking"] as const).map((walkingPreference) => {
               const selected = preferences.walkingPreference === walkingPreference;
@@ -140,7 +154,11 @@ export function NativeTourPlanner({
                   key={walkingPreference}
                   accessibilityRole="radio"
                   accessibilityState={{ checked: selected }}
-                  onPress={() => setPreferences((current) => ({ ...current, walkingPreference }))}
+                  onPress={() => {
+                    void triggerCitywalkHaptic("light");
+                    setPreferences((current) => ({ ...current, walkingPreference }));
+                    setSaveState(undefined);
+                  }}
                   style={[styles.choice, selected && styles.choiceSelected]}
                 >
                   <AppText variant="caption" style={styles.choiceText}>
@@ -151,28 +169,18 @@ export function NativeTourPlanner({
             })}
           </View>
 
-          <AppText variant="label">{messages.recommendedForYou}</AppText>
-          {recommendations.map((place, index) => (
-            <Link
-              key={place.slug}
-              href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }}
-              asChild
-            >
-              <Pressable accessibilityRole="link" style={styles.routeStop}>
-                <AppText variant="caption" style={styles.number}>{index + 1}</AppText>
-                <AppText variant="label" style={styles.stopName}>{place.content.name}</AppText>
-              </Pressable>
-            </Link>
-          ))}
-
-          <AppText variant="label">{messages.availableTime}</AppText>
+          <PlannerStep label={messages.availableTime} number={3} />
           <View accessibilityRole="radiogroup" style={styles.twoColumns}>
             {TOUR_TIME_BUDGETS.map((budget) => (
               <Pressable
                 key={budget}
                 accessibilityRole="radio"
                 accessibilityState={{ checked: timeBudget === budget }}
-                onPress={() => setTimeBudget(budget)}
+                onPress={() => {
+                  void triggerCitywalkHaptic("light");
+                  setTimeBudget(budget);
+                  setSaveState(undefined);
+                }}
                 style={[styles.choice, timeBudget === budget && styles.choiceSelected]}
               >
                 <AppText variant="caption" style={styles.choiceText}>{messages[budgetLabels[budget]]}</AppText>
@@ -180,17 +188,39 @@ export function NativeTourPlanner({
             ))}
           </View>
 
+          <View style={styles.recommendations}>
+            <AppText variant="label">{messages.recommendedForYou}</AppText>
+            {recommendations.map((place, index) => (
+              <Link
+                key={place.slug}
+                href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }}
+                asChild
+              >
+                <Pressable accessibilityRole="link" style={({ pressed }) => [styles.routeStop, pressed && styles.pressed]}>
+                  <AppText variant="caption" style={styles.number}>{index + 1}</AppText>
+                  <AppText variant="label" style={styles.stopName}>{place.content.name}</AppText>
+                  <NativeIcon ios={direction === "rtl" ? "chevron.left" : "chevron.right"} android={direction === "rtl" ? "chevron_left" : "chevron_right"} color={colors.textSubtle} size={17} />
+                </Pressable>
+              </Link>
+            ))}
+          </View>
+
           <PrimaryButton
+            haptic="medium"
             label={result ? messages.rebuildTrip : messages.buildTrip}
             leadingIcon={<NativeIcon ios="sparkles" android="auto_awesome" color="#FFFFFF" size={19} />}
             onPress={buildTrip}
           />
 
           {result ? (
-            <View accessibilityLiveRegion="polite" style={styles.result}>
+            <MotionView accessibilityLiveRegion="polite" style={styles.result}>
               <AppText variant="heading">{messages.yourRoute}</AppText>
               {result.stops.length === 0 ? (
-                <StatusMessage>{messages.noRoute}</StatusMessage>
+                <EmptyState
+                  description={messages.noRoute}
+                  icon={<NativeIcon ios="point.bottomleft.forward.to.point.topright.scurvepath" android="route" color={colors.primary} size={28} />}
+                  title={messages.noRouteTitle}
+                />
               ) : (
                 <>
                   <View style={styles.summary}>
@@ -219,18 +249,31 @@ export function NativeTourPlanner({
                       }}
                       asChild
                     >
-                      <PrimaryButton label={messages.startTrip} />
+                      <PrimaryButton haptic="medium" label={messages.startTrip} />
                     </Link>
                   ) : null}
-                  <PrimaryButton label={messages.saveTrip} onPress={() => void saveTrip()} />
-                  {saveState === "saved" ? <StatusMessage>{messages.tripSavedLocally}</StatusMessage> : null}
-                  {saveState === "error" ? <StatusMessage>{messages.tripSaveFailed}</StatusMessage> : null}
+                  <PrimaryButton haptic="medium" label={messages.saveTrip} onPress={() => void saveTrip()} tone="secondary" />
+                  {saveState === "saved" ? (
+                    <MotionView><StatusMessage tone="success">{messages.tripSavedLocally}</StatusMessage></MotionView>
+                  ) : null}
+                  {saveState === "error" ? <StatusMessage tone="error">{messages.tripSaveFailed}</StatusMessage> : null}
                 </>
               )}
-            </View>
+            </MotionView>
           ) : null}
-        </Card>
+        </MotionView>
       ) : null}
+    </View>
+  );
+}
+
+function PlannerStep({ label, number }: Readonly<{ label: string; number: number }>) {
+  return (
+    <View style={styles.stepHeading}>
+      <View style={styles.stepNumber}>
+        <AppText variant="caption" style={styles.stepNumberText}>{number}</AppText>
+      </View>
+      <AppText variant="label">{label}</AppText>
     </View>
   );
 }
@@ -260,7 +303,13 @@ const styles = StyleSheet.create({
   disclosureLabel: { alignItems: "center", flexDirection: "row", flexShrink: 1, gap: spacing.sm },
   disclosureText: { flexShrink: 1 },
   pressed: { backgroundColor: "#F3F4F6" },
-  panel: { gap: spacing.md },
+  panel: { backgroundColor: colors.surface, borderRadius: radius.lg, gap: spacing.md, padding: spacing.md },
+  plannerIntro: { alignItems: "flex-start", flexDirection: "row", gap: spacing.sm },
+  plannerIcon: { alignItems: "center", backgroundColor: colors.violetSoft, borderRadius: radius.pill, height: 42, justifyContent: "center", width: 42 },
+  plannerHeading: { flex: 1, gap: spacing.xs },
+  stepHeading: { alignItems: "center", flexDirection: "row", gap: spacing.sm, marginTop: spacing.sm },
+  stepNumber: { alignItems: "center", backgroundColor: colors.surfaceMuted, borderRadius: radius.pill, height: 26, justifyContent: "center", width: 26 },
+  stepNumberText: { color: colors.textMuted },
   muted: { color: colors.textMuted },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   chip: {
@@ -287,9 +336,10 @@ const styles = StyleSheet.create({
   },
   choiceSelected: { backgroundColor: "#DBEAFE", borderColor: colors.primary },
   choiceText: { textAlign: "center" },
-  result: { borderTopColor: colors.border, borderTopWidth: 1, gap: spacing.sm, paddingTop: spacing.md },
+  recommendations: { gap: spacing.xs },
+  result: { borderTopColor: colors.border, borderTopWidth: StyleSheet.hairlineWidth, gap: spacing.md, paddingTop: spacing.lg },
   summary: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
-  summaryItem: { backgroundColor: colors.background, borderRadius: radius.md, flexBasis: "47%", flexGrow: 1, padding: spacing.sm },
+  summaryItem: { backgroundColor: colors.surfaceMuted, borderRadius: radius.md, flexBasis: "47%", flexGrow: 1, padding: spacing.sm },
   routeStop: { alignItems: "center", flexDirection: "row", gap: spacing.sm, minHeight: 44 },
   number: { backgroundColor: colors.primary, borderRadius: radius.pill, color: "#FFFFFF", minWidth: 28, padding: spacing.xs, textAlign: "center" },
   stopName: { flex: 1 },

@@ -1,7 +1,6 @@
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Linking,
   Platform,
@@ -15,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { CitywalkLoading } from "../../../../components/CitywalkLoading";
 import { NativeIcon } from "../../../../components/NativeIcon";
-import { AppText, Screen, StatusMessage } from "../../../../components/ui";
+import { AppText, EmptyState, InlineLoadingDots, MotionView, Screen, StatusMessage } from "../../../../components/ui";
 import { colors, radius, spacing, typography } from "../../../../design/tokens";
 import { useGuideEligibility, usePublicPlace } from "../../../../hooks/usePublicContent";
 import type { GuideAllowance, GuideSource } from "../../../../lib/api/contracts";
@@ -29,6 +28,7 @@ import {
   type GuideConversationMessage,
 } from "../../../../lib/guideConversation";
 import { parsePlaceRouteIdentity } from "../../../../lib/routing";
+import { triggerCitywalkHaptic } from "../../../../lib/haptics";
 import { getScreenSafeAreaEdges, SCREEN_TOP_SPACING } from "../../../../lib/screenLayout";
 import { useNativeLocale } from "../../../../localization/LocaleProvider";
 
@@ -66,7 +66,15 @@ export default function GuideScreen() {
     return <Screen><CitywalkLoading variant="place" /></Screen>;
   }
   if (placeState.status === "error" || guideState.status === "error") {
-    return <Screen><StatusMessage>{messages.guideUnavailable}</StatusMessage></Screen>;
+    return (
+      <Screen>
+        <EmptyState
+          description={messages.guideUnavailable}
+          icon={<NativeIcon ios="sparkles" android="auto_awesome" color={colors.violet} size={28} />}
+          title={messages.askGuideTitle}
+        />
+      </Screen>
+    );
   }
 
   const place = placeState.data.place;
@@ -75,7 +83,15 @@ export default function GuideScreen() {
     place.slug !== identity.placeSlug ||
     !guideState.data.eligible
   ) {
-    return <Screen><StatusMessage>{messages.guideUnavailable}</StatusMessage></Screen>;
+    return (
+      <Screen>
+        <EmptyState
+          description={messages.guideUnavailable}
+          icon={<NativeIcon ios="sparkles" android="auto_awesome" color={colors.violet} size={28} />}
+          title={messages.askGuideTitle}
+        />
+      </Screen>
+    );
   }
   const { citySlug, placeSlug } = identity;
 
@@ -92,6 +108,7 @@ export default function GuideScreen() {
     setConversation(turn.messages);
     setQuestion("");
     setBusy(true);
+    void triggerCitywalkHaptic("light");
     try {
       const result = await citywalkApi.askGuide({
         citySlug,
@@ -118,6 +135,7 @@ export default function GuideScreen() {
         id: nextMessageId("assistant"),
         text: errorText,
       }));
+      void triggerCitywalkHaptic("error");
     } finally {
       setBusy(false);
     }
@@ -162,6 +180,7 @@ export default function GuideScreen() {
                 key={message.id}
                 message={message}
                 sourcesLabel={messages.sources}
+                sourcesCountLabel={messages.sourceCount.replace("{count}", String(message.sources?.length ?? 0))}
               />
             ))}
             {busy ? (
@@ -171,7 +190,7 @@ export default function GuideScreen() {
                 accessibilityRole="progressbar"
                 style={[styles.bubble, styles.assistantBubble, styles.thinkingBubble]}
               >
-                <ActivityIndicator color={colors.primary} size="small" />
+                <InlineLoadingDots />
                 <AppText variant="caption" style={styles.thinkingText}>{messages.guideThinking}</AppText>
               </View>
             ) : null}
@@ -216,14 +235,17 @@ export default function GuideScreen() {
 function GuideMessageBubble({
   direction,
   message,
+  sourcesCountLabel,
   sourcesLabel,
 }: Readonly<{
   direction: "ltr" | "rtl";
   message: GuideConversationMessage;
+  sourcesCountLabel: string;
   sourcesLabel: string;
 }>) {
   const isUser = message.role === "user";
-  return (
+  const [sourcesExpanded, setSourcesExpanded] = useState(false);
+  const bubble = (
     <View style={[
       styles.bubble,
       isUser ? styles.userBubble : styles.assistantBubble,
@@ -235,14 +257,38 @@ function GuideMessageBubble({
       <AppText style={isUser ? styles.userText : undefined}>{message.text}</AppText>
       {message.sources?.length ? (
         <View style={styles.sources}>
-          <AppText variant="caption" style={styles.sourcesTitle}>{sourcesLabel}</AppText>
-          {message.sources.map((source) => (
-            <GuideSourceLink key={`${message.id}-${source.placeSlug}-${source.url}`} source={source} />
-          ))}
+          <Pressable
+            accessibilityLabel={sourcesCountLabel}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: sourcesExpanded }}
+            onPress={() => {
+              void triggerCitywalkHaptic("light");
+              setSourcesExpanded((current) => !current);
+            }}
+            style={({ pressed }) => [styles.sourcesToggle, pressed && styles.sourcePressed]}
+          >
+            <NativeIcon ios="checkmark.shield" android="verified" color={colors.teal} size={16} />
+            <AppText variant="caption" style={styles.sourcesTitle}>{sourcesCountLabel}</AppText>
+            <NativeIcon
+              ios={sourcesExpanded ? "chevron.up" : "chevron.down"}
+              android={sourcesExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down"}
+              color={colors.textMuted}
+              size={16}
+            />
+          </Pressable>
+          {sourcesExpanded ? (
+            <MotionView style={styles.sourceList}>
+              <AppText variant="caption" style={styles.sourceListTitle}>{sourcesLabel}</AppText>
+              {message.sources.map((source) => (
+                <GuideSourceLink key={`${message.id}-${source.placeSlug}-${source.url}`} source={source} />
+              ))}
+            </MotionView>
+          ) : null}
         </View>
       ) : null}
     </View>
   );
+  return isUser ? bubble : <MotionView>{bubble}</MotionView>;
 }
 
 function GuideSourceLink({ source }: Readonly<{ source: GuideSource }>) {
@@ -302,7 +348,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     paddingTop: spacing.sm,
   },
-  sourcesTitle: { color: colors.textMuted },
+  sourcesToggle: { alignItems: "center", flexDirection: "row", gap: spacing.xs, minHeight: 36 },
+  sourcesTitle: { color: colors.textMuted, flex: 1 },
+  sourceList: { gap: spacing.xs },
+  sourceListTitle: { color: colors.textSubtle },
   source: { borderRadius: radius.sm, minHeight: 36, justifyContent: "center", paddingVertical: spacing.xs },
   sourcePressed: { opacity: 0.65 },
   sourceText: { color: colors.primary, textDecorationLine: "underline" },
@@ -333,6 +382,6 @@ const styles = StyleSheet.create({
     alignItems: "center", backgroundColor: colors.primary, borderRadius: radius.pill,
     height: 48, justifyContent: "center", width: 48,
   },
-  sendButtonPressed: { backgroundColor: colors.primaryPressed },
+  sendButtonPressed: { backgroundColor: colors.primaryPressed, transform: [{ scale: 0.96 }] },
   sendButtonDisabled: { opacity: 0.45 },
 });

@@ -2,7 +2,8 @@ import { Link, router, Stack, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 
-import { AppText, Card, PrimaryButton, Screen, StatusMessage } from "../../components/ui";
+import { NativeIcon } from "../../components/NativeIcon";
+import { AppText, Card, EmptyState, PrimaryButton, Screen, StatusMessage } from "../../components/ui";
 import { CitywalkLoading } from "../../components/CitywalkLoading";
 import { colors, radius, spacing, typography } from "../../design/tokens";
 import { nativeAuthClient } from "../../lib/auth/client";
@@ -13,6 +14,7 @@ import {
 } from "../../lib/auth/errors";
 import { loadLocalTrips, type LocalSavedTrip } from "../../lib/tripStorage";
 import { createMobileTripPlaceParams } from "../../lib/tripNavigation";
+import { triggerCitywalkHaptic } from "../../lib/haptics";
 import { useNativeLocale } from "../../localization/LocaleProvider";
 
 export default function AccountScreen() {
@@ -23,13 +25,17 @@ export default function AccountScreen() {
   const [busy, setBusy] = useState<"sign-in" | "sign-up">();
   const [failure, setFailure] = useState<NativeAuthErrorCode>();
   const [notice, setNotice] = useState<string>();
-  const [savedTrips, setSavedTrips] = useState<readonly LocalSavedTrip[]>([]);
+  const [savedTrips, setSavedTrips] = useState<readonly LocalSavedTrip[]>();
 
   useFocusEffect(useCallback(() => {
     let active = true;
-    void loadLocalTrips().then((trips) => {
-      if (active) setSavedTrips(trips);
-    });
+    void loadLocalTrips()
+      .then((trips) => {
+        if (active) setSavedTrips(trips);
+      })
+      .catch(() => {
+        if (active) setSavedTrips([]);
+      });
     return () => { active = false; };
   }, []));
 
@@ -54,11 +60,14 @@ export default function AccountScreen() {
           });
       if (result.error) {
         setFailure(classifyNativeAuthError(result.error));
+        void triggerCitywalkHaptic("error");
         return;
       }
+      void triggerCitywalkHaptic("success");
       if (mode === "sign-up") setNotice(messages.accountCreated);
     } catch {
       setFailure("network");
+      void triggerCitywalkHaptic("error");
     } finally {
       setBusy(undefined);
     }
@@ -67,16 +76,23 @@ export default function AccountScreen() {
   return (
     <Screen>
       <Stack.Screen options={{ title: messages.account }} />
-      <AppText variant="title">{messages.account}</AppText>
-      <AppText>{messages.guestMode}</AppText>
-      <PrimaryButton label={messages.continueAsGuest} onPress={() => router.back()} />
+      <View style={styles.introduction}>
+        <View style={styles.accountIcon}>
+          <NativeIcon ios="person.crop.circle" android="account_circle" color={colors.primary} size={30} />
+        </View>
+        <View style={styles.introductionText}>
+          <AppText variant="screenTitle">{messages.account}</AppText>
+          <AppText style={styles.muted}>{messages.guestMode}</AppText>
+        </View>
+      </View>
+      <PrimaryButton label={messages.continueAsGuest} onPress={() => router.back()} tone="secondary" />
 
       {isPending ? <CitywalkLoading compact /> : null}
       {session ? (
         <Card>
           <AppText variant="heading">{messages.signedIn}</AppText>
           <AppText>{session.user.email}</AppText>
-          <PrimaryButton label={messages.signOut} onPress={() => void nativeAuthClient.signOut()} />
+          <PrimaryButton label={messages.signOut} onPress={() => void nativeAuthClient.signOut()} tone="secondary" />
         </Card>
       ) : (
         <Card>
@@ -102,17 +118,24 @@ export default function AccountScreen() {
           />
           <View style={styles.actions}>
             <PrimaryButton label={messages.signIn} busy={busy === "sign-in"} onPress={() => void authenticate("sign-in")} style={styles.action} />
-            <PrimaryButton label={messages.signUp} busy={busy === "sign-up"} onPress={() => void authenticate("sign-up")} style={styles.action} />
+            <PrimaryButton label={messages.signUp} busy={busy === "sign-up"} onPress={() => void authenticate("sign-up")} style={styles.action} tone="secondary" />
           </View>
-          {failure ? <StatusMessage>{authFailureMessage(failure, messages)}</StatusMessage> : null}
-          {notice ? <StatusMessage>{notice}</StatusMessage> : null}
+          {failure ? <StatusMessage tone="error">{authFailureMessage(failure, messages)}</StatusMessage> : null}
+          {notice ? <StatusMessage tone="success">{notice}</StatusMessage> : null}
         </Card>
       )}
 
       <View style={styles.savedTrips}>
         <AppText variant="heading">{messages.savedTrips}</AppText>
-        {savedTrips.length === 0 ? <AppText>{messages.noSavedTrips}</AppText> : null}
-        {savedTrips.map((trip) => (
+        {savedTrips === undefined ? <CitywalkLoading compact /> : null}
+        {savedTrips?.length === 0 ? (
+          <EmptyState
+            description={messages.noSavedTripsDescription}
+            icon={<NativeIcon ios="map" android="map" color={colors.primary} size={28} />}
+            title={messages.noSavedTrips}
+          />
+        ) : null}
+        {savedTrips?.map((trip) => (
           <Card key={trip.id}>
             <AppText variant="label">{trip.citySlug}</AppText>
             <AppText variant="caption" style={styles.savedMetadata}>
@@ -132,7 +155,7 @@ export default function AccountScreen() {
               }}
               asChild
             >
-              <PrimaryButton label={messages.resumeTrip} />
+              <PrimaryButton haptic="medium" label={messages.resumeTrip} />
             </Link>
           </Card>
         ))}
@@ -154,6 +177,10 @@ function authFailureMessage(
 }
 
 const styles = StyleSheet.create({
+  introduction: { alignItems: "center", flexDirection: "row", gap: spacing.md },
+  introductionText: { flex: 1, gap: spacing.xs },
+  accountIcon: { alignItems: "center", backgroundColor: colors.primarySoft, borderRadius: radius.pill, height: 56, justifyContent: "center", width: 56 },
+  muted: { color: colors.textMuted },
   input: {
     minHeight: 50,
     borderWidth: 1,

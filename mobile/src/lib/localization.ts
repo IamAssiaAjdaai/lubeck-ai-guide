@@ -19,6 +19,9 @@ export type NativeMessages = Readonly<{
   nextStop: string;
   previousStop: string;
   finishTrip: string;
+  tripComplete: string;
+  tripCompleteDescription: string;
+  returnToCity: string;
   fallbackContent: string;
   places: string;
   map: string;
@@ -51,6 +54,7 @@ export type NativeMessages = Readonly<{
   sendQuestion: string;
   answer: string;
   sources: string;
+  sourceCount: string;
   guideUnavailable: string;
   guideError: string;
   guideRateLimited: string;
@@ -103,12 +107,14 @@ export type NativeMessages = Readonly<{
   approximateDistance: string;
   distanceDisclaimer: string;
   noRoute: string;
+  noRouteTitle: string;
   saveTrip: string;
   tripSavedLocally: string;
   tripSaveFailed: string;
   savedTrips: string;
   resumeTrip: string;
   noSavedTrips: string;
+  noSavedTripsDescription: string;
 }>;
 
 const messages: Record<NativeLocale, NativeMessages> = {
@@ -117,6 +123,7 @@ const messages: Record<NativeLocale, NativeMessages> = {
     availableCities: "Available cities", exploreCity: "Explore city", tours: "Tours", stops: "stops",
     minutes: "min", estimatedDuration: "Estimated duration", startTour: "Start tour", startTrip: "Start trip",
     stopProgress: "Stop {current} of {total}", nextStop: "Next stop", previousStop: "Previous stop", finishTrip: "Finish trip",
+    tripComplete: "Trip complete", tripCompleteDescription: "You explored {count} stops. Ready for another walk?", returnToCity: "Return to city",
     fallbackContent: "This content is shown in its available language.", places: "Places", map: "City map",
     useLocation: "Use my location", locationRequesting: "Finding your location…",
     locationDenied: "Location permission was denied. The map remains available.",
@@ -130,7 +137,7 @@ const messages: Record<NativeLocale, NativeMessages> = {
     visitorNote: "Visitor note", audioGuide: "Audio guide", playAudio: "Play", pauseAudio: "Pause",
     replayAudio: "Replay", loadingAudio: "Loading audio…", audioUnavailable: "Audio is currently unavailable.",
     askCitywalk: "Ask CITYWALK", askGuideTitle: "Ask CITYWALK", questionPlaceholder: "What would you like to know?",
-    sendQuestion: "Send question", answer: "Answer", sources: "Sources",
+    sendQuestion: "Send question", answer: "Answer", sources: "Sources", sourceCount: "{count} verified sources",
     guideUnavailable: "The verified AI guide is not available for this place.",
     guideError: "CITYWALK could not answer right now. Please try again.",
     guideRateLimited: "Your AI Guide allowance has been reached. Please try again later.",
@@ -156,15 +163,17 @@ const messages: Record<NativeLocale, NativeMessages> = {
     hours2: "2 hours", hours3: "3 hours", buildTrip: "Build my trip", rebuildTrip: "Rebuild trip", yourRoute: "Your route",
     totalTime: "Total time", walkingTime: "Walking time", approximateDistance: "Approx. distance",
     distanceDisclaimer: "Distance is estimated between stops and may differ from the actual walking route.",
-    noRoute: "No suitable route fits this time and your current preferences.", saveTrip: "Save your trip",
+    noRoute: "No suitable route fits this time and your current preferences.", noRouteTitle: "No route just yet", saveTrip: "Save your trip",
     tripSavedLocally: "Saved on this device. Account sync is not available yet.", tripSaveFailed: "This trip could not be saved on this device.",
-    savedTrips: "Saved trips", resumeTrip: "Resume trip", noSavedTrips: "No trips are saved on this device yet.",
+    savedTrips: "Saved trips", resumeTrip: "Resume trip", noSavedTrips: "No saved trips yet",
+    noSavedTripsDescription: "Build a trip in a city and save it here for your next walk.",
   },
   de: {
     appTagline: "Gehen. Entdecken. Städte hören.", discoverCities: "Stadt entdecken",
     availableCities: "Verfügbare Städte", exploreCity: "Stadt erkunden", tours: "Touren", stops: "Stopps",
     minutes: "Min.", estimatedDuration: "Geschätzte Dauer", startTour: "Tour starten", startTrip: "Tour starten",
     stopProgress: "Stopp {current} von {total}", nextStop: "Nächster Stopp", previousStop: "Vorheriger Stopp", finishTrip: "Tour beenden",
+    tripComplete: "Tour abgeschlossen", tripCompleteDescription: "Du hast {count} Stopps erkundet. Lust auf einen weiteren Spaziergang?", returnToCity: "Zurück zur Stadt",
     fallbackContent: "Dieser Inhalt wird in der verfügbaren Sprache angezeigt.", places: "Orte", map: "Stadtplan",
     useLocation: "Meinen Standort verwenden", locationRequesting: "Standort wird ermittelt…",
     locationDenied: "Der Standortzugriff wurde abgelehnt. Die Karte bleibt verfügbar.",
@@ -178,7 +187,7 @@ const messages: Record<NativeLocale, NativeMessages> = {
     visitorNote: "Besuchshinweis", audioGuide: "Audioguide", playAudio: "Abspielen", pauseAudio: "Pause",
     replayAudio: "Erneut abspielen", loadingAudio: "Audio wird geladen…", audioUnavailable: "Audio ist derzeit nicht verfügbar.",
     askCitywalk: "CITYWALK fragen", askGuideTitle: "CITYWALK fragen", questionPlaceholder: "Was möchtest du wissen?",
-    sendQuestion: "Frage senden", answer: "Antwort", sources: "Quellen",
+    sendQuestion: "Frage senden", answer: "Antwort", sources: "Quellen", sourceCount: "{count} verifizierte Quellen",
     guideUnavailable: "Der verifizierte KI-Guide ist für diesen Ort nicht verfügbar.",
     guideError: "CITYWALK kann gerade nicht antworten. Bitte versuche es erneut.",
     guideRateLimited: "Dein Kontingent für den KI-Guide ist erreicht. Bitte versuche es später erneut.",
@@ -204,15 +213,17 @@ const messages: Record<NativeLocale, NativeMessages> = {
     hours2: "2 Stunden", hours3: "3 Stunden", buildTrip: "Meine Tour planen", rebuildTrip: "Tour neu planen", yourRoute: "Deine Route",
     totalTime: "Gesamtzeit", walkingTime: "Gehzeit", approximateDistance: "Ca. Entfernung",
     distanceDisclaimer: "Die Entfernung wird zwischen den Stopps geschätzt und kann vom tatsächlichen Fußweg abweichen.",
-    noRoute: "Für diese Zeit und deine aktuellen Wünsche passt keine geeignete Route.", saveTrip: "Tour speichern",
+    noRoute: "Für diese Zeit und deine aktuellen Wünsche passt keine geeignete Route.", noRouteTitle: "Noch keine passende Route", saveTrip: "Tour speichern",
     tripSavedLocally: "Auf diesem Gerät gespeichert. Kontosynchronisierung ist noch nicht verfügbar.", tripSaveFailed: "Diese Tour konnte auf dem Gerät nicht gespeichert werden.",
-    savedTrips: "Gespeicherte Touren", resumeTrip: "Tour fortsetzen", noSavedTrips: "Auf diesem Gerät sind noch keine Touren gespeichert.",
+    savedTrips: "Gespeicherte Touren", resumeTrip: "Tour fortsetzen", noSavedTrips: "Noch keine gespeicherten Touren",
+    noSavedTripsDescription: "Plane eine Tour in einer Stadt und speichere sie hier für deinen nächsten Spaziergang.",
   },
   ar: {
     appTagline: "امشِ. اكتشف. واستمع إلى كل مدينة.", discoverCities: "اكتشف مدينة",
     availableCities: "المدن المتاحة", exploreCity: "استكشف المدينة", tours: "الجولات", stops: "محطات",
     minutes: "دقيقة", estimatedDuration: "المدة التقديرية", startTour: "ابدأ الجولة", startTrip: "ابدأ الرحلة",
     stopProgress: "المحطة {current} من {total}", nextStop: "المحطة التالية", previousStop: "المحطة السابقة", finishTrip: "إنهاء الرحلة",
+    tripComplete: "اكتملت الرحلة", tripCompleteDescription: "استكشفت {count} محطات. هل أنت مستعد لجولة أخرى؟", returnToCity: "العودة إلى المدينة",
     fallbackContent: "يُعرض هذا المحتوى باللغة المتاحة.", places: "الأماكن", map: "خريطة المدينة",
     useLocation: "استخدام موقعي", locationRequesting: "جارٍ تحديد موقعك…",
     locationDenied: "تم رفض إذن الموقع. تظل الخريطة متاحة.",
@@ -226,7 +237,7 @@ const messages: Record<NativeLocale, NativeMessages> = {
     visitorNote: "ملاحظة للزيارة", audioGuide: "الدليل الصوتي", playAudio: "تشغيل", pauseAudio: "إيقاف مؤقت",
     replayAudio: "إعادة التشغيل", loadingAudio: "جارٍ تحميل الصوت…", audioUnavailable: "الصوت غير متاح حاليًا.",
     askCitywalk: "اسأل CITYWALK", askGuideTitle: "اسأل CITYWALK", questionPlaceholder: "ماذا تريد أن تعرف؟",
-    sendQuestion: "إرسال السؤال", answer: "الإجابة", sources: "المصادر",
+    sendQuestion: "إرسال السؤال", answer: "الإجابة", sources: "المصادر", sourceCount: "{count} مصادر موثقة",
     guideUnavailable: "دليل الذكاء الاصطناعي الموثق غير متاح لهذا المكان.",
     guideError: "يتعذر على CITYWALK الإجابة الآن. حاول مرة أخرى.",
     guideRateLimited: "لقد وصلت إلى الحد المسموح به لدليل الذكاء الاصطناعي. حاول لاحقًا.",
@@ -252,9 +263,10 @@ const messages: Record<NativeLocale, NativeMessages> = {
     hours2: "ساعتان", hours3: "3 ساعات", buildTrip: "أنشئ رحلتي", rebuildTrip: "أعد بناء الرحلة", yourRoute: "مسارك",
     totalTime: "الوقت الإجمالي", walkingTime: "وقت المشي", approximateDistance: "المسافة التقريبية",
     distanceDisclaimer: "المسافة تقديرية بين المحطات وقد تختلف عن مسار المشي الفعلي.",
-    noRoute: "لا يوجد مسار مناسب لهذا الوقت والتفضيلات الحالية.", saveTrip: "احفظ رحلتك",
+    noRoute: "لا يوجد مسار مناسب لهذا الوقت والتفضيلات الحالية.", noRouteTitle: "لا يوجد مسار مناسب بعد", saveTrip: "احفظ رحلتك",
     tripSavedLocally: "حُفظت على هذا الجهاز. مزامنة الحساب غير متاحة بعد.", tripSaveFailed: "تعذر حفظ الرحلة على هذا الجهاز.",
-    savedTrips: "الرحلات المحفوظة", resumeTrip: "متابعة الرحلة", noSavedTrips: "لا توجد رحلات محفوظة على هذا الجهاز بعد.",
+    savedTrips: "الرحلات المحفوظة", resumeTrip: "متابعة الرحلة", noSavedTrips: "لا توجد رحلات محفوظة بعد",
+    noSavedTripsDescription: "خطط لرحلة في إحدى المدن واحفظها هنا لجولتك القادمة.",
   },
 };
 
