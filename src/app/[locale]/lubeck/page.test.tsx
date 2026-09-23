@@ -45,11 +45,10 @@ vi.mock("@/components/travel/TourCard", () => ({
     );
   },
 }));
-vi.mock("@/components/travel/CustomTourPlanner", () => ({
+vi.mock("@/components/walk/WalkPlanner", () => ({
   default: (props: Record<string, unknown>) => {
     mocks.customTourPlanner(props);
-    const labels = props.builderLabels as { build: string };
-    return <button data-top-action="custom">{labels.build}</button>;
+    return <button data-top-action="custom">Build my walk</button>;
   },
 }));
 vi.mock("@/components/travel/PlaceDiscovery", () => ({
@@ -104,7 +103,7 @@ describe("Lübeck Explore hierarchy", () => {
 
     const heading = screen.getByRole("heading", {
       level: 1,
-      name: getTranslations("en").explore.title,
+      name: "Lübeck",
     });
     const actions = document.querySelectorAll("[data-top-action]");
     const placesHeading = screen.getByRole("heading", {
@@ -113,8 +112,8 @@ describe("Lübeck Explore hierarchy", () => {
     });
 
     expect(actions).toHaveLength(2);
-    expect(actions[0].getAttribute("data-top-action")).toBe("tour");
-    expect(actions[1].getAttribute("data-top-action")).toBe("custom");
+    expect(actions[0].getAttribute("data-top-action")).toBe("custom");
+    expect(actions[1].getAttribute("data-top-action")).toBe("tour");
     expect(
       heading.compareDocumentPosition(actions[0]) &
         Node.DOCUMENT_POSITION_FOLLOWING,
@@ -126,8 +125,7 @@ describe("Lübeck Explore hierarchy", () => {
     expect(mocks.customTourPlanner).toHaveBeenCalledWith(
       expect.objectContaining({
         citySlug: "lubeck",
-        plannerId: "lubeck_historic_center",
-        preferenceLabels: getTranslations("en").tourPreferences,
+        cityName: "Lübeck",
       }),
     );
     expect(mocks.tourCard).toHaveBeenCalledWith(

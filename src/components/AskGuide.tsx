@@ -38,7 +38,11 @@ import {
   type StoredGuideMessage,
 } from "@/lib/tourConversation";
 
+import type { WalkGuideContext } from "@/lib/walk/guideContext";
+
 type AskGuideProps = {
+  compact?: boolean;
+  walkContext?: WalkGuideContext;
   citySlug: string;
   placeSlug: string;
   placeName: string;
@@ -91,6 +95,8 @@ export default function AskGuide({
   labels,
   suggestions,
   tourId,
+  walkContext,
+  compact = false,
 }: AskGuideProps) {
   const conversationScope: GuideConversationScope = tourId
     ? { kind: "tour", citySlug, tourId }
@@ -257,6 +263,7 @@ export default function AskGuide({
                 locale,
 
                 tourContext,
+                walkContext,
 
                 /*
                  * Recent successful
@@ -405,9 +412,9 @@ export default function AskGuide({
         aria-label={
           buttonLabel
         }
-        className="mt-9 flex min-h-24 w-full items-center gap-4 rounded-[var(--radius-md)] border border-violet-200 bg-gradient-to-br from-violet-50 to-blue-50 p-4 text-start transition hover:border-violet-300"
+        className={compact ? "button-secondary min-w-0 gap-2 px-3 text-center" : "mt-6 flex min-h-24 w-full items-center gap-4 rounded-[var(--radius-md)] border bg-accent-soft p-4 text-start transition hover:border-primary"}
       >
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-ai shadow-sm">
+        <span className={compact ? "shrink-0 text-primary" : "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-primary"}>
           <Sparkles
             aria-hidden="true"
             size={21}
@@ -420,17 +427,17 @@ export default function AskGuide({
             {buttonLabel}
           </span>
 
-          <span className="mt-1 block text-sm leading-5 text-text-secondary">
+          {!compact && <span className="mt-1 block text-sm leading-5 text-text-secondary">
             {labels.empty}
-          </span>
+          </span>}
         </span>
 
-        <GuideChevron
+        {!compact && <GuideChevron
           aria-hidden="true"
           size={19}
           strokeWidth={1.8}
           className="shrink-0 text-ai"
-        />
+        />}
       </button>
 
       {/* Bottom Sheet */}
