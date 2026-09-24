@@ -1,7 +1,7 @@
 "use client";
-import { useSyncExternalStore } from "react";
-import { Bookmark } from "lucide-react";
-import { readSavedWalks } from "@/lib/walk/storage";
+import { useState, useSyncExternalStore } from "react";
+import { Bookmark, Trash2 } from "lucide-react";
+import { getSavedWalksSnapshot, readSavedWalks, removeSavedWalk, subscribeSavedWalks } from "@/lib/walk/storage";
 import { walkCopy, walkCopyLocale } from "@/lib/walk/copy";
 import type { Locale } from "@/lib/i18n";
 // Restore session/query state on a fresh document; a cached city page may
@@ -19,7 +19,9 @@ export default function SavedWalks({
     () => true,
     () => false,
   );
-  const saved = hydrated ? readSavedWalks() : [];
+  const serialized = useSyncExternalStore(subscribeSavedWalks, getSavedWalksSnapshot, () => "[]");
+  const saved = readSavedWalks(serialized);
+  const [removeFailed, setRemoveFailed] = useState(false);
   const t = walkCopy(locale);
   let active: { citySlug: string; cityName: string } | undefined;
   if (hydrated)
@@ -52,10 +54,10 @@ export default function SavedWalks({
       ) : saved.length ? (
         <div className="grid gap-3">
           {saved.map((walk) => (
+            <div key={`${walk.citySlug}:${walk.id}`} className="saved-walk-card surface-card flex items-center gap-2 p-5">
             <a
-              key={walk.id}
               href={`/${locale}/${walk.citySlug}?walk=${encodeURIComponent(walk.id)}#build-walk`}
-              className="saved-walk-card surface-card flex items-center gap-4 p-5"
+              className="flex min-w-0 flex-1 items-center gap-4"
             >
               <Bookmark size={22} className="text-primary" />
               <span>
@@ -65,11 +67,17 @@ export default function SavedWalks({
                 </span>
               </span>
             </a>
+            <button type="button" className="button-tertiary shrink-0" aria-label={`${t.removeWalk}: ${walk.cityName}`}
+              onClick={() => setRemoveFailed(!removeSavedWalk(walk.id, walk.citySlug))}>
+              <Trash2 size={20} aria-hidden="true" />
+            </button>
+            </div>
           ))}
         </div>
       ) : (
         <p className="text-text-secondary">{t.emptySaved}</p>
       )}
+      {removeFailed ? <p role="alert" className="mt-4 text-text-secondary">{t.removeFailed}</p> : null}
     </section>
   );
 }

@@ -85,6 +85,8 @@ describe("active walk confirmation and history", () => {
     expect(session().remaining).toHaveLength(3);
     fireEvent.click(screen.getByRole("button", { name: "Confirm change" }));
     expect(session().remaining).toEqual([]);
+    expect(screen.queryByText("Stop 1 of 0")).toBeNull();
+    expect(screen.getByText("Remaining walk", { selector: "header p" })).toBeTruthy();
     expect(
       screen.getByRole("link", { name: "Navigate" }).getAttribute("href"),
     ).toContain("destination=53.86,10.68");

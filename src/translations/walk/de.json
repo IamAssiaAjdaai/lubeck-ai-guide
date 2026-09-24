@@ -137,5 +137,8 @@
   "assistant": "CITYWALK Assistent",
   "interestsHelp": "Wähle deine Themen (Mehrfachauswahl möglich).",
   "hamburgDescription": "Hafenblicke. Große Geschichten.",
-  "duesseldorfDescription": "Kunst. Kultur. Neue Perspektiven."
+  "duesseldorfDescription": "Kunst. Kultur. Neue Perspektiven.",
+  "mapFallbackHelp": "Dein Reiseplan ist weiterhin verfügbar.",
+  "removeWalk": "Tour entfernen",
+  "removeFailed": "Die Tour konnte nicht entfernt werden. Bitte versuche es erneut."
 }

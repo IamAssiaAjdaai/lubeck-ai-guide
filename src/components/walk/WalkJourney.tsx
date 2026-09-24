@@ -286,7 +286,7 @@ export default function WalkJourney({
             <p className="text-sm text-primary">
               {stage === "preview"
                 ? t.preview
-                : formatMessage(t.stop, {
+                : !current ? t.remaining : formatMessage(t.stop, {
                     number: visited.length + 1,
                     total: visited.length + route.places.length,
                   })}

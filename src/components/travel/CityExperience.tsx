@@ -1,5 +1,4 @@
 import AppHeader from "@/components/walk/AppHeader";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -36,7 +35,6 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { prepareMapPlaces } from "@/lib/mapPlaces";
-import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 import { getCityScopedTourId } from "@/lib/tourIdentity";
 
 type CityExperienceProps = Readonly<{
@@ -150,17 +148,6 @@ export default function CityExperience({
         <header className="walk-hero walk-city-hero">
           {cityImage ? (
             <figure>
-              <div className="relative hidden aspect-[16/9] bg-surface">
-                <Image
-                  src={cityImage}
-                  alt={city.content.name}
-                  fill
-                  priority
-                  unoptimized={isApplicationMediaPath(cityImage)}
-                  sizes="(max-width: 480px) calc(100vw - 48px), 432px"
-                  className="object-cover"
-                />
-              </div>
               <MediaAttribution
                 as="figcaption"
                 attribution={cityHeroMedia?.attribution}

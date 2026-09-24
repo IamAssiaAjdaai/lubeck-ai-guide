@@ -2,7 +2,7 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   GPUInitializationError,
   Map as MapLibreMap,
@@ -61,6 +61,8 @@ type CityMapProps = Readonly<{
   centerUserLocationRequest: number;
   mapLabels: Translations["map"];
   walkingTimeTemplate: string;
+  fallbackDescription?: string;
+  fallbackContent?: ReactNode;
 }>;
 
 type MarkerEntry = Readonly<{
@@ -103,6 +105,8 @@ export default function CityMap({
   centerUserLocationRequest,
   mapLabels,
   walkingTimeTemplate,
+  fallbackDescription,
+  fallbackContent,
 }: CityMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -144,6 +148,7 @@ export default function CityMap({
 
     let map: MapLibreMap | null = null;
     let hasLoaded = false;
+    let consecutiveSourceErrors = 0;
     let failed = false;
     let startupTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -196,14 +201,19 @@ export default function CityMap({
         }
       };
 
-      map.on("style.load", markMapInitialized);
-
       map.on("load", () => {
         markMapInitialized();
         captureMapEvent("map_opened", { city, locale });
       });
+      map.on("sourcedata", (event) => {
+        if (event.sourceDataType === "content") consecutiveSourceErrors = 0;
+      });
       map.on("error", (event) => {
-        const reason = getFatalMapErrorReason(event, hasLoaded);
+        const isSourceError = ("sourceId" in event && event.sourceId !== undefined) ||
+          ("tile" in event && event.tile !== undefined);
+        if (isSourceError) consecutiveSourceErrors += 1;
+        const reason = getFatalMapErrorReason(event, hasLoaded) ??
+          (consecutiveSourceErrors >= 3 ? "tiles" : undefined);
         if (!reason) return;
         failMap(
           reason,
@@ -312,7 +322,7 @@ export default function CityMap({
         ? current
         : undefined,
     );
-  }, [categoryById, city, locale, places]);
+  }, [categoryById, city, initializationAttempt, locale, places]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -370,7 +380,7 @@ export default function CityMap({
       userMarkerRef.current?.remove();
       userMarkerRef.current = null;
     };
-  }, [places, userLocation, userLocationLabel]);
+  }, [initializationAttempt, places, userLocation, userLocationLabel]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -403,6 +413,7 @@ export default function CityMap({
   }, [selectedCategory, selectedPlace]);
 
   return (
+    <>
     <section
       aria-labelledby={labelledBy}
       className={`mt-4 ${styles.mapFrame}`}
@@ -416,6 +427,7 @@ export default function CityMap({
         >
           <MapPinOff aria-hidden="true" size={25} strokeWidth={1.7} />
           <p>{mapLabels.unavailable}</p>
+          {fallbackDescription ? <p>{fallbackDescription}</p> : null}
           {process.env.NODE_ENV === "development" ? (
             <code className={styles.mapFailureCode}>
               {getMapFailureDevelopmentLabel(mapFailure.reason)}
@@ -507,5 +519,7 @@ export default function CityMap({
         </>
       )}
     </section>
+    {mapFailure ? fallbackContent : null}
+    </>
   );
 }

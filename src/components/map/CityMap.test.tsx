@@ -101,6 +101,7 @@ function renderMap(places: readonly CityMapPlace[] = [place]) {
       centerUserLocationRequest={0}
       mapLabels={t.map}
       walkingTimeTemplate={t.distance.walkingMinutes}
+      fallbackDescription="Your itinerary is still available."
     />,
   );
 }
@@ -254,4 +255,46 @@ describe("CityMap initialization", () => {
       expect(screen.getByText(getTranslations("en").map.unavailable)).not.toBeNull();
     });
   });
+  it("replaces a denied basemap after style load and retries with markers", () => {
+    const first = createMapMock();
+    mocks.constructMap.mockReturnValue(first.map);
+    renderMap();
+    act(() => {
+      first.handlers.get("load")?.({} as never);
+      first.handlers.get("error")?.({ error: { status: 403 }, sourceId: "openmaptiles" } as never);
+    });
+    expect(screen.getByText("Your itinerary is still available.")).not.toBeNull();
+    expect(first.map.remove).toHaveBeenCalledOnce();
+    expect(screen.queryByText(/403/)).toBeNull();
+    const second = createMapMock();
+    mocks.constructMap.mockReturnValue(second.map);
+    fireEvent.click(screen.getByRole("button", { name: "Retry map" }));
+    expect(mocks.constructMap).toHaveBeenCalledTimes(2);
+    expect(mocks.markerAdd).toHaveBeenCalledTimes(2);
+  });
+
+  it("falls back after repeated source failures even after the map has loaded", () => {
+    const { map, handlers } = createMapMock();
+    mocks.constructMap.mockReturnValue(map);
+    renderMap();
+    act(() => {
+      handlers.get("load")?.({} as never);
+      for (let i = 0; i < 3; i++) handlers.get("error")?.({ sourceId: "tiles", error: new Error("network") } as never);
+    });
+    expect(screen.getByText("Your itinerary is still available.")).not.toBeNull();
+  });
+
+  it("keeps the map when successful tile content separates transient failures", () => {
+    const { map, handlers } = createMapMock();
+    mocks.constructMap.mockReturnValue(map);
+    renderMap();
+    act(() => {
+      for (let i = 0; i < 4; i++) {
+        handlers.get("error")?.({ sourceId: "tiles", error: new Error("network") } as never);
+        handlers.get("sourcedata")?.({ sourceDataType: "content" } as never);
+      }
+    });
+    expect(screen.queryByText("Your itinerary is still available.")).toBeNull();
+  });
+
 });

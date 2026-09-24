@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "@/components/travel/ContentImage";
 import { Search, ChevronRight, MapPin, Clock3, Navigation } from "lucide-react";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { calculateDistanceMeters } from "@/lib/distance";

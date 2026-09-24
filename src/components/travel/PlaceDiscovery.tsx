@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image from "@/components/travel/ContentImage";
 import dynamic from "next/dynamic";
 import posthog from "posthog-js";
 import {

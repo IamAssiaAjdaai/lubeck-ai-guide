@@ -2,6 +2,7 @@ export type MapFailureReason =
   | "webgl2-unavailable"
   | "constructor"
   | "style"
+  | "tiles"
   | "startup-timeout";
 
 type MapErrorEventLike = Readonly<{
@@ -18,6 +19,7 @@ const MAP_FAILURE_DEVELOPMENT_CODES: Readonly<
   "webgl2-unavailable": "webgl2_unavailable",
   constructor: "constructor_error",
   style: "style_error",
+  tiles: "tiles_unavailable",
   "startup-timeout": "startup_timeout",
 };
 
@@ -69,6 +71,12 @@ export function getFatalMapErrorReason(
   if (getErrorName(event.error) === "GPUInitializationError") {
     return "webgl2-unavailable";
   }
+
+  // A denied tile/source request cannot recover just because the style loaded.
+  const status = typeof event.error === "object" && event.error !== null &&
+    "status" in event.error ? event.error.status : undefined;
+  if ((event.sourceId !== undefined || event.tile !== undefined) &&
+    (status === 401 || status === 403)) return "tiles";
 
   if (hasLoaded || event.sourceId !== undefined || event.tile !== undefined) {
     return undefined;
