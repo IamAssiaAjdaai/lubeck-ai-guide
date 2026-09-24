@@ -1,0 +1,95 @@
+import { describe, expect, it } from "vitest";
+
+import { filterPlacesByCategory } from "@/data/placeCategories";
+import { lubeckPlaces } from "@/data/places";
+import {
+  calculateMapBounds,
+  getMapMarkerAriaLabel,
+  isValidMapCoordinate,
+  prepareMapPlaces,
+} from "@/lib/mapPlaces";
+
+function prepareLubeckMapPlaces(locale: "en" | "ar" = "en") {
+  return prepareMapPlaces(lubeckPlaces, locale, {
+    getDetailHref: (place) =>
+      `/${locale}/lubeck/${place.slug}`,
+  });
+}
+
+describe("map place preparation", () => {
+  it("produces valid marker data for all 25 Lübeck places", () => {
+    const markers = prepareLubeckMapPlaces();
+
+    expect(markers).toHaveLength(25);
+    for (const marker of markers) {
+      expect(isValidMapCoordinate(marker.coordinates)).toBe(true);
+      expect(marker.name.trim()).not.toBe("");
+      expect(marker.shortDescription.trim()).not.toBe("");
+    }
+    expect(calculateMapBounds(markers)).toEqual([
+      [10.6794443, 53.8609],
+      [10.6908538, 53.874],
+    ]);
+  });
+
+  it("preserves category-filtered marker counts", () => {
+    expect(
+      prepareMapPlaces(filterPlacesByCategory(lubeckPlaces, "see"), "en"),
+    ).toHaveLength(17);
+    expect(
+      prepareMapPlaces(filterPlacesByCategory(lubeckPlaces, "eat"), "en"),
+    ).toHaveLength(5);
+    expect(
+      prepareMapPlaces(filterPlacesByCategory(lubeckPlaces, "fun"), "en"),
+    ).toHaveLength(3);
+  });
+
+  it("gives all 25 catalog places usable detail links", () => {
+    const markers = prepareLubeckMapPlaces();
+    const linkedMarkers = markers.filter((marker) => marker.detailHref);
+
+    expect(linkedMarkers).toHaveLength(25);
+    expect(linkedMarkers.map((marker) => marker.detailHref)).toEqual(
+      lubeckPlaces.map((place) => `/en/lubeck/${place.slug}`),
+    );
+  });
+
+  it("preserves fallback locale and direction semantics", () => {
+    const markers = prepareLubeckMapPlaces("ar");
+    const fallback = markers.find((marker) => marker.slug === "cafe-niederegger");
+    const translated = markers.find((marker) => marker.slug === "holstentor");
+
+    expect(fallback).toMatchObject({
+      requestedLocale: "ar",
+      actualLocale: "en",
+      contentDirection: "ltr",
+      didFallback: true,
+    });
+    expect(translated).toMatchObject({
+      requestedLocale: "ar",
+      actualLocale: "ar",
+      contentDirection: "rtl",
+      didFallback: false,
+    });
+  });
+
+  it("carries trusted availability metadata into client planning data", () => {
+    const buddenbrookhaus =
+      prepareLubeckMapPlaces().find(
+        (marker) =>
+          marker.slug === "buddenbrookhaus",
+      );
+
+    expect(buddenbrookhaus).toMatchObject({
+      status: "renovation",
+      statusVerifiedAt: "2026-09-03",
+      visitNoteVerifiedAt: "2026-09-03",
+    });
+  });
+
+  it("builds accessible marker labels from name and category", () => {
+    expect(getMapMarkerAriaLabel("Café Niederegger", "Eat")).toBe(
+      "Café Niederegger — Eat",
+    );
+  });
+});
