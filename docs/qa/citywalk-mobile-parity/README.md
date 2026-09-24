@@ -119,7 +119,7 @@ Do not force-add ignored `.env.local`, `.next/`, `.expo/`, `node_modules/`, `mob
 - `packages/traveler-core/src/walkPlanner.ts`, `walkJourney.ts`, `walkGuideContext.ts`, `walkCopy.ts`, `cityAvailability.ts` and `copy/{en,de,ar}.json`.
 - Web planner/journey/session adapters, public place-detail API, focused shared/native/API tests, root guidance and PR template.
 
-The three deleted `src/translations/walk/*.json` paths are intentional moves into the shared package, not removed language support. There are no dependency/lockfile changes or database migrations.
+The three deleted `src/translations/walk/*.json` paths are intentional moves into the shared package, not removed language support. The original parity implementation had no dependency/lockfile changes or database migrations. The CI follow-up below changes only mobile dependencies, test configuration and this validation record.
 
 ### Final gate exit codes
 
@@ -131,3 +131,26 @@ The three deleted `src/translations/walk/*.json` paths are intentional moves int
 - `mobile-lint`: 0
 - `web-build`: 0
 - `mobile-bundle`: 0
+
+## Mobile CI dependency follow-up — 2026-09-24
+
+The reported CI run passed 176 tests in 32 files but had one unhandled worker error: `walk-flow.test.tsx` could not load `jsdom`. That was an incomplete suite. The earlier local run resolved DOM testing dependencies from the repository root, masking the missing mobile declarations.
+
+Mobile now declares `jsdom`, `@testing-library/react`, `@testing-library/dom`, and `react-dom` as development dependencies. React DOM is pinned to `19.2.3`, matching mobile React. Vitest no longer aliases React to the root installation. No tests were excluded or errors suppressed.
+
+The clean-install gate also exposed four Expo Doctor version mismatches. Updated `expo` to `~57.0.25`, `expo-linking` to `~57.0.11`, `expo-location` to `~57.0.20`, and `expo-router` to `~57.0.23`, with their required transitive patch updates. No application source, schema, API, auth or product logic changed.
+
+Final verification used a fresh temporary checkout on macOS / Node 22.22.2, with **no root `node_modules`**, no environment files, and a clean `npm ci --no-audit --no-fund` inside `mobile`. The checked dependency manifests and Vitest configuration match the final working tree. This reproduces mobile dependency isolation; it is not a claim of a new GitHub Actions run.
+
+| Final check | Result |
+| --- | --- |
+| Entire mobile suite, `npm run test:run` | **185 passed, 33 files, 0 failed, 0 skipped, 0 unhandled errors** |
+| Walk-flow interaction subset (included above) | **9 passed** |
+| `npm run typecheck` | Passed, exit 0 |
+| `npm run lint` | Passed, exit 0, zero warnings |
+| `npm run config:validate` | Passed, exit 0 |
+| `npm run doctor` | **21/21 checks passed**, exit 0 |
+| `npx expo export --platform all --max-workers 2` in the working checkout | iOS and Android Hermes bundles exported, exit 0; output stored under `/tmp` |
+| `git diff --check` and final diff review | Passed; only mobile package/lockfile, Vitest configuration and this README changed; no secrets, environment files, debug code or generated artifacts |
+
+The root/web and DB results above belong to the earlier parity gate and were not rerun for this mobile dependency fix. Native device acceptance and the existing Upstash, S3, full-map and Stripe blockers remain unchanged. No commit or push was performed for this follow-up.
