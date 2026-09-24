@@ -1,3 +1,8 @@
+import VerifiedInfo from "@/components/walk/VerifiedInfo";
+import type { PlaceSource } from "@/data/placeSources";
+import PlaceWalkAction from "@/components/walk/PlaceWalkAction";
+import BottomNavigation from "@/components/walk/BottomNavigation";
+import AppHeader from "@/components/walk/AppHeader";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -19,6 +24,7 @@ import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 import type { PublicMedia } from "@/lib/media/types";
 
 type PlaceExperienceProps = Readonly<{
+  verifiedSources?: readonly PlaceSource[];
   locale: Locale;
   citySlug: string;
   placeSlug: string;
@@ -48,6 +54,7 @@ export function PlaceExperience({
   backHref,
   translations,
   guideEnabled = false,
+  verifiedSources = [],
 }: PlaceExperienceProps) {
   const interfaceDirection = getDirection(locale);
   const contentDirection = getDirection(contentLocale);
@@ -58,6 +65,7 @@ export function PlaceExperience({
   return (
     <main lang={locale} dir={interfaceDirection} className="app-shell">
       <section className="content-container py-7 sm:py-10">
+        <AppHeader/>
         <Link
           href={backHref}
           aria-label={translations.common.back}
@@ -113,9 +121,9 @@ export function PlaceExperience({
         </header>
 
         {audio ? (
-          <section className="mt-8" aria-labelledby="generic-place-audio">
+          <section className="mt-8" aria-labelledby="audio-guide">
             <h2
-              id="generic-place-audio"
+              id="audio-guide"
               className="mb-3 flex items-center gap-2 text-[1.125rem] font-semibold tracking-[-0.02em]"
             >
               <Headphones aria-hidden="true" size={19} strokeWidth={1.8} />
@@ -178,6 +186,8 @@ export function PlaceExperience({
           </section>
         ) : null}
 
+        <VerifiedInfo sources={verifiedSources} locale={locale}/>
+        <PlaceWalkAction locale={locale} citySlug={citySlug} placeSlug={placeSlug}/>
         {guideEnabled ? (
           <AskGuide
             citySlug={citySlug}
@@ -196,6 +206,7 @@ export function PlaceExperience({
           />
         ) : null}
       </section>
+      <BottomNavigation locale={locale} citySlug={citySlug} active="explore"/>
     </main>
   );
 }

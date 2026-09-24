@@ -45,6 +45,10 @@ export type BuildPersonalizedTourInput<TPlace extends TourBuilderPlace> = Readon
   preferences: TourPreferences | unknown;
   timeBudgetMinutes: TourTimeBudget | unknown;
   origin: GeographicCoordinates;
+  /** Exact planner budget; legacy preset callers remain compatible. */
+  planningBudgetMinutes?: number;
+  finish?: GeographicCoordinates;
+  additionalInterestTags?: readonly string[];
 }>;
 
 export function isTourTimeBudget(value: unknown): value is TourTimeBudget {
@@ -66,6 +70,8 @@ export function buildPersonalizedTour<TPlace extends TourBuilderPlace>(
 ): PersonalizedTourResult<TPlace> {
   const preferences = parseTourPreferences(input.preferences);
   const timeBudgetMinutes = parseTourTimeBudget(input.timeBudgetMinutes);
+  const budget = input.planningBudgetMinutes === undefined ? timeBudgetMinutes : input.planningBudgetMinutes;
+  if (!Number.isFinite(budget) || budget <= 0 || budget > 1440) throw new Error("Invalid planning budget");
   const remaining = input.places.flatMap((place, originalIndex) =>
     isEligibleTourPlace(place) ? [{ place, originalIndex }] : []);
   const stops: PersonalizedTourStop<TPlace>[] = [];
@@ -80,14 +86,17 @@ export function buildPersonalizedTour<TPlace extends TourBuilderPlace>(
       if (legDistanceMeters === undefined) return [];
       const legWalkingMinutes = estimateWalkingMinutes(legDistanceMeters);
       if (legWalkingMinutes === undefined) return [];
+      const finishDistance = input.finish ? calculateDistanceMeters(place.coordinates, input.finish) : 0;
+      if (finishDistance === undefined) return [];
+      const finishMinutes = input.finish ? estimateWalkingMinutes(finishDistance) ?? 0 : 0;
       if (
         totalVisitMinutes + totalWalkingMinutes +
-          place.durationMinutes + legWalkingMinutes > timeBudgetMinutes
+          place.durationMinutes + legWalkingMinutes + finishMinutes > budget
       ) return [];
       return [{
         place,
         originalIndex,
-        matches: countTourInterestMatches(place, preferences.interests),
+        matches: countTourInterestMatches(place, preferences.interests) + (input.additionalInterestTags ?? []).reduce((score, tag) => score + Number(place.tags?.includes(tag) ?? false), 0),
         legDistanceMeters,
         legWalkingMinutes,
       }];

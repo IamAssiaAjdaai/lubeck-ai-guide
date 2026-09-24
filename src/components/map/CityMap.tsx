@@ -44,6 +44,7 @@ export type CityMapPlace = MapPlace &
 
 type CityMapProps = Readonly<{
   places: readonly CityMapPlace[];
+  routePoints?: readonly { lat: number; lng: number }[];
   categories: readonly LocalizedPlaceCategory[];
   locale: Locale;
   city: string;
@@ -85,6 +86,7 @@ function captureMapEvent(
 
 export default function CityMap({
   places,
+  routePoints,
   categories,
   locale,
   city,
@@ -232,6 +234,20 @@ export default function CityMap({
       mapRef.current = null;
     };
   }, [city, initialCenter, initialZoom, initializationAttempt, locale, styleUrl]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !routePoints || routePoints.length < 2) return;
+    const draw = () => {
+      if (!map.isStyleLoaded()) return;
+      if (map.getLayer("citywalk-route")) map.removeLayer("citywalk-route");
+      if (map.getSource("citywalk-route")) map.removeSource("citywalk-route");
+      map.addSource("citywalk-route", { type: "geojson", data: { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: routePoints.map(point => [point.lng, point.lat]) } } });
+      map.addLayer({ id: "citywalk-route", type: "line", source: "citywalk-route", paint: { "line-color": "#0967C8", "line-width": 3, "line-dasharray": [2,2] } });
+    };
+    if (map.isStyleLoaded()) draw(); else map.on("load", draw);
+    return () => { map.off("load", draw); };
+  }, [routePoints, initializationAttempt]);
 
   useEffect(() => {
     const map = mapRef.current;
