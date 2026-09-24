@@ -17,6 +17,7 @@ type AudioPlayerProps = {
   playLabel: string;
   pauseLabel: string;
   unavailableLabel: string;
+  premiumAnalytics?: Readonly<Record<string, string | number>>;
 };
 
 function captureAudioPlayed(properties: Record<string, string>) {
@@ -29,7 +30,7 @@ function captureAudioPlayed(properties: Record<string, string>) {
   }
 }
 
-export default function AudioPlayer({ src, title, city, landmark, locale, listenLabel, playLabel, pauseLabel, unavailableLabel }: AudioPlayerProps) {
+export default function AudioPlayer({ src, title, city, landmark, locale, listenLabel, playLabel, pauseLabel, unavailableLabel, premiumAnalytics }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const hasTrackedPlay = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -47,6 +48,9 @@ export default function AudioPlayer({ src, title, city, landmark, locale, listen
         setIsPlaying(true);
         if (!hasTrackedPlay.current) {
           captureAudioPlayed({ city, landmark, locale });
+          if (premiumAnalytics) {
+            posthog.capture("premium_feature_used", premiumAnalytics);
+          }
           hasTrackedPlay.current = true;
         }
       } catch (error) {

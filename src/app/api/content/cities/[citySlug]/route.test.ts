@@ -1,0 +1,96 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mocks = vi.hoisted(() => ({
+  getPublicCitySnapshot: vi.fn(),
+  toLocalizedPublicCityResponse: vi.fn(),
+}));
+
+vi.mock("server-only", () => ({}));
+vi.mock("@/lib/content/publicRepository.server", () => mocks);
+
+import { GET } from "@/app/api/content/cities/[citySlug]/route";
+
+describe("public city content API", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.getPublicCitySnapshot.mockResolvedValue({ city: { slug: "hamburg" } });
+    mocks.toLocalizedPublicCityResponse.mockReturnValue({
+      city: {
+        slug: "hamburg",
+        countryCode: "DE",
+        timezone: "Europe/Berlin",
+        requestedLocale: "ar",
+        resolvedLocale: "en",
+        didFallback: true,
+        content: { name: "Hamburg" },
+      },
+      places: [],
+      tours: [],
+    });
+  });
+
+  it("returns published public DTOs with explicit locale fallback metadata", async () => {
+    const response = await GET(
+      new Request("https://citywalk.example/api/content/cities/hamburg?locale=ar"),
+      { params: Promise.resolve({ citySlug: "hamburg" }) },
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Cache-Control")).toContain("s-maxage=60");
+    expect(response.headers.get("ETag")).toMatch(/^"[A-Za-z0-9_-]+"$/);
+    expect(mocks.getPublicCitySnapshot).toHaveBeenCalledWith("hamburg");
+    expect(mocks.toLocalizedPublicCityResponse).toHaveBeenCalledWith(
+      expect.anything(),
+      "ar",
+    );
+    expect(body.city).toMatchObject({
+      slug: "hamburg",
+      countryCode: "DE",
+      timezone: "Europe/Berlin",
+      requestedLocale: "ar",
+      resolvedLocale: "en",
+      didFallback: true,
+    });
+    expect(JSON.stringify(body)).not.toMatch(
+      /createdByUserId|updatedByUserId|publicationStatus/,
+    );
+  });
+
+  it("rejects unsupported locales before reading content", async () => {
+    const response = await GET(
+      new Request("https://citywalk.example/api/content/cities/lubeck?locale=xx"),
+      { params: Promise.resolve({ citySlug: "lubeck" }) },
+    );
+
+    expect(response.status).toBe(400);
+    expect(mocks.getPublicCitySnapshot).not.toHaveBeenCalled();
+  });
+
+  it("returns a clean 404 without leaking repository errors", async () => {
+    mocks.getPublicCitySnapshot.mockRejectedValue(
+      new PublicContentNotFoundError("database details must not leak"),
+    );
+    const response = await GET(
+      new Request("https://citywalk.example/api/content/cities/missing"),
+      { params: Promise.resolve({ citySlug: "missing" }) },
+    );
+
+    expect(response.status).toBe(404);
+    await expect(response.json()).resolves.toEqual({
+      error: "Published city not found.",
+    });
+  });
+  it("returns a non-cacheable 503 for infrastructure failures without substituting content", async () => {
+    mocks.getPublicCitySnapshot.mockRejectedValueOnce(new Error("private database credentials"));
+    const response = await GET(
+      new Request("https://citywalk.example/api/content/cities/lubeck"),
+      { params: Promise.resolve({ citySlug: "lubeck" }) },
+    );
+    expect(response.status).toBe(503);
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+    await expect(response.json()).resolves.toEqual({ error: "Content is temporarily unavailable." });
+  });
+
+});

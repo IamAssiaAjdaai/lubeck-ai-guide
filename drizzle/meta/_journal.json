@@ -1,0 +1,104 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788462143856,
+      "tag": "0000_striped_scarlet_spider",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788639631090,
+      "tag": "0001_jazzy_shinko_yamashiro",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788662007993,
+      "tag": "0002_wooden_magik",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788680052600,
+      "tag": "0003_remarkable_jimmy_woo",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788811690252,
+      "tag": "0004_military_stark_industries",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788815109261,
+      "tag": "0005_optimal_starfox",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788824826769,
+      "tag": "0006_ordinary_kulan_gath",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788870474184,
+      "tag": "0007_equal_black_tarantula",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788877835356,
+      "tag": "0008_overconfident_may_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788884508078,
+      "tag": "0009_third_mister_fear",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788893957643,
+      "tag": "0010_fluffy_runaways",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1788981746364,
+      "tag": "0011_calm_fenris",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1788991260910,
+      "tag": "0012_equal_vampiro",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1789137712803,
+      "tag": "0013_large_wallflower",
+      "breakpoints": true
+    }
+  ]
+}

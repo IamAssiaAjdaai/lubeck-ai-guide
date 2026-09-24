@@ -1,0 +1,46 @@
+import { drizzleAdapter } from "@better-auth/drizzle-adapter";
+import { expo } from "@better-auth/expo";
+import { betterAuth } from "better-auth";
+
+import * as authSchema from "@/db/authSchema";
+import { getDb } from "@/db/client";
+import { getBetterAuthEnvironment } from "@/lib/auth/env";
+
+export const AUTH_ROUTE_PATH = "/api/auth";
+export const PUBLIC_EMAIL_SIGN_UP_ENABLED = true;
+export const NATIVE_AUTH_TRUSTED_ORIGINS = ["citywalk://", "citywalk://*"] as const;
+
+type CreateAuthOptions = Readonly<{
+  allowEmailSignUp?: boolean;
+}>;
+
+export function createCitywalkAuth(
+  options: CreateAuthOptions = {},
+) {
+  const environment = getBetterAuthEnvironment();
+
+  return betterAuth({
+    appName: "CITYWALK",
+    baseURL: environment.baseURL,
+    basePath: AUTH_ROUTE_PATH,
+    secret: environment.secret,
+    trustedOrigins: [...NATIVE_AUTH_TRUSTED_ORIGINS],
+    plugins: [expo()],
+    database: drizzleAdapter(getDb(), {
+      provider: "pg",
+      schema: authSchema,
+      transaction: true,
+    }),
+    emailAndPassword: {
+      enabled: true,
+      disableSignUp: !options.allowEmailSignUp,
+      minPasswordLength: 12,
+      maxPasswordLength: 128,
+      autoSignIn: false,
+    },
+    session: {
+      expiresIn: 60 * 60 * 24 * 7,
+      updateAge: 60 * 60 * 24,
+    },
+  });
+}
