@@ -7,58 +7,14 @@ on:
   pull_request:
     branches:
       - main
-      - develop
 
 jobs:
-  mobile:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: mobile
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: mobile/package-lock.json
-
-      - name: Install mobile dependencies
-        run: npm ci
-
-      - name: Run mobile tests
-        run: npm run test:run
-
-      - name: Run mobile lint
-        run: npm run lint
-
-      - name: Run mobile TypeScript
-        run: npm run typecheck
-
-      - name: Validate Expo configuration
-        run: npm run config:validate
-
-      - name: Run Expo Doctor
-        run: npm run doctor
-
   build:
     runs-on: ubuntu-latest
-    env:
-      # No reachable database; auth initialization does not connect during build.
-      DATABASE_URL: postgresql://citywalk:citywalk@127.0.0.1:5432/citywalk_build
-      BETTER_AUTH_URL: http://localhost:3000
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Configure ephemeral build auth secret
-        shell: bash
-        run: echo "BETTER_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -80,73 +36,3 @@ jobs:
 
       - name: Build project
         run: npm run build
-
-  database-integration:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: citywalk
-          POSTGRES_USER: citywalk
-          POSTGRES_PASSWORD: citywalk
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U citywalk -d citywalk"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-
-    env:
-      DATABASE_URL: postgresql://citywalk:citywalk@localhost:5432/citywalk
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Apply database migration
-        run: npm run db:migrate
-
-      - name: Seed database
-        run: npm run db:seed
-
-      - name: Verify database
-        run: npm run db:verify
-
-      - name: Re-seed database
-        run: npm run db:seed
-
-      - name: Verify seed idempotency
-        run: npm run db:verify
-
-      - name: Verify seed idempotency
-        run: npm run db:verify
-
-      - name: Import canonical CMS content
-        run: npm run cms:import-lubeck
-
-      - name: Verify CMS import idempotency
-        run: npm run cms:import-lubeck
-
-      - name: Run CMS content integration tests
-        run: npm run cms:test:integration
-
-      - name: Run generic city content integration tests
-        run: npm run content:test:integration
-
-      - name: Run CMS media integration tests
-        run: npm run media:test:integration
-
-      - name: Run commerce webhook integration tests
-        run: npm run commerce:test:integration

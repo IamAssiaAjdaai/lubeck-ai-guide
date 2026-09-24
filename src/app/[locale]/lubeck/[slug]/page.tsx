@@ -1,39 +1,12 @@
-import { PublicContentNotFoundError } from "@/lib/content/errors";
-import VerifiedInfo from "@/components/walk/VerifiedInfo";
-import { getWalkVerifiedSources } from "@/lib/walk/verifiedSources.server";
-import PlaceWalkAction from "@/components/walk/PlaceWalkAction";
-import BottomNavigation from "@/components/walk/BottomNavigation";
-import Image from "@/components/travel/ContentImage";
-import {
-  LUBECK_HISTORIC_TOUR_ID,
-} from "@/lib/tourContext";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { connection } from "next/server";
-import { headers } from "next/headers";
-import {
-  ArrowLeft,
-  ArrowRight,
-  CircleCheckBig,
-  Clock3,
-  Gem,
-  Headphones,
-  MapPin,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, CircleCheckBig, Headphones } from "lucide-react";
 import TrackLandmarkView from "@/components/TrackLandmarkView";
 import AudioPlayer from "@/components/AudioPlayer";
 import TrackedLink from "@/components/TrackedLink";
 import AskGuide from "@/components/AskGuide";
-import {
-  getPlaceDurationLabel,
-  HIDDEN_GEM_TAG,
-  lubeckLandmarks as landmarks,
-  lubeckPlaces,
-  resolvePlaceContent,
-} from "@/data/places";
-import {
-  getLandmarkAudio,
-} from "@/data/landmarkAudio";
+import { landmarks } from "@/data/landmarks";
 import {
   formatMessage,
   getDirection,
@@ -41,39 +14,12 @@ import {
   isLocale,
   locales,
 } from "@/lib/i18n";
-import { getContentSource } from "@/lib/content/source";
-import { resolveLandmarkPageAudio } from "@/lib/content/landmarkAudio";
-import { resolvePlaceImage, resolvePlaceImageMedia } from "@/lib/content/placeMedia";
-import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
-import { formatTime } from "@/lib/formatTime";
-import { getGuideEligibility } from "@/lib/guideEligibility.server";
-import { getPublicSession } from "@/lib/auth/publicSession.server";
-import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
-import { MediaAttribution } from "@/components/travel/MediaAttribution";
-import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
-import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
-import {
-  getCityPassPaywallContext,
-  LUBECK_CITY_PASS,
-  type CityPassConfiguration,
-} from "@/lib/commerce/cityPassConfig";
-import { createCityPassReturnPath } from "@/lib/commerce/cityPassReturn";
-import { getCityPassAccessState } from "@/lib/commerce/cityPassAccess.server";
-import {
-  getPremiumPlaceAudio,
-  type PremiumPlaceAudio,
-} from "@/lib/commerce/premiumMedia.server";
-import {
-  formatMinorCurrency,
-  getActiveCityPassOffer,
-} from "@/lib/commerce/queries.server";
 
 type LandmarkPageProps = {
   params: Promise<{
     locale: string;
     slug: string;
   }>;
-  searchParams?: Promise<{ premium?: string | string[] }>;
 };
 
 /*
@@ -84,20 +30,19 @@ type LandmarkPageProps = {
  * /fr/lubeck/holstentor
  * /ar/lubeck/holstentor
  *
- * ...and the same for every published code-catalog place.
+ * ...and the same for every landmark.
  */
 export function generateStaticParams() {
   return locales.flatMap((locale) =>
-    lubeckPlaces.map((place) => ({
+    landmarks.map((landmark) => ({
       locale,
-      slug: place.slug,
+      slug: landmark.slug,
     }))
   );
 }
 
 export default async function LandmarkPage({
   params,
-  searchParams,
 }: LandmarkPageProps) {
   const { locale, slug } = await params;
 
@@ -114,109 +59,42 @@ export default async function LandmarkPage({
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
   const NextIcon = direction === "rtl" ? ArrowLeft : ArrowRight;
 
+  /*
+   * Find current landmark
+   */
   const currentIndex = landmarks.findIndex(
     (landmark) => landmark.slug === slug
   );
-  const isTourLandmark = currentIndex >= 0;
 
-  const contentSource = getContentSource();
-  if (contentSource !== "code") await connection();
-  const snapshot = await getPublicCitySnapshot("lubeck", contentSource).catch((error: unknown) => {
-    if (error instanceof PublicContentNotFoundError) notFound();
-    throw error;
-  });
-  const landmark = snapshot.places.find((place) => place.slug === slug);
-
-  if (!landmark) {
+  if (currentIndex === -1) {
     notFound();
   }
+
+  const landmark = landmarks[currentIndex];
 
   /*
    * Get translated landmark content
    */
-  const resolvedContent = resolvePlaceContent(landmark, currentLocale);
-
-  if (!resolvedContent) {
-    notFound();
-  }
-
-  const { actualLocale, content } = resolvedContent;
-  const contentDirection = getDirection(actualLocale);
+  const content = landmark.content[currentLocale];
 
   const name = content.name;
-  const visitDuration = isTourLandmark
-    ? undefined
-    : getPlaceDurationLabel(landmark, currentLocale);
-  const description = content.description ?? content.shortDescription;
+  const duration = content.duration;
+  const description = content.description;
   const story = content.story;
-  const legacyAudio = getLandmarkAudio(
-    landmark.slug,
-    currentLocale,
-  );
-  const audio = resolveLandmarkPageAudio(
-    contentSource,
-    snapshot.media?.places[landmark.slug],
-    currentLocale,
-    legacyAudio,
-  );
-  const audioDuration = audio?.durationSeconds === undefined
-    ? undefined
-    : formatTime(audio.durationSeconds);
-  const facts = content.facts ?? [];
-  const placeMedia = snapshot.media?.places[landmark.slug];
-  const selectedImage = resolvePlaceImageMedia(
-    contentSource,
-    placeMedia,
-    currentLocale,
-    "detail",
-  );
-  const image = resolvePlaceImage(
-    contentSource,
-    placeMedia,
-    currentLocale,
-    landmark.image,
-    "detail",
-  );
-  const isHiddenGem = landmark.tags.includes(HIDDEN_GEM_TAG);
-  const guideEnabled = isTourLandmark && await getGuideEligibility({
-    citySlug: "lubeck",
-    placeSlug: landmark.slug,
-    source: contentSource,
-    snapshot,
-  });
-  let premiumAudio: PremiumPlaceAudio | undefined;
-  if (contentSource !== "code" && snapshot.media) {
-    try {
-      premiumAudio = await getPremiumPlaceAudio(
-        LUBECK_CITY_PASS.citySlug,
-        landmark.slug,
-        currentLocale,
-      );
-    } catch (error) {
-      if (contentSource === "database") throw error;
-    }
-  }
-  const premiumCopy = getCityPassCopy(LUBECK_CITY_PASS, currentLocale);
-  const premiumValue = (await searchParams)?.premium;
-  const premiumRequested =
-    (Array.isArray(premiumValue) ? premiumValue[0] : premiumValue) === "1";
-  const premiumState = premiumAudio
-    ? await resolvePremiumState(currentLocale, LUBECK_CITY_PASS)
-    : undefined;
+  const audio = content.audio;
+  const facts = content.facts;
+  const image = landmark.image;
 
   /*
    * Find next landmark
    */
-  const nextLandmark = isTourLandmark
-    ? landmarks[currentIndex + 1]
-    : undefined;
+  const nextLandmark = landmarks[currentIndex + 1];
 
   /*
    * Calculate tour progress
    */
-  const progress = isTourLandmark
-    ? ((currentIndex + 1) / landmarks.length) * 100
-    : 0;
+  const progress =
+    ((currentIndex + 1) / landmarks.length) * 100;
 
   return (
     <main
@@ -227,15 +105,12 @@ export default async function LandmarkPage({
       <section className="content-container py-7 sm:py-10">
         {/* Navigation */}
         <div className="flex items-center justify-between">
-          {isTourLandmark ? (
-            <TrackLandmarkView
-              tourId={LUBECK_HISTORIC_TOUR_ID}
-              city="lubeck"
-              landmark={landmark.slug}
-              locale={currentLocale}
-              stopNumber={currentIndex + 1}
-            />
-          ) : null}
+          <TrackLandmarkView
+            city="lubeck"
+            landmark={landmark.slug}
+            locale={currentLocale}
+            stopNumber={currentIndex + 1}
+          />
           <Link
             href={`/${currentLocale}/lubeck`}
             aria-label={t.common.back}
@@ -244,112 +119,60 @@ export default async function LandmarkPage({
             <BackIcon aria-hidden="true" size={19} strokeWidth={1.8} />
           </Link>
 
-          {isTourLandmark ? (
-            <span className="text-[13px] font-medium text-text-secondary">
-              {formatMessage(t.landmark.stopProgress, {
-                current: currentIndex + 1,
-                total: landmarks.length,
-              })}
-            </span>
-          ) : null}
+          <span className="text-[13px] font-medium text-text-secondary">
+            {formatMessage(t.landmark.stopProgress, {
+              current: currentIndex + 1,
+              total: landmarks.length,
+            })}
+          </span>
         </div>
 
         {/* Tour progress */}
-        {isTourLandmark ? (
-          <div className="mt-3 h-1 overflow-hidden rounded-full bg-border">
-            <div
-              className="h-full rounded-full bg-accent transition-all"
-              style={{
-                width: `${progress}%`,
-              }}
-            />
-          </div>
-        ) : null}
+        <div className="mt-3 h-1 overflow-hidden rounded-full bg-border">
+          <div
+            className="h-full rounded-full bg-accent transition-all"
+            style={{
+              width: `${progress}%`,
+            }}
+          />
+        </div>
 
         {/* Landmark image */}
         {image ? (
-          <figure className="mt-6">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-lg)] bg-surface">
-              <Image
-                src={image}
-                alt={name}
-                fill
-                priority={isTourLandmark && currentIndex === 0}
-                unoptimized={isApplicationMediaPath(image)}
-                sizes="(max-width: 448px) 100vw, 448px"
-                className="object-cover"
-              />
-            </div>
-            <MediaAttribution as="figcaption" attribution={selectedImage?.attribution} className="mt-2 px-1" />
-          </figure>
-        ) : null}
+          <div className="relative mt-6 aspect-[4/3] overflow-hidden rounded-[var(--radius-lg)] bg-surface">
+            <Image
+              src={image}
+              alt={name}
+              fill
+              priority={currentIndex === 0}
+              sizes="(max-width: 448px) 100vw, 448px"
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <div className="mt-6 aspect-[4/3] w-full rounded-[var(--radius-lg)] bg-surface" />
+        )}
 
         {/* Landmark header */}
         <div className="mt-6">
-          {isTourLandmark ? (
           <p className="flex items-center gap-2 text-sm font-medium text-text-secondary">
-            <Headphones aria-hidden="true" size={17} strokeWidth={1.8} />
-            <span>
-              {t.landmark.audioGuide}
-              {audioDuration ? ` · ${audioDuration}` : ""}
-            </span>
+            <Headphones aria-hidden="true" size={17} strokeWidth={1.8} /> {t.landmark.audioGuide} · {duration}
           </p>
-          ) : (
-            <div className="flex flex-wrap items-center gap-2 text-sm font-medium text-text-secondary">
-              <p className="flex items-center gap-1.5">
-                <MapPin aria-hidden="true" size={16} strokeWidth={1.8} />
-                {t.placeCategories[landmark.category]}
-              </p>
-              <span aria-hidden="true">·</span>
-              <p className="flex items-center gap-1.5">
-                <Clock3 aria-hidden="true" size={16} strokeWidth={1.8} />
-                {visitDuration}
-              </p>
-            </div>
-          )}
 
-          <h1
-            lang={actualLocale}
-            dir={contentDirection}
-            className="mt-2 text-[2rem] font-bold leading-tight tracking-[-0.03em]"
-          >
+          <h1 className="mt-2 text-[2rem] font-bold leading-tight tracking-[-0.03em]">
             {name}
           </h1>
 
-          {isHiddenGem ? (
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
-              <Gem aria-hidden="true" size={14} strokeWidth={1.8} />
-              {t.tourPreferences["hidden-gems"]}
-            </span>
-          ) : null}
-
-          <p
-            lang={actualLocale}
-            dir={contentDirection}
-            className="mt-3 text-base leading-7 text-text-secondary"
-          >
+          <p className="mt-3 text-base leading-7 text-text-secondary">
             {description}
           </p>
-
-          {content.visitNote ? (
-            <p
-              lang={actualLocale}
-              dir={contentDirection}
-              className="mt-4 rounded-xl border border-border bg-surface p-4 text-sm leading-6 text-text-secondary"
-            >
-              {content.visitNote}
-            </p>
-          ) : null}
         </div>
 
         {/* Audio */}
         {audio ? (
-          <div
-            id="audio-guide"
-            className="mt-8 scroll-mt-6"
-          >
+          <div className="mt-8">
             <AudioPlayer
-              src={audio.src}
+              src={audio}
               title={`${name} ${t.landmark.audioGuide}`}
               city="lubeck"
               landmark={landmark.slug}
@@ -360,97 +183,27 @@ export default async function LandmarkPage({
               unavailableLabel={t.landmark.audioUnavailable}
             />
           </div>
-        ) : isTourLandmark ? (
-          <div
-            id="audio-guide"
-            className="mt-7 scroll-mt-6 flex items-center gap-3 rounded-2xl bg-surface p-4 text-text-secondary"
-          >
-            <Headphones
-              aria-hidden="true"
-              size={20}
-              strokeWidth={1.8}
-              className="shrink-0"
-            />
-
+        ) : (
+          <div className="mt-7 flex items-center gap-3 rounded-2xl bg-surface p-4 text-text-secondary">
+            <Headphones aria-hidden="true" size={20} strokeWidth={1.8} className="shrink-0" />
             <p className="text-sm leading-6">
               {t.landmark.audioUnavailable}
             </p>
           </div>
-        ) : null}
-
-        {premiumAudio ? (
-          premiumState?.access.active ? (
-            <section id="premium-audio" className="mt-8 scroll-mt-6 rounded-3xl border border-violet-200 bg-violet-50/70 p-5" lang={premiumCopy.actualLocale} dir={premiumCopy.actualLocale === "ar" ? "rtl" : "ltr"}>
-              <p className="text-xs font-bold uppercase tracking-[0.14em] text-violet-700">CITYWALK PASS</p>
-              <h2 className="mt-2 text-xl font-semibold">{premiumCopy.premiumAudio}</h2>
-              {premiumState.access.expiresAt ? (
-                <p className="mt-2 text-sm text-text-secondary">
-                  {premiumCopy.activeUntil.replace(
-                    "{date}",
-                    new Intl.DateTimeFormat(currentLocale, {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    }).format(premiumState.access.expiresAt),
-                  )}
-                </p>
-              ) : null}
-              <div className="mt-4">
-                <AudioPlayer
-                  src={premiumAudio.src}
-                  title={`${name} ${premiumCopy.premiumAudio}`}
-                  city="lubeck"
-                  landmark={landmark.slug}
-                  locale={currentLocale}
-                  listenLabel={premiumCopy.continuePremium}
-                  playLabel={t.common.play}
-                  pauseLabel={t.common.pause}
-                  unavailableLabel={t.landmark.audioUnavailable}
-                  premiumAnalytics={{
-                    city_slug: LUBECK_CITY_PASS.citySlug,
-                    feature_id:
-                      LUBECK_CITY_PASS.primaryPremiumFeature.id,
-                    locale: currentLocale,
-                    entitlement_scope: `${LUBECK_CITY_PASS.entitlement.scopeType}:${LUBECK_CITY_PASS.entitlement.scopeKey}`,
-                  }}
-                />
-              </div>
-            </section>
-          ) : (
-            <CityPassPaywall
-              locale={currentLocale}
-              copy={premiumCopy}
-              pass={getCityPassPaywallContext(LUBECK_CITY_PASS)}
-              returnPath={createCityPassReturnPath(
-                currentLocale,
-                LUBECK_CITY_PASS.citySlug,
-                landmark.slug,
-              )}
-              signedIn={premiumState?.signedIn ?? false}
-              offer={premiumState?.offer}
-              initiallyOpen={premiumRequested}
-            />
-          )
-        ) : null}
+        )}
 
         {/* Story */}
-        {story ? (
-          <section className="mt-9">
-            <h2 className="text-[1.375rem] font-semibold tracking-[-0.02em]">
-              {t.landmark.story}
-            </h2>
+        <section className="mt-9">
+          <h2 className="text-[1.375rem] font-semibold tracking-[-0.02em]">
+            {t.landmark.story}
+          </h2>
 
-            <p
-              lang={actualLocale}
-              dir={contentDirection}
-              className="mt-3 text-base leading-7 text-text-primary"
-            >
-              {story}
-            </p>
-          </section>
-        ) : null}
+          <p className="mt-3 text-base leading-7 text-text-primary">
+            {story}
+          </p>
+        </section>
 
         {/* Quick facts */}
-        {facts.length > 0 ? (
         <section className="mt-9">
           <h2 className="text-[1.375rem] font-semibold tracking-[-0.02em]">
             {t.landmark.quickFacts}
@@ -460,8 +213,6 @@ export default async function LandmarkPage({
             {facts.map((fact) => (
               <div
                 key={fact.label}
-                lang={actualLocale}
-                dir={contentDirection}
                 className="surface-card min-w-0 p-4 last:odd:col-span-full"
               >
                 <p className="text-[13px] text-text-secondary">
@@ -475,17 +226,11 @@ export default async function LandmarkPage({
             ))}
           </div>
         </section>
-        ) : null}
 
-        <VerifiedInfo sources={await getWalkVerifiedSources("lubeck",landmark.slug,contentSource)} locale={currentLocale}/>
-        <PlaceWalkAction locale={currentLocale} citySlug="lubeck" placeSlug={landmark.slug}/>
-        {/* AI Guide remains scoped to the verified canonical tour. */}
-        {guideEnabled ? (
+        {/* AI Guide */}
           <AskGuide
-            tourId={LUBECK_HISTORIC_TOUR_ID}
-            citySlug="lubeck"
-            placeSlug={landmark.slug}
-            placeName={name}
+            landmark={landmark.slug}
+            landmarkName={name}
             locale={currentLocale}
             direction={direction}
             buttonLabel={t.ai.open}
@@ -493,11 +238,9 @@ export default async function LandmarkPage({
             labels={t.ai}
             suggestions={[t.ai.suggestionFamous, t.ai.suggestionBuilt, t.ai.suggestionStory]}
           />
-        ) : null}
 
         {/* Next landmark / Finish */}
-        {isTourLandmark ? (
-        <div className="sticky bottom-24 z-20 -mx-2 mt-7 rounded-2xl bg-background/90 p-2 backdrop-blur-md">
+        <div className="sticky bottom-3 z-20 -mx-2 mt-7 rounded-2xl bg-background/90 p-2 backdrop-blur-md">
           {nextLandmark ? (
             <Link href={`/${currentLocale}/lubeck/${nextLandmark.slug}`} className="button-dark w-full">
               {t.landmark.nextStop} <NextIcon aria-hidden="true" size={19} strokeWidth={1.8} />
@@ -513,38 +256,7 @@ export default async function LandmarkPage({
             </TrackedLink>
           )}
         </div>
-        ) : null}
       </section>
-      <BottomNavigation locale={currentLocale} citySlug="lubeck" active="explore"/>
     </main>
   );
-}
-
-async function resolvePremiumState(
-  locale: (typeof locales)[number],
-  configuration: CityPassConfiguration,
-) {
-  const session = await getPublicSession(await headers());
-  const access = await getCityPassAccessState({
-    userId: session?.user.id,
-    citySlug: configuration.citySlug,
-  });
-  const offer = access.active
-    ? undefined
-    : await getActiveCityPassOffer(configuration.citySlug);
-  return {
-    signedIn: Boolean(session),
-    access,
-    offer: offer
-      ? {
-          priceId: offer.priceId,
-          productSlug: offer.productSlug,
-          formattedPrice: formatMinorCurrency(
-            offer.unitAmount,
-            offer.currency,
-            locale,
-          ),
-        }
-      : undefined,
-  };
 }
