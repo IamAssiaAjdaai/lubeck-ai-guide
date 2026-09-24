@@ -109,3 +109,11 @@ When the user later says `pushed` or explicitly authorizes commit/push, continue
 - Report actual command/test results, not assumed results.
 - If a required external dependency is unavailable, complete all work that does not depend on it and describe the exact remaining acceptance step.
 - Keep recommendations production-oriented; CITYWALK is not treated as a throwaway MVP.
+
+## Cross-platform traveler parity
+
+CITYWALK follows cross-platform parity by default. Any traveler-facing feature implemented for web must be reviewed and implemented for iOS and Android before the feature is considered complete, unless the ticket explicitly documents a platform exception.
+
+Prefer shared domain and business logic. Do not duplicate planner, trip adaptation, eligibility or AI context logic across web and mobile without a technical reason.
+
+Every traveler-facing ticket must include a platform matrix with Web, iOS and Android marked Required and record implementation and actual testing for each. Document exceptions in the ticket (web-only admin, mobile-only native capability, or infrastructure/server-only work). A feature is complete only when all required platforms are implemented and tested.

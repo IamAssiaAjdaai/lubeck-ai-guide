@@ -1,7 +1,9 @@
-import { Image } from "expo-image";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { walkCopy } from "@citywalk/traveler-core/walkCopy";
+import { loadSavedPlaces, toggleSavedPlace } from "../../../../lib/walkStorage";
+import { NativeContentImage as Image } from "../../../../components/NativeContentImage";
+import { Link, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useState } from "react";
+import { Linking, StyleSheet, View } from "react-native";
 
 import { NativeAudioPlayer } from "../../../../components/NativeAudioPlayer";
 import { MediaAttribution } from "../../../../components/MediaAttribution";
@@ -35,6 +37,13 @@ export default function PlaceScreen() {
   const identity = parsePlaceRouteIdentity(params.citySlug, params.placeSlug);
   const trip = parseMobileTripContext(params);
   const { direction, locale, messages } = useNativeLocale();
+  const t = walkCopy(locale);
+  const [saved, setSaved] = useState(false), [saveMessage, setSaveMessage] = useState("");
+  useFocusEffect(useCallback(() => {
+    let alive = true;
+    void loadSavedPlaces().then(items => { if (alive) setSaved(items.some(p => p.citySlug === params.citySlug && p.slug === params.placeSlug)); }).catch(() => { if (alive) setSaveMessage(messages.tripSaveFailed); });
+    return () => { alive = false; };
+  }, [params.citySlug, params.placeSlug, messages.tripSaveFailed, setSaveMessage, setSaved]));
   const [tripCompleted, setTripCompleted] = useState(false);
   const placeState = usePublicPlace(
     identity?.citySlug ?? "invalid",
@@ -68,6 +77,9 @@ export default function PlaceScreen() {
   return (
     <Screen>
       <Stack.Screen options={{ title: place.content.name }} />
+      {saveMessage ? <StatusMessage>{saveMessage}</StatusMessage> : null}
+      <PrimaryButton label={`${t.saved}${saved ? " ✓" : ""}`} accessibilityState={{ selected: saved }} tone="secondary" onPress={() => { void toggleSavedPlace({ citySlug: identity.citySlug, slug: place.slug, name: place.content.name }).then(setSaved).catch(() => setSaveMessage(messages.tripSaveFailed)); }} />
+      <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug: identity.citySlug, add: place.slug } }} asChild><PrimaryButton label={t.addToWalk} /></Link>
       {trip ? (
         <TripProgress
           current={trip.currentStopIndex + 1}
@@ -133,6 +145,7 @@ export default function PlaceScreen() {
           ))}
         </View>
       ) : null}
+      {placeState.data.verifiedSources?.length ? <View style={styles.section}><SectionTitle>{t.verified}</SectionTitle><AppText>{t.verifiedHelp}</AppText>{placeState.data.verifiedSources.map(source => <PrimaryButton key={source.url} tone="secondary" label={`${source.label} · ${t.lastChecked}: ${source.verifiedAt}`} onPress={() => { void Linking.openURL(source.url).catch(() => setSaveMessage(messages.unavailable)); }} />)}</View> : null}
       {guideState.status === "available" && guideState.data.eligible ? (
         <Link
           href={{

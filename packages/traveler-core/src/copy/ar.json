@@ -140,5 +140,12 @@
   "duesseldorfDescription": "فن وثقافة ومنظور مختلف.",
   "mapFallbackHelp": "لا يزال مسار جولتك متاحًا.",
   "removeWalk": "إزالة الجولة",
-  "removeFailed": "تعذرت إزالة الجولة. يرجى المحاولة مرة أخرى."
+  "removeFailed": "تعذرت إزالة الجولة. يرجى المحاولة مرة أخرى.",
+  "runningLate": "أنا متأخر",
+  "removePlace": "إزالة المكان المحفوظ",
+  "savedPlacesEmpty": "ستظهر أماكنك المحفوظة هنا.",
+  "categories": "اهتمامات أخرى في هذه المدينة",
+  "mapUnavailable": "الخريطة غير متاحة",
+  "refreshLocation": "تحديث موقعي",
+  "recalculate": "إعادة الحساب لوقت العودة"
 }

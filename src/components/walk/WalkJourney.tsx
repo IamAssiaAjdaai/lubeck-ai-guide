@@ -31,13 +31,14 @@ import {
 } from "@/lib/distance";
 import { isEligibleTourPlace } from "@/lib/tourBuilder";
 import {
-  buildWalk,
   measureWalk,
   type WalkRoute,
   type WalkSettings,
   type Point,
 } from "@/lib/walk/planner";
 import { walkCopy } from "@/lib/walk/copy";
+import { buildWalkGuideContext } from "@/lib/walk/guideContext";
+import { proposeAddedStop, proposeShorterWalk, remainingWalkBudget } from "@citywalk/traveler-core/walkJourney";
 import type { JourneySession } from "@/lib/walk/session";
 import { saveWalk } from "@/lib/walk/storage";
 import { useUserLocation } from "@/hooks/useUserLocation";
@@ -175,25 +176,8 @@ export default function WalkJourney({
         : t.storageError,
     );
   const proposeShorter = () => {
-    const budget = Math.max(
-      1,
-      Math.min(
-        Math.floor(remaining.minutes * 0.65),
-        settings.deadline
-          ? Math.floor((settings.deadline - Date.now()) / 60000)
-          : Infinity,
-      ),
-    );
     try {
-      setProposed(
-        buildWalk(route.places, {
-          ...settings,
-          start: origin,
-          finish: route.finish,
-          minutes: budget,
-          deadline: undefined,
-        }),
-      );
+      setProposed(proposeShorterWalk(route.places, settings, origin, route.finish));
     } catch {
       setMessage(t.noEligible);
     }
@@ -229,15 +213,8 @@ export default function WalkJourney({
         ),
     );
     if (!place) return;
-    const next = measureWalk([...route.places, place], origin, route.finish);
-    const budget = settings.deadline
-      ? Math.floor((settings.deadline - Date.now()) / 60000)
-      : Math.max(
-          0,
-          settings.minutes -
-            Math.floor((Date.now() - (startedAt ?? Date.now())) / 60000),
-        );
-    if (next.minutes > budget) {
+    const next = proposeAddedStop(route.places, place, visited.map(p => p.slug), settings, origin, route.finish, startedAt ?? Date.now());
+    if (!next) {
       setMessage(t.noEligible);
       return;
     }
@@ -521,16 +498,10 @@ export default function WalkJourney({
                   </button>
                   {current && (
                     <AskGuide
-                      walkContext={{
-                        visited: visited.map((place) => place.slug),
-                        remaining: route.places.map((place) => place.slug),
-                        interests: settings.interests,
-                        walking: settings.walking,
-                        minutesRemaining: remaining.minutes,
-                        deadline: settings.deadline,
-                        start: settings.start,
-                        finish: route.finish,
-                      }}
+                      walkContext={buildWalkGuideContext({
+                        visited, remaining: route.places, settings,
+                        minutesRemaining: remainingWalkBudget(settings, startedAt ?? generatedAt, now), finish: route.finish,
+                      })}
                       citySlug={citySlug}
                       placeSlug={current.slug}
                       placeName={current.name}

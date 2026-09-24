@@ -1,4 +1,4 @@
-import { Camera, Map, Marker, type CameraRef } from "@maplibre/maplibre-react-native";
+import { Camera, Map, Marker, GeoJSONSource, Layer, type CameraRef } from "@maplibre/maplibre-react-native";
 import { useEffect, useRef, useState } from "react";
 import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -15,21 +15,34 @@ import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import { resolveMapStyleUrl } from "../lib/mapStyle";
 import { triggerCitywalkHaptic } from "../lib/haptics";
 import { useNativeLocale } from "../localization/LocaleProvider";
-import { AppText } from "./ui";
+import { walkCopy } from "@citywalk/traveler-core/walkCopy";
+import { AppText, PrimaryButton } from "./ui";
 import { NativeIcon } from "./NativeIcon";
 
 const MAP_STYLE_URL = resolveMapStyleUrl();
 
-export function NativeCityMap({ places }: Readonly<{
+export function NativeCityMap({ places, routeStart, routeFinish, currentSlug, onLocation }: Readonly<{
   places: readonly PublicPlaceCard[];
+  routeStart?: { lat: number; lng: number };
+  routeFinish?: { lat: number; lng: number };
+  currentSlug?: string;
+  onLocation?: (point: { lat: number; lng: number }) => void;
 }>) {
-  const { messages } = useNativeLocale();
+  const { messages, locale } = useNativeLocale();
   const cameraRef = useRef<CameraRef>(null);
   const [locationStatus, setLocationStatus] = useState<NativeLocationStatus>("idle");
   const [userLocation, setUserLocation] = useState<NativeUserLocation>();
   const [mapFailed, setMapFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const line = [...(routeStart ? [routeStart] : []), ...places.map(p => p.coordinates), ...(routeFinish ? [routeFinish] : [])].map(p => [p.lng, p.lat]);
+  useEffect(() => {
+    if (loaded || mapFailed) return;
+    const timer = setTimeout(() => setMapFailed(true), 30000);
+    return () => clearTimeout(timer);
+  }, [attempt, loaded, mapFailed]);
   const appState = useRef(AppState.currentState);
-  const initialCenter: [number, number] = places[0]
+  const initialCenter: [number, number] = routeStart ? [routeStart.lng, routeStart.lat] : places[0]
     ? [places[0].coordinates.lng, places[0].coordinates.lat]
     : [0, 0];
   const statusMessage = getLocationStatusMessage(locationStatus, messages);
@@ -61,6 +74,7 @@ export function NativeCityMap({ places }: Readonly<{
     setLocationStatus(result.status);
     if (result.status === "available") {
       setUserLocation(result.location);
+      onLocation?.({ lat: result.location.latitude, lng: result.location.longitude });
       cameraRef.current?.easeTo({ center: [result.location.longitude, result.location.latitude], zoom: 15, duration: 350 });
     }
   }
@@ -77,18 +91,24 @@ export function NativeCityMap({ places }: Readonly<{
     <View style={styles.shell}>
       {mapFailed ? (
         <View accessibilityRole="alert" style={styles.fallback}>
-          <AppText variant="caption" style={styles.statusText}>{messages.locationUnavailable}</AppText>
+          <AppText variant="caption" style={styles.statusText}>{walkCopy(locale).mapUnavailable}</AppText>
+          <AppText>{walkCopy(locale).mapFallbackHelp}</AppText>
+          <PrimaryButton label={walkCopy(locale).retry} onPress={() => { setLoaded(false); setMapFailed(false); setAttempt(v => v + 1); }} />
         </View>
       ) : (
         <Map
+          key={attempt}
           mapStyle={MAP_STYLE_URL}
+          onDidFinishRenderingMapFully={() => setLoaded(true)}
           style={styles.map}
           compass
           attribution
           onDidFailLoadingMap={() => setMapFailed(true)}
         >
           <Camera ref={cameraRef} initialViewState={{ center: initialCenter, zoom: 13 }} />
-          {places.map((place) => (
+          {routeStart && line.length > 1 ? <GeoJSONSource id="walk-route" data={{ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: line } }}><Layer id="walk-route-line" type="line" paint={{ "line-color": colors.primary, "line-width": 4 }} /></GeoJSONSource> : null}
+          {routeFinish ? <Marker id="walk-finish" lngLat={[routeFinish.lng, routeFinish.lat]}><AppText accessibilityLabel={walkCopy(locale).end}>⚑</AppText></Marker> : null}
+          {places.map((place, index) => (
             <Marker
               key={place.slug}
               id={`place-${place.slug}`}
@@ -96,9 +116,9 @@ export function NativeCityMap({ places }: Readonly<{
             >
               <View
                 accessible
-                accessibilityLabel={place.content.name}
-                style={styles.placeMarker}
-              />
+                accessibilityLabel={`${index + 1}. ${place.content.name}`}
+                style={[styles.placeMarker, place.slug === currentSlug && { backgroundColor: colors.success }]}
+              ><Text style={{ color: "white", fontSize: 10, textAlign: "center" }}>{index + 1}</Text></View>
             </Marker>
           ))}
           {userLocation ? (

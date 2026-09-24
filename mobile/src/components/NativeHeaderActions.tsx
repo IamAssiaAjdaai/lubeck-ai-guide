@@ -12,6 +12,7 @@ export function NativeHeaderActions() {
   return (
     <View style={styles.actions}>
       <LocaleSelector />
+      <Link href="/saved" asChild><Pressable accessibilityLabel={messages.savedTrips} accessibilityRole="button" style={styles.action}><NativeIcon ios="heart" android="favorite_border" /></Pressable></Link>
       <Link href="/account" asChild>
         <Pressable
           accessibilityLabel={messages.account}

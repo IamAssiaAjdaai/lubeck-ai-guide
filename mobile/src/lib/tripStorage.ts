@@ -112,3 +112,13 @@ function isLocalSavedTrip(value: unknown): value is LocalSavedTrip {
 function isNonNegativeNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value) && value >= 0;
 }
+
+/** Keep the legacy format readable and removable alongside V2 walks. */
+export async function removeLocalTrip(citySlug: string, id: string, store?: TripStore) {
+  const target = store ?? await getDefaultStore();
+  // A failed read must not be treated as an empty store before a destructive write.
+  const raw = await target.getItem(LOCAL_TRIPS_STORAGE_KEY);
+  const value: unknown = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(value)) throw new Error("Invalid local trip store");
+  await target.setItem(LOCAL_TRIPS_STORAGE_KEY, JSON.stringify(value.filter(trip => !(isLocalSavedTrip(trip) && trip.citySlug === citySlug && trip.id === id))));
+}

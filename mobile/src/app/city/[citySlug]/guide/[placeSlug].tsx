@@ -1,3 +1,6 @@
+import { buildWalkGuideContext } from "@citywalk/traveler-core/walkGuideContext";
+import { remainingWalkBudget } from "@citywalk/traveler-core/walkJourney";
+import { loadActiveWalk } from "../../../../lib/walkStorage";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -144,12 +147,19 @@ export default function GuideScreen() {
     setBusy(true);
     void triggerCitywalkHaptic("light");
     try {
+      const active = await loadActiveWalk(citySlug).catch(() => undefined);
+      const walkContext = active?.remaining[0] === placeSlug ? buildWalkGuideContext({
+        visited: active.visited.map(slug => ({ slug })), remaining: active.remaining.map(slug => ({ slug })),
+        settings: active.settings, finish: active.finish,
+        minutesRemaining: remainingWalkBudget(active.settings, active.startedAt),
+      }) : undefined;
       const result = await citywalkApi.askGuide({
         citySlug,
         placeSlug,
         locale,
         question: turn.question,
         history: turn.history,
+        walkContext,
       });
       setAllowance(result.allowance);
       const completed = appendGuideAnswer(turn.messages, {

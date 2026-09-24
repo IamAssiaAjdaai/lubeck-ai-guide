@@ -1,3 +1,4 @@
+import { isWalkSettings } from "@citywalk/traveler-core/walkJourney";
 import { readSavedWalks } from "./storage";
 import type { DiscoveryPlace } from "@/components/travel/PlaceDiscovery";
 import { isEligibleTourPlace } from "@/lib/tourBuilder";
@@ -48,6 +49,7 @@ export function readJourney(
     )
       return;
     if (
+      !isWalkSettings(value.settings) ||
       !Number.isFinite(value.settings.minutes) ||
       value.settings.minutes <= 0 ||
       value.settings.minutes > 1440 ||
@@ -110,6 +112,7 @@ export function readSavedRoute(
   );
   if (
     !saved?.settings ||
+    !isWalkSettings(saved.settings) ||
     !validPoint(saved.settings.start) ||
     (saved.settings.finish && !validPoint(saved.settings.finish)) ||
     !Number.isFinite(saved.settings.minutes) ||

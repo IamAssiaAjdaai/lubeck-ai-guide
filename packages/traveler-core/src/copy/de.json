@@ -140,5 +140,12 @@
   "duesseldorfDescription": "Kunst. Kultur. Neue Perspektiven.",
   "mapFallbackHelp": "Dein Reiseplan ist weiterhin verfügbar.",
   "removeWalk": "Tour entfernen",
-  "removeFailed": "Die Tour konnte nicht entfernt werden. Bitte versuche es erneut."
+  "removeFailed": "Die Tour konnte nicht entfernt werden. Bitte versuche es erneut.",
+  "runningLate": "Ich bin spät dran",
+  "removePlace": "Gespeicherten Ort entfernen",
+  "savedPlacesEmpty": "Hier erscheinen deine gespeicherten Orte.",
+  "categories": "Weitere Interessen in dieser Stadt",
+  "mapUnavailable": "Karte nicht verfügbar",
+  "refreshLocation": "Meinen Standort aktualisieren",
+  "recalculate": "Für meine Rückkehrzeit neu berechnen"
 }

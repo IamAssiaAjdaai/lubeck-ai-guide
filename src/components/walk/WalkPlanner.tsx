@@ -18,7 +18,7 @@ import type { DiscoveryPlace } from "@/components/travel/PlaceDiscovery";
 import type { Locale } from "@/lib/i18n";
 import { formatMessage } from "@/lib/i18n";
 import { useUserLocation } from "@/hooks/useUserLocation";
-import { walkCopy, walkCopyLocale } from "@/lib/walk/copy";
+import { walkCopy, walkCopyLocale, walkCategoryLabel } from "@/lib/walk/copy";
 import {
   buildWalk,
   deadlineForToday,
@@ -75,6 +75,8 @@ function Planner({ places, locale, citySlug, cityName }: PlannerProps) {
   const [mode, setMode] = useState<"duration" | "deadline">("duration");
   const [time, setTime] = useState("");
   const [interests, setInterests] = useState<Interest[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const cityCategories = [...new Set(places.flatMap(place => place.tags ?? []))].filter(tag => !Object.values(interestTags).flat().some(known => known === tag));
   const [walking, setWalking] = useState<WalkSettings["walking"]>("balanced");
   const [start, setStart] = useState(requestedPlace ?? "");
   const [end, setEnd] = useState("anywhere");
@@ -137,6 +139,7 @@ function Planner({ places, locale, citySlug, cityName }: PlannerProps) {
       start: origin,
       finish,
       interests,
+      categories,
       walking,
     };
     setInvalid(false);
@@ -361,6 +364,10 @@ function Planner({ places, locale, citySlug, cityName }: PlannerProps) {
                       })}
                     </div>
                   </fieldset>
+                  {cityCategories.length > 0 && <fieldset className="mt-7">
+                      <legend className="mb-3 text-lg font-semibold">{t.categories}</legend>
+                      <div className="interest-options">{cityCategories.map(tag => <button key={tag} type="button" className="walk-choice" aria-pressed={categories.includes(tag)} onClick={() => setCategories(current => current.includes(tag) ? current.filter(item => item !== tag) : [...current, tag])}>{walkCategoryLabel(tag, locale)}{categories.includes(tag) && <Check size={17} />}</button>)}</div>
+                  </fieldset>}
                   <fieldset className="mt-7">
                     <legend className="mb-3 text-lg font-semibold">
                       {t.walking}

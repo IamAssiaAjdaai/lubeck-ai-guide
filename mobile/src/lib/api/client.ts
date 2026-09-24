@@ -18,6 +18,8 @@ import {
 import type { PublicContentFetch } from "../publicContentCache";
 import { getConfiguredApiOrigin } from "./environment";
 
+import type { WalkGuideContext } from "@citywalk/traveler-core/walkGuideContext";
+
 export type AuthCookieProvider = () => Promise<string>;
 export type VisitorIdProvider = () => Promise<string>;
 
@@ -32,6 +34,7 @@ export type GuideQuestionInput = Readonly<{
   locale: NativeLocale;
   question: string;
   history?: readonly GuideHistoryInput[];
+  walkContext?: WalkGuideContext;
 }>;
 
 export type CitywalkApiClient = Readonly<{

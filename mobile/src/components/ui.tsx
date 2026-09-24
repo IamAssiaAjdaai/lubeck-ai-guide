@@ -41,6 +41,8 @@ export function Screen({
         ref={scrollViewRef}
         contentContainerStyle={styles.screenContent}
         keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="on-drag"
       >
         {children}
       </ScrollView>
@@ -52,7 +54,7 @@ export function VirtualizedScreen<T>({
   includeTopSafeArea = false,
   contentContainerStyle,
   ...props
-}: FlatListProps<T> & { includeTopSafeArea?: boolean }) {
+}: FlatListProps<T> & { includeTopSafeArea?: boolean; ref?: Ref<FlatList<T>> }) {
   const { direction } = useNativeLocale();
   return (
     <SafeAreaView
@@ -114,6 +116,7 @@ export function PrimaryButton({
   trailingIcon,
   tone = "primary",
   haptic,
+  wrapLabel = false,
   onPress,
   ...props
 }: PressableProps & {
@@ -123,6 +126,7 @@ export function PrimaryButton({
   trailingIcon?: ReactNode;
   tone?: "primary" | "secondary" | "ai" | "success";
   haptic?: CitywalkHaptic;
+  wrapLabel?: boolean;
 }) {
   const buttonTone = tone === "secondary"
     ? styles.secondaryButton
@@ -154,7 +158,7 @@ export function PrimaryButton({
       ) : (
         <View style={styles.buttonContent}>
           {leadingIcon}
-          <Text numberOfLines={1} adjustsFontSizeToFit style={textTone}>{label}</Text>
+          <Text numberOfLines={wrapLabel ? undefined : 1} adjustsFontSizeToFit={!wrapLabel} style={textTone}>{label}</Text>
           {trailingIcon}
         </View>
       )}

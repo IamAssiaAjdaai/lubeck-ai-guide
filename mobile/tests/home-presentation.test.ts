@@ -14,7 +14,7 @@ describe("native Home presentation", () => {
   });
 
   it("keeps available cities data-driven and makes the primary action scroll to them", () => {
-    expect(homeSource).toContain("cities.data.cities.map");
+    expect(homeSource).toContain("filteredCities.map");
     expect(homeSource).toContain("scrollViewRef.current?.scrollTo");
     expect(homeSource).toContain("prefetchPublicCity(city.slug, locale)");
     expect(homeSource).toContain('cachePolicy="memory-disk"');

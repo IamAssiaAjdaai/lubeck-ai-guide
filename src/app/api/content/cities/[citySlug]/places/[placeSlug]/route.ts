@@ -1,3 +1,5 @@
+import { getWalkVerifiedSources } from "@/lib/walk/verifiedSources.server";
+import { getContentSource } from "@/lib/content/source";
 import { PublicContentNotFoundError } from "@/lib/content/errors";
 import {
   getPublicCitySnapshot,
@@ -21,9 +23,12 @@ export async function GET(
   try {
     const startedAt = performance.now();
     const snapshot = await getPublicCitySnapshot(citySlug);
+    // Resolve publication first; source verification never grants publication.
+    const detail = toLocalizedPublicPlaceResponse(snapshot, placeSlug, requestedLocale);
+    const verifiedSources = await getWalkVerifiedSources(citySlug, placeSlug, getContentSource());
     return publicContentJsonResponse(
       request,
-      toLocalizedPublicPlaceResponse(snapshot, placeSlug, requestedLocale),
+      { ...detail, verifiedSources },
       performance.now() - startedAt,
     );
   } catch (error) {

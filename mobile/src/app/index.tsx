@@ -1,6 +1,12 @@
-import { Image } from "expo-image";
+import { cityLaunches } from "@citywalk/traveler-core/cityAvailability";
+import { calculateDistanceMeters } from "@citywalk/traveler-core";
+import { walkCopy } from "@citywalk/traveler-core/walkCopy";
+import { WalkInput } from "../components/WalkControls";
+import { requestForegroundLocation } from "../lib/location";
+import { expoForegroundLocationAdapter } from "../lib/location.expo";
+import { NativeContentImage as Image } from "../components/NativeContentImage";
 import { Link } from "expo-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 import citywalkHero from "../../assets/images/citywalk-hero.png";
@@ -20,6 +26,23 @@ import { useNativeLocale } from "../localization/LocaleProvider";
 export default function HomeScreen() {
   const { locale, messages } = useNativeLocale();
   const cities = usePublicCities(locale);
+  const t = walkCopy(locale);
+  const [query, setQuery] = useState("");
+  const [location, setLocation] = useState<{ lat: number; lng: number }>();
+  const [locating, setLocating] = useState(false), [locationHelp, setLocationHelp] = useState("");
+  async function locate() {
+    setLocating(true);
+    const result = await requestForegroundLocation(expoForegroundLocationAdapter);
+    setLocating(false);
+    if (result.status === "available") { setLocation({ lat: result.location.latitude, lng: result.location.longitude }); setLocationHelp(t.nearest); }
+    else setLocationHelp(t.locationHelp);
+  }
+  const filteredCities = cities.status === "available" ? cities.data.cities.filter(city => (cityLaunches[city.slug]?.status ?? "available") === "available" && city.name.toLocaleLowerCase(locale).includes(query.toLocaleLowerCase(locale))).sort((a, b) => {
+    if (!location) return 0;
+    const first = cityLaunches[a.slug]?.coordinates, second = cityLaunches[b.slug]?.coordinates;
+    return (first ? calculateDistanceMeters(location, first) ?? Infinity : Infinity) - (second ? calculateDistanceMeters(location, second) ?? Infinity : Infinity);
+  }) : [];
+  const coming = Object.entries(cityLaunches).filter(([,city]) => city.status === "coming_soon" && city.name.toLocaleLowerCase(locale).includes(query.toLocaleLowerCase(locale)));
   const scrollViewRef = useRef<ScrollView>(null);
   const availableCitiesY = useRef(0);
 
@@ -56,6 +79,9 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      <PrimaryButton label={t.location} busy={locating} onPress={() => void locate()} />
+      {locationHelp ? <AppText>{locationHelp}</AppText> : null}
+      <WalkInput label={t.search} value={query} onChangeText={setQuery} placeholder={t.search} />
       <View onLayout={({ nativeEvent }) => { availableCitiesY.current = nativeEvent.layout.y; }}>
         <SectionTitle>{messages.availableCities}</SectionTitle>
       </View>
@@ -74,7 +100,7 @@ export default function HomeScreen() {
           title={messages.availableCities}
         />
       ) : null}
-      {cities.status === "available" ? cities.data.cities.map((city) => {
+      {cities.status === "available" ? filteredCities.map((city) => {
         const image = selectPrimaryImageMedia(city.media);
         const imageUrl = selectImageUrl(image, undefined, undefined, "card");
         const contentDirection = getNativeDirection(city.resolvedLocale);
@@ -106,6 +132,7 @@ export default function HomeScreen() {
                 ) : <View style={styles.imageFallback} />}
                 <View style={[styles.cityContent, { direction: contentDirection }]}>
                   <AppText variant="title" style={contentTextStyle}>{city.name}</AppText>
+                  <AppText>{t.availableNow}</AppText>
                   {city.shortDescription ? (
                     <AppText numberOfLines={2} style={[contentTextStyle, styles.cityDescription]}>{city.shortDescription}</AppText>
                   ) : null}
@@ -116,6 +143,8 @@ export default function HomeScreen() {
           </MotionView>
         );
       }) : null}
+      {coming.map(([slug, city]) => <View key={slug} style={styles.cityContent}><AppText variant="title">{city.name}</AppText><AppText>{t.comingSoon}</AppText></View>)}
+      {cities.status === "available" && !filteredCities.length && !coming.length ? <AppText>{t.noCities}</AppText> : null}
     </Screen>
   );
 }

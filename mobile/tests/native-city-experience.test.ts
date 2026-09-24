@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import citySource from "../src/app/city/[citySlug]/index.tsx?raw";
 import headerSource from "../src/components/NativeHeaderActions.tsx?raw";
 import localeSource from "../src/components/LocaleSelector.tsx?raw";
+import walkSource from "../src/components/NativeWalkFlow.tsx?raw";
 import plannerSource from "../src/components/NativeTourPlanner.tsx?raw";
 import placeSource from "../src/app/city/[citySlug]/place/[placeSlug].tsx?raw";
 import tourSource from "../src/app/city/[citySlug]/tour/[tourSlug].tsx?raw";
@@ -31,12 +32,12 @@ describe("native city experience parity", () => {
 
   it("exposes recommendations, time budgets, route summaries, and a local save boundary", () => {
     expect(plannerSource).toContain("rankNativePlaces");
-    expect(plannerSource).toContain("TOUR_TIME_BUDGETS.map");
-    expect(plannerSource).toContain("buildNativePersonalizedTour");
-    expect(plannerSource).toContain("saveLocalTrip");
+    expect(walkSource).toContain("t.halfDay");
+    expect(walkSource).toContain("buildWalk(places, settings)");
+    expect(walkSource).toContain("saveNativeWalk(journey)");
     expect(plannerSource).toContain("messages.distanceDisclaimer");
-    expect(plannerSource).toContain("messages.startTrip");
-    expect(plannerSource).toContain('source: "personalized"');
+    expect(walkSource).toContain("t.startWalk");
+    expect(walkSource).toContain("persistActiveWalk(next)");
   });
 
   it("uses one sequential trip model for published and personalized routes", () => {

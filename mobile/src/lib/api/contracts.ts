@@ -121,6 +121,7 @@ export type PublicCitySummaryResponse = Readonly<{
 export type PublicPlaceResponse = Readonly<{
   city: PublicCity;
   place: PublicPlace;
+  verifiedSources?: readonly { label: string; url: string; verifiedAt: string }[];
 }>;
 
 export type GuideEligibilityResponse = Readonly<{
@@ -184,7 +185,12 @@ export function parseCitySummaryResponse(value: unknown): PublicCitySummaryRespo
 
 export function parsePlaceResponse(value: unknown): PublicPlaceResponse {
   const object = asObject(value, "place detail");
-  return { city: parseCity(object.city), place: parsePlace(object.place) };
+  return { city: parseCity(object.city), place: parsePlace(object.place),
+    ...(Array.isArray(object.verifiedSources) ? { verifiedSources: object.verifiedSources.flatMap(source => {
+      if (!source || typeof source !== "object" || typeof source.label !== "string" || typeof source.url !== "string" || !/^https?:\/\//.test(source.url) || typeof source.verifiedAt !== "string" || Number.isNaN(Date.parse(source.verifiedAt))) return [];
+      return [{ label: source.label, url: source.url, verifiedAt: source.verifiedAt }];
+    }) } : {}),
+  };
 }
 
 export function parseGuideEligibilityResponse(value: unknown): GuideEligibilityResponse {

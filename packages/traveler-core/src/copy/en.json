@@ -140,5 +140,12 @@
   "duesseldorfDescription": "Art. Culture. A different perspective.",
   "mapFallbackHelp": "Your itinerary is still available.",
   "removeWalk": "Remove walk",
-  "removeFailed": "We couldn’t remove this walk. Please try again."
+  "removeFailed": "We couldn’t remove this walk. Please try again.",
+  "runningLate": "I’m running late",
+  "removePlace": "Remove saved place",
+  "savedPlacesEmpty": "Your saved places will appear here.",
+  "categories": "More interests in this city",
+  "mapUnavailable": "Map unavailable",
+  "refreshLocation": "Update my location",
+  "recalculate": "Recalculate for my return time"
 }

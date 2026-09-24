@@ -1,6 +1,11 @@
-import { Image } from "expo-image";
+import { useRef, useState } from "react";
+import { walkCopy } from "@citywalk/traveler-core/walkCopy";
+import { calculateDistanceMeters } from "@citywalk/traveler-core";
+import { requestForegroundLocation } from "../../../lib/location";
+import { expoForegroundLocationAdapter } from "../../../lib/location.expo";
+import { NativeContentImage as Image } from "../../../components/NativeContentImage";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 
 import { CitywalkLoading } from "../../../components/CitywalkLoading";
 import { MediaAttribution } from "../../../components/MediaAttribution";
@@ -9,6 +14,7 @@ import { NativeIcon } from "../../../components/NativeIcon";
 import { NativeTourPlanner } from "../../../components/NativeTourPlanner";
 import {
   AppText,
+  PrimaryButton,
   MotionView,
   PressableSurface,
   Screen,
@@ -30,6 +36,12 @@ export default function CityScreen() {
   const params = useLocalSearchParams<{ citySlug?: string | string[] }>();
   const identity = parseCityRouteIdentity(params.citySlug);
   const { direction: appDirection, locale, messages } = useNativeLocale();
+  const t = walkCopy(locale);
+  const list = useRef<FlatList<PublicPlaceCard>>(null);
+  const placesOffset = useRef(0);
+  const [near, setNear] = useState<{ lat: number; lng: number }>();
+  const [locationMessage, setLocationMessage] = useState("");
+  const [locating, setLocating] = useState(false);
   const cityState = usePublicCity(identity?.citySlug ?? "invalid", locale);
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
@@ -54,7 +66,8 @@ export default function CityScreen() {
     <>
       <Stack.Screen options={{ title: city.content.name }} />
       <VirtualizedScreen
-        data={places}
+        ref={list}
+        data={near ? [...places].sort((a,b) => (calculateDistanceMeters(near, a.coordinates) ?? Infinity) - (calculateDistanceMeters(near, b.coordinates) ?? Infinity)) : places}
         keyExtractor={(place) => place.slug}
         initialNumToRender={4}
         maxToRenderPerBatch={5}
@@ -84,6 +97,18 @@ export default function CityScreen() {
               ) : null}
             </View>
 
+            <View style={styles.section}>
+              <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug: city.slug } }} asChild><PrimaryButton label={t.build} /></Link>
+              <PrimaryButton tone="secondary" label={t.places} onPress={() => list.current?.scrollToOffset({ offset: placesOffset.current, animated: true })} />
+              <Link href={{ pathname: "/saved", params: { citySlug: city.slug } }} asChild><PrimaryButton tone="secondary" label={t.saved} /></Link>
+              {places[0] ? <Link href={{ pathname: "/city/[citySlug]/guide/[placeSlug]", params: { citySlug: city.slug, placeSlug: places[0].slug } }} asChild><PrimaryButton tone="ai" label={t.ask} /></Link> : null}
+              <PrimaryButton tone="secondary" label={t.near} busy={locating} onPress={() => { setLocating(true); void requestForegroundLocation(expoForegroundLocationAdapter).then(result => {
+                setLocating(false);
+                if (result.status === "available") { setNear({ lat: result.location.latitude, lng: result.location.longitude }); setLocationMessage(t.nearest); }
+                else setLocationMessage(t.gpsHelp);
+              }); }} />
+              {locationMessage ? <StatusMessage>{locationMessage}</StatusMessage> : null}
+            </View>
             {tours.length > 0 ? (
               <View style={styles.section}>
                 <SectionTitle>{messages.tours}</SectionTitle>
@@ -108,7 +133,7 @@ export default function CityScreen() {
               <SectionTitle>{messages.map}</SectionTitle>
               <NativeCityMap places={places} />
             </View>
-            <SectionTitle>{messages.places}</SectionTitle>
+            <View onLayout={event => { placesOffset.current = event.nativeEvent.layout.y; }}><SectionTitle>{messages.places}</SectionTitle></View>
           </MotionView>
         )}
         renderItem={({ item }) => (
