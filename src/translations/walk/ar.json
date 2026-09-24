@@ -137,5 +137,8 @@
   "assistant": "مساعد CITYWALK",
   "interestsHelp": "اختر المواضيع التي تهمك (يمكن اختيار أكثر من موضوع).",
   "hamburgDescription": "إطلالات على الميناء. قصص كبيرة.",
-  "duesseldorfDescription": "فن وثقافة ومنظور مختلف."
+  "duesseldorfDescription": "فن وثقافة ومنظور مختلف.",
+  "mapFallbackHelp": "لا يزال مسار جولتك متاحًا.",
+  "removeWalk": "إزالة الجولة",
+  "removeFailed": "تعذرت إزالة الجولة. يرجى المحاولة مرة أخرى."
 }

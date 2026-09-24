@@ -137,5 +137,8 @@
   "assistant": "CITYWALK Assistant",
   "interestsHelp": "Choose the topics that interest you (select multiple).",
   "hamburgDescription": "Harbor views. Big stories.",
-  "duesseldorfDescription": "Art. Culture. A different perspective."
+  "duesseldorfDescription": "Art. Culture. A different perspective.",
+  "mapFallbackHelp": "Your itinerary is still available.",
+  "removeWalk": "Remove walk",
+  "removeFailed": "We couldn’t remove this walk. Please try again."
 }

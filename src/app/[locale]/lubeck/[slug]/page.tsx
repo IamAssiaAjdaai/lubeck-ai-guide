@@ -3,7 +3,7 @@ import VerifiedInfo from "@/components/walk/VerifiedInfo";
 import { getWalkVerifiedSources } from "@/lib/walk/verifiedSources.server";
 import PlaceWalkAction from "@/components/walk/PlaceWalkAction";
 import BottomNavigation from "@/components/walk/BottomNavigation";
-import Image from "next/image";
+import Image from "@/components/travel/ContentImage";
 import {
   LUBECK_HISTORIC_TOUR_ID,
 } from "@/lib/tourContext";

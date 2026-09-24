@@ -60,8 +60,8 @@ describe("generic public city landing", () => {
     expect(screen.getByRole("heading", { name: "Gravensteen", level: 3 })).not.toBeNull();
     expect(screen.getByRole("heading", { name: "Gravensteen" }).closest("a")?.getAttribute("href"))
       .toBe("/en/ghent/gravensteen");
-    expect(screen.getByRole("img", { name: "Ghent" }).getAttribute("src"))
-      .toBe("/api/media/city-hero");
+    // The V2 illustrated header should not download an invisible photo.
+    expect(document.querySelector('img[src="/api/media/city-hero"]')).toBeNull();
     expect(document.querySelector('img[src="/api/media/place-card"]')).not.toBeNull();
     expect(screen.getByText("Hidden gems")).not.toBeNull();
     expect(mocks.getPublicCitySnapshot).toHaveBeenCalledWith("ghent", "database");
