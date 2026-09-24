@@ -1,3 +1,8 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
+import VerifiedInfo from "@/components/walk/VerifiedInfo";
+import { getWalkVerifiedSources } from "@/lib/walk/verifiedSources.server";
+import PlaceWalkAction from "@/components/walk/PlaceWalkAction";
+import BottomNavigation from "@/components/walk/BottomNavigation";
 import Image from "next/image";
 import {
   LUBECK_HISTORIC_TOUR_ID,
@@ -42,7 +47,7 @@ import { resolvePlaceImage, resolvePlaceImageMedia } from "@/lib/content/placeMe
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { formatTime } from "@/lib/formatTime";
 import { getGuideEligibility } from "@/lib/guideEligibility.server";
-import { auth } from "@/lib/auth/server";
+import { getPublicSession } from "@/lib/auth/publicSession.server";
 import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 import { MediaAttribution } from "@/components/travel/MediaAttribution";
 import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
@@ -116,7 +121,10 @@ export default async function LandmarkPage({
 
   const contentSource = getContentSource();
   if (contentSource !== "code") await connection();
-  const snapshot = await getPublicCitySnapshot("lubeck", contentSource);
+  const snapshot = await getPublicCitySnapshot("lubeck", contentSource).catch((error: unknown) => {
+    if (error instanceof PublicContentNotFoundError) notFound();
+    throw error;
+  });
   const landmark = snapshot.places.find((place) => place.slug === slug);
 
   if (!landmark) {
@@ -469,6 +477,8 @@ export default async function LandmarkPage({
         </section>
         ) : null}
 
+        <VerifiedInfo sources={await getWalkVerifiedSources("lubeck",landmark.slug,contentSource)} locale={currentLocale}/>
+        <PlaceWalkAction locale={currentLocale} citySlug="lubeck" placeSlug={landmark.slug}/>
         {/* AI Guide remains scoped to the verified canonical tour. */}
         {guideEnabled ? (
           <AskGuide
@@ -487,7 +497,7 @@ export default async function LandmarkPage({
 
         {/* Next landmark / Finish */}
         {isTourLandmark ? (
-        <div className="sticky bottom-3 z-20 -mx-2 mt-7 rounded-2xl bg-background/90 p-2 backdrop-blur-md">
+        <div className="sticky bottom-24 z-20 -mx-2 mt-7 rounded-2xl bg-background/90 p-2 backdrop-blur-md">
           {nextLandmark ? (
             <Link href={`/${currentLocale}/lubeck/${nextLandmark.slug}`} className="button-dark w-full">
               {t.landmark.nextStop} <NextIcon aria-hidden="true" size={19} strokeWidth={1.8} />
@@ -505,6 +515,7 @@ export default async function LandmarkPage({
         </div>
         ) : null}
       </section>
+      <BottomNavigation locale={currentLocale} citySlug="lubeck" active="explore"/>
     </main>
   );
 }
@@ -513,7 +524,7 @@ async function resolvePremiumState(
   locale: (typeof locales)[number],
   configuration: CityPassConfiguration,
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getPublicSession(await headers());
   const access = await getCityPassAccessState({
     userId: session?.user.id,
     citySlug: configuration.citySlug,

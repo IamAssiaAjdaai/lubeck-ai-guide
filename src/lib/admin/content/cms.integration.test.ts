@@ -48,6 +48,7 @@ import {
   getPublicCitySnapshot,
   resolvePublicLocalization,
 } from "@/lib/content/publicRepository.server";
+import { buildWalk } from "@/lib/walk/planner";
 import { importCanonicalLubeckContent } from "@/lib/admin/content/importLubeck.server";
 
 const shouldRun = process.env.CMS_DB_INTEGRATION === "1";
@@ -190,7 +191,39 @@ describe.runIf(shouldRun)("CMS PostgreSQL integration", () => {
     expect(new Set(canonicalRevisionsAfterRepeat.map(({ placeId }) => placeId)).size).toBe(25);
     expect(canonicalRevisionsAfterRepeat.map(({ id }) => id).sort((a, b) => a - b))
       .toEqual(revisionIdsBeforeRepeat);
-  });
+  }, 30_000);
+
+  it("plans only from the remaining published city records when a canonical place is archived", async () => {
+    const db = getDb();
+    const [city] = await db.select().from(citiesTable).where(eq(citiesTable.slug, "lubeck"));
+    const [place] = await db.select().from(placesTable).where(and(
+      eq(placesTable.cityId, city!.id), eq(placesTable.slug, "cafe-niederegger"),
+    ));
+    expect(place).toBeDefined();
+    try {
+      // Exercise read-side archive filtering even when a current revision exists.
+      // Publication workflow transitions are covered by the separate CRUD tests.
+      await db.update(placesTable).set({ publicationStatus: "archived" })
+        .where(eq(placesTable.id, place!.id));
+      const snapshot = await getPublicCitySnapshot("lubeck", "database");
+      expect(snapshot.places).toHaveLength(24);
+      expect(snapshot.places.some(({ slug }) => slug === place!.slug)).toBe(false);
+      const route = buildWalk(snapshot.places, {
+        minutes: 120, start: snapshot.places[0]!.coordinates,
+        interests: ["history"], walking: "balanced",
+      });
+      expect(route.places.length).toBeGreaterThan(0);
+      expect(route.places.every((stop) => snapshot.places.some((eligible) => eligible.slug === stop.slug))).toBe(true);
+      expect(route.places.every((stop) => stop.city === "lubeck")).toBe(true);
+    } finally {
+      await db.update(placesTable).set({
+        publicationStatus: place!.publicationStatus,
+        updatedAt: place!.updatedAt,
+        updatedByUserId: place!.updatedByUserId,
+      })
+        .where(eq(placesTable.id, place!.id));
+    }
+  }, 30_000);
 
   it("runs transactional CRUD, publication, ordering, and public visibility", async () => {
     const existing = await getDb()

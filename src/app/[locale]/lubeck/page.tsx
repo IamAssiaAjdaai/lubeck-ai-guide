@@ -1,3 +1,4 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
@@ -27,7 +28,10 @@ export default async function LubeckPage({ params }: LubeckPageProps) {
   const contentSource = getContentSource();
   if (contentSource !== "code") await connection();
 
-  const snapshot = await getPublicCitySnapshot("lubeck", contentSource);
+  const snapshot = await getPublicCitySnapshot("lubeck", contentSource).catch((error: unknown) => {
+    if (error instanceof PublicContentNotFoundError) notFound();
+    throw error;
+  });
   const city = cities.lubeck;
 
   return (

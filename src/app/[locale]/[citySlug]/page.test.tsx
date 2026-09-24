@@ -1,3 +1,4 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -100,7 +101,7 @@ describe("generic public city landing", () => {
     render(await renderPage("en", "ghent"));
 
     expect(screen.queryByText("Walking Tour")).toBeNull();
-    expect(screen.getByRole("button", { name: "Build my tour" })).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Build my walk" })).not.toBeNull();
     expect(screen.getByRole("heading", { name: "Gravensteen" })).not.toBeNull();
   });
 
@@ -131,7 +132,7 @@ describe("generic public city landing", () => {
     expect(screen.getByRole("heading", { name: "Medieval Ghent" })).not.toBeNull();
     expect(screen.getByText("A curated old-city walk.")).not.toBeNull();
     expect(screen.getByText("75 min")).not.toBeNull();
-    expect(screen.getByText("2 Stops")).not.toBeNull();
+    expect(screen.getAllByText("2 Stops").length).toBeGreaterThan(0);
     const orderedStops = document.querySelectorAll("ol li");
     expect(orderedStops[0]?.textContent).toContain("Gravensteen");
     expect(orderedStops[1]?.textContent).toContain("Belfry");
@@ -208,7 +209,7 @@ describe("generic public city landing", () => {
     ["en", "draft-city"],
     ["en", "published-without-places"],
   ])("returns not found for unavailable city %s/%s", async (locale, citySlug) => {
-    mocks.getPublicCitySnapshot.mockRejectedValue(new Error("unavailable"));
+    mocks.getPublicCitySnapshot.mockRejectedValue(new PublicContentNotFoundError("unavailable"));
 
     await expect(renderPage(locale, citySlug)).rejects.toThrow("NEXT_NOT_FOUND");
     expect(mocks.notFound).toHaveBeenCalledOnce();

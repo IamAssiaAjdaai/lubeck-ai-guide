@@ -29,29 +29,10 @@ vi.mock("@/lib/content/publicRepository.server", () => ({
 vi.mock("@/components/LanguageSelector", () => ({
   default: () => <div data-testid="language-selector" />,
 }));
-vi.mock("@/components/travel/CityHero", () => ({
-  default: ({ image }: { image: string }) => <div data-hero-image={image} data-testid="brand-hero" />,
-}));
-vi.mock("@/components/travel/CityCard", () => ({
-  FeaturedCityCard: ({ image, name, description, href, actionLabel, contentLocale, contentDirection }: {
-    image?: string;
-    name: string;
-    description?: string;
-    href: string;
-    actionLabel: string;
-    contentLocale: string;
-    contentDirection: string;
-  }) => (
-    <article data-image={image} data-testid="featured-city" lang={contentLocale} dir={contentDirection}>
-      <h2>{name}</h2>
-      {description ? <p>{description}</p> : null}
-      <a href={href}>{actionLabel}</a>
-    </article>
-  ),
-}));
+vi.mock("next/image", () => ({ default: ({src, alt}: {src:string;alt:string}) => <span data-image={src} role="img" aria-label={alt}/> }));
 
 import Home from "@/app/page";
-import { brandHeroImage, cities } from "@/data/cities";
+import { cities } from "@/data/cities";
 import { getTranslations, locales } from "@/lib/i18n";
 import type { PublicMedia } from "@/lib/media/types";
 
@@ -74,7 +55,6 @@ describe("Home available cities", () => {
     mocks.getPublicCitySummaries.mockResolvedValue([summary([heroMedia, cardMedia])]);
     await renderHome();
     expect(featuredImage()).toBe(cardMedia.url);
-    expect(screen.getByTestId("brand-hero").getAttribute("data-hero-image")).toBe(brandHeroImage);
   });
 
   it("uses approved hero media when card media is absent", async () => {
@@ -115,27 +95,19 @@ describe("Home available cities", () => {
     }
   });
 
-  it("targets Available Cities with one localized primary discovery action", async () => {
+  it("offers optional location, search, and non-navigable upcoming cities", async () => {
     await renderHome();
-    const hero = screen.getByTestId("brand-hero");
-    const action = screen.getByTestId("home-primary-action");
-    const featuredCity = screen.getByTestId("featured-city");
-
-    expect(action.tagName).toBe("A");
-    expect(action.getAttribute("href")).toBe("#available-cities");
-    expect(action.className).toContain("button-primary");
-    expect(screen.getAllByRole("link", { name: getTranslations("en").home.discoverCity })).toHaveLength(1);
-    expect(hero.compareDocumentPosition(action) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(action.compareDocumentPosition(featuredCity) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(screen.getByText(getTranslations("en").common.noSignUp)).not.toBeNull();
-    expect(screen.getByRole("heading", { name: getTranslations("en").home.availableCities })).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Use my location" })).not.toBeNull();
+    expect(screen.getByRole("searchbox", { name: "Search city" })).not.toBeNull();
+    expect(screen.getByRole("heading", { name: "Available cities" })).not.toBeNull();
+    expect(screen.getByRole("heading", { name: "Hamburg" }).closest("a")).toBeNull();
+    expect(screen.getByRole("heading", { name: "Düsseldorf" }).closest("a")).toBeNull();
   });
 
   it("renders Lübeck as the currently published available city", async () => {
     await renderHome();
-    expect(screen.getByTestId("available-city-lubeck").className).toContain("max-w-[22.5rem]");
     expect(screen.getByRole("heading", { name: "Lübeck" })).not.toBeNull();
-    expect(screen.getByRole("link", { name: "Explore Lübeck" }).getAttribute("href")).toBe("/en/lubeck");
+    expect(screen.getByTestId("available-city-lubeck").getAttribute("href")).toBe("/en/lubeck");
   });
 
   it("renders multiple published cities through the same card model", async () => {
@@ -145,10 +117,10 @@ describe("Home available cities", () => {
     ]);
     await renderHome();
 
-    expect(screen.getAllByTestId("featured-city")).toHaveLength(2);
+    expect(screen.getAllByTestId(/^available-city-/)).toHaveLength(2);
     expect(screen.getByTestId("available-city-lubeck")).not.toBeNull();
     expect(screen.getByTestId("available-city-ghent")).not.toBeNull();
-    expect(screen.getByRole("link", { name: "Explore Ghent" })).not.toBeNull();
+    expect(screen.getByTestId("available-city-ghent")).not.toBeNull();
     expect(screen.getByText("A published city description.")).not.toBeNull();
   });
 
@@ -175,7 +147,7 @@ async function renderHome() {
 }
 
 function featuredImage(): string | null {
-  return screen.getByTestId("featured-city").getAttribute("data-image");
+  return screen.getByTestId("available-city-lubeck").querySelector("[data-image]")!.getAttribute("data-image");
 }
 
 function summary(media: readonly PublicMedia[], slug = "lubeck", name = "Lübeck", shortDescription = "Published city description.") {

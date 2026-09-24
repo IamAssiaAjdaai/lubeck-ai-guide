@@ -1,9 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
-vi.mock("@/lib/auth/server", () => ({
-  auth: { api: { getSession: vi.fn() } },
-}));
+vi.mock("@/lib/auth/publicSession.server", () => ({ getPublicSession: vi.fn() }));
 
 import {
   enforceGuideDailyAllowance,

@@ -1,3 +1,6 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
+import { getWalkVerifiedSources } from "@/lib/walk/verifiedSources.server";
+import { isCityLaunched } from "@/data/cityAvailability";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
@@ -31,7 +34,7 @@ export default function GenericPlacePage(props: GenericPlacePageProps) {
 
 export async function GenericPlaceContent({ params }: GenericPlacePageProps) {
   const { locale, citySlug, placeSlug } = await params;
-  if (!isLocale(locale)) notFound();
+  if (!isLocale(locale) || !isCityLaunched(citySlug)) notFound();
 
   const contentSource = getContentSource();
   if (contentSource !== "code") await connection();
@@ -88,6 +91,7 @@ export async function GenericPlaceContent({ params }: GenericPlacePageProps) {
       backHref={`/${locale}/${citySlug}`}
       translations={translations}
       guideEnabled={guideEnabled}
+      verifiedSources={await getWalkVerifiedSources(citySlug,place.slug,contentSource)}
     />
   );
 }
@@ -98,7 +102,8 @@ async function loadDiscoverableCity(
 ) {
   try {
     return await getPublicCitySnapshot(citySlug, source);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (error instanceof PublicContentNotFoundError) notFound();
+    throw error;
   }
 }

@@ -1,3 +1,4 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -44,7 +45,7 @@ describe("public place detail API", () => {
 
   it("fails closed without leaking unavailable place details", async () => {
     mocks.toLocalizedPublicPlaceResponse.mockImplementationOnce(() => {
-      throw new Error("working revision must stay private");
+      throw new PublicContentNotFoundError("working revision must stay private");
     });
     const response = await GET(
       new Request("https://citywalk.example/api/content/cities/lubeck/places/draft?locale=en"),
@@ -55,4 +56,15 @@ describe("public place detail API", () => {
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
     await expect(response.json()).resolves.toEqual({ error: "Published place not found." });
   });
+  it("returns a non-cacheable 503 for infrastructure failures without substituting content", async () => {
+    mocks.getPublicCitySnapshot.mockRejectedValueOnce(new Error("private database credentials"));
+    const response = await GET(
+      new Request("https://citywalk.example/api/content/cities/lubeck/places/holstentor"),
+      { params: Promise.resolve({ citySlug: "lubeck", placeSlug: "holstentor" }) },
+    );
+    expect(response.status).toBe(503);
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+    await expect(response.json()).resolves.toEqual({ error: "Content is temporarily unavailable." });
+  });
+
 });

@@ -38,7 +38,6 @@ import { getCityPassConfiguration } from "@/lib/commerce/cityPassConfig";
 import {
   getPublicCitySnapshot,
   getPublicCitySummaries,
-  resolvePublicLocalization,
 } from "@/lib/content/publicRepository.server";
 import {
   getCityReadinessMatrix,
@@ -269,35 +268,19 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
     }
   });
 
-  it("exposes Hamburg and Lubeck as isolated generic public snapshots", async () => {
+  it("keeps coming-soon Hamburg out of active public flows while Lubeck remains available", async () => {
     const summaries = await getPublicCitySummaries("database");
-    const hamburg = await getPublicCitySnapshot("hamburg", "database");
-    const lubeck = await getPublicCitySnapshot("lubeck", "database");
-
-    expect(summaries.map(({ city }) => city.slug)).toEqual(
-      expect.arrayContaining(["hamburg", "lubeck"]),
+    expect(summaries.map(({ city }) => city.slug)).toContain("lubeck");
+    expect(summaries.map(({ city }) => city.slug)).not.toContain("hamburg");
+    await expect(getPublicCitySnapshot("hamburg", "database")).rejects.toThrow(/not found/i);
+    const response = await getPublicCity(
+      new Request("https://citywalk.example/api/content/cities/hamburg"),
+      { params: Promise.resolve({ citySlug: "hamburg" }) },
     );
-    expect(hamburg.city).toMatchObject({
-      slug: "hamburg",
-      countryCode: "DE",
-      timezone: "Europe/Berlin",
-    });
-    expect(hamburg.city.content.de?.description).toBeTruthy();
-    expect(hamburg.city.content.en?.description).toBeTruthy();
-    expect(lubeck.city.content.de?.description).toBeTruthy();
-    expect(lubeck.city.content.en?.description).toBeTruthy();
-    expect(hamburg.places).toHaveLength(HAMBURG_PLACE_COUNT);
-    expect(hamburg.places.every(({ city }) => city === "hamburg")).toBe(true);
-    expect(hamburg.places.some(({ slug }) =>
-      lubeck.places.some((place) => place.slug === slug),
-    )).toBe(false);
-    expect(hamburg.tours).toHaveLength(1);
-    expect(hamburg.tours[0]?.stops.map(({ position }) => position)).toEqual([1, 2, 3, 4, 5, 6, 7]);
-    expect(resolvePublicLocalization(hamburg.city.content, "ar")).toMatchObject({
-      requestedLocale: "ar",
-      resolvedLocale: "en",
-      didFallback: true,
-    });
+    expect(response.status).toBe(404);
+    const lubeck = await getPublicCitySnapshot("lubeck", "database");
+    expect(lubeck.places).toHaveLength(25);
+    expect(lubeck.places.every(({ city }) => city === "lubeck")).toBe(true);
     await expect(getPublicCitySnapshot("not-hamburg", "database")).rejects.toThrow();
   });
 
@@ -360,7 +343,10 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
 
   it("ingests external JSON as draft and exposes it only after the CMS workflow", async () => {
     const db = getDb();
-    const beforeHamburg = await getPublicCitySnapshot("hamburg", "database");
+    const hamburgPlaces = () => db.select({ slug: placesTable.slug }).from(placesTable)
+      .innerJoin(citiesTable, eq(placesTable.cityId, citiesTable.id))
+      .where(eq(citiesTable.slug, "hamburg")).orderBy(placesTable.slug);
+    const beforeHamburg = await hamburgPlaces();
     const beforeLubeck = await getPublicCitySnapshot("lubeck", "database");
     const directory = await mkdtemp(join(tmpdir(), "citywalk-no-code-city-"));
     const manifestPath = join(directory, "third-city.json");
@@ -567,11 +553,9 @@ describe.runIf(shouldRun)("generic city content PostgreSQL integration", () => {
       await rm(directory, { force: true, recursive: true });
     }
 
-    const afterHamburg = await getPublicCitySnapshot("hamburg", "database");
+    const afterHamburg = await hamburgPlaces();
     const afterLubeck = await getPublicCitySnapshot("lubeck", "database");
-    expect(afterHamburg.places.map(({ slug }) => slug)).toEqual(
-      beforeHamburg.places.map(({ slug }) => slug),
-    );
+    expect(afterHamburg).toEqual(beforeHamburg);
     expect(afterLubeck.places.map(({ slug }) => slug)).toEqual(
       beforeLubeck.places.map(({ slug }) => slug),
     );

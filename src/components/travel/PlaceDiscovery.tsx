@@ -558,6 +558,12 @@ export default function PlaceDiscovery({
       void requestLocation();
     };
 
+  useEffect(() => {
+    const openNearby = () => { setView("map"); void requestLocation(); };
+    window.addEventListener("citywalk:nearby", openNearby);
+    return () => window.removeEventListener("citywalk:nearby", openNearby);
+  }, [requestLocation]);
+
   return (
     <>
       <div

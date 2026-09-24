@@ -14,6 +14,7 @@ const eslintConfig = defineConfig([
     "coverage/**",
     "next-env.d.ts",
     "mobile/**",
+    "lubeck-ai-guide/**", // Separate local checkout, not this application.
   ]),
 ]);
 

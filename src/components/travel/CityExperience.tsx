@@ -1,19 +1,27 @@
+import AppHeader from "@/components/walk/AppHeader";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import CustomTourPlanner from "@/components/travel/CustomTourPlanner";
+import CityHubActions from "@/components/walk/CityHubActions";
+import WalkPlanner from "@/components/walk/WalkPlanner";
+import BottomNavigation from "@/components/walk/BottomNavigation";
+import { walkCopy, walkCopyLocale } from "@/lib/walk/copy";
 import { MediaAttribution } from "@/components/travel/MediaAttribution";
 import PlaceDiscovery, {
   type DiscoveryPlace,
 } from "@/components/travel/PlaceDiscovery";
-import TourCard, {
-  type TourCardStop,
-} from "@/components/travel/TourCard";
+import TourCard, { type TourCardStop } from "@/components/travel/TourCard";
 import { localizePlaceCategories } from "@/data/placeCategories";
 import type { Place, PlaceCoordinates } from "@/data/places";
-import { resolveCityHeroImage, resolveCityHeroMedia } from "@/lib/content/homeMedia";
-import { resolvePlaceImage, resolvePlaceImageMedia } from "@/lib/content/placeMedia";
+import {
+  resolveCityHeroImage,
+  resolveCityHeroMedia,
+} from "@/lib/content/homeMedia";
+import {
+  resolvePlaceImage,
+  resolvePlaceImageMedia,
+} from "@/lib/content/placeMedia";
 import {
   resolvePublicLocalization,
   type PublicCitySnapshot,
@@ -29,10 +37,7 @@ import {
 } from "@/lib/i18n";
 import { prepareMapPlaces } from "@/lib/mapPlaces";
 import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
-import {
-  getCityScopedPlannerId,
-  getCityScopedTourId,
-} from "@/lib/tourIdentity";
+import { getCityScopedTourId } from "@/lib/tourIdentity";
 
 type CityExperienceProps = Readonly<{
   locale: Locale;
@@ -60,10 +65,7 @@ export default function CityExperience({
   locale,
   snapshot,
   contentSource,
-  heading,
-  headingLocale,
   legacyCityImage,
-  plannerId = getCityScopedPlannerId(snapshot.city.slug),
   tourAnalyticsIds,
 }: CityExperienceProps) {
   const translations = getTranslations(locale);
@@ -77,8 +79,7 @@ export default function CityExperience({
 
   const categories = localizePlaceCategories(translations);
   const preparedPlaces = prepareMapPlaces(snapshot.places, locale, {
-    getDetailHref: (place) =>
-      `/${locale}/${snapshot.city.slug}/${place.slug}`,
+    getDetailHref: (place) => `/${locale}/${snapshot.city.slug}/${place.slug}`,
   }).map((place) => {
     const media = snapshot.media?.places[place.slug];
     const selectedImage = resolvePlaceImageMedia(
@@ -131,11 +132,13 @@ export default function CityExperience({
     locale,
     legacyCityImage,
   );
-  const titleLocale = headingLocale ?? city.resolvedLocale;
+  const titleLocale = city.resolvedLocale;
+  const v2 = walkCopy(locale);
 
   return (
     <main lang={locale} dir={interfaceDirection} className="app-shell">
-      <section className="content-container py-8 sm:py-12">
+      <section className="content-container pt-6">
+        <AppHeader />
         <Link
           href="/"
           aria-label={translations.common.back}
@@ -144,10 +147,10 @@ export default function CityExperience({
           <BackIcon aria-hidden="true" size={19} strokeWidth={1.8} />
         </Link>
 
-        <header className="mt-5 overflow-hidden rounded-3xl border border-border bg-white">
+        <header className="walk-hero walk-city-hero">
           {cityImage ? (
             <figure>
-              <div className="relative aspect-[16/9] bg-surface">
+              <div className="relative hidden aspect-[16/9] bg-surface">
                 <Image
                   src={cityImage}
                   alt={city.content.name}
@@ -165,43 +168,69 @@ export default function CityExperience({
               />
             </figure>
           ) : null}
-          <div className="p-6">
+          <div className="relative z-10 pt-8">
             <h1
               lang={titleLocale}
               dir={getDirection(titleLocale)}
-              className="text-[2rem] font-bold leading-tight tracking-[-0.03em]"
+              className="text-[2.8rem] font-bold leading-tight tracking-[-0.03em]"
             >
-              {heading ?? city.content.name}
+              {city.content.name}
             </h1>
-            {city.content.shortDescription ? (
-              <p
-                lang={city.resolvedLocale}
-                dir={getDirection(city.resolvedLocale)}
-                className="mt-3 text-[15px] leading-6 text-text-secondary"
-              >
-                {city.content.shortDescription}
-              </p>
-            ) : null}
-            {city.content.description ? (
-              <p
-                lang={city.resolvedLocale}
-                dir={getDirection(city.resolvedLocale)}
-                className="mt-3 text-[15px] leading-7 text-text-secondary"
-              >
-                {city.content.description}
-              </p>
-            ) : null}
+            <p
+              className="mt-3 text-text-secondary"
+              lang={walkCopyLocale(locale)}
+            >
+              {v2.hubSubtitle}
+            </p>
           </div>
         </header>
 
+        {plannerOrigin ? (
+          <div className="mt-6">
+            <WalkPlanner
+              places={catalogPlaces}
+              locale={locale}
+              citySlug={snapshot.city.slug}
+              cityName={city.content.name}
+            />
+          </div>
+        ) : null}
+
+        <CityHubActions
+          locale={locale}
+          citySlug={snapshot.city.slug}
+          place={catalogPlaces[0]}
+        />
+        {city.content.shortDescription && (
+          <details
+            lang={city.resolvedLocale}
+            dir={getDirection(city.resolvedLocale)}
+            className="mt-4 text-sm leading-6 text-text-secondary"
+          >
+            <summary className="cursor-pointer">
+              {city.content.shortDescription}
+            </summary>
+            {city.content.description && (
+              <p className="mt-2">{city.content.description}</p>
+            )}
+          </details>
+        )}
         {tours.length > 0 ? (
           <section
             aria-label={translations.explore.walkingTour}
             className="mt-7 grid gap-4"
           >
+            <h2 className="text-xl font-bold" lang={walkCopyLocale(locale)}>
+              {v2.suggested}
+            </h2>
             {tours.map((resolvedTour) => (
               <TourCard
                 key={resolvedTour.tour.slug}
+                image={
+                  preparedPlaces.find(
+                    (place) => place.slug === resolvedTour.startPlace.slug,
+                  )?.image
+                }
                 eyebrow={translations.explore.walkingTour}
                 title={resolvedTour.title}
                 description={resolvedTour.description}
@@ -215,7 +244,10 @@ export default function CityExperience({
                 locale={locale}
                 tourId={
                   tourAnalyticsIds?.[resolvedTour.tour.slug] ??
-                  getCityScopedTourId(snapshot.city.slug, resolvedTour.tour.slug)
+                  getCityScopedTourId(
+                    snapshot.city.slug,
+                    resolvedTour.tour.slug,
+                  )
                 }
                 startLandmarkSlug={resolvedTour.startPlace.slug}
               />
@@ -223,22 +255,7 @@ export default function CityExperience({
           </section>
         ) : null}
 
-        {plannerOrigin ? (
-          <div className={tours.length > 0 ? "mt-3" : "mt-7"}>
-            <CustomTourPlanner
-              places={catalogPlaces}
-              categories={categories}
-              preferenceLabels={translations.tourPreferences}
-              builderLabels={translations.tourBuilder}
-              locale={locale}
-              citySlug={snapshot.city.slug}
-              plannerId={plannerId}
-              origin={plannerOrigin}
-            />
-          </div>
-        ) : null}
-
-        <section className="mt-9">
+        <section id="places" className="mt-9 scroll-mt-6">
           <h2
             id="place-category-heading"
             className="text-xl font-semibold tracking-[-0.02em]"
@@ -261,6 +278,11 @@ export default function CityExperience({
           />
         </section>
       </section>
+      <BottomNavigation
+        locale={locale}
+        citySlug={snapshot.city.slug}
+        active="explore"
+      />
     </main>
   );
 }
@@ -290,37 +312,39 @@ function resolveTours(
       if (!place) return [];
       const placeContent = resolvePublicLocalization(place.content, locale);
       return placeContent
-        ? [{
-            name: placeContent.content.name,
-            language: placeContent.resolvedLocale,
-            direction: getDirection(placeContent.resolvedLocale),
-          }]
+        ? [
+            {
+              name: placeContent.content.name,
+              language: placeContent.resolvedLocale,
+              direction: getDirection(placeContent.resolvedLocale),
+            },
+          ]
         : [];
     });
 
-    return [{
-      tour,
-      title: content.content.title,
-      description: [
-        content.content.shortDescription,
-        content.content.description,
-      ].find(
-        (value) => value && value !== translations.explore.walkingTour,
-      ),
-      contentLocale: content.resolvedLocale,
-      ...(tour.estimatedDurationMinutes
-        ? {
-            duration: formatMessage(translations.tourBuilder.minutesFormat, {
-              minutes: new Intl.NumberFormat(locale).format(
-                tour.estimatedDurationMinutes,
-              ),
-            }),
-          }
-        : {}),
-      stopsLabel: `${new Intl.NumberFormat(locale).format(stops.length)} ${translations.tourBuilder.stops}`,
-      stops,
-      startPlace,
-    }];
+    return [
+      {
+        tour,
+        title: content.content.title,
+        description: [
+          content.content.shortDescription,
+          content.content.description,
+        ].find((value) => value && value !== translations.explore.walkingTour),
+        contentLocale: content.resolvedLocale,
+        ...(tour.estimatedDurationMinutes
+          ? {
+              duration: formatMessage(translations.tourBuilder.minutesFormat, {
+                minutes: new Intl.NumberFormat(locale).format(
+                  tour.estimatedDurationMinutes,
+                ),
+              }),
+            }
+          : {}),
+        stopsLabel: `${new Intl.NumberFormat(locale).format(stops.length)} ${translations.tourBuilder.stops}`,
+        stops,
+        startPlace,
+      },
+    ];
   });
 }
 

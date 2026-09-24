@@ -54,9 +54,7 @@ vi.mock("@/lib/commerce/premiumMedia.server", () => ({
   getPremiumPlaceAudio,
 }));
 
-vi.mock("@/lib/auth/server", () => ({
-  auth: { api: { getSession } },
-}));
+vi.mock("@/lib/auth/publicSession.server", () => ({ getPublicSession: getSession }));
 
 vi.mock("@/lib/commerce/cityPassAccess.server", () => ({
   getCityPassAccessState,

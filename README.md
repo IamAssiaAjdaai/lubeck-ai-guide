@@ -1,3 +1,5 @@
+For the database-backed CITYWALK V2 workflow, see [CITYWALK local setup](docs/CITYWALK_LOCAL_SETUP.md).
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -40,15 +42,17 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Database foundation
 
-CITYWALK uses PostgreSQL with Drizzle ORM for its planned server-side data layer.
+CITYWALK uses PostgreSQL with Drizzle ORM for its server-side data layer.
 
 ### Current status
 
 The database schema, migration, seed mapping, server-side client, and local
 runtime verification workflow are implemented.
 
-The frontend continues to use the canonical TypeScript dataset. PostgreSQL is
-only used by the backend foundation in this phase.
+CITYWALK V2 reads shared published city/place/tour repositories. The example
+configuration and production default use PostgreSQL. Curated TypeScript content
+remains an explicit `CITYWALK_CONTENT_SOURCE=code` option for development/demos.
+Run `npm run cms:import-lubeck` after seeding to publish the existing curated content.
 
 ### Local PostgreSQL
 
@@ -233,18 +237,19 @@ from the deterministic personalized Tour Builder.
 
 ### Public content source
 
-Set the server-only `CITYWALK_CONTENT_SOURCE` variable to control the migration:
+Set the server-only `CITYWALK_CONTENT_SOURCE` variable explicitly:
 
 ```env
-CITYWALK_CONTENT_SOURCE=code
+CITYWALK_CONTENT_SOURCE=database
 ```
 
-- `code` uses the current canonical TypeScript snapshot and is the safe default.
-- `database` requires a complete, internally consistent published database
-  snapshot and fails clearly when it is missing.
+- `code` explicitly uses the canonical TypeScript snapshot for development/demos.
+- `database` is the production default and requires an internally consistent
+  published database snapshot. Partial catalogs are allowed; outages are not
+  disguised as missing content or successful fixture responses.
 - `auto` prefers a valid published database snapshot and otherwise falls back
-  wholesale to code. It never merges a partial database snapshot into the
-  canonical one.
+  wholesale to code with a warning. It is development-only and rejected in
+  production. It never merges database and code snapshots.
 
 The public read API is `GET /api/content/cities/:citySlug?locale=en`. It exposes
 public DTOs only, includes requested/resolved locale metadata for honest

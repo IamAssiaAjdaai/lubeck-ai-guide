@@ -1,11 +1,12 @@
 import "server-only";
+import { isCityLaunched } from "@/data/cityAvailability";
+import { PublicContentNotFoundError } from "./errors";
 
 import { and, asc, eq, inArray } from "drizzle-orm";
 
 import { cities } from "@/data/cities";
 import {
   getPlace,
-  LUBECK_PLACE_SLUGS,
   lubeckLandmarks,
   lubeckPlaces,
   type Place,
@@ -24,7 +25,7 @@ import {
   toursTable,
   tourStopsTable,
 } from "@/db/schema";
-import { getContentSource, type ContentSource } from "@/lib/content/source";
+import { assertContentSourceAllowed, getContentSource, type ContentSource } from "@/lib/content/source";
 import { getTranslations, isLocale, locales, type Locale } from "@/lib/i18n";
 import { getPublicMediaSnapshot } from "@/lib/media/publicMedia.server";
 import {
@@ -132,6 +133,8 @@ export async function getPublicCitySnapshot(
   citySlug: string,
   source: ContentSource = getContentSource(),
 ): Promise<PublicCitySnapshot> {
+  assertContentSourceAllowed(source);
+  if (!isCityLaunched(citySlug)) throw new PublicContentNotFoundError();
   if (source === "code") return getCodeSnapshot(citySlug);
   if (source === "database") {
     const snapshot = await loadPublishedDatabaseSnapshot(citySlug);
@@ -143,6 +146,7 @@ export async function getPublicCitySnapshot(
     assertCompleteSnapshot(snapshot);
     return snapshot;
   } catch {
+    console.warn("CITYWALK development auto source: using curated code because the database snapshot is unavailable.");
     return getCodeSnapshot(citySlug);
   }
 }
@@ -150,12 +154,16 @@ export async function getPublicCitySnapshot(
 export async function getPublicCitySummaries(
   source: ContentSource = getContentSource(),
 ): Promise<readonly PublicCitySummary[]> {
+  assertContentSourceAllowed(source);
   if (source === "code") return [getCodeCitySummary()];
   if (source === "database") return loadPublishedDatabaseCitySummaries();
   try {
     const summaries = await loadPublishedDatabaseCitySummaries();
-    return summaries.length > 0 ? summaries : [getCodeCitySummary()];
+    if (summaries.length > 0) return summaries;
+    console.warn("CITYWALK development auto source: using curated code because no cities are published.");
+    return [getCodeCitySummary()];
   } catch {
+    console.warn("CITYWALK development auto source: using curated code because city discovery is unavailable.");
     return [getCodeCitySummary()];
   }
 }
@@ -295,7 +303,7 @@ export function toLocalizedPublicPlaceResponse(
 ) {
   const full = toLocalizedPublicCityResponse(snapshot, requestedLocale);
   const place = full.places.find(({ slug }) => slug === placeSlug);
-  if (!place) throw new Error("Published place not found.");
+  if (!place) throw new PublicContentNotFoundError("Published place not found.");
   return { city: full.city, place };
 }
 
@@ -337,7 +345,7 @@ async function loadPublishedDatabaseSnapshot(
     .where(eq(citiesTable.slug, citySlug))
     .limit(1);
   if (!city || city.publicationStatus !== "published") {
-    throw new Error("Published city snapshot is unavailable.");
+    throw new PublicContentNotFoundError("Published city snapshot is unavailable.");
   }
   const [cityLocalizations, placeRows, tourRows] = await Promise.all([
     db
@@ -425,7 +433,7 @@ async function loadPublishedDatabaseSnapshot(
     authoredLocalizationCount: validCityLocalizations.length,
     publishedTravelerVisiblePlaceCount: publishedPlaces.length,
   })) {
-    throw new Error("Published city is not traveler-discoverable.");
+    throw new PublicContentNotFoundError("Published city is not traveler-discoverable.");
   }
   const placeSlugById = new Map(
     publishedPlaces.map(({ id, slug }) => [id, slug] as const),
@@ -618,7 +626,7 @@ async function loadPublishedDatabaseCitySummaries(): Promise<readonly PublicCity
     placeRevisions.map((revision) => [revision.placeId, revision] as const),
   );
   const discoverableCities = cityRows.filter((city) =>
-    isTravelerDiscoverableCity({
+    isCityLaunched(city.slug) && isTravelerDiscoverableCity({
       publicationStatus: city.publicationStatus,
       authoredLocalizationCount: localizations.filter(
         ({ cityId, locale, name }) =>
@@ -680,7 +688,7 @@ async function loadPublishedDatabaseCitySummaries(): Promise<readonly PublicCity
 
 function getCodeSnapshot(citySlug: string): PublicCitySnapshot {
   if (citySlug !== "lubeck") {
-    throw new Error(`Canonical code content is unavailable for ${citySlug}.`);
+    throw new PublicContentNotFoundError(`Canonical code content is unavailable for ${citySlug}.`);
   }
   return {
     city: {
@@ -754,12 +762,6 @@ function assertCompleteSnapshot(snapshot: PublicCitySnapshot) {
   }
   if (snapshot.places.length === 0) {
     throw new Error("Published city has no traveler-visible places.");
-  }
-  if (snapshot.city.slug === "lubeck") {
-    const slugs = new Set(snapshot.places.map(({ slug }) => slug));
-    if (LUBECK_PLACE_SLUGS.some((slug) => !slugs.has(slug))) {
-      throw new Error("Published Lubeck snapshot is incomplete.");
-    }
   }
   const placeSlugs = new Set(snapshot.places.map(({ slug }) => slug));
   if (

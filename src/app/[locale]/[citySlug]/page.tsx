@@ -1,3 +1,5 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
+import { isCityLaunched } from "@/data/cityAvailability";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
@@ -27,7 +29,7 @@ export default function GenericCityPage(props: GenericCityPageProps) {
 
 export async function GenericCityContent({ params }: GenericCityPageProps) {
   const { locale, citySlug } = await params;
-  if (!isLocale(locale)) notFound();
+  if (!isLocale(locale) || !isCityLaunched(citySlug)) notFound();
 
   const contentSource = getContentSource();
   if (contentSource !== "code") await connection();
@@ -49,7 +51,8 @@ async function loadDiscoverableCity(
 ): Promise<PublicCitySnapshot> {
   try {
     return await getPublicCitySnapshot(citySlug, source);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (error instanceof PublicContentNotFoundError) notFound();
+    throw error;
   }
 }
