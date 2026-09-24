@@ -1,18 +1,12 @@
-import Link from "next/link";
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, House } from "lucide-react";
+import { connection } from "next/server";
 
-import LandmarkCard from "@/components/travel/LandmarkCard";
-import TourCard from "@/components/travel/TourCard";
+import CityExperience from "@/components/travel/CityExperience";
 import { cities } from "@/data/cities";
-import { landmarks } from "@/data/landmarks";
-import {
-  formatMessage,
-  getDirection,
-  getTranslations,
-  isLocale,
-  locales,
-} from "@/lib/i18n";
+import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
+import { getContentSource } from "@/lib/content/source";
+import { getTranslations, isLocale, locales } from "@/lib/i18n";
 
 type LubeckPageProps = {
   params: Promise<{
@@ -24,80 +18,34 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export default async function LubeckPage({
-  params,
-}: LubeckPageProps) {
+export default async function LubeckPage({ params }: LubeckPageProps) {
   const { locale } = await params;
 
   if (!isLocale(locale)) {
     notFound();
   }
 
-  const currentLocale = locale;
-  const t = getTranslations(currentLocale);
-  const direction = getDirection(currentLocale);
+  const contentSource = getContentSource();
+  if (contentSource !== "code") await connection();
+
+  const snapshot = await getPublicCitySnapshot("lubeck", contentSource).catch((error: unknown) => {
+    if (error instanceof PublicContentNotFoundError) notFound();
+    throw error;
+  });
   const city = cities.lubeck;
-  const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
-  const [durationLabel, stopsLabel = ""] = t.explore.duration.split("•").map((value) => value.trim());
 
   return (
-    <main
-      lang={currentLocale}
-      dir={direction}
-      className="app-shell"
-    >
-      <section className="content-container py-8 sm:py-12">
-
-        {/* Back */}
-        <Link
-          href="/"
-          className="button-tertiary -ms-3 min-h-11 px-3 text-sm"
-        >
-          <BackIcon aria-hidden="true" size={18} strokeWidth={1.8} /> <House aria-hidden="true" size={16} strokeWidth={1.8} /> {t.common.back}
-        </Link>
-
-        {/* Header */}
-        <header className="mt-5">
-          <h1 className="text-[2rem] font-bold leading-tight tracking-[-0.03em]">
-            {t.explore.title}
-          </h1>
-
-          <p className="mt-2 leading-7 text-text-secondary">
-            {t.explore.subtitle}
-          </p>
-        </header>
-
-        {/* Walking Tour Card */}
-        <div className="mt-7"><TourCard eyebrow={t.explore.walkingTour} title={t.explore.historicCenter} duration={durationLabel} stops={stopsLabel} ctaLabel={t.explore.startTour} href={`/${currentLocale}/${city.slug}/${city.startLandmarkSlug}`} locale={currentLocale} tourId={city.tourId} startLandmarkSlug={city.startLandmarkSlug} /></div>
-
-        {/* Places */}
-        <section className="mt-9">
-          <h2 className="text-xl font-semibold tracking-[-0.02em]">
-            {t.explore.places}
-          </h2>
-
-          <div className="mt-4 flex flex-col gap-3">
-            {landmarks.map((landmark, index) => {
-              const content =
-                landmark.content[currentLocale];
-
-              return (
-                <LandmarkCard
-                  key={landmark.slug}
-                  href={`/${currentLocale}/${city.slug}/${landmark.slug}`}
-                  image={landmark.image}
-                  name={content.name}
-                  duration={content.duration}
-                  stopLabel={formatMessage(t.landmark.stopProgress, { current: index + 1, total: landmarks.length })}
-                  direction={direction}
-                  locale={currentLocale}
-                  slug={landmark.slug}
-                />
-              );
-            })}
-          </div>
-        </section>
-      </section>
-    </main>
+    <CityExperience
+      locale={locale}
+      snapshot={snapshot}
+      contentSource={contentSource}
+      heading={getTranslations(locale).explore.title}
+      headingLocale={locale}
+      legacyCityImage={city.heroImage}
+      plannerId={city.tourId}
+      tourAnalyticsIds={{
+        "historic-center-walk": city.tourId,
+      }}
+    />
   );
 }

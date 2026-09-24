@@ -1,0 +1,54 @@
+import { describe, expect, it } from "vitest";
+
+import {
+  createCityPassLandingPath,
+  createCityPassReturnPath,
+  parseCityPassReturnPath,
+  resolveCityPassReturnPath,
+} from "@/lib/commerce/cityPassReturn";
+
+describe("city pass return destinations", () => {
+  it("allows a city-scoped pass landing intent without admitting arbitrary paths", () => {
+    expect(createCityPassLandingPath("en", "lubeck")).toBe("/en/pass/lubeck");
+    expect(parseCityPassReturnPath("/en/pass/test-city", "en")).toEqual({
+      path: "/en/pass/test-city", citySlug: "test-city",
+    });
+    expect(resolveCityPassReturnPath("/en/pass/test-city", "de")).toBe("/de");
+    expect(resolveCityPassReturnPath("/en/pass/../../admin", "en")).toBe("/en");
+  });
+  it("creates an allowlisted localized destination for any valid city", () => {
+    expect(
+      createCityPassReturnPath("de", "lubeck", "glandorps-gang"),
+    ).toBe("/de/lubeck/glandorps-gang?premium=1#premium-audio");
+    expect(createCityPassReturnPath("en", "test-city", "museum")).toBe(
+      "/en/test-city/museum?premium=1#premium-audio",
+    );
+  });
+
+  it.each([
+    "https://evil.example/de/lubeck/place?premium=1#premium-audio",
+    "//evil.example/path",
+    "/en/lubeck/place?premium=1#premium-audio",
+    "/de/lubeck/../../admin?premium=1#premium-audio",
+    "/de/bad_city/place?premium=1#premium-audio",
+    "/de/lubeck/bad_place?premium=1#premium-audio",
+    "/de/lubeck\\place?premium=1#premium-audio",
+    "/de/lubeck/place?premium=1&extra=1#premium-audio",
+    "/de/lubeck/place?premium=1#unexpected",
+  ])("rejects malformed or external destination %s", (value) => {
+    expect(resolveCityPassReturnPath(value, "de")).toBe("/de");
+  });
+
+  it("parses a safe city-scoped intent without treating it as access authority", () => {
+    expect(
+      parseCityPassReturnPath(
+        "/en/test-city/museum?premium=1#premium-audio",
+        "en",
+      ),
+    ).toEqual({
+      path: "/en/test-city/museum?premium=1#premium-audio",
+      citySlug: "test-city",
+      placeSlug: "museum",
+    });
+  });
+});

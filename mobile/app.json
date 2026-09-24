@@ -1,0 +1,88 @@
+{
+  "expo": {
+    "name": "CITYWALK",
+    "slug": "citywalk-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "citywalk",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FAFAF8",
+    "androidStatusBar": {
+      "backgroundColor": "#FAFAF8",
+      "barStyle": "dark-content",
+      "translucent": false
+    },
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "ios": {
+      "icon": "./assets/images/icon.png",
+      "bundleIdentifier": "com.citywalk.app.dev",
+      "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.citywalk.app.dev",
+      "softwareKeyboardLayoutMode": "resize",
+      "adaptiveIcon": {
+        "backgroundColor": "#0787BE",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-dev-client",
+      "expo-secure-store",
+      "expo-font",
+      "@maplibre/maplibre-react-native",
+      "expo-asset",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundRecording": false,
+          "enableBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow CITYWALK to show your position on the city map while you use the app.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FAFAF8",
+          "image": "./assets/images/icon.png",
+          "imageWidth": 168,
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ce652902-908a-4e73-8c2c-9ee5aafbfd53"
+      }
+    },
+    "owner": "assixacity"
+  }
+}
