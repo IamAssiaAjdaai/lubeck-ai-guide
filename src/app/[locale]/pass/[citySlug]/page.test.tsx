@@ -9,7 +9,7 @@ vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("next/navigation", () => ({ notFound: () => { throw new Error("NOT_FOUND"); } }));
 vi.mock("next/link", () => ({ default: ({ children, href }: { children: string; href: string }) => <a href={href}>{children}</a> }));
-vi.mock("@/lib/auth/server", () => ({ auth: { api: { getSession: vi.fn(async () => null) } } }));
+vi.mock("@/lib/auth/server", () => ({ getAuth: () => ({ api: { getSession: vi.fn(async () => null) } }) }));
 vi.mock("@/lib/commerce/cityPassAccess.server", () => ({ getCityPassAccessState: vi.fn() }));
 vi.mock("@/lib/commerce/queries.server", () => ({
   getActiveCityPassOffer: vi.fn(),

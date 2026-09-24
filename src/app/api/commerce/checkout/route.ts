@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth/server";
+import { getAuth } from "@/lib/auth/server";
 import {
   CommerceCheckoutError,
   parseCommerceCheckoutInput,
@@ -9,7 +9,7 @@ import {
 } from "@/lib/commerce/checkout.server";
 
 export async function POST(request: Request) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) {
     return NextResponse.json({ error: "AUTHENTICATION_REQUIRED" }, { status: 401 });
   }

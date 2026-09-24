@@ -5,10 +5,10 @@ import {
   linkGuestIdentityToUser,
   parseGuestLinkInput,
 } from "@/lib/account/guestLink.server";
-import { auth } from "@/lib/auth/server";
+import { getAuth } from "@/lib/auth/server";
 
 export async function POST(request: Request) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) {
     return Response.json({ error: "Authentication required." }, { status: 401 });
   }

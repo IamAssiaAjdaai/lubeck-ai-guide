@@ -1,3 +1,4 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -208,7 +209,7 @@ describe("generic public city landing", () => {
     ["en", "draft-city"],
     ["en", "published-without-places"],
   ])("returns not found for unavailable city %s/%s", async (locale, citySlug) => {
-    mocks.getPublicCitySnapshot.mockRejectedValue(new Error("unavailable"));
+    mocks.getPublicCitySnapshot.mockRejectedValue(new PublicContentNotFoundError("unavailable"));
 
     await expect(renderPage(locale, citySlug)).rejects.toThrow("NEXT_NOT_FOUND");
     expect(mocks.notFound).toHaveBeenCalledOnce();

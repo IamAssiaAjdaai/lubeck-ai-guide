@@ -1,3 +1,4 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import VerifiedInfo from "@/components/walk/VerifiedInfo";
 import { getWalkVerifiedSources } from "@/lib/walk/verifiedSources.server";
 import PlaceWalkAction from "@/components/walk/PlaceWalkAction";
@@ -46,7 +47,7 @@ import { resolvePlaceImage, resolvePlaceImageMedia } from "@/lib/content/placeMe
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { formatTime } from "@/lib/formatTime";
 import { getGuideEligibility } from "@/lib/guideEligibility.server";
-import { auth } from "@/lib/auth/server";
+import { getPublicSession } from "@/lib/auth/publicSession.server";
 import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 import { MediaAttribution } from "@/components/travel/MediaAttribution";
 import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
@@ -120,7 +121,10 @@ export default async function LandmarkPage({
 
   const contentSource = getContentSource();
   if (contentSource !== "code") await connection();
-  const snapshot = await getPublicCitySnapshot("lubeck", contentSource);
+  const snapshot = await getPublicCitySnapshot("lubeck", contentSource).catch((error: unknown) => {
+    if (error instanceof PublicContentNotFoundError) notFound();
+    throw error;
+  });
   const landmark = snapshot.places.find((place) => place.slug === slug);
 
   if (!landmark) {
@@ -520,7 +524,7 @@ async function resolvePremiumState(
   locale: (typeof locales)[number],
   configuration: CityPassConfiguration,
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getPublicSession(await headers());
   const access = await getCityPassAccessState({
     userId: session?.user.id,
     citySlug: configuration.citySlug,

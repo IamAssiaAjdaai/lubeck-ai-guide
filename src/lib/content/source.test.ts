@@ -22,3 +22,9 @@ describe("content source selection", () => {
     );
   });
 });
+
+it("uses database content by default in production and disallows silent auto fallback", () => {
+  expect(getContentSource({ NODE_ENV: "production" })).toBe("database");
+  expect(() => getContentSource({ NODE_ENV: "production", CITYWALK_CONTENT_SOURCE: "auto" })).toThrow(/development-only/);
+  expect(getContentSource({ NODE_ENV: "production", CITYWALK_CONTENT_SOURCE: "code" })).toBe("code");
+});

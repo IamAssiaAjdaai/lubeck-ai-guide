@@ -1,3 +1,4 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import {
   getPublicCitySnapshot,
   toLocalizedPublicCitySummaryResponse,
@@ -25,7 +26,10 @@ export async function GET(
       toLocalizedPublicCitySummaryResponse(snapshot, requestedLocale),
       performance.now() - startedAt,
     );
-  } catch {
+  } catch (error) {
+    if (!(error instanceof PublicContentNotFoundError)) {
+      return publicContentErrorResponse("Content is temporarily unavailable.", 503);
+    }
     return publicContentErrorResponse("Published city not found.", 404);
   }
 }

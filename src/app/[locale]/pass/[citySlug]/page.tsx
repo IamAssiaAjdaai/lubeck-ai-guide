@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
 import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
-import { auth } from "@/lib/auth/server";
+import { getAuth } from "@/lib/auth/server";
 import { getCityPassAccessState } from "@/lib/commerce/cityPassAccess.server";
 import { getCityPassConfiguration, getCityPassPaywallContext } from "@/lib/commerce/cityPassConfig";
 import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
@@ -21,7 +21,7 @@ export default async function CityPassLandingPage({
   if (!configuration) notFound();
 
   await connection();
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: await headers() });
   const access = await getCityPassAccessState({ userId: session?.user.id, citySlug });
   const offer = access.active ? undefined : await getActiveCityPassOffer(citySlug);
   const copy = getCityPassCopy(configuration, locale);

@@ -38,11 +38,11 @@ export class AdminAuthorizationError extends Error {
 }
 
 async function loadRequestSession(): Promise<RequestSession> {
-  const [{ auth }, { headers }] = await Promise.all([
+  const [{ getAuth }, { headers }] = await Promise.all([
     import("@/lib/auth/server"),
     import("next/headers"),
   ]);
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: await headers() });
 
   if (!session) {
     return null;

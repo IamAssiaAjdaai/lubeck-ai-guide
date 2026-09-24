@@ -1,3 +1,4 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import { isCityLaunched } from "@/data/cityAvailability";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
@@ -50,7 +51,8 @@ async function loadDiscoverableCity(
 ): Promise<PublicCitySnapshot> {
   try {
     return await getPublicCitySnapshot(citySlug, source);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (error instanceof PublicContentNotFoundError) notFound();
+    throw error;
   }
 }

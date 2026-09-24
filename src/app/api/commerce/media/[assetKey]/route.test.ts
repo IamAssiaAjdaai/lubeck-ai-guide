@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/auth/server", () => ({
-  auth: { api: { getSession: mocks.getSession } },
+  getAuth: () => ({ api: { getSession: mocks.getSession } }),
 }));
 vi.mock("@/lib/commerce/premiumMedia.server", () => ({
   getPremiumMediaDeliveryAsset: mocks.getAsset,

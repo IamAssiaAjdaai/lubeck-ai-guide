@@ -1,3 +1,4 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import { getWalkVerifiedSources } from "@/lib/walk/verifiedSources.server";
 import { isCityLaunched } from "@/data/cityAvailability";
 import { Suspense } from "react";
@@ -101,7 +102,8 @@ async function loadDiscoverableCity(
 ) {
   try {
     return await getPublicCitySnapshot(citySlug, source);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (error instanceof PublicContentNotFoundError) notFound();
+    throw error;
   }
 }

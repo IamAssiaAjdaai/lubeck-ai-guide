@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 
 import { TravelerAccountPanel } from "@/components/account/TravelerAccountPanel";
 import { getAccountCopy } from "@/lib/account/copy";
-import { auth } from "@/lib/auth/server";
+import { getAuth } from "@/lib/auth/server";
 import { getDirection, isLocale } from "@/lib/i18n";
 
 type TravelerAccountPageProps = Readonly<{
@@ -38,7 +38,7 @@ export default async function TravelerAccountPage({
   const copy = getAccountCopy(locale);
   const direction = getDirection(locale);
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: await headers() });
 
   return (
     <main lang={locale} dir={direction} className="app-shell">

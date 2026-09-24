@@ -2,7 +2,7 @@ import "server-only";
 
 import { createHash } from "node:crypto";
 
-import { auth } from "@/lib/auth/server";
+import { getPublicSession } from "@/lib/auth/publicSession.server";
 import { canUseCityPremiumFeature } from "@/lib/commerce/cityPassAccess.server";
 import { getCityGuideAllowancePolicy } from "@/lib/commerce/cityPassConfig";
 import { getAiGuideDailyRateLimit } from "@/lib/rateLimit";
@@ -31,7 +31,7 @@ export type GuideAllowanceDependencies = Readonly<{
 
 const defaultDependencies: GuideAllowanceDependencies = {
   async getAuthenticatedUserId(request) {
-    const session = await auth.api.getSession({ headers: request.headers });
+    const session = await getPublicSession(request.headers);
     return session?.user.id;
   },
   hasPremiumAccess: canUseCityPremiumFeature,

@@ -5,7 +5,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { CommerceCheckoutButton } from "@/components/commerce/CommerceCheckoutButton";
 import { CheckoutReturnTracker } from "@/components/commerce/CheckoutReturnTracker";
-import { auth } from "@/lib/auth/server";
+import { getAuth } from "@/lib/auth/server";
 import { getCommerceCopy } from "@/lib/commerce/copy";
 import {
   formatMinorCurrency,
@@ -32,7 +32,7 @@ export default async function PurchasesPage({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) {
     redirect(
       `/${locale}/account?next=${encodeURIComponent(`/${locale}/account/purchases`)}`,

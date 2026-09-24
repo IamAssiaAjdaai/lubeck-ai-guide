@@ -167,6 +167,16 @@ describe("public content repository", () => {
     expect(summaries.map(({ city }) => city.slug)).toEqual(["ghent"]);
   });
 
+  it.each(["hamburg", "duesseldorf"])("keeps coming-soon %s out of active flows even when CMS content exists", async (slug) => {
+    await expect(getPublicCitySnapshot(slug, "database")).rejects.toThrow(/not found/i);
+    expect(getDb).not.toHaveBeenCalled();
+    mockCitySummaryDatabase(
+      [{ id: 1, slug, publicationStatus: "published" }],
+      [{ cityId: 1, locale: "en", name: slug, shortDescription: null }],
+    );
+    expect(await getPublicCitySummaries("database")).toEqual([]);
+  });
+
   it("falls back wholesale to code when auto city discovery fails", async () => {
     getDb.mockReturnValue({
       select: () => ({

@@ -1,3 +1,4 @@
+import { PublicContentNotFoundError } from "@/lib/content/errors";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -53,7 +54,7 @@ describe("compact public city API", () => {
     expect(invalid.status).toBe(400);
     expect(invalid.headers.get("Cache-Control")).toBe("private, no-store");
 
-    mocks.getPublicCitySnapshot.mockRejectedValueOnce(new Error("private database detail"));
+    mocks.getPublicCitySnapshot.mockRejectedValueOnce(new PublicContentNotFoundError("private database detail"));
     const missing = await GET(
       new Request("https://citywalk.example/api/content/cities/missing/summary?locale=en"),
       { params: Promise.resolve({ citySlug: "missing" }) },
@@ -61,4 +62,15 @@ describe("compact public city API", () => {
     expect(missing.status).toBe(404);
     expect(await missing.json()).toEqual({ error: "Published city not found." });
   });
+  it("returns a non-cacheable 503 for infrastructure failures without substituting content", async () => {
+    mocks.getPublicCitySnapshot.mockRejectedValueOnce(new Error("private database credentials"));
+    const response = await GET(
+      new Request("https://citywalk.example/api/content/cities/lubeck/summary"),
+      { params: Promise.resolve({ citySlug: "lubeck" }) },
+    );
+    expect(response.status).toBe(503);
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+    await expect(response.json()).resolves.toEqual({ error: "Content is temporarily unavailable." });
+  });
+
 });
