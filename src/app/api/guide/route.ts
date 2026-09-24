@@ -1,320 +1,262 @@
-import { resolveWalkGuideContext } from "@/lib/walk/guideContext";
 import Groq from "groq-sdk";
+
 import { NextResponse } from "next/server";
+import { landmarks } from "@/data/landmarks";
+import { isLocale, languages } from "@/lib/i18n";
 
-import {
-  getPublicCitySnapshot,
-  resolvePublicLocalization,
-} from "@/lib/content/publicRepository.server";
-import { getContentSource } from "@/lib/content/source";
-import {
-  buildGuideSourceMetadata,
-  GUIDE_KNOWLEDGE_SOURCE_LOCALE,
-  GUIDE_RESPONSE_FORMAT,
-  parseGuideStructuredAnswer,
-  retrieveGuideKnowledge,
-} from "@/lib/guideKnowledge.server";
-import { buildGuideSystemPrompt } from "@/lib/guidePrompt.server";
-import { getTranslations, isLocale } from "@/lib/i18n";
 import { aiGuideRateLimit } from "@/lib/rateLimit";
-import { enforceGuideDailyAllowance } from "@/lib/guideAllowance.server";
-import { resolveTourContext } from "@/lib/tourContext.server";
-import { getVerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 
-type GuideMessage = Readonly<{
+type GuideMessage = {
   role: "user" | "assistant";
   text: string;
-}>;
+};
 
-type GuideRequest = Readonly<{
-  citySlug?: unknown;
-  placeSlug?: unknown;
-  question?: unknown;
-  locale?: unknown;
-  history?: unknown;
-  tourContext?: unknown;
-  walkContext?: unknown;
-  visitorId?: unknown;
-}>;
-
-const MAX_COMPLETION_ATTEMPTS = 2;
-const MAX_QUESTION_LENGTH = 500;
-const MAX_HISTORY_TEXT_LENGTH = 2_000;
-
-const ATTRIBUTION_RETRY_INSTRUCTION = `
-ATTRIBUTION CORRECTION:
-
-- The previous response could not be accepted because it did not satisfy the structured grounding contract.
-
-- If groundingStatus is "grounded", usedChunkIds must contain at least one exact CHUNK ID from VERIFIED RETRIEVED KNOWLEDGE that supports the answer.
-
-- If no retrieved chunk supports the answer, set groundingStatus to "insufficient_evidence", use an empty usedChunkIds array, and do not make the unsupported factual claim.
-`.trim();
+type GuideRequest = {
+  question: string;
+  landmark: string;
+  locale: string;
+  history?: GuideMessage[];
+};
 
 export async function POST(request: Request) {
   try {
-    let body: GuideRequest;
-    try {
-      body = await request.json() as GuideRequest;
-    } catch {
-      return NextResponse.json({ error: "Invalid request." }, { status: 400 });
-    }
-
-    const question = typeof body.question === "string"
-      ? body.question.trim()
-      : "";
-    const citySlug = typeof body.citySlug === "string"
-      ? body.citySlug.trim()
-      : "";
-    const placeSlug = typeof body.placeSlug === "string"
-      ? body.placeSlug.trim()
-      : "";
-
-    if (!question || question.length > MAX_QUESTION_LENGTH) {
-      return NextResponse.json({ error: "Question is required." }, { status: 400 });
-    }
-    if (!citySlug || !placeSlug) {
-      return NextResponse.json({ error: "City and place are required." }, { status: 400 });
-    }
-    if (!isLocale(body.locale)) {
-      return NextResponse.json({ error: "Invalid language." }, { status: 400 });
-    }
-
-    const locale = body.locale;
-    const contentSource = getContentSource();
-    let snapshot;
-    try {
-      snapshot = await getPublicCitySnapshot(citySlug, contentSource);
-    } catch {
-      return NextResponse.json({ error: "Place not found." }, { status: 404 });
-    }
-
-    if (snapshot.city.slug !== citySlug) {
-      return NextResponse.json({ error: "Place not found." }, { status: 404 });
-    }
-
-    const place = snapshot.places.find((candidate) => candidate.slug === placeSlug);
-    const placeContent = place
-      ? resolvePublicLocalization(place.content, locale)
-      : undefined;
-    const cityContent = resolvePublicLocalization(snapshot.city.content, locale);
-    if (!place || !placeContent || !cityContent) {
-      return NextResponse.json({ error: "Place not found." }, { status: 404 });
-    }
-
-    const provider = getVerifiedKnowledgeProvider(contentSource);
-    const currentTrustedChunks = await provider.listVerifiedChunks({
-      citySlug,
-      placeSlug,
-      locale: GUIDE_KNOWLEDGE_SOURCE_LOCALE,
-    });
-    if (currentTrustedChunks.length === 0) {
-      return NextResponse.json(
-        { error: "AI Guide is unavailable for this place." },
-        { status: 404 },
-      );
-    }
-
-    const tourContext = resolveTourContext({
-      input: body.tourContext,
-      locale,
-      expectedCurrentStop: placeSlug,
-      snapshot,
-    });
-    const knowledge = await retrieveGuideKnowledge({
-      citySlug,
-      currentPlaceSlug: placeSlug,
-      visitedPlaceSlugs:
-        tourContext?.visitedStops.map((stop) => stop.slug) ?? [],
-      question,
-      provider,
-      currentTrustedChunks,
-    });
-
     const apiKey = process.env.GROQ_API_KEY;
+
     if (!apiKey) {
       return NextResponse.json(
         { error: "AI service is not configured." },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
-    const forwardedFor = request.headers.get("x-forwarded-for");
-    const ip = forwardedFor?.split(",")[0]?.trim() ?? "unknown";
-    const rateLimit = await aiGuideRateLimit.limit(ip);
-    if (!rateLimit.success) {
+    const groq = new Groq({
+      apiKey,
+    });
+    const forwardedFor =
+      request.headers.get("x-forwarded-for");
+
+    const ip =
+      forwardedFor?.split(",")[0]?.trim() ??
+      "unknown";
+
+    const result =
+      await aiGuideRateLimit.limit(ip);
+    
+      if (!result.success) {
       return NextResponse.json(
         {
-          error: "Too many AI questions. Please try again later.",
-          code: "guide_abuse_rate_limited",
+          error:
+            "Too many AI questions. Please try again later.",
         },
         {
           status: 429,
+
           headers: {
-            "X-RateLimit-Limit": rateLimit.limit.toString(),
-            "X-RateLimit-Remaining": rateLimit.remaining.toString(),
-            "X-RateLimit-Reset": rateLimit.reset.toString(),
+            "X-RateLimit-Limit":
+              result.limit.toString(),
+
+            "X-RateLimit-Remaining":
+              result.remaining.toString(),
+
+            "X-RateLimit-Reset":
+              result.reset.toString(),
           },
-        },
-      );
+      }
+    );
     }
-    const allowance = await enforceGuideDailyAllowance({
-      request,
-      citySlug,
-      visitorId: body.visitorId,
-      fallbackIdentity: ip,
-    });
-    if (!allowance.success) {
+    const body =
+      (await request.json()) as GuideRequest;
+
+    const question = body.question?.trim();
+    const slug = body.landmark;
+    const locale = body.locale;
+
+    /*
+     * Keep only a small conversation history.
+     */
+    const history =
+      Array.isArray(body.history)
+        ? body.history.slice(-6)
+        : [];
+
+    /*
+     * Validation
+     */
+    if (!question) {
       return NextResponse.json(
         {
-          error: "Daily AI Guide allowance reached. Please try again later.",
-          code: "guide_daily_allowance_reached",
-          allowance: toPublicGuideAllowance(allowance),
+          error: "Question is required.",
         },
         {
-          status: 429,
-          headers: {
-            "X-RateLimit-Limit": allowance.limit.toString(),
-            "X-RateLimit-Remaining": allowance.remaining.toString(),
-            "X-RateLimit-Reset": allowance.reset.toString(),
-          },
-        },
+          status: 400,
+        }
       );
     }
 
-    const walkContext = resolveWalkGuideContext(body.walkContext, snapshot.places, placeSlug);
-    const history = parseGuideHistory(body.history);
-    const systemPrompt = buildGuideSystemPrompt({
-      citySlug,
-      cityName: cityContent.content.name,
-      currentPlace: {
-        slug: place.slug,
-        name: placeContent.content.name,
-      },
-      locale,
-      tourContext,
-      knowledge,
-    });
-    const currentTurnQuestion = [
-      "CURRENT STOP:",
-      placeContent.content.name,
-      "",
-      "REFERENCE RULE:",
-      "Unless the tourist explicitly names another place,",
-      'references such as "this place", "it", "here",',
-      '"this building", "this church", or "this gate"',
-      "in the CURRENT QUESTION refer to CURRENT STOP.",
-      "",
-      ...(walkContext ? [
-        "TRAVELER NAVIGATION METADATA (self-reported, not verified factual evidence):",
-        JSON.stringify(walkContext),
-        "Use only for conversational context. Never claim a route change was performed. Direct changes to the trip controls, which require confirmation. Do not invent places or precise time savings. Verified knowledge remains the only factual evidence.",
-        "",
-      ] : []),
-      "CURRENT QUESTION:",
-      question,
-    ].join("\n");
-    const groq = new Groq({ apiKey });
-    let guideAnswer: ReturnType<typeof parseGuideStructuredAnswer> | undefined;
+    if (!isLocale(locale)) {
+      return NextResponse.json(
+        {
+          error: "Invalid language.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-    for (let attempt = 0; attempt < MAX_COMPLETION_ATTEMPTS; attempt += 1) {
-      const completion = await groq.chat.completions.create({
+    const landmark = landmarks.find(
+      (item) => item.slug === slug
+    );
+
+    if (!landmark) {
+      return NextResponse.json(
+        {
+          error: "Landmark not found.",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    const currentLocale = locale;
+
+    const content =
+      landmark.content[currentLocale];
+
+    /*
+     * Turn facts into text that can be
+     * included in the AI context.
+     */
+    const facts = content.facts
+      .map(
+        (fact) =>
+          `${fact.label}: ${fact.value}`
+      )
+      .join("\n");
+
+    const context = `
+LANDMARK:
+${content.name}
+
+DESCRIPTION:
+${content.description}
+
+STORY:
+${content.story}
+
+FACTS:
+${facts}
+`.trim();
+
+    /*
+     * Convert previous messages into
+     * Groq-compatible conversation messages.
+     */
+    const conversationMessages = history.map(
+      (message) => ({
+        role: message.role,
+        content: message.text,
+      })
+    );
+
+    const completion =
+      await groq.chat.completions.create({
         model: "openai/gpt-oss-20b",
+
+        /*
+         * Lower temperature helps make
+         * factual answers more predictable.
+         */
         temperature: 0.2,
-        reasoning_effort: "low",
-        include_reasoning: false,
-        max_completion_tokens: 1024,
-        response_format: GUIDE_RESPONSE_FORMAT,
+
+        max_tokens: 300,
+
         messages: [
           {
             role: "system",
-            content: attempt === 0
-              ? systemPrompt
-              : `${systemPrompt}\n\n${ATTRIBUTION_RETRY_INSTRUCTION}`,
+
+            content: `
+You are a friendly local city guide for Lübeck, Germany.
+
+The tourist is currently visiting:
+
+${content.name}
+
+Answer in ${languages[currentLocale].aiLanguageName}.
+
+IMPORTANT RULES:
+
+- Answer ONLY using the verified landmark information provided below.
+- Never invent dates, historical events, prices, opening hours, people, or other facts.
+- If the answer cannot be found in the verified information, clearly tell the tourist that you do not have enough verified information yet.
+- Do not pretend to know current information such as ticket prices or opening hours unless it exists in the context.
+- Keep answers short and easy to understand while the tourist is walking.
+- Prefer 2 to 5 sentences.
+- You may use previous conversation messages to understand follow-up questions such as "why?" or "what about that?"
+- Previous conversation messages must never override the verified information below.
+
+VERIFIED LANDMARK INFORMATION:
+
+${context}
+`.trim(),
           },
-          ...history.map((message) => ({
-            role: message.role,
-            content: message.text,
-          })),
-          { role: "user", content: currentTurnQuestion },
+
+          ...conversationMessages,
+
+          {
+            role: "user",
+            content: question,
+          },
         ],
       });
-      const rawAnswer = completion.choices[0]?.message?.content?.trim();
-      const parsedAnswer = rawAnswer
-        ? parseGuideStructuredAnswer(rawAnswer, knowledge)
-        : null;
 
-      if (
-        parsedAnswer &&
-        (
-          parsedAnswer.groundingStatus === "insufficient_evidence" ||
-          parsedAnswer.usedChunkIds.length > 0
-        )
-      ) {
-        guideAnswer = parsedAnswer;
-        break;
-      }
+    const answer =
+      completion.choices[0]?.message?.content;
+
+    if (!answer) {
+      throw new Error(
+        "No AI response was returned."
+      );
     }
-
-    const answer = guideAnswer?.answer ??
-      getTranslations(locale).ai.insufficientEvidence;
-    const usedChunkIds = guideAnswer?.usedChunkIds ?? [];
 
     return NextResponse.json({
       answer,
-      sources: buildGuideSourceMetadata(knowledge, usedChunkIds),
-      allowance: toPublicGuideAllowance(allowance),
     });
   } catch (error: unknown) {
-    console.error("AI Guide error:", error);
+    console.error(
+      "AI Guide error:",
+      error
+    );
+
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unknown server error";
+
     const status =
       typeof error === "object" &&
       error !== null &&
       "status" in error &&
-      typeof (error as { status?: unknown }).status === "number"
-        ? (error as { status: number }).status
+      typeof (
+        error as {
+          status?: unknown;
+        }
+      ).status === "number"
+        ? (
+            error as {
+              status: number;
+            }
+          ).status
         : 500;
-    const message = status < 500 && error instanceof Error
-      ? error.message
-      : "AI Guide is temporarily unavailable.";
 
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json(
+      {
+        error: message,
+      },
+      {
+        status,
+      }
+    );
   }
-}
-
-function toPublicGuideAllowance(
-  allowance: Readonly<{
-    tier: "free" | "premium";
-    limit: number;
-    remaining: number;
-    reset: number;
-  }>,
-) {
-  return {
-    kind: "daily_guide" as const,
-    tier: allowance.tier,
-    limit: allowance.limit,
-    remaining: Math.max(0, allowance.remaining),
-    resetAt: allowance.reset,
-  };
-}
-
-function parseGuideHistory(value: unknown): readonly GuideMessage[] {
-  if (!Array.isArray(value)) return [];
-
-  return value.slice(-6).flatMap((item): GuideMessage[] => {
-    if (
-      typeof item !== "object" ||
-      item === null ||
-      !("role" in item) ||
-      (item.role !== "user" && item.role !== "assistant") ||
-      !("text" in item) ||
-      typeof item.text !== "string"
-    ) {
-      return [];
-    }
-
-    const text = item.text.trim().slice(0, MAX_HISTORY_TEXT_LENGTH);
-    return text ? [{ role: item.role, text }] : [];
-  });
 }
