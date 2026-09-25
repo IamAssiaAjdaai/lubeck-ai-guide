@@ -1,0 +1,68 @@
+import { StyleSheet } from "react-native";
+import { colors, radius, shadows, spacing } from "./tokens";
+export const walkStyles = StyleSheet.create({
+  section: { gap: spacing.sm },
+  flex: { flex: 1, minWidth: 0 },
+  muted: { color: colors.textMuted },
+  deadline: {
+    borderTopWidth: 1,
+    borderColor: colors.border,
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
+    gap: spacing.sm,
+  },
+  activeHeading: { gap: spacing.xs },
+  eyebrow: {
+    color: colors.textMuted,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  returnCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    padding: spacing.md,
+    backgroundColor: colors.successSoft,
+    borderRadius: radius.md,
+  },
+  lateCard: { backgroundColor: colors.warningSoft },
+  actionRow: { flexDirection: "row", gap: spacing.sm },
+  navigationBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.sm,
+    ...shadows.card,
+  },
+  controls: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  control: {
+    flex: 1,
+    minWidth: 0,
+    minHeight: 75,
+    paddingHorizontal: spacing.xs,
+  },
+  assistant: {
+    borderRadius: radius.hero,
+    padding: spacing.md,
+    gap: spacing.md,
+    backgroundColor: colors.surface,
+    ...shadows.card,
+  },
+  handle: {
+    width: 36,
+    height: 4,
+    borderRadius: 4,
+    backgroundColor: colors.borderStrong,
+    alignSelf: "center",
+  },
+  finishCheck: {
+    width: 62,
+    height: 62,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: radius.pill,
+    backgroundColor: colors.successSoft,
+  },
+});

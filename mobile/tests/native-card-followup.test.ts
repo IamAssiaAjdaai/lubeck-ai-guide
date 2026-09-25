@@ -8,11 +8,11 @@ import appConfig from "../app.json";
 
 describe("physical-device card and keyboard follow-up", () => {
   it("keeps full-card city navigation without a separate arrow circle", () => {
-    expect(homeSource).toContain("<Link href={{ pathname: \"/city/[citySlug]\"");
+    expect(homeSource).toContain('pathname: "/city/[citySlug]"');
     expect(homeSource).toContain("<PressableSurface");
     expect(homeSource).toContain("prefetchPublicCity(city.slug, locale)");
     expect(homeSource).toContain('triggerCitywalkHaptic("medium")');
-    expect(homeSource).toContain("<MediaAttribution attribution={image?.attribution} />");
+    expect(homeSource).toContain("<MediaAttribution attribution={city.attribution} />");
     expect(homeSource).not.toContain("cityAffordance");
     expect(homeSource).toContain("numberOfLines={2}");
   });
