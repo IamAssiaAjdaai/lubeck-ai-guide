@@ -117,3 +117,7 @@ CITYWALK follows cross-platform parity by default. Any traveler-facing feature i
 Prefer shared domain and business logic. Do not duplicate planner, trip adaptation, eligibility or AI context logic across web and mobile without a technical reason.
 
 Every traveler-facing ticket must include a platform matrix with Web, iOS and Android marked Required and record implementation and actual testing for each. Document exceptions in the ticket (web-only admin, mobile-only native capability, or infrastructure/server-only work). A feature is complete only when all required platforms are implemented and tested.
+
+### Visual parity
+
+CITYWALK traveler-facing features require both functional and visual parity across Web, iOS and Android by default. Current Web V2 is the visual/UX source of truth: preserve its information architecture, design tokens, hierarchy, brand language, content sections, and equivalent cards/CTAs/loading/error/empty states. Native sheets, sharing and permissions may follow platform conventions; a separate Home/City Hub design or replacing visual cards with generic buttons is not parity. Capture matching screenshots on all three platforms and review them before calling a traveler-facing change complete or preparing a visual-parity store release.
