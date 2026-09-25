@@ -1,189 +1,310 @@
+import { triggerCitywalkHaptic } from "../lib/haptics";
 import { cityLaunches } from "@citywalk/traveler-core/cityAvailability";
 import { calculateDistanceMeters } from "@citywalk/traveler-core";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
-import { WalkInput } from "../components/WalkControls";
-import { requestForegroundLocation } from "../lib/location";
-import { expoForegroundLocationAdapter } from "../lib/location.expo";
-import { NativeContentImage as Image } from "../components/NativeContentImage";
-import { Link } from "expo-router";
-import { useRef, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-
-import citywalkHero from "../../assets/images/citywalk-hero.png";
+import { Link, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import { ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { V2Hero } from "../components/V2Presentation";
+import { NativeContentImage } from "../components/NativeContentImage";
 import { CitywalkLoading } from "../components/CitywalkLoading";
 import { MediaAttribution } from "../components/MediaAttribution";
-import { NativeHeaderActions } from "../components/NativeHeaderActions";
 import { NativeIcon } from "../components/NativeIcon";
-import { AppText, EmptyState, MotionView, PressableSurface, PrimaryButton, Screen, SectionTitle } from "../components/ui";
-import { colors, motion, radius, spacing } from "../design/tokens";
+import {
+  AppText,
+  EmptyState,
+  PressableSurface,
+  PrimaryButton,
+  Screen,
+  SectionTitle,
+} from "../components/ui";
+import { colors, motion, radius, shadows, spacing } from "../design/tokens";
 import { prefetchPublicCity, usePublicCities } from "../hooks/usePublicContent";
 import { citywalkApi } from "../lib/api/instance";
 import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
-import { triggerCitywalkHaptic } from "../lib/haptics";
-import { getNativeDirection, getNativeTextAlignment } from "../lib/localization";
+import {
+  getNativeDirection,
+} from "../lib/localization";
+import { requestForegroundLocation } from "../lib/location";
+import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import { useNativeLocale } from "../localization/LocaleProvider";
 
 export default function HomeScreen() {
-  const { locale, messages } = useNativeLocale();
+  const { locale, direction, messages } = useNativeLocale(),
+    t = walkCopy(locale);
   const cities = usePublicCities(locale);
-  const t = walkCopy(locale);
+  const { section } = useLocalSearchParams<{ section?: string }>();
+  const scroll = useRef<ScrollView>(null);
+  const [citiesOffset, setCitiesOffset] = useState(0);
+  useEffect(() => {
+    if (section === "cities")
+      scroll.current?.scrollTo({ y: citiesOffset, animated: true });
+  }, [section, citiesOffset]);
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState<{ lat: number; lng: number }>();
-  const [locating, setLocating] = useState(false), [locationHelp, setLocationHelp] = useState("");
+  const [locating, setLocating] = useState(false),
+    [locationHelp, setLocationHelp] = useState("");
   async function locate() {
     setLocating(true);
-    const result = await requestForegroundLocation(expoForegroundLocationAdapter);
+    const result = await requestForegroundLocation(
+      expoForegroundLocationAdapter,
+    );
     setLocating(false);
-    if (result.status === "available") { setLocation({ lat: result.location.latitude, lng: result.location.longitude }); setLocationHelp(t.nearest); }
-    else setLocationHelp(t.locationHelp);
+    if (result.status === "available") {
+      setLocation({
+        lat: result.location.latitude,
+        lng: result.location.longitude,
+      });
+      setLocationHelp(t.nearest);
+    } else setLocationHelp(t.locationHelp);
   }
-  const filteredCities = cities.status === "available" ? cities.data.cities.filter(city => (cityLaunches[city.slug]?.status ?? "available") === "available" && city.name.toLocaleLowerCase(locale).includes(query.toLocaleLowerCase(locale))).sort((a, b) => {
-    if (!location) return 0;
-    const first = cityLaunches[a.slug]?.coordinates, second = cityLaunches[b.slug]?.coordinates;
-    return (first ? calculateDistanceMeters(location, first) ?? Infinity : Infinity) - (second ? calculateDistanceMeters(location, second) ?? Infinity : Infinity);
-  }) : [];
-  const coming = Object.entries(cityLaunches).filter(([,city]) => city.status === "coming_soon" && city.name.toLocaleLowerCase(locale).includes(query.toLocaleLowerCase(locale)));
-  const scrollViewRef = useRef<ScrollView>(null);
-  const availableCitiesY = useRef(0);
-
+  const available =
+    cities.status === "available"
+      ? cities.data.cities
+          .filter(
+            (city) =>
+              (cityLaunches[city.slug]?.status ?? "available") === "available",
+          )
+          .map((city) => ({
+            ...city,
+            available: true,
+            image: selectImageUrl(
+              selectPrimaryImageMedia(city.media),
+              cityLaunches[city.slug]?.heroImage,
+              undefined,
+              "card",
+            ),
+            attribution: selectPrimaryImageMedia(city.media)?.attribution,
+          }))
+      : [];
+  const upcoming = Object.entries(cityLaunches)
+    .filter(([, c]) => c.status === "coming_soon")
+    .map(([slug, c]) => ({
+      slug,
+      name: c.name,
+      available: false,
+      image: c.heroImage,
+      resolvedLocale: "de",
+      shortDescription:
+        slug === "hamburg"
+          ? t.hamburgDescription
+          : slug === "duesseldorf"
+            ? t.duesseldorfDescription
+            : undefined,
+      attribution: c.credit ? { text: c.credit.text } : undefined,
+    }));
+  const choices = [...available, ...upcoming]
+    .filter((c) =>
+      c.name
+        .toLocaleLowerCase(locale)
+        .includes(query.toLocaleLowerCase(locale)),
+    )
+    .sort((a, b) => {
+      if (a.available !== b.available) return a.available ? -1 : 1;
+      if (!location) return 0;
+      return (
+        (calculateDistanceMeters(location, cityLaunches[a.slug]?.coordinates) ??
+          Infinity) -
+        (calculateDistanceMeters(location, cityLaunches[b.slug]?.coordinates) ??
+          Infinity)
+      );
+    });
   return (
-    <Screen includeTopSafeArea scrollViewRef={scrollViewRef}>
-      <View style={styles.header}>
-        <View style={styles.brandRow}>
-          <AppText variant="label" style={styles.brand}>CITYWALK</AppText>
-          <NativeHeaderActions />
-        </View>
-      </View>
-
-      <View style={styles.hero}>
-        <Image
-          accessibilityLabel={messages.homeHeroTitle}
-          contentFit="cover"
-          source={citywalkHero}
-          style={styles.heroImage}
-          transition={motion.component}
+    <Screen scrollViewRef={scroll}>
+      <V2Hero title={t.homeTitle} subtitle={t.homeSubtitle} />
+      <PrimaryButton
+        label={t.location}
+        busy={locating}
+        onPress={() => void locate()}
+        leadingIcon={
+          <NativeIcon
+            ios="location.fill"
+            android="near_me"
+            color={colors.surface}
+            size={20}
+          />
+        }
+      />
+      {locationHelp ? (
+        <AppText accessibilityLiveRegion="polite">{locationHelp}</AppText>
+      ) : null}
+      <View style={[styles.search, { direction }]}>
+        <NativeIcon
+          ios="magnifyingglass"
+          android="search"
+          color={colors.textMuted}
         />
-        <View style={styles.heroCopyBlock}>
-          <AppText variant="hero" style={styles.heroTitle}>{messages.homeHeroTitle}</AppText>
-          <AppText style={styles.heroCopy}>{messages.homeHeroSubtitle}</AppText>
-        </View>
-        <PrimaryButton
-          label={messages.discoverCity}
-          onPress={() => scrollViewRef.current?.scrollTo({ y: availableCitiesY.current, animated: true })}
-          style={styles.discoverButton}
-          trailingIcon={<NativeIcon ios="arrow.down" android="arrow_downward" color="#FFFFFF" size={18} />}
+        <TextInput
+          accessibilityLabel={t.search}
+          placeholder={t.search}
+          placeholderTextColor={colors.textSubtle}
+          value={query}
+          onChangeText={setQuery}
+          style={[
+            styles.searchInput,
+            { textAlign: direction === "rtl" ? "right" : "left" },
+          ]}
         />
-        <View style={styles.reassurance}>
-          <NativeIcon ios="checkmark.circle.fill" android="check_circle" color={colors.success} size={17} />
-          <AppText variant="caption" style={styles.reassuranceText}>{messages.noSignUpRequired}</AppText>
-        </View>
       </View>
-
-      <PrimaryButton label={t.location} busy={locating} onPress={() => void locate()} />
-      {locationHelp ? <AppText>{locationHelp}</AppText> : null}
-      <WalkInput label={t.search} value={query} onChangeText={setQuery} placeholder={t.search} />
-      <View onLayout={({ nativeEvent }) => { availableCitiesY.current = nativeEvent.layout.y; }}>
-        <SectionTitle>{messages.availableCities}</SectionTitle>
+      <View onLayout={(event) => setCitiesOffset(event.nativeEvent.layout.y)}>
+        <SectionTitle>{t.available}</SectionTitle>
       </View>
       {cities.status === "loading" ? <CitywalkLoading variant="home" /> : null}
       {cities.status === "error" ? (
         <EmptyState
+          title={t.available}
           description={messages.unavailable}
-          icon={<NativeIcon ios="wifi.slash" android="wifi_off" color={colors.primary} size={28} />}
-          title={messages.availableCities}
+          icon={<NativeIcon ios="wifi.slash" android="wifi_off" />}
         />
       ) : null}
-      {cities.status === "available" && cities.data.cities.length === 0 ? (
+      {cities.status === "available" && !choices.length ? (
         <EmptyState
-          description={messages.unavailable}
-          icon={<NativeIcon ios="map" android="map" color={colors.primary} size={28} />}
-          title={messages.availableCities}
+          title={t.noCities}
+          description={t.search}
+          icon={<NativeIcon ios="magnifyingglass" android="search" />}
         />
       ) : null}
-      {cities.status === "available" ? filteredCities.map((city) => {
-        const image = selectPrimaryImageMedia(city.media);
-        const imageUrl = selectImageUrl(image, undefined, undefined, "card");
-        const contentDirection = getNativeDirection(city.resolvedLocale);
-        const contentTextStyle = {
-          writingDirection: contentDirection,
-          textAlign: getNativeTextAlignment(city.resolvedLocale),
-        } as const;
-        return (
-          <MotionView key={city.slug} style={styles.cityCard}>
-            <Link href={{ pathname: "/city/[citySlug]", params: { citySlug: city.slug } }} asChild>
-              <PressableSurface
-                accessibilityLabel={`${messages.exploreCity}: ${city.name}`}
-                accessibilityRole="link"
-                onPressIn={() => {
-                  void prefetchPublicCity(city.slug, locale).catch(() => undefined);
+      {choices.map((city) => {
+        const body = (
+          <View style={[styles.cityCard, { direction }]}>
+            <NativeContentImage
+              source={
+                city.image
+                  ? { uri: citywalkApi.resolveUrl(city.image) }
+                  : undefined
+              }
+              fallbackSource={
+                cityLaunches[city.slug]?.heroImage
+                  ? {
+                      uri: citywalkApi.resolveUrl(
+                        cityLaunches[city.slug].heroImage!,
+                      ),
+                    }
+                  : undefined
+              }
+              contentFit="cover"
+              transition={motion.component}
+              cachePolicy="memory-disk"
+              style={styles.cityImage}
+              accessibilityLabel={city.name}
+            />
+            <View style={styles.cityCopy}>
+              <AppText
+                variant="heading"
+                style={{
+                  writingDirection: getNativeDirection(city.resolvedLocale),
+                  textAlign: direction === "rtl" ? "right" : "left",
                 }}
-                onPress={() => { void triggerCitywalkHaptic("medium"); }}
-                style={styles.cityLink}
               >
-                {image && imageUrl ? (
-                  <Image
-                    source={{ uri: citywalkApi.resolveUrl(imageUrl) }}
-                    cachePolicy="memory-disk"
-                    contentFit="cover"
-                    style={styles.cityImage}
-                    accessibilityLabel={city.name}
-                    transition={motion.component}
+                {city.name}
+              </AppText>
+              <View style={styles.status}>
+                {city.available ? (
+                  <View style={styles.statusDot} />
+                ) : (
+                  <NativeIcon
+                    ios="clock"
+                    android="schedule"
+                    size={14}
+                    color={colors.textMuted}
                   />
-                ) : <View style={styles.imageFallback} />}
-                <View style={[styles.cityContent, { direction: contentDirection }]}>
-                  <AppText variant="title" style={contentTextStyle}>{city.name}</AppText>
-                  <AppText>{t.availableNow}</AppText>
-                  {city.shortDescription ? (
-                    <AppText numberOfLines={2} style={[contentTextStyle, styles.cityDescription]}>{city.shortDescription}</AppText>
-                  ) : null}
-                </View>
-              </PressableSurface>
-            </Link>
-            <View style={styles.attribution}><MediaAttribution attribution={image?.attribution} /></View>
-          </MotionView>
+                )}
+                <AppText
+                  variant="caption"
+                  style={{
+                    color: city.available ? colors.success : colors.textMuted,
+                  }}
+                >
+                  {city.available ? t.availableNow : t.comingSoon}
+                </AppText>
+              </View>
+              {city.shortDescription ? (
+                <AppText
+                  numberOfLines={2}
+                  variant="metadata"
+                  style={styles.muted}
+                >
+                  {city.shortDescription}
+                </AppText>
+              ) : null}
+            </View>
+            <NativeIcon
+              ios={direction === "rtl" ? "chevron.left" : "chevron.right"}
+              android={direction === "rtl" ? "chevron_left" : "chevron_right"}
+              color={colors.textMuted}
+              size={18}
+            />
+          </View>
         );
-      }) : null}
-      {coming.map(([slug, city]) => <View key={slug} style={styles.cityContent}><AppText variant="title">{city.name}</AppText><AppText>{t.comingSoon}</AppText></View>)}
-      {cities.status === "available" && !filteredCities.length && !coming.length ? <AppText>{t.noCities}</AppText> : null}
+        return (
+          <View key={city.slug}>
+            {city.available ? (
+              <Link
+                href={{
+                  pathname: "/city/[citySlug]",
+                  params: { citySlug: city.slug },
+                }}
+                asChild
+              >
+                <PressableSurface
+                  accessibilityRole="link"
+                  accessibilityLabel={`${messages.exploreCity}: ${city.name}`}
+                  onPress={() => {
+                    void triggerCitywalkHaptic("medium");
+                  }}
+                  onPressIn={() => {
+                    void prefetchPublicCity(city.slug, locale).catch(
+                      () => undefined,
+                    );
+                  }}
+                >
+                  {body}
+                </PressableSurface>
+              </Link>
+            ) : (
+              body
+            )}
+            <MediaAttribution attribution={city.attribution} />
+          </View>
+        );
+      })}
     </Screen>
   );
 }
-
 const styles = StyleSheet.create({
-  header: { gap: spacing.md },
-  brandRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  brand: { color: colors.primary, letterSpacing: 2 },
-  hero: { alignItems: "center", gap: spacing.md, paddingBottom: spacing.sm },
-  heroImage: {
-    aspectRatio: 5 / 4,
-    backgroundColor: colors.surface,
-    borderColor: "#DBEAFE",
-    borderRadius: radius.hero,
-    borderWidth: StyleSheet.hairlineWidth,
-    width: "100%",
+  search: {
+    minHeight: 56,
+    flexDirection: "row",
+    gap: spacing.sm,
+    alignItems: "center",
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
   },
-  heroCopyBlock: { alignItems: "center", gap: spacing.sm },
-  heroTitle: { textAlign: "center", maxWidth: 330 },
-  heroCopy: { textAlign: "center", color: colors.textMuted, maxWidth: 320 },
-  discoverButton: { alignSelf: "stretch" },
-  reassurance: { alignItems: "center", flexDirection: "row", gap: spacing.xs },
-  reassuranceText: { color: colors.textMuted },
+  searchInput: { flex: 1, minHeight: 56, color: colors.text, fontSize: 16 },
   cityCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    borderColor: colors.border,
-    borderWidth: StyleSheet.hairlineWidth,
-    elevation: 3,
+    borderRadius: radius.md,
+    paddingEnd: spacing.sm,
     overflow: "hidden",
-    shadowColor: colors.text,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.07,
-    shadowRadius: 18,
+    ...shadows.card,
   },
-  cityLink: { borderRadius: radius.lg, overflow: "hidden" },
-  cityImage: { width: "100%", height: 176, backgroundColor: colors.primarySoft },
-  imageFallback: { width: "100%", height: 150, backgroundColor: colors.primarySoft },
-  cityContent: { gap: spacing.xs, paddingHorizontal: spacing.md, paddingTop: spacing.md, paddingBottom: spacing.xs },
-  cityDescription: { color: colors.textMuted, lineHeight: 21 },
-  attribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
+  cityImage: {
+    width: "43%",
+    minHeight: 112,
+    alignSelf: "stretch",
+    borderRadius: radius.sm,
+  },
+  cityCopy: { flex: 1, minWidth: 0, gap: spacing.xs, paddingVertical: spacing.sm },
+  status: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  statusDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.success,
+  },
+  muted: { color: colors.textMuted },
 });

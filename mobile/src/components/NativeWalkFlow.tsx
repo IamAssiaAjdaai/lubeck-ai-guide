@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "expo-router";
 import {
-  ActivityIndicator,
   BackHandler,
   Linking,
   Modal,
+  ScrollView,
   Share,
   View,
 } from "react-native";
 import {
-  buildWalk,
+  buildWalkSteps,
+  type WalkBuildStage,
   deadlineForToday,
   interestTags,
   measureWalk,
@@ -51,7 +52,18 @@ import {
   SectionTitle,
   StatusMessage,
 } from "./ui";
-import { WalkChoices, WalkInput } from "./WalkControls";
+import { WalkChoices, WalkInput, WalkPlacePicker } from "./WalkControls";
+import {
+  MetricSummary,
+  StepProgress,
+  V2Hero,
+  V2Itinerary,
+  V2Loading,
+  V2WalkError,
+} from "./V2Presentation";
+import { NativeIcon } from "./NativeIcon";
+import { colors } from "../design/tokens";
+import { walkStyles as styles } from "../design/walkStyles";
 
 export function NativeWalkFlow({
   citySlug,
@@ -72,9 +84,13 @@ export function NativeWalkFlow({
   const [stage, setStage] = useState<
     "hydrate" | "plan" | "building" | "preview" | "active" | "finished"
   >("hydrate");
+  const scroll = useRef<ScrollView>(null);
   const [step, setStep] = useState(1),
     [minutes, setMinutes] = useState(120),
     [returnBy, setReturnBy] = useState("");
+  useEffect(() => {
+    scroll.current?.scrollTo({ y: 0, animated: false });
+  }, [stage, step]);
   const [interests, setInterests] = useState<Interest[]>([
       "history",
       "architecture",
@@ -95,6 +111,9 @@ export function NativeWalkFlow({
     [message, setMessage] = useState("");
   const [now, setNow] = useState(() => Date.now()),
     [generatedAt, setGeneratedAt] = useState(() => Date.now());
+  const [showMap, setShowMap] = useState(false);
+  const [buildError, setBuildError] = useState<"empty" | "error">();
+  const [buildStage, setBuildStage] = useState<WalkBuildStage>("matching");
   const [rating, setRating] = useState<string[]>([]),
     [fit, setFit] = useState<string[]>([]);
   const [proposalMessage, setProposalMessage] = useState("");
@@ -184,15 +203,26 @@ export function NativeWalkFlow({
           setJourney(restored);
           setStage(savedId ? "preview" : "active");
           if (addSlug) {
-              const candidate = places.find(place => place.slug === addSlug);
-              const proposal = candidate ? proposeAddedStop(
-                restored.remaining.flatMap(slug => places.find(place => place.slug === slug) ?? []),
-                candidate, restored.visited, restored.settings, restored.position,
-                restored.finish, restored.startedAt,
-              ) : undefined;
-              if (proposal) setProposed(proposal);
-              else { setPanel("add"); setMessage(t.noEligible); }
+            const candidate = places.find((place) => place.slug === addSlug);
+            const proposal = candidate
+              ? proposeAddedStop(
+                  restored.remaining.flatMap(
+                    (slug) => places.find((place) => place.slug === slug) ?? [],
+                  ),
+                  candidate,
+                  restored.visited,
+                  restored.settings,
+                  restored.position,
+                  restored.finish,
+                  restored.startedAt,
+                )
+              : undefined;
+            if (proposal) setProposed(proposal);
+            else {
+              setPanel("add");
+              setMessage(t.noEligible);
             }
+          }
           return;
         }
         setMessage(t.noEligible);
@@ -227,8 +257,8 @@ export function NativeWalkFlow({
           setPanel(undefined);
           return true;
         }
-        if (stage === "plan" && step === 2) {
-          setStep(1);
+        if (stage === "plan" && step > 1) {
+          setStep((value) => value - 1);
           return true;
         }
         return false;
@@ -269,11 +299,8 @@ export function NativeWalkFlow({
       return;
     }
     setMessage("");
+    setBuildStage("matching");
     setStage("building");
-    // Yield to native rendering; no invented stage completion or percentage.
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => resolve()),
-    );
     try {
       const settings: WalkSettings = {
         minutes,
@@ -284,9 +311,17 @@ export function NativeWalkFlow({
         categories,
         walking,
       };
-      const route = buildWalk(places, settings);
+      const steps = buildWalkSteps(places, settings);
+      let result = steps.next();
+      while (!result.done) {
+        setBuildStage(result.value);
+        // Render before the next synchronous work unit; no decorative delay.
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+        result = steps.next();
+      }
+      const route = result.value;
       if (!route.places.length) {
-        setMessage(`${t.empty} ${t.emptyHelp}`);
+        setBuildError("empty");
         setStage("plan");
         return;
       }
@@ -306,7 +341,7 @@ export function NativeWalkFlow({
       });
       setStage("preview");
     } catch {
-      setMessage(t.errorHelp);
+      setBuildError("error");
       setStage("plan");
     }
   }
@@ -391,90 +426,171 @@ export function NativeWalkFlow({
   const route = journey
     ? measureWalk(named(journey.remaining), journey.position, journey.finish)
     : undefined;
-  const current = route?.places[0];
+  // Do not silently promote a different place if refreshed content loses a stop.
+  const current = places.find((place) => place.slug === journey?.remaining[0]);
   const eta =
     (stage === "preview" ? generatedAt : now) + (route?.minutes ?? 0) * 60000;
   const deadline = journey?.settings.deadline;
   const itinerary = (items: PublicPlaceCard[], interactive = true) => (
-    <View style={{ gap: 12 }}>
+    <View style={styles.section}>
       <SectionTitle>{t.itinerary}</SectionTitle>
-      {items.map((p, i) => !interactive ? <AppText key={p.slug}>{i + 1}. {p.content.name} · {duration(p.durationMinutes)}</AppText> : (
-        <Link
-          key={p.slug}
-          href={{
-            pathname: "/city/[citySlug]/place/[placeSlug]",
-            params: { citySlug, placeSlug: p.slug },
-          }}
-          asChild
-        >
-          <PrimaryButton
-            wrapLabel
-            tone="secondary"
-            label={`${i + 1}. ${p.content.name} · ${duration(p.durationMinutes)}`}
-          />
-        </Link>
-      ))}
+      <V2Itinerary
+        places={items}
+        citySlug={citySlug}
+        interactive={interactive}
+      />
     </View>
   );
   const summary = (r: WalkRoute<PublicPlaceCard>) => (
-    <View style={{ gap: 8 }}>
-      <AppText>
-        {duration(r.minutes)} · {distance(r.distance)} · {r.places.length}{" "}
-        {t.stops}
+    <View>
+      <MetricSummary
+        items={[
+          {
+            label: t.duration,
+            value: duration(r.minutes),
+            icon: <NativeIcon ios="clock" android="schedule" size={20} />,
+          },
+          {
+            label: t.distance,
+            value: distance(r.distance),
+            icon: <NativeIcon ios="mappin" android="place" size={20} />,
+          },
+          {
+            label: t.stops,
+            value: String(r.places.length),
+            icon: (
+              <NativeIcon
+                ios="point.topleft.down.to.point.bottomright.curvepath"
+                android="route"
+                size={20}
+              />
+            ),
+          },
+        ]}
+      />
+      <AppText variant="caption" style={styles.muted}>
+        {t.estimated}
+        {r.finish ? ` · ${t.returnLeg}` : ""}
       </AppText>
-      <AppText variant="caption">{t.estimated}</AppText>
-      {r.finish ? <AppText variant="caption">{t.returnLeg}</AppText> : null}
     </View>
   );
+  const customize = () => {
+    if (!journey) return;
+    setStage("plan");
+    setStep(1);
+    setShowMap(false);
+    const settings = journey.settings;
+    setMinutes(settings.minutes);
+    setInterests(settings.interests);
+    setCategories(settings.categories ?? []);
+    setWalking(settings.walking);
+    setGps(settings.start);
+    setStartMode("gps");
+    setReturnBy(
+      settings.deadline
+        ? `${new Date(settings.deadline).getHours().toString().padStart(2, "0")}:${new Date(settings.deadline).getMinutes().toString().padStart(2, "0")}`
+        : "",
+    );
+    const endpoint = places.find(
+      (p) =>
+        p.coordinates.lat === settings.finish?.lat &&
+        p.coordinates.lng === settings.finish?.lng,
+    );
+    setEndMode(
+      !settings.finish ? "anywhere" : endpoint ? "destination" : "loop",
+    );
+    if (endpoint) setEndSlug(endpoint.slug);
+  };
 
   return (
-    <Screen>
+    <Screen
+      scrollViewRef={scroll}
+      onBack={
+        stage === "plan" && step > 1
+          ? () => setStep((value) => value - 1)
+          : undefined
+      }
+      navigation={stage !== "plan" && stage !== "building"}
+      footer={
+        stage === "plan" && !buildError ? (
+          <PrimaryButton
+            wrapLabel
+            label={step < 3 ? t.continue : t.buildAction}
+            disabled={step === 3 && !eligible.length}
+            leadingIcon={
+              <NativeIcon
+                ios="location.fill"
+                android="near_me"
+                color={colors.surface}
+              />
+            }
+            onPress={() =>
+              step < 3 ? setStep((value) => value + 1) : void build()
+            }
+          />
+        ) : undefined
+      }
+    >
       {message ? <StatusMessage>{message}</StatusMessage> : null}
-      {stage === "hydrate" || stage === "building" ? (
-        <View accessibilityRole="progressbar" accessibilityLabel={t.loading}>
-          <ActivityIndicator />
-          <AppText variant="heading">{t.loading}</AppText>
-          {stage === "building" ? (
-            <AppText>
-              {[t.matching, t.checking, t.fitting, t.choosing].join("\n")}
-            </AppText>
-          ) : null}
-        </View>
+      {stage === "hydrate" ? <AppText accessibilityLiveRegion="polite">{messages.loading}</AppText> : null}
+      {stage === "building" ? <V2Loading stage={buildStage} /> : null}
+      {buildError ? (
+        <V2WalkError
+          empty={buildError === "empty"}
+          retry={() => {
+            setBuildError(undefined);
+            setStep(1);
+          }}
+          close={() =>
+            router.replace({
+              pathname: "/city/[citySlug]",
+              params: { citySlug },
+            })
+          }
+        />
       ) : null}
-      {stage === "plan" ? (
+      {stage === "plan" && !buildError ? (
         <>
-          <SectionTitle>{t.build}</SectionTitle>
-          <AppText>{t.step.replace("{step}", String(step))}</AppText>
+          <StepProgress
+            step={step}
+            label={t.step.replace("{step}", String(step))}
+          />
+          <V2Hero
+            compact
+            title={t.build}
+            subtitle={step === 1 ? t.timeQuestion : undefined}
+          />
           {step === 1 ? (
             <>
               <WalkChoices
-                label={t.timeQuestion}
+                label=""
+                variant="time"
                 options={[
-                  { value: 60, label: t.hour1 },
-                  { value: 120, label: t.hour2 },
-                  { value: 180, label: t.hour3 },
-                  { value: 240, label: t.halfDay },
+                  { value: 60, label: t.hour1, description: t.quickWalk },
+                  { value: 120, label: t.hour2, description: t.deeperWalk },
+                  { value: 180, label: t.hour3, description: t.moreWalk },
+                  { value: 240, label: t.halfDay, description: t.relaxedWalk },
                 ]}
                 selected={[minutes]}
                 onSelect={setMinutes}
               />
-              <AppText>{t.deadlineHelp}</AppText>
+              <View style={styles.deadline}>
+                <SectionTitle>{t.deadlineQuestion}</SectionTitle>
+                <AppText style={styles.muted}>{t.deadlineHelp}</AppText>
+              </View>
               <WalkInput
                 label={t.returnBy}
                 value={returnBy}
                 onChangeText={setReturnBy}
                 placeholder="HH:MM"
               />
-              <PrimaryButton
-                wrapLabel
-                label={t.continue}
-                onPress={() => setStep(2)}
-              />
             </>
-          ) : (
+          ) : step === 2 ? (
             <>
               <WalkChoices
                 label={t.interests}
+                help={t.interestsHelp}
+                number={1}
                 multiple
                 options={(Object.keys(interestTags) as Interest[]).map(
                   (value) => ({ value, label: t[value] }),
@@ -506,12 +622,22 @@ export function NativeWalkFlow({
               ) : null}
               <WalkChoices
                 label={t.walking}
+                variant="segment"
+                number={2}
                 options={(["easy", "balanced", "long"] as const).map(
                   (value) => ({ value, label: t[value] }),
                 )}
                 selected={[walking]}
                 onSelect={setWalking}
               />
+              <PrimaryButton
+                label={t.back}
+                tone="secondary"
+                onPress={() => setStep(1)}
+              />
+            </>
+          ) : (
+            <>
               <SectionTitle>{t.start}</SectionTitle>
               <PrimaryButton
                 wrapLabel
@@ -520,7 +646,7 @@ export function NativeWalkFlow({
                 tone={startMode === "gps" ? "primary" : "secondary"}
                 onPress={() => void locate()}
               />
-              <WalkChoices
+              <WalkPlacePicker
                 label={t.choosePlace}
                 options={options}
                 selected={startMode === "place" ? [startSlug] : []}
@@ -531,6 +657,8 @@ export function NativeWalkFlow({
               />
               <WalkChoices
                 label={t.end}
+                variant="radio"
+                number={4}
                 options={(["anywhere", "loop", "destination"] as const).map(
                   (value) => ({ value, label: t[value] }),
                 )}
@@ -538,24 +666,19 @@ export function NativeWalkFlow({
                 onSelect={setEndMode}
               />
               {endMode === "destination" ? (
-                <WalkChoices
+                <WalkPlacePicker
                   label={t.destination}
                   options={options}
                   selected={[endSlug]}
                   onSelect={setEndSlug}
                 />
               ) : null}
-              <PrimaryButton
-                wrapLabel
-                label={t.buildAction}
-                disabled={!eligible.length}
-                onPress={() => void build()}
-              />
+
               <PrimaryButton
                 wrapLabel
                 tone="secondary"
                 label={t.back}
-                onPress={() => setStep(1)}
+                onPress={() => setStep(2)}
               />
             </>
           )}
@@ -564,138 +687,231 @@ export function NativeWalkFlow({
       ) : null}
       {journey && route && (stage === "preview" || stage === "active") ? (
         <>
-          <SectionTitle>
-            {stage === "preview"
-              ? t.preview
-              : (current?.content.name ?? t.remaining)}
-          </SectionTitle>
-          <AppText>{cityName}</AppText>
-          {summary(route)}
-          <AppText>{t.eta.replace("{time}", clock(eta))}</AppText>
-          {deadline ? (
-            <AppText>
-              {t.buffer
-                .replace("{time}", clock(deadline))
-                .replace(
-                  "{minutes}",
-                  String(Math.floor((deadline - eta) / 60000)),
-                )}
-            </AppText>
-          ) : null}
+          {stage === "preview" ? (
+            <V2Hero compact title={t.preview} subtitle={cityName} />
+          ) : (
+            <View style={styles.activeHeading}>
+              {current ? (
+                <AppText variant="caption" style={styles.eyebrow}>
+                  {messages.stopProgress
+                    ?.replace("{current}", String(journey.visited.length + 1))
+                    .replace(
+                      "{total}",
+                      String(journey.visited.length + journey.remaining.length),
+                    )}
+                </AppText>
+              ) : null}
+              <SectionTitle>
+                {current?.content.name ?? t.remaining}
+              </SectionTitle>
+              {current ? (
+                <AppText numberOfLines={1} style={styles.muted}>
+                  {current.content.shortDescription}
+                </AppText>
+              ) : null}
+            </View>
+          )}
+          {stage === "preview" ? summary(route) : null}
+          <View
+            style={[
+              styles.returnCard,
+              deadline && eta > deadline ? styles.lateCard : undefined,
+            ]}
+          >
+            <NativeIcon
+              ios="clock"
+              android="schedule"
+              color={
+                deadline && eta > deadline ? colors.warning : colors.success
+              }
+              size={28}
+            />
+            <View style={styles.flex}>
+              <AppText variant="label">
+                {t.eta.replace("{time}", clock(eta))}
+              </AppText>
+              {deadline ? (
+                <AppText variant="metadata" style={styles.muted}>
+                  {t.buffer
+                    .replace("{time}", clock(deadline))
+                    .replace(
+                      "{minutes}",
+                      String(Math.floor((deadline - eta) / 60000)),
+                    )}
+                </AppText>
+              ) : null}
+            </View>
+          </View>
           {deadline && eta > deadline ? (
             <StatusMessage>{t.late}</StatusMessage>
           ) : null}
-          <NativeCityMap
-            places={route.places}
-            routeStart={journey.position}
-            routeFinish={journey.finish}
-            currentSlug={current?.slug}
-            onLocation={(point) => {
-              if (stage === "active")
-                void update({ ...journey, position: point });
-            }}
-          />
+          {stage === "preview" ? (
+            <PrimaryButton
+              label={t.map}
+              tone="secondary"
+              onPress={() => setShowMap((v) => !v)}
+              leadingIcon={
+                <NativeIcon ios="map" android="map" color={colors.primary} />
+              }
+            />
+          ) : null}
+          {stage === "active" || showMap ? (
+            <NativeCityMap
+              places={route.places}
+              routeStart={journey.position}
+              routeFinish={journey.finish}
+              currentSlug={current?.slug}
+              onLocation={(point) => {
+                if (stage === "active")
+                  void update({ ...journey, position: point });
+              }}
+            />
+          ) : null}
           {stage === "preview" ? (
             <>
               {itinerary(route.places)}
               <PrimaryButton
                 wrapLabel
                 label={t.startWalk}
+                leadingIcon={
+                  <NativeIcon
+                    ios="location.fill"
+                    android="near_me"
+                    color={colors.surface}
+                  />
+                }
                 onPress={() => {
                   void update({ ...journey, startedAt: Date.now() });
                   setStage("active");
                 }}
               />
-              <PrimaryButton
-                wrapLabel
-                label={t.customize}
-                tone="secondary"
-                onPress={() => {
-                  setStage("plan");
-                  setStep(1);
-                  const s = journey.settings;
-                  setMinutes(s.minutes);
-                  setInterests(s.interests);
-                  setCategories(s.categories ?? []);
-                  setWalking(s.walking);
-                  setGps(s.start);
-                  setStartMode("gps");
-                  setReturnBy(
-                    s.deadline
-                      ? `${new Date(s.deadline).getHours().toString().padStart(2, "0")}:${new Date(s.deadline).getMinutes().toString().padStart(2, "0")}`
-                      : "",
-                  );
-                  const endpoint = places.find(
-                    (p) =>
-                      p.coordinates.lat === s.finish?.lat &&
-                      p.coordinates.lng === s.finish?.lng,
-                  );
-                  setEndMode(
-                    !s.finish ? "anywhere" : endpoint ? "destination" : "loop",
-                  );
-                  if (endpoint) setEndSlug(endpoint.slug);
-                }}
-              />
+              <View style={styles.actionRow}>
+                <PrimaryButton
+                  style={styles.flex}
+                  label={t.customize}
+                  tone="secondary"
+                  onPress={customize}
+                />
+                <PrimaryButton
+                  style={styles.flex}
+                  label={t.save}
+                  tone="secondary"
+                  onPress={() => void save()}
+                />
+              </View>
             </>
           ) : (
             <>
               {current ? (
                 <>
-                  <AppText>
-                    {duration(
-                      estimateWalkingMinutes(
+                  <View style={styles.navigationBar}>
+                    <AppText style={styles.flex}>
+                      {duration(
+                        estimateWalkingMinutes(
+                          calculateDistanceMeters(
+                            journey.position,
+                            current.coordinates,
+                          ) ?? 0,
+                        ) ?? 0,
+                      )}{" "}
+                      ·{" "}
+                      {distance(
                         calculateDistanceMeters(
                           journey.position,
                           current.coordinates,
                         ) ?? 0,
-                      ) ?? 0,
-                    )}{" "}
-                    ·{" "}
-                    {distance(
-                      calculateDistanceMeters(
-                        journey.position,
-                        current.coordinates,
-                      ) ?? 0,
-                    )}
-                  </AppText>
-                  <PrimaryButton
-                    wrapLabel
-                    label={t.navigate}
-                    onPress={() => void navigate(current.coordinates)}
-                  />
-                  <Link
-                    href={{
-                      pathname: "/city/[citySlug]/place/[placeSlug]",
-                      params: { citySlug, placeSlug: current.slug },
-                    }}
-                    asChild
-                  >
+                      )}
+                    </AppText>
                     <PrimaryButton
-                      wrapLabel
-                      tone="secondary"
-                      label={`${t.listen} · ${t.read}`}
+                      style={styles.flex}
+                      label={t.navigate}
+                      onPress={() => void navigate(current.coordinates)}
                     />
-                  </Link>
-                  <Link
-                    href={{
-                      pathname: "/city/[citySlug]/guide/[placeSlug]",
-                      params: { citySlug, placeSlug: current.slug },
-                    }}
-                    asChild
-                  >
-                    <PrimaryButton wrapLabel tone="ai" label={t.ask} />
-                  </Link>
+                  </View>
+                  <View style={styles.actionRow}>
+                    {[
+                      {
+                        label: t.listen,
+                        ios: "headphones",
+                        android: "headphones",
+                        focus: "audio",
+                      },
+                      {
+                        label: t.read,
+                        ios: "book",
+                        android: "menu_book",
+                        focus: "story",
+                      },
+                    ].map((action) => (
+                      <Link
+                        key={action.focus}
+                        push
+                        href={{
+                          pathname: "/city/[citySlug]/place/[placeSlug]",
+                          params: {
+                            citySlug,
+                            placeSlug: current.slug,
+                            focus: action.focus,
+                          },
+                        }}
+                        asChild
+                      >
+                        <PrimaryButton
+                          compact
+                          style={styles.flex}
+                          wrapLabel
+                          tone="secondary"
+                          label={action.label}
+                          leadingIcon={
+                            <NativeIcon
+                              ios={action.ios as "headphones" | "book"}
+                              android={
+                                action.android as "headphones" | "menu_book"
+                              }
+                            />
+                          }
+                        />
+                      </Link>
+                    ))}
+                    <Link
+                      push
+                      href={{
+                        pathname: "/city/[citySlug]/guide/[placeSlug]",
+                        params: { citySlug, placeSlug: current.slug },
+                      }}
+                      asChild
+                    >
+                      <PrimaryButton
+                        compact
+                        style={styles.flex}
+                        wrapLabel
+                        tone="secondary"
+                        label={t.ask}
+                        leadingIcon={
+                          <NativeIcon ios="sparkles" android="auto_awesome" />
+                        }
+                      />
+                    </Link>
+                  </View>
+                </>
+              ) : journey.finish ? (
+                <PrimaryButton
+                  label={t.navigate}
+                  onPress={() => void navigate(journey.finish!)}
+                />
+              ) : null}
+              <SectionTitle>{t.tripControls}</SectionTitle>
+              <View style={styles.controls}>
+                {current ? (
                   <PrimaryButton
-                    wrapLabel
-                    label={t.visited}
-                    onPress={() =>
-                      void update(advanceWalk(journey, current, true))
-                    }
-                  />
-                  <PrimaryButton
+                    compact
+                    style={styles.control}
                     wrapLabel
                     tone="secondary"
                     label={t.skip}
+                    leadingIcon={
+                      <NativeIcon ios="forward.end" android="skip_next" />
+                    }
                     onPress={() =>
                       setProposed(
                         measureWalk(
@@ -706,42 +922,68 @@ export function NativeWalkFlow({
                       )
                     }
                   />
-                </>
-              ) : journey.finish ? (
+                ) : null}
                 <PrimaryButton
+                  compact
+                  style={styles.control}
                   wrapLabel
-                  label={t.navigate}
-                  onPress={() => void navigate(journey.finish!)}
+                  tone="secondary"
+                  label={t.shorten}
+                  onPress={shorten}
+                  leadingIcon={
+                    <NativeIcon
+                      ios="arrow.triangle.branch"
+                      android="alt_route"
+                    />
+                  }
                 />
-              ) : null}
-              <SectionTitle>{t.tripControls}</SectionTitle>
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={`${t.tired} · ${t.shorten}`}
-                onPress={shorten}
-              />
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={t.runningLate}
-                onPress={shorten}
-              />
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={t.add}
-                onPress={() => setPanel("add")}
-              />
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={t.takeBack}
-                onPress={() => setPanel("back")}
-              />
+                <PrimaryButton
+                  compact
+                  style={styles.control}
+                  wrapLabel
+                  tone="secondary"
+                  label={t.add}
+                  onPress={() => setPanel("add")}
+                  leadingIcon={<NativeIcon ios="plus" android="add" />}
+                />
+                <PrimaryButton
+                  compact
+                  style={styles.control}
+                  wrapLabel
+                  tone="secondary"
+                  label={t.takeBack}
+                  onPress={() => setPanel("back")}
+                  leadingIcon={
+                    <NativeIcon ios="arrow.uturn.backward" android="undo" />
+                  }
+                />
+              </View>
+              <View style={styles.assistant}>
+                <View style={styles.handle} />
+                <AppText variant="caption" style={styles.eyebrow}>
+                  CITYWALK · {t.ask}
+                </AppText>
+                <View style={styles.actionRow}>
+                  <PrimaryButton
+                    style={styles.flex}
+                    wrapLabel
+                    tone="secondary"
+                    label={`${t.tired} · ${t.shorten}`}
+                    onPress={shorten}
+                  />
+                  <PrimaryButton
+                    style={styles.flex}
+                    wrapLabel
+                    tone="secondary"
+                    label={t.runningLate}
+                    onPress={shorten}
+                  />
+                </View>
+              </View>
               {panel === "add" ? (
                 <WalkChoices
                   label={t.add}
+                  variant="radio"
                   options={options.filter(
                     (p) =>
                       ![...journey.visited, ...journey.remaining].includes(
@@ -755,11 +997,10 @@ export function NativeWalkFlow({
               {panel === "back" ? (
                 <>
                   <PrimaryButton
-                    wrapLabel
                     label={t.tripStart}
                     onPress={() => back(journey.settings.start)}
                   />
-                  <WalkChoices
+                  <WalkPlacePicker
                     label={t.destination}
                     options={options}
                     selected={[]}
@@ -769,9 +1010,16 @@ export function NativeWalkFlow({
                   />
                 </>
               ) : null}
+              {current ? (
+                <PrimaryButton
+                  label={t.visited}
+                  onPress={() =>
+                    void update(advanceWalk(journey, current, true))
+                  }
+                />
+              ) : null}
               {itinerary(route.places)}
               <PrimaryButton
-                wrapLabel
                 label={t.finish}
                 onPress={() => {
                   const next = {
@@ -790,26 +1038,38 @@ export function NativeWalkFlow({
                   setStage("finished");
                 }}
               />
+              <PrimaryButton
+                label={t.save}
+                tone="secondary"
+                onPress={() => void save()}
+              />
             </>
           )}
-          <PrimaryButton
-            wrapLabel
-            label={t.save}
-            tone="secondary"
-            onPress={() => void save()}
-          />
         </>
       ) : null}
       {journey && stage === "finished" ? (
         <>
+          <View style={styles.finishCheck}>
+            <NativeIcon
+              ios="checkmark"
+              android="check"
+              color={colors.success}
+              size={38}
+            />
+          </View>
           <SectionTitle>{t.finished.replace("{city}", cityName)}</SectionTitle>
-          <AppText>
-            {journey.visited.length} {t.placesVisited} ·{" "}
-            {distance(journey.historyDistance)} ·{" "}
-            {duration(
-              ((journey.finishedAt ?? now) - journey.startedAt) / 60000,
-            )}
-          </AppText>
+          <MetricSummary
+            items={[
+              { label: t.placesVisited, value: String(journey.visited.length) },
+              { label: t.distance, value: distance(journey.historyDistance) },
+              {
+                label: t.timeExplored,
+                value: duration(
+                  ((journey.finishedAt ?? now) - journey.startedAt) / 60000,
+                ),
+              },
+            ]}
+          />
           <SectionTitle>{t.highlights}</SectionTitle>
           {journey.visited.length ? (
             itinerary(named(journey.visited))
@@ -867,7 +1127,7 @@ export function NativeWalkFlow({
         presentationStyle="pageSheet"
         onRequestClose={() => setProposed(undefined)}
       >
-        <Screen includeTopSafeArea>
+        <Screen includeTopSafeArea navigation={false} brand={false}>
           <SectionTitle>{t.confirm}</SectionTitle>
           <AppText>{t.changeHelp}</AppText>
           {proposed ? (

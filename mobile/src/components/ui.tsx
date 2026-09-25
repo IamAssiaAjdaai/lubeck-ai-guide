@@ -1,4 +1,13 @@
-import { useEffect, useState, type PropsWithChildren, type ReactNode, type Ref } from "react";
+import {
+  useEffect,
+  useCallback,
+  useRef,
+  useImperativeHandle,
+  useState,
+  type PropsWithChildren,
+  type ReactNode,
+  type Ref,
+} from "react";
 import {
   ActivityIndicator,
   Animated,
@@ -8,6 +17,7 @@ import {
   StyleSheet,
   Text,
   View,
+  useWindowDimensions,
   type PressableProps,
   type FlatListProps,
   type StyleProp,
@@ -15,47 +25,97 @@ import {
   type ViewProps,
   type ViewStyle,
 } from "react-native";
+import { NativeBrand, NativeBottomNavigation } from "./NativeChrome";
+import { useRootTabScroll } from "../lib/tabNavigation";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { colors, motion, radius, spacing, typography } from "../design/tokens";
+import {
+  colors,
+  layout,
+  shadows,
+  motion,
+  radius,
+  spacing,
+  typography,
+} from "../design/tokens";
 import { triggerCitywalkHaptic, type CitywalkHaptic } from "../lib/haptics";
 import { useReducedMotion } from "../lib/motion";
-import { getScreenSafeAreaEdges, SCREEN_TOP_SPACING } from "../lib/screenLayout";
+import {
+  getScreenSafeAreaEdges,
+  SCREEN_TOP_SPACING,
+} from "../lib/screenLayout";
 import { useNativeLocale } from "../localization/LocaleProvider";
 
 export function Screen({
   children,
-  includeTopSafeArea = false,
+  includeTopSafeArea = true,
   scrollViewRef,
+  footer,
+  navigation = true,
+  brand = true,
+  onBack,
 }: PropsWithChildren<{
   includeTopSafeArea?: boolean;
   scrollViewRef?: Ref<ScrollView>;
+  footer?: ReactNode;
+  navigation?: boolean;
+  brand?: boolean;
+  onBack?: () => void;
 }>) {
   const { direction } = useNativeLocale();
+  const { width } = useWindowDimensions();
+  const scroll = useRef<ScrollView>(null);
+  useImperativeHandle(scrollViewRef, () => scroll.current!, []);
+  useRootTabScroll(useCallback(() => scroll.current?.scrollTo({ y: 0, animated: true }), []));
   return (
     <SafeAreaView
       style={[styles.safeArea, { direction }]}
       edges={getScreenSafeAreaEdges(includeTopSafeArea)}
     >
       <ScrollView
-        ref={scrollViewRef}
-        contentContainerStyle={styles.screenContent}
+        ref={scroll}
+        style={{ direction }}
+        contentContainerStyle={[
+          styles.screenContent,
+          width <= layout.smallPhone && styles.smallScreen,
+        ]}
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets
         keyboardDismissMode="on-drag"
       >
+        {brand ? <NativeBrand onBack={onBack} /> : null}
         {children}
       </ScrollView>
+      {footer ? (
+        <View
+          style={[
+            styles.footer,
+            width <= layout.smallPhone && styles.smallScreen,
+          ]}
+        >
+          {footer}
+        </View>
+      ) : null}
+      {navigation ? <NativeBottomNavigation /> : null}
     </SafeAreaView>
   );
 }
 
 export function VirtualizedScreen<T>({
-  includeTopSafeArea = false,
+  includeTopSafeArea = true,
   contentContainerStyle,
+  ListHeaderComponent,
+  ref: listRef,
   ...props
-}: FlatListProps<T> & { includeTopSafeArea?: boolean; ref?: Ref<FlatList<T>> }) {
+}: FlatListProps<T> & {
+  includeTopSafeArea?: boolean;
+  ref?: Ref<FlatList<T>>;
+}) {
   const { direction } = useNativeLocale();
+  const { width } = useWindowDimensions();
+  const list = useRef<FlatList<T>>(null);
+  useImperativeHandle(listRef, () => list.current!, []);
+  useRootTabScroll(useCallback(() => list.current?.scrollToOffset({ offset: 0, animated: true }), []));
   return (
     <SafeAreaView
       style={[styles.safeArea, { direction }]}
@@ -63,9 +123,26 @@ export function VirtualizedScreen<T>({
     >
       <FlatList
         {...props}
-        contentContainerStyle={[styles.screenContent, contentContainerStyle]}
+        ref={list}
+        style={[props.style, { direction }]}
+        ListHeaderComponent={
+          <>
+            <NativeBrand />
+            {typeof ListHeaderComponent === "function" ? (
+              <ListHeaderComponent />
+            ) : (
+              ListHeaderComponent
+            )}
+          </>
+        }
+        contentContainerStyle={[
+          styles.screenContent,
+          width <= layout.smallPhone && styles.smallScreen,
+          contentContainerStyle,
+        ]}
         keyboardShouldPersistTaps="handled"
       />
+      <NativeBottomNavigation />
     </SafeAreaView>
   );
 }
@@ -82,14 +159,21 @@ export function AppText({
       style={[
         styles.text,
         typography[variant],
-        { writingDirection: direction, textAlign: direction === "rtl" ? "right" : "left" },
+        direction === "rtl" && { letterSpacing: 0, lineHeight: typography[variant].lineHeight + 3 },
+        {
+          writingDirection: direction,
+          textAlign: direction === "rtl" ? "right" : "left",
+        },
         style,
       ]}
     />
   );
 }
 
-export function Card({ children, style }: PropsWithChildren<{ style?: ViewStyle }>) {
+export function Card({
+  children,
+  style,
+}: PropsWithChildren<{ style?: ViewStyle }>) {
   return <View style={[styles.card, style]}>{children}</View>;
 }
 
@@ -104,7 +188,12 @@ export function PressableSurface({
   return (
     <Pressable
       {...props}
-      style={({ pressed }) => [styles.pressableSurface, style, pressed && styles.pressableSurfacePressed, pressed && pressedStyle]}
+      style={({ pressed }) => [
+        styles.pressableSurface,
+        style,
+        pressed && styles.pressableSurfacePressed,
+        pressed && pressedStyle,
+      ]}
     />
   );
 }
@@ -117,6 +206,7 @@ export function PrimaryButton({
   tone = "primary",
   haptic,
   wrapLabel = false,
+  compact = false,
   onPress,
   ...props
 }: PressableProps & {
@@ -127,15 +217,19 @@ export function PrimaryButton({
   tone?: "primary" | "secondary" | "ai" | "success";
   haptic?: CitywalkHaptic;
   wrapLabel?: boolean;
+  compact?: boolean;
 }) {
-  const buttonTone = tone === "secondary"
-    ? styles.secondaryButton
-    : tone === "ai"
-      ? styles.aiButton
-      : tone === "success"
-        ? styles.successButton
-        : undefined;
-  const textTone = tone === "secondary" ? styles.secondaryButtonText : styles.buttonText;
+  const { direction } = useNativeLocale();
+  const buttonTone =
+    tone === "secondary"
+      ? styles.secondaryButton
+      : tone === "ai"
+        ? styles.aiButton
+        : tone === "success"
+          ? styles.successButton
+          : undefined;
+  const textTone =
+    tone === "secondary" ? styles.secondaryButtonText : styles.buttonText;
   return (
     <Pressable
       accessibilityRole="button"
@@ -148,17 +242,27 @@ export function PrimaryButton({
       style={(state) => [
         styles.primaryButton,
         buttonTone,
+        compact && { paddingHorizontal: spacing.xs, paddingVertical: spacing.sm },
         state.pressed && styles.primaryButtonPressed,
         (busy || props.disabled) && styles.disabled,
         typeof props.style === "function" ? props.style(state) : props.style,
       ]}
     >
       {busy ? (
-        <ActivityIndicator color={tone === "secondary" ? colors.primary : "#FFFFFF"} />
+        <ActivityIndicator
+          color={tone === "secondary" ? colors.primary : "#FFFFFF"}
+        />
       ) : (
-        <View style={styles.buttonContent}>
+        <View style={[styles.buttonContent, { direction }, compact && styles.tileContent]}>
           {leadingIcon}
-          <Text numberOfLines={wrapLabel ? undefined : 1} adjustsFontSizeToFit={!wrapLabel} style={textTone}>{label}</Text>
+          <Text
+            numberOfLines={compact ? 2 : wrapLabel ? undefined : 1}
+            adjustsFontSizeToFit={compact || !wrapLabel}
+            minimumFontScale={0.85}
+            style={[textTone, { writingDirection: direction, textAlign: "center", flexShrink: 1 }, compact && styles.tileLabel, direction === "rtl" && { lineHeight: compact ? 20 : 24 }]}
+          >
+            {label}
+          </Text>
           {trailingIcon}
         </View>
       )}
@@ -172,14 +276,18 @@ export function MotionView({
   distance = 10,
   duration = motion.component,
   ...props
-}: PropsWithChildren<Omit<ViewProps, "style"> & {
-  style?: StyleProp<ViewStyle>;
-  distance?: number;
-  duration?: number;
-}>) {
+}: PropsWithChildren<
+  Omit<ViewProps, "style"> & {
+    style?: StyleProp<ViewStyle>;
+    distance?: number;
+    duration?: number;
+  }
+>) {
   const reducedMotion = useReducedMotion();
   const [opacity] = useState(() => new Animated.Value(reducedMotion ? 1 : 0));
-  const [translateY] = useState(() => new Animated.Value(reducedMotion ? 0 : distance));
+  const [translateY] = useState(
+    () => new Animated.Value(reducedMotion ? 0 : distance),
+  );
 
   useEffect(() => {
     if (reducedMotion) {
@@ -189,12 +297,19 @@ export function MotionView({
     }
     Animated.parallel([
       Animated.timing(opacity, { duration, toValue: 1, useNativeDriver: true }),
-      Animated.timing(translateY, { duration, toValue: 0, useNativeDriver: true }),
+      Animated.timing(translateY, {
+        duration,
+        toValue: 0,
+        useNativeDriver: true,
+      }),
     ]).start();
   }, [duration, opacity, reducedMotion, translateY]);
 
   return (
-    <Animated.View {...props} style={[style, { opacity, transform: [{ translateY }] }]}>
+    <Animated.View
+      {...props}
+      style={[style, { opacity, transform: [{ translateY }] }]}
+    >
       {children}
     </Animated.View>
   );
@@ -213,8 +328,12 @@ export function EmptyState({
 }>) {
   return (
     <View style={styles.emptyState}>
-      <View accessibilityElementsHidden style={styles.emptyIcon}>{icon}</View>
-      <AppText variant="heading" style={styles.emptyTitle}>{title}</AppText>
+      <View accessibilityElementsHidden style={styles.emptyIcon}>
+        {icon}
+      </View>
+      <AppText variant="heading" style={styles.emptyTitle}>
+        {title}
+      </AppText>
       <AppText style={styles.emptyDescription}>{description}</AppText>
       {action}
     </View>
@@ -230,16 +349,30 @@ export function InlineLoadingDots() {
       opacity.setValue(1);
       return;
     }
-    const animation = Animated.loop(Animated.sequence([
-      Animated.timing(opacity, { duration: 420, toValue: 1, useNativeDriver: true }),
-      Animated.timing(opacity, { duration: 420, toValue: 0.35, useNativeDriver: true }),
-    ]));
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          duration: 420,
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          duration: 420,
+          toValue: 0.35,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
     animation.start();
     return () => animation.stop();
   }, [opacity, reducedMotion]);
 
   return (
-    <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={styles.loadingDots}>
+    <View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={styles.loadingDots}
+    >
       {[0, 1, 2].map((dot) => (
         <Animated.View key={dot} style={[styles.loadingDot, { opacity }]} />
       ))}
@@ -248,19 +381,29 @@ export function InlineLoadingDots() {
 }
 
 export function SectionTitle({ children }: { children: ReactNode }) {
-  return <AppText variant="heading" style={styles.sectionTitle}>{children}</AppText>;
+  return (
+    <AppText accessibilityRole="header" variant="heading" style={styles.sectionTitle}>
+      {children}
+    </AppText>
+  );
 }
 
 export function StatusMessage({
   children,
   tone = "info",
-}: { children: ReactNode; tone?: "info" | "success" | "error" }) {
+}: {
+  children: ReactNode;
+  tone?: "info" | "success" | "error";
+}) {
   return (
-    <View accessibilityRole="alert" style={[
-      styles.status,
-      tone === "success" && styles.statusSuccess,
-      tone === "error" && styles.statusError,
-    ]}>
+    <View
+      accessibilityRole="alert"
+      style={[
+        styles.status,
+        tone === "success" && styles.statusSuccess,
+        tone === "error" && styles.statusError,
+      ]}
+    >
       <AppText>{children}</AppText>
     </View>
   );
@@ -269,10 +412,24 @@ export function StatusMessage({
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.background },
   screenContent: {
+    width: "100%",
+    maxWidth: layout.contentWidth,
+    alignSelf: "center",
     paddingHorizontal: spacing.lg,
     paddingTop: SCREEN_TOP_SPACING,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl,
+    gap: spacing.md,
+    paddingBottom: spacing.lg,
+  },
+  smallScreen: { paddingHorizontal: spacing.md },
+  footer: {
+    width: "100%",
+    maxWidth: layout.contentWidth,
+    alignSelf: "center",
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.background,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
   },
   text: { color: colors.text },
   card: {
@@ -282,11 +439,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.md,
     gap: spacing.sm,
-    shadowColor: "#171717",
-    shadowOpacity: 0.045,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 1,
+    ...shadows.card,
   },
   pressableSurface: { minHeight: 44 },
   pressableSurfacePressed: { opacity: 0.88, transform: [{ scale: 0.985 }] },
@@ -304,10 +457,20 @@ const styles = StyleSheet.create({
   successButton: { backgroundColor: colors.success },
   buttonText: { color: "#FFFFFF", ...typography.label },
   secondaryButtonText: { color: colors.primary, ...typography.label },
-  buttonContent: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
+  buttonContent: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  tileContent: { flexDirection: "column", gap: spacing.sm, width: "100%" },
+  tileLabel: { fontSize: 12, lineHeight: 16, textAlign: "center" },
   disabled: { opacity: 0.55 },
   sectionTitle: { marginTop: spacing.sm },
-  status: { borderRadius: radius.md, backgroundColor: "#EEF2FF", padding: spacing.md },
+  status: {
+    borderRadius: radius.md,
+    backgroundColor: colors.primarySoft,
+    padding: spacing.md,
+  },
   statusSuccess: { backgroundColor: colors.successSoft },
   statusError: { backgroundColor: colors.dangerSoft },
   emptyState: {
@@ -325,7 +488,16 @@ const styles = StyleSheet.create({
     width: 64,
   },
   emptyTitle: { textAlign: "center" },
-  emptyDescription: { color: colors.textMuted, maxWidth: 300, textAlign: "center" },
+  emptyDescription: {
+    color: colors.textMuted,
+    maxWidth: 300,
+    textAlign: "center",
+  },
   loadingDots: { alignItems: "center", flexDirection: "row", gap: 4 },
-  loadingDot: { backgroundColor: colors.primary, borderRadius: 4, height: 6, width: 6 },
+  loadingDot: {
+    backgroundColor: colors.primary,
+    borderRadius: 4,
+    height: 6,
+    width: 6,
+  },
 });

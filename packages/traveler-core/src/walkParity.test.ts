@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildWalk,
+  buildWalkSteps,
   deadlineForToday,
   measureWalk,
   type WalkSettings,
@@ -200,5 +201,23 @@ describe("shared V2 cross-platform rules", () => {
     expect(walkCategoryLabel("new-city-tag", "en")).toBe("new city tag");
     expect(isCityLaunched("hamburg")).toBe(false);
     expect(cityLaunches.hamburg.status).toBe("coming_soon");
+  });
+});
+
+
+describe("observable planner work units", () => {
+  it.each(["easy", "balanced", "long"] as const)("keeps %s routes identical to synchronous planning", (walking) => {
+    const input = { ...settings, walking };
+    const steps = buildWalkSteps(places, input, 1000000);
+    const observed = [];
+    let result = steps.next();
+    while (!result.done) { observed.push(result.value); result = steps.next(); }
+    expect(observed).toEqual(["matching", "checking", "fitting", "choosing"]);
+    expect(result.value).toEqual(buildWalk(places, input, 1000000));
+  });
+  it("never reports later stages after an invalid time budget", () => {
+    const steps = buildWalkSteps(places, { ...settings, minutes: -1 });
+    expect(steps.next().value).toBe("matching");
+    expect(() => steps.next()).toThrow("Invalid time budget");
   });
 });

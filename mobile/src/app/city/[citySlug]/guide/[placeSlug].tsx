@@ -1,3 +1,4 @@
+import { NativeBrand, NativeBottomNavigation } from "../../../../components/NativeChrome";
 import { buildWalkGuideContext } from "@citywalk/traveler-core/walkGuideContext";
 import { remainingWalkBudget } from "@citywalk/traveler-core/walkJourney";
 import { loadActiveWalk } from "../../../../lib/walkStorage";
@@ -186,7 +187,7 @@ export default function GuideScreen() {
   const sendDisabled = !canSend;
 
   return (
-    <SafeAreaView edges={getScreenSafeAreaEdges(false)} style={[styles.safeArea, { direction }]}>
+    <SafeAreaView edges={getScreenSafeAreaEdges(true)} style={[styles.safeArea, { direction }]}>
       <Stack.Screen options={{ title: messages.askGuideTitle }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -198,6 +199,7 @@ export default function GuideScreen() {
           keyboardShouldPersistTaps="handled"
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
         >
+          <NativeBrand />
           <View style={styles.guideHeader}>
             <View style={styles.guideIdentity}>
               <View style={styles.guideIcon}>
@@ -305,6 +307,7 @@ export default function GuideScreen() {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
+      <NativeBottomNavigation />
     </SafeAreaView>
   );
 }
@@ -385,16 +388,17 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.background },
   keyboardView: { flex: 1 },
   conversation: {
+    width: "100%", maxWidth: 480, alignSelf: "center",
     flexGrow: 1,
     gap: spacing.lg,
     paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,
     paddingTop: SCREEN_TOP_SPACING,
   },
-  guideHeader: { gap: spacing.sm },
+  guideHeader: { gap: spacing.sm, borderRadius: radius.hero, padding: spacing.md, backgroundColor: colors.surfaceMuted },
   guideIdentity: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
   guideIcon: {
-    alignItems: "center", backgroundColor: "#DBEAFE", borderRadius: radius.pill,
+    alignItems: "center", backgroundColor: colors.primarySoft, borderRadius: radius.pill,
     height: 40, justifyContent: "center", width: 40,
   },
   guideHeading: { flex: 1 },
@@ -442,6 +446,7 @@ const styles = StyleSheet.create({
   sourcePressed: { opacity: 0.65 },
   sourceText: { color: colors.primary, textDecorationLine: "underline" },
   composer: {
+    width: "100%", maxWidth: 480, alignSelf: "center",
     alignItems: "flex-end",
     backgroundColor: colors.surface,
     borderTopColor: colors.border,

@@ -10,8 +10,8 @@ import { AppText } from "./ui";
 
 const labels = { en: "EN", de: "DE", ar: "العربية" } as const;
 
-export function LocaleSelector() {
-  const { locale, messages, setLocale } = useNativeLocale();
+export function LocaleSelector({ showLabel = false }: { showLabel?: boolean }) {
+  const { locale, direction, messages, setLocale } = useNativeLocale();
   const [open, setOpen] = useState(false);
 
   return (
@@ -22,16 +22,31 @@ export function LocaleSelector() {
         accessibilityState={{ expanded: open }}
         hitSlop={6}
         onPress={() => setOpen(true)}
-        style={({ pressed }) => [styles.trigger, pressed && styles.pressed]}
+        style={({ pressed }) => [
+          styles.trigger,
+          { direction },
+          showLabel && styles.labelledTrigger,
+          pressed && styles.pressed,
+        ]}
       >
-        <NativeIcon ios="globe" android="language" />
+        <NativeIcon ios="globe" android="language" size={showLabel ? 16 : 22} />
+        {showLabel ? (
+          <Text style={styles.currentLanguage}>
+            {{ en: "English", de: "Deutsch", ar: "العربية" }[locale]}
+          </Text>
+        ) : null}
       </Pressable>
-      <Modal animationType="fade" onRequestClose={() => setOpen(false)} transparent visible={open}>
+      <Modal
+        animationType="fade"
+        onRequestClose={() => setOpen(false)}
+        transparent
+        visible={open}
+      >
         <Pressable
           accessibilityLabel={messages.close}
           accessibilityRole="button"
           onPress={() => setOpen(false)}
-          style={styles.backdrop}
+          style={[styles.backdrop, { direction }]}
         >
           <View accessibilityRole="radiogroup" style={styles.menu}>
             <AppText variant="heading">{messages.language}</AppText>
@@ -47,7 +62,12 @@ export function LocaleSelector() {
                 }}
                 style={[styles.option, candidate === locale && styles.selected]}
               >
-                <Text style={[styles.label, candidate === locale && styles.selectedLabel]}>
+                <Text
+                  style={[
+                    styles.label,
+                    candidate === locale && styles.selectedLabel,
+                  ]}
+                >
                   {labels[candidate]}
                 </Text>
               </Pressable>
@@ -70,7 +90,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 44,
   },
-  pressed: { backgroundColor: colors.surfaceMuted, transform: [{ scale: 0.96 }] },
+  labelledTrigger: {
+    width: "auto",
+    flexDirection: "row",
+    gap: spacing.xs,
+    paddingHorizontal: spacing.sm,
+  },
+  currentLanguage: { ...typography.caption, color: colors.textMuted },
+  pressed: {
+    backgroundColor: colors.surfaceMuted,
+    transform: [{ scale: 0.96 }],
+  },
   backdrop: {
     alignItems: "flex-end",
     backgroundColor: "rgba(23, 23, 23, 0.35)",

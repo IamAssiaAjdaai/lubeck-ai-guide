@@ -1,3 +1,4 @@
+import { LocaleSelector } from "../../components/LocaleSelector";
 import { Link, router, Stack, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
@@ -75,6 +76,7 @@ export default function AccountScreen() {
 
   return (
     <Screen>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}><AppText>{messages.language}</AppText><LocaleSelector /></View>
       <Stack.Screen options={{ title: messages.account }} />
       <View style={styles.introduction}>
         <View style={styles.accountIcon}>

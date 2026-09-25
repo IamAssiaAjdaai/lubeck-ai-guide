@@ -3,12 +3,31 @@ import { useState } from "react";
 import { View } from "react-native";
 import { colors } from "../design/tokens";
 import { NativeIcon } from "./NativeIcon";
-export function NativeContentImage(props: ImageProps) {
-  return <ContentImage key={JSON.stringify(props.source)} {...props} />;
+type ContentImageProps = ImageProps & { fallbackSource?: ImageProps["source"] };
+export function NativeContentImage(props: ContentImageProps) {
+  return (
+    <ContentImage
+      key={JSON.stringify([props.source, props.fallbackSource])}
+      {...props}
+    />
+  );
 }
-function ContentImage({ onError, ...props }: ImageProps) {
-  const [failed, setFailed] = useState(false);
-  if (failed || !props.source)
+function ContentImage({
+  onError,
+  fallbackSource,
+  ...props
+}: ContentImageProps) {
+  const [failures, setFailures] = useState(0);
+  const hasFallback =
+    fallbackSource &&
+    JSON.stringify(fallbackSource) !== JSON.stringify(props.source);
+  const source =
+    failures === 0
+      ? (props.source ?? fallbackSource)
+      : failures === 1 && hasFallback && props.source
+        ? fallbackSource
+        : undefined;
+  if (!source)
     return (
       <View
         accessible
@@ -33,8 +52,9 @@ function ContentImage({ onError, ...props }: ImageProps) {
   return (
     <Image
       {...props}
+      source={source}
       onError={(event) => {
-        setFailed(true);
+        setFailures((value) => value + 1);
         onError?.(event);
       }}
     />

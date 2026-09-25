@@ -11,10 +11,10 @@ import accountSource from "../src/app/account/index.tsx?raw";
 
 describe("native city experience parity", () => {
   it("renders city hero, published tour stops, and the personalized planner", () => {
-    expect(citySource).toContain('selectImageUrl(cityImage, undefined, undefined, "hero")');
+    expect(citySource).toContain("<V2Hero");
     expect(citySource).toContain('stopNames.join(" · ")');
     expect(citySource).toContain("messages.startTour");
-    expect(citySource).toContain("<NativeTourPlanner");
+    expect(citySource).toContain('pathname: "/city/[citySlug]/walk"');
     expect(citySource).toContain("<VirtualizedScreen");
     expect(citySource).toContain("initialNumToRender={4}");
     expect(citySource).toContain('cachePolicy="memory-disk"');
@@ -33,7 +33,7 @@ describe("native city experience parity", () => {
   it("exposes recommendations, time budgets, route summaries, and a local save boundary", () => {
     expect(plannerSource).toContain("rankNativePlaces");
     expect(walkSource).toContain("t.halfDay");
-    expect(walkSource).toContain("buildWalk(places, settings)");
+    expect(walkSource).toContain("buildWalkSteps(places, settings)");
     expect(walkSource).toContain("saveNativeWalk(journey)");
     expect(plannerSource).toContain("messages.distanceDisclaimer");
     expect(walkSource).toContain("t.startWalk");
