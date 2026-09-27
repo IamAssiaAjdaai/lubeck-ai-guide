@@ -72,7 +72,7 @@ describe("canonical native preview start and session reset", () => {
     try { await clearCurrentWalk("lubeck", current, store); expect(changed).toHaveBeenCalledWith(undefined); } finally { off(); }
     expect(await loadCurrentWalk("lubeck", store)).toBeUndefined();
     for (const [key, value] of before) if (!key.endsWith("active:lubeck")) expect(store.values.get(key)).toBe(value);
-    expect(await loadSavedWalks(store)).toEqual([draft]); expect(await loadSavedPlaces(store)).toHaveLength(1);
+    expect(await loadSavedWalks(store)).toMatchObject([draft]); expect(await loadSavedPlaces(store)).toHaveLength(1);
     expect([...store.values.values()].some(v => v.includes('"finishedAt"'))).toBe(false);
   });
   it("does not erase a concurrent membership edit or clear on failed persistence", async () => {

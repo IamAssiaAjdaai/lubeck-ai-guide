@@ -1,4 +1,5 @@
 import { getLocaleLabel, getSelectableLocales } from "@citywalk/i18n";
+import { experimentalLocalesEnabled } from "../localization/localePreference";
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -49,7 +50,7 @@ export function LocaleSelector({ showLabel = false }: { showLabel?: boolean }) {
           <View accessibilityRole="radiogroup" style={styles.menu}>
             <ScrollView contentContainerStyle={styles.options}>
             <AppText variant="heading">{messages.language}</AppText>
-            {getSelectableLocales(process.env.NODE_ENV === "development").map((candidate) => (
+            {getSelectableLocales(experimentalLocalesEnabled()).map((candidate) => (
               <Pressable
                 key={candidate}
                 accessibilityRole="radio"

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, ChevronDown, Globe2, Search, X } from "lucide-react";
 import posthog from "posthog-js";
 
+import { getSelectableLocales } from "@citywalk/i18n";
 import type { Locale } from "@/lib/i18n";
 
 type LanguageOption = { locale: Locale; nativeName: string };
@@ -23,10 +24,11 @@ export default function LanguageSelector({ currentLocale, label, closeLabel, opt
   const [isPending, startTransition] = useTransition();
   const currentLanguage = options.find((item) => item.locale === currentLocale)!;
   const filteredOptions = useMemo(() => {
+    const visible = getSelectableLocales().flatMap(locale => options.find(option => option.locale === locale) ?? []);
     const normalized = query.trim().toLocaleLowerCase();
     return normalized
-      ? options.filter((item) => item.nativeName.toLocaleLowerCase().includes(normalized))
-      : options;
+      ? visible.filter((item) => item.nativeName.toLocaleLowerCase().includes(normalized))
+      : visible;
   }, [options, query]);
 
   useEffect(() => {

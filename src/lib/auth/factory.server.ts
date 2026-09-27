@@ -1,6 +1,7 @@
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { expo } from "@better-auth/expo";
 import { betterAuth } from "better-auth";
+import { AUTH_MIN_PASSWORD_LENGTH, AUTH_MAX_PASSWORD_LENGTH } from "@citywalk/traveler-core";
 
 import * as authSchema from "@/db/authSchema";
 import { getDb } from "@/db/client";
@@ -34,8 +35,8 @@ export function createCitywalkAuth(
     emailAndPassword: {
       enabled: true,
       disableSignUp: !options.allowEmailSignUp,
-      minPasswordLength: 12,
-      maxPasswordLength: 128,
+      minPasswordLength: AUTH_MIN_PASSWORD_LENGTH,
+      maxPasswordLength: AUTH_MAX_PASSWORD_LENGTH,
       autoSignIn: false,
     },
     session: {

@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const storage = vi.hoisted(() => ({ data: new Map<string, string>(), get: vi.fn(), set: vi.fn() }));
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: storage.get, setItem: storage.set } }));
-import { LOCALE_PREFERENCE_KEY, localePreference, resolveDeviceLocale } from "../src/localization/localePreference";
+import { LOCALE_PREFERENCE_KEY, localePreference, resolveDeviceLocale, experimentalLocalesEnabled } from "../src/localization/localePreference";
 import { NativeLocaleProvider, useNativeLocale } from "../src/localization/LocaleProvider";
 function Traveler() {
   const { locale, setLocale } = useNativeLocale();
@@ -16,9 +16,9 @@ beforeEach(() => {
   storage.get.mockImplementation(async (key: string) => storage.data.get(key) ?? null);
   storage.set.mockImplementation(async (key: string, value: string) => { storage.data.set(key, value); });
 });
-afterEach(() => { cleanup(); vi.clearAllMocks(); });
+afterEach(() => { cleanup(); vi.clearAllMocks(); vi.unstubAllEnvs(); });
 describe("native locale preference", () => {
-  it.each([["de-DE", "de"], ["en-GB", "en"], ["da_DK", "da"], ["sv-SE", "sv"], ["nl-BE", "nl"], ["es-MX", "es"], ["AR-eg", "ar"], ["fr-FR", "en"], ["", "en"]])("resolves device variant %s to %s", (input, expected) => {
+  it.each([["de-DE", "de"], ["en-GB", "en"], ["da_DK", "da"], ["sv-SE", "sv"], ["nl-BE", "nl"], ["es-MX", "es"], ["AR-eg", "en"], ["fr-FR", "en"], ["", "en"]])("resolves device variant %s to %s", (input, expected) => {
     expect(resolveDeviceLocale(input)).toBe(expected);
   });
   it("persists language after restart without remounting traveler state or touching saved/walk data", async () => {
@@ -52,4 +52,23 @@ describe("native locale preference", () => {
     storage.set.mockRejectedValueOnce(new Error("full"));
     await expect(localePreference.write("de")).resolves.toBeUndefined();
   });
+});
+
+it("keeps Arabic available only through the explicit development policy", () => {
+  expect(resolveDeviceLocale("ar-EG", false)).toBe("en");
+  expect(resolveDeviceLocale("ar-EG", true)).toBe("ar");
+});
+it("does not automatically activate a previously stored Arabic locale at launch", async () => {
+  storage.data.set(LOCALE_PREFERENCE_KEY, "ar");
+  render(<NativeLocaleProvider><Traveler /></NativeLocaleProvider>);
+  await screen.findByText("en/home");
+  expect(storage.data.get(LOCALE_PREFERENCE_KEY)).toBe("ar");
+});
+
+it("requires explicit development opt-in and ignores it in production", () => {
+  vi.stubEnv("NODE_ENV", "production"); vi.stubEnv("EXPO_PUBLIC_EXPERIMENTAL_LOCALES", "1");
+  expect(experimentalLocalesEnabled()).toBe(false); expect(resolveDeviceLocale("ar-EG")).toBe("en");
+  vi.stubEnv("NODE_ENV", "development"); expect(experimentalLocalesEnabled()).toBe(true);
+  expect(resolveDeviceLocale("ar-EG")).toBe("ar");
+  vi.stubEnv("EXPO_PUBLIC_EXPERIMENTAL_LOCALES", ""); expect(experimentalLocalesEnabled()).toBe(false);
 });

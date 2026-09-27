@@ -2,8 +2,9 @@ import {
   isWalkJourney,
   type WalkJourney,
 } from "@citywalk/traveler-core/walkJourney";
-import { isEligibleTourPlace } from "@citywalk/traveler-core";
+import { isEligibleTourPlace, savedRouteIdentity } from "@citywalk/traveler-core";
 import type { PublicPlaceCard } from "./api/contracts";
+export { savedRouteIdentity } from "@citywalk/traveler-core";
 
 export type WalkStore = {
   getItem(key: string): Promise<string | null>;
@@ -31,6 +32,34 @@ function mutate<T>(work: () => Promise<T>): Promise<T> {
   queue = next.catch(() => undefined);
   return next;
 }
+// Native-only save lineage; session IDs and progress remain independent.
+export type SavedWalk = WalkJourney & { savedAt?: number; updatedAt?: number };
+type LinkedJourney = WalkJourney & { savedWalkId?: string };
+const savedListeners = new Set<(walks: SavedWalk[]) => void>();
+export function subscribeSavedWalks(listener: (walks: SavedWalk[]) => void) {
+  savedListeners.add(listener);
+  return () => { savedListeners.delete(listener); };
+}
+function notifySavedWalks(walks: SavedWalk[]) { savedListeners.forEach(listener => listener(walks)); }
+// Planned visit order survives normal progress (visited prefix + remaining suffix).
+// Skip/remove/shorten change the itinerary; locale, clocks and current position do not.
+export function savedWalkState(journey: WalkJourney, walks: readonly SavedWalk[]) {
+  const sameCity = walks.filter(walk => walk.citySlug === journey.citySlug);
+  const linkedId = (journey as LinkedJourney).savedWalkId;
+  const record = sameCity.find(walk => walk.id === linkedId)
+    ?? sameCity.find(walk => walk.id === journey.id)
+    ?? sameCity.find(walk => savedRouteIdentity(walk) === savedRouteIdentity(journey));
+  return { record, status: !record ? "unsaved" as const
+    : savedRouteIdentity(record) === savedRouteIdentity(journey) ? "saved" as const : "changed" as const };
+}
+export function reopenSavedWalk(record: WalkJourney, sessionId: string): WalkJourney {
+  const { savedAt: _savedAt, updatedAt: _updatedAt, ...route } = record as SavedWalk;
+  return { ...route, savedWalkId: record.id, id: sessionId,
+    remaining: [...new Set([...record.visited, ...record.remaining])], visited: [],
+    position: record.settings.start, historyDistance: 0, startedAt: Date.now(), finishedAt: undefined,
+    settings: { ...record.settings, deadline: undefined },
+  } as LinkedJourney;
+}
 export type CurrentWalk = { journey: WalkJourney; phase: "preview" | "active" };
 const listeners = new Map<string, Set<(current: CurrentWalk | undefined) => void>>();
 export function subscribeCurrentWalk(city: string, listener: (current: CurrentWalk | undefined) => void) {
@@ -55,11 +84,21 @@ export async function loadActiveWalk(city: string, store?: WalkStore) {
 }
 async function writeCurrent(current: CurrentWalk, target: WalkStore) {
   if (!isWalkJourney(current.journey)) throw new Error("Invalid journey");
-  const journey = uniqueJourney(current.journey);
+  const previous = await read(activeKey(current.journey.citySlug), target);
+  const linkedId = isWalkJourney(previous) && previous.id === current.journey.id
+    ? (previous as LinkedJourney).savedWalkId : undefined;
+  const accountLink = isWalkJourney(previous) && previous.id === current.journey.id
+    ? previous as WalkJourney & { accountSavedWalkId?: string; accountSavedUserId?: string } : undefined;
+  const journey = uniqueJourney({ ...current.journey,
+    ...(accountLink?.accountSavedWalkId ? { accountSavedWalkId: accountLink.accountSavedWalkId, accountSavedUserId: accountLink.accountSavedUserId } : {}),
+    ...((current.journey as LinkedJourney).savedWalkId || linkedId
+      ? { savedWalkId: (current.journey as LinkedJourney).savedWalkId ?? linkedId } : {}),
+  });
   await target.setItem(activeKey(journey.citySlug), JSON.stringify(
     current.phase === "preview" ? { ...journey, nativePhase: "preview" } : journey,
   ));
   notifyCurrentWalk(journey.citySlug, journey.finishedAt ? undefined : { ...current, journey });
+  return journey;
 }
 export async function persistCurrentWalk(journey: WalkJourney, phase: CurrentWalk["phase"], store?: WalkStore) {
   return mutate(async () => writeCurrent({ journey, phase }, store ?? await defaultStore()));
@@ -121,20 +160,21 @@ export async function changeCurrentWalk(
     const next = change(await loadCurrentWalk(city, target));
     if (next.journey.citySlug !== city) throw new Error("Wrong walk city");
     const normalized = { ...next, journey: uniqueJourney(next.journey) };
-    await writeCurrent(normalized, target);
-    return normalized;
+    const journey = await writeCurrent(normalized, target);
+    return { ...normalized, journey };
   });
 }
 export async function loadSavedWalks(
   store?: WalkStore,
-): Promise<WalkJourney[]> {
+): Promise<SavedWalk[]> {
   const value = await read(savedKey, store ?? (await defaultStore()));
   return Array.isArray(value) ? value.filter(isWalkJourney) : [];
 }
 export async function saveNativeWalk(journey: WalkJourney, places: readonly PublicPlaceCard[], contentReady = true, store?: WalkStore) {
+  if (!store) throw new Error("account-required"); // Historical local helper is not a production save path.
   if (!isWalkJourney(journey)) throw new Error("Invalid journey");
   return mutate(async () => {
-    const target = store ?? (await defaultStore());
+    const target = store;
     const suppliedStatus = walkSaveStatus(journey, places, contentReady);
     if (suppliedStatus !== "ready") throw new Error(`walk-save-${suppliedStatus}`);
     // Read the persisted session under the same queue as membership/removal.
@@ -145,15 +185,27 @@ export async function saveNativeWalk(journey: WalkJourney, places: readonly Publ
     if (status !== "ready") throw new Error(`walk-save-${status}`);
     const { nativePhase: _phase, ...savedJourney } = current as WalkJourney & { nativePhase?: string };
     const existing = await loadSavedWalks(target);
-    await target.setItem(
-      savedKey,
-      JSON.stringify([
-        uniqueJourney(savedJourney),
-        ...existing.filter(
-          (w) => w.id !== journey.id || w.citySlug !== journey.citySlug,
-        ),
-      ]),
-    );
+    const match = savedWalkState(savedJourney, existing);
+    const id = match.record?.id ?? savedJourney.id;
+    // Persist lineage on the current session, never changing membership/progress.
+    // A failed saved write can leave a harmless unresolved link, never a false Saved state.
+    const linked = { ...current, savedWalkId: id };
+    if ((current as LinkedJourney).savedWalkId !== id) {
+      await target.setItem(activeKey(journey.citySlug), JSON.stringify(linked));
+    }
+    if (match.status !== "saved") {
+      const { savedWalkId: _link, ...route } = uniqueJourney(savedJourney) as LinkedJourney;
+      const stamp = Date.now();
+      const record: SavedWalk = { ...route, id,
+        // Do not invent creation times for historical records.
+        ...(match.record ? { savedAt: match.record.savedAt } : { savedAt: stamp }), updatedAt: stamp };
+      const next = [...existing];
+      if (match.record) next[existing.indexOf(match.record)] = record;
+      else next.unshift(record);
+      await target.setItem(savedKey, JSON.stringify(next));
+      notifySavedWalks(next);
+    } else notifySavedWalks(existing);
+    return { ...savedJourney, savedWalkId: id } as LinkedJourney;
   });
 }
 export async function removeNativeWalk(
@@ -164,12 +216,9 @@ export async function removeNativeWalk(
   return mutate(async () => {
     const target = store ?? (await defaultStore());
     const existing = await loadSavedWalks(target);
-    await target.setItem(
-      savedKey,
-      JSON.stringify(
-        existing.filter((w) => w.id !== id || w.citySlug !== city),
-      ),
-    );
+    const next = existing.filter(w => w.id !== id || w.citySlug !== city);
+    await target.setItem(savedKey, JSON.stringify(next));
+    notifySavedWalks(next);
   });
 }
 export async function loadSavedPlaces(
@@ -216,4 +265,21 @@ export async function saveWalkFeedback(
     `citywalk:native:v2:feedback:${id}:${key}`,
     value,
   );
+}
+
+// Account save re-reads under the same queue as remove-last-stop and membership.
+export async function saveCurrentAccountWalk(
+  journey: WalkJourney, places: readonly PublicPlaceCard[], ready: boolean,
+  persist: (current: WalkJourney) => Promise<{ accountSavedWalkId: string; accountSavedUserId: string }>, store?: WalkStore,
+) {
+  return mutate(async () => {
+    const target = store ?? await defaultStore();
+    const current = await read(activeKey(journey.citySlug), target);
+    if (!isWalkJourney(current) || current.id !== journey.id || current.citySlug !== journey.citySlug) throw new Error("walk-changed");
+    const status = walkSaveStatus(current, places, ready);
+    if (status !== "ready") throw new Error(`walk-save-${status}`);
+    const link = await persist(current);
+    await target.setItem(activeKey(current.citySlug), JSON.stringify({ ...current, ...link }));
+    return { ...current, ...link };
+  });
 }

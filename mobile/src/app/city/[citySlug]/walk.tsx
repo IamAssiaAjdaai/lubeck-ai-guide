@@ -14,6 +14,7 @@ export default function WalkScreen() {
   const params = useLocalSearchParams<{
     citySlug: string;
     saved?: string;
+    source?: string;
     add?: string;
   }>();
   const identity = parseCityRouteIdentity(params.citySlug);
@@ -49,6 +50,7 @@ export default function WalkScreen() {
         places={data.places}
         contentStatus={state.status}
         savedId={params.saved}
+      accountSaved={params.source === "account"}
         addSlug={params.add}
       />
     </>

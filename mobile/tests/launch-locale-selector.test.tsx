@@ -14,7 +14,7 @@ vi.mock("react-native", () => ({
 vi.mock("../src/components/NativeIcon", () => ({ NativeIcon: () => null }));
 vi.mock("../src/lib/haptics", () => ({ triggerCitywalkHaptic: vi.fn(async () => undefined) }));
 vi.mock("../src/components/ui", () => ({ AppText: ({ children }: React.PropsWithChildren) => <span>{children}</span> }));
-vi.mock("../src/localization/localePreference", () => ({ deviceLocale: () => "en", localePreference: { read: async () => null, write: async () => undefined } }));
+vi.mock("../src/localization/localePreference", () => ({ experimentalLocalesEnabled: () => process.env.NODE_ENV === "development" && process.env.EXPO_PUBLIC_EXPERIMENTAL_LOCALES === "1", resolveDeviceLocale: (locale: string) => locale, deviceLocale: () => "en", localePreference: { read: async () => null, write: async () => undefined } }));
 import { LocaleSelector } from "../src/components/LocaleSelector";
 import { NativeLocaleProvider, useNativeLocale } from "../src/localization/LocaleProvider";
 function Example() {
@@ -36,7 +36,7 @@ describe("single native launch-language selector", () => {
     expect(screen.getByText(t(locale, "assistant.sendQuestion"))).toBeTruthy();
   });
   it("retains experimental Arabic and its RTL metadata in development", () => {
-    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("NODE_ENV", "development"); vi.stubEnv("EXPO_PUBLIC_EXPERIMENTAL_LOCALES", "1");
     render(<NativeLocaleProvider><Example /></NativeLocaleProvider>);
     fireEvent.click(screen.getByRole("button", { name: "Language" }));
     expect(screen.getAllByRole("radio")).toHaveLength(7);

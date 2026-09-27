@@ -32,3 +32,10 @@ export type LaunchLocale = (typeof launchLocales)[number];
 export function getSelectableLocales(includeExperimental = false): readonly SharedLocale[] {
   return includeExperimental ? [...launchLocales, ...sharedLocales.filter(locale => !launchLocales.some(launch => launch === locale))] : launchLocales;
 }
+
+export const supportedLocales = sharedLocales;
+export const launchVisibleLocales = launchLocales;
+export function resolveVisibleLocale(locale: string, includeExperimental = false): SharedLocale {
+  const language = locale.trim().replace(/_/g, "-").split("-")[0].toLowerCase();
+  return getSelectableLocales(includeExperimental).some(candidate => candidate === language) ? language as SharedLocale : fallbackLocale;
+}
