@@ -1,5 +1,7 @@
 # Saved walks and guest-first Account — 2026-09-27
 
+> **Current acceptance — 2026-09-27:** [Physical iPhone acceptance and final validation](physical-acceptance.md) supersedes the pending deployment/device status below for this feature. This document retains its earlier implementation/review evidence; its historical counts and operational restrictions describe that earlier checkpoint. Android physical and release-build acceptance remain unverified.
+
 **Subsequent product decision:** [Launch visibility and account Saved Walks](account-saved-walks.md) supersedes the local-only permanent-save policy and Account benefit limitations below. These earlier results remain historical; existing local records are preserved.
 
 Implementation review only. **Account UX is superseded by [Account/Profile hardening](account-hardening.md); validation below records the preceding saved-walk/guest-first checkpoint.** Branch `feat/saved-walk-account-ux`, based on `74684d3faad7df3d5ed9e2b63173125debb87fae` (merged PR #142). The held media/tooling stash was not applied. No backend, auth-provider, environment, payment, media, or native dependency changes. No build, deployment, publication, commit or push.

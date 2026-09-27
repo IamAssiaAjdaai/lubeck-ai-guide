@@ -1,5 +1,7 @@
 # Account Saved Walks — Preview acceptance review — 2026-09-27
 
+> **Current acceptance — 2026-09-27:** [Physical iPhone acceptance and final validation](physical-acceptance.md) supersedes the pending deployment/device status below for this feature. This document retains its earlier implementation/review evidence; its historical counts and operational restrictions describe that earlier checkpoint. Android physical and release-build acceptance remain unverified.
+
 Branch: `feat/saved-walk-account-ux`. HEAD and freshly fetched `origin/develop`: `74684d3faad7df3d5ed9e2b63173125debb87fae`. Index unchanged/empty. All existing local work preserved. No stash operation, source reset, commit, push, build, deployment, Preview migration, configuration change or publication.
 
 The owner accepts the six-language launch policy, retained technical Arabic support, guest-first core, account-required permanent Saved Walks and separately preserved historical local saves. This accepts product direction, not new physical/backend deployment results. Previously confirmed iPhone behavior remains recorded in the preceding reports; no new iPhone, Android or release acceptance is claimed here.

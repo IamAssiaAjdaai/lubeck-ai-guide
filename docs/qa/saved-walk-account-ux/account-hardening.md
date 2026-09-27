@@ -1,5 +1,7 @@
 # Account/Profile hardening — 2026-09-27
 
+> **Current acceptance — 2026-09-27:** [Physical iPhone acceptance and final validation](physical-acceptance.md) supersedes the pending deployment/device status below for this feature. This document retains its earlier implementation/review evidence; its historical counts and operational restrictions describe that earlier checkpoint. Android physical and release-build acceptance remain unverified.
+
 **Subsequent product decision:** [Launch visibility and account Saved Walks](account-saved-walks.md) supersedes the local-only permanent-save policy and Account benefit limitations below. These earlier results remain historical; existing local records are preserved.
 
 Branch: `feat/saved-walk-account-ux`; base HEAD: `74684d3faad7df3d5ed9e2b63173125debb87fae`. This extends the uncommitted saved-walk/guest-first work. Nothing staged, committed, pushed, built, deployed or published. No stash, provider/configuration, database, payment, storage or media changes. No remote auth/account mutations were performed for this task.

@@ -1,5 +1,7 @@
 # Launch language visibility and account Saved Walks — 2026-09-27
 
+> **Current acceptance — 2026-09-27:** [Physical iPhone acceptance and final validation](physical-acceptance.md) supersedes the pending deployment/device status below for this feature. This document retains its earlier implementation/review evidence; its historical counts and operational restrictions describe that earlier checkpoint. Android physical and release-build acceptance remain unverified.
+
 **Follow-up:** [Preview acceptance safety review](preview-acceptance-review.md) records the later real-auth/locked-dependency checks, migration upgrade evidence and operational deployment prerequisites. Earlier counts below remain historical.
 
 
