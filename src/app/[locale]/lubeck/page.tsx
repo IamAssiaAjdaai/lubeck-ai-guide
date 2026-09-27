@@ -1,3 +1,4 @@
+import { getLubeckEditorial } from "@/data/lubeckEditorial";
 import { PublicContentNotFoundError } from "@/lib/content/errors";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
@@ -6,7 +7,7 @@ import CityExperience from "@/components/travel/CityExperience";
 import { cities } from "@/data/cities";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { getContentSource } from "@/lib/content/source";
-import { getTranslations, isLocale, locales } from "@/lib/i18n";
+import { isLocale, locales } from "@/lib/i18n";
 
 type LubeckPageProps = {
   params: Promise<{
@@ -39,7 +40,7 @@ export default async function LubeckPage({ params }: LubeckPageProps) {
       locale={locale}
       snapshot={snapshot}
       contentSource={contentSource}
-      heading={getTranslations(locale).explore.title}
+      heading={getLubeckEditorial(locale)["explore.title"]}
       headingLocale={locale}
       legacyCityImage={city.heroImage}
       plannerId={city.tourId}

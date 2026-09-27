@@ -1,14 +1,12 @@
+import { getLocaleLabel, getSelectableLocales } from "@citywalk/i18n";
 import { useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
-import { NATIVE_LOCALES } from "../lib/localization";
 import { triggerCitywalkHaptic } from "../lib/haptics";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { NativeIcon } from "./NativeIcon";
 import { AppText } from "./ui";
-
-const labels = { en: "EN", de: "DE", ar: "العربية" } as const;
 
 export function LocaleSelector({ showLabel = false }: { showLabel?: boolean }) {
   const { locale, direction, messages, setLocale } = useNativeLocale();
@@ -32,7 +30,7 @@ export function LocaleSelector({ showLabel = false }: { showLabel?: boolean }) {
         <NativeIcon ios="globe" android="language" size={showLabel ? 16 : 22} />
         {showLabel ? (
           <Text style={styles.currentLanguage}>
-            {{ en: "English", de: "Deutsch", ar: "العربية" }[locale]}
+            {getLocaleLabel(locale)}
           </Text>
         ) : null}
       </Pressable>
@@ -49,8 +47,9 @@ export function LocaleSelector({ showLabel = false }: { showLabel?: boolean }) {
           style={[styles.backdrop, { direction }]}
         >
           <View accessibilityRole="radiogroup" style={styles.menu}>
+            <ScrollView contentContainerStyle={styles.options}>
             <AppText variant="heading">{messages.language}</AppText>
-            {NATIVE_LOCALES.map((candidate) => (
+            {getSelectableLocales(process.env.NODE_ENV === "development").map((candidate) => (
               <Pressable
                 key={candidate}
                 accessibilityRole="radio"
@@ -68,10 +67,11 @@ export function LocaleSelector({ showLabel = false }: { showLabel?: boolean }) {
                     candidate === locale && styles.selectedLabel,
                   ]}
                 >
-                  {labels[candidate]}
+                  {getLocaleLabel(candidate)}
                 </Text>
               </Pressable>
             ))}
+            </ScrollView>
           </View>
         </Pressable>
       </Modal>
@@ -112,10 +112,11 @@ const styles = StyleSheet.create({
   menu: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
-    gap: spacing.xs,
+    maxHeight: "80%",
     minWidth: 210,
     padding: spacing.md,
   },
+  options: { gap: spacing.xs },
   option: {
     alignItems: "center",
     borderRadius: radius.md,

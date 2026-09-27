@@ -1,9 +1,9 @@
 import { Image, type ImageProps } from "expo-image";
-import { useState } from "react";
+import { useState, type ComponentProps } from "react";
 import { View } from "react-native";
-import { colors } from "../design/tokens";
+import { colors, motion } from "../design/tokens";
 import { NativeIcon } from "./NativeIcon";
-type ContentImageProps = ImageProps & { fallbackSource?: ImageProps["source"] };
+type ContentImageProps = ImageProps & { fallbackSource?: ImageProps["source"]; placeholderIcon?: Pick<ComponentProps<typeof NativeIcon>, "ios" | "android"> };
 export function NativeContentImage(props: ContentImageProps) {
   return (
     <ContentImage
@@ -15,6 +15,7 @@ export function NativeContentImage(props: ContentImageProps) {
 function ContentImage({
   onError,
   fallbackSource,
+  placeholderIcon,
   ...props
 }: ContentImageProps) {
   const [failures, setFailures] = useState(0);
@@ -42,8 +43,8 @@ function ContentImage({
         ]}
       >
         <NativeIcon
-          ios="photo"
-          android="image"
+          ios={placeholderIcon?.ios ?? "photo"}
+          android={placeholderIcon?.android ?? "image"}
           color={colors.primary}
           size={32}
         />
@@ -53,6 +54,9 @@ function ContentImage({
     <Image
       {...props}
       source={source}
+      placeholder={props.placeholder ?? require("../../assets/images/content-placeholder.svg")}
+      placeholderContentFit="cover"
+      transition={props.transition ?? motion.component}
       onError={(event) => {
         setFailures((value) => value + 1);
         onError?.(event);

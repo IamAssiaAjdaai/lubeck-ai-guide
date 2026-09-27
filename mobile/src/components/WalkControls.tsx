@@ -2,11 +2,13 @@ import { useState, type ComponentProps } from "react";
 import {
   Modal,
   StyleSheet,
+  Text,
   TextInput,
   View,
   useWindowDimensions,
 } from "react-native";
 import { AppText, PressableSurface, PrimaryButton, Screen } from "./ui";
+import { useResponsiveTextLayout } from "../design/responsiveText";
 import { NativeIcon } from "./NativeIcon";
 import {
   colors,
@@ -44,6 +46,7 @@ export function WalkChoices<T extends string | number>({
   help,
   number,
   showHeading = true,
+  compact = false,
 }: {
   label: string;
   options: readonly { value: T; label: string; description?: string }[];
@@ -54,8 +57,12 @@ export function WalkChoices<T extends string | number>({
   help?: string;
   number?: number;
   showHeading?: boolean;
+  compact?: boolean;
 }) {
   const { width } = useWindowDimensions();
+  const { categoryColumns } = useResponsiveTextLayout();
+  const wrapSegments = compact && options.length > categoryColumns;
+  const { direction } = useNativeLocale();
   return (
     <View style={styles.section}>
       {label && showHeading ? (
@@ -80,6 +87,7 @@ export function WalkChoices<T extends string | number>({
           styles.options,
           variant === "segment" && styles.segment,
           variant === "radio" && styles.radioList,
+          compact && [styles.compactOptions, { direction, flexWrap: wrapSegments ? "wrap" : "nowrap" }],
         ]}
       >
         {options.map((option) => {
@@ -107,6 +115,7 @@ export function WalkChoices<T extends string | number>({
                 variant === "radio" && styles.radio,
                 checked && styles.selected,
                 variant === "segment" && checked && styles.activeSegment,
+                compact && [styles.compactOption, wrapSegments && { flexBasis: "45%" }],
               ]}
             >
               {icon ? (
@@ -122,8 +131,8 @@ export function WalkChoices<T extends string | number>({
                   />
                 </View>
               ) : null}
-              <View style={variant === "time" ? undefined : styles.optionText}>
-                <AppText
+              <View style={compact ? { minWidth: 0, flexShrink: 1, width: "100%" } : variant === "time" ? undefined : styles.optionText}>
+                {compact ? <Text style={[styles.compactLabel, { writingDirection: direction }, variant === "segment" && checked && { color: colors.surface }]}>{option.label}</Text> : <AppText
                   variant={variant === "time" ? "heading" : "metadata"}
                   style={
                     variant === "segment" && checked
@@ -132,7 +141,7 @@ export function WalkChoices<T extends string | number>({
                   }
                 >
                   {option.label}
-                </AppText>
+                </AppText>}
                 {option.description ? (
                   <AppText variant="metadata" style={styles.muted}>
                     {option.description}
@@ -313,6 +322,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xs,
   },
   activeSegment: { backgroundColor: colors.primary },
+  compactOptions: { alignSelf: "stretch", width: "100%", borderRadius: radius.sm },
+  compactOption: { flex: 1, flexGrow: 1, flexBasis: 0, minWidth: 0, minHeight: 44, paddingVertical: spacing.sm, paddingHorizontal: spacing.xs, borderRadius: 10, flexDirection: "row" },
+  compactLabel: { ...typography.metadata, color: colors.text, textAlign: "center" },
   radioList: { flexDirection: "column" },
   radio: { flexBasis: "auto", width: "100%" },
   input: {

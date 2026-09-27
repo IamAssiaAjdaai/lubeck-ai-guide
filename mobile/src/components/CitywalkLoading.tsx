@@ -5,14 +5,18 @@ import { colors, radius, spacing } from "../design/tokens";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { useReducedMotion } from "../lib/motion";
 import { AppText } from "./ui";
+import { discoveryCopy } from "../design/discoveryCopy";
 
 type LoadingVariant = "default" | "compact" | "home" | "city" | "place";
 
 export function CitywalkLoading({
   compact = false,
   variant = compact ? "compact" : "default",
-}: Readonly<{ compact?: boolean; variant?: LoadingVariant }>) {
-  const { messages } = useNativeLocale();
+  label,
+}: Readonly<{ compact?: boolean; variant?: LoadingVariant; label?: string }>) {
+  const { messages, locale, direction } = useNativeLocale();
+  const copy = discoveryCopy(locale);
+  const loadingLabel = label ?? (variant === "city" ? copy.loadingCity : variant === "place" ? copy.loadingPlace : variant === "home" ? copy.loadingCities : messages.loading);
   const reducedMotion = useReducedMotion();
   const [pulse] = useState(() => new Animated.Value(0.62));
   const isCompact = variant === "compact";
@@ -34,9 +38,10 @@ export function CitywalkLoading({
 
   return (
     <View
-      accessibilityLabel={messages.loading}
+      testID={`content-loading-${variant}`}
+      accessibilityLabel={loadingLabel}
       accessibilityRole="progressbar"
-      style={[styles.container, isCompact && styles.compact]}
+      style={[styles.container, isCompact && styles.compact, { direction }, direction === "rtl" && { alignItems: "stretch" }]}
     >
       <View
         accessibilityElementsHidden
@@ -59,7 +64,7 @@ export function CitywalkLoading({
       </Animated.View>
       <View style={styles.loadingLabel}>
         <ActivityIndicator color={colors.primary} size="small" />
-        <AppText variant="caption" style={styles.label}>{messages.loading}</AppText>
+        <AppText variant="caption" style={styles.label}>{loadingLabel}</AppText>
       </View>
     </View>
   );

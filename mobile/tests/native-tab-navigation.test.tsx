@@ -2,12 +2,13 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-const state = vi.hoisted(() => ({ path: "/", params: {} as Record<string, string>, locale: "en", navigate: vi.fn(), dismissTo: vi.fn() }));
+const state = vi.hoisted(() => ({ path: "/", params: {} as Record<string, string>, locale: "en", navigate: vi.fn(), dismissTo: vi.fn(), transitionEnd: undefined as (() => void) | undefined }));
 vi.mock("expo-router", () => ({
   usePathname: () => state.path,
   useLocalSearchParams: () => state.params,
   useRouter: () => ({ navigate: state.navigate, dismissTo: state.dismissTo }),
-  useFocusEffect: (callback: React.EffectCallback) => React.useEffect(callback, [callback]),
+  useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : state.path === "/account" ? "account/index" : state.path === "/city/lubeck" ? "city/[citySlug]/index" : "city/[citySlug]/place/[placeSlug]" }),
+  useNavigation: () => ({ isFocused: () => true, addListener: (_event: string, callback: () => void) => { state.transitionEnd = callback; return () => { state.transitionEnd = undefined; }; } }),
 }));
 vi.mock("react-native", () => ({
   StyleSheet: { create: (s: unknown) => s },
@@ -22,7 +23,7 @@ vi.mock("../src/localization/LocaleProvider", () => ({ useNativeLocale: () => ({
 import { NativeBottomNavigation } from "../src/components/NativeChrome";
 import { NativeTabScrollProvider, useRootTabScroll } from "../src/lib/tabNavigation";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
-function Root({ scroll }: { scroll: () => void }) { useRootTabScroll(scroll); return <NativeBottomNavigation />; }
+function Root({ scroll }: { scroll: () => void }) { useRootTabScroll(scroll); return <NativeBottomNavigation onScrollToTop={scroll} />; }
 afterEach(() => { cleanup(); vi.clearAllMocks(); state.locale = "en"; });
 describe("native active-tab reselection", () => {
   it.each([
@@ -54,6 +55,10 @@ describe("native active-tab reselection", () => {
     expect(scroll).not.toHaveBeenCalled();
     state.path = "/city/lubeck";
     rerender(<NativeTabScrollProvider><Root scroll={scroll} /></NativeTabScrollProvider>);
+    expect(scroll).not.toHaveBeenCalled();
+    state.transitionEnd?.();
+    expect(scroll).toHaveBeenCalledOnce();
+    state.transitionEnd?.();
     expect(scroll).toHaveBeenCalledOnce();
   });
   it("uses one RTL row with localized labels, without double-reversing the tab array", () => {

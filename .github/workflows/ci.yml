@@ -30,6 +30,9 @@ jobs:
       - name: Install mobile dependencies
         run: npm ci
 
+      - name: Check launch-language completeness
+        run: npm run i18n:check
+
       - name: Run mobile tests
         run: npm run test:run
 
@@ -68,6 +71,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Check launch-language completeness
+        run: npm run i18n:check
 
       - name: Run lint
         run: npm run lint

@@ -1,3 +1,6 @@
+import { arabicTextOverride, nativeHeadingStyle, nativeTextStyle } from "../design/rtlPresentation";
+import { nativeArabicDisplayText } from "../lib/contentLabels";
+import { isolateLatinRuns } from "../lib/bidi";
 import {
   useEffect,
   useCallback,
@@ -54,6 +57,7 @@ export function Screen({
   navigation = true,
   brand = true,
   onBack,
+  scrollDiagnostics,
 }: PropsWithChildren<{
   includeTopSafeArea?: boolean;
   scrollViewRef?: Ref<ScrollView>;
@@ -61,17 +65,27 @@ export function Screen({
   navigation?: boolean;
   brand?: boolean;
   onBack?: () => void;
+  scrollDiagnostics?: string;
 }>) {
   const { direction } = useNativeLocale();
   const { width } = useWindowDimensions();
   const scroll = useRef<ScrollView>(null);
+  const scrollProbe = useRef({ y: 0, pending: false });
   useImperativeHandle(scrollViewRef, () => scroll.current!, []);
-  useRootTabScroll(useCallback(() => scroll.current?.scrollTo({ y: 0, animated: true }), []));
+  const scrollToTop = useCallback((animated = true) => {
+    if (__DEV__ && process.env.EXPO_PUBLIC_CITYWALK_QA_LOGS === "1" && scrollDiagnostics) {
+      scrollProbe.current.pending = true;
+      console.info(`[HOME_SCROLL] ref=${Boolean(scroll.current)} native=${Boolean(scroll.current?.getNativeScrollRef?.())} beforeY=${scrollProbe.current.y} action=scroll-top`);
+    }
+    scroll.current?.scrollTo({ y: 0, animated });
+  }, [scrollDiagnostics]);
+  useRootTabScroll(scrollToTop);
   return (
     <SafeAreaView
       style={[styles.safeArea, { direction }]}
       edges={getScreenSafeAreaEdges(includeTopSafeArea)}
     >
+      {brand ? <NativeBrand onBack={onBack} /> : null}
       <ScrollView
         ref={scroll}
         style={{ direction }}
@@ -79,11 +93,17 @@ export function Screen({
           styles.screenContent,
           width <= layout.smallPhone && styles.smallScreen,
         ]}
+        onScroll={scrollDiagnostics && __DEV__ && process.env.EXPO_PUBLIC_CITYWALK_QA_LOGS === "1" ? event => {
+          scrollProbe.current.y = event.nativeEvent.contentOffset.y;
+          if (scrollProbe.current.pending && scrollProbe.current.y <= 1) {
+            console.info(`[HOME_SCROLL] reached-top y=${scrollProbe.current.y}`);
+            scrollProbe.current.pending = false;
+          }
+        } : undefined}
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets
         keyboardDismissMode="on-drag"
       >
-        {brand ? <NativeBrand onBack={onBack} /> : null}
         {children}
       </ScrollView>
       {footer ? (
@@ -96,7 +116,7 @@ export function Screen({
           {footer}
         </View>
       ) : null}
-      {navigation ? <NativeBottomNavigation /> : null}
+      {navigation ? <NativeBottomNavigation onScrollToTop={scrollToTop} /> : null}
     </SafeAreaView>
   );
 }
@@ -115,19 +135,20 @@ export function VirtualizedScreen<T>({
   const { width } = useWindowDimensions();
   const list = useRef<FlatList<T>>(null);
   useImperativeHandle(listRef, () => list.current!, []);
-  useRootTabScroll(useCallback(() => list.current?.scrollToOffset({ offset: 0, animated: true }), []));
+  const scrollToTop = useCallback((animated = true) => list.current?.scrollToOffset({ offset: 0, animated }), []);
+  useRootTabScroll(scrollToTop);
   return (
     <SafeAreaView
       style={[styles.safeArea, { direction }]}
       edges={getScreenSafeAreaEdges(includeTopSafeArea)}
     >
+      <NativeBrand />
       <FlatList
         {...props}
         ref={list}
         style={[props.style, { direction }]}
         ListHeaderComponent={
           <>
-            <NativeBrand />
             {typeof ListHeaderComponent === "function" ? (
               <ListHeaderComponent />
             ) : (
@@ -142,7 +163,7 @@ export function VirtualizedScreen<T>({
         ]}
         keyboardShouldPersistTaps="handled"
       />
-      <NativeBottomNavigation />
+      <NativeBottomNavigation onScrollToTop={scrollToTop} />
     </SafeAreaView>
   );
 }
@@ -150,9 +171,12 @@ export function VirtualizedScreen<T>({
 export function AppText({
   variant = "body",
   style,
+  children,
   ...props
 }: TextProps & { variant?: keyof typeof typography }) {
-  const { direction } = useNativeLocale();
+  const { locale, direction } = useNativeLocale();
+  const parts = Array.isArray(children) ? children : [children];
+  const text = parts.filter(child => typeof child === "string").join(" ");
   return (
     <Text
       {...props}
@@ -160,13 +184,15 @@ export function AppText({
         styles.text,
         typography[variant],
         direction === "rtl" && { letterSpacing: 0, lineHeight: typography[variant].lineHeight + 3 },
-        {
-          writingDirection: direction,
-          textAlign: direction === "rtl" ? "right" : "left",
-        },
+        nativeTextStyle(direction),
         style,
+        arabicTextOverride(direction, text),
       ]}
-    />
+    >
+      {direction === "rtl"
+        ? (Array.isArray(children) ? children : [children]).map(child => typeof child === "string" ? isolateLatinRuns(nativeArabicDisplayText(child, locale)) : child)
+        : children}
+    </Text>
   );
 }
 
@@ -205,7 +231,7 @@ export function PrimaryButton({
   trailingIcon,
   tone = "primary",
   haptic,
-  wrapLabel = false,
+  wrapLabel = true,
   compact = false,
   onPress,
   ...props
@@ -234,6 +260,7 @@ export function PrimaryButton({
     <Pressable
       accessibilityRole="button"
       {...props}
+      accessibilityState={{ ...props.accessibilityState, busy, disabled: Boolean(busy || props.disabled) }}
       disabled={busy || props.disabled}
       onPress={(event) => {
         if (haptic) void triggerCitywalkHaptic(haptic);
@@ -241,6 +268,7 @@ export function PrimaryButton({
       }}
       style={(state) => [
         styles.primaryButton,
+        !compact && styles.textActionButton,
         buttonTone,
         compact && { paddingHorizontal: spacing.xs, paddingVertical: spacing.sm },
         state.pressed && styles.primaryButtonPressed,
@@ -248,24 +276,17 @@ export function PrimaryButton({
         typeof props.style === "function" ? props.style(state) : props.style,
       ]}
     >
-      {busy ? (
-        <ActivityIndicator
-          color={tone === "secondary" ? colors.primary : "#FFFFFF"}
-        />
-      ) : (
-        <View style={[styles.buttonContent, { direction }, compact && styles.tileContent]}>
-          {leadingIcon}
+      <View style={[styles.buttonContent, { direction }, compact && styles.tileContent, compact && direction === "rtl" && { alignItems: "flex-start" }]}>
+          {busy ? <ActivityIndicator color={tone === "secondary" ? colors.primary : "#FFFFFF"} /> : leadingIcon}
           <Text
-            numberOfLines={compact ? 2 : wrapLabel ? undefined : 1}
-            adjustsFontSizeToFit={compact || !wrapLabel}
-            minimumFontScale={0.85}
-            style={[textTone, { writingDirection: direction, textAlign: "center", flexShrink: 1 }, compact && styles.tileLabel, direction === "rtl" && { lineHeight: compact ? 20 : 24 }]}
+            numberOfLines={wrapLabel ? undefined : 1}
+            adjustsFontSizeToFit={false}
+            style={[textTone, { writingDirection: direction, textAlign: "center", flexShrink: 1, minWidth: 0 }, compact && styles.tileLabel, direction === "rtl" && { lineHeight: compact ? 20 : 24 }, compact && direction === "rtl" && { textAlign: "right", alignSelf: "stretch" }]}
           >
-            {label}
+            {direction === "rtl" ? isolateLatinRuns(label) : label}
           </Text>
           {trailingIcon}
-        </View>
-      )}
+      </View>
     </Pressable>
   );
 }
@@ -326,15 +347,16 @@ export function EmptyState({
   icon: ReactNode;
   title: string;
 }>) {
+  const { direction } = useNativeLocale();
   return (
-    <View style={styles.emptyState}>
+    <View style={[styles.emptyState, { direction }]} >
       <View accessibilityElementsHidden style={styles.emptyIcon}>
         {icon}
       </View>
-      <AppText variant="heading" style={styles.emptyTitle}>
+      <AppText variant="heading" style={[styles.emptyTitle, direction === "rtl" && { alignSelf: "stretch" }]}>
         {title}
       </AppText>
-      <AppText style={styles.emptyDescription}>{description}</AppText>
+      <AppText style={[styles.emptyDescription, direction === "rtl" && { alignSelf: "stretch" }]}>{description}</AppText>
       {action}
     </View>
   );
@@ -381,8 +403,9 @@ export function InlineLoadingDots() {
 }
 
 export function SectionTitle({ children }: { children: ReactNode }) {
+  const { direction } = useNativeLocale();
   return (
-    <AppText accessibilityRole="header" variant="heading" style={styles.sectionTitle}>
+    <AppText accessibilityRole="header" variant="heading" style={[styles.sectionTitle, nativeHeadingStyle(direction)]}>
       {children}
     </AppText>
   );
@@ -452,12 +475,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   primaryButtonPressed: { opacity: 0.9, transform: [{ scale: 0.985 }] },
+  textActionButton: { alignSelf: "stretch", paddingVertical: spacing.sm },
   secondaryButton: { backgroundColor: colors.primarySoft },
   aiButton: { backgroundColor: colors.violet },
   successButton: { backgroundColor: colors.success },
   buttonText: { color: "#FFFFFF", ...typography.label },
   secondaryButtonText: { color: colors.primary, ...typography.label },
   buttonContent: {
+    width: "100%",
+    justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
     gap: spacing.sm,

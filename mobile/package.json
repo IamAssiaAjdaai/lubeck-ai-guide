@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@better-auth/expo": "^1.7.2",
+    "@citywalk/i18n": "file:../packages/i18n",
     "@citywalk/traveler-core": "file:../packages/traveler-core",
     "@maplibre/maplibre-react-native": "^11.3.10",
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -23,6 +24,7 @@
     "expo-secure-store": "~57.0.4",
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
+    "expo-store-review": "~57.0.3",
     "expo-symbols": "~57.0.3",
     "expo-system-ui": "~57.0.4",
     "expo-web-browser": "~57.0.3",
@@ -55,7 +57,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit",
-    "config:validate": "expo config --type public"
+    "config:validate": "expo config --type public",
+    "i18n:check": "node ../packages/i18n/scripts/check.mjs"
   },
   "private": true
 }

@@ -11,7 +11,7 @@ import accountSource from "../src/app/account/index.tsx?raw";
 
 describe("native city experience parity", () => {
   it("renders city hero, published tour stops, and the personalized planner", () => {
-    expect(citySource).toContain("<V2Hero");
+    expect(citySource).toContain("<ImageOverlayHero");
     expect(citySource).toContain('stopNames.join(" · ")');
     expect(citySource).toContain("messages.startTour");
     expect(citySource).toContain('pathname: "/city/[citySlug]/walk"');
@@ -34,10 +34,10 @@ describe("native city experience parity", () => {
     expect(plannerSource).toContain("rankNativePlaces");
     expect(walkSource).toContain("t.halfDay");
     expect(walkSource).toContain("buildWalkSteps(places, settings)");
-    expect(walkSource).toContain("saveNativeWalk(journey)");
+    expect(walkSource).toContain('saveNativeWalk(journey, places, contentStatus === "available")');
     expect(plannerSource).toContain("messages.distanceDisclaimer");
     expect(walkSource).toContain("t.startWalk");
-    expect(walkSource).toContain("persistActiveWalk(next)");
+    expect(walkSource).toContain("changeCurrentWalk(citySlug");
   });
 
   it("uses one sequential trip model for published and personalized routes", () => {

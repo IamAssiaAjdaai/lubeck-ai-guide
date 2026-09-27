@@ -17,17 +17,12 @@
     "availableCities": "Saadaolevad linnad",
     "exploreCity": "Avasta {city}",
     "availableNow": "Nüüd saadaval",
-    "featuredCityDescription": "Avasta giidiga jalutuskäigul 5 ajaloolist paika.",
     "moreCities": "Rohkem linnu",
     "comingSoon": "Peagi saadaval",
     "germany": "Saksamaa"
   },
   "explore": {
-    "title": "Avasta Lübeckit",
-    "subtitle": "20 avastamist väärt kohta",
     "walkingTour": "Jalutuskäik",
-    "historicCenter": "Lübecki ajalooline keskus",
-    "duration": "~45 min • 5 peatust",
     "places": "Paigad",
     "startTour": "Alusta jalutuskäiku"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Ringkäik läbitud",
-    "title": "Avastasid Lübeckit!",
-    "description": "Läbisid Lübecki vanalinnas 5 ajaloolist peatust.",
-    "progress": "5 peatust 5-st läbitud",
     "ratingQuestion": "Kuidas ringkäik meeldis?",
     "thankYou": "Täname tagasiside eest!",
     "feedback": "Jaga tagasisidet",

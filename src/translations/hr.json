@@ -17,17 +17,12 @@
     "availableCities": "Dostupni gradovi",
     "exploreCity": "Istražite {city}",
     "availableNow": "Dostupno sada",
-    "featuredCityDescription": "Otkrijte 5 povijesnih mjesta uz vođenu pješačku turu.",
     "moreCities": "Više gradova",
     "comingSoon": "Uskoro",
     "germany": "Njemačka"
   },
   "explore": {
-    "title": "Otkrijte Lübeck",
-    "subtitle": "20 mjesta za otkrivanje",
     "walkingTour": "Pješačka tura",
-    "historicCenter": "Povijesno središte Lübecka",
-    "duration": "~45 min • 5 postaja",
     "places": "Mjesta",
     "startTour": "Započni pješačku turu"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Tura je završena",
-    "title": "Istražili ste Lübeck!",
-    "description": "Obišli ste 5 povijesnih postaja u starom gradu Lübecka.",
-    "progress": "Završeno 5 od 5 postaja",
     "ratingQuestion": "Kako vam se svidjela tura?",
     "thankYou": "Hvala na povratnoj informaciji!",
     "feedback": "Podijelite dojam",

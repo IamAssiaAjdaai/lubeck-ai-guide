@@ -1,9 +1,14 @@
+import { CitywalkLoading } from "../components/CitywalkLoading";
+import { uxCopy } from "../design/uxCopy";
+import { ContentRecovery } from "../components/ContentRecovery";
+import { WalkMembershipControl } from "../components/WalkMembershipControl";
+import { nativeCityName, nativePlaceName } from "../lib/displayNames";
 import { cityLaunches } from "@citywalk/traveler-core/cityAvailability";
 import { NativeIcon } from "../components/NativeIcon";
 import { colors, radius, shadows, spacing } from "../design/tokens";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Link, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import type { WalkJourney } from "@citywalk/traveler-core/walkJourney";
 import {
@@ -26,20 +31,22 @@ import {
   PressableSurface,
   Screen,
   SectionTitle,
-  StatusMessage,
 } from "../components/ui";
 export default function SavedScreen() {
   const { citySlug, view } = useLocalSearchParams<{
     citySlug?: string;
     view?: string;
   }>();
-  const { locale, messages } = useNativeLocale(),
+  const { locale, direction, messages } = useNativeLocale(),
     t = walkCopy(locale);
   const [walks, setWalks] = useState<WalkJourney[]>([]),
     [legacy, setLegacy] = useState<readonly LocalSavedTrip[]>([]),
     [places, setPlaces] = useState<SavedPlace[]>([]);
   const [active, setActive] = useState<WalkJourney[]>([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [removing, setRemoving] = useState<string>();
+  const removeLock = useRef(false);
   const reload = useCallback(async () => {
     const [w, l, p] = await Promise.all([
       loadSavedWalks(),
@@ -62,21 +69,25 @@ export default function SavedScreen() {
       citySlugs.map((slug) => loadActiveWalk(slug)),
     );
     setActive(journeys.filter((item): item is WalkJourney => Boolean(item)));
+    setLoading(false);
   }, []);
   useFocusEffect(
     useCallback(() => {
-      void reload().catch(() => setError(messages.unavailable));
+      void reload().catch(() => { setLoading(false); setError(messages.unavailable); });
     }, [reload, messages.unavailable]),
   );
-  async function remove(work: () => Promise<unknown>) {
+  async function remove(key: string, work: () => Promise<unknown>) {
+    if (removeLock.current) return;
+    removeLock.current = true; setRemoving(key);
     try {
       await work();
       await reload();
       setError("");
     } catch {
       setError(t.removeFailed);
-    }
+    } finally { removeLock.current = false; setRemoving(undefined); }
   }
+  if (loading) return <Screen><CitywalkLoading compact label={uxCopy(locale).saved} /></Screen>;
   const visible = (view === "trips" ? active : [...walks, ...legacy]).filter(
     (w) => !citySlug || w.citySlug === citySlug,
   );
@@ -86,7 +97,7 @@ export default function SavedScreen() {
       <AppText variant="screenTitle">
         {view === "trips" ? t.trips : t.saved}
       </AppText>
-      {error ? <StatusMessage>{error}</StatusMessage> : null}
+      {error ? <ContentRecovery retry={() => { setError(""); void reload().catch(() => setError(messages.unavailable)); }} /> : null}
       {!visible.length ? (
         <EmptyState
           title={view === "trips" ? t.emptyTrips : t.emptySaved}
@@ -102,7 +113,7 @@ export default function SavedScreen() {
         />
       ) : null}
       {visible.map((w) => (
-        <View key={`${w.citySlug}:${w.id}`} style={styles.row}>
+        <View key={`${w.citySlug}:${w.id}`} style={[styles.row, { direction }]}>
           <View style={styles.icon}>
             <NativeIcon
               ios="bookmark"
@@ -122,7 +133,7 @@ export default function SavedScreen() {
           >
             <PressableSurface accessibilityRole="link" style={styles.copy}>
               <AppText variant="label">
-                {cityLaunches[w.citySlug]?.name ?? w.citySlug}
+                {nativeCityName(w.citySlug, cityLaunches[w.citySlug]?.name ?? w.citySlug, locale)}
               </AppText>
               <AppText variant="metadata" style={styles.muted}>
                 {
@@ -138,22 +149,24 @@ export default function SavedScreen() {
           {view !== "trips" ? (
             <PressableSurface
               accessibilityRole="button"
-              accessibilityLabel={`${t.removeWalk}: ${cityLaunches[w.citySlug]?.name ?? w.citySlug}`}
+              accessibilityLabel={`${t.removeWalk}: ${nativeCityName(w.citySlug, cityLaunches[w.citySlug]?.name ?? w.citySlug, locale)}`}
               style={styles.remove}
+              disabled={Boolean(removing)}
+              accessibilityState={{ busy: removing === `walk:${w.citySlug}:${w.id}`, disabled: Boolean(removing) }}
               onPress={() =>
-                void remove(() =>
+                void remove(`walk:${w.citySlug}:${w.id}`, () =>
                   "remaining" in w
                     ? removeNativeWalk(w.citySlug, w.id)
                     : removeLocalTrip(w.citySlug, w.id),
                 )
               }
             >
-              <NativeIcon
+              {removing === `walk:${w.citySlug}:${w.id}` ? <ActivityIndicator color={colors.primary} /> : <NativeIcon
                 ios="trash"
                 android="delete_outline"
                 color={colors.textMuted}
                 size={20}
-              />
+              />}
             </PressableSurface>
           ) : null}
         </View>
@@ -178,7 +191,7 @@ export default function SavedScreen() {
           {places
             .filter((p) => !citySlug || p.citySlug === citySlug)
             .map((p) => (
-              <View key={`${p.citySlug}:${p.slug}`} style={styles.row}>
+              <View key={`${p.citySlug}:${p.slug}`} style={[styles.row, { direction }]}>
                 <View style={styles.icon}>
                   <NativeIcon
                     ios="mappin"
@@ -197,21 +210,24 @@ export default function SavedScreen() {
                     accessibilityRole="link"
                     style={styles.copy}
                   >
-                    <AppText variant="label">{p.name}</AppText>
+                    <AppText variant="label">{nativePlaceName(p.citySlug, p.slug, p.name, locale)}</AppText>
+                    <WalkMembershipControl citySlug={p.citySlug} placeSlug={p.slug} readOnly />
                   </PressableSurface>
                 </Link>
                 <PressableSurface
                   accessibilityRole="button"
-                  accessibilityLabel={`${t.removePlace}: ${p.name}`}
+                  accessibilityLabel={`${t.removePlace}: ${nativePlaceName(p.citySlug, p.slug, p.name, locale)}`}
                   style={styles.remove}
-                  onPress={() => void remove(() => toggleSavedPlace(p))}
+                  disabled={Boolean(removing)}
+                  accessibilityState={{ busy: removing === `place:${p.citySlug}:${p.slug}`, disabled: Boolean(removing) }}
+                  onPress={() => void remove(`place:${p.citySlug}:${p.slug}`, () => toggleSavedPlace(p))}
                 >
-                  <NativeIcon
+                  {removing === `place:${p.citySlug}:${p.slug}` ? <ActivityIndicator color={colors.primary} /> : <NativeIcon
                     ios="trash"
                     android="delete_outline"
                     size={20}
                     color={colors.textMuted}
-                  />
+                  />}
                 </PressableSurface>
               </View>
             ))}

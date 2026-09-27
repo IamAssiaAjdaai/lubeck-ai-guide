@@ -4,6 +4,9 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   location: vi.fn(),
+  scroll: vi.fn(),
+  section: undefined as string | undefined,
+  locale: "en",
   cities: [
     {
       slug: "lubeck",
@@ -17,7 +20,10 @@ const state = vi.hoisted(() => ({
 }));
 vi.mock("react-native", () => ({
   StyleSheet: { create: (s: unknown) => s },
-  View: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  View: ({ children, onLayout }: React.PropsWithChildren<{ onLayout?: (event: { nativeEvent: { layout: { y: number } } }) => void }>) => {
+    React.useEffect(() => { onLayout?.({ nativeEvent: { layout: { y: 420 } } }); }, [onLayout]);
+    return <div>{children}</div>;
+  },
   TextInput: ({
     accessibilityLabel,
     value,
@@ -35,7 +41,7 @@ vi.mock("react-native", () => ({
   ),
 }));
 vi.mock("expo-router", () => ({
-  useLocalSearchParams: () => ({}),
+  useLocalSearchParams: () => ({ section: state.section }),
   Link: ({
     children,
     href,
@@ -44,7 +50,10 @@ vi.mock("expo-router", () => ({
   ),
 }));
 vi.mock("../src/components/ui", () => ({
-  Screen: ({ children }: React.PropsWithChildren) => <main>{children}</main>,
+  Screen: ({ children, scrollViewRef }: React.PropsWithChildren<{ scrollViewRef: React.Ref<{ scrollTo: typeof state.scroll }> }>) => {
+    React.useImperativeHandle(scrollViewRef, () => ({ scrollTo: state.scroll }));
+    return <main>{children}</main>;
+  },
   AppText: ({ children }: React.PropsWithChildren) => <span>{children}</span>,
   SectionTitle: ({ children }: React.PropsWithChildren) => <h2>{children}</h2>,
   PressableSurface: ({ children }: React.PropsWithChildren) => (
@@ -59,8 +68,8 @@ vi.mock("../src/components/ui", () => ({
   }) => <button onClick={onPress}>{label}</button>,
   EmptyState: ({ title }: { title: string }) => <p role="status">{title}</p>,
 }));
-vi.mock("../src/components/V2Presentation", () => ({
-  V2Hero: ({ title, subtitle }: { title: string; subtitle: string }) => (
+vi.mock("../src/components/ImageOverlayHero", () => ({
+  ImageOverlayHero: ({ title, subtitle }: { title: string; subtitle: string }) => (
     <header>
       <h1>{title}</h1>
       <p>{subtitle}</p>
@@ -102,8 +111,8 @@ vi.mock("../src/lib/location.expo", () => ({
 }));
 vi.mock("../src/localization/LocaleProvider", () => ({
   useNativeLocale: () => ({
-    locale: "en",
-    direction: "ltr",
+    locale: state.locale,
+    direction: state.locale === "ar" ? "rtl" : "ltr",
     messages: { exploreCity: "Explore city", unavailable: "Unavailable" },
   }),
 }));
@@ -111,8 +120,17 @@ import HomeScreen from "../src/app/index";
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  state.locale = "en";
+  state.section = undefined;
 });
 describe("native Home V2 (native bridges mocked)", () => {
+  it("returns city-selection Explore to the top on the first tab transition", () => {
+    const { rerender } = render(<HomeScreen />);
+    state.scroll.mockClear();
+    state.section = "cities";
+    rerender(<HomeScreen />);
+    expect(state.scroll).toHaveBeenCalledExactlyOnceWith({ y: 0, animated: true });
+  });
   it("uses V2 copy and published imagery even when the API has no city media", () => {
     render(<HomeScreen />);
     expect(
@@ -147,4 +165,25 @@ describe("native Home V2 (native bridges mocked)", () => {
     expect(screen.getByRole("textbox")).toBeTruthy();
     expect(screen.getByRole("link").getAttribute("href")).toBe("/city/lubeck");
   });
+});
+
+
+it("localizes city cards in Arabic without changing route identity", () => {
+  state.locale = "ar";
+  render(<HomeScreen />);
+  expect(screen.getByText("لوبيك")).toBeTruthy();
+  expect(screen.getByText("هامبورغ")).toBeTruthy();
+  expect(screen.getByRole("link").getAttribute("href")).toBe("/city/lubeck");
+  expect(screen.getByRole("img", { name: "لوبيك" })).toBeTruthy();
+});
+
+
+it("finds the same city using either its Arabic display name or original name", () => {
+  state.locale = "ar";
+  render(<HomeScreen />);
+  for (const value of ["لوبيك", "Lübeck"]) {
+    fireEvent.change(screen.getByRole("textbox"), { target: { value } });
+    expect(screen.getAllByRole("img")).toHaveLength(1);
+    expect(screen.getByRole("link").getAttribute("href")).toBe("/city/lubeck");
+  }
 });

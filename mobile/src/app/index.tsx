@@ -1,11 +1,14 @@
+import { nativeRowStyle, nativeTextBlock, nativeTextStyle } from "../design/rtlPresentation";
+import { ContentRecovery } from "../components/ContentRecovery";
+import { nativeCityName } from "../lib/displayNames";
 import { triggerCitywalkHaptic } from "../lib/haptics";
-import { cityLaunches } from "@citywalk/traveler-core/cityAvailability";
+import { cityLaunches, getLaunchDescription } from "@citywalk/traveler-core/cityAvailability";
 import { calculateDistanceMeters } from "@citywalk/traveler-core";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, TextInput, View } from "react-native";
-import { V2Hero } from "../components/V2Presentation";
+import { ImageOverlayHero } from "../components/ImageOverlayHero";
 import { NativeContentImage } from "../components/NativeContentImage";
 import { CitywalkLoading } from "../components/CitywalkLoading";
 import { MediaAttribution } from "../components/MediaAttribution";
@@ -22,9 +25,6 @@ import { colors, motion, radius, shadows, spacing } from "../design/tokens";
 import { prefetchPublicCity, usePublicCities } from "../hooks/usePublicContent";
 import { citywalkApi } from "../lib/api/instance";
 import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
-import {
-  getNativeDirection,
-} from "../lib/localization";
 import { requestForegroundLocation } from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import { useNativeLocale } from "../localization/LocaleProvider";
@@ -35,11 +35,10 @@ export default function HomeScreen() {
   const cities = usePublicCities(locale);
   const { section } = useLocalSearchParams<{ section?: string }>();
   const scroll = useRef<ScrollView>(null);
-  const [citiesOffset, setCitiesOffset] = useState(0);
   useEffect(() => {
     if (section === "cities")
-      scroll.current?.scrollTo({ y: citiesOffset, animated: true });
-  }, [section, citiesOffset]);
+      scroll.current?.scrollTo({ y: 0, animated: true });
+  }, [section]);
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState<{ lat: number; lng: number }>();
   const [locating, setLocating] = useState(false),
@@ -85,17 +84,12 @@ export default function HomeScreen() {
       available: false,
       image: c.heroImage,
       resolvedLocale: "de",
-      shortDescription:
-        slug === "hamburg"
-          ? t.hamburgDescription
-          : slug === "duesseldorf"
-            ? t.duesseldorfDescription
-            : undefined,
+      shortDescription: getLaunchDescription(slug, locale),
       attribution: c.credit ? { text: c.credit.text } : undefined,
     }));
   const choices = [...available, ...upcoming]
     .filter((c) =>
-      c.name
+      `${c.name} ${nativeCityName(c.slug, c.name, locale)}`
         .toLocaleLowerCase(locale)
         .includes(query.toLocaleLowerCase(locale)),
     )
@@ -110,8 +104,8 @@ export default function HomeScreen() {
       );
     });
   return (
-    <Screen scrollViewRef={scroll}>
-      <V2Hero title={t.homeTitle} subtitle={t.homeSubtitle} />
+    <Screen scrollViewRef={scroll} scrollDiagnostics="home">
+      <ImageOverlayHero title={t.homeTitle} subtitle={t.homeSubtitle} />
       <PrimaryButton
         label={t.location}
         busy={locating}
@@ -128,7 +122,7 @@ export default function HomeScreen() {
       {locationHelp ? (
         <AppText accessibilityLiveRegion="polite">{locationHelp}</AppText>
       ) : null}
-      <View style={[styles.search, { direction }]}>
+      <View style={[styles.search, nativeRowStyle(direction)]}>
         <NativeIcon
           ios="magnifyingglass"
           android="search"
@@ -142,21 +136,15 @@ export default function HomeScreen() {
           onChangeText={setQuery}
           style={[
             styles.searchInput,
-            { textAlign: direction === "rtl" ? "right" : "left" },
+            nativeTextStyle(direction),
           ]}
         />
       </View>
-      <View onLayout={(event) => setCitiesOffset(event.nativeEvent.layout.y)}>
+      <View>
         <SectionTitle>{t.available}</SectionTitle>
       </View>
       {cities.status === "loading" ? <CitywalkLoading variant="home" /> : null}
-      {cities.status === "error" ? (
-        <EmptyState
-          title={t.available}
-          description={messages.unavailable}
-          icon={<NativeIcon ios="wifi.slash" android="wifi_off" />}
-        />
-      ) : null}
+      {cities.status === "error" ? <ContentRecovery retry={cities.retry} /> : null}
       {cities.status === "available" && !choices.length ? (
         <EmptyState
           title={t.noCities}
@@ -166,7 +154,7 @@ export default function HomeScreen() {
       ) : null}
       {choices.map((city) => {
         const body = (
-          <View style={[styles.cityCard, { direction }]}>
+          <View style={[styles.cityCard, nativeRowStyle(direction)]}>
             <NativeContentImage
               source={
                 city.image
@@ -186,19 +174,16 @@ export default function HomeScreen() {
               transition={motion.component}
               cachePolicy="memory-disk"
               style={styles.cityImage}
-              accessibilityLabel={city.name}
+              accessibilityLabel={nativeCityName(city.slug, city.name, locale)}
             />
-            <View style={styles.cityCopy}>
+            <View style={[styles.cityCopy, nativeTextBlock(direction)]}>
               <AppText
                 variant="heading"
-                style={{
-                  writingDirection: getNativeDirection(city.resolvedLocale),
-                  textAlign: direction === "rtl" ? "right" : "left",
-                }}
+                style={nativeTextStyle(direction)}
               >
-                {city.name}
+                {nativeCityName(city.slug, city.name, locale)}
               </AppText>
-              <View style={styles.status}>
+              <View style={[styles.status, nativeRowStyle(direction)]}>
                 {city.available ? (
                   <View style={styles.statusDot} />
                 ) : (
@@ -248,7 +233,7 @@ export default function HomeScreen() {
               >
                 <PressableSurface
                   accessibilityRole="link"
-                  accessibilityLabel={`${messages.exploreCity}: ${city.name}`}
+                  accessibilityLabel={`${messages.exploreCity}: ${nativeCityName(city.slug, city.name, locale)}`}
                   onPress={() => {
                     void triggerCitywalkHaptic("medium");
                   }}

@@ -1,4 +1,5 @@
-import { walkCopy, walkCopyLocale } from "@/lib/walk/copy";
+import { getLaunchDescription } from "@citywalk/traveler-core/cityAvailability";
+import { walkCopyLocale } from "@/lib/walk/copy";
 import AppHeader from "@/components/walk/AppHeader";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
@@ -63,9 +64,7 @@ export default async function Home() {
         image: launch.heroImage,
         contentLocale: walkCopyLocale(locale),
         description:
-          slug === "hamburg"
-            ? walkCopy(locale).hamburgDescription
-            : walkCopy(locale).duesseldorfDescription,
+          getLaunchDescription(slug, locale),
       });
   }
   return (

@@ -17,17 +17,12 @@
     "availableCities": "Dostępne miasta",
     "exploreCity": "Odkryj {city}",
     "availableNow": "Dostępne teraz",
-    "featuredCityDescription": "Odkryj 5 historycznych miejsc podczas spaceru z przewodnikiem.",
     "moreCities": "Więcej miast",
     "comingSoon": "Wkrótce",
     "germany": "Niemcy"
   },
   "explore": {
-    "title": "Odkryj Lübeck",
-    "subtitle": "20 miejsc do odkrycia",
     "walkingTour": "Spacer z przewodnikiem",
-    "historicCenter": "Historyczne centrum Lübeck",
-    "duration": "~45 min • 5 przystanków",
     "places": "Miejsca",
     "startTour": "Rozpocznij spacer"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Zwiedzanie zakończone",
-    "title": "Lübeck odkryty!",
-    "description": "Ukończono 5 historycznych przystanków na starym mieście Lübeck.",
-    "progress": "Ukończono 5 z 5 przystanków",
     "ratingQuestion": "Jak podobało Ci się zwiedzanie?",
     "thankYou": "Dziękujemy za opinię!",
     "feedback": "Podziel się opinią",

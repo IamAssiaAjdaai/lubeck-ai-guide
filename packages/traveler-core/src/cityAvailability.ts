@@ -1,3 +1,5 @@
+import launchContent from "./launchContent.json";
+import { resolveLocalizedContent } from "../../i18n/src/content";
 /** Launch availability is independent of CMS publication and source verification. */
 export type CityAvailability = "available" | "coming_soon" | "unpublished";
 export const cityLaunches: Readonly<
@@ -43,4 +45,9 @@ export const cityLaunches: Readonly<
 };
 export function isCityLaunched(slug: string) {
   return !cityLaunches[slug] || cityLaunches[slug].status === "available";
+}
+
+export function getLaunchDescription(slug: string, locale: string): string | undefined {
+  const translations = launchContent[slug as keyof typeof launchContent];
+  return translations ? resolveLocalizedContent({ translations, identity: `city:${slug}` }, locale)?.content.shortDescription : undefined;
 }

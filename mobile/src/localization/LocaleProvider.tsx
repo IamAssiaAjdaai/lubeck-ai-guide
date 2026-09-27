@@ -1,4 +1,7 @@
-import { createContext, useContext, useMemo, useState, type PropsWithChildren } from "react";
+import { createContext, useContext, useMemo, useState, useCallback, useEffect, useRef, type PropsWithChildren } from "react";
+
+import { isSharedLocale } from "@citywalk/i18n";
+import { deviceLocale, localePreference } from "./localePreference";
 
 import type { NativeLocale } from "../lib/api/contracts";
 import {
@@ -18,13 +21,26 @@ type NativeLocaleContextValue = Readonly<{
 const NativeLocaleContext = createContext<NativeLocaleContextValue | undefined>(undefined);
 
 export function NativeLocaleProvider({ children }: PropsWithChildren) {
-  const [locale, setLocale] = useState<NativeLocale>("en");
+  const [locale, updateLocale] = useState<NativeLocale>(deviceLocale);
+  const selected = useRef(false);
+  useEffect(() => {
+    let active = true;
+    void localePreference.read().then(saved => {
+      if (active && !selected.current && isSharedLocale(saved)) updateLocale(saved);
+    });
+    return () => { active = false; };
+  }, []);
+  const setLocale = useCallback((next: NativeLocale) => {
+    selected.current = true;
+    updateLocale(next);
+    void localePreference.write(next);
+  }, []);
   const value = useMemo(() => ({
     locale,
     setLocale,
     direction: getNativeDirection(locale),
     messages: getNativeMessages(locale),
-  }), [locale]);
+  }), [locale, setLocale]);
 
   return <NativeLocaleContext.Provider value={value}>{children}</NativeLocaleContext.Provider>;
 }

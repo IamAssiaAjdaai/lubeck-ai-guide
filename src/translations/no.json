@@ -17,17 +17,12 @@
     "availableCities": "Tilgjengelige byer",
     "exploreCity": "Oppdag {city}",
     "availableNow": "Tilgjengelig nå",
-    "featuredCityDescription": "Opplev 5 historiske steder på en guidet spasertur.",
     "moreCities": "Flere byer",
     "comingSoon": "Kommer snart",
     "germany": "Tyskland"
   },
   "explore": {
-    "title": "Oppdag Lübeck",
-    "subtitle": "20 steder å oppdage",
     "walkingTour": "Byvandring",
-    "historicCenter": "Lübecks historiske sentrum",
-    "duration": "~45 min • 5 stopp",
     "places": "Steder",
     "startTour": "Start byvandringen"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Turen er fullført",
-    "title": "Du har opplevd Lübeck!",
-    "description": "Du fullførte 5 historiske stopp i Lübecks gamleby.",
-    "progress": "5 av 5 stopp fullført",
     "ratingQuestion": "Hvordan var turen?",
     "thankYou": "Takk for tilbakemeldingen!",
     "feedback": "Del tilbakemelding",

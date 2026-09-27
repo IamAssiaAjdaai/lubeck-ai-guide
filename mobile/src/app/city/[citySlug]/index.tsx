@@ -1,5 +1,10 @@
+import { nativeTextBlock, nativeContentTextStyle, nativeRowStyle } from "../../../design/rtlPresentation";
+import { nativeArabicDisplayText, nativeCategoryLabel } from "../../../lib/contentLabels";
+import { ContentRecovery } from "../../../components/ContentRecovery";
+import { WalkMembershipControl } from "../../../components/WalkMembershipControl";
+import { nativeCityName, nativePlaceName } from "../../../lib/displayNames";
 import { useEffect, useRef, useState } from "react";
-import { walkCopy, walkCategoryLabel } from "@citywalk/traveler-core/walkCopy";
+import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { calculateDistanceMeters } from "@citywalk/traveler-core";
 import { requestForegroundLocation } from "../../../lib/location";
 import { expoForegroundLocationAdapter } from "../../../lib/location.expo";
@@ -7,13 +12,15 @@ import { NativeContentImage as Image } from "../../../components/NativeContentIm
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { FlatList, StyleSheet, View } from "react-native";
 
+import { cityAssistantRoute } from "../../../lib/cityAssistant";
 import { discoveryCopy } from "../../../design/discoveryCopy";
 import { WalkChoices } from "../../../components/WalkControls";
 import { CitywalkLoading } from "../../../components/CitywalkLoading";
 import { MediaAttribution } from "../../../components/MediaAttribution";
 import { NativeCityMap } from "../../../components/NativeCityMap";
 import { NativeIcon } from "../../../components/NativeIcon";
-import { V2Hero } from "../../../components/V2Presentation";
+import { ImageOverlayHero } from "../../../components/ImageOverlayHero";
+import { useResponsiveTextLayout } from "../../../design/responsiveText";
 import {
   AppText,
   PrimaryButton,
@@ -36,14 +43,12 @@ import {
   selectPrimaryImageMedia,
 } from "../../../lib/api/media";
 import { triggerCitywalkHaptic } from "../../../lib/haptics";
-import {
-  getNativeDirection,
-  getNativeTextAlignment,
-} from "../../../lib/localization";
+import { getNativeDirection } from "../../../lib/localization";
 import { parseCityRouteIdentity } from "../../../lib/routing";
 import { useNativeLocale } from "../../../localization/LocaleProvider";
 
 export default function CityScreen() {
+  const textLayout = useResponsiveTextLayout();
   const params = useLocalSearchParams<{
     citySlug?: string | string[];
     section?: string;
@@ -81,11 +86,7 @@ export default function CityScreen() {
       </Screen>
     );
   if (cityState.status === "error")
-    return (
-      <Screen>
-        <StatusMessage>{messages.unavailable}</StatusMessage>
-      </Screen>
-    );
+    return <Screen><ContentRecovery retry={cityState.retry} citySlug={identity.citySlug} /></Screen>;
 
   const { city, places, tours } = cityState.data;
   const filteredPlaces = places.filter(
@@ -101,7 +102,7 @@ export default function CityScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: city.content.name }} />
+      <Stack.Screen options={{ title: nativeCityName(city.slug, city.content.name, locale) }} />
       <VirtualizedScreen
         ref={list}
         data={visiblePlaces}
@@ -117,7 +118,7 @@ export default function CityScreen() {
               headerOffset.current = event.nativeEvent.layout.y;
             }}
           >
-            <V2Hero title={city.content.name} subtitle={t.hubSubtitle} city />
+            <ImageOverlayHero title={nativeCityName(city.slug, city.content.name, locale)} subtitle={t.hubSubtitle} />
             <Link
               href={{
                 pathname: "/city/[citySlug]/walk",
@@ -136,10 +137,10 @@ export default function CityScreen() {
                 }
               />
             </Link>
-            <View style={styles.quickActions}>
+            <View style={[styles.quickActions, { direction: appDirection }]}>
               <PrimaryButton
                 compact
-                style={styles.quickAction}
+                style={StyleSheet.flatten([styles.quickAction, { flex: 0, width: textLayout.quickWidth }])}
                 tone="secondary"
                 label={t.places}
                 wrapLabel
@@ -155,7 +156,7 @@ export default function CityScreen() {
               />
               <PrimaryButton
                 compact
-                style={styles.quickAction}
+                style={StyleSheet.flatten([styles.quickAction, { flex: 0, width: textLayout.quickWidth }])}
                 tone="secondary"
                 label={t.near}
                 wrapLabel
@@ -193,7 +194,7 @@ export default function CityScreen() {
               >
                 <PrimaryButton
                   compact
-                  style={styles.quickAction}
+                  style={StyleSheet.flatten([styles.quickAction, { flex: 0, width: textLayout.quickWidth }])}
                   tone="secondary"
                   label={t.saved}
                   wrapLabel
@@ -206,18 +207,11 @@ export default function CityScreen() {
                   }
                 />
               </Link>
-              <PrimaryButton
-                compact
-                style={styles.quickAction}
-                tone="secondary"
-                label={t.ask}
-                wrapLabel
-                onPress={() => {
-                  setLocationMessage(labels.chooseGuidePlace);
-                  list.current?.scrollToOffset({ offset: placesOffset.current, animated: true });
-                }}
-                leadingIcon={<NativeIcon ios="bubble.left" android="chat_bubble_outline" color={colors.primary} />}
-              />
+              <Link href={cityAssistantRoute(city.slug)} asChild>
+                <PrimaryButton compact style={StyleSheet.flatten([styles.quickAction, { flex: 0, width: textLayout.quickWidth }])} tone="secondary"
+                  label={t.ask} wrapLabel
+                  leadingIcon={<NativeIcon ios="bubble.left" android="chat_bubble_outline" color={colors.primary} />} />
+              </Link>
             </View>
             {locationMessage ? (
               <StatusMessage>{locationMessage}</StatusMessage>
@@ -254,6 +248,7 @@ export default function CityScreen() {
                 label={messages.places}
                 showHeading={false}
                 variant="segment"
+                compact
                 options={(["all", "see", "eat", "fun"] as const).map(
                   (value) => ({ value, label: labels[value] }),
                 )}
@@ -263,6 +258,7 @@ export default function CityScreen() {
               <WalkChoices
                 label={messages.map}
                 variant="segment"
+                compact
                 options={[
                   { value: "list", label: labels.list },
                   { value: "map", label: labels.map },
@@ -270,7 +266,7 @@ export default function CityScreen() {
                 selected={[mapVisible ? "map" : "list"]}
                 onSelect={(value) => setMapVisible(value === "map")}
               />
-              {mapVisible ? <NativeCityMap places={visiblePlaces} /> : null}
+              {mapVisible ? <NativeCityMap citySlug={city.slug} places={visiblePlaces} /> : null}
             </View>
           </MotionView>
         }
@@ -300,6 +296,7 @@ function TourCard({
   messages: ReturnType<typeof useNativeLocale>["messages"];
   appDirection: "ltr" | "rtl";
 }>) {
+  const { expanded } = useResponsiveTextLayout();
   const firstPlace = places.find(
     (place) =>
       place.slug ===
@@ -314,16 +311,13 @@ function TourCard({
     firstPlace?.imageVariants,
     "card",
   );
-  const direction = getNativeDirection(tour.resolvedLocale);
-  const textStyle = {
-    writingDirection: direction,
-    textAlign: getNativeTextAlignment(tour.resolvedLocale),
-  } as const;
+  const { locale: uiLocale } = useNativeLocale();
+  const textStyle = nativeContentTextStyle(uiLocale, tour.resolvedLocale);
   const stopNames = [...tour.stops]
     .sort((first, second) => first.position - second.position)
     .flatMap((stop) => {
       const place = places.find(({ slug }) => slug === stop.placeSlug);
-      return place ? [place.content.name] : [];
+      return place ? [nativePlaceName(citySlug, place.slug, place.content.name, uiLocale)] : [];
     });
   return (
     <MotionView style={styles.tourCard}>
@@ -339,7 +333,7 @@ function TourCard({
           onPress={() => {
             void triggerCitywalkHaptic("medium");
           }}
-          style={styles.tourLink}
+          style={StyleSheet.flatten([styles.tourLink, nativeRowStyle(appDirection), expanded && { flexDirection: "column" }])}
         >
           {imageUrl ? (
             <Image
@@ -351,18 +345,18 @@ function TourCard({
               }
               cachePolicy="memory-disk"
               contentFit="cover"
-              style={styles.placeImage}
-              accessibilityLabel={tour.content.title}
+              style={[styles.placeImage, expanded && { width: "100%", minHeight: 0, aspectRatio: 1.8 }]}
+              accessibilityLabel={nativeArabicDisplayText(tour.content.title, uiLocale)}
               transition={motion.component}
             />
           ) : null}
-          <View style={styles.tourContent}>
+          <View style={[styles.tourContent, nativeTextBlock(appDirection), expanded && { flex: 0, width: "100%" }]}>
             <AppText variant="heading" style={textStyle}>
-              {tour.content.title}
+              {nativeArabicDisplayText(tour.content.title, uiLocale)}
             </AppText>
             {tour.content.shortDescription || tour.content.description ? (
               <AppText
-                numberOfLines={3}
+                numberOfLines={expanded ? undefined : 3}
                 style={[textStyle, styles.description]}
               >
                 {tour.content.shortDescription ?? tour.content.description}
@@ -387,21 +381,21 @@ function TourCard({
                 .slice(0, 2)
                 .map((tag) => (
                   <AppText key={tag} variant="caption" style={styles.chip}>
-                    {walkCategoryLabel(
+                    {nativeCategoryLabel(
                       tag,
-                      firstPlace?.requestedLocale ?? "en",
+                      uiLocale,
                     )}
                   </AppText>
                 ))}
             </View>
             <AppText
-              numberOfLines={2}
+              numberOfLines={expanded ? undefined : 2}
               variant="caption"
               style={styles.stopName}
             >
               {stopNames.join(" · ")}
             </AppText>
-            <View style={styles.startTourRow}>
+            <View style={[styles.startTourRow, nativeRowStyle(appDirection)]}>
               <AppText variant="label" style={styles.startTour}>
                 {messages.startTour}
               </AppText>
@@ -422,9 +416,9 @@ function TourCard({
           </View>
         </PressableSurface>
       </Link>
-      <View style={styles.cardAttribution}>
-        <MediaAttribution attribution={image?.attribution} />
-      </View>
+      {image?.attribution ? <View style={styles.cardAttribution}>
+        <MediaAttribution attribution={image.attribution} />
+      </View> : null}
     </MotionView>
   );
 }
@@ -447,11 +441,9 @@ function PlaceCard({
     place.imageVariants,
     "card",
   );
-  const direction = getNativeDirection(place.resolvedLocale);
-  const textStyle = {
-    writingDirection: direction,
-    textAlign: getNativeTextAlignment(place.resolvedLocale),
-  } as const;
+  const { messages } = useNativeLocale();
+  const direction = getNativeDirection(locale);
+  const textStyle = nativeContentTextStyle(locale, place.resolvedLocale);
   return (
     <View style={styles.placeCard}>
       <Link
@@ -471,11 +463,11 @@ function PlaceCard({
               () => undefined,
             );
           }}
-          style={styles.placeLink}
+          style={StyleSheet.flatten([styles.placeLink, nativeRowStyle(direction)])}
         >
-          {image ? (
             <Image
-              source={{ uri: citywalkApi.resolveUrl(image) }}
+              source={image ? { uri: citywalkApi.resolveUrl(image) } : undefined}
+              placeholderIcon={place.category === "eat" ? { ios: "fork.knife", android: "restaurant" } : place.category === "fun" ? { ios: "sparkles", android: "auto_awesome" } : { ios: "mappin", android: "place" }}
               fallbackSource={
                 place.image
                   ? { uri: citywalkApi.resolveUrl(place.image) }
@@ -485,17 +477,17 @@ function PlaceCard({
               contentFit="cover"
               recyclingKey={`${citySlug}:${place.slug}`}
               style={styles.placeThumbnail}
-              accessibilityLabel={place.content.name}
+              accessibilityLabel={nativePlaceName(citySlug, place.slug, place.content.name, locale)}
               transition={motion.press}
             />
-          ) : null}
-          <View style={styles.placeContent}>
-            <AppText numberOfLines={2} variant="cardTitle" style={textStyle}>
-              {place.content.name}
+          <View style={[styles.placeContent, nativeTextBlock(direction)]}>
+            <AppText numberOfLines={2} variant="cardTitle">
+              {nativePlaceName(citySlug, place.slug, place.content.name, locale)}
             </AppText>
-            <AppText numberOfLines={2} style={[textStyle, styles.description]}>
+            {place.content.shortDescription ? <AppText numberOfLines={2} variant="metadata" style={[textStyle, styles.description]}>
               {place.content.shortDescription}
-            </AppText>
+            </AppText> : null}
+            {direction === "rtl" && place.didFallback ? <AppText variant="caption">{messages.fallbackContent}</AppText> : null}
             <AppText variant="caption" style={styles.metadata}>
               {discoveryCopy(locale)[place.category]} · {place.durationMinutes}{" "}
               {visitMinutes}
@@ -503,15 +495,16 @@ function PlaceCard({
           </View>
         </PressableSurface>
       </Link>
-      <View style={styles.cardAttribution}>
-        <MediaAttribution attribution={imageMedia?.attribution} />
-      </View>
+      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense /></View>
+      {imageMedia?.attribution ? <View style={styles.cardAttribution}>
+        <MediaAttribution attribution={imageMedia.attribution} />
+      </View> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  quickActions: { flexDirection: "row", gap: spacing.sm },
+  quickActions: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   quickAction: {
     flex: 1,
     minWidth: 0,
@@ -542,9 +535,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primarySoft,
   },
   placeThumbnail: {
-    alignSelf: "stretch",
     backgroundColor: colors.primarySoft,
-    width: 108,
+    width: 96,
+    height: 96,
+    flexShrink: 0,
+    borderRadius: radius.sm,
   },
   placeCard: {
     backgroundColor: colors.surface,
@@ -554,12 +549,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
     overflow: "hidden",
   },
-  placeLink: { alignItems: "center", flexDirection: "row", minHeight: 120 },
+  placeLink: { alignItems: "flex-start", flexDirection: "row", minHeight: 120, padding: 12, gap: 12 },
   placeContent: {
     flex: 1,
     gap: spacing.xs,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    minWidth: 0,
+    paddingVertical: 2,
   },
   metadata: { color: colors.textMuted, marginTop: spacing.xs },
   muted: { color: colors.textMuted },
@@ -571,10 +566,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   tourLink: { overflow: "hidden", flexDirection: "row" },
-  tourContent: { flex: 1, gap: spacing.xs, padding: spacing.md },
+  tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: spacing.md },
+  cardActions: { paddingHorizontal: 12, paddingBottom: 12, paddingTop: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
   stopName: { color: colors.textMuted, marginTop: spacing.xs },
-  startTour: { color: colors.primary, marginTop: spacing.md },
-  startTourRow: { alignItems: "center", flexDirection: "row", gap: spacing.xs },
+  startTour: { color: colors.primary, flexShrink: 1 },
+  startTourRow: { alignItems: "center", flexDirection: "row", gap: spacing.sm, marginTop: spacing.sm },
 });

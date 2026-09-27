@@ -17,17 +17,12 @@
     "availableCities": "Bliet disponibbli",
     "exploreCity": "Esplora {city}",
     "availableNow": "Disponibbli issa",
-    "featuredCityDescription": "Skopri 5 postijiet storiċi permezz ta’ mixja gwidata.",
     "moreCities": "Aktar bliet",
     "comingSoon": "Dalwaqt",
     "germany": "Il-Ġermanja"
   },
   "explore": {
-    "title": "Skopri Lübeck",
-    "subtitle": "20 post x’tiskopri",
     "walkingTour": "Dawra bil-mixi",
-    "historicCenter": "Iċ-ċentru storiku ta’ Lübeck",
-    "duration": "~45 min • 5 waqfiet",
     "places": "Postijiet",
     "startTour": "Ibda d-dawra bil-mixi"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Id-dawra tlestiet",
-    "title": "Skoprejt Lübeck!",
-    "description": "Lestejt 5 waqfiet storiċi fil-belt il-qadima ta’ Lübeck.",
-    "progress": "5 minn 5 waqfiet lesti",
     "ratingQuestion": "Kif kienet id-dawra?",
     "thankYou": "Grazzi tal-kummenti tiegħek!",
     "feedback": "Aqsam il-kummenti",

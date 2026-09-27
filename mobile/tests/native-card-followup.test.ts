@@ -22,7 +22,8 @@ describe("physical-device card and keyboard follow-up", () => {
     expect(citySource).toContain('pathname: "/city/[citySlug]/place/[placeSlug]"');
     expect(citySource).toContain("prefetchPublicPlace(citySlug, place.slug, locale)");
     expect(citySource).toContain('triggerCitywalkHaptic("light")');
-    expect(citySource).toContain("<MediaAttribution attribution={imageMedia?.attribution} />");
+    expect(citySource).toContain("imageMedia?.attribution ?");
+    expect(citySource).toContain("<MediaAttribution attribution={imageMedia.attribution} />");
     expect(citySource).toContain('accessibilityRole="link"');
     expect(citySource).not.toContain("placeChevron");
   });

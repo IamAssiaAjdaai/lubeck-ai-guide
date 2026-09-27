@@ -17,17 +17,12 @@
     "availableCities": "Elérhető városok",
     "exploreCity": "Fedezd fel: {city}",
     "availableNow": "Most elérhető",
-    "featuredCityDescription": "Fedezz fel 5 történelmi helyet egy vezetett sétán.",
     "moreCities": "További városok",
     "comingSoon": "Hamarosan",
     "germany": "Németország"
   },
   "explore": {
-    "title": "Fedezze fel Lübecket",
-    "subtitle": "20 felfedezésre váró hely",
     "walkingTour": "Gyalogos túra",
-    "historicCenter": "Lübeck történelmi központja",
-    "duration": "~45 perc • 5 állomás",
     "places": "Helyszínek",
     "startTour": "Gyalogos túra indítása"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "A túra véget ért",
-    "title": "Felfedezte Lübecket!",
-    "description": "Teljesítette az 5 történelmi állomást Lübeck óvárosában.",
-    "progress": "5/5 állomás teljesítve",
     "ratingQuestion": "Hogy tetszett a túra?",
     "thankYou": "Köszönjük a visszajelzést!",
     "feedback": "Visszajelzés küldése",

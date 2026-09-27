@@ -1,3 +1,4 @@
+import { getLubeckEditorial } from "@/data/lubeckEditorial";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CircleCheckBig, House, RotateCcw } from "lucide-react";
@@ -54,11 +55,11 @@ export default async function CompletePage({
           </p>
 
           <h1 className="mt-3 text-[2rem] font-bold leading-tight tracking-[-0.03em]">
-            {content.title}
+            {getLubeckEditorial(locale)["complete.title"]}
           </h1>
 
           <p className="mx-auto mt-3 max-w-sm leading-7 text-text-secondary">
-            {content.description}
+            {getLubeckEditorial(locale)["complete.description"]}
           </p>
         </div>
 

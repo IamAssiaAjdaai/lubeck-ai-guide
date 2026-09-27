@@ -1,16 +1,20 @@
+import { nativeTextBlock, nativeTextStyle } from "../design/rtlPresentation";
+import { nativeCategoryLabel } from "../lib/contentLabels";
+import { WalkMembershipControl } from "./WalkMembershipControl";
+import { nativePlaceName } from "../lib/displayNames";
 import { useEffect, useState, type ReactNode } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { discoveryCopy } from "../design/discoveryCopy";
-import { walkCopy, walkCategoryLabel } from "@citywalk/traveler-core/walkCopy";
+import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import type { WalkBuildStage } from "@citywalk/traveler-core/walkPlanner";
 import type { PublicPlaceCard } from "../lib/api/contracts";
 import { citywalkApi } from "../lib/api/instance";
 import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { useReducedMotion } from "../lib/motion";
-import { colors, layout, radius, shadows, spacing } from "../design/tokens";
+import { colors, layout, motion, radius, shadows, spacing } from "../design/tokens";
 import { AppText, PressableSurface, PrimaryButton } from "./ui";
 import { NativeContentImage } from "./NativeContentImage";
 import { NativeIcon } from "./NativeIcon";
@@ -38,24 +42,22 @@ export function V2Hero({
         { direction },
       ]}
     >
-      <Image
+      {!compact && !city ? <Image
         source={require("../../assets/images/citywalk-waterfront.webp")}
         contentFit="cover"
-        style={[
-          styles.heroArt,
-          {
-            transform: [{ scaleX: direction === "rtl" ? -1 : 1 }],
-          },
-        ]}
+        style={styles.heroArt}
         accessible={false}
-      />
-      <View style={styles.heroCopy}>
+      /> : null}
+      <View style={[styles.heroCopy, city && styles.cityHeroCopy, compact && styles.compactHeroCopy, nativeTextBlock(direction)]}>
       {children}
-      <AppText variant={city ? "hero" : "screenTitle"} style={styles.heroTitle}>
+      <AppText variant={city ? "hero" : "screenTitle"} style={[styles.heroTitle, direction === "rtl" && [styles.arabicHeroTitle, nativeTextStyle(direction)]]}>
         {title}
       </AppText>
-      {subtitle ? <AppText style={styles.subtitle}>{subtitle}</AppText> : null}
+      {subtitle ? <AppText style={[styles.subtitle, nativeTextStyle(direction)]}>{subtitle}</AppText> : null}
       </View>
+      {city && !compact ? <View style={styles.cityHeroScene}>
+        <Image source={require("../../assets/images/citywalk-waterfront.webp")} contentFit="cover" contentPosition="bottom right" style={styles.cityHeroArt} accessible={false} />
+      </View> : null}
     </View>
   );
 }
@@ -120,7 +122,7 @@ export function V2Itinerary({
           "thumbnail",
         );
         const row = (
-          <View style={styles.itineraryRow}>
+          <View style={[styles.itineraryRow, { direction }]}>
             <View style={styles.number}>
               <AppText style={styles.numberText}>{index + 1}</AppText>
             </View>
@@ -133,18 +135,18 @@ export function V2Itinerary({
               }
               contentFit="cover"
               style={styles.thumbnail}
-              accessibilityLabel={place.content.name}
+              accessibilityLabel={nativePlaceName(citySlug, place.slug, place.content.name, locale)}
             />
             <View style={styles.rowCopy}>
               <AppText
                 variant="label"
                 style={{
                   writingDirection:
-                    place.resolvedLocale === "ar" ? "rtl" : "ltr",
+                    direction,
                   textAlign: direction === "rtl" ? "right" : "left",
                 }}
               >
-                {place.content.name}
+                {nativePlaceName(citySlug, place.slug, place.content.name, locale)}
               </AppText>
               <AppText variant="caption" style={styles.muted}>
                 {t.minutes.replace("{minutes}", String(place.durationMinutes))}{" "}
@@ -153,7 +155,7 @@ export function V2Itinerary({
                 place.category === "eat" ||
                 place.category === "fun"
                   ? discoveryCopy(locale)[place.category]
-                  : walkCategoryLabel(place.category, locale)}
+                  : nativeCategoryLabel(place.category, locale)}
               </AppText>
             </View>
             {interactive ? (
@@ -167,8 +169,8 @@ export function V2Itinerary({
           </View>
         );
         return interactive ? (
+          <View key={place.slug}>
           <Link
-            key={place.slug}
             href={{
               pathname: "/city/[citySlug]/place/[placeSlug]",
               params: { citySlug, placeSlug: place.slug },
@@ -177,11 +179,13 @@ export function V2Itinerary({
           >
             <PressableSurface
               accessibilityRole="link"
-              accessibilityLabel={place.content.name}
+              accessibilityLabel={nativePlaceName(citySlug, place.slug, place.content.name, locale)}
             >
               {row}
             </PressableSurface>
           </Link>
+          <WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} onlyMember />
+          </View>
         ) : (
           <View key={place.slug}>{row}</View>
         );
@@ -189,10 +193,26 @@ export function V2Itinerary({
     </View>
   );
 }
-export function V2Loading({ stage = "matching" }: { stage?: WalkBuildStage }) {
+export function V2Loading({ stage = "matching", onReady, onPresented }: { stage?: WalkBuildStage; onReady?: () => void; onPresented?: () => void }) {
   const { locale, direction } = useNativeLocale(),
     t = walkCopy(locale),
     reduced = useReducedMotion();
+  const [entrance] = useState(() => new Animated.Value(0));
+  useEffect(() => {
+    if (reduced) {
+      entrance.setValue(1);
+      // Layout alone does not mean pixels have been presented. Cross a frame
+      // boundary even when the system requests no animation.
+      let next = 0;
+      const first = requestAnimationFrame(() => { next = requestAnimationFrame(() => onPresented?.()); });
+      return () => { cancelAnimationFrame(first); cancelAnimationFrame(next); };
+    }
+    const transition = Animated.timing(entrance, {
+      toValue: 1, duration: motion.component, useNativeDriver: true,
+    });
+    transition.start(({ finished }) => { if (finished) onPresented?.(); });
+    return () => transition.stop();
+  }, [entrance, reduced, onPresented]);
   const [rotation] = useState(() => new Animated.Value(0));
   useEffect(() => {
     if (reduced) return;
@@ -207,7 +227,7 @@ export function V2Loading({ stage = "matching" }: { stage?: WalkBuildStage }) {
     return () => animation.stop();
   }, [rotation, reduced]);
   return (
-    <View style={{ direction }} accessibilityRole="progressbar" accessibilityLabel={t.loading} accessibilityValue={{ text: t[stage] }}>
+    <Animated.View onLayout={onReady} testID="walk-building-progress" style={{ direction, opacity: entrance }} accessibilityRole="progressbar" accessibilityLabel={t.loading} accessibilityValue={{ text: t[stage] }}>
       <V2Hero title={t.loading} subtitle={t.loadingSubtitle} />
       <View style={styles.ring}>
         <NativeIcon
@@ -254,22 +274,24 @@ export function V2Loading({ stage = "matching" }: { stage?: WalkBuildStage }) {
         />
         <AppText style={styles.rowCopy}>{t.reassurance}</AppText>
       </View>
-    </View>
+    </Animated.View>
   );
 }
 export function V2WalkError({
   empty = false,
   retry,
   close,
+  recoveryLabel,
 }: {
   empty?: boolean;
   retry: () => void;
   close: () => void;
+  recoveryLabel?: string;
 }) {
-  const { locale } = useNativeLocale(),
+  const { locale, direction } = useNativeLocale(),
     t = walkCopy(locale);
   return (
-    <View accessibilityRole="alert" style={styles.error}>
+    <View accessibilityRole="alert" style={[styles.error, { direction }, direction === "rtl" && { alignItems: "stretch" }]}>
       <View style={styles.errorArt}>
         <Image
           source={require("../../assets/images/citywalk-waterfront.webp")}
@@ -284,7 +306,7 @@ export function V2WalkError({
       <AppText style={[styles.subtitle, styles.center]}>
         {empty ? t.emptyHelp : t.errorHelp}
       </AppText>
-      <PrimaryButton label={empty ? t.customize : t.retry} onPress={retry} />
+      <PrimaryButton label={recoveryLabel ?? (empty ? t.customize : t.retry)} onPress={retry} />
       <PrimaryButton label={t.backCity} tone="secondary" onPress={close} />
       {!empty ? (
         <AppText style={[styles.muted, styles.center]}>{t.errorHint}</AppText>
@@ -306,8 +328,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingTop: spacing.xl,
   },
-  compactHero: { minHeight: 125, paddingVertical: spacing.md },
+  cityHeroCopy: { paddingBottom: spacing.sm },
+  cityHeroScene: { width: "100%", aspectRatio: 1.8, overflow: "hidden", borderRadius: radius.md },
+  cityHeroArt: { position: "absolute", width: "150%", height: "150%", right: 0, bottom: 0 },
+  compactHero: { minHeight: 0, paddingVertical: spacing.sm },
+  compactHeroCopy: { paddingBottom: 0 },
   heroTitle: { maxWidth: "95%" },
+  arabicHeroTitle: { maxWidth: "100%", alignSelf: "stretch", writingDirection: "rtl", textAlign: "right" },
   subtitle: { color: colors.textMuted, fontSize: 17, lineHeight: 25 },
   muted: { color: colors.textMuted },
   progress: {

@@ -1,3 +1,9 @@
+import { t as translate } from "@citywalk/i18n";
+import { nativeTextBlock, nativeContentTextStyle } from "../../../../design/rtlPresentation";
+import { ContentRecovery } from "../../../../components/ContentRecovery";
+import { WalkMembershipControl } from "../../../../components/WalkMembershipControl";
+import { nativePlaceName } from "../../../../lib/displayNames";
+import { discoveryCopy } from "../../../../design/discoveryCopy";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { loadSavedPlaces, toggleSavedPlace } from "../../../../lib/walkStorage";
 import { NativeContentImage as Image } from "../../../../components/NativeContentImage";
@@ -30,10 +36,6 @@ import {
   selectImageUrl,
   selectPrimaryImageMedia,
 } from "../../../../lib/api/media";
-import {
-  getNativeDirection,
-  getNativeTextAlignment,
-} from "../../../../lib/localization";
 import { parsePlaceRouteIdentity } from "../../../../lib/routing";
 import {
   adjacentMobileTripParams,
@@ -107,6 +109,7 @@ function PlaceContent() {
       setSaved,
     ]),
   );
+  const [savingPlace, setSavingPlace] = useState(false);
   const [tripCompleted, setTripCompleted] = useState(false);
   const placeState = usePublicPlace(
     identity?.citySlug ?? "invalid",
@@ -131,11 +134,7 @@ function PlaceContent() {
       </Screen>
     );
   if (placeState.status === "error")
-    return (
-      <Screen>
-        <StatusMessage>{messages.unavailable}</StatusMessage>
-      </Screen>
-    );
+    return <Screen><ContentRecovery retry={placeState.retry} citySlug={identity.citySlug} /></Screen>;
 
   const place = placeState.data.place;
   if (
@@ -148,11 +147,7 @@ function PlaceContent() {
       </Screen>
     );
   }
-  const contentDirection = getNativeDirection(place.resolvedLocale);
-  const contentTextStyle = {
-    writingDirection: contentDirection,
-    textAlign: getNativeTextAlignment(place.resolvedLocale),
-  } as const;
+  const contentTextStyle = nativeContentTextStyle(locale, place.resolvedLocale);
   const imageMedia = selectPrimaryImageMedia(place.media);
   const image = selectImageUrl(
     imageMedia,
@@ -161,12 +156,13 @@ function PlaceContent() {
     "detail",
   );
   const audio = selectExactLocaleAudio(place.media, locale);
+  const hasStory = Boolean(place.content.story?.trim());
   const previousStop = trip ? adjacentMobileTripParams(trip, -1) : undefined;
   const nextStop = trip ? adjacentMobileTripParams(trip, 1) : undefined;
 
   return (
     <Screen scrollViewRef={scroll}>
-      <Stack.Screen options={{ title: place.content.name }} />
+      <Stack.Screen options={{ title: nativePlaceName(identity.citySlug, place.slug, place.content.name, locale) }} />
       {saveMessage ? <StatusMessage>{saveMessage}</StatusMessage> : null}
       {trip ? (
         <TripProgress
@@ -193,23 +189,24 @@ function PlaceContent() {
               cachePolicy="memory-disk"
               contentFit="cover"
               style={styles.hero}
-              accessibilityLabel={place.content.name}
+              accessibilityLabel={nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)}
               transition={motion.component}
             />
             <MediaAttribution attribution={imageMedia?.attribution} />
           </View>
         ) : null}
-        <View style={[styles.introduction, { direction: contentDirection }]}>
+        <View style={[styles.introduction, nativeTextBlock(direction)]}>
           <AppText variant="metadata" style={styles.eyebrow}>
-            {place.category.toUpperCase()} · {place.durationMinutes}{" "}
+            {discoveryCopy(locale)[place.category]} · {place.durationMinutes}{" "}
             {messages.visitMinutes}
           </AppText>
-          <AppText variant="screenTitle" style={contentTextStyle}>
-            {place.content.name}
+          <AppText variant="screenTitle">
+            {nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)}
           </AppText>
           <AppText style={[contentTextStyle, styles.description]}>
             {place.content.description ?? place.content.shortDescription}
           </AppText>
+          {direction === "rtl" && place.didFallback ? <AppText variant="caption">{messages.fallbackContent}</AppText> : null}
         </View>
         {place.content.visitNote ? (
           <View style={styles.note}>
@@ -229,8 +226,8 @@ function PlaceContent() {
             </AppText>
           </View>
         ) : null}
-        {place.content.story ? (
-          <View style={styles.section} onLayout={(event) => {
+        {hasStory ? (
+          <View testID="place-story-section" style={styles.section} onLayout={(event) => {
             sections.current.story = event.nativeEvent.layout.y;
             focusSection();
           }}>
@@ -240,43 +237,43 @@ function PlaceContent() {
         ) : null}
         <PrimaryButton
           label={`${t.saved}${saved ? " ✓" : ""}`}
+          busy={savingPlace}
           accessibilityState={{ selected: saved }}
           tone="secondary"
           onPress={() => {
+            if (savingPlace) return;
+            setSavingPlace(true);
             void toggleSavedPlace({
               citySlug: identity.citySlug,
               slug: place.slug,
               name: place.content.name,
             })
               .then(setSaved)
-              .catch(() => setSaveMessage(messages.tripSaveFailed));
+              .catch(() => setSaveMessage(messages.tripSaveFailed)).finally(() => setSavingPlace(false));
           }}
         />
-        <Link
-          href={{
-            pathname: "/city/[citySlug]/walk",
-            params: { citySlug: identity.citySlug, add: place.slug },
+        <WalkMembershipControl citySlug={identity.citySlug} placeSlug={place.slug} />
+        <View
+          testID="place-audio-section"
+          onLayout={(event) => {
+            sections.current.audio = event.nativeEvent.layout.y;
+            focusSection();
           }}
-          asChild
         >
-          <PrimaryButton label={t.addToWalk} />
-        </Link>
-        {audio ? (
-          <View
-            onLayout={(event) => {
-              sections.current.audio = event.nativeEvent.layout.y;
-              focusSection();
-            }}
-          >
+          {audio ? (
             <NativeAudioPlayer
               key={`${identity.citySlug}:${place.slug}:${locale}`}
               source={citywalkApi.resolveUrl(audio.url)}
-              title={`${place.content.name} ${messages.audioGuide}`}
+              title={`${nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)} ${messages.audioGuide}`}
               durationSeconds={audio.durationSeconds}
+              assetLocale={audio.locale}
             />
-          </View>
-        ) : null}
-        {!audio && params.focus === "audio" ? <StatusMessage>{messages.audioUnavailable}</StatusMessage> : null}
+          ) : (
+            <View testID="audio-unavailable-notice" style={[styles.audioNotice, nativeTextBlock(direction)]}>
+              <AppText>{translate(locale, "place.audioMissingDescription")}</AppText>
+            </View>
+          )}
+        </View>
         {place.content.facts?.length ? (
           <View style={styles.factsList}>
             <SectionTitle>{messages.facts}</SectionTitle>
@@ -446,6 +443,7 @@ function PlaceContent() {
 }
 
 const styles = StyleSheet.create({
+  audioNotice: { backgroundColor: colors.primarySoft, borderRadius: radius.sm, padding: spacing.md },
   content: { gap: spacing.md },
   hero: {
     width: "100%",

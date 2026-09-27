@@ -1,3 +1,6 @@
+import { ContentRecovery } from "../../../../components/ContentRecovery";
+import { uxCopy } from "../../../../design/uxCopy";
+import { nativePlaceName } from "../../../../lib/displayNames";
 import { NativeBrand, NativeBottomNavigation } from "../../../../components/NativeChrome";
 import { buildWalkGuideContext } from "@citywalk/traveler-core/walkGuideContext";
 import { remainingWalkBudget } from "@citywalk/traveler-core/walkJourney";
@@ -16,7 +19,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { CitywalkLoading } from "../../../../components/CitywalkLoading";
 import { NativeIcon } from "../../../../components/NativeIcon";
 import { AppText, EmptyState, InlineLoadingDots, MotionView, Screen, StatusMessage } from "../../../../components/ui";
 import { colors, radius, spacing, typography } from "../../../../design/tokens";
@@ -91,18 +93,10 @@ export default function GuideScreen() {
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
   if (placeState.status === "loading" || guideState.status === "loading") {
-    return <Screen><CitywalkLoading variant="place" /></Screen>;
+    return <Screen><AppText variant="screenTitle">{messages.askGuideTitle}</AppText><AppText accessibilityLiveRegion="polite">{uxCopy(locale).assistant}</AppText><InlineLoadingDots /></Screen>;
   }
   if (placeState.status === "error" || guideState.status === "error") {
-    return (
-      <Screen>
-        <EmptyState
-          description={messages.guideUnavailable}
-          icon={<NativeIcon ios="sparkles" android="auto_awesome" color={colors.violet} size={28} />}
-          title={messages.askGuideTitle}
-        />
-      </Screen>
-    );
+    return <Screen><AppText variant="screenTitle">{messages.askGuideTitle}</AppText><ContentRecovery citySlug={identity.citySlug} retry={() => { placeState.retry(); guideState.retry(); }} /></Screen>;
   }
 
   const place = placeState.data.place;
@@ -123,7 +117,7 @@ export default function GuideScreen() {
   }
   const { citySlug, placeSlug } = identity;
 
-  if (!hydrated) return <Screen><CitywalkLoading variant="place" /></Screen>;
+  if (!hydrated) return <Screen><AppText variant="screenTitle">{messages.askGuideTitle}</AppText><AppText accessibilityLiveRegion="polite">{uxCopy(locale).assistant}</AppText><InlineLoadingDots /></Screen>;
 
   const canSend = canSubmitGuideQuestion({ busy, hydrated, allowance, failure, question });
 
@@ -189,6 +183,7 @@ export default function GuideScreen() {
   return (
     <SafeAreaView edges={getScreenSafeAreaEdges(true)} style={[styles.safeArea, { direction }]}>
       <Stack.Screen options={{ title: messages.askGuideTitle }} />
+      <NativeBrand />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
@@ -199,7 +194,6 @@ export default function GuideScreen() {
           keyboardShouldPersistTaps="handled"
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
         >
-          <NativeBrand />
           <View style={styles.guideHeader}>
             <View style={styles.guideIdentity}>
               <View style={styles.guideIcon}>
@@ -207,7 +201,7 @@ export default function GuideScreen() {
               </View>
               <View style={styles.guideHeading}>
                 <AppText variant="heading">{messages.askGuideTitle}</AppText>
-                <AppText variant="caption" style={styles.placeName}>{place.content.name}</AppText>
+                <AppText variant="caption" style={styles.placeName}>{nativePlaceName(placeState.data.city.slug, place.slug, place.content.name, locale)}</AppText>
               </View>
             </View>
             {allowance?.tier === "free" ? (
@@ -307,7 +301,7 @@ export default function GuideScreen() {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
-      <NativeBottomNavigation />
+      <NativeBottomNavigation onScrollToTop={() => scrollRef.current?.scrollTo({ y: 0, animated: true })} />
     </SafeAreaView>
   );
 }

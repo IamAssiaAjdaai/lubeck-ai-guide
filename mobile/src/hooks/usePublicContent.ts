@@ -17,10 +17,12 @@ import {
   type PublicContentFetch,
 } from "../lib/publicContentCache";
 
-type RemoteState<T> =
+type ContentState<T> =
   | Readonly<{ status: "loading" }>
   | Readonly<{ status: "available"; data: T }>
   | Readonly<{ status: "error" }>;
+
+type RemoteState<T> = ContentState<T> & { retry: () => void };
 
 export function usePublicCities(locale: NativeLocale): RemoteState<PublicCityIndexResponse> {
   const fetcher = useCallback(
@@ -102,10 +104,11 @@ function useCachedPublicContent<T>(
   parse: (value: unknown) => T,
   fetcher: (etag: string | undefined, signal: AbortSignal) => Promise<PublicContentFetch<T>>,
 ): RemoteState<T> {
+  const [attempt, setAttempt] = useState(0);
   const cached = publicContentCache.peek<T>(key);
   const [state, setState] = useState<Readonly<{
     requestKey: string;
-    result: RemoteState<T>;
+    result: ContentState<T>;
   }>>({
     requestKey: key,
     result: cached ? { status: "available", data: cached } : { status: "loading" },
@@ -132,19 +135,24 @@ function useCachedPublicContent<T>(
       unsubscribe();
       publicContentCache.cancelIfUnused(key);
     };
-  }, [fetcher, key, parse]);
+  }, [fetcher, key, parse, attempt]);
 
-  if (state.requestKey !== key) {
-    return cached ? { status: "available", data: cached } : { status: "loading" };
-  }
-  return state.result;
+  const retry = () => {
+    setState({ requestKey: key, result: cached ? { status: "available", data: cached } : { status: "loading" } });
+    setAttempt(value => value + 1);
+  };
+  const result = state.requestKey !== key
+    ? cached ? { status: "available" as const, data: cached } : { status: "loading" as const }
+    : state.result;
+  return { ...result, retry };
 }
 
 function useRemoteContent<T>(load: () => Promise<T>, dependencies: readonly unknown[]): RemoteState<T> {
+  const [attempt, setAttempt] = useState(0);
   const requestKey = JSON.stringify(dependencies);
   const [state, setState] = useState<Readonly<{
     requestKey: string;
-    result: RemoteState<T>;
+    result: ContentState<T>;
   }>>({ requestKey, result: { status: "loading" } });
 
   useEffect(() => {
@@ -161,7 +169,10 @@ function useRemoteContent<T>(load: () => Promise<T>, dependencies: readonly unkn
     };
     // The caller supplies stable scalar dependencies for its loader.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, dependencies);
+  }, [...dependencies, attempt]);
 
-  return state.requestKey === requestKey ? state.result : { status: "loading" };
+  return { ...(state.requestKey === requestKey ? state.result : { status: "loading" as const }), retry: () => {
+    setState({ requestKey, result: { status: "loading" } });
+    setAttempt(value => value + 1);
+  } };
 }

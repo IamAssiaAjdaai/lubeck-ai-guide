@@ -11,57 +11,33 @@ import { colors, layout, spacing, typography } from "../design/tokens";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { LocaleSelector } from "./LocaleSelector";
 import { NativeIcon } from "./NativeIcon";
-import { activeNativeTab, tabRootKey, useTabScrollCoordinator } from "../lib/tabNavigation";
+import { activeNativeTab, tabRootKey, useTabScrollCoordinator, logTabPress } from "../lib/tabNavigation";
 
 export function NativeBrand({ onBack }: { onBack?: () => void }) {
   const router = useRouter(),
     path = usePathname();
   const { locale, direction } = useNativeLocale();
+  const nested = path !== "/" && path !== "/saved" && path !== "/account";
   return (
-    <View>
-      <View style={[styles.brand, { direction }]}>
-        <Pressable
-          accessibilityRole="link"
-          accessibilityLabel="CITYWALK"
-          onPress={() => router.navigate("/")}
-          style={[styles.wordmark, { direction: "ltr" }]}
-        >
-          <Image
-            source={require("../../assets/images/citywalk-mark.svg")}
-            style={styles.mark}
-            contentFit="contain"
-          />
-          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={styles.name}>CITYWALK</Text>
-        </Pressable>
-        {path === "/" ? (
-          <LocaleSelector showLabel />
-        ) : (
-          <Text style={styles.motto}>
-            {"CITIES\nSTORIES\nPEOPLE\nEVERYWHERE\n—"}
-          </Text>
-        )}
-      </View>
-      {path !== "/" ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={walkCopy(locale).back}
-          onPress={
-            onBack ??
-            (() => (router.canGoBack() ? router.back() : router.replace("/")))
-          }
-          style={styles.back}
-        >
-          <NativeIcon
-            ios={direction === "rtl" ? "chevron.right" : "chevron.left"}
-            android={direction === "rtl" ? "chevron_right" : "chevron_left"}
-            color={colors.textMuted}
-          />
+    <View accessibilityRole="header" testID="native-header" style={[styles.brand, nested && styles.compactBrand, { direction }]}>
+      {nested ? (
+        <Pressable accessibilityRole="button" accessibilityLabel={walkCopy(locale).back}
+          onPress={onBack ?? (() => router.canGoBack() ? router.back() : router.replace("/"))}
+          style={styles.back}>
+          <NativeIcon ios={direction === "rtl" ? "chevron.right" : "chevron.left"}
+            android={direction === "rtl" ? "chevron_right" : "chevron_left"} color={colors.primary} />
         </Pressable>
       ) : null}
+      <Pressable accessibilityRole="link" accessibilityLabel="CITYWALK" onPress={() => router.navigate("/")}
+        style={[styles.wordmark, { direction: "ltr" }]}>
+        <Image source={require("../../assets/images/citywalk-mark.svg")} style={nested ? styles.compactMark : styles.mark} contentFit="contain" />
+        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.name, nested && styles.compactName]}>CITYWALK</Text>
+      </Pressable>
+      <LocaleSelector showLabel={!nested} />
     </View>
   );
 }
-export function NativeBottomNavigation() {
+export function NativeBottomNavigation({ onScrollToTop }: { onScrollToTop: () => void }) {
   const { locale, direction } = useNativeLocale(),
     t = walkCopy(locale);
   const router = useRouter(),
@@ -120,6 +96,7 @@ export function NativeBottomNavigation() {
           onPress={() => {
             scrollCoordinator?.clear();
             if (active !== item.key) {
+              logTabPress(item.key, false, "navigate");
               router.navigate(item.href as Href);
               return;
             }
@@ -128,9 +105,14 @@ export function NativeBottomNavigation() {
               : item.key === "profile" ? "/account"
               : item.key === "home" || item.key === "explore" ? `/:${item.key}`
               : `/saved:${item.key}`;
-            scrollCoordinator?.request(root);
-            if (tabRootKey(path, { section, view }) !== root)
+            if (tabRootKey(path, { section, view }) === root) {
+              logTabPress(item.key, true, "scroll-top");
+              onScrollToTop();
+            } else {
+              logTabPress(item.key, true, "return-root-and-scroll-top");
+              scrollCoordinator?.request(root);
               router.dismissTo(item.href as Href);
+            }
           }}
           style={styles.tab}
         >
@@ -141,9 +123,7 @@ export function NativeBottomNavigation() {
             color={active === item.key ? colors.primary : colors.textMuted}
           />
           <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.85}
+            adjustsFontSizeToFit={false}
             style={[
               styles.tabLabel,
               { writingDirection: direction, ...(direction === "rtl" ? { lineHeight: 19 } : {}) },
@@ -162,17 +142,21 @@ const styles = StyleSheet.create({
     minHeight: 44,
     width: 44,
     justifyContent: "center",
-    marginBottom: spacing.sm,
+    alignItems: "center",
   },
   brand: {
     minHeight: 68,
-    marginBottom: 14,
+    paddingHorizontal: spacing.md,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: spacing.sm,
   },
+  compactBrand: { minHeight: 52, gap: spacing.xs },
+  compactMark: { width: 26, height: 28 },
+  compactName: { fontSize: 16, letterSpacing: 1.4 },
   wordmark: {
+    flex: 1,
     minHeight: 48,
     flexDirection: "row",
     alignItems: "center",
@@ -181,14 +165,8 @@ const styles = StyleSheet.create({
   },
   mark: { width: 40, height: 42 },
   name: { flexShrink: 1, color: "#183F67", fontSize: 19, fontWeight: "600", letterSpacing: 2 },
-  motto: {
-    color: colors.textSubtle,
-    fontSize: 8,
-    lineHeight: 12,
-    letterSpacing: 1.4,
-    writingDirection: "ltr",
-  },
   navigation: {
+    flexShrink: 0,
     width: "100%",
     maxWidth: 576,
     alignSelf: "center",

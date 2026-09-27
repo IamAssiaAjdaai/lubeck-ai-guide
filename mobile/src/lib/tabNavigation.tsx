@@ -1,5 +1,5 @@
-import { createContext, useCallback, useContext, useState, type PropsWithChildren } from "react";
-import { useFocusEffect, useLocalSearchParams, usePathname } from "expo-router";
+import { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from "react";
+import { useLocalSearchParams, useNavigation, useRoute, type NativeStackNavigationProp } from "expo-router";
 
 export type NativeTab = "home" | "explore" | "trips" | "saved" | "profile";
 export function activeNativeTab(path: string, params: { section?: string; view?: string }): NativeTab {
@@ -14,22 +14,17 @@ export function tabRootKey(path: string, params: { section?: string; view?: stri
   return undefined;
 }
 
-// Focus-scoped refs give the custom bar native tabPress behavior. Nested-route
-// requests are consumed when Expo Router focuses the tab root, without timers.
+// Root taps use the visible screen's ref directly. Only a nested return needs
+// a pending intent, consumed after the native stack attaches its destination.
 export function createTabScrollCoordinator() {
-  let focused: { key: string; scroll: () => void } | undefined;
   let pending: string | undefined;
   return {
     clear() { pending = undefined; },
-    request(key: string) {
-      if (focused?.key === key) { focused.scroll(); pending = undefined; }
-      else pending = key;
-    },
-    register(key: string, scroll: () => void) {
-      const entry = { key, scroll };
-      focused = entry;
-      if (pending === key) { pending = undefined; scroll(); }
-      return () => { if (focused === entry) focused = undefined; };
+    request(key: string) { pending = key; },
+    completeRootReturn(key: string, scroll: () => void) {
+      if (pending !== key) return;
+      pending = undefined;
+      scroll();
     },
   };
 }
@@ -39,12 +34,23 @@ export function NativeTabScrollProvider({ children }: PropsWithChildren) {
   return <TabScrollContext.Provider value={coordinator}>{children}</TabScrollContext.Provider>;
 }
 export function useTabScrollCoordinator() { return useContext(TabScrollContext); }
-export function useRootTabScroll(scrollToTop: () => void) {
-  const path = usePathname();
-  const params = useLocalSearchParams<{ section?: string; view?: string }>();
+export function useRootTabScroll(scrollToTop: (animated?: boolean) => void) {
+  const route = useRoute();
+  const navigation = useNavigation<NativeStackNavigationProp<Record<string, object | undefined>>>();
+  const params = useLocalSearchParams<{ section?: string; view?: string; citySlug?: string }>();
   const coordinator = useTabScrollCoordinator();
+  // usePathname is global: background stack screens must retain their own identity.
+  const path = route.name === "index" ? "/" : route.name === "saved" ? "/saved"
+    : route.name === "account/index" ? "/account"
+    : route.name === "city/[citySlug]/index" && params.citySlug ? `/city/${params.citySlug}` : "";
   const key = tabRootKey(path, params);
-  useFocusEffect(useCallback(() => {
-    if (key) return coordinator?.register(key, scrollToTop);
-  }, [coordinator, key, scrollToTop]));
+  const finish = useCallback(() => {
+    if (key && navigation.isFocused()) coordinator?.completeRootReturn(key, () => scrollToTop(false));
+  }, [coordinator, key, navigation, scrollToTop]);
+  useEffect(() => navigation.addListener("transitionEnd", finish), [navigation, finish]);
+}
+
+export function logTabPress(tab: NativeTab, active: boolean, action: string) {
+  if (typeof __DEV__ !== "undefined" && __DEV__ && process.env.EXPO_PUBLIC_CITYWALK_QA_LOGS === "1")
+    console.info(`[TAB_PRESS] ${tab} active=${active} action=${action}`);
 }

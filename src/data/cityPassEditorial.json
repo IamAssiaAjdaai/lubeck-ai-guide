@@ -1,0 +1,35 @@
+{
+  "en": {
+    "title": "Unlock Hidden Lübeck for 72 hours",
+    "benefits": [
+      "Hidden Lübeck narrated audio experience",
+      "Premium stories in available languages",
+      "More verified AI Guide questions",
+      "Cross-device access after sign-in",
+      "One payment, no subscription"
+    ],
+    "premiumAudio": "Hidden Lübeck premium audio"
+  },
+  "de": {
+    "title": "Hidden Lübeck für 72 Stunden freischalten",
+    "benefits": [
+      "Erzähltes Hidden-Lübeck-Audioerlebnis",
+      "Premium-Geschichten in verfügbaren Sprachen",
+      "Mehr verifizierte Fragen an den KI-Guide",
+      "Geräteübergreifender Zugriff nach Anmeldung",
+      "Einmalzahlung, kein Abonnement"
+    ],
+    "premiumAudio": "Hidden-Lübeck-Premium-Audio"
+  },
+  "ar": {
+    "title": "افتح تجربة لوبيك الخفية لمدة 72 ساعة",
+    "benefits": [
+      "تجربة صوتية تحكي قصص لوبيك الخفية",
+      "قصص مميزة باللغات المتاحة",
+      "المزيد من الأسئلة الموثقة للدليل الذكي",
+      "الوصول عبر الأجهزة بعد تسجيل الدخول",
+      "دفعة واحدة، بلا اشتراك"
+    ],
+    "premiumAudio": "صوت لوبيك الخفية المميز"
+  }
+}

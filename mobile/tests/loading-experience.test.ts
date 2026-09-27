@@ -11,7 +11,7 @@ import loadingSource from "../src/components/CitywalkLoading.tsx?raw";
 const loadingScreens = {
   account: accountSource,
   city: citySource,
-  guide: guideSource,
+
   home: homeSource,
   place: placeSource,
   tour: tourSource,
@@ -37,6 +37,9 @@ describe("CITYWALK loading experience", () => {
 
   it("uses inline chat thinking after a question instead of a full-screen loader", () => {
     expect(guideSource).toContain("messages.guideThinking");
+    expect(guideSource).toContain("uxCopy(locale).assistant");
+    expect(guideSource).toContain("InlineLoadingDots");
+    expect(guideSource).not.toContain("CitywalkLoading");
     expect(guideSource).toContain("styles.thinkingBubble");
     expect(guideSource).toContain("setConversation(turn.messages)");
   });
