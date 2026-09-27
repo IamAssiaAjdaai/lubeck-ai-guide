@@ -1,4 +1,12 @@
-# Account lifecycle — local implementation, 2026-09-27
+# Account lifecycle — iPhone accepted, 2026-09-28
+
+## Current acceptance — 2026-09-28
+
+**Owner-confirmed physical iPhone account-lifecycle acceptance: PASS.** See [Preview validation and acceptance](preview-validation.md#owner-confirmed-physical-iphone-acceptance--2026-09-28) for all 16 reported scenarios and final validation. Test delivery remains Resend test mode only. Real Gmail/Outlook delivery, a verified CITYWALK sending domain and SPF/DKIM/DMARC remain launch blockers. Commerce/staff/audit-linked deletion remains blocked pending an approved retention policy. No Android physical acceptance is claimed.
+
+Implementation baseline: `a6aa9984fd65bffa4c09100f4c9e61c1414e110e`. Device model, iOS version, installed native build and exact device JS fingerprint were not supplied for this owner report; they are not inferred. The separate local API-origin cache correction remains outside this documentation-only commit. The root TypeScript config edit and `.expo/` also remain local.
+
+The sections below preserve dated implementation and pre-deployment evidence. Their earlier pending/no-deployment/no-physical-acceptance statements describe those earlier checkpoints, not the current status above. Unreported scenarios (including Arabic RTL and physical expiry/error variants) remain unverified.
 
 ## Reviewed commit / Preview preparation checkpoint
 
@@ -86,7 +94,7 @@ Before any separately approved push/deployment: verify this branch's exact Previ
 
 Final validation is recorded below. Counts from different runs overlap and must not be added together. Isolated integration uses `scripts/test-account-lifecycle.mjs`: creates a uniquely named loopback-only database, applies the existing migrations, mocks email and rate-limit transports, and removes only that database. It never loads private env files or accesses Preview/Production. Real Better Auth hashing/token/session behavior and PostgreSQL cascades are exercised; mocked transport success is not email-delivery evidence.
 
-## Physical iPhone retest — pending
+## Historical physical iPhone checklist — see current acceptance above
 
 1. Preserve current walk, favorites, language, rating history and historical local saves; record their presence without deleting storage.
 2. Sign in → Forgot password. Check invalid email, request acknowledgement, offline/config/rate-limit error and retry; compare existing/unknown synthetic emails without disclosure.
