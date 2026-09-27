@@ -85,3 +85,21 @@ Both root/mobile lockfiles retain **Better Auth 1.7.2**. The root installed Bett
 The feature diff contains no private env/signing files or Preview database URL/Neon credentials. The isolated-test runner’s existing loopback-only synthetic credentials are test fixtures, not remote secrets. Untracked Expo runtime output remains local and excluded. The held media/tooling stash remains untouched. Production configuration is unchanged; no merge is authorized by this acceptance.
 
 Only Saved Walks are account-backed. Favorites/current progress remain local. Broader cloud sync and historical-save import are deferred. Password-reset email delivery and account deletion remain lifecycle follow-ups. Android physical acceptance, release/store builds and general release readiness remain unverified. Final PR-head CI/Preview checks and reviewer approval remain merge gates; physical iPhone acceptance is complete only for the scenarios listed above.
+
+## CI boundary correction — 2026-09-27
+
+PR #143 run #90 failed because the root auth contract test imported `mobile/src/lib/auth/errors.ts`. With root-only `npm ci`, Vite/Oxc selected `mobile/tsconfig.json`, whose `expo/tsconfig.base` dependency is intentionally absent. The normal developer install masked this root-to-mobile dependency.
+
+The exact transform failure was reproduced in a disposable root-only, lockfile-matched source copy with the mobile source/config present but no Expo or mobile dependencies installed. `traveler-core/accountPolicy` now owns the unchanged 12–128 password bounds. The server factory, native validator and root contract consume the shared package; native exports remain compatible. A native regression checks both shared bounds and their rejection/acceptance edges. No root Expo dependency, workspace, lockfile, Saved Walk behavior or environment changes.
+
+Validation on the fix:
+
+- Focused root auth/shared: **17 passed / 4 files**, zero failed/skipped.
+- Full root suite, still without Expo/mobile dependencies: **874 passed / 143 files; 35 tests / 6 files skipped; zero failed**. These skips are conditional integration gates, not passes.
+- Focused mobile auth/account: **37 passed / 4 files**, zero failed/skipped. Full mobile was not rerun for this policy-only extraction.
+- Isolated account integration: **13 passed / 1 file**, zero failed/skipped, including real Better Auth. These exercise 13 of the root suite’s conditional skips; 22 unrelated integration tests were not rerun. Disposable database removed.
+- Root/mobile TypeScript and lint: **PASS**. The fresh root copy initially lacked generated `PageProps`/`LayoutProps`; `next typegen` generated the standard route declarations, after which TypeScript passed. No build or source workaround.
+- i18n: **477 keys × 7 locales**, zero errors. Diff check: PASS.
+- Root source/shared import scan finds no imports of `mobile/`; the root suite succeeds with that dependency boundary enforced by absent Expo. All 514 checked root/shared/script/schema/config files matched the proposed source.
+
+The root-only copy retains Better Auth 1.7.2. Earlier physical acceptance remains evidence for the unchanged product policy; this CI correction does not invent a new device run or Android acceptance. The held stash and original working checkout remain untouched.

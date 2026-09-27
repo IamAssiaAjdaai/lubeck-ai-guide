@@ -1,14 +1,25 @@
 import { describe, expect, it } from "vitest";
+import { AUTH_MIN_PASSWORD_LENGTH, AUTH_MAX_PASSWORD_LENGTH } from "@citywalk/traveler-core";
 
 import {
   classifyNativeAuthError,
   NATIVE_AUTH_MIN_PASSWORD_LENGTH,
+  NATIVE_AUTH_MAX_PASSWORD_LENGTH,
   validateNativeAuthInput,
   validateDisplayName,
   validateNewPassword,
 } from "../src/lib/auth/errors";
 
 describe("native account diagnostics", () => {
+  it("uses the shared account policy for both native password bounds", () => {
+    expect(NATIVE_AUTH_MIN_PASSWORD_LENGTH).toBe(AUTH_MIN_PASSWORD_LENGTH);
+    expect(NATIVE_AUTH_MAX_PASSWORD_LENGTH).toBe(AUTH_MAX_PASSWORD_LENGTH);
+    expect(validateNewPassword("x".repeat(AUTH_MIN_PASSWORD_LENGTH - 1))).toBe("password_too_short");
+    expect(validateNewPassword("x".repeat(AUTH_MIN_PASSWORD_LENGTH))).toBeUndefined();
+    expect(validateNewPassword("x".repeat(AUTH_MAX_PASSWORD_LENGTH))).toBeUndefined();
+    expect(validateNewPassword("x".repeat(AUTH_MAX_PASSWORD_LENGTH + 1))).toBe("password_too_long");
+  });
+
   it("mirrors the server password floor before submitting", () => {
     expect(NATIVE_AUTH_MIN_PASSWORD_LENGTH).toBe(12);
     expect(validateNativeAuthInput("traveler@example.com", "short"))

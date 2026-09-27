@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { NATIVE_AUTH_MIN_PASSWORD_LENGTH, NATIVE_AUTH_MAX_PASSWORD_LENGTH } from "../../../mobile/src/lib/auth/errors";
+import { AUTH_MIN_PASSWORD_LENGTH, AUTH_MAX_PASSWORD_LENGTH } from "@citywalk/traveler-core";
 const mocks = vi.hoisted(() => ({ configure: vi.fn() }));
 vi.mock("better-auth", () => ({ betterAuth: mocks.configure }));
 vi.mock("@better-auth/drizzle-adapter", () => ({ drizzleAdapter: () => ({}) }));
@@ -15,8 +15,8 @@ describe("native account capability contract", () => {
       const config = mocks.configure.mock.lastCall![0];
       expect(config.emailAndPassword).toMatchObject({
         enabled: true, autoSignIn: false, disableSignUp: !allowEmailSignUp,
-        minPasswordLength: NATIVE_AUTH_MIN_PASSWORD_LENGTH,
-        maxPasswordLength: NATIVE_AUTH_MAX_PASSWORD_LENGTH,
+        minPasswordLength: AUTH_MIN_PASSWORD_LENGTH,
+        maxPasswordLength: AUTH_MAX_PASSWORD_LENGTH,
       });
     }
   });
