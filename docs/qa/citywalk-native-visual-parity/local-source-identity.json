@@ -1,0 +1,560 @@
+{
+  "head": "efe8cf62f408181f0f4ca922f32e53e712a982a2",
+  "sourceDigest": "dabce61609b820b25467d8a49f34c3a09315a61845768a26b59632773543f11b",
+  "definition": "SHA256 of sorted JSON path/content-SHA256 entries for every changed tracked and untracked source/config/test/asset file, excluding docs, AGENTS.md and PR template; deletes explicit. No ignored files included.",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "796c1afd578fc5b13411503f6f0833e44f836fe7b6abca3e3635f87882cf52ed"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "cc240ba02af0fec2d221af89932c7e9c1fe918b77196e02368746f3f206888f6"
+    },
+    {
+      "path": "mobile/assets/images/content-placeholder.svg",
+      "sha256": "783f85e1c0b7bb0ea069389b682ce3be52105cfba7d7199bf3ea569c091a3d66"
+    },
+    {
+      "path": "mobile/package-lock.json",
+      "sha256": "3495377530bbc8e89c7a029372792a481e86ebeb94d51977d35324cf2cde055a"
+    },
+    {
+      "path": "mobile/package.json",
+      "sha256": "b47b8ef63f86072f705a821f6b2b6a535f5098e6c424f9331815d1c962553fbe"
+    },
+    {
+      "path": "mobile/src/app/account/index.tsx",
+      "sha256": "bac29f4c61a5498abadd5518a8f1f7bf3f8de65361a47fcaf46771fbee094ece"
+    },
+    {
+      "path": "mobile/src/app/city/[citySlug]/assistant.tsx",
+      "sha256": "a8681d46de7bab337959e53908516e6172314a66b81a6497088d27378bf946a4"
+    },
+    {
+      "path": "mobile/src/app/city/[citySlug]/guide/[placeSlug].tsx",
+      "sha256": "902a3c80c2106bd189d6f1b4ba3bd3a9aa2ab9a6c5255950d2acc85b0f9b8ab3"
+    },
+    {
+      "path": "mobile/src/app/city/[citySlug]/index.tsx",
+      "sha256": "1d84fe858de83503520735240e8f8d5dd77434220b8159c7f9a3a748abc6e113"
+    },
+    {
+      "path": "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx",
+      "sha256": "72ae12c70b11220c92cb3f52d766f63035d0ec377d640ffd2add57452cb9f2a2"
+    },
+    {
+      "path": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx",
+      "sha256": "2463ee19f34c8fad18c31cf625e9b485441f1d7ca919533e966f1b87f8b7a0b7"
+    },
+    {
+      "path": "mobile/src/app/city/[citySlug]/walk.tsx",
+      "sha256": "0d47aa58402219e86f6bc031fd002cb133aa61c7c383baeeddc5ae633f4294dd"
+    },
+    {
+      "path": "mobile/src/app/index.tsx",
+      "sha256": "45c09c619fa9b4a0af355ce68cab8de38d702ccbea2d18c12001d8d1b5b2abe9"
+    },
+    {
+      "path": "mobile/src/app/saved.tsx",
+      "sha256": "9f932bff44d8b77b502a6f2c366756acc647187739fd52259ba3b3cae6b94635"
+    },
+    {
+      "path": "mobile/src/components/CitywalkLoading.tsx",
+      "sha256": "3126d293e7667f2eb626e8d78b5d894071d991c080c2280f7ed065b6070bf124"
+    },
+    {
+      "path": "mobile/src/components/ContentRecovery.tsx",
+      "sha256": "560543d5db93cb53466e4ace69586433d55349fcdde582b786e64f987b86e033"
+    },
+    {
+      "path": "mobile/src/components/LocaleSelector.tsx",
+      "sha256": "f4e9b0716eb590b56ebc060fbc6788d1dd522ef97be91fd406c55fdb6cce5165"
+    },
+    {
+      "path": "mobile/src/components/NativeAudioPlayer.tsx",
+      "sha256": "882ec71ff8694da55c986a1c6d21a046eefd1db2bb465c4e6e34c1fad2c4ca79"
+    },
+    {
+      "path": "mobile/src/components/NativeChrome.tsx",
+      "sha256": "895dfb9751aabe6d169cd20a779bca5092ae485ad98b3c901e541da4be5a151d"
+    },
+    {
+      "path": "mobile/src/components/NativeCityMap.tsx",
+      "sha256": "108fdbe2e4049b11c7a960cfe7b46b0e7412f51c684100508f2b9fe373976390"
+    },
+    {
+      "path": "mobile/src/components/NativeContentImage.tsx",
+      "sha256": "eabd0a0bfc0aefab9fb6ac1bf5b2e266eee989a1703eb6fb60d8e6cca799b5c6"
+    },
+    {
+      "path": "mobile/src/components/NativeTourPlanner.tsx",
+      "sha256": "50c9a8229cecbf263176d97174087d2cc0ac4fa87598a844a1fb5c8431e7e2b8"
+    },
+    {
+      "path": "mobile/src/components/NativeWalkFlow.tsx",
+      "sha256": "8fe12e9e40797fb417701491a89f882ea550ce24091f844f017436047c7207ec"
+    },
+    {
+      "path": "mobile/src/components/PublicStoreReview.tsx",
+      "sha256": "b350416e5aecb942ae70c6b0e6e30a59cbca520e037ba174b26b683ee8d8a68a"
+    },
+    {
+      "path": "mobile/src/components/V2Presentation.tsx",
+      "sha256": "259feef66b224bfb57592395e248eafddce27d2c3beec12d9f5abaf7190eb609"
+    },
+    {
+      "path": "mobile/src/components/WalkMembershipControl.tsx",
+      "sha256": "874abf0a7002b2deba3e1d0abf3f04e38702e7dc7e1bce0c8a8c31fe366da82c"
+    },
+    {
+      "path": "mobile/src/components/ui.tsx",
+      "sha256": "7a67f81da85491b357f453cad737824cddee2d368c90c83b639110b4fdbca65d"
+    },
+    {
+      "path": "mobile/src/design/discoveryCopy.ts",
+      "sha256": "f9aac8bb4253e43fe93262264c18ff6c2d1b515f9afef6a5d7f04fa52a10a3cc"
+    },
+    {
+      "path": "mobile/src/design/rtlPresentation.ts",
+      "sha256": "78500f74e242611ba4073b13920c851e15ea2e7d8eb6ff09e6b4eaf246c9792e"
+    },
+    {
+      "path": "mobile/src/design/uxCopy.ts",
+      "sha256": "950fdcfafe97103d42b49e92a84116ca952dc526d276b15813864e0e5c83ad0a"
+    },
+    {
+      "path": "mobile/src/hooks/useCurrentWalk.ts",
+      "sha256": "60b34c5079f5b0f5676de7be05c8de79a33478e7ddf2bc566f79155cbbc21045"
+    },
+    {
+      "path": "mobile/src/hooks/usePublicContent.ts",
+      "sha256": "b332cb4c4ecf1626d8d03dd6dcd1632fe246221e9c5df383c6d2ac214df8b6c7"
+    },
+    {
+      "path": "mobile/src/lib/api/contracts.ts",
+      "sha256": "300fe7ec04f7667fbf6507c777e59dc90ec0a27906f9261c3104d1f2c3c624db"
+    },
+    {
+      "path": "mobile/src/lib/bidi.ts",
+      "sha256": "b1e692e7fe23fa6464b6f0fe1e7b5594dab3f7bd382a5c1f370d00bc097b5813"
+    },
+    {
+      "path": "mobile/src/lib/cityAssistant.ts",
+      "sha256": "89602a973018faab593d4c38fe1cf5e66a3e62846d0a519233e57edeebca41c2"
+    },
+    {
+      "path": "mobile/src/lib/contentLabels.ts",
+      "sha256": "e3b2367857e7fad9636914c7eb92c1b40b4390375004dce4d558ea51f3993723"
+    },
+    {
+      "path": "mobile/src/lib/displayNames.ts",
+      "sha256": "274fb1c2148a8ed930c15113f8d04e004add54c8de03404f597e7f378330f299"
+    },
+    {
+      "path": "mobile/src/lib/localization.ts",
+      "sha256": "0eebbd68fa55420570065e220b104d60278261ce104191f7e45a08ed9b523491"
+    },
+    {
+      "path": "mobile/src/lib/storeReview.ts",
+      "sha256": "f194f5360bc010addd0100b290c3640a4155fc770dc9688466cd231934597eff"
+    },
+    {
+      "path": "mobile/src/lib/tabNavigation.tsx",
+      "sha256": "cab733b03ff10841a5cf49a3ff4fc46056e48fca5a3c72f408b5f8aac806c49c"
+    },
+    {
+      "path": "mobile/src/lib/walkMembership.ts",
+      "sha256": "1a9f3353f8ea15254784682c4342b1d6c3e2c469d22b33cfceb196485db3b464"
+    },
+    {
+      "path": "mobile/src/lib/walkStorage.ts",
+      "sha256": "12e9acd1a66fce12b152446551fbe4627d344ea21dfbeb7b14aae78ef20c39b2"
+    },
+    {
+      "path": "mobile/src/localization/LocaleProvider.tsx",
+      "sha256": "939638404b535f17b254af26fe555759fc64edd518740d311224fd8ce0d89d6a"
+    },
+    {
+      "path": "mobile/src/localization/localePreference.ts",
+      "sha256": "77c427efac24b04b6a4a9a59fbe43385302a0114430f38552514752487933836"
+    },
+    {
+      "path": "mobile/tests/api-client.test.ts",
+      "sha256": "d0f5b7fe5777c368f06cde4bbf013afce3b12bd3df7fa842f0d64d965a215232"
+    },
+    {
+      "path": "mobile/tests/content-image.test.tsx",
+      "sha256": "e2cb68a2201ee353bfa00d1f52f96edf642009aadd078d33b500fe1eb49bcf83"
+    },
+    {
+      "path": "mobile/tests/content-loading-retry.test.tsx",
+      "sha256": "0728ca5e48b3c6799adc7f462765c28ad32e9421a71796bebd864ef46748436a"
+    },
+    {
+      "path": "mobile/tests/display-names.test.ts",
+      "sha256": "98f2bc6050f15c0614dc413b99f0ad52e3082b219afdf10a3eef1c4976e3cdef"
+    },
+    {
+      "path": "mobile/tests/home-presentation.test.tsx",
+      "sha256": "2e95537c9dce3f65e8bfb468de95e273de5881d42c06c6e69e197ff535a10257"
+    },
+    {
+      "path": "mobile/tests/launch-locale-selector.test.tsx",
+      "sha256": "30ee4fd9752feed0c472abfb494a443c255dcbd374a5cb0b2bacb1893dd665d2"
+    },
+    {
+      "path": "mobile/tests/loading-experience.test.ts",
+      "sha256": "a9797e3874546b08f9759cbba24e68a90fad12892a49f011e904414729fe78c4"
+    },
+    {
+      "path": "mobile/tests/locale-preference.test.tsx",
+      "sha256": "e5c9049ea4c3df18e44615a7768e31df84e6b94f6ab45b3e5a2fdf70dfb417fd"
+    },
+    {
+      "path": "mobile/tests/membership-screens.test.tsx",
+      "sha256": "dfc0bda350c195a124af8368df1a2d938cd9eeb744a28ca645563029f760ca4f"
+    },
+    {
+      "path": "mobile/tests/native-city-experience.test.ts",
+      "sha256": "314827b28a58ed4ca89447d9b292d780215ae4bd83f1fb748cd7be28aab700f3"
+    },
+    {
+      "path": "mobile/tests/native-media-loading.test.tsx",
+      "sha256": "b9f6b0fd85e08f5c5173862ba74322c345fdd62ef20240a28c26566540d8d9c9"
+    },
+    {
+      "path": "mobile/tests/native-screen-chrome.test.tsx",
+      "sha256": "2a79f0539c701e2aaa2b3745989ccfe7d05b87f16ab26569adfc444cc71cae39"
+    },
+    {
+      "path": "mobile/tests/native-tab-navigation.test.tsx",
+      "sha256": "0076b89ddcc8d71eff0cee551169fcd60172c01c992160b101dbfde192e1942e"
+    },
+    {
+      "path": "mobile/tests/native-v2-regressions.test.tsx",
+      "sha256": "50edaa4669a3c879098f619b05b9969b87d13e06c264e7f6e042bca6e3b22fb1"
+    },
+    {
+      "path": "mobile/tests/public-store-review.test.tsx",
+      "sha256": "dec3dc96672ac9cfa1c90da80419884c5c29e3201adcfd9c898b95871f69e894"
+    },
+    {
+      "path": "mobile/tests/rtl-presentation.test.ts",
+      "sha256": "1cc26a95ab485870eb99c2656146f74ff6cafaa44de9726e7c27099a5af8f0e2"
+    },
+    {
+      "path": "mobile/tests/store-review.test.ts",
+      "sha256": "10692bb2687880f6eaff9606e995b1b599e61cff4d5be9508c5eaaffef18a974"
+    },
+    {
+      "path": "mobile/tests/walk-flow.test.tsx",
+      "sha256": "92e6b931f095c910cf41f901967fea8ff9524544017e8f409a069ba45e68e421"
+    },
+    {
+      "path": "mobile/tests/walk-membership.test.tsx",
+      "sha256": "2d0aa5ddf2e8cb77f06b69372dac757ce9463c48558b5346dc8ed2ff0cb26d4e"
+    },
+    {
+      "path": "next.config.ts",
+      "sha256": "20797f98f30e0b29a1d111ee405945bfd7842e9b9e6501de61634ecd60a2f462"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "24cad8211e1daeef7f4634fc096312017acfc32512695dab72e659497adfcf54"
+    },
+    {
+      "path": "package.json",
+      "sha256": "e5d7df765c3553c4b42e6bdf4f09c75e9b7e63ad50658ff7d2c8c39dd095c9e6"
+    },
+    {
+      "path": "packages/i18n/README.md",
+      "sha256": "6ffa038b5137e8756b0e8ac6bda8177614e6dc87cb3adedad3634a3692c27bb4"
+    },
+    {
+      "path": "packages/i18n/package.json",
+      "sha256": "019bd4e3e3371401a647e25a8658cc5e1b1d872ed998167d37ea5871aad63c2b"
+    },
+    {
+      "path": "packages/i18n/scripts/check.mjs",
+      "sha256": "dff8ed795172a256dc4228f5830dc6326571271238442690f5d4a87a6ce9ef9d"
+    },
+    {
+      "path": "packages/i18n/src/adapters.ts",
+      "sha256": "4ff69b31ad4053b4cda2ecbb6409760ad132fa3d4a157df8b52ca17a17efc733"
+    },
+    {
+      "path": "packages/i18n/src/ci-check.test.ts",
+      "sha256": "4fd6f3876c728a243aa240591c83e5f05eef8d9812311d168e79a5c56a6b02bd"
+    },
+    {
+      "path": "packages/i18n/src/content.ts",
+      "sha256": "75b44667bcab405f5de7a79bf863364678c19011aa0ee32f0bc0fcffbfbbf431"
+    },
+    {
+      "path": "packages/i18n/src/i18n.test.ts",
+      "sha256": "f49ece221e1a2e4fccd485a720d05b2223a0beaf6b35e1bb8d3bb618aca1a8e8"
+    },
+    {
+      "path": "packages/i18n/src/index.ts",
+      "sha256": "affd7fa63660b6031fe5037b9d1111cf02772da1e5b74f2cdc7af421f143f8ba"
+    },
+    {
+      "path": "packages/i18n/src/launch-locales.json",
+      "sha256": "6d5ed95bfda51f221a5ec592b9e35952351ca34c8b1d4acbcbf097aeab5c160c"
+    },
+    {
+      "path": "packages/i18n/src/locale-config.ts",
+      "sha256": "ca73dacc289537eada5ce896f879fb6a6675745eae36ca993a40131e9a990312"
+    },
+    {
+      "path": "packages/i18n/src/locales/ar.json",
+      "sha256": "39617175e3495149a9e9b477f24be7252dad638927e0d515b5276d77b8828cdd"
+    },
+    {
+      "path": "packages/i18n/src/locales/da.json",
+      "sha256": "a1723f4823c4b88ab8d41c3872c908def047d15a9fdb2e0bcb5be767cc820d0b"
+    },
+    {
+      "path": "packages/i18n/src/locales/de.json",
+      "sha256": "e74f32c4180b24e539b1e93765af229ab7a178af754540a34b076ab18666d680"
+    },
+    {
+      "path": "packages/i18n/src/locales/en.json",
+      "sha256": "d324345c11acba0ec349be81eaa2f30a08c30732b393bad8c97414de4f66d7aa"
+    },
+    {
+      "path": "packages/i18n/src/locales/es.json",
+      "sha256": "5b4f23f6cb4085ebd02cafac3fa08a82ca62e6c45d2af7a5d54c21ee111976b3"
+    },
+    {
+      "path": "packages/i18n/src/locales/nl.json",
+      "sha256": "921a63cbdf1a7e3060ddb160503d8ae6d7b89467974cb1a74c81d2fde461a927"
+    },
+    {
+      "path": "packages/i18n/src/locales/sv.json",
+      "sha256": "96e86c52d6fa1b1222efa266270a5503ad1627b868543927a31b6aa4995fcc24"
+    },
+    {
+      "path": "packages/i18n/src/runtime.ts",
+      "sha256": "6a7c373bd6cee4c1d056ee48870c1e84d8537874833ab9c89db4c7852d389a78"
+    },
+    {
+      "path": "packages/i18n/src/translator.ts",
+      "sha256": "381e902fc105e2d704b3409e85e223077e3682884ea5089f8551564ac407976a"
+    },
+    {
+      "path": "packages/i18n/src/types.ts",
+      "sha256": "f249e15761c23a5c0ac0c32f963826483299ae8f19af7cb319f45507056adb8b"
+    },
+    {
+      "path": "packages/i18n/tsconfig.json",
+      "sha256": "e299ee914e1cc9994441a2ecb9e3b32e9fa2d2809fb1c372a93315121a2cbe03"
+    },
+    {
+      "path": "packages/traveler-core/package.json",
+      "sha256": "45018f72254ad0b81a749c65ac2db0a58e0e9e24fb0b0e5e6958a5c0a469f825"
+    },
+    {
+      "path": "packages/traveler-core/src/cityAvailability.ts",
+      "sha256": "3d2038ad7d58ed48037f798bf21cd708820552a6333de1585162807dc9e95e84"
+    },
+    {
+      "path": "packages/traveler-core/src/copy/ar.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "packages/traveler-core/src/copy/de.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "packages/traveler-core/src/copy/en.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "packages/traveler-core/src/launchContent.json",
+      "sha256": "a1bf1c6ddad709918fbb367d4c618ae1bda3809d51a42fc7d1e5942e6e5a1179"
+    },
+    {
+      "path": "packages/traveler-core/src/walkCopy.ts",
+      "sha256": "492e3aac046cdb6e5276b50feea3658349d1b2105bbe9a1c50473594417306b3"
+    },
+    {
+      "path": "scripts/audit-launch-content.mjs",
+      "sha256": "d69412e3058236d150e4bb29d52e25b0c803f27ee04ba689c28747edab0debe6"
+    },
+    {
+      "path": "src/app/[locale]/lubeck/complete/page.tsx",
+      "sha256": "ce3e7d002fc959abdbf82a7eae4aabc1763cc6907836e14108fe3d388f89fb04"
+    },
+    {
+      "path": "src/app/[locale]/lubeck/page.tsx",
+      "sha256": "f83937128b158d52048497e190232458ae90c849ee66b8074b0c34946eef5658"
+    },
+    {
+      "path": "src/app/global-error.tsx",
+      "sha256": "db97f61486b1d401b5899d028383f3957b8a29ed89c89bb96782f7e1fa1319af"
+    },
+    {
+      "path": "src/app/page.test.tsx",
+      "sha256": "c251465fbd623250cd3f3f162a1b4971763d484b214983c3252643f8ffa26856"
+    },
+    {
+      "path": "src/app/page.tsx",
+      "sha256": "ff4ff4bdd2c199562c2fa9e39a334111e2e8a5e618e4adae7a56be33165847c7"
+    },
+    {
+      "path": "src/components/commerce/CityPassPaywall.tsx",
+      "sha256": "053cd6b19a4c034e35c0285681922c4ba7c0e1db47ec99d38e1e297d02582520"
+    },
+    {
+      "path": "src/data/cityPassEditorial.json",
+      "sha256": "28afaf50dd198ced2c36672f12e8e3b2ff6a230c2207a0d5573cea9a70a8336a"
+    },
+    {
+      "path": "src/data/lubeckEditorial.json",
+      "sha256": "2ce490bae7209aaad27cddac09c962b4e4bfad676467d25f615270e3bdc5ef09"
+    },
+    {
+      "path": "src/data/lubeckEditorial.ts",
+      "sha256": "c058cf4b4be65c315656c648c77acc38ff4ec0e930f2a6eb361a4e9f19e4ddd2"
+    },
+    {
+      "path": "src/lib/account/copy.ts",
+      "sha256": "ae99e0ee3db43d4be2c1776a37ab94ceebe81aa8ecfae83cddf7450d1ec339bf"
+    },
+    {
+      "path": "src/lib/admin/content/importLubeck.server.ts",
+      "sha256": "ed7cc7ad00773036b64c2370c34e4881404b6e7d89defbb0e0e043c54a995900"
+    },
+    {
+      "path": "src/lib/commerce/cityPassCopy.test.ts",
+      "sha256": "4791a3de033fc0a9543a6dcdb4f6d11b5e53f5c8d06039e69b85368afaed00d5"
+    },
+    {
+      "path": "src/lib/commerce/cityPassCopy.ts",
+      "sha256": "3e9b384aa16dbc082055aad2038e216bb5077f05f355b40234f817990f2e13ba"
+    },
+    {
+      "path": "src/lib/commerce/copy.ts",
+      "sha256": "4b0625b867d81a7714a4c278b4b7033364342a4fcf94a0d7f987b2be5796d7dc"
+    },
+    {
+      "path": "src/lib/content/publicRepository.server.ts",
+      "sha256": "6dd5ed1dc1c8edaa97ed4ebb397dbd6b78a6042d229a58db5e2d93c5f09c779e"
+    },
+    {
+      "path": "src/lib/i18n.ts",
+      "sha256": "f8374bb39eb16a539029c5ec33e866c56a960b9bac3ca421f158f03c6355f672"
+    },
+    {
+      "path": "src/translations/ar.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "src/translations/bg.json",
+      "sha256": "ce112e561bdad2211cf7c44f9a07887896c8a51c3edc19970a4c0cff6b274e9f"
+    },
+    {
+      "path": "src/translations/cs.json",
+      "sha256": "fcf8a2c335ca22e5b6513b26c14e993d534908aca8bf247a7c2bca956a373fcb"
+    },
+    {
+      "path": "src/translations/da.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "src/translations/de.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "src/translations/el.json",
+      "sha256": "69ee9a5fb0c721174e206be61878b7fc181b28d67e1ba6dcd6583da7ef1775f6"
+    },
+    {
+      "path": "src/translations/en.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "src/translations/es.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "src/translations/et.json",
+      "sha256": "dfb09703f35edc860ddbd36cc344d315eaed87e2bdfef114e2371cc0d6a42a7a"
+    },
+    {
+      "path": "src/translations/fi.json",
+      "sha256": "9b26c4b3e3fdb01ecad3044536f8033e4b26aa41f5eaa93aa094441e8b3e8264"
+    },
+    {
+      "path": "src/translations/fr.json",
+      "sha256": "759aa2726f3759e4efd57c5fab812432893d907fc6a0622beb6113cd0dbbc11a"
+    },
+    {
+      "path": "src/translations/ga.json",
+      "sha256": "8194b93bc18be1502ec11ad5c9c304f8cb917403a260d7f8ac9719d340be2b95"
+    },
+    {
+      "path": "src/translations/hr.json",
+      "sha256": "e9d3432b27dc8091d92b43b5621ceea41f5168982fca5eecf21d660aecdc0e44"
+    },
+    {
+      "path": "src/translations/hu.json",
+      "sha256": "770d1cc4279287e42a5851af38840bdce1c0883d2ac76d61a94641c0206302df"
+    },
+    {
+      "path": "src/translations/it.json",
+      "sha256": "686746862ede6833b1a8b51100c801f3e80e1eaa9144da26877868f118787689"
+    },
+    {
+      "path": "src/translations/lt.json",
+      "sha256": "92af31a13d7028206ae6527ac1622983a5abf9a6a0d8510c0443a2abc2607677"
+    },
+    {
+      "path": "src/translations/lv.json",
+      "sha256": "243257c7dd4dca0ea539d280d9da70306de772f037c220e58ce8de96e0bc7d75"
+    },
+    {
+      "path": "src/translations/mt.json",
+      "sha256": "9719302d004abc5b2b2d63bcc1c9cf9777f926b5395cf48e5e2924e6656c5816"
+    },
+    {
+      "path": "src/translations/nl.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "src/translations/no.json",
+      "sha256": "f766961fe79653dbbc3cde931017ea330be395dd0e8529bca96fc5312028b89d"
+    },
+    {
+      "path": "src/translations/pl.json",
+      "sha256": "5d5f211d23d5d38236832ec0e544fc56dadb3578765410ae0f2167f87b3393ec"
+    },
+    {
+      "path": "src/translations/pt.json",
+      "sha256": "aedccc697fe80d5b43a8ba69041d208046ae833559d62c618b8159140e15ad89"
+    },
+    {
+      "path": "src/translations/ro.json",
+      "sha256": "747624fefb4abef1bb4b1851f64e7ddc7dd056cd19521d6c73e0940634515fbe"
+    },
+    {
+      "path": "src/translations/sk.json",
+      "sha256": "75e26efef47f23263b98a3a3401a6378da1fd7eceac0d03c19da5099840868eb"
+    },
+    {
+      "path": "src/translations/sl.json",
+      "sha256": "723b9f4968f43893c26a4e535348752634b561b15748339456204a7ff085ea79"
+    },
+    {
+      "path": "src/translations/sv.json",
+      "sha256": "DELETED"
+    },
+    {
+      "path": "src/translations/tr.json",
+      "sha256": "2420dc8f1a8e5c92d90d40a40a9643b29f8970175757545eeb3be2adbb8a5218"
+    }
+  ],
+  "evidenceScope": "Historical 2026-09-25 local source manifest from launch reconciliation; not Commit 1, a native build identity, or current device evidence."
+}
