@@ -7,7 +7,7 @@ import { sharedLocales, t } from "@citywalk/i18n";
 const mocks = vi.hoisted(() => ({
   params: {} as Record<string, string>,
   locale: "en", session: null as null | { user: { id: string; name: string; email: string } },
-  listAccounts: vi.fn(), updateUser: vi.fn(), changePassword: vi.fn(), requestPasswordReset: vi.fn(), deleteUser: vi.fn(),
+  deleteAccount: vi.fn(), listAccounts: vi.fn(), updateUser: vi.fn(), changePassword: vi.fn(), requestPasswordReset: vi.fn(), deleteUser: vi.fn(),
   signIn: vi.fn(), signUp: vi.fn(), signOut: vi.fn(), back: vi.fn(), replace: vi.fn(),
   data: new Map<string, string>(), write: vi.fn(), remove: vi.fn(), clear: vi.fn(),
 }));
@@ -15,6 +15,7 @@ vi.mock("@react-native-async-storage/async-storage", () => ({ default: {
   getItem: async (key: string) => mocks.data.get(key) ?? null,
   setItem: mocks.write, removeItem: mocks.remove, clear: mocks.clear,
 } }));
+vi.mock("../src/lib/auth/lifecycle", () => ({ deleteNativeAccount: mocks.deleteAccount }));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: {
   useSession: () => ({ data: mocks.session, isPending: false }),
   listAccounts: mocks.listAccounts, updateUser: mocks.updateUser, changePassword: mocks.changePassword, requestPasswordReset: mocks.requestPasswordReset, deleteUser: mocks.deleteUser,
@@ -60,6 +61,7 @@ function unchanged(before: Map<string, string>) {
 beforeEach(() => {
   vi.clearAllMocks(); mocks.params = {}; mocks.locale = "en"; mocks.session = null;
   mocks.listAccounts.mockResolvedValue({ data: [{ providerId: "credential" }] });
+  mocks.deleteAccount.mockResolvedValue({}); mocks.requestPasswordReset.mockResolvedValue({ data: { status: true } });
   mocks.updateUser.mockResolvedValue({}); mocks.changePassword.mockResolvedValue({});
   mocks.signIn.mockResolvedValue({}); mocks.signUp.mockResolvedValue({}); mocks.signOut.mockResolvedValue({});
   mocks.data = new Map(["citywalk:native:v2:saved", "citywalk:native:v2:places", "citywalk:native:v2:active:lubeck", "citywalk:local-trips:v2", "citywalk:native:locale:v1", "citywalk:native:public-review:v1"].map(key => [key, `existing-${key}`]));
@@ -134,14 +136,19 @@ describe("account management with real capability boundaries", () => {
     expect(screen.getByLabelText(copy("profile.accountDisplayName")).getAttribute("data-autocomplete")).toBe("name");
     expect(screen.getByLabelText(messages().email).getAttribute("data-autocomplete")).toBe("email");
   });
-  it.each(["traveler@example.test", "unknown@example.test"])("never claims reset mail was sent without delivery infrastructure (%s)", email => {
+  it.each(["traveler@example.test", "unknown@example.test"])("shows the same reset acknowledgement for %s", async email => {
     const before = new Map(mocks.data); render(<AccountScreen />); open(); press("profile.forgotPassword");
-    enter("profile.email", email);
-    expect(screen.getByText(copy("profile.resetUnavailable"))).toBeTruthy();
-    const submit = screen.getByRole("button", { name: copy("profile.sendResetLink") });
-    expect((submit as HTMLButtonElement).disabled).toBe(true); fireEvent.click(submit);
-    expect(mocks.requestPasswordReset).not.toHaveBeenCalled();
-    press("common.back"); expect(screen.getByRole("button", { name: messages().signIn })).toBeTruthy(); unchanged(before);
+    press("profile.sendResetLink"); expect(screen.getByText(messages().invalidEmail)).toBeTruthy(); expect(mocks.requestPasswordReset).not.toHaveBeenCalled();
+    enter("profile.email", email); press("profile.sendResetLink");
+    await screen.findByText(copy("lifecycle.resetRequested"));
+    expect(mocks.requestPasswordReset).toHaveBeenCalledWith({ email, fetchOptions: { headers: { "X-Citywalk-Locale": "en" } } });
+    unchanged(before);
+  });
+  it("shows a recoverable reset failure without claiming delivery", async () => {
+    mocks.requestPasswordReset.mockResolvedValueOnce({ error: { code: "UNAVAILABLE" } });
+    render(<AccountScreen />); open(); press("profile.forgotPassword"); enter("profile.email", "traveler@example.test"); press("profile.sendResetLink");
+    await screen.findByText(copy("lifecycle.unavailable")); expect(screen.queryByText(copy("lifecycle.resetRequested"))).toBeNull();
+    press("profile.sendResetLink"); await screen.findByText(copy("lifecycle.resetRequested"));
   });
   it("shows profile identity, edits only the name, and recovers from an update failure", async () => {
     signedIn(); mocks.updateUser.mockResolvedValueOnce({ error: { code: "INTERNAL_SERVER_ERROR" } }).mockImplementationOnce(async () => { mocks.session!.user.name = "New name"; return {}; });
@@ -192,10 +199,23 @@ describe("account management with real capability boundaries", () => {
     press("common.back"); await act(async () => finish({}));
     expect(screen.queryByText(copy("profile.passwordChanged"))).toBeNull();
   });
-  it("keeps deletion explicitly unavailable without deleting account or traveler data", async () => {
-    signedIn(); const before = new Map(mocks.data); render(<AccountScreen />); press("profile.deleteAccount");
-    await screen.findByText(copy("profile.deleteUnavailable")); expect(mocks.deleteUser).not.toHaveBeenCalled();
-    press("common.back"); expect(screen.getByText("Alex")).toBeTruthy(); unchanged(before);
+  it("requires password and explicit confirmation, then returns to guest without touching local data", async () => {
+    signedIn(); const before = new Map(mocks.data); const view = render(<AccountScreen />); press("profile.deleteAccount");
+    await screen.findByLabelText(copy("profile.currentPassword"));
+    expect((screen.getByRole("button", { name: copy("lifecycle.deletePermanently") }) as HTMLButtonElement).disabled).toBe(true);
+    enter("profile.currentPassword", "original-test-password");
+    fireEvent.click(screen.getByText(new RegExp(copy("lifecycle.deleteConfirm"))));
+    press("lifecycle.deletePermanently"); await screen.findByText(copy("lifecycle.deleted"));
+    expect(mocks.deleteAccount).toHaveBeenCalledWith("private-user-id", "original-test-password");
+    mocks.session = null; view.rerender(<AccountScreen />); expect(screen.getByText(copy("profile.guestFirst"))).toBeTruthy(); unchanged(before);
+  });
+  it("does not fake success on a failed deletion and allows retry", async () => {
+    signedIn(); mocks.deleteAccount.mockResolvedValueOnce({ error: { code: "RETENTION_REVIEW_REQUIRED" } });
+    const before = new Map(mocks.data); render(<AccountScreen />); press("profile.deleteAccount"); await screen.findByLabelText(copy("profile.currentPassword"));
+    enter("profile.currentPassword", "original-test-password"); fireEvent.click(screen.getByText(new RegExp(copy("lifecycle.deleteConfirm"))));
+    press("lifecycle.deletePermanently"); await screen.findByText(copy("lifecycle.retentionBlocked"));
+    expect(screen.queryByText(copy("lifecycle.deleted"))).toBeNull(); expect(mocks.signOut).not.toHaveBeenCalled();
+    press("lifecycle.deletePermanently"); await screen.findByText(copy("lifecycle.deleted")); unchanged(before);
   });
 });
 
@@ -223,4 +243,10 @@ it("returns to the pending walk only after explicit sign-in, without saving or c
   await screen.findByText(messages().accountCreated); expect(mocks.back).not.toHaveBeenCalled();
   fireEvent.change(screen.getByLabelText(messages().password), { target: { value: "a-local-test-password" } }); open();
   await waitFor(() => expect(mocks.back).toHaveBeenCalledOnce()); unchanged(before);
+});
+
+it("does not claim a reset acknowledgement for an unexpected API response", async () => {
+  mocks.requestPasswordReset.mockResolvedValue({ data: {} }); render(<AccountScreen />); open(); press("profile.forgotPassword");
+  enter("profile.email", "synthetic@example.test"); press("profile.sendResetLink");
+  await screen.findByText(copy("lifecycle.unavailable")); expect(screen.queryByText(copy("lifecycle.resetRequested"))).toBeNull();
 });

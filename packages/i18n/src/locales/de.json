@@ -531,5 +531,25 @@
     "title": "CITYWALK bewerten",
     "description": "Eine kurze Bewertung hilft anderen Reisenden, uns zu entdecken.",
     "action": "CITYWALK bewerten"
+  },
+  "lifecycle": {
+    "resetRequestHelp": "Gib deine Konto-E-Mail-Adresse ein, um einen Link zum Zurücksetzen anzufordern.",
+    "resetRequested": "Anfrage erhalten. Falls ein Konto mit dieser E-Mail-Adresse existiert, findest du die Anleitung im Posteingang oder Spamordner. Kommt keine E-Mail an, versuche es später erneut.",
+    "emailSubject": "Dein CITYWALK-Passwort zurücksetzen",
+    "emailBody": "Über den folgenden CITYWALK-Link kannst du ein neues Passwort festlegen. Er ist 30 Minuten gültig und nur einmal verwendbar.",
+    "emailIgnore": "Falls du dies nicht angefordert hast, ignoriere diese E-Mail. Dein Passwort wurde nicht geändert.",
+    "invalidLink": "Dieser Link ist ungültig, abgelaufen oder bereits verwendet. Fordere in CITYWALK einen neuen Link an.",
+    "resetSuccess": "Dein Passwort wurde zurückgesetzt. Alle bisherigen Sitzungen wurden beendet. Melde dich mit deinem neuen Passwort an.",
+    "resetSubmit": "Neues Passwort festlegen",
+    "validating": "Link wird geprüft…",
+    "unavailable": "Diese Anfrage ist vorübergehend nicht möglich. Bitte versuche es später erneut.",
+    "rateLimited": "Zu viele Versuche. Bitte warte 15 Minuten und versuche es erneut.",
+    "deleteWarning": "Dein CITYWALK-Konto, deine im Konto gespeicherten Touren und dein Profil werden dauerhaft gelöscht. Alle aktiven Sitzungen enden. Dies kann nicht rückgängig gemacht werden.",
+    "localDataRemains": "Deine aktuelle Tour, Favoriten, Spracheinstellung, Bewertungshistorie und bisherigen nur lokal gespeicherten Touren bleiben auf diesem Gerät.",
+    "deleteConfirm": "Ich verstehe, dass mein Konto und die darin gespeicherten Touren dauerhaft gelöscht werden.",
+    "deletePermanently": "Konto dauerhaft löschen",
+    "deleted": "Dein Konto und die darin gespeicherten Touren wurden gelöscht. Lokale Reisedaten bleiben erhalten.",
+    "retentionBlocked": "Dieses Konto enthält Datensätze, deren Aufbewahrung geprüft werden muss. Die selbstständige Löschung ist derzeit nicht verfügbar. Es wurden keine Kontodaten gelöscht.",
+    "reauthRequired": "Bestätige dein aktuelles Passwort. Falls deine Sitzung abgelaufen ist, melde dich vor dem Löschen erneut an."
   }
 }

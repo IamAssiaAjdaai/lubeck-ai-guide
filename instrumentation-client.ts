@@ -9,7 +9,7 @@ const projectToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const apiHost = process.env.NEXT_PUBLIC_POSTHOG_HOST;
 
 // Analytics is optional; missing configuration must never block hydration.
-if (projectToken && apiHost) {
+if (projectToken && apiHost && window.location.pathname !== "/account/reset-password") {
   posthog.init(projectToken, {
     api_host: apiHost,
     defaults: "2026-01-30",

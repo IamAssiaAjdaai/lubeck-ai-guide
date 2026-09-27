@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { AUTH_MIN_PASSWORD_LENGTH, AUTH_MAX_PASSWORD_LENGTH } from "@citywalk/traveler-core";
+vi.mock("server-only", () => ({}));
 const mocks = vi.hoisted(() => ({ configure: vi.fn() }));
 vi.mock("better-auth", () => ({ betterAuth: mocks.configure }));
 vi.mock("@better-auth/drizzle-adapter", () => ({ drizzleAdapter: () => ({}) }));
@@ -20,10 +21,13 @@ describe("native account capability contract", () => {
       });
     }
   });
-  it("truthfully treats reset mail, deletion, email change and social sign-in as unconfigured", () => {
+  it("enables secure reset hooks while keeping direct deletion and other providers disabled", () => {
     createCitywalkAuth({ allowEmailSignUp: true });
     const config = mocks.configure.mock.lastCall![0];
-    expect(config.emailAndPassword.sendResetPassword).toBeUndefined();
+    expect(config.emailAndPassword.sendResetPassword).toBeTypeOf("function");
+    expect(config.emailAndPassword.resetPasswordTokenExpiresIn).toBe(1800);
+    expect(config.emailAndPassword.revokeSessionsOnPasswordReset).toBe(true);
+    expect(config.hooks.before).toBeTypeOf("function");
     expect(config.user?.deleteUser?.enabled).not.toBe(true);
     expect(config.user?.changeEmail?.enabled).not.toBe(true);
     expect(config.socialProviders).toBeUndefined();

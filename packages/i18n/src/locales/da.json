@@ -531,5 +531,25 @@
     "title": "Anmeld CITYWALK",
     "description": "En kort anmeldelse hjælper andre rejsende med at finde os.",
     "action": "Bedøm CITYWALK"
+  },
+  "lifecycle": {
+    "resetRequestHelp": "Indtast kontoens e-mailadresse for at anmode om et link til nulstilling.",
+    "resetRequested": "Anmodning modtaget. Hvis der findes en konto med denne e-mail, finder du vejledningen i indbakken eller spam. Hvis e-mailen ikke kommer, så prøv igen senere.",
+    "emailSubject": "Nulstil din CITYWALK-adgangskode",
+    "emailBody": "Brug følgende CITYWALK-link til at vælge en ny adgangskode. Det udløber efter 30 minutter og kan kun bruges én gang.",
+    "emailIgnore": "Ignorer denne e-mail, hvis du ikke har bedt om den. Din adgangskode er ikke ændret.",
+    "invalidLink": "Linket er ugyldigt, udløbet eller allerede brugt. Bed om et nyt link i CITYWALK.",
+    "resetSuccess": "Din adgangskode er nulstillet. Alle tidligere sessioner er afsluttet. Log ind med din nye adgangskode.",
+    "resetSubmit": "Vælg ny adgangskode",
+    "validating": "Kontrollerer link…",
+    "unavailable": "Anmodningen er midlertidigt utilgængelig. Prøv igen senere.",
+    "rateLimited": "For mange forsøg. Vent 15 minutter, og prøv igen.",
+    "deleteWarning": "Slet din CITYWALK-konto, dine kontogemte ture og din profil permanent. Alle aktive sessioner afsluttes. Dette kan ikke fortrydes.",
+    "localDataRemains": "Din aktuelle tur, favoritter, sprog, anmeldelseshistorik og tidligere lokalt gemte ture bliver på denne enhed.",
+    "deleteConfirm": "Jeg forstår, at min konto og mine kontogemte ture bliver slettet permanent.",
+    "deletePermanently": "Slet konto permanent",
+    "deleted": "Din konto og dine kontogemte ture er slettet. Lokale rejsedata er bevaret.",
+    "retentionBlocked": "Kontoen har oplysninger, hvis opbevaring skal vurderes. Selvbetjent sletning er ikke tilgængelig lige nu. Ingen kontodata er slettet.",
+    "reauthRequired": "Bekræft din nuværende adgangskode. Hvis sessionen er udløbet, skal du logge ind igen før sletning."
   }
 }
