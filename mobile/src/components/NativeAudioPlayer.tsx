@@ -1,5 +1,5 @@
 import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { formatAudioTime } from "../lib/audio";
@@ -7,46 +7,75 @@ import { colors, radius, spacing } from "../design/tokens";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { AppText, Card, PrimaryButton, StatusMessage } from "./ui";
 import { NativeIcon } from "./NativeIcon";
+import { registerAudioDiagnosticPlayer } from "../lib/audioDiagnostics";
+import { prepareNarrationAudio, narrationAudioSessionState } from "../lib/narrationAudioSession";
 
 type NativeAudioPlayerProps = Readonly<{
   source: string;
   title: string;
   durationSeconds?: number;
+  assetLocale?: string;
 }>;
 
-export function NativeAudioPlayer({
+export function NativeAudioPlayer(props: NativeAudioPlayerProps) {
+  const [attempt, setAttempt] = useState(0);
+  return <AudioPlayerAttempt key={`${props.source}:${attempt}`} {...props} retry={() => setAttempt(value => value + 1)} />;
+}
+function AudioPlayerAttempt({
   source,
   title,
   durationSeconds,
-}: NativeAudioPlayerProps) {
-  const { messages } = useNativeLocale();
+  assetLocale,
+  retry,
+}: NativeAudioPlayerProps & { retry: () => void }) {
+  const { locale, messages } = useNativeLocale();
   const player = useAudioPlayer({ uri: source }, { updateInterval: 500 });
   const status = useAudioPlayerStatus(player);
   const [actionError, setActionError] = useState(false);
+  const [preparing, setPreparing] = useState(false);
+  const pendingPlay = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
+  useEffect(() => registerAudioDiagnosticPlayer(player, {
+    source, requestedLocale: locale, assetLocale,
+    sample: () => ({ ...player.currentStatus, muted: player.muted, volume: player.volume, sessionSetup: narrationAudioSessionState() }),
+  }), [player, source, locale, assetLocale]);
   const duration = positiveDuration(status.duration) ??
     positiveDuration(durationSeconds) ?? 0;
   const currentTime = Math.min(Math.max(status.currentTime, 0), duration || Infinity);
   const ended = status.didJustFinish || (duration > 0 && currentTime >= duration - 0.25);
 
   async function togglePlayback() {
+    if (pendingPlay.current) return;
     setActionError(false);
     try {
       if (status.playing) {
         player.pause();
         return;
       }
+      pendingPlay.current = true;
+      setPreparing(true);
+      await prepareNarrationAudio();
+      if (!mounted.current) return;
       if (ended) await player.seekTo(0);
+      if (!mounted.current) return;
       player.play();
     } catch {
-      setActionError(true);
+      if (mounted.current) setActionError(true);
+    } finally {
+      pendingPlay.current = false;
+      if (mounted.current) setPreparing(false);
     }
   }
 
   if (status.error || actionError) {
-    return <StatusMessage>{messages.audioUnavailable}</StatusMessage>;
+    return <View><StatusMessage>{messages.audioUnavailable}</StatusMessage><PrimaryButton label={messages.retry} tone="secondary" onPress={retry} /></View>;
   }
 
-  const busy = !status.isLoaded || status.isBuffering;
+  const busy = preparing || !status.isLoaded || status.isBuffering;
   const actionLabel = ended
     ? messages.replayAudio
     : status.playing

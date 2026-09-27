@@ -17,17 +17,12 @@
     "availableCities": "Cidades disponíveis",
     "exploreCity": "Explorar {city}",
     "availableNow": "Disponível agora",
-    "featuredCityDescription": "Descubra 5 lugares históricos num passeio guiado a pé.",
     "moreCities": "Mais cidades",
     "comingSoon": "Em breve",
     "germany": "Alemanha"
   },
   "explore": {
-    "title": "Descubra Lübeck",
-    "subtitle": "20 locais para descobrir",
     "walkingTour": "Percurso a pé",
-    "historicCenter": "Centro histórico de Lübeck",
-    "duration": "~45 min • 5 paragens",
     "places": "Locais",
     "startTour": "Iniciar percurso a pé"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Percurso concluído",
-    "title": "Explorou Lübeck!",
-    "description": "Concluiu 5 paragens históricas no centro antigo de Lübeck.",
-    "progress": "5 de 5 paragens concluídas",
     "ratingQuestion": "O que achou do percurso?",
     "thankYou": "Obrigado pela sua opinião!",
     "feedback": "Partilhar opinião",

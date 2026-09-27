@@ -17,17 +17,12 @@
     "availableCities": "Kullanılabilir şehirler",
     "exploreCity": "{city} şehrini keşfet",
     "availableNow": "Şimdi kullanılabilir",
-    "featuredCityDescription": "Rehberli bir yürüyüşle 5 tarihi yeri keşfedin.",
     "moreCities": "Daha fazla şehir",
     "comingSoon": "Yakında",
     "germany": "Almanya"
   },
   "explore": {
-    "title": "Lübeck'i keşfedin",
-    "subtitle": "Keşfedilecek 20 yer",
     "walkingTour": "Yürüyüş turu",
-    "historicCenter": "Lübeck Tarihî Merkezi",
-    "duration": "~45 dk • 5 durak",
     "places": "Yerler",
     "startTour": "Yürüyüş turuna başla"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Tur tamamlandı",
-    "title": "Lübeck'i keşfettiniz!",
-    "description": "Lübeck'in eski kentindeki 5 tarihî durağı tamamladınız.",
-    "progress": "5 durağın 5'i tamamlandı",
     "ratingQuestion": "Turunuz nasıldı?",
     "thankYou": "Geri bildiriminiz için teşekkürler!",
     "feedback": "Geri bildirim paylaş",

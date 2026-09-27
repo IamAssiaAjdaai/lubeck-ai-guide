@@ -6,15 +6,18 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NativeHeaderActions } from "../components/NativeHeaderActions";
 import { colors } from "../design/tokens";
 import { NativeLocaleProvider } from "../localization/LocaleProvider";
+import { NativeTabScrollProvider } from "../lib/tabNavigation";
 
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <NativeLocaleProvider>
+          <NativeTabScrollProvider>
           <StatusBar style="dark" />
           <Stack
             screenOptions={{
+              headerShown: false,
               headerStyle: { backgroundColor: colors.background },
               headerShadowVisible: false,
               headerTintColor: colors.text,
@@ -30,6 +33,7 @@ export default function RootLayout() {
             <Stack.Screen name="city/[citySlug]/guide/[placeSlug]" options={{ title: "CITYWALK" }} />
             <Stack.Screen name="account/index" options={{ title: "CITYWALK" }} />
           </Stack>
+          </NativeTabScrollProvider>
         </NativeLocaleProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

@@ -17,17 +17,12 @@
     "availableCities": "Pieejamās pilsētas",
     "exploreCity": "Izpētīt {city}",
     "availableNow": "Pieejams tagad",
-    "featuredCityDescription": "Atklājiet 5 vēsturiskas vietas gida vadītā pastaigā.",
     "moreCities": "Vairāk pilsētu",
     "comingSoon": "Drīzumā",
     "germany": "Vācija"
   },
   "explore": {
-    "title": "Atklājiet Lübeck",
-    "subtitle": "20 vietas, ko atklāt",
     "walkingTour": "Pastaigu maršruts",
-    "historicCenter": "Lübeck vēsturiskais centrs",
-    "duration": "~45 min • 5 pieturas",
     "places": "Vietas",
     "startTour": "Sākt pastaigu"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Maršruts pabeigts",
-    "title": "Jūs iepazināt Lübeck!",
-    "description": "Jūs apmeklējāt 5 vēsturiskas pieturas Lübeck vecpilsētā.",
-    "progress": "Pabeigtas 5 no 5 pieturām",
     "ratingQuestion": "Kā jums patika maršruts?",
     "thankYou": "Paldies par atsauksmi!",
     "feedback": "Dalīties atsauksmē",

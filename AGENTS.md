@@ -110,10 +110,12 @@ When the user later says `pushed` or explicitly authorizes commit/push, continue
 - If a required external dependency is unavailable, complete all work that does not depend on it and describe the exact remaining acceptance step.
 - Keep recommendations production-oriented; CITYWALK is not treated as a throwaway MVP.
 
-## Cross-platform traveler parity
+## Product surfaces and native parity
 
-CITYWALK follows cross-platform parity by default. Any traveler-facing feature implemented for web must be reviewed and implemented for iOS and Android before the feature is considered complete, unless the ticket explicitly documents a platform exception.
+Scope authority: [#136 ARCH-01](https://github.com/IamAssiaAjdaai/lubeck-ai-guide/issues/136), with the dated 2026-09-24 updates to #131, #138, #33 and #112.
 
-Prefer shared domain and business logic. Do not duplicate planner, trip adaptation, eligibility or AI context logic across web and mobile without a technical reason.
+iOS and Android are the primary traveler product and require native capability parity. Public Web owns acquisition, landing, SEO, sharing, legal and intentional previews. Admin Web owns content, translations, users, analytics, commerce and operations. Preserve existing Web functionality; full native traveler replication on Web is not a default requirement.
 
-Every traveler-facing ticket must include a platform matrix with Web, iOS and Android marked Required and record implementation and actual testing for each. Document exceptions in the ticket (web-only admin, mobile-only native capability, or infrastructure/server-only work). A feature is complete only when all required platforms are implemented and tested.
+For each ticket classify Mobile Core, Public Web (required/optional/not applicable) and Admin Web (required/not applicable). Record iOS and Android implementation and actual acceptance separately. Reuse shared domain/backend rules without duplicating planner, adaptation, eligibility or AI context logic.
+
+Preserve the approved CITYWALK V2 brand, hierarchy and information architecture while using native interaction patterns. Require native evidence for required native capabilities; literal Web layout replication and three-frontend screenshots are not universal release gates. Distinguish local implementation, automated verification, device verification, pushed, merged and deployed evidence. Missing evidence is unverified, not an observed visual mismatch.

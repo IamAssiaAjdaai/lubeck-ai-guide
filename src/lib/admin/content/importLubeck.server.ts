@@ -1,3 +1,5 @@
+import { locales } from "@/lib/i18n";
+import { getLubeckEditorial, lubeckEditorialLocales } from "@/data/lubeckEditorial";
 import { and, asc, eq, inArray } from "drizzle-orm";
 
 import { cities } from "@/data/cities";
@@ -25,7 +27,6 @@ import {
   toursTable,
   tourStopsTable,
 } from "@/db/schema";
-import { getTranslations, locales } from "@/lib/i18n";
 import {
   canBootstrapCanonicalRecord,
   canRefreshCanonicalLocalization,
@@ -360,15 +361,14 @@ export async function importCanonicalLubeckContent() {
       updatedByUserId: tour.updatedByUserId,
     });
     if (mayImportTour) {
-      for (const locale of locales) {
-        const translations = getTranslations(locale);
+      for (const locale of lubeckEditorialLocales) {
         await tx
           .insert(tourLocalizationsTable)
           .values({
             tourId: tour.id,
             locale,
-            title: translations.explore.historicCenter,
-            shortDescription: translations.explore.walkingTour,
+            title: getLubeckEditorial(locale)["explore.historicCenter"],
+            shortDescription: getLubeckEditorial(locale)["explore.walkingTour"],
           })
           .onConflictDoNothing({
             target: [

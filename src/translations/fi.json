@@ -17,17 +17,12 @@
     "availableCities": "Saatavilla olevat kaupungit",
     "exploreCity": "Tutustu: {city}",
     "availableNow": "Nyt saatavilla",
-    "featuredCityDescription": "Kierrä 5 historiallista kohdetta opastetulla kävelykierroksella.",
     "moreCities": "Lisää kaupunkeja",
     "comingSoon": "Tulossa pian",
     "germany": "Saksa"
   },
   "explore": {
-    "title": "Tutustu Lyypekkiin",
-    "subtitle": "20 paikkaa löydettäväksi",
     "walkingTour": "Kävelykierros",
-    "historicCenter": "Lyypekin historiallinen keskusta",
-    "duration": "~45 min • 5 pysähdystä",
     "places": "Kohteet",
     "startTour": "Aloita kävelykierros"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Kierros suoritettu",
-    "title": "Tutustuit Lyypekkiin!",
-    "description": "Suoritit 5 historiallista pysähdystä Lyypekin vanhassakaupungissa.",
-    "progress": "5/5 pysähdystä suoritettu",
     "ratingQuestion": "Millainen kierros oli?",
     "thankYou": "Kiitos palautteestasi!",
     "feedback": "Anna palautetta",

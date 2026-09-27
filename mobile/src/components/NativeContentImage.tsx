@@ -1,14 +1,34 @@
 import { Image, type ImageProps } from "expo-image";
-import { useState } from "react";
+import { useState, type ComponentProps } from "react";
 import { View } from "react-native";
-import { colors } from "../design/tokens";
+import { colors, motion } from "../design/tokens";
 import { NativeIcon } from "./NativeIcon";
-export function NativeContentImage(props: ImageProps) {
-  return <ContentImage key={JSON.stringify(props.source)} {...props} />;
+type ContentImageProps = ImageProps & { fallbackSource?: ImageProps["source"]; placeholderIcon?: Pick<ComponentProps<typeof NativeIcon>, "ios" | "android"> };
+export function NativeContentImage(props: ContentImageProps) {
+  return (
+    <ContentImage
+      key={JSON.stringify([props.source, props.fallbackSource])}
+      {...props}
+    />
+  );
 }
-function ContentImage({ onError, ...props }: ImageProps) {
-  const [failed, setFailed] = useState(false);
-  if (failed || !props.source)
+function ContentImage({
+  onError,
+  fallbackSource,
+  placeholderIcon,
+  ...props
+}: ContentImageProps) {
+  const [failures, setFailures] = useState(0);
+  const hasFallback =
+    fallbackSource &&
+    JSON.stringify(fallbackSource) !== JSON.stringify(props.source);
+  const source =
+    failures === 0
+      ? (props.source ?? fallbackSource)
+      : failures === 1 && hasFallback && props.source
+        ? fallbackSource
+        : undefined;
+  if (!source)
     return (
       <View
         accessible
@@ -23,8 +43,8 @@ function ContentImage({ onError, ...props }: ImageProps) {
         ]}
       >
         <NativeIcon
-          ios="photo"
-          android="image"
+          ios={placeholderIcon?.ios ?? "photo"}
+          android={placeholderIcon?.android ?? "image"}
           color={colors.primary}
           size={32}
         />
@@ -33,8 +53,12 @@ function ContentImage({ onError, ...props }: ImageProps) {
   return (
     <Image
       {...props}
+      source={source}
+      placeholder={props.placeholder ?? require("../../assets/images/content-placeholder.svg")}
+      placeholderContentFit="cover"
+      transition={props.transition ?? motion.component}
       onError={(event) => {
-        setFailed(true);
+        setFailures((value) => value + 1);
         onError?.(event);
       }}
     />

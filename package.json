@@ -41,7 +41,8 @@
     "mobile:test": "npm --prefix mobile run test:run",
     "mobile:lint": "npm --prefix mobile run lint",
     "mobile:typecheck": "npm --prefix mobile run typecheck",
-    "mobile:config": "npm --prefix mobile run config:validate"
+    "mobile:config": "npm --prefix mobile run config:validate",
+    "i18n:check": "node packages/i18n/scripts/check.mjs"
   },
   "dependencies": {
     "@citywalk/traveler-core": "file:packages/traveler-core",
@@ -65,7 +66,8 @@
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
     "sharp": "^0.35.4",
-    "stripe": "^22.4.0"
+    "stripe": "^22.4.0",
+    "@citywalk/i18n": "file:packages/i18n"
   },
   "devDependencies": {
     "@google-cloud/text-to-speech": "^7.0.0",
@@ -95,5 +97,8 @@
   },
   "engines": {
     "node": "22.x"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

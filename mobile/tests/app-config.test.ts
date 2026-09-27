@@ -98,7 +98,7 @@ describe("CITYWALK native app configuration", () => {
     expect(appJson.expo.plugins).toContain("expo-font");
   });
 
-  it("configures store beta as store-distributed builds against the stable Beta API", () => {
+  it("configures store beta as store-distributed builds against the restored develop Preview API", () => {
     const storeBeta = easJson.build["store-beta"];
 
     expect(storeBeta).toMatchObject({
@@ -109,19 +109,23 @@ describe("CITYWALK native app configuration", () => {
       env: {
         EXPO_PUBLIC_CITYWALK_ENV: "preview",
         EXPO_PUBLIC_CITYWALK_API_ORIGIN:
-          "https://lubeck-ai-guide-git-beta-store-iamassiaajdaais-projects.vercel.app",
+          "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app",
       },
     });
   });
 
-  it("configures internal preview builds against the stable Beta API", () => {
+  it("configures internal preview builds against the restored develop Preview API", () => {
     expect(easJson.build.preview).toEqual({
+      developmentClient: false,
+      autoIncrement: true,
+      android: { buildType: "apk" },
+      ios: { buildConfiguration: "Release" },
       distribution: "internal",
       environment: "preview",
       env: {
         EXPO_PUBLIC_CITYWALK_ENV: "preview",
         EXPO_PUBLIC_CITYWALK_API_ORIGIN:
-          "https://lubeck-ai-guide-git-beta-store-iamassiaajdaais-projects.vercel.app",
+          "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app",
       },
     });
   });
@@ -129,7 +133,7 @@ describe("CITYWALK native app configuration", () => {
   it("keeps store beta submission limited to Google Play internal and TestFlight", () => {
     expect(easJson.submit["store-beta"]).toEqual({
       android: { track: "internal", releaseStatus: "draft" },
-      ios: {},
+      ios: { ascAppId: "6815815964" },
     });
   });
 });

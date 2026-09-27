@@ -1,4 +1,5 @@
-export type NativeLocale = "en" | "de" | "ar";
+import { reportContentFallback } from "@citywalk/i18n/content";
+export type { SharedLocale as NativeLocale } from "@citywalk/i18n";
 
 export type PublicMediaAttribution = Readonly<{
   text: string;
@@ -235,9 +236,7 @@ function parseCitySummary(value: unknown): PublicCitySummary {
     ...(typeof object.shortDescription === "string"
       ? { shortDescription: object.shortDescription }
       : {}),
-    requestedLocale: asString(object.requestedLocale, "requested locale"),
-    resolvedLocale: asString(object.resolvedLocale, "resolved locale"),
-    didFallback: asBoolean(object.didFallback, "fallback state"),
+    ...parseLocaleMetadata(object),
     media: parseMediaArray(object.media),
   };
 }
@@ -380,13 +379,18 @@ function parseFacts(value: unknown): readonly PublicFact[] {
   });
 }
 
-function parseLocalizedContent(object: Record<string, unknown>) {
-  return {
+function parseLocaleMetadata(object: Record<string, unknown>) {
+  const localized = {
     requestedLocale: asString(object.requestedLocale, "requested locale"),
     resolvedLocale: asString(object.resolvedLocale, "resolved locale"),
     didFallback: asBoolean(object.didFallback, "fallback state"),
-    content: object.content,
   };
+  reportContentFallback(localized, typeof object.slug === "string" ? object.slug : "content");
+  return localized;
+}
+
+function parseLocalizedContent(object: Record<string, unknown>) {
+  return { ...parseLocaleMetadata(object), content: object.content };
 }
 
 function parseMediaArray(value: unknown): readonly PublicMedia[] {

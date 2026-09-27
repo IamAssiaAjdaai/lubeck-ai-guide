@@ -1,3 +1,6 @@
+import { nativeRowStyle, nativeTextBlock } from "../../design/rtlPresentation";
+import { uxCopy } from "../../design/uxCopy";
+import { nativeCityName } from "../../lib/displayNames";
 import { Link, router, Stack, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
@@ -18,28 +21,36 @@ import { triggerCitywalkHaptic } from "../../lib/haptics";
 import { useNativeLocale } from "../../localization/LocaleProvider";
 
 export default function AccountScreen() {
-  const { locale, messages } = useNativeLocale();
+  const { locale, direction, messages } = useNativeLocale();
   const { data: session, isPending } = nativeAuthClient.useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState<"sign-in" | "sign-up">();
+  const [busy, setBusy] = useState<"sign-in" | "sign-up" | "sign-out">();
   const [failure, setFailure] = useState<NativeAuthErrorCode>();
   const [notice, setNotice] = useState<string>();
+  const [savedFailure, setSavedFailure] = useState(false);
   const [savedTrips, setSavedTrips] = useState<readonly LocalSavedTrip[]>();
 
   useFocusEffect(useCallback(() => {
     let active = true;
     void loadLocalTrips()
       .then((trips) => {
-        if (active) setSavedTrips(trips);
+        if (active) { setSavedTrips(trips); setSavedFailure(false); }
       })
       .catch(() => {
-        if (active) setSavedTrips([]);
+        if (active) setSavedFailure(true);
       });
     return () => { active = false; };
   }, []));
 
+  async function retrySaved() {
+    setSavedFailure(false);
+    try { setSavedTrips(await loadLocalTrips()); }
+    catch { setSavedFailure(true); }
+  }
+
   async function authenticate(mode: "sign-in" | "sign-up") {
+    if (busy) return;
     const normalizedEmail = email.trim();
     const validationFailure = validateNativeAuthInput(normalizedEmail, password);
     if (validationFailure) {
@@ -73,26 +84,36 @@ export default function AccountScreen() {
     }
   }
 
+  async function signOut() {
+    if (busy) return;
+    setBusy("sign-out"); setFailure(undefined);
+    try {
+      const result = await nativeAuthClient.signOut();
+      if (result.error) setFailure(classifyNativeAuthError(result.error));
+    } catch { setFailure("network"); }
+    finally { setBusy(undefined); }
+  }
+
   return (
     <Screen>
       <Stack.Screen options={{ title: messages.account }} />
-      <View style={styles.introduction}>
+      <View style={[styles.introduction, nativeRowStyle(direction)]}>
         <View style={styles.accountIcon}>
           <NativeIcon ios="person.crop.circle" android="account_circle" color={colors.primary} size={30} />
         </View>
-        <View style={styles.introductionText}>
+        <View style={[styles.introductionText, nativeTextBlock(direction)]}>
           <AppText variant="screenTitle">{messages.account}</AppText>
           <AppText style={styles.muted}>{messages.guestMode}</AppText>
         </View>
       </View>
       <PrimaryButton label={messages.continueAsGuest} onPress={() => router.back()} tone="secondary" />
 
-      {isPending ? <CitywalkLoading compact /> : null}
+      {isPending ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
       {session ? (
         <Card>
           <AppText variant="heading">{messages.signedIn}</AppText>
           <AppText>{session.user.email}</AppText>
-          <PrimaryButton label={messages.signOut} onPress={() => void nativeAuthClient.signOut()} tone="secondary" />
+          <PrimaryButton label={messages.signOut} busy={busy === "sign-out"} onPress={() => void signOut()} tone="secondary" />
         </Card>
       ) : (
         <Card>
@@ -117,17 +138,18 @@ export default function AccountScreen() {
             style={styles.input}
           />
           <View style={styles.actions}>
-            <PrimaryButton label={messages.signIn} busy={busy === "sign-in"} onPress={() => void authenticate("sign-in")} style={styles.action} />
-            <PrimaryButton label={messages.signUp} busy={busy === "sign-up"} onPress={() => void authenticate("sign-up")} style={styles.action} tone="secondary" />
+            <PrimaryButton label={messages.signIn} busy={busy === "sign-in"} disabled={Boolean(busy)} onPress={() => void authenticate("sign-in")} style={styles.action} />
+            <PrimaryButton label={messages.signUp} busy={busy === "sign-up"} disabled={Boolean(busy)} onPress={() => void authenticate("sign-up")} style={styles.action} tone="secondary" />
           </View>
-          {failure ? <StatusMessage tone="error">{authFailureMessage(failure, messages)}</StatusMessage> : null}
           {notice ? <StatusMessage tone="success">{notice}</StatusMessage> : null}
         </Card>
       )}
 
-      <View style={styles.savedTrips}>
+      {failure ? <StatusMessage tone="error">{authFailureMessage(failure, messages)}</StatusMessage> : null}
+      <View style={[styles.savedTrips, nativeTextBlock(direction)]}>
         <AppText variant="heading">{messages.savedTrips}</AppText>
-        {savedTrips === undefined ? <CitywalkLoading compact /> : null}
+        {savedTrips === undefined && !savedFailure ? <CitywalkLoading compact label={uxCopy(locale).saved} /> : null}
+        {savedFailure ? <><StatusMessage>{messages.unavailable}</StatusMessage><PrimaryButton label={messages.retry} onPress={() => void retrySaved()} /></> : null}
         {savedTrips?.length === 0 ? (
           <EmptyState
             description={messages.noSavedTripsDescription}
@@ -137,7 +159,7 @@ export default function AccountScreen() {
         ) : null}
         {savedTrips?.map((trip) => (
           <Card key={trip.id}>
-            <AppText variant="label">{trip.citySlug}</AppText>
+            <AppText variant="label">{nativeCityName(trip.citySlug, trip.citySlug, locale)}</AppText>
             <AppText variant="caption" style={styles.savedMetadata}>
               {trip.stopSlugs.length} {messages.stops} · {trip.totalMinutes} {messages.minutes} · {new Intl.DateTimeFormat(locale, {
                 dateStyle: "medium",

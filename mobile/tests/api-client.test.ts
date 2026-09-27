@@ -269,3 +269,22 @@ describe("CITYWALK native API client", () => {
     expect(Object.keys(client)).not.toContain("cookie");
   });
 });
+
+
+it("requests Arabic on both list and detail paths and preserves authored content and honest fallback metadata", async () => {
+  const authored = { ...cityResponse.places[0], requestedLocale: "ar", resolvedLocale: "ar", content: { name: "هولستنتور", shortDescription: "بوابة لوبيك التاريخية", story: "قصة البوابة" } };
+  const fallback = { ...cityResponse.places[0], slug: "other", requestedLocale: "ar", resolvedLocale: "en", didFallback: true };
+  const fetchImpl = vi.fn()
+    .mockResolvedValueOnce(new Response(JSON.stringify({ ...cityResponse, places: [authored, fallback] })))
+    .mockResolvedValueOnce(new Response(JSON.stringify({ city: cityResponse.city, place: authored })));
+  const client = createCitywalkApiClient({ origin: "https://citywalk.example", fetchImpl });
+  const summary = await client.getCitySummary("lubeck", "ar");
+  const detail = await client.getPlace("lubeck", "holstentor", "ar");
+  expect(summary.places[0].content.shortDescription).toBe("بوابة لوبيك التاريخية");
+  expect(detail.place.content.story).toBe("قصة البوابة");
+  expect(summary.places[1]).toMatchObject({ resolvedLocale: "en", didFallback: true });
+  expect(fetchImpl.mock.calls.map(([url]) => String(url))).toEqual([
+    "https://citywalk.example/api/content/cities/lubeck/summary?locale=ar",
+    "https://citywalk.example/api/content/cities/lubeck/places/holstentor?locale=ar",
+  ]);
+});

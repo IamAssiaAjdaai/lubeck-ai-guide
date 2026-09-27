@@ -71,6 +71,22 @@ export function buildWalk<T extends TourBuilderPlace>(
   settings: WalkSettings,
   now = Date.now(),
 ): WalkRoute<T> {
+  const steps = buildWalkSteps(places, settings, now);
+  let result = steps.next();
+  while (!result.done) result = steps.next();
+  return result.value;
+}
+
+export type WalkBuildStage = "matching" | "checking" | "fitting" | "choosing";
+
+// Shared work units, used synchronously by Web and frame-by-frame by native.
+// Yields precede real work; there is no fabricated progress or minimum delay.
+export function* buildWalkSteps<T extends TourBuilderPlace>(
+  places: readonly T[],
+  settings: WalkSettings,
+  now = Date.now(),
+): Generator<WalkBuildStage, WalkRoute<T>, void> {
+  yield "matching";
   const budget = settings.deadline
     ? Math.floor((settings.deadline - now) / 60000)
     : settings.minutes;
@@ -89,6 +105,7 @@ export function buildWalk<T extends TourBuilderPlace>(
       interestScore(b, settings.interests) -
       interestScore(a, settings.interests),
   );
+  yield "checking";
   const result = buildPersonalizedTour({
     places: ordered,
     preferences: {
@@ -107,6 +124,7 @@ export function buildWalk<T extends TourBuilderPlace>(
         .flatMap((key) => [...interestTags[key]]),
     ],
   });
+  yield "fitting";
   let selected = result.stops.map((stop) => stop.place);
   if (settings.walking === "easy") {
     // A shorter walking cap is a real preference, not just a visual toggle.
@@ -124,6 +142,7 @@ export function buildWalk<T extends TourBuilderPlace>(
     )
       selected = selected.slice(0, -1);
   }
+  yield "choosing";
   return measureWalk(selected, settings.start, settings.finish);
 }
 export function deadlineForToday(

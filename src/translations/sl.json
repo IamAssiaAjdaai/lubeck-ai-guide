@@ -17,17 +17,12 @@
     "availableCities": "Razpoložljiva mesta",
     "exploreCity": "Raziščite {city}",
     "availableNow": "Na voljo zdaj",
-    "featuredCityDescription": "Odkrijte 5 zgodovinskih krajev na vodenem sprehodu.",
     "moreCities": "Več mest",
     "comingSoon": "Kmalu",
     "germany": "Nemčija"
   },
   "explore": {
-    "title": "Odkrijte Lübeck",
-    "subtitle": "20 krajev za odkrivanje",
     "walkingTour": "Peš ogled",
-    "historicCenter": "Zgodovinsko središče Lübecka",
-    "duration": "~45 min • 5 postankov",
     "places": "Kraji",
     "startTour": "Začni peš ogled"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Ogled je končan",
-    "title": "Raziskali ste Lübeck!",
-    "description": "Obiskali ste 5 zgodovinskih postankov v starem mestnem jedru Lübecka.",
-    "progress": "Opravljenih 5 od 5 postankov",
     "ratingQuestion": "Kako vam je bil všeč ogled?",
     "thankYou": "Hvala za povratne informacije!",
     "feedback": "Deli mnenje",

@@ -17,17 +17,12 @@
     "availableCities": "Cathracha atá ar fáil",
     "exploreCity": "Déan iniúchadh ar {city}",
     "availableNow": "Ar fáil anois",
-    "featuredCityDescription": "Faigh amach 5 áit stairiúla ar shiúlóid threoraithe.",
     "moreCities": "Tuilleadh cathracha",
     "comingSoon": "Ag teacht go luath",
     "germany": "An Ghearmáin"
   },
   "explore": {
-    "title": "Faigh blaiseadh de Lübeck",
-    "subtitle": "20 áit le haimsiú",
     "walkingTour": "Turas siúlóide",
-    "historicCenter": "Lár stairiúil Lübeck",
-    "duration": "~45 nóim • 5 stad",
     "places": "Áiteanna",
     "startTour": "Cuir tús leis an turas"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Turas críochnaithe",
-    "title": "Rinne tú iniúchadh ar Lübeck!",
-    "description": "Chríochnaigh tú 5 stad stairiúla i seanbhaile Lübeck.",
-    "progress": "5 stad as 5 críochnaithe",
     "ratingQuestion": "Conas a bhí an turas?",
     "thankYou": "Go raibh maith agat as d'aiseolas!",
     "feedback": "Roinn aiseolas",

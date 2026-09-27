@@ -1,5 +1,8 @@
 # CITYWALK Architecture Context
 
+Scope clarification — 2026-09-25: [#136 ARCH-01](https://github.com/IamAssiaAjdaai/lubeck-ai-guide/issues/136) governs current acceptance: iOS/Android primary traveler capabilities, Public Web acquisition/SEO/share/legal/intentional previews, Admin Web operations. Earlier references to all-three-frontend traveler parity are historical; preserve existing Web functionality and the approved V2 identity.
+
+
 This document gives coding agents a compact, current mental model of CITYWALK. It is intentionally architectural rather than a changelog. GitHub issues remain authoritative for ticket scope.
 
 ## Product

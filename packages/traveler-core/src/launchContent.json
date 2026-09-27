@@ -1,0 +1,24 @@
+{
+  "hamburg": {
+    "en": {
+      "shortDescription": "Harbor views. Big stories."
+    },
+    "de": {
+      "shortDescription": "Hafenblicke. Große Geschichten."
+    },
+    "ar": {
+      "shortDescription": "إطلالات على الميناء. قصص كبيرة."
+    }
+  },
+  "duesseldorf": {
+    "en": {
+      "shortDescription": "Art. Culture. A different perspective."
+    },
+    "de": {
+      "shortDescription": "Kunst. Kultur. Neue Perspektiven."
+    },
+    "ar": {
+      "shortDescription": "فن وثقافة ومنظور مختلف."
+    }
+  }
+}

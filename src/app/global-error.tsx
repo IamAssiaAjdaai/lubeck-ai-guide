@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import posthog from "posthog-js";
-import en from "@/translations/en.json";
+import { webCopy } from "@citywalk/i18n/adapters";
+const en = webCopy("en");
 
 export default function GlobalError({
   error,

@@ -1,3 +1,4 @@
+import { getLubeckEditorial } from "@/data/lubeckEditorial";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -129,7 +130,7 @@ describe("Home available cities", () => {
     await renderHome();
 
     expect(screen.queryByText(/Barcelona|Amsterdam|Paris/)).toBeNull();
-    expect(screen.queryByText(getTranslations("en").home.featuredCityDescription)).toBeNull();
+    expect(screen.queryByText(getLubeckEditorial("en")["home.featuredCityDescription"])).toBeNull();
   });
 
   it("defines discovery copy for every supported locale", () => {

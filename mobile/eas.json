@@ -16,7 +16,15 @@
       "environment": "preview",
       "env": {
         "EXPO_PUBLIC_CITYWALK_ENV": "preview",
-        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://lubeck-ai-guide-git-beta-store-iamassiaajdaais-projects.vercel.app"
+        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app"
+      },
+      "developmentClient": false,
+      "autoIncrement": true,
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "buildConfiguration": "Release"
       }
     },
     "store-beta": {
@@ -28,7 +36,7 @@
       },
       "env": {
         "EXPO_PUBLIC_CITYWALK_ENV": "preview",
-        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://lubeck-ai-guide-git-beta-store-iamassiaajdaais-projects.vercel.app"
+        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app"
       }
     },
     "production": {
@@ -44,7 +52,9 @@
         "track": "internal",
         "releaseStatus": "draft"
       },
-      "ios": {}
+      "ios": {
+        "ascAppId": "6815815964"
+      }
     },
     "production": {}
   }

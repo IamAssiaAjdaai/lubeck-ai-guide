@@ -1,15 +1,23 @@
-import { useEffect, useState } from "react";
+import { PublicStoreReview } from "./PublicStoreReview";
+import { t as translate } from "@citywalk/i18n";
+import { nativeCategoryLabel } from "../lib/contentLabels";
+import { uxCopy } from "../design/uxCopy";
+import { CitywalkLoading } from "./CitywalkLoading";
+import { nativeCityName, nativePlaceName } from "../lib/displayNames";
+import { discoveryCopy } from "../design/discoveryCopy";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "expo-router";
 import {
-  ActivityIndicator,
   BackHandler,
   Linking,
   Modal,
+  ScrollView,
   Share,
   View,
 } from "react-native";
 import {
-  buildWalk,
+  buildWalkSteps,
+  type WalkBuildStage,
   deadlineForToday,
   interestTags,
   measureWalk,
@@ -29,14 +37,21 @@ import {
   estimateWalkingMinutes,
   isEligibleTourPlace,
 } from "@citywalk/traveler-core";
-import { walkCopy, walkCategoryLabel } from "@citywalk/traveler-core/walkCopy";
+import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import type { PublicPlaceCard } from "../lib/api/contracts";
 import {
-  loadActiveWalk,
+  loadCurrentWalk,
+  changeCurrentWalk,
+  subscribeCurrentWalk,
+  persistCurrentWalk,
   loadSavedWalks,
-  persistActiveWalk,
   saveNativeWalk,
   saveWalkFeedback,
+  startCurrentWalk,
+  walkStartStatus,
+  walkSaveStatus,
+  clearCurrentWalk,
+  type CurrentWalk,
 } from "../lib/walkStorage";
 import { loadLocalTrips } from "../lib/tripStorage";
 import { createMobileTripId } from "../lib/tripNavigation";
@@ -51,7 +66,18 @@ import {
   SectionTitle,
   StatusMessage,
 } from "./ui";
-import { WalkChoices, WalkInput } from "./WalkControls";
+import { WalkChoices, WalkInput, WalkPlacePicker } from "./WalkControls";
+import {
+  MetricSummary,
+  StepProgress,
+  V2Hero,
+  V2Itinerary,
+  V2Loading,
+  V2WalkError,
+} from "./V2Presentation";
+import { NativeIcon } from "./NativeIcon";
+import { colors } from "../design/tokens";
+import { walkStyles as styles } from "../design/walkStyles";
 
 export function NativeWalkFlow({
   citySlug,
@@ -59,12 +85,14 @@ export function NativeWalkFlow({
   places,
   savedId,
   addSlug,
+  contentStatus = "available",
 }: {
   citySlug: string;
   cityName: string;
   places: readonly PublicPlaceCard[];
   savedId?: string;
   addSlug?: string;
+  contentStatus?: "available" | "loading" | "error";
 }) {
   const { locale, messages } = useNativeLocale(),
     t = walkCopy(locale),
@@ -72,9 +100,34 @@ export function NativeWalkFlow({
   const [stage, setStage] = useState<
     "hydrate" | "plan" | "building" | "preview" | "active" | "finished"
   >("hydrate");
+  const [saving, setSaving] = useState(false);
+  const saveLock = useRef(false);
+  const [updating, setUpdating] = useState(false);
+  const [rebuildConfirmation, setRebuildConfirmation] = useState<{ current: CurrentWalk | undefined }>();
+  const updateLock = useRef(false);
+  const feedbackLock = useRef(false);
+  const [feedbackSaving, setFeedbackSaving] = useState(false);
+  const [reviewSettled, setReviewSettled] = useState<string>();
+  const [showPrivateFeedback, setShowPrivateFeedback] = useState<string>();
+  const reviewDidSettle = useCallback((id: string) => setReviewSettled(id), []);
+  const scroll = useRef<ScrollView>(null);
+  const buildLayoutReady = useRef<(() => void) | undefined>(undefined);
+  const buildPresented = useRef<(() => void) | undefined>(undefined);
+  const handleBuildPresented = useCallback(() => {
+    buildPresented.current?.();
+    buildPresented.current = undefined;
+  }, []);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; buildLayoutReady.current?.(); buildPresented.current?.(); };
+  }, []);
   const [step, setStep] = useState(1),
     [minutes, setMinutes] = useState(120),
     [returnBy, setReturnBy] = useState("");
+  useEffect(() => {
+    scroll.current?.scrollTo({ y: 0, animated: false });
+  }, [stage, step]);
   const [interests, setInterests] = useState<Interest[]>([
       "history",
       "architecture",
@@ -95,6 +148,9 @@ export function NativeWalkFlow({
     [message, setMessage] = useState("");
   const [now, setNow] = useState(() => Date.now()),
     [generatedAt, setGeneratedAt] = useState(() => Date.now());
+  const [showMap, setShowMap] = useState(false);
+  const [buildError, setBuildError] = useState<"empty" | "error">();
+  const [buildStage, setBuildStage] = useState<WalkBuildStage>("matching");
   const [rating, setRating] = useState<string[]>([]),
     [fit, setFit] = useState<string[]>([]);
   const [proposalMessage, setProposalMessage] = useState("");
@@ -111,7 +167,7 @@ export function NativeWalkFlow({
   );
   const options = eligible.map((p) => ({
     value: p.slug,
-    label: p.content.name,
+    label: nativePlaceName(citySlug, p.slug, p.content.name, locale),
   }));
   const clock = (time: number) =>
     new Intl.DateTimeFormat(locale, {
@@ -126,6 +182,7 @@ export function NativeWalkFlow({
     let alive = true;
     void (async () => {
       let restored: WalkJourney | undefined;
+      let restoredPhase: "preview" | "active" = "active";
       if (savedId) {
         restored = (await loadSavedWalks()).find(
           (w) => w.id === savedId && w.citySlug === citySlug,
@@ -171,7 +228,11 @@ export function NativeWalkFlow({
             finishedAt: undefined,
             settings: { ...restored.settings, deadline: undefined },
           };
-      } else restored = await loadActiveWalk(citySlug);
+      } else {
+        const current = await loadCurrentWalk(citySlug);
+        restored = current?.journey;
+        restoredPhase = current?.phase ?? "active";
+      }
       if (!alive) return;
       if (restored) {
         const allKnown = [...restored.remaining, ...restored.visited].every(
@@ -180,19 +241,32 @@ export function NativeWalkFlow({
         const allEligible = restored.remaining.every((slug) =>
           eligible.some((p) => p.slug === slug),
         );
-        if (allKnown && allEligible) {
+        if (savedId || restoredPhase === "preview" || (allKnown && allEligible)) {
+          if (savedId) await persistCurrentWalk(restored, "preview");
+          if (!alive) return;
           setJourney(restored);
-          setStage(savedId ? "preview" : "active");
-          if (addSlug) {
-              const candidate = places.find(place => place.slug === addSlug);
-              const proposal = candidate ? proposeAddedStop(
-                restored.remaining.flatMap(slug => places.find(place => place.slug === slug) ?? []),
-                candidate, restored.visited, restored.settings, restored.position,
-                restored.finish, restored.startedAt,
-              ) : undefined;
-              if (proposal) setProposed(proposal);
-              else { setPanel("add"); setMessage(t.noEligible); }
+          setStage(savedId ? "preview" : restoredPhase);
+          if (addSlug && ![...restored.visited, ...restored.remaining].includes(addSlug)) {
+            const candidate = places.find((place) => place.slug === addSlug);
+            const proposal = candidate
+              ? proposeAddedStop(
+                  restored.remaining.flatMap(
+                    (slug) => places.find((place) => place.slug === slug) ?? [],
+                  ),
+                  candidate,
+                  restored.visited,
+                  restored.settings,
+                  restored.position,
+                  restored.finish,
+                  restored.startedAt,
+                )
+              : undefined;
+            if (proposal) setProposed(proposal);
+            else {
+              setPanel("add");
+              setProposalMessage(t.noEligible);
             }
+          }
           return;
         }
         setMessage(t.noEligible);
@@ -211,6 +285,17 @@ export function NativeWalkFlow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [citySlug, savedId]);
   useEffect(() => {
+    if (stage !== "preview" && stage !== "active") return;
+    return subscribeCurrentWalk(citySlug, current => {
+      setMessage(previous => previous === t.savedDone ? "" : previous);
+      setJourney(current?.journey);
+      setStage(current?.phase ?? "plan");
+      // A proposal belongs to the route it was computed from.
+      setProposed(undefined);
+      setProposalMessage("");
+    });
+  }, [citySlug, stage, t.savedDone]);
+  useEffect(() => {
     if (stage !== "active") return;
     const timer = setInterval(() => setNow(Date.now()), 30000);
     return () => clearInterval(timer);
@@ -219,6 +304,10 @@ export function NativeWalkFlow({
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
+        if (rebuildConfirmation) {
+          if (!updateLock.current) setRebuildConfirmation(undefined);
+          return true;
+        }
         if (proposed) {
           setProposed(undefined);
           return true;
@@ -227,15 +316,15 @@ export function NativeWalkFlow({
           setPanel(undefined);
           return true;
         }
-        if (stage === "plan" && step === 2) {
-          setStep(1);
+        if (stage === "plan" && step > 1) {
+          setStep((value) => value - 1);
           return true;
         }
         return false;
       },
     );
     return () => subscription.remove();
-  }, [proposed, panel, stage, step]);
+  }, [proposed, panel, stage, step, rebuildConfirmation]);
   async function locate() {
     setLocating(true);
     const result = await requestForegroundLocation(
@@ -269,11 +358,13 @@ export function NativeWalkFlow({
       return;
     }
     setMessage("");
+    setBuildStage("matching");
+    const presented = new Promise<void>((resolve) => { buildPresented.current = resolve; });
     setStage("building");
-    // Yield to native rendering; no invented stage completion or percentage.
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => resolve()),
-    );
+    // Wait for this native view's real layout, not a synthetic display timer.
+    // A fast local plan must not finish before its progress screen is attached.
+    await new Promise<void>((resolve) => { buildLayoutReady.current = resolve; });
+    if (!mounted.current) return;
     try {
       const settings: WalkSettings = {
         minutes,
@@ -284,16 +375,29 @@ export function NativeWalkFlow({
         categories,
         walking,
       };
-      const route = buildWalk(places, settings);
+      const steps = buildWalkSteps(places, settings);
+      let result = steps.next();
+      while (!result.done) {
+        setBuildStage(result.value);
+        // Render before the next synchronous work unit; no decorative delay.
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+        if (!mounted.current) return;
+        result = steps.next();
+      }
+      // Local planning can finish during the native entrance transition. Keep
+      // its real progress mounted until that transition has actually completed.
+      await presented;
+      if (!mounted.current) return;
+      const route = result.value;
       if (!route.places.length) {
-        setMessage(`${t.empty} ${t.emptyHelp}`);
+        setBuildError("empty");
         setStage("plan");
         return;
       }
       const time = Date.now();
       setGeneratedAt(time);
       setNow(time);
-      setJourney({
+      const generated: WalkJourney = {
         id: createMobileTripId("walk"),
         citySlug,
         settings,
@@ -303,30 +407,79 @@ export function NativeWalkFlow({
         finish,
         historyDistance: 0,
         startedAt: time,
-      });
+      };
+      await persistCurrentWalk(generated, "preview");
+      if (!mounted.current) return;
+      setJourney(generated);
       setStage("preview");
     } catch {
-      setMessage(t.errorHelp);
+      setBuildError("error");
       setStage("plan");
     }
   }
-  async function update(next: WalkJourney) {
-    setJourney(next);
-    setNow(Date.now());
+  async function update(next: WalkJourney, phase: "preview" | "active" = stage === "preview" ? "preview" : "active") {
+    if (updateLock.current) return false;
+    updateLock.current = true; setUpdating(true);
     try {
-      await persistActiveWalk(next);
-    } catch {
-      setMessage(messages.tripSaveFailed);
-    }
+      const result = await changeCurrentWalk(citySlug, current => {
+        if (!current || current.journey.id !== next.id) throw new Error("Walk changed");
+        const changesStops = next.remaining !== journey?.remaining || next.visited !== journey?.visited;
+        if (changesStops && JSON.stringify([current.journey.remaining, current.journey.visited]) !== JSON.stringify([journey?.remaining, journey?.visited])) throw new Error("Walk changed");
+        return { phase, journey: changesStops ? next : { ...next, remaining: current.journey.remaining, visited: current.journey.visited } };
+      });
+      setJourney(result.journey); setNow(Date.now()); return true;
+    } catch { setMessage(messages.tripSaveFailed); return false; }
+    finally { updateLock.current = false; setUpdating(false); }
   }
   async function save() {
-    if (!journey) return;
-    try {
-      await saveNativeWalk(journey);
-      setMessage(t.savedDone);
-    } catch {
-      setMessage(messages.tripSaveFailed);
+    if (!journey || saveLock.current) return;
+    saveLock.current = true; setSaving(true); setMessage("");
+    try { await saveNativeWalk(journey, places, contentStatus === "available"); setMessage(t.savedDone); }
+    catch (error) {
+      const code = error instanceof Error ? error.message : "";
+      setMessage(code === "walk-save-empty" ? t.saveEmpty
+        : code === "walk-save-loading" || code === "walk-save-unresolved" ? t.saveContentUnavailable : messages.tripSaveFailed);
     }
+    finally { saveLock.current = false; setSaving(false); }
+  }
+  async function start() {
+    if (!journey || updateLock.current) return;
+    updateLock.current = true; setUpdating(true);
+    try {
+      const next = await startCurrentWalk(citySlug, journey.id, places, contentStatus === "available");
+      setJourney(next.journey); setNow(Date.now()); setStage("active");
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "";
+      setMessage(code === "walk-start-empty" ? t.emptyHelp
+        : code === "walk-start-unresolved" || code === "walk-start-loading" ? t.planContentUnavailable : messages.tripSaveFailed);
+    } finally { updateLock.current = false; setUpdating(false); }
+  }
+  async function requestRebuild() {
+    if (updateLock.current) return;
+    try {
+      const current = await loadCurrentWalk(citySlug);
+      if (journey && current?.journey.id !== journey.id) throw new Error("walk-changed");
+      setMessage(""); setRebuildConfirmation({ current });
+    }
+    catch { setMessage(messages.tripSaveFailed); }
+  }
+  async function rebuild() {
+    if (!rebuildConfirmation || updateLock.current) return;
+    updateLock.current = true; setUpdating(true);
+    try {
+      await clearCurrentWalk(citySlug, rebuildConfirmation.current);
+      setJourney(undefined); setProposed(undefined); setPanel(undefined);
+      setProposalMessage(""); setMessage(""); setBuildError(undefined);
+      setStep(1); setMinutes(120); setReturnBy("");
+      setInterests(["history", "architecture"]); setCategories([]); setWalking("balanced");
+      setStartSlug(places[0]?.slug ?? ""); setEndSlug(places[0]?.slug ?? "");
+      setGps(undefined); setStartMode("place"); setEndMode("loop");
+      setShowMap(false); setBuildStage("matching");
+      setNow(Date.now()); setGeneratedAt(Date.now()); setRating([]); setFit([]);
+      setReviewSettled(undefined); setShowPrivateFeedback(undefined);
+      setRebuildConfirmation(undefined); setStage("plan");
+    } catch { setMessage(messages.tripSaveFailed); }
+    finally { updateLock.current = false; setUpdating(false); }
   }
   function shorten() {
     if (!journey) return;
@@ -361,7 +514,7 @@ export function NativeWalkFlow({
       setProposed(next);
       setPanel(undefined);
       setProposalMessage("");
-    } else setMessage(t.noEligible);
+    } else setProposalMessage(t.noEligible);
   }
   function back(point: Point) {
     if (journey) {
@@ -379,102 +532,196 @@ export function NativeWalkFlow({
     }
   }
   async function feedback(key: "rating" | "fit", value: string) {
-    if (!journey) return;
+    if (!journey || feedbackLock.current) return;
+    feedbackLock.current = true; setFeedbackSaving(true);
     try {
       await saveWalkFeedback(journey.id, key, value);
       (key === "rating" ? setRating : setFit)([value]);
       setMessage(t.thanks);
     } catch {
       setMessage(messages.tripSaveFailed);
-    }
+    } finally { feedbackLock.current = false; setFeedbackSaving(false); }
   }
   const route = journey
     ? measureWalk(named(journey.remaining), journey.position, journey.finish)
     : undefined;
-  const current = route?.places[0];
+  const startStatus = contentStatus === "error" ? "unresolved"
+    : journey ? walkStartStatus(journey, places, contentStatus === "available") : "empty";
+  const saveStatus = contentStatus === "error" ? "unresolved"
+    : journey ? walkSaveStatus(journey, places, contentStatus === "available") : "empty";
+  const saveFeedback = saveStatus !== "ready" ? <StatusMessage>{saveStatus === "empty" ? t.saveEmpty
+    : saveStatus === "loading" ? discoveryCopy(locale).loadingWalkContent : t.saveContentUnavailable}</StatusMessage> : null;
+  // Do not silently promote a different place if refreshed content loses a stop.
+  const current = places.find((place) => place.slug === journey?.remaining[0]);
   const eta =
     (stage === "preview" ? generatedAt : now) + (route?.minutes ?? 0) * 60000;
   const deadline = journey?.settings.deadline;
   const itinerary = (items: PublicPlaceCard[], interactive = true) => (
-    <View style={{ gap: 12 }}>
+    <View style={styles.section}>
       <SectionTitle>{t.itinerary}</SectionTitle>
-      {items.map((p, i) => !interactive ? <AppText key={p.slug}>{i + 1}. {p.content.name} · {duration(p.durationMinutes)}</AppText> : (
-        <Link
-          key={p.slug}
-          href={{
-            pathname: "/city/[citySlug]/place/[placeSlug]",
-            params: { citySlug, placeSlug: p.slug },
-          }}
-          asChild
-        >
-          <PrimaryButton
-            wrapLabel
-            tone="secondary"
-            label={`${i + 1}. ${p.content.name} · ${duration(p.durationMinutes)}`}
-          />
-        </Link>
-      ))}
+      <V2Itinerary
+        places={items}
+        citySlug={citySlug}
+        interactive={interactive}
+      />
     </View>
   );
   const summary = (r: WalkRoute<PublicPlaceCard>) => (
-    <View style={{ gap: 8 }}>
-      <AppText>
-        {duration(r.minutes)} · {distance(r.distance)} · {r.places.length}{" "}
-        {t.stops}
+    <View>
+      <MetricSummary
+        items={[
+          {
+            label: t.duration,
+            value: duration(r.minutes),
+            icon: <NativeIcon ios="clock" android="schedule" size={20} />,
+          },
+          {
+            label: t.distance,
+            value: distance(r.distance),
+            icon: <NativeIcon ios="mappin" android="place" size={20} />,
+          },
+          {
+            label: t.stops,
+            value: String(r.places.length),
+            icon: (
+              <NativeIcon
+                ios="point.topleft.down.to.point.bottomright.curvepath"
+                android="route"
+                size={20}
+              />
+            ),
+          },
+        ]}
+      />
+      <AppText variant="caption" style={styles.muted}>
+        {t.estimated}
+        {r.finish ? ` · ${t.returnLeg}` : ""}
       </AppText>
-      <AppText variant="caption">{t.estimated}</AppText>
-      {r.finish ? <AppText variant="caption">{t.returnLeg}</AppText> : null}
     </View>
   );
+  const customize = () => {
+    if (!journey) return;
+    setStage("plan");
+    setStep(1);
+    setShowMap(false);
+    const settings = journey.settings;
+    setMinutes(settings.minutes);
+    setInterests(settings.interests);
+    setCategories(settings.categories ?? []);
+    setWalking(settings.walking);
+    setGps(settings.start);
+    setStartMode("gps");
+    setReturnBy(
+      settings.deadline
+        ? `${new Date(settings.deadline).getHours().toString().padStart(2, "0")}:${new Date(settings.deadline).getMinutes().toString().padStart(2, "0")}`
+        : "",
+    );
+    const endpoint = places.find(
+      (p) =>
+        p.coordinates.lat === settings.finish?.lat &&
+        p.coordinates.lng === settings.finish?.lng,
+    );
+    setEndMode(
+      !settings.finish ? "anywhere" : endpoint ? "destination" : "loop",
+    );
+    if (endpoint) setEndSlug(endpoint.slug);
+  };
 
   return (
-    <Screen>
+    <Screen
+      scrollViewRef={scroll}
+      onBack={
+        stage === "plan" && step > 1
+          ? () => setStep((value) => value - 1)
+          : undefined
+      }
+      navigation={stage !== "plan" && stage !== "building"}
+      footer={
+        stage === "plan" && !buildError ? (
+          <PrimaryButton
+            wrapLabel
+            label={step < 3 ? t.continue : t.buildAction}
+            disabled={step === 3 && !eligible.length}
+            leadingIcon={
+              <NativeIcon
+                ios="location.fill"
+                android="near_me"
+                color={colors.surface}
+              />
+            }
+            onPress={() =>
+              step < 3 ? setStep((value) => value + 1) : void build()
+            }
+          />
+        ) : undefined
+      }
+    >
       {message ? <StatusMessage>{message}</StatusMessage> : null}
-      {stage === "hydrate" || stage === "building" ? (
-        <View accessibilityRole="progressbar" accessibilityLabel={t.loading}>
-          <ActivityIndicator />
-          <AppText variant="heading">{t.loading}</AppText>
-          {stage === "building" ? (
-            <AppText>
-              {[t.matching, t.checking, t.fitting, t.choosing].join("\n")}
-            </AppText>
-          ) : null}
-        </View>
+      {stage === "hydrate" ? <CitywalkLoading compact label={discoveryCopy(locale).restoringWalk} /> : null}
+      {stage === "building" ? <V2Loading stage={buildStage} onPresented={handleBuildPresented} onReady={() => {
+        scroll.current?.scrollTo({ y: 0, animated: false });
+        buildLayoutReady.current?.();
+        buildLayoutReady.current = undefined;
+      }} /> : null}
+      {buildError ? (
+        <V2WalkError
+          empty={buildError === "empty"}
+          recoveryLabel={buildError === "empty" ? t.rebuild : undefined}
+          retry={() => {
+            if (buildError === "empty") { void requestRebuild(); return; }
+            setBuildError(undefined);
+            setStep(1);
+          }}
+          close={() =>
+            router.replace({
+              pathname: "/city/[citySlug]",
+              params: { citySlug },
+            })
+          }
+        />
       ) : null}
-      {stage === "plan" ? (
+      {stage === "plan" && !buildError ? (
         <>
-          <SectionTitle>{t.build}</SectionTitle>
-          <AppText>{t.step.replace("{step}", String(step))}</AppText>
+          <StepProgress
+            step={step}
+            label={t.step.replace("{step}", String(step))}
+          />
+          <V2Hero
+            compact
+            title={t.build}
+            subtitle={step === 1 ? t.timeQuestion : undefined}
+          />
           {step === 1 ? (
             <>
               <WalkChoices
-                label={t.timeQuestion}
+                label=""
+                variant="time"
                 options={[
-                  { value: 60, label: t.hour1 },
-                  { value: 120, label: t.hour2 },
-                  { value: 180, label: t.hour3 },
-                  { value: 240, label: t.halfDay },
+                  { value: 60, label: t.hour1, description: t.quickWalk },
+                  { value: 120, label: t.hour2, description: t.deeperWalk },
+                  { value: 180, label: t.hour3, description: t.moreWalk },
+                  { value: 240, label: t.halfDay, description: t.relaxedWalk },
                 ]}
                 selected={[minutes]}
                 onSelect={setMinutes}
               />
-              <AppText>{t.deadlineHelp}</AppText>
+              <View style={styles.deadline}>
+                <SectionTitle>{t.deadlineQuestion}</SectionTitle>
+                <AppText style={styles.muted}>{t.deadlineHelp}</AppText>
+              </View>
               <WalkInput
                 label={t.returnBy}
                 value={returnBy}
                 onChangeText={setReturnBy}
-                placeholder="HH:MM"
-              />
-              <PrimaryButton
-                wrapLabel
-                label={t.continue}
-                onPress={() => setStep(2)}
+                placeholder={translate(locale, "planner.timePlaceholder")}
               />
             </>
-          ) : (
+          ) : step === 2 ? (
             <>
               <WalkChoices
                 label={t.interests}
+                help={t.interestsHelp}
+                number={1}
                 multiple
                 options={(Object.keys(interestTags) as Interest[]).map(
                   (value) => ({ value, label: t[value] }),
@@ -492,7 +739,7 @@ export function NativeWalkFlow({
                   multiple
                   options={dynamicTags.map((value) => ({
                     value,
-                    label: walkCategoryLabel(value, locale),
+                    label: nativeCategoryLabel(value, locale),
                   }))}
                   selected={categories}
                   onSelect={(key) =>
@@ -506,12 +753,22 @@ export function NativeWalkFlow({
               ) : null}
               <WalkChoices
                 label={t.walking}
+                variant="segment"
+                number={2}
                 options={(["easy", "balanced", "long"] as const).map(
                   (value) => ({ value, label: t[value] }),
                 )}
                 selected={[walking]}
                 onSelect={setWalking}
               />
+              <PrimaryButton
+                label={t.back}
+                tone="secondary"
+                onPress={() => setStep(1)}
+              />
+            </>
+          ) : (
+            <>
               <SectionTitle>{t.start}</SectionTitle>
               <PrimaryButton
                 wrapLabel
@@ -520,7 +777,7 @@ export function NativeWalkFlow({
                 tone={startMode === "gps" ? "primary" : "secondary"}
                 onPress={() => void locate()}
               />
-              <WalkChoices
+              <WalkPlacePicker
                 label={t.choosePlace}
                 options={options}
                 selected={startMode === "place" ? [startSlug] : []}
@@ -531,6 +788,8 @@ export function NativeWalkFlow({
               />
               <WalkChoices
                 label={t.end}
+                variant="radio"
+                number={4}
                 options={(["anywhere", "loop", "destination"] as const).map(
                   (value) => ({ value, label: t[value] }),
                 )}
@@ -538,24 +797,19 @@ export function NativeWalkFlow({
                 onSelect={setEndMode}
               />
               {endMode === "destination" ? (
-                <WalkChoices
+                <WalkPlacePicker
                   label={t.destination}
                   options={options}
                   selected={[endSlug]}
                   onSelect={setEndSlug}
                 />
               ) : null}
-              <PrimaryButton
-                wrapLabel
-                label={t.buildAction}
-                disabled={!eligible.length}
-                onPress={() => void build()}
-              />
+
               <PrimaryButton
                 wrapLabel
                 tone="secondary"
                 label={t.back}
-                onPress={() => setStep(1)}
+                onPress={() => setStep(2)}
               />
             </>
           )}
@@ -564,138 +818,236 @@ export function NativeWalkFlow({
       ) : null}
       {journey && route && (stage === "preview" || stage === "active") ? (
         <>
-          <SectionTitle>
-            {stage === "preview"
-              ? t.preview
-              : (current?.content.name ?? t.remaining)}
-          </SectionTitle>
-          <AppText>{cityName}</AppText>
-          {summary(route)}
-          <AppText>{t.eta.replace("{time}", clock(eta))}</AppText>
-          {deadline ? (
-            <AppText>
-              {t.buffer
-                .replace("{time}", clock(deadline))
-                .replace(
-                  "{minutes}",
-                  String(Math.floor((deadline - eta) / 60000)),
-                )}
-            </AppText>
-          ) : null}
+          {stage === "preview" ? (
+            <V2Hero compact title={t.preview} subtitle={nativeCityName(citySlug, cityName, locale)} />
+          ) : (
+            <View style={styles.activeHeading}>
+              {current ? (
+                <AppText variant="caption" style={styles.eyebrow}>
+                  {messages.stopProgress
+                    ?.replace("{current}", String(journey.visited.length + 1))
+                    .replace(
+                      "{total}",
+                      String(journey.visited.length + journey.remaining.length),
+                    )}
+                </AppText>
+              ) : null}
+              <SectionTitle>
+                {current ? nativePlaceName(citySlug, current.slug, current.content.name, locale) : t.remaining}
+              </SectionTitle>
+              {current ? (
+                <AppText numberOfLines={1} style={styles.muted}>
+                  {current.content.shortDescription}
+                </AppText>
+              ) : null}
+            </View>
+          )}
+          {stage === "preview" ? summary(route) : null}
+          <View
+            style={[
+              styles.returnCard,
+              deadline && eta > deadline ? styles.lateCard : undefined,
+            ]}
+          >
+            <NativeIcon
+              ios="clock"
+              android="schedule"
+              color={
+                deadline && eta > deadline ? colors.warning : colors.success
+              }
+              size={28}
+            />
+            <View style={styles.flex}>
+              <AppText variant="label">
+                {t.eta.replace("{time}", clock(eta))}
+              </AppText>
+              {deadline ? (
+                <AppText variant="metadata" style={styles.muted}>
+                  {t.buffer
+                    .replace("{time}", clock(deadline))
+                    .replace(
+                      "{minutes}",
+                      String(Math.floor((deadline - eta) / 60000)),
+                    )}
+                </AppText>
+              ) : null}
+            </View>
+          </View>
           {deadline && eta > deadline ? (
             <StatusMessage>{t.late}</StatusMessage>
           ) : null}
-          <NativeCityMap
-            places={route.places}
-            routeStart={journey.position}
-            routeFinish={journey.finish}
-            currentSlug={current?.slug}
-            onLocation={(point) => {
-              if (stage === "active")
-                void update({ ...journey, position: point });
-            }}
-          />
+          {stage === "preview" ? (
+            <PrimaryButton
+              label={t.map}
+              tone="secondary"
+              onPress={() => setShowMap((v) => !v)}
+              leadingIcon={
+                <NativeIcon ios="map" android="map" color={colors.primary} />
+              }
+            />
+          ) : null}
+          {stage === "active" || showMap ? (
+            <NativeCityMap
+              citySlug={citySlug}
+              places={route.places}
+              routeStart={journey.position}
+              routeFinish={journey.finish}
+              currentSlug={current?.slug}
+              onLocation={(point) => {
+                if (stage === "active")
+                  void update({ ...journey, position: point });
+              }}
+            />
+          ) : null}
           {stage === "preview" ? (
             <>
               {itinerary(route.places)}
+              {startStatus === "loading" ? <CitywalkLoading compact label={discoveryCopy(locale).loadingWalkContent} /> :
+                startStatus !== "ready" ? <StatusMessage>{startStatus === "empty" ? t.emptyHelp : t.planContentUnavailable}</StatusMessage> : null}
               <PrimaryButton
                 wrapLabel
                 label={t.startWalk}
-                onPress={() => {
-                  void update({ ...journey, startedAt: Date.now() });
-                  setStage("active");
-                }}
+                disabled={startStatus !== "ready"}
+                busy={updating}
+                leadingIcon={
+                  <NativeIcon
+                    ios="location.fill"
+                    android="near_me"
+                    color={colors.surface}
+                  />
+                }
+                onPress={() => void start()}
               />
-              <PrimaryButton
-                wrapLabel
-                label={t.customize}
-                tone="secondary"
-                onPress={() => {
-                  setStage("plan");
-                  setStep(1);
-                  const s = journey.settings;
-                  setMinutes(s.minutes);
-                  setInterests(s.interests);
-                  setCategories(s.categories ?? []);
-                  setWalking(s.walking);
-                  setGps(s.start);
-                  setStartMode("gps");
-                  setReturnBy(
-                    s.deadline
-                      ? `${new Date(s.deadline).getHours().toString().padStart(2, "0")}:${new Date(s.deadline).getMinutes().toString().padStart(2, "0")}`
-                      : "",
-                  );
-                  const endpoint = places.find(
-                    (p) =>
-                      p.coordinates.lat === s.finish?.lat &&
-                      p.coordinates.lng === s.finish?.lng,
-                  );
-                  setEndMode(
-                    !s.finish ? "anywhere" : endpoint ? "destination" : "loop",
-                  );
-                  if (endpoint) setEndSlug(endpoint.slug);
-                }}
-              />
+              {saveFeedback}
+              <View style={styles.actionRow}>
+                <PrimaryButton
+                  style={styles.flex}
+                  label={t.customize}
+                  tone="secondary"
+                  onPress={customize}
+                />
+                <PrimaryButton
+                  style={styles.flex}
+                  label={t.save}
+                  disabled={saveStatus !== "ready"}
+                  busy={saving}
+                  tone="secondary"
+                  onPress={() => void save()}
+                />
+              </View>
             </>
           ) : (
             <>
               {current ? (
                 <>
-                  <AppText>
-                    {duration(
-                      estimateWalkingMinutes(
+                  <View style={styles.navigationBar}>
+                    <AppText style={styles.flex}>
+                      {duration(
+                        estimateWalkingMinutes(
+                          calculateDistanceMeters(
+                            journey.position,
+                            current.coordinates,
+                          ) ?? 0,
+                        ) ?? 0,
+                      )}{" "}
+                      ·{" "}
+                      {distance(
                         calculateDistanceMeters(
                           journey.position,
                           current.coordinates,
                         ) ?? 0,
-                      ) ?? 0,
-                    )}{" "}
-                    ·{" "}
-                    {distance(
-                      calculateDistanceMeters(
-                        journey.position,
-                        current.coordinates,
-                      ) ?? 0,
-                    )}
-                  </AppText>
-                  <PrimaryButton
-                    wrapLabel
-                    label={t.navigate}
-                    onPress={() => void navigate(current.coordinates)}
-                  />
-                  <Link
-                    href={{
-                      pathname: "/city/[citySlug]/place/[placeSlug]",
-                      params: { citySlug, placeSlug: current.slug },
-                    }}
-                    asChild
-                  >
+                      )}
+                    </AppText>
                     <PrimaryButton
-                      wrapLabel
-                      tone="secondary"
-                      label={`${t.listen} · ${t.read}`}
+                      style={styles.flex}
+                      label={t.navigate}
+                      onPress={() => void navigate(current.coordinates)}
                     />
-                  </Link>
-                  <Link
-                    href={{
-                      pathname: "/city/[citySlug]/guide/[placeSlug]",
-                      params: { citySlug, placeSlug: current.slug },
-                    }}
-                    asChild
-                  >
-                    <PrimaryButton wrapLabel tone="ai" label={t.ask} />
-                  </Link>
+                  </View>
+                  <View style={styles.actionRow}>
+                    {[
+                      {
+                        label: t.listen,
+                        ios: "headphones",
+                        android: "headphones",
+                        focus: "audio",
+                      },
+                      {
+                        label: t.read,
+                        ios: "book",
+                        android: "menu_book",
+                        focus: "story",
+                      },
+                    ].map((action) => (
+                      <Link
+                        key={action.focus}
+                        push
+                        href={{
+                          pathname: "/city/[citySlug]/place/[placeSlug]",
+                          params: {
+                            citySlug,
+                            placeSlug: current.slug,
+                            focus: action.focus,
+                          },
+                        }}
+                        asChild
+                      >
+                        <PrimaryButton
+                          compact
+                          style={styles.flex}
+                          wrapLabel
+                          tone="secondary"
+                          label={action.label}
+                          leadingIcon={
+                            <NativeIcon
+                              ios={action.ios as "headphones" | "book"}
+                              android={
+                                action.android as "headphones" | "menu_book"
+                              }
+                            />
+                          }
+                        />
+                      </Link>
+                    ))}
+                    <Link
+                      push
+                      href={{
+                        pathname: "/city/[citySlug]/guide/[placeSlug]",
+                        params: { citySlug, placeSlug: current.slug },
+                      }}
+                      asChild
+                    >
+                      <PrimaryButton
+                        compact
+                        style={styles.flex}
+                        wrapLabel
+                        tone="secondary"
+                        label={t.ask}
+                        leadingIcon={
+                          <NativeIcon ios="sparkles" android="auto_awesome" />
+                        }
+                      />
+                    </Link>
+                  </View>
+                </>
+              ) : journey.finish ? (
+                <PrimaryButton
+                  label={t.navigate}
+                  onPress={() => void navigate(journey.finish!)}
+                />
+              ) : null}
+              <SectionTitle>{t.tripControls}</SectionTitle>
+              <View style={styles.controls}>
+                {current ? (
                   <PrimaryButton
-                    wrapLabel
-                    label={t.visited}
-                    onPress={() =>
-                      void update(advanceWalk(journey, current, true))
-                    }
-                  />
-                  <PrimaryButton
+                    compact
+                    style={styles.control}
                     wrapLabel
                     tone="secondary"
                     label={t.skip}
+                    leadingIcon={
+                      <NativeIcon ios="forward.end" android="skip_next" />
+                    }
                     onPress={() =>
                       setProposed(
                         measureWalk(
@@ -706,60 +1058,71 @@ export function NativeWalkFlow({
                       )
                     }
                   />
-                </>
-              ) : journey.finish ? (
+                ) : null}
                 <PrimaryButton
+                  compact
+                  style={styles.control}
                   wrapLabel
-                  label={t.navigate}
-                  onPress={() => void navigate(journey.finish!)}
+                  tone="secondary"
+                  label={t.shorten}
+                  onPress={shorten}
+                  leadingIcon={
+                    <NativeIcon
+                      ios="arrow.triangle.branch"
+                      android="alt_route"
+                    />
+                  }
                 />
-              ) : null}
-              <SectionTitle>{t.tripControls}</SectionTitle>
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={`${t.tired} · ${t.shorten}`}
-                onPress={shorten}
-              />
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={t.runningLate}
-                onPress={shorten}
-              />
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={t.add}
-                onPress={() => setPanel("add")}
-              />
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={t.takeBack}
-                onPress={() => setPanel("back")}
-              />
-              {panel === "add" ? (
-                <WalkChoices
+                <PrimaryButton
+                  compact
+                  style={styles.control}
+                  wrapLabel
+                  tone="secondary"
                   label={t.add}
-                  options={options.filter(
-                    (p) =>
-                      ![...journey.visited, ...journey.remaining].includes(
-                        p.value,
-                      ),
-                  )}
-                  selected={[]}
-                  onSelect={add}
+                  onPress={() => { setProposalMessage(""); setPanel("add"); }}
+                  leadingIcon={<NativeIcon ios="plus" android="add" />}
                 />
-              ) : null}
+                <PrimaryButton
+                  compact
+                  style={styles.control}
+                  wrapLabel
+                  tone="secondary"
+                  label={t.takeBack}
+                  onPress={() => setPanel("back")}
+                  leadingIcon={
+                    <NativeIcon ios="arrow.uturn.backward" android="undo" />
+                  }
+                />
+              </View>
+              <View style={styles.assistant}>
+                <View style={styles.handle} />
+                <AppText variant="caption" style={styles.eyebrow}>
+                  CITYWALK · {t.ask}
+                </AppText>
+                <View style={styles.actionRow}>
+                  <PrimaryButton
+                    style={styles.flex}
+                    wrapLabel
+                    tone="secondary"
+                    label={`${t.tired} · ${t.shorten}`}
+                    onPress={shorten}
+                  />
+                  <PrimaryButton
+                    style={styles.flex}
+                    wrapLabel
+                    tone="secondary"
+                    label={t.runningLate}
+                    onPress={shorten}
+                  />
+                </View>
+              </View>
               {panel === "back" ? (
                 <>
                   <PrimaryButton
-                    wrapLabel
                     label={t.tripStart}
                     onPress={() => back(journey.settings.start)}
                   />
-                  <WalkChoices
+                  <WalkPlacePicker
                     label={t.destination}
                     options={options}
                     selected={[]}
@@ -769,10 +1132,19 @@ export function NativeWalkFlow({
                   />
                 </>
               ) : null}
+              {current ? (
+                <PrimaryButton
+                  label={t.visited}
+                  busy={updating}
+                  onPress={() =>
+                    void update(advanceWalk(journey, current, true))
+                  }
+                />
+              ) : null}
               {itinerary(route.places)}
               <PrimaryButton
-                wrapLabel
                 label={t.finish}
+                busy={updating}
                 onPress={() => {
                   const next = {
                     ...journey,
@@ -786,52 +1158,73 @@ export function NativeWalkFlow({
                           ) ?? 0)
                         : 0),
                   };
-                  void update(next);
-                  setStage("finished");
+                  void update(next).then(ok => { if (ok) setStage("finished"); });
                 }}
+              />
+              {saveFeedback}
+              <PrimaryButton
+                label={t.save}
+                disabled={saveStatus !== "ready"}
+                  busy={saving}
+                tone="secondary"
+                onPress={() => void save()}
               />
             </>
           )}
-          <PrimaryButton
-            wrapLabel
-            label={t.save}
-            tone="secondary"
-            onPress={() => void save()}
-          />
+          <PrimaryButton label={t.rebuild} tone="secondary" busy={updating} onPress={() => void requestRebuild()} />
         </>
       ) : null}
       {journey && stage === "finished" ? (
         <>
-          <SectionTitle>{t.finished.replace("{city}", cityName)}</SectionTitle>
-          <AppText>
-            {journey.visited.length} {t.placesVisited} ·{" "}
-            {distance(journey.historyDistance)} ·{" "}
-            {duration(
-              ((journey.finishedAt ?? now) - journey.startedAt) / 60000,
-            )}
-          </AppText>
+          <View style={styles.finishCheck}>
+            <NativeIcon
+              ios="checkmark"
+              android="check"
+              color={colors.success}
+              size={38}
+            />
+          </View>
+          <SectionTitle>{t.finished.replace("{city}", nativeCityName(citySlug, cityName, locale))}</SectionTitle>
+          <MetricSummary
+            items={[
+              { label: t.placesVisited, value: String(journey.visited.length) },
+              { label: t.distance, value: distance(journey.historyDistance) },
+              {
+                label: t.timeExplored,
+                value: duration(
+                  ((journey.finishedAt ?? now) - journey.startedAt) / 60000,
+                ),
+              },
+            ]}
+          />
           <SectionTitle>{t.highlights}</SectionTitle>
           {journey.visited.length ? (
             itinerary(named(journey.visited))
           ) : (
             <AppText>{t.noVisited}</AppText>
           )}
-          <PrimaryButton wrapLabel label={t.save} onPress={() => void save()} />
+          {saveFeedback}
+          <PrimaryButton wrapLabel label={t.save} disabled={saveStatus !== "ready"}
+                  busy={saving} onPress={() => void save()} />
           <PrimaryButton
             wrapLabel
             label={t.share}
             onPress={() => {
               void Share.share({
-                message: `${t.finished.replace("{city}", cityName)}\n${named(
+                message: `${t.finished.replace("{city}", nativeCityName(citySlug, cityName, locale))}\n${named(
                   journey.visited,
                 )
-                  .map((p) => p.content.name)
+                  .map((p) => nativePlaceName(citySlug, p.slug, p.content.name, locale))
                   .join(" · ")}`,
               }).catch(() => setMessage(t.shareFailed));
             }}
           />
+          <PublicStoreReview journey={journey} onSettled={reviewDidSettle} />
+          {reviewSettled === journey.id && showPrivateFeedback !== journey.id ? <PrimaryButton wrapLabel tone="secondary"
+            label={translate(locale, "complete.feedback")} onPress={() => setShowPrivateFeedback(journey.id)} /> : null}
+          {showPrivateFeedback === journey.id ? <>
           <WalkChoices
-            label={t.rate}
+            label={translate(locale, "complete.ratingQuestion")}
             options={[1, 2, 3, 4, 5].map((value) => ({
               value: String(value),
               label: `${value} ★`,
@@ -848,6 +1241,8 @@ export function NativeWalkFlow({
             selected={fit}
             onSelect={(value) => void feedback("fit", value)}
           />
+          {feedbackSaving ? <PrimaryButton label={uxCopy(locale).saving} busy disabled /> : null}
+          </> : null}
           <PrimaryButton
             wrapLabel
             tone="secondary"
@@ -861,13 +1256,36 @@ export function NativeWalkFlow({
           />
         </>
       ) : null}
+      <Modal visible={!!rebuildConfirmation} animationType="slide" presentationStyle="pageSheet"
+        onRequestClose={() => { if (!updateLock.current) setRebuildConfirmation(undefined); }}>
+        <Screen includeTopSafeArea navigation={false} brand={false}>
+          <SectionTitle>{t.rebuild}</SectionTitle>
+          <AppText>{t.rebuildHelp}</AppText>
+          {message ? <StatusMessage>{message}</StatusMessage> : null}
+          <PrimaryButton label={t.confirm} busy={updating} onPress={() => void rebuild()} />
+          <PrimaryButton label={translate(locale, "common.cancel")} tone="secondary" disabled={updating}
+            onPress={() => setRebuildConfirmation(undefined)} />
+        </Screen>
+      </Modal>
       <Modal
-        visible={!!proposed}
+        visible={panel === "add" || !!proposed}
         animationType="slide"
         presentationStyle="pageSheet"
-        onRequestClose={() => setProposed(undefined)}
+        onRequestClose={() => { setPanel(undefined); setProposed(undefined); setProposalMessage(""); }}
       >
-        <Screen includeTopSafeArea>
+        <Screen includeTopSafeArea navigation={false} brand={false}
+          footer={panel === "add" ? <>
+            {proposalMessage ? <StatusMessage>{proposalMessage}</StatusMessage> : null}
+            <PrimaryButton tone="secondary" label={translate(locale, "common.close")}
+              onPress={() => { setPanel(undefined); setProposalMessage(""); }} />
+          </> : undefined}>
+          {panel === "add" && journey ? <>
+            <WalkChoices label={t.add} variant="radio"
+              options={options.filter(p => ![...journey.visited, ...journey.remaining].includes(p.value))}
+              selected={[]} onSelect={add} />
+            {!options.some(p => ![...journey.visited, ...journey.remaining].includes(p.value)) ?
+              <StatusMessage>{t.noEligible}</StatusMessage> : null}
+          </> : <>
           <SectionTitle>{t.confirm}</SectionTitle>
           <AppText>{t.changeHelp}</AppText>
           {proposed ? (
@@ -885,6 +1303,7 @@ export function NativeWalkFlow({
           <PrimaryButton
             wrapLabel
             label={t.confirm}
+            busy={updating}
             onPress={() => {
               if (!journey || !proposed) return;
               const etaAtConfirm = Date.now() + proposed.minutes * 60000;
@@ -901,9 +1320,7 @@ export function NativeWalkFlow({
                 ...journey,
                 remaining: proposed.places.map((p) => p.slug),
                 finish: proposed.finish,
-              });
-              setProposed(undefined);
-              setProposalMessage("");
+              }).then(ok => { if (ok) { setProposed(undefined); setProposalMessage(""); } else setProposalMessage(messages.tripSaveFailed); });
             }}
           />
           <PrimaryButton
@@ -915,6 +1332,7 @@ export function NativeWalkFlow({
               setProposalMessage("");
             }}
           />
+          </>}
         </Screen>
       </Modal>
     </Screen>

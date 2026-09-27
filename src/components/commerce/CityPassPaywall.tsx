@@ -6,7 +6,7 @@ import posthog from "posthog-js";
 import { useEffect, useState } from "react";
 
 import { CommerceCheckoutButton } from "@/components/commerce/CommerceCheckoutButton";
-import type { Locale } from "@/lib/i18n";
+import { getDirection, type Locale } from "@/lib/i18n";
 import type { CityPassCopy } from "@/lib/commerce/cityPassCopy";
 import type { CityPassPaywallContext } from "@/lib/commerce/cityPassConfig";
 
@@ -51,7 +51,7 @@ export function CityPassPaywall({
   }
 
   return (
-    <section id="premium-audio" className="mt-8 scroll-mt-6" lang={copy.actualLocale} dir={copy.actualLocale === "ar" ? "rtl" : "ltr"}>
+    <section id="premium-audio" className="mt-8 scroll-mt-6" lang={copy.actualLocale} dir={getDirection(copy.actualLocale)}>
       {!open ? (
         <button
           type="button"
@@ -69,13 +69,13 @@ export function CityPassPaywall({
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.14em] text-violet-700">CITYWALK PASS</p>
-              <h2 className="mt-2 text-2xl font-bold leading-tight tracking-[-0.025em]">{copy.title}</h2>
+              <h2 lang={copy.editorialLocale ?? copy.actualLocale} dir={getDirection(copy.editorialLocale ?? copy.actualLocale)} className="mt-2 text-2xl font-bold leading-tight tracking-[-0.025em]">{copy.title}</h2>
             </div>
             <button type="button" aria-label={copy.close} onClick={() => setOpen(false)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-text-secondary transition hover:text-text-primary">
               <X aria-hidden="true" size={19} />
             </button>
           </div>
-          <ul className="mt-5 space-y-3">
+          <ul lang={copy.editorialLocale ?? copy.actualLocale} dir={getDirection(copy.editorialLocale ?? copy.actualLocale)} className="mt-5 space-y-3">
             {copy.benefits.map((benefit) => (
               <li className="flex items-start gap-2.5 text-sm leading-6 text-text-secondary" key={benefit}>
                 <Check aria-hidden="true" className="mt-1 shrink-0 text-teal-600" size={16} />

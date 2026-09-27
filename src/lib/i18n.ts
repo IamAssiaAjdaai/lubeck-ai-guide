@@ -1,11 +1,8 @@
-import ar from "@/translations/ar.json";
+import { webCopy } from "@citywalk/i18n/adapters";
+import { localeConfig, getLocaleDirection, isSharedLocale, sharedLocales, type SharedLocale } from "@citywalk/i18n";
 import bg from "@/translations/bg.json";
 import cs from "@/translations/cs.json";
-import da from "@/translations/da.json";
-import de from "@/translations/de.json";
 import el from "@/translations/el.json";
-import en from "@/translations/en.json";
-import es from "@/translations/es.json";
 import et from "@/translations/et.json";
 import fi from "@/translations/fi.json";
 import fr from "@/translations/fr.json";
@@ -16,40 +13,41 @@ import it from "@/translations/it.json";
 import lt from "@/translations/lt.json";
 import lv from "@/translations/lv.json";
 import mt from "@/translations/mt.json";
-import nl from "@/translations/nl.json";
 import no from "@/translations/no.json";
 import pl from "@/translations/pl.json";
 import pt from "@/translations/pt.json";
 import ro from "@/translations/ro.json";
 import sk from "@/translations/sk.json";
 import sl from "@/translations/sl.json";
-import sv from "@/translations/sv.json";
 import tr from "@/translations/tr.json";
 
-export const locales = [
+const legacyLocales = [
   "de", "da", "nl", "sv", "en", "fr", "fi", "no", "pl", "it", "es",
   "pt", "cs", "el", "hu", "ro", "sk", "sl", "hr", "bg", "et", "lv",
   "lt", "ga", "mt", "tr", "ar",
 ] as const;
 
-export type Locale = (typeof locales)[number];
+type LegacyLocale = (typeof legacyLocales)[number];
+export type Locale = LegacyLocale | SharedLocale;
+export const locales: readonly Locale[] = [...new Set<Locale>([...legacyLocales, ...sharedLocales])];
 export type TextDirection = "ltr" | "rtl";
-type StringSchema<T> = { [Key in keyof T]: T[Key] extends string ? string : StringSchema<T[Key]> };
-export type Translations = StringSchema<typeof en>;
+export type Translations = ReturnType<typeof webCopy>;
+const en = webCopy("en"), de = webCopy("de"), ar = webCopy("ar");
+const da = webCopy("da"), sv = webCopy("sv"), nl = webCopy("nl"), es = webCopy("es");
 
 const translations = {
   de, da, nl, sv, en, fr, fi, no, pl, it, es, pt, cs, el, hu, ro, sk, sl,
   hr, bg, et, lv, lt, ga, mt, tr, ar,
-} satisfies { [Key in Locale]: Translations };
+} satisfies { [Key in LegacyLocale]: Translations };
 
 type LanguageMetadata = { locale: Locale; nativeName: string; direction: TextDirection; aiLanguageName: string };
 
-export const languages = {
-  de: { locale: "de", nativeName: "Deutsch", direction: "ltr", aiLanguageName: "German" },
+const legacyLanguages = {
+  de: { locale: "de", nativeName: localeConfig.de.label, direction: localeConfig.de.direction, aiLanguageName: localeConfig.de.aiLanguageName },
   da: { locale: "da", nativeName: "Dansk", direction: "ltr", aiLanguageName: "Danish" },
   nl: { locale: "nl", nativeName: "Nederlands", direction: "ltr", aiLanguageName: "Dutch" },
   sv: { locale: "sv", nativeName: "Svenska", direction: "ltr", aiLanguageName: "Swedish" },
-  en: { locale: "en", nativeName: "English", direction: "ltr", aiLanguageName: "English" },
+  en: { locale: "en", nativeName: localeConfig.en.label, direction: localeConfig.en.direction, aiLanguageName: localeConfig.en.aiLanguageName },
   fr: { locale: "fr", nativeName: "Français", direction: "ltr", aiLanguageName: "French" },
   fi: { locale: "fi", nativeName: "Suomi", direction: "ltr", aiLanguageName: "Finnish" },
   no: { locale: "no", nativeName: "Norsk", direction: "ltr", aiLanguageName: "Norwegian" },
@@ -71,14 +69,21 @@ export const languages = {
   ga: { locale: "ga", nativeName: "Gaeilge", direction: "ltr", aiLanguageName: "Irish" },
   mt: { locale: "mt", nativeName: "Malti", direction: "ltr", aiLanguageName: "Maltese" },
   tr: { locale: "tr", nativeName: "Türkçe", direction: "ltr", aiLanguageName: "Turkish" },
-  ar: { locale: "ar", nativeName: "العربية", direction: "rtl", aiLanguageName: "Arabic" },
-} satisfies { [Key in Locale]: LanguageMetadata };
+  ar: { locale: "ar", nativeName: localeConfig.ar.label, direction: localeConfig.ar.direction, aiLanguageName: localeConfig.ar.aiLanguageName },
+} satisfies { [Key in LegacyLocale]: LanguageMetadata };
+
+export const languages = {
+  ...legacyLanguages,
+  ...Object.fromEntries(sharedLocales.map(locale => [locale, {
+    locale, nativeName: localeConfig[locale].label,
+    direction: localeConfig[locale].direction,
+    aiLanguageName: localeConfig[locale].aiLanguageName,
+  }])),
+} as Record<Locale, LanguageMetadata>;
 
 export function isLocale(value: unknown): value is Locale {
   return typeof value === "string" && locales.some((locale) => locale === value);
 }
-export function getTranslations(locale: Locale): Translations { return translations[locale] }
-export function getDirection(locale: Locale): TextDirection { return languages[locale].direction }
-export function formatMessage(message: string, values: Readonly<Record<string, string | number>>): string {
-  return Object.entries(values).reduce((result, [key, value]) => result.replaceAll(`{${key}}`, String(value)), message);
-}
+export function getTranslations(locale: Locale): Translations { return isSharedLocale(locale) ? webCopy(locale) : translations[locale] }
+export function getDirection(locale: Locale): TextDirection { return isSharedLocale(locale) ? getLocaleDirection(locale) : languages[locale].direction }
+export { formatMessage } from "@citywalk/i18n";

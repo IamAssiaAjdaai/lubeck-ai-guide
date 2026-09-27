@@ -11,5 +11,8 @@
     "./walkJourney": "./src/walkJourney.ts",
     "./walkCopy": "./src/walkCopy.ts",
     "./cityAvailability": "./src/cityAvailability.ts"
+  },
+  "dependencies": {
+    "@citywalk/i18n": "file:../i18n"
   }
 }

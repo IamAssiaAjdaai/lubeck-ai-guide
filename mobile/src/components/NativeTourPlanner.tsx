@@ -1,3 +1,4 @@
+import { nativePlaceName } from "../lib/displayNames";
 import { Link } from "expo-router";
 import { View } from "react-native";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
@@ -11,7 +12,7 @@ export function NativeTourPlanner({ citySlug, places, origin }: { citySlug: stri
   return <View style={{ gap: 12 }}>
     <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild><PrimaryButton wrapLabel label={t.build} /></Link>
     <SectionTitle>{t.suggested}</SectionTitle>
-    {recommended.map(place => <Link key={place.slug} href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }} asChild><PrimaryButton wrapLabel tone="secondary" label={place.content.name} /></Link>)}
+    {recommended.map(place => <Link key={place.slug} href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }} asChild><PrimaryButton wrapLabel tone="secondary" label={nativePlaceName(citySlug, place.slug, place.content.name, locale)} /></Link>)}
     <AppText variant="caption">{messages.distanceDisclaimer}</AppText>
   </View>;
 }

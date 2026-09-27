@@ -1,3 +1,5 @@
+import { ContentRecovery } from "../../../../components/ContentRecovery";
+import { nativePlaceName } from "../../../../lib/displayNames";
 import { Image } from "expo-image";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { StyleSheet, View } from "react-native";
@@ -30,7 +32,7 @@ export default function TourScreen() {
 
   if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
   if (cityState.status === "loading") return <Screen><CitywalkLoading variant="city" /></Screen>;
-  if (cityState.status === "error") return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
+  if (cityState.status === "error") return <Screen><ContentRecovery retry={cityState.retry} citySlug={identity.citySlug} /></Screen>;
 
   const tour = resolveTourForRoute(cityState.data, identity);
   if (!tour) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
@@ -45,7 +47,7 @@ export default function TourScreen() {
   const direction = getNativeDirection(tour.resolvedLocale);
   const tourTextStyle = {
     writingDirection: direction,
-    textAlign: getNativeTextAlignment(tour.resolvedLocale),
+    textAlign: getNativeTextAlignment(locale),
   } as const;
   const image = selectPrimaryImageMedia(tour.media);
   const imageUrl = selectImageUrl(image, undefined, undefined, "detail");
@@ -73,7 +75,7 @@ export default function TourScreen() {
             <MediaAttribution attribution={image.attribution} />
           </View>
         ) : null}
-        <View style={[styles.introduction, { direction }]}>
+        <View style={[styles.introduction, { direction: appDirection }]}>
           <AppText variant="screenTitle" style={tourTextStyle}>
             {tour.content.title}
           </AppText>
@@ -103,10 +105,10 @@ export default function TourScreen() {
 
         <View style={styles.route}>
           {stops.map(({ stop, place }, index) => {
-        const placeDirection = getNativeDirection(place.resolvedLocale);
+        const placeDirection = appDirection;
         const placeTextStyle = {
           writingDirection: placeDirection,
-          textAlign: getNativeTextAlignment(place.resolvedLocale),
+          textAlign: getNativeTextAlignment(locale),
         } as const;
         return (
             <Link
@@ -125,7 +127,7 @@ export default function TourScreen() {
                 <View style={styles.stopNumber}><AppText variant="caption" style={styles.stopNumberText}>{index + 1}</AppText></View>
                 <View style={[styles.stopContent, { direction: placeDirection }]}>
                   <AppText variant="cardTitle" style={placeTextStyle}>
-                    {place.content.name}
+                    {nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)}
                   </AppText>
                   {stop.visitDurationMinutes ? (
                     <AppText variant="caption" style={styles.metadata}>

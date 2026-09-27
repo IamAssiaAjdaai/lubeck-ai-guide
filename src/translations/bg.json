@@ -17,17 +17,12 @@
     "availableCities": "Налични градове",
     "exploreCity": "Разгледайте {city}",
     "availableNow": "Налично сега",
-    "featuredCityDescription": "Открийте 5 исторически места с пешеходна обиколка с гид.",
     "moreCities": "Още градове",
     "comingSoon": "Очаквайте скоро",
     "germany": "Германия"
   },
   "explore": {
-    "title": "Открийте Lübeck",
-    "subtitle": "20 места за откриване",
     "walkingTour": "Пешеходна обиколка",
-    "historicCenter": "Историческият център на Lübeck",
-    "duration": "~45 мин • 5 спирки",
     "places": "Места",
     "startTour": "Започнете обиколката"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Обиколката приключи",
-    "title": "Разгледахте Lübeck!",
-    "description": "Преминахте през 5 исторически спирки в стария град на Lübeck.",
-    "progress": "Завършени 5 от 5 спирки",
     "ratingQuestion": "Как ви се стори обиколката?",
     "thankYou": "Благодарим за отзива!",
     "feedback": "Споделете отзив",

@@ -6,6 +6,7 @@ import placeSource from "../src/app/city/[citySlug]/place/[placeSlug].tsx?raw";
 import citySource from "../src/app/city/[citySlug]/index.tsx?raw";
 import homeSource from "../src/app/index.tsx?raw";
 import loadingSource from "../src/components/CitywalkLoading.tsx?raw";
+import presentationSource from "../src/components/V2Presentation.tsx?raw";
 import plannerSource from "../src/components/NativeWalkFlow.tsx?raw";
 import uiSource from "../src/components/ui.tsx?raw";
 import motionSource from "../src/lib/motion.ts?raw";
@@ -38,7 +39,7 @@ describe("CITYWALK native product-design polish", () => {
     expect(plannerSource).toContain("<WalkChoices");
     expect(plannerSource).toContain("<Modal");
     expect(plannerSource).toContain("t.confirm");
-    expect(plannerSource).toContain("t.emptyHelp");
+    expect(presentationSource).toContain("t.emptyHelp");
     expect(placeSource).toContain("<TripProgress");
     expect(placeSource).toContain("messages.tripComplete");
     expect(placeSource).toContain('tone="secondary"');

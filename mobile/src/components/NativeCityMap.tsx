@@ -1,6 +1,8 @@
+import { uxCopy } from "../design/uxCopy";
+import { nativePlaceName } from "../lib/displayNames";
 import { Camera, Map, Marker, GeoJSONSource, Layer, type CameraRef } from "@maplibre/maplibre-react-native";
 import { useEffect, useRef, useState } from "react";
-import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, AppState, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
 import type { PublicPlaceCard } from "../lib/api/contracts";
@@ -21,7 +23,8 @@ import { NativeIcon } from "./NativeIcon";
 
 const MAP_STYLE_URL = resolveMapStyleUrl();
 
-export function NativeCityMap({ places, routeStart, routeFinish, currentSlug, onLocation }: Readonly<{
+export function NativeCityMap({ citySlug, places, routeStart, routeFinish, currentSlug, onLocation }: Readonly<{
+  citySlug?: string;
   places: readonly PublicPlaceCard[];
   routeStart?: { lat: number; lng: number };
   routeFinish?: { lat: number; lng: number };
@@ -116,7 +119,7 @@ export function NativeCityMap({ places, routeStart, routeFinish, currentSlug, on
             >
               <View
                 accessible
-                accessibilityLabel={`${index + 1}. ${place.content.name}`}
+                accessibilityLabel={`${index + 1}. ${nativePlaceName(citySlug ?? "", place.slug, place.content.name, locale)}`}
                 style={[styles.placeMarker, place.slug === currentSlug && { backgroundColor: colors.success }]}
               ><Text style={{ color: "white", fontSize: 10, textAlign: "center" }}>{index + 1}</Text></View>
             </Marker>
@@ -128,6 +131,11 @@ export function NativeCityMap({ places, routeStart, routeFinish, currentSlug, on
           ) : null}
         </Map>
       )}
+      {!loaded && !mapFailed ? <View pointerEvents="none" accessibilityRole="progressbar" accessibilityLabel={uxCopy(locale).map} style={[StyleSheet.absoluteFill, { backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center", gap: spacing.sm }]}>
+        <NativeIcon ios="map" android="map" color={colors.primary} size={30} />
+        <ActivityIndicator color={colors.primary} />
+        <AppText>{uxCopy(locale).map}</AppText>
+      </View> : null}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}

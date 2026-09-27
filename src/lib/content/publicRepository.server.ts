@@ -1,3 +1,5 @@
+import { resolveLocalizedContent } from "@citywalk/i18n/content";
+import { getLubeckEditorial, lubeckEditorialLocales } from "@/data/lubeckEditorial";
 import "server-only";
 import { isCityLaunched } from "@/data/cityAvailability";
 import { PublicContentNotFoundError } from "./errors";
@@ -26,7 +28,7 @@ import {
   tourStopsTable,
 } from "@/db/schema";
 import { assertContentSourceAllowed, getContentSource, type ContentSource } from "@/lib/content/source";
-import { getTranslations, isLocale, locales, type Locale } from "@/lib/i18n";
+import { isLocale, locales, type Locale } from "@/lib/i18n";
 import { getPublicMediaSnapshot } from "@/lib/media/publicMedia.server";
 import {
   publicLegacyImageVariants,
@@ -171,35 +173,22 @@ export async function getPublicCitySummaries(
 export function resolvePublicLocalization<TContent>(
   content: Readonly<Partial<Record<Locale, TContent>>>,
   requestedLocale: Locale,
+  identity?: string,
 ): ResolvedPublicContent<TContent> | undefined {
-  const exact = content[requestedLocale];
-  if (exact) {
-    return {
-      requestedLocale,
-      resolvedLocale: requestedLocale,
-      didFallback: false,
-      content: exact,
-    };
-  }
-  for (const resolvedLocale of ["en", "de", ...locales] as const) {
-    const fallback = content[resolvedLocale];
-    if (fallback) {
-      return {
-        requestedLocale,
-        resolvedLocale,
-        didFallback: true,
-        content: fallback,
-      };
-    }
-  }
-  return undefined;
+  // Preserve the existing canonical fallback order when English is absent.
+  const canonicalLocale = (["de", ...locales] as const).find(locale => content[locale] != null);
+  return resolveLocalizedContent({
+    translations: content,
+    identity,
+    canonical: canonicalLocale ? { locale: canonicalLocale, content: content[canonicalLocale]! } : undefined,
+  }, requestedLocale);
 }
 
 export function toLocalizedPublicCityResponse(
   snapshot: PublicCitySnapshot,
   requestedLocale: Locale,
 ) {
-  const city = resolvePublicLocalization(snapshot.city.content, requestedLocale);
+  const city = resolvePublicLocalization(snapshot.city.content, requestedLocale, `city:${snapshot.city.slug}`);
   if (!city) throw new Error("Published city has no authored localization.");
   return {
     city: {
@@ -210,7 +199,7 @@ export function toLocalizedPublicCityResponse(
       media: publicMediaForLocale(snapshot.media?.city ?? [], requestedLocale),
     },
     places: snapshot.places.flatMap((place) => {
-      const resolved = resolvePublicLocalization(place.content, requestedLocale);
+      const resolved = resolvePublicLocalization(place.content, requestedLocale, `place:${place.slug}`);
       if (!resolved) return [];
       return [{
         slug: place.slug,
@@ -234,7 +223,7 @@ export function toLocalizedPublicCityResponse(
       }];
     }),
     tours: snapshot.tours.flatMap((tour) => {
-      const resolved = resolvePublicLocalization(tour.content, requestedLocale);
+      const resolved = resolvePublicLocalization(tour.content, requestedLocale, `tour:${tour.slug}`);
       if (!resolved) return [];
       return [{
         slug: tour.slug,
@@ -316,6 +305,7 @@ export function toLocalizedPublicCityIndexResponse(
       const resolved = resolvePublicLocalization(
         summary.city.content,
         requestedLocale,
+        `city:${summary.city.slug}`,
       );
       if (!resolved) return [];
       return [{
@@ -704,11 +694,10 @@ function getCodeSnapshot(citySlug: string): PublicCitySnapshot {
       slug: "historic-center-walk",
       estimatedDurationMinutes: cities.lubeck.estimatedMinutes,
       content: Object.fromEntries(
-        locales.map((locale) => {
-          const translations = getTranslations(locale);
+        lubeckEditorialLocales.map((locale) => {
           return [locale, {
-            title: translations.explore.historicCenter,
-            shortDescription: translations.explore.walkingTour,
+            title: getLubeckEditorial(locale)["explore.historicCenter"],
+            shortDescription: getLubeckEditorial(locale)["explore.walkingTour"],
           }];
         }),
       ),
@@ -728,13 +717,12 @@ function getCodeCitySummary(): PublicCitySummary {
       countryCode: cities.lubeck.countryCode,
       timezone: cities.lubeck.timezone,
       content: Object.fromEntries(
-        locales.map((locale) => {
-          const translations = getTranslations(locale);
+        lubeckEditorialLocales.map((locale) => {
           return [
             locale,
             {
               name: cities.lubeck.name,
-              shortDescription: translations.home.featuredCityDescription,
+              shortDescription: getLubeckEditorial(locale)["home.featuredCityDescription"],
               ...(cities.lubeck.legacyContent[
                 locale as keyof typeof cities.lubeck.legacyContent
               ]

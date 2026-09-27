@@ -1,17 +1,15 @@
+import { getLocaleLabel, getSelectableLocales } from "@citywalk/i18n";
 import { useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "../design/tokens";
-import { NATIVE_LOCALES } from "../lib/localization";
 import { triggerCitywalkHaptic } from "../lib/haptics";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { NativeIcon } from "./NativeIcon";
 import { AppText } from "./ui";
 
-const labels = { en: "EN", de: "DE", ar: "العربية" } as const;
-
-export function LocaleSelector() {
-  const { locale, messages, setLocale } = useNativeLocale();
+export function LocaleSelector({ showLabel = false }: { showLabel?: boolean }) {
+  const { locale, direction, messages, setLocale } = useNativeLocale();
   const [open, setOpen] = useState(false);
 
   return (
@@ -22,20 +20,36 @@ export function LocaleSelector() {
         accessibilityState={{ expanded: open }}
         hitSlop={6}
         onPress={() => setOpen(true)}
-        style={({ pressed }) => [styles.trigger, pressed && styles.pressed]}
+        style={({ pressed }) => [
+          styles.trigger,
+          { direction },
+          showLabel && styles.labelledTrigger,
+          pressed && styles.pressed,
+        ]}
       >
-        <NativeIcon ios="globe" android="language" />
+        <NativeIcon ios="globe" android="language" size={showLabel ? 16 : 22} />
+        {showLabel ? (
+          <Text style={styles.currentLanguage}>
+            {getLocaleLabel(locale)}
+          </Text>
+        ) : null}
       </Pressable>
-      <Modal animationType="fade" onRequestClose={() => setOpen(false)} transparent visible={open}>
+      <Modal
+        animationType="fade"
+        onRequestClose={() => setOpen(false)}
+        transparent
+        visible={open}
+      >
         <Pressable
           accessibilityLabel={messages.close}
           accessibilityRole="button"
           onPress={() => setOpen(false)}
-          style={styles.backdrop}
+          style={[styles.backdrop, { direction }]}
         >
           <View accessibilityRole="radiogroup" style={styles.menu}>
+            <ScrollView contentContainerStyle={styles.options}>
             <AppText variant="heading">{messages.language}</AppText>
-            {NATIVE_LOCALES.map((candidate) => (
+            {getSelectableLocales(process.env.NODE_ENV === "development").map((candidate) => (
               <Pressable
                 key={candidate}
                 accessibilityRole="radio"
@@ -47,11 +61,17 @@ export function LocaleSelector() {
                 }}
                 style={[styles.option, candidate === locale && styles.selected]}
               >
-                <Text style={[styles.label, candidate === locale && styles.selectedLabel]}>
-                  {labels[candidate]}
+                <Text
+                  style={[
+                    styles.label,
+                    candidate === locale && styles.selectedLabel,
+                  ]}
+                >
+                  {getLocaleLabel(candidate)}
                 </Text>
               </Pressable>
             ))}
+            </ScrollView>
           </View>
         </Pressable>
       </Modal>
@@ -70,7 +90,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 44,
   },
-  pressed: { backgroundColor: colors.surfaceMuted, transform: [{ scale: 0.96 }] },
+  labelledTrigger: {
+    width: "auto",
+    flexDirection: "row",
+    gap: spacing.xs,
+    paddingHorizontal: spacing.sm,
+  },
+  currentLanguage: { ...typography.caption, color: colors.textMuted },
+  pressed: {
+    backgroundColor: colors.surfaceMuted,
+    transform: [{ scale: 0.96 }],
+  },
   backdrop: {
     alignItems: "flex-end",
     backgroundColor: "rgba(23, 23, 23, 0.35)",
@@ -82,10 +112,11 @@ const styles = StyleSheet.create({
   menu: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
-    gap: spacing.xs,
+    maxHeight: "80%",
     minWidth: 210,
     padding: spacing.md,
   },
+  options: { gap: spacing.xs },
   option: {
     alignItems: "center",
     borderRadius: radius.md,

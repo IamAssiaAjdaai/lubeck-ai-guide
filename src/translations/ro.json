@@ -17,17 +17,12 @@
     "availableCities": "Orașe disponibile",
     "exploreCity": "Explorează {city}",
     "availableNow": "Disponibil acum",
-    "featuredCityDescription": "Descoperă 5 locuri istorice într-un tur pietonal ghidat.",
     "moreCities": "Mai multe orașe",
     "comingSoon": "În curând",
     "germany": "Germania"
   },
   "explore": {
-    "title": "Descoperiți Lübeck",
-    "subtitle": "20 de locuri de descoperit",
     "walkingTour": "Tur pietonal",
-    "historicCenter": "Centrul istoric al Lübeckului",
-    "duration": "~45 min • 5 opriri",
     "places": "Locuri",
     "startTour": "Începeți turul pietonal"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Tur încheiat",
-    "title": "Ați explorat Lübeck!",
-    "description": "Ați parcurs 5 opriri istorice în centrul vechi al Lübeckului.",
-    "progress": "5 din 5 opriri finalizate",
     "ratingQuestion": "Cum vi s-a părut turul?",
     "thankYou": "Vă mulțumim pentru părere!",
     "feedback": "Trimiteți o părere",

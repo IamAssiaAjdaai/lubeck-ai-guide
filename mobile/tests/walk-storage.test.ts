@@ -16,6 +16,7 @@ import {
   removeLocalTrip,
 } from "../src/lib/tripStorage";
 import type { WalkJourney } from "@citywalk/traveler-core/walkJourney";
+import type { PublicPlaceCard } from "../src/lib/api/contracts";
 const start = { lat: 53.86, lng: 10.68 };
 const journey: WalkJourney = {
   id: "one",
@@ -34,6 +35,7 @@ const journey: WalkJourney = {
   startedAt: Date.now(),
   historyDistance: 0,
 };
+const places: PublicPlaceCard[] = [{ slug: "place", category: "see", coordinates: start, durationMinutes: 15, tags: [], media: [], requestedLocale: "en", resolvedLocale: "en", didFallback: false, content: { name: "Place", shortDescription: "Place" } }];
 function memory() {
   const values = new Map<string, string>();
   return {
@@ -55,10 +57,12 @@ describe("anonymous native V2 persistence", () => {
   });
   it("deduplicates saves and scopes removal by city and ID", async () => {
     const store = memory();
+    await persistActiveWalk(journey, store);
+    await persistActiveWalk({ ...journey, citySlug: "other" }, store);
     await Promise.all([
-      saveNativeWalk(journey, store),
-      saveNativeWalk(journey, store),
-      saveNativeWalk({ ...journey, citySlug: "other" }, store),
+      saveNativeWalk(journey, places, true, store),
+      saveNativeWalk(journey, places, true, store),
+      saveNativeWalk({ ...journey, citySlug: "other" }, places, true, store),
     ]);
     expect(await loadSavedWalks(store)).toHaveLength(2);
     await removeNativeWalk("city", "one", store);
@@ -88,7 +92,7 @@ describe("anonymous native V2 persistence", () => {
       },
     };
     await expect(removeNativeWalk("city", "one", store)).rejects.toThrow();
-    await expect(saveNativeWalk(journey, store)).rejects.toThrow();
+    await expect(saveNativeWalk(journey, places, true, store)).rejects.toThrow();
     expect(writes).toBe(0);
   });
   it("persists feedback separately from active routes", async () => {
@@ -121,7 +125,8 @@ describe("anonymous native V2 persistence", () => {
       },
       { store, createId: () => "legacy" },
     );
-    await saveNativeWalk(journey, store);
+    await persistActiveWalk(journey, store);
+    await saveNativeWalk(journey, places, true, store);
     await removeNativeWalk("city", "one", store);
     expect(await loadLocalTrips(store)).toHaveLength(1);
     await removeLocalTrip("other", "legacy", store);

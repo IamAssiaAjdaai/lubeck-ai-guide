@@ -17,17 +17,12 @@
     "availableCities": "Dostupné mestá",
     "exploreCity": "Preskúmať {city}",
     "availableNow": "Teraz dostupné",
-    "featuredCityDescription": "Objavte 5 historických miest počas komentovanej prechádzky.",
     "moreCities": "Ďalšie mestá",
     "comingSoon": "Už čoskoro",
     "germany": "Nemecko"
   },
   "explore": {
-    "title": "Objavte Lübeck",
-    "subtitle": "20 miest na objavovanie",
     "walkingTour": "Pešia prehliadka",
-    "historicCenter": "Historické centrum Lübecku",
-    "duration": "~45 min • 5 zastávok",
     "places": "Miesta",
     "startTour": "Začať pešiu prehliadku"
   },
@@ -50,9 +45,6 @@
   },
   "complete": {
     "badge": "Prehliadka dokončená",
-    "title": "Preskúmali ste Lübeck!",
-    "description": "Absolvovali ste 5 historických zastávok v starom meste Lübecku.",
-    "progress": "Dokončených 5 z 5 zastávok",
     "ratingQuestion": "Ako sa vám prehliadka páčila?",
     "thankYou": "Ďakujeme za váš názor!",
     "feedback": "Zdieľať názor",
