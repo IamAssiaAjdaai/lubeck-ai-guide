@@ -4,6 +4,8 @@ import {
   classifyNativeAuthError,
   NATIVE_AUTH_MIN_PASSWORD_LENGTH,
   validateNativeAuthInput,
+  validateDisplayName,
+  validateNewPassword,
 } from "../src/lib/auth/errors";
 
 describe("native account diagnostics", () => {
@@ -22,4 +24,17 @@ describe("native account diagnostics", () => {
     expect(classifyNativeAuthError(new Error("offline"))).toBe("unknown");
     expect(classifyNativeAuthError(undefined)).toBe("network");
   });
+});
+
+it("validates names and matching passwords within the server bounds", () => {
+  expect(validateDisplayName("   ")).toBe("invalid_name");
+  expect(validateDisplayName("x".repeat(101))).toBe("invalid_name");
+  expect(validateDisplayName("اسم المسافر")).toBeUndefined();
+  expect(validateNewPassword("x".repeat(8))).toBe("password_too_short");
+  expect(validateNewPassword("x".repeat(12))).toBeUndefined();
+  expect(validateNewPassword("x".repeat(128))).toBeUndefined();
+  expect(validateNewPassword("x".repeat(129))).toBe("password_too_long");
+  expect(validateNewPassword("new-password", "not-the-same")).toBe("password_mismatch");
+  expect(validateNewPassword("new-password", "new-password")).toBeUndefined();
+  expect(classifyNativeAuthError({ code: "PASSWORD_TOO_LONG" })).toBe("password_too_long");
 });

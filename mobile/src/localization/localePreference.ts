@@ -1,10 +1,12 @@
 import storage from "@react-native-async-storage/async-storage";
-import { isSharedLocale, type SharedLocale } from "@citywalk/i18n";
+import { resolveVisibleLocale, type SharedLocale } from "@citywalk/i18n";
 
 export const LOCALE_PREFERENCE_KEY = "citywalk:native:locale:v1";
-export function resolveDeviceLocale(tag: string): SharedLocale {
-  const language = tag.trim().replace(/_/g, "-").split("-")[0].toLowerCase();
-  return isSharedLocale(language) ? language : "en";
+export function experimentalLocalesEnabled() {
+  return process.env.NODE_ENV === "development" && process.env.EXPO_PUBLIC_EXPERIMENTAL_LOCALES === "1";
+}
+export function resolveDeviceLocale(tag: string, includeExperimental = experimentalLocalesEnabled()): SharedLocale {
+  return resolveVisibleLocale(tag, includeExperimental);
 }
 export function deviceLocale(): SharedLocale {
   try { return resolveDeviceLocale(Intl.DateTimeFormat().resolvedOptions().locale); }

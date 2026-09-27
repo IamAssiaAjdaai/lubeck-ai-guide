@@ -53,7 +53,8 @@ describe("CITYWALK native product-design polish", () => {
   });
 
   it("uses designed empty and success/error states rather than isolated placeholder text", () => {
-    expect(accountSource).toContain("<EmptyState");
+    expect(accountSource).toContain('"profile.guestFirst"');
+    expect(accountSource).toContain("<StatusMessage");
     expect(uiSource).toContain("statusSuccess");
     expect(uiSource).toContain("statusError");
   });

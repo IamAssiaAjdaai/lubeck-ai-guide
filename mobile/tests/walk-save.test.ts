@@ -28,7 +28,7 @@ describe("canonical saving of planned visit stops", () => {
     const staleSave = saveNativeWalk(journey, places, true, store);
     await remove; await expect(staleSave).rejects.toThrow("walk-save-empty");
     for (const [key, value] of before) if (!key.endsWith("active:lubeck")) expect(store.values.get(key)).toBe(value);
-    expect((await loadSavedWalks(store)).find(w => w.id === journey.id && w.citySlug === "lubeck")).toEqual(journey);
+    expect((await loadSavedWalks(store)).find(w => w.id === journey.id && w.citySlug === "lubeck")).toMatchObject(journey);
     expect((await loadCurrentWalk("lubeck", store))?.journey.remaining).toEqual([]);
   });
   it("rejects an explicitly empty update even when an older valid saved copy/current record exists", async () => {
@@ -41,7 +41,7 @@ describe("canonical saving of planned visit stops", () => {
     const store = memory(); await persistCurrentWalk(journey, "preview", store);
     await Promise.all([saveNativeWalk(journey, places, true, store), saveNativeWalk(journey, places, true, store)]);
     const reopened = { ...store, values: new Map(store.values), getItem: async (key: string) => store.values.get(key) ?? null };
-    expect(await loadSavedWalks(reopened)).toEqual([journey]);
+    expect(await loadSavedWalks(reopened)).toMatchObject([journey]);
     expect((await loadCurrentWalk("lubeck", store))?.phase).toBe("preview");
   });
   it.each([false, true])("saves a visited itinerary with no remaining stops (finished %s)", async finished => {
@@ -49,7 +49,7 @@ describe("canonical saving of planned visit stops", () => {
     await persistCurrentWalk(completed, "active", store);
     expect(walkSaveStatus(completed, places)).toBe("ready");
     await saveNativeWalk(completed, places, true, store);
-    expect(await loadSavedWalks(store)).toEqual([completed]);
+    expect(await loadSavedWalks(store)).toMatchObject([completed]);
   });
   it("distinguishes loading, unresolved and ineligible data without an extra network request or saved write", async () => {
     const store = memory(); await persistCurrentWalk(journey, "preview", store); store.setItem.mockClear();
@@ -74,4 +74,27 @@ describe("canonical saving of planned visit stops", () => {
     await removeNativeWalk(empty.citySlug, empty.id, store);
     expect(await loadSavedWalks(store)).toEqual([]);
   });
+});
+
+it("blocks production local permanent saves; historical records stay readable/removable", async () => {
+  await expect(saveNativeWalk(journey, places)).rejects.toThrow("account-required");
+});
+it("account persistence revalidates the latest draft under membership serialization", async () => {
+  const { saveCurrentAccountWalk } = await import("../src/lib/walkStorage");
+  const store = memory(); await persistCurrentWalk(journey, "preview", store);
+  const persist = vi.fn(async () => ({ accountSavedWalkId: "server", accountSavedUserId: "owner" }));
+  const remove = removePlaceFromCurrentWalk("lubeck", "gate", store);
+  const save = saveCurrentAccountWalk(journey, places, true, persist, store);
+  await remove; await expect(save).rejects.toThrow("walk-save-empty"); expect(persist).not.toHaveBeenCalled();
+  expect(await loadSavedWalks(store)).toEqual([]);
+});
+it("account save preserves old local saves/favorites and writes only current-session lineage", async () => {
+  const { saveCurrentAccountWalk } = await import("../src/lib/walkStorage");
+  const store = memory(); await persistCurrentWalk(journey, "preview", store); await saveNativeWalk(journey, places, true, store);
+  await toggleSavedPlace({ citySlug: "lubeck", slug: "gate", name: "Gate" }, store);
+  const before = new Map(store.values); const persist = vi.fn(async () => ({ accountSavedWalkId: "server", accountSavedUserId: "owner" }));
+  await saveCurrentAccountWalk(journey, places, true, persist, store);
+  expect(store.values.get("citywalk:native:v2:saved")).toBe(before.get("citywalk:native:v2:saved"));
+  expect(store.values.get("citywalk:native:v2:places")).toBe(before.get("citywalk:native:v2:places"));
+  expect((await loadCurrentWalk("lubeck", store))?.journey).toMatchObject({ id: "draft", accountSavedWalkId: "server" });
 });

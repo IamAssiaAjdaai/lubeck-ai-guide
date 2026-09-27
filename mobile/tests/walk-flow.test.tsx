@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { subscribeAccountWalks } from "../src/lib/accountWalks";
 import React, { useEffect } from "react";
 import { t as translate, sharedLocales } from "@citywalk/i18n";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
+  guest: false,
   saved: [] as import("@citywalk/traveler-core/walkJourney").WalkJourney[],
   current: undefined as import("../src/lib/walkStorage").CurrentWalk | undefined,
   changed: undefined as ((current: import("../src/lib/walkStorage").CurrentWalk | undefined) => void) | undefined,
@@ -26,6 +28,19 @@ const mocks = vi.hoisted(() => ({
   holdPresentation: false,
   presented: undefined as (() => void) | undefined,
 }));
+
+vi.mock("../src/hooks/useAccountWalks", () => ({ useAccountWalks: () => { const [, refresh] = React.useReducer(n => n + 1, 0); useEffect(() => subscribeAccountWalks(() => refresh()), []); return { userId: mocks.guest ? undefined : "test-user", walks: mocks.saved, loading: false, error: false, refresh: vi.fn() }; } }));
+vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { getSession: async () => ({ data: mocks.guest ? null : { user: { id: "test-user" } } }) } }));
+vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { fetchAuthenticated: async (_path: string, init: RequestInit) => {
+  if (init.method === "GET") return Response.json({ walks: mocks.saved.map(w => ({ id: w.id, route: { citySlug: w.citySlug, stopSlugs: [...w.visited, ...w.remaining], settings: w.settings, finish: w.finish }, createdAt: "2026-09-27T00:00:00Z", updatedAt: "2026-09-27T00:00:00Z" })) });
+  const { route, id } = JSON.parse(init.body as string);
+  if (init.method === "DELETE") { mocks.saved = mocks.saved.filter(w => w.id !== id); return Response.json({ removed: true }); }
+  const actual = await import("@citywalk/traveler-core");
+  const duplicate = mocks.saved.find(w => actual.savedRouteIdentity(w) === actual.savedRouteIdentity({ citySlug: route.citySlug, remaining: route.stopSlugs, visited: [], finish: route.finish }));
+  const record = { id: duplicate?.id ?? id ?? "server-record", route, createdAt: "2026-09-27T00:00:00Z", updatedAt: "2026-09-27T00:00:00Z" };
+  if (!duplicate) { const next = mocks.saved.filter(w => w.id !== record.id).concat(actual.accountSavedJourney(record)); await mocks.save(next); mocks.saved = next; }
+  return Response.json({ walk: record });
+} } }));
 vi.mock("../src/lib/storeReview", () => ({ storeReview: { afterCompletion: async () => ({ status: "unavailable" }), configuredUrl: () => undefined } }));
 vi.mock("expo-router", () => ({
   useFocusEffect: (callback: () => void) => useEffect(callback, [callback]),
@@ -33,7 +48,7 @@ vi.mock("expo-router", () => ({
   useLocalSearchParams: () => ({ citySlug: "city" }),
   Link: ({ children, href, push }: React.PropsWithChildren<{ href: unknown; push?: boolean }>) =>
     <a data-route={JSON.stringify(href)} data-push={String(Boolean(push))}>{children}</a>,
-  useRouter: () => ({ replace: vi.fn() }),
+  useRouter: () => ({ replace: vi.fn() }), router: { push: vi.fn() },
 }));
 vi.mock("react-native", () => ({
   StyleSheet: { create: (styles: unknown) => styles },
@@ -222,6 +237,7 @@ vi.mock("../src/lib/walkStorage", async (importOriginal) => {
   return {
   ...actual,
   startCurrentWalk: (city: string, id: string, places: readonly PublicPlaceCard[], ready: boolean) => actual.startCurrentWalk(city, id, places, ready, store),
+  removeNativeWalk: (city: string, id: string) => actual.removeNativeWalk(city, id, store),
   clearCurrentWalk: (city: string, expected: import("../src/lib/walkStorage").CurrentWalk | undefined) => actual.clearCurrentWalk(city, expected, store),
   loadCurrentWalk: async () => {
     if (mocks.current) return mocks.current;
@@ -238,6 +254,7 @@ vi.mock("../src/lib/walkStorage", async (importOriginal) => {
     const next = change(mocks.current); await mocks.persist(next.journey); mocks.current = next; mocks.changed?.(next.journey.finishedAt ? undefined : next); return next;
   },
   saveNativeWalk: (journey: import("@citywalk/traveler-core/walkJourney").WalkJourney, places: readonly PublicPlaceCard[], ready: boolean) => actual.saveNativeWalk(journey, places, ready, store),
+  saveCurrentAccountWalk: (journey: import("@citywalk/traveler-core/walkJourney").WalkJourney, places: readonly PublicPlaceCard[], ready: boolean, persist: Parameters<typeof actual.saveCurrentAccountWalk>[3]) => actual.saveCurrentAccountWalk(journey, places, ready, persist, store),
   saveWalkFeedback: mocks.feedback,
 }; });
 vi.mock("../src/lib/tripStorage", () => ({ loadLocalTrips: async () => [] }));
@@ -281,7 +298,7 @@ afterEach(() => {
   cleanup();
   mocks.current = undefined; mocks.changed = undefined; mocks.saved = [];
   vi.clearAllMocks();
-  mocks.locale = "en";
+  mocks.locale = "en"; mocks.guest = false;
   mocks.contentStatus = "available";
   vi.unstubAllGlobals();
 });
@@ -301,12 +318,13 @@ describe("rendered native V2 flow (native bridges mocked, not device acceptance)
       setup();
       await preview();
       const t = walkCopy(locale);
-      fireEvent.click(screen.getByRole("button", { name: t.save }));
+      fireEvent.click(screen.getByRole("button", { name: translate(mocks.locale, "saved.saveWalk") }));
       await waitFor(() => expect(mocks.save).toHaveBeenCalledOnce());
       fireEvent.click(screen.getByRole("button", { name: t.startWalk }));
     await screen.findByRole("button", { name: t.visited });
       await screen.findByRole("button", { name: t.visited });
-      expect(mocks.persist).toHaveBeenCalledTimes(2);
+      expect(mocks.persist).toHaveBeenCalledTimes(3); // Draft, saved-record lineage, then Start.
+      expect(mocks.current?.journey).toMatchObject({ accountSavedWalkId: mocks.saved[0].id });
     },
   );
   it("retains the itinerary until a shortening proposal is confirmed", async () => {
@@ -738,13 +756,13 @@ describe("empty previews and confirmed start-over planning", () => {
 describe("rendered Save eligibility backed by canonical persistence", () => {
   it.each(sharedLocales)("disables zero-stop Save and explains recovery in %s", async locale => {
     mocks.locale = locale; setup(); await preview(); const t = walkCopy(locale);
-    fireEvent.click(screen.getByRole("button", { name: t.save }));
-    await screen.findByText(t.savedDone);
+    fireEvent.click(screen.getByRole("button", { name: translate(mocks.locale, "saved.saveWalk") }));
+    await screen.findByText(translate(mocks.locale, "saved.accountDone"));
     const saved = structuredClone(mocks.saved); expect(saved).toHaveLength(1);
     act(() => { mocks.current = { ...mocks.current!, journey: { ...mocks.current!.journey, remaining: [] } }; mocks.changed?.(mocks.current); });
-    const save = screen.getByRole("button", { name: t.save }) as HTMLButtonElement;
+    const save = screen.getByRole("button", { name: translate(mocks.locale, "saved.updateWalk") }) as HTMLButtonElement;
     expect(save.disabled).toBe(true); expect(screen.getByText(t.saveEmpty)).toBeTruthy();
-    expect(screen.queryByText(t.savedDone)).toBeNull();
+    expect(screen.queryByText(translate(mocks.locale, "saved.accountDone"))).toBeNull();
     fireEvent.click(save); expect(mocks.saved).toEqual(saved); expect(mocks.save).toHaveBeenCalledOnce();
     expect((screen.getByRole("button", { name: t.startWalk }) as HTMLButtonElement).disabled).toBe(true);
     expect(screen.getByRole("button", { name: t.rebuild })).toBeTruthy();
@@ -753,18 +771,18 @@ describe("rendered Save eligibility backed by canonical persistence", () => {
     setup(); await preview(); const t = walkCopy("en");
     // Model a storage update before the subscriber/UI callback is delivered.
     mocks.current = { ...mocks.current!, journey: { ...mocks.current!.journey, remaining: [] } };
-    fireEvent.click(screen.getByRole("button", { name: t.save }));
+    fireEvent.click(screen.getByRole("button", { name: translate(mocks.locale, "saved.saveWalk") }));
     await screen.findByText(t.saveEmpty);
     expect(mocks.save).not.toHaveBeenCalled(); expect(mocks.saved).toEqual([]);
-    expect(screen.queryByText(t.savedDone)).toBeNull();
+    expect(screen.queryByText(translate(mocks.locale, "saved.accountDone"))).toBeNull();
   });
   it("keeps Save unavailable during content loading without calling the plan empty", async () => {
     const view = render(<WalkScreen />); await preview(); const t = walkCopy("en");
     mocks.contentStatus = "loading"; view.rerender(<WalkScreen />);
-    expect((screen.getByRole("button", { name: t.save }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: translate(mocks.locale, "saved.saveWalk") }) as HTMLButtonElement).disabled).toBe(true);
     expect(screen.queryByText(t.saveEmpty)).toBeNull(); expect(mocks.save).not.toHaveBeenCalled();
     mocks.contentStatus = "available"; view.rerender(<WalkScreen />);
-    expect((screen.getByRole("button", { name: t.save }) as HTMLButtonElement).disabled).toBe(false);
+    expect((screen.getByRole("button", { name: translate(mocks.locale, "saved.saveWalk") }) as HTMLButtonElement).disabled).toBe(false);
   });
   it("opens an old empty saved record with blocked Start/Save and recovery, without purging it", async () => {
     setup(); await preview();
@@ -774,7 +792,7 @@ describe("rendered Save eligibility backed by canonical persistence", () => {
     const t = walkCopy("en");
     await screen.findByRole("button", { name: t.startWalk });
     expect((screen.getByRole("button", { name: t.startWalk }) as HTMLButtonElement).disabled).toBe(true);
-    expect((screen.getByRole("button", { name: t.save }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: translate(mocks.locale, "saved.walkSaved") }) as HTMLButtonElement).disabled).toBe(true);
     expect(screen.getByRole("button", { name: t.rebuild })).toBeTruthy();
     expect(mocks.saved).toEqual([empty]);
   });
@@ -784,10 +802,55 @@ describe("rendered Save eligibility backed by canonical persistence", () => {
     render(<NativeWalkFlow citySlug="city" cityName="City" places={places} />); const t = walkCopy("en");
     fireEvent.click(await screen.findByRole("button", { name: t.finish }));
     await screen.findByText(t.finished.replace("{city}", "City"));
-    const save = screen.getByRole("button", { name: t.save }) as HTMLButtonElement;
+    const save = screen.getByRole("button", { name: translate(mocks.locale, "saved.saveWalk") }) as HTMLButtonElement;
     expect(save.disabled).toBe(false); fireEvent.click(save);
-    await screen.findByText(t.savedDone);
-    expect(mocks.saved[0].remaining).toEqual([]); expect(mocks.saved[0].visited).toEqual(["place-0"]);
-    expect(mocks.saved[0].finishedAt).toBeTypeOf("number");
+    await screen.findByText(translate(mocks.locale, "saved.accountDone"));
+    expect(mocks.saved[0].remaining).toEqual(["place-0"]); expect(mocks.saved[0].visited).toEqual([]);
+    expect(mocks.saved[0].finishedAt).toBeUndefined();
+    expect(mocks.current?.journey.finishedAt).toBeTypeOf("number");
   });
+});
+
+
+describe("rendered saved route state", () => {
+  it("reopened route shows Saved, a changed route shows Update, and external removal resets Save", async () => {
+    setup(); await preview();
+    fireEvent.click(screen.getByRole("button", { name: translate("en", "saved.saveWalk") }));
+    const savedButton = await screen.findByRole("button", { name: translate("en", "saved.walkSaved") });
+    expect((savedButton as HTMLButtonElement).disabled).toBe(true);
+    const record = structuredClone(mocks.saved[0]);
+    cleanup(); mocks.current = undefined;
+    render(<NativeWalkFlow citySlug="city" cityName="City" places={places} savedId={record.id} accountSaved />);
+    expect((await screen.findByRole("button", { name: translate("en", "saved.walkSaved") }) as HTMLButtonElement).disabled).toBe(true);
+    act(() => { mocks.current = { ...mocks.current!, journey: { ...mocks.current!.journey, remaining: mocks.current!.journey.remaining.slice(0, 1) } }; mocks.changed?.(mocks.current); });
+    const update = await screen.findByRole("button", { name: translate("en", "saved.updateWalk") });
+    fireEvent.click(update);
+    await screen.findByRole("button", { name: translate("en", "saved.walkSaved") });
+    expect(mocks.saved).toHaveLength(1); expect(mocks.saved[0].id).toBe(record.id);
+    const { removeAccountWalk } = await import("../src/lib/accountWalks");
+    await act(async () => { await removeAccountWalk("test-user", record.id); });
+    expect((screen.getByRole("button", { name: translate("en", "saved.saveWalk") }) as HTMLButtonElement).disabled).toBe(false);
+    expect((mocks.current as import("../src/lib/walkStorage").CurrentWalk | undefined)?.journey.remaining).toHaveLength(1);
+  });
+});
+
+it("guest Save opens a cancelable gate without changing current walk or permanent records", async () => {
+  mocks.guest = true; setup(); await preview();
+  const before = JSON.stringify(mocks.current), writes = mocks.persist.mock.calls.length;
+  fireEvent.click(screen.getByRole("button", { name: translate("en", "saved.saveWalk") }));
+  const gate = screen.getByRole("dialog");
+  expect(within(gate).getByText(translate("en", "saved.gateDescription"))).toBeTruthy();
+  fireEvent.click(within(gate).getByRole("button", { name: translate("en", "saved.continueWithoutSaving") }));
+  expect(screen.queryByRole("dialog")).toBeNull(); expect(JSON.stringify(mocks.current)).toBe(before);
+  expect(mocks.persist.mock.calls.length).toBe(writes); expect(mocks.save).not.toHaveBeenCalled(); expect(mocks.saved).toEqual([]);
+});
+
+it.each(["sign-up", "sign-in"] as const)("guest gate pushes %s without resetting or saving the walk", async entry => {
+  mocks.guest = true; setup(); await preview();
+  const before = JSON.stringify(mocks.current);
+  fireEvent.click(screen.getByRole("button", { name: translate("en", "saved.saveWalk") }));
+  fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: translate("en", entry === "sign-up" ? "profile.signUp" : "profile.signIn") }));
+  const { router } = await import("expo-router");
+  expect(router.push).toHaveBeenCalledWith({ pathname: "/account", params: { entry, returnToWalk: "1" } });
+  expect(screen.queryByRole("dialog")).toBeNull(); expect(JSON.stringify(mocks.current)).toBe(before); expect(mocks.save).not.toHaveBeenCalled();
 });

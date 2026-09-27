@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
+vi.mock("../src/hooks/useAccountWalks", () => ({ useAccountWalks: () => ({ userId: state.account ? "owner" : undefined, walks: state.account ? [{ id: "cloud-walk", citySlug: "lubeck", remaining: ["holstentor"], visited: [] }] : [], loading: false, error: false, refresh: vi.fn() }) }));
+vi.mock("../src/lib/accountWalks", () => ({ removeAccountWalk: vi.fn() }));
 import React from "react";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-const state = vi.hoisted(() => ({ locale: "en" as "en" | "de" | "ar" | "da" | "sv" | "nl" | "es", fontScale: 1, staleMessages: false, noAudio: false, noStory: false, placeLoading: false, scrollTo: vi.fn(), showTour: false, focus: undefined as string | undefined, placeSlug: "holstentor", responseSlug: undefined as string | undefined, saved: false, emptySaved: false, reduced: true, entranceFinished: undefined as ((result: { finished: boolean }) => void) | undefined }));
+const state = vi.hoisted(() => ({ account: false, locale: "en" as "en" | "de" | "ar" | "da" | "sv" | "nl" | "es", fontScale: 1, staleMessages: false, noAudio: false, noStory: false, placeLoading: false, scrollTo: vi.fn(), showTour: false, focus: undefined as string | undefined, placeSlug: "holstentor", responseSlug: undefined as string | undefined, saved: false, emptySaved: false, reduced: true, entranceFinished: undefined as ((result: { finished: boolean }) => void) | undefined }));
 vi.mock("react-native", () => ({
   ActivityIndicator: () => <span role="progressbar" />,
   Text: ({ children, style }: React.PropsWithChildren<{ style?: unknown }>) => <span data-style={JSON.stringify(style)}>{children}</span>,
@@ -50,7 +52,7 @@ vi.mock("../src/components/ui", () => ({
 vi.mock("../src/components/NativeContentImage", () => ({ NativeContentImage: ({ style }: { style?: unknown }) => <div data-testid="content-image" data-style={JSON.stringify(style)} /> }));
 vi.mock("../src/components/NativeAudioPlayer", () => ({ NativeAudioPlayer: ({ source, title }: { source: string; title: string }) => <audio aria-label={title} src={source} /> }));
 vi.mock("../src/components/TripProgress", () => ({ TripProgress: () => null }));
-vi.mock("../src/lib/walkStorage", () => ({ loadSavedPlaces: async () => state.saved ? [{ citySlug: "lubeck", slug: "holstentor", name: "Holstentor", savedAt: 1 }] : [], loadSavedWalks: async () => state.saved ? [{ id: "saved-walk", citySlug: "lubeck", remaining: state.emptySaved ? [] : ["holstentor"], visited: [] }] : [], loadActiveWalk: async () => undefined, removeNativeWalk: vi.fn(), toggleSavedPlace: vi.fn() }));
+vi.mock("../src/lib/walkStorage", () => ({ subscribeSavedWalks: () => () => {}, loadSavedPlaces: async () => state.saved ? [{ citySlug: "lubeck", slug: "holstentor", name: "Holstentor", savedAt: 1 }] : [], loadSavedWalks: async () => state.saved ? [{ id: "saved-walk", citySlug: "lubeck", remaining: state.emptySaved ? [] : ["holstentor"], visited: [] }] : [], loadActiveWalk: async () => undefined, removeNativeWalk: vi.fn(), toggleSavedPlace: vi.fn() }));
 vi.mock("../src/components/NativeCityMap", () => ({ NativeCityMap: () => null }));
 vi.mock("../src/components/CitywalkLoading", () => ({ CitywalkLoading: () => <div data-testid="place-skeleton" /> }));
 vi.mock("../src/components/MediaAttribution", () => ({ MediaAttribution: () => null }));
@@ -91,7 +93,7 @@ import type { PublicPlaceCard } from "../src/lib/api/contracts";
 vi.mock("../src/lib/tripStorage", () => ({ loadLocalTrips: async () => [], removeLocalTrip: vi.fn() }));
 import { V2Itinerary, V2Loading } from "../src/components/V2Presentation";
 beforeEach(() => vi.stubGlobal("require", () => 1)); // Native asset bridge only.
-afterEach(() => { cleanup(); vi.unstubAllGlobals(); state.locale = "en"; state.fontScale = 1; state.staleMessages = false; state.noAudio = false; state.noStory = false; state.placeLoading = false; state.scrollTo.mockClear(); state.showTour = false; state.focus = undefined; state.responseSlug = undefined; state.saved = false; state.emptySaved = false; state.reduced = true; state.entranceFinished = undefined; });
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); state.locale = "en"; state.fontScale = 1; state.staleMessages = false; state.noAudio = false; state.noStory = false; state.placeLoading = false; state.scrollTo.mockClear(); state.showTour = false; state.focus = undefined; state.responseSlug = undefined; state.saved = false; state.account = false; state.emptySaved = false; state.reduced = true; state.entranceFinished = undefined; });
 describe("native V2 acceptance regressions (native bridges mocked)", () => {
   it("removes English audio and shows German unavailability after changing locale", () => {
     state.placeSlug = "holstentor"; state.focus = "audio";
@@ -409,4 +411,16 @@ it("keeps explicit removal available for historical zero-stop saved records", as
   expect(removeNativeWalk).not.toHaveBeenCalled();
   await act(async () => fireEvent.click(remove));
   expect(removeNativeWalk).toHaveBeenCalledWith("lubeck", "saved-walk");
+});
+
+it("separates account and historical local copies without duplicate rows or automatic upload", async () => {
+  state.saved = true; state.account = true; render(<SavedScreen />);
+  await screen.findByText(t("en", "saved.accountDescription"));
+  expect(screen.getAllByRole("button", { name: `${walkCopy("en").removeWalk}: Lübeck` })).toHaveLength(1);
+  fireEvent.click(screen.getByRole("button", { name: t("en", "saved.localWalks") }));
+  await screen.findByText(t("en", "saved.localDescription"));
+  expect(screen.getAllByRole("button", { name: `${walkCopy("en").removeWalk}: Lübeck` })).toHaveLength(1);
+  const { removeNativeWalk } = await import("../src/lib/walkStorage");
+  fireEvent.click(screen.getByRole("button", { name: `${walkCopy("en").removeWalk}: Lübeck` }));
+  await act(async () => {}); expect(removeNativeWalk).toHaveBeenCalledWith("lubeck", "saved-walk");
 });

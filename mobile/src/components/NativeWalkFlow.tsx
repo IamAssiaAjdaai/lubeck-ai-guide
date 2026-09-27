@@ -1,3 +1,6 @@
+import { useAccountWalks } from "../hooks/useAccountWalks";
+import { accountWalkState, saveAccountWalk, loadAccountWalkForOpen } from "../lib/accountWalks";
+import { SaveAccountGate } from "./SaveAccountGate";
 import { PublicStoreReview } from "./PublicStoreReview";
 import { t as translate } from "@citywalk/i18n";
 import { nativeCategoryLabel } from "../lib/contentLabels";
@@ -45,7 +48,7 @@ import {
   subscribeCurrentWalk,
   persistCurrentWalk,
   loadSavedWalks,
-  saveNativeWalk,
+  reopenSavedWalk,
   saveWalkFeedback,
   startCurrentWalk,
   walkStartStatus,
@@ -85,12 +88,14 @@ export function NativeWalkFlow({
   places,
   savedId,
   addSlug,
+  accountSaved = false,
   contentStatus = "available",
 }: {
   citySlug: string;
   cityName: string;
   places: readonly PublicPlaceCard[];
   savedId?: string;
+  accountSaved?: boolean;
   addSlug?: string;
   contentStatus?: "available" | "loading" | "error";
 }) {
@@ -100,6 +105,10 @@ export function NativeWalkFlow({
   const [stage, setStage] = useState<
     "hydrate" | "plan" | "building" | "preview" | "active" | "finished"
   >("hydrate");
+  const account = useAccountWalks();
+  const savedMessage = translate(locale, "saved.accountDone");
+  const [saveGate, setSaveGate] = useState(false);
+
   const [saving, setSaving] = useState(false);
   const saveLock = useRef(false);
   const [updating, setUpdating] = useState(false);
@@ -184,10 +193,10 @@ export function NativeWalkFlow({
       let restored: WalkJourney | undefined;
       let restoredPhase: "preview" | "active" = "active";
       if (savedId) {
-        restored = (await loadSavedWalks()).find(
+        restored = accountSaved ? await loadAccountWalkForOpen(savedId, citySlug) : (await loadSavedWalks()).find(
           (w) => w.id === savedId && w.citySlug === citySlug,
         );
-        if (!restored) {
+        if (!restored && !accountSaved) {
           const legacy = (await loadLocalTrips()).find(
             (w) => w.id === savedId && w.citySlug === citySlug,
           );
@@ -214,20 +223,9 @@ export function NativeWalkFlow({
               },
             };
         }
-        if (restored)
-          restored = {
-            ...restored,
-            id: createMobileTripId("walk"),
-            remaining: [
-              ...new Set([...restored.visited, ...restored.remaining]),
-            ],
-            visited: [],
-            position: restored.settings.start,
-            historyDistance: 0,
-            startedAt: Date.now(),
-            finishedAt: undefined,
-            settings: { ...restored.settings, deadline: undefined },
-          };
+        if (restored) {
+          restored = reopenSavedWalk(restored, createMobileTripId("walk"));
+        }
       } else {
         const current = await loadCurrentWalk(citySlug);
         restored = current?.journey;
@@ -283,18 +281,18 @@ export function NativeWalkFlow({
     };
     // Hydrate once per city/saved route; locale refresh must not reset an active walk.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [citySlug, savedId]);
+  }, [citySlug, savedId, accountSaved]);
   useEffect(() => {
     if (stage !== "preview" && stage !== "active") return;
     return subscribeCurrentWalk(citySlug, current => {
-      setMessage(previous => previous === t.savedDone ? "" : previous);
+      setMessage(previous => previous === savedMessage ? "" : previous);
       setJourney(current?.journey);
       setStage(current?.phase ?? "plan");
       // A proposal belongs to the route it was computed from.
       setProposed(undefined);
       setProposalMessage("");
     });
-  }, [citySlug, stage, t.savedDone]);
+  }, [citySlug, stage, savedMessage]);
   useEffect(() => {
     if (stage !== "active") return;
     const timer = setInterval(() => setNow(Date.now()), 30000);
@@ -432,10 +430,16 @@ export function NativeWalkFlow({
     finally { updateLock.current = false; setUpdating(false); }
   }
   async function save() {
-    if (!journey || saveLock.current) return;
+    if (!journey || saveLock.current || account.loading) return;
+    if (!account.userId) { setSaveGate(true); return; }
     saveLock.current = true; setSaving(true); setMessage("");
-    try { await saveNativeWalk(journey, places, contentStatus === "available"); setMessage(t.savedDone); }
-    catch (error) {
+    try {
+      const linked = await saveAccountWalk(journey, places, contentStatus === "available", account.userId);
+      // Another screen may have edited membership while storage was settling.
+      setJourney(current => current?.id === linked.id
+        ? { ...current, accountSavedWalkId: linked.accountSavedWalkId, accountSavedUserId: linked.accountSavedUserId } : current);
+      setMessage(translate(locale, "saved.accountDone"));
+    } catch (error) {
       const code = error instanceof Error ? error.message : "";
       setMessage(code === "walk-save-empty" ? t.saveEmpty
         : code === "walk-save-loading" || code === "walk-save-unresolved" ? t.saveContentUnavailable : messages.tripSaveFailed);
@@ -549,6 +553,8 @@ export function NativeWalkFlow({
     : journey ? walkStartStatus(journey, places, contentStatus === "available") : "empty";
   const saveStatus = contentStatus === "error" ? "unresolved"
     : journey ? walkSaveStatus(journey, places, contentStatus === "available") : "empty";
+  const savedState = journey && account.userId ? accountWalkState(journey, account.walks, account.userId).status : "unsaved";
+  const saveLabel = translate(locale, savedState === "saved" ? "saved.walkSaved" : savedState === "changed" ? "saved.updateWalk" : "saved.saveWalk");
   const saveFeedback = saveStatus !== "ready" ? <StatusMessage>{saveStatus === "empty" ? t.saveEmpty
     : saveStatus === "loading" ? discoveryCopy(locale).loadingWalkContent : t.saveContentUnavailable}</StatusMessage> : null;
   // Do not silently promote a different place if refreshed content loses a stop.
@@ -928,8 +934,8 @@ export function NativeWalkFlow({
                 />
                 <PrimaryButton
                   style={styles.flex}
-                  label={t.save}
-                  disabled={saveStatus !== "ready"}
+                  label={saveLabel}
+                  disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
                   busy={saving}
                   tone="secondary"
                   onPress={() => void save()}
@@ -1163,8 +1169,8 @@ export function NativeWalkFlow({
               />
               {saveFeedback}
               <PrimaryButton
-                label={t.save}
-                disabled={saveStatus !== "ready"}
+                label={saveLabel}
+                disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
                   busy={saving}
                 tone="secondary"
                 onPress={() => void save()}
@@ -1204,7 +1210,7 @@ export function NativeWalkFlow({
             <AppText>{t.noVisited}</AppText>
           )}
           {saveFeedback}
-          <PrimaryButton wrapLabel label={t.save} disabled={saveStatus !== "ready"}
+          <PrimaryButton wrapLabel label={saveLabel} disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
                   busy={saving} onPress={() => void save()} />
           <PrimaryButton
             wrapLabel
@@ -1256,6 +1262,7 @@ export function NativeWalkFlow({
           />
         </>
       ) : null}
+      <SaveAccountGate visible={saveGate} onClose={() => setSaveGate(false)} />
       <Modal visible={!!rebuildConfirmation} animationType="slide" presentationStyle="pageSheet"
         onRequestClose={() => { if (!updateLock.current) setRebuildConfirmation(undefined); }}>
         <Screen includeTopSafeArea navigation={false} brand={false}>

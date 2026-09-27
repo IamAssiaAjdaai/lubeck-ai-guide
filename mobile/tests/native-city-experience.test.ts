@@ -7,6 +7,7 @@ import walkSource from "../src/components/NativeWalkFlow.tsx?raw";
 import plannerSource from "../src/components/NativeTourPlanner.tsx?raw";
 import placeSource from "../src/app/city/[citySlug]/place/[placeSlug].tsx?raw";
 import tourSource from "../src/app/city/[citySlug]/tour/[tourSlug].tsx?raw";
+import savedSource from "../src/app/saved.tsx?raw";
 import accountSource from "../src/app/account/index.tsx?raw";
 
 describe("native city experience parity", () => {
@@ -30,11 +31,11 @@ describe("native city experience parity", () => {
     expect(localeSource).not.toContain("styles.group");
   });
 
-  it("exposes recommendations, time budgets, route summaries, and a local save boundary", () => {
+  it("exposes recommendations, time budgets, route summaries, and an authenticated save boundary", () => {
     expect(plannerSource).toContain("rankNativePlaces");
     expect(walkSource).toContain("t.halfDay");
     expect(walkSource).toContain("buildWalkSteps(places, settings)");
-    expect(walkSource).toContain('saveNativeWalk(journey, places, contentStatus === "available")');
+    expect(walkSource).toContain('saveAccountWalk(journey, places, contentStatus === "available", account.userId)');
     expect(plannerSource).toContain("messages.distanceDisclaimer");
     expect(walkSource).toContain("t.startWalk");
     expect(walkSource).toContain("changeCurrentWalk(citySlug");
@@ -49,15 +50,17 @@ describe("native city experience parity", () => {
     expect(placeSource).toContain("messages.finishTrip");
   });
 
-  it("makes saved trips visible and resumable from the account screen", () => {
-    expect(accountSource).toContain("loadLocalTrips");
+  it("links Profile to the canonical Saved screen with both native and historical trips", () => {
+    expect(accountSource).toContain('href="/saved"');
+    expect(savedSource).toContain("loadLocalTrips");
+    expect(savedSource).toContain("loadSavedWalks");
     expect(accountSource).toContain("messages.savedTrips");
-    expect(accountSource).toContain("messages.resumeTrip");
+    expect(savedSource).toContain('pathname: "/city/[citySlug]/walk"');
   });
 
   it("surfaces actionable account validation and successful creation", () => {
     expect(accountSource).toContain("validateNativeAuthInput");
     expect(accountSource).toContain("classifyNativeAuthError");
-    expect(accountSource).toContain("messages.accountCreated");
+    expect(accountSource).toContain("profile.accountCreated");
   });
 });

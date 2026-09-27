@@ -1,3 +1,6 @@
+import { t as translate } from "@citywalk/i18n";
+import { useAccountWalks } from "../hooks/useAccountWalks";
+import { removeAccountWalk } from "../lib/accountWalks";
 import { CitywalkLoading } from "../components/CitywalkLoading";
 import { uxCopy } from "../design/uxCopy";
 import { ContentRecovery } from "../components/ContentRecovery";
@@ -15,6 +18,7 @@ import {
   loadActiveWalk,
   loadSavedPlaces,
   loadSavedWalks,
+  subscribeSavedWalks,
   removeNativeWalk,
   toggleSavedPlace,
   type SavedPlace,
@@ -27,6 +31,7 @@ import {
 import { useNativeLocale } from "../localization/LocaleProvider";
 import {
   AppText,
+  PrimaryButton,
   EmptyState,
   PressableSurface,
   Screen,
@@ -39,6 +44,9 @@ export default function SavedScreen() {
   }>();
   const { locale, direction, messages } = useNativeLocale(),
     t = walkCopy(locale);
+  const account = useAccountWalks();
+  const [localView, setLocalView] = useState(false);
+  const showAccount = Boolean(account.userId) && !localView && view !== "trips";
   const [walks, setWalks] = useState<WalkJourney[]>([]),
     [legacy, setLegacy] = useState<readonly LocalSavedTrip[]>([]),
     [places, setPlaces] = useState<SavedPlace[]>([]);
@@ -47,13 +55,15 @@ export default function SavedScreen() {
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState<string>();
   const removeLock = useRef(false);
+  const savedRevision = useRef(0);
   const reload = useCallback(async () => {
+    const revision = savedRevision.current;
     const [w, l, p] = await Promise.all([
       loadSavedWalks(),
       loadLocalTrips(),
       loadSavedPlaces(),
     ]);
-    setWalks(w);
+    if (revision === savedRevision.current) setWalks(w);
     setLegacy(l);
     setPlaces(p);
     const citySlugs = [
@@ -74,6 +84,7 @@ export default function SavedScreen() {
   useFocusEffect(
     useCallback(() => {
       void reload().catch(() => { setLoading(false); setError(messages.unavailable); });
+      return subscribeSavedWalks(walks => { savedRevision.current++; setWalks(walks); });
     }, [reload, messages.unavailable]),
   );
   async function remove(key: string, work: () => Promise<unknown>) {
@@ -88,7 +99,7 @@ export default function SavedScreen() {
     } finally { removeLock.current = false; setRemoving(undefined); }
   }
   if (loading) return <Screen><CitywalkLoading compact label={uxCopy(locale).saved} /></Screen>;
-  const visible = (view === "trips" ? active : [...walks, ...legacy]).filter(
+  const visible = (view === "trips" ? active : showAccount ? account.walks : [...walks, ...legacy]).filter(
     (w) => !citySlug || w.citySlug === citySlug,
   );
   return (
@@ -97,8 +108,18 @@ export default function SavedScreen() {
       <AppText variant="screenTitle">
         {view === "trips" ? t.trips : t.saved}
       </AppText>
+      {view !== "trips" ? <>
+        <SectionTitle>{translate(locale, showAccount ? "saved.accountWalks" : "saved.localWalks")}</SectionTitle>
+        <AppText variant="metadata">{translate(locale, showAccount ? "saved.accountDescription" : "saved.localDescription")}</AppText>
+        {account.userId ? <PrimaryButton tone="secondary" label={translate(locale, showAccount ? "saved.localWalks" : "saved.accountWalks")} onPress={() => setLocalView(value => !value)} /> : <>
+          <Link href={{ pathname: "/account", params: { entry: "sign-in" } }} asChild><PrimaryButton label={messages.signIn} tone="secondary" /></Link>
+          <Link href={{ pathname: "/account", params: { entry: "sign-up" } }} asChild><PrimaryButton label={messages.signUp} tone="secondary" /></Link>
+        </>}
+        {showAccount && account.loading ? <CitywalkLoading compact label={uxCopy(locale).saved} /> : null}
+        {showAccount && account.error ? <ContentRecovery retry={() => void account.refresh()} /> : null}
+      </> : null}
       {error ? <ContentRecovery retry={() => { setError(""); void reload().catch(() => setError(messages.unavailable)); }} /> : null}
-      {!visible.length ? (
+      {!visible.length && !(showAccount && (account.loading || account.error)) ? (
         <EmptyState
           title={view === "trips" ? t.emptyTrips : t.emptySaved}
           description={t.build}
@@ -126,7 +147,7 @@ export default function SavedScreen() {
               pathname: "/city/[citySlug]/walk",
               params: {
                 citySlug: w.citySlug,
-                ...(view === "trips" ? {} : { saved: w.id }),
+                ...(view === "trips" ? {} : { saved: w.id, ...(showAccount ? { source: "account" } : {}) }),
               },
             }}
             asChild
@@ -155,7 +176,7 @@ export default function SavedScreen() {
               accessibilityState={{ busy: removing === `walk:${w.citySlug}:${w.id}`, disabled: Boolean(removing) }}
               onPress={() =>
                 void remove(`walk:${w.citySlug}:${w.id}`, () =>
-                  "remaining" in w
+                  showAccount && account.userId ? removeAccountWalk(account.userId, w.id) : "remaining" in w
                     ? removeNativeWalk(w.citySlug, w.id)
                     : removeLocalTrip(w.citySlug, w.id),
                 )

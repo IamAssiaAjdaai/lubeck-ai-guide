@@ -13,6 +13,7 @@ vi.mock("expo-router", () => ({
   useRouter: () => ({ navigate: vi.fn(), dismissTo: vi.fn(), canGoBack: () => true, back: state.back }),
 }));
 vi.mock("react-native", () => ({
+  BackHandler: { addEventListener: () => ({ remove: vi.fn() }) },
   StyleSheet: { create: (s: unknown) => s, hairlineWidth: 1 },
   useWindowDimensions: () => ({ width: 390 }),
   View: ({ children, testID, style, accessibilityRole }: React.PropsWithChildren<{ testID?: string; style?: unknown; accessibilityRole?: string }>) => <div role={accessibilityRole} data-testid={testID} data-style={JSON.stringify(style)}>{children}</div>,
@@ -44,6 +45,7 @@ vi.mock("../src/lib/location", () => ({ requestForegroundLocation: vi.fn() }));
 vi.mock("../src/lib/location.expo", () => ({ expoForegroundLocationAdapter: {} }));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { useSession: () => ({ data: undefined, isPending: false }) } }));
 vi.mock("../src/lib/tripStorage", () => ({ loadLocalTrips: async () => [] }));
+import { t as translate } from "@citywalk/i18n";
 import { getNativeMessages } from "../src/lib/localization";
 import AccountScreen from "../src/app/account";
 import HomeScreen from "../src/app/index";
@@ -137,9 +139,9 @@ it.each(["ar", "de"] as const)("keeps one header language control on the actual 
   expect(screen.getAllByRole("button", { name: "Language" })).toHaveLength(1);
   expect(screen.getByTestId("native-header").contains(screen.getByRole("button", { name: "Language" }))).toBe(true);
   expect(screen.queryByText(getNativeMessages(locale).language)).toBeNull();
-  await screen.findByText(getNativeMessages(locale).noSavedTrips);
+  await screen.findByText(translate(locale, "profile.accountValue"));
   if (locale === "ar") {
-    const title = screen.getByText(getNativeMessages("ar").account);
+    const title = screen.getByText(content => content.replace(/[\u2066-\u2069]/g, "") === translate(locale, "profile.nativeAccountTitle"));
     expect(JSON.parse(title.dataset.style!).at(-1)).toMatchObject({ writingDirection: "rtl", textAlign: "right" });
   }
 });
