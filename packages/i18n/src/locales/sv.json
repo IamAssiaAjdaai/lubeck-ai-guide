@@ -531,5 +531,25 @@
     "title": "Recensera CITYWALK",
     "description": "En kort recension hjälper andra resenärer att hitta oss.",
     "action": "Betygsätt CITYWALK"
+  },
+  "lifecycle": {
+    "resetRequestHelp": "Ange kontots e-postadress för att begära en återställningslänk.",
+    "resetRequested": "Begäran mottagen. Om det finns ett konto med denna e-postadress kommer instruktioner till inkorgen eller skräpposten. Om inget mejl kommer, försök igen senare.",
+    "emailSubject": "Återställ ditt CITYWALK-lösenord",
+    "emailBody": "Använd följande CITYWALK-länk för att välja ett nytt lösenord. Den gäller i 30 minuter och kan bara användas en gång.",
+    "emailIgnore": "Ignorera mejlet om du inte begärde det. Ditt lösenord har inte ändrats.",
+    "invalidLink": "Länken är ogiltig, har gått ut eller har redan använts. Begär en ny länk i CITYWALK.",
+    "resetSuccess": "Ditt lösenord har återställts. Alla tidigare sessioner har avslutats. Logga in med ditt nya lösenord.",
+    "resetSubmit": "Välj nytt lösenord",
+    "validating": "Kontrollerar länk…",
+    "unavailable": "Begäran är tillfälligt otillgänglig. Försök igen senare.",
+    "rateLimited": "För många försök. Vänta 15 minuter och försök igen.",
+    "deleteWarning": "Radera ditt CITYWALK-konto, dina kontosparade promenader och din profil permanent. Alla aktiva sessioner avslutas. Detta kan inte ångras.",
+    "localDataRemains": "Din aktuella promenad, favoriter, språkval, recensionshistorik och tidigare lokalt sparade promenader finns kvar på enheten.",
+    "deleteConfirm": "Jag förstår att mitt konto och mina kontosparade promenader raderas permanent.",
+    "deletePermanently": "Radera kontot permanent",
+    "deleted": "Ditt konto och dina kontosparade promenader har raderats. Lokala resedata finns kvar.",
+    "retentionBlocked": "Kontot innehåller uppgifter vars lagring behöver granskas. Självbetjänad radering är inte tillgänglig just nu. Inga kontouppgifter har raderats.",
+    "reauthRequired": "Bekräfta ditt nuvarande lösenord. Om sessionen har gått ut ska du logga in igen innan du raderar kontot."
   }
 }

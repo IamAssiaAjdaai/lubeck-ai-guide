@@ -531,5 +531,25 @@
     "title": "Beoordeel CITYWALK",
     "description": "Met een korte beoordeling help je andere reizigers ons te ontdekken.",
     "action": "Beoordeel CITYWALK"
+  },
+  "lifecycle": {
+    "resetRequestHelp": "Vul het e-mailadres van je account in om een herstellink aan te vragen.",
+    "resetRequested": "Verzoek ontvangen. Als er een account met dit e-mailadres bestaat, vind je instructies in je inbox of spammap. Komt er geen e-mail, probeer het later opnieuw.",
+    "emailSubject": "Je CITYWALK-wachtwoord herstellen",
+    "emailBody": "Gebruik de volgende CITYWALK-link om een nieuw wachtwoord in te stellen. De link is 30 minuten geldig en kan maar één keer worden gebruikt.",
+    "emailIgnore": "Negeer deze e-mail als je dit niet hebt aangevraagd. Je wachtwoord is niet gewijzigd.",
+    "invalidLink": "Deze link is ongeldig, verlopen of al gebruikt. Vraag een nieuwe link aan in CITYWALK.",
+    "resetSuccess": "Je wachtwoord is hersteld. Alle eerdere sessies zijn beëindigd. Log in met je nieuwe wachtwoord.",
+    "resetSubmit": "Nieuw wachtwoord instellen",
+    "validating": "Link controleren…",
+    "unavailable": "Dit verzoek is tijdelijk niet beschikbaar. Probeer het later opnieuw.",
+    "rateLimited": "Te veel pogingen. Wacht 15 minuten en probeer het opnieuw.",
+    "deleteWarning": "Verwijder je CITYWALK-account, je in het account opgeslagen wandelingen en je profiel definitief. Alle actieve sessies worden beëindigd. Dit kan niet ongedaan worden gemaakt.",
+    "localDataRemains": "Je huidige wandeling, favorieten, taalvoorkeur, beoordelingsgeschiedenis en eerdere alleen lokaal opgeslagen wandelingen blijven op dit apparaat.",
+    "deleteConfirm": "Ik begrijp dat mijn account en mijn daarin opgeslagen wandelingen definitief worden verwijderd.",
+    "deletePermanently": "Account definitief verwijderen",
+    "deleted": "Je account en je daarin opgeslagen wandelingen zijn verwijderd. Lokale reisgegevens zijn behouden.",
+    "retentionBlocked": "Dit account bevat gegevens waarvan de bewaring moet worden beoordeeld. Zelf verwijderen is momenteel niet beschikbaar. Er zijn geen accountgegevens verwijderd.",
+    "reauthRequired": "Bevestig je huidige wachtwoord. Als je sessie is verlopen, log dan opnieuw in voordat je het account verwijdert."
   }
 }

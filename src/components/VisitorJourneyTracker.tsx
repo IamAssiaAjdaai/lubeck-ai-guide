@@ -14,6 +14,7 @@ export default function VisitorJourneyTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (pathname === "/account/reset-password") return;
     const identity = getBrowserVisitorSessionIdentity();
     const event = getVisitorJourneyEvent(pathname);
     if (!event) return;

@@ -531,5 +531,25 @@
     "title": "Reseña de CITYWALK",
     "description": "Una breve reseña ayuda a otros viajeros a descubrirnos.",
     "action": "Valorar CITYWALK"
+  },
+  "lifecycle": {
+    "resetRequestHelp": "Introduce el correo de tu cuenta para solicitar un enlace de restablecimiento.",
+    "resetRequested": "Solicitud recibida. Si existe una cuenta con este correo, encontrarás las instrucciones en la bandeja de entrada o en spam. Si no llega el correo, inténtalo más tarde.",
+    "emailSubject": "Restablece tu contraseña de CITYWALK",
+    "emailBody": "Usa el siguiente enlace de CITYWALK para elegir una nueva contraseña. Caduca en 30 minutos y solo se puede usar una vez.",
+    "emailIgnore": "Si no lo has solicitado, ignora este correo. Tu contraseña no ha cambiado.",
+    "invalidLink": "Este enlace no es válido, ha caducado o ya se ha usado. Solicita otro enlace en CITYWALK.",
+    "resetSuccess": "Tu contraseña se ha restablecido. Todas las sesiones anteriores han terminado. Inicia sesión con tu nueva contraseña.",
+    "resetSubmit": "Establecer nueva contraseña",
+    "validating": "Comprobando enlace…",
+    "unavailable": "La solicitud no está disponible temporalmente. Inténtalo más tarde.",
+    "rateLimited": "Demasiados intentos. Espera 15 minutos y vuelve a intentarlo.",
+    "deleteWarning": "Elimina permanentemente tu cuenta de CITYWALK, las rutas guardadas en ella y tu perfil. Todas las sesiones activas terminarán. Esta acción no se puede deshacer.",
+    "localDataRemains": "Tu ruta actual, favoritos, idioma, historial de valoraciones y rutas guardadas solo en el dispositivo permanecerán en este dispositivo.",
+    "deleteConfirm": "Entiendo que mi cuenta y las rutas guardadas en ella se eliminarán permanentemente.",
+    "deletePermanently": "Eliminar cuenta permanentemente",
+    "deleted": "Tu cuenta y las rutas guardadas en ella se han eliminado. Los datos locales de viaje se han conservado.",
+    "retentionBlocked": "Esta cuenta contiene registros cuya conservación requiere revisión. La eliminación automática no está disponible por ahora. No se ha eliminado ningún dato de la cuenta.",
+    "reauthRequired": "Confirma tu contraseña actual. Si la sesión ha caducado, vuelve a iniciar sesión antes de eliminar tu cuenta."
   }
 }

@@ -10,13 +10,14 @@ import { PasswordField } from "../../components/PasswordField";
 import { AppText, Card, PrimaryButton, PressableSurface, Screen, StatusMessage } from "../../components/ui";
 import { CitywalkLoading } from "../../components/CitywalkLoading";
 import { colors, radius, spacing, typography } from "../../design/tokens";
+import { deleteNativeAccount } from "../../lib/auth/lifecycle";
 import { nativeAuthClient } from "../../lib/auth/client";
 import { classifyNativeAuthError, type NativeAuthErrorCode, validateDisplayName, validateNativeAuthInput, validateNewPassword } from "../../lib/auth/errors";
 import { triggerCitywalkHaptic } from "../../lib/haptics";
 import { useNativeLocale } from "../../localization/LocaleProvider";
 
 type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "change-password" | "delete";
-type Action = "sign-in" | "sign-up" | "edit" | "change-password" | "sign-out";
+type Action = "sign-in" | "sign-up" | "edit" | "change-password" | "sign-out" | "reset" | "delete";
 
 export default function AccountScreen() {
   const { locale, direction, messages } = useNativeLocale();
@@ -29,6 +30,8 @@ export default function AccountScreen() {
   const [confirmation, setConfirmation] = useState("");
   const [busy, setBusy] = useState<Action>();
   const [failure, setFailure] = useState<NativeAuthErrorCode>();
+  const [deleteConfirmed, setDeleteConfirmed] = useState(false);
+  const [lifecycleFailure, setLifecycleFailure] = useState<TranslationKey>();
   const [notice, setNotice] = useState<TranslationKey>();
   const [entry, setEntry] = useState<Entry | undefined>(() => params.entry === "sign-in" || params.entry === "sign-up" ? params.entry : undefined);
   const submitLock = useRef(false);
@@ -50,6 +53,7 @@ export default function AccountScreen() {
   function clearPasswords() { setPassword(""); setNewPassword(""); setConfirmation(""); }
   const open = useCallback((next?: Entry) => {
     request.current++;
+    setDeleteConfirmed(false); setLifecycleFailure(undefined);
     setPassword(""); setNewPassword(""); setConfirmation("");
     setFailure(undefined); setNotice(undefined); setEntry(next);
     if (next === "edit") setName(session?.user.name ?? "");
@@ -71,11 +75,16 @@ export default function AccountScreen() {
     if (submitLock.current) return;
     submitLock.current = true;
     const token = ++request.current;
-    setBusy(action); setFailure(undefined); setNotice(undefined);
+    setBusy(action); setFailure(undefined); setNotice(undefined); setLifecycleFailure(undefined);
     try {
       const result = await work();
       if (!mounted.current || token !== request.current) return;
-      if (result.error) { setFailure(classifyNativeAuthError(result.error)); void triggerCitywalkHaptic("error"); return; }
+      if (result.error) {
+        const code = typeof result.error === "object" && result.error !== null && "code" in result.error ? result.error.code : undefined;
+        if (action === "reset" || action === "delete") setLifecycleFailure(code === "RETENTION_REVIEW_REQUIRED" ? "lifecycle.retentionBlocked" : code === "RATE_LIMITED" ? "lifecycle.rateLimited" : code === "REAUTH_REQUIRED" ? "lifecycle.reauthRequired" : "lifecycle.unavailable");
+        else setFailure(classifyNativeAuthError(result.error));
+        void triggerCitywalkHaptic("error"); return;
+      }
       clearPasswords(); success(); void triggerCitywalkHaptic("success");
     } catch {
       if (mounted.current && token === request.current) setFailure("network");
@@ -110,6 +119,18 @@ export default function AccountScreen() {
     void perform("change-password", () => nativeAuthClient.changePassword({ currentPassword: password, newPassword, revokeOtherSessions: true }), () => {
       setEntry(undefined); setNotice("profile.passwordChanged");
     });
+  }
+  function requestReset() {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setFailure("invalid_email"); setNotice(undefined); setLifecycleFailure(undefined); return; }
+    void perform("reset", async () => {
+      const result = await nativeAuthClient.requestPasswordReset({ email: email.trim(), fetchOptions: { headers: { "X-Citywalk-Locale": locale } } });
+      return result.error ? { error: result.error } : result.data?.status === true ? {} : { error: { code: "UNAVAILABLE" } };
+    }, () => setNotice("lifecycle.resetRequested"));
+  }
+  function deleteAccount() {
+    if (!session || !deleteConfirmed || !hasCredential) return;
+    if (!password) { setFailure("current_password_required"); return; }
+    void perform("delete", () => deleteNativeAccount(session.user.id, password), () => { setEntry(undefined); setNotice("lifecycle.deleted"); });
   }
   const isEmailEntry = !session && (entry === "sign-in" || entry === "sign-up");
   const label = (key: TranslationKey) => t(locale, key);
@@ -173,8 +194,8 @@ export default function AccountScreen() {
     {!session && entry === "reset" ? <Card>
       <AppText variant="heading">{label("profile.resetPassword")}</AppText>
       {emailField}
-      <StatusMessage>{label("profile.resetUnavailable")}</StatusMessage>
-      <PrimaryButton label={label("profile.sendResetLink")} disabled />
+      <AppText>{label("lifecycle.resetRequestHelp")}</AppText>
+      <PrimaryButton label={label("profile.sendResetLink")} busy={busy === "reset"} onPress={requestReset} />
     </Card> : null}
     {session && entry === "edit" ? <Card>
       <AppText variant="heading">{label("profile.editProfile")}</AppText>
@@ -193,9 +214,18 @@ export default function AccountScreen() {
     </Card> : null}
     {session && entry === "delete" ? <Card>
       <AppText variant="heading">{label("profile.deleteAccount")}</AppText>
-      <StatusMessage>{label("profile.deleteUnavailable")}</StatusMessage>
+      <AppText>{label("lifecycle.deleteWarning")}</AppText>
+      <AppText>{label("lifecycle.localDataRemains")}</AppText>
+      {hasCredential ? <>
+        <PasswordField label={label("profile.currentPassword")} value={password} onChange={setPassword} disabled={Boolean(busy)} />
+        <PressableSurface accessibilityRole="checkbox" accessibilityState={{ checked: deleteConfirmed, disabled: Boolean(busy) }} disabled={Boolean(busy)} onPress={() => setDeleteConfirmed(value => !value)} style={styles.deleteAction}>
+          <AppText variant="label">{deleteConfirmed ? "✓ " : "□ "}{label("lifecycle.deleteConfirm")}</AppText>
+        </PressableSurface>
+        <PrimaryButton label={label("lifecycle.deletePermanently")} busy={busy === "delete"} disabled={!deleteConfirmed || !password} onPress={deleteAccount} />
+      </> : <StatusMessage>{label("lifecycle.reauthRequired")}</StatusMessage>}
     </Card> : null}
     {failure ? <StatusMessage tone="error">{failure === "invalid_credentials" && entry === "change-password" ? label("profile.currentPasswordIncorrect") : authFailureMessage(failure, locale, messages)}</StatusMessage> : null}
+    {lifecycleFailure ? <StatusMessage tone="error">{label(lifecycleFailure)}</StatusMessage> : null}
     {notice ? <StatusMessage tone="success">{label(notice)}</StatusMessage> : null}
     {entry ? <PrimaryButton label={label("common.back")} tone="secondary" onPress={back} /> : null}
     {!session && entry ? <PrimaryButton label={messages.continueAsGuest} tone="secondary" onPress={leave} /> : null}

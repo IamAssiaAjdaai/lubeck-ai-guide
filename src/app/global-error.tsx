@@ -12,6 +12,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     if (
+      window.location.pathname !== "/account/reset-password" &&
       process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
       process.env.NEXT_PUBLIC_POSTHOG_HOST
     ) {
