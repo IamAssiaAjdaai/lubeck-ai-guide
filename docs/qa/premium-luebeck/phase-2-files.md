@@ -1,0 +1,66 @@
+# Phase 1 + Phase 2 exact source inventory
+
+This historical Phase 1/2 inventory is included in the Phase 3C premium checkpoint, alongside the later Phase 3 gate, validation fixtures and reports. Phase 1 foundation files are included because Phase 2 continued that implementation.
+
+- `docs/qa/premium-luebeck/README.md`
+- `docs/qa/premium-luebeck/phase-2-files.md`
+- `docs/qa/premium-luebeck/phase-2.md`
+- `drizzle/0015_majestic_lake.sql`
+- `drizzle/meta/0015_snapshot.json`
+- `drizzle/meta/_journal.json`
+- `mobile/app.config.ts`
+- `mobile/app.json`
+- `mobile/eas.json`
+- `mobile/package-lock.json`
+- `mobile/package.json`
+- `mobile/src/app/_layout.tsx`
+- `mobile/src/app/city/[citySlug]/walk.tsx`
+- `mobile/src/components/CityUnlockGate.tsx`
+- `mobile/src/components/NativeBillingRecovery.tsx`
+- `mobile/src/components/NativeWalkFlow.tsx`
+- `mobile/src/lib/cityUnlock.ts`
+- `mobile/src/lib/cityUnlockAccess.ts`
+- `mobile/src/lib/nativeBilling.ts`
+- `mobile/src/lib/nativeBillingRuntime.ts`
+- `mobile/tests/app-config.test.ts`
+- `mobile/tests/city-unlock-access.test.ts`
+- `mobile/tests/city-unlock-gate.test.tsx`
+- `mobile/tests/city-unlock.test.ts`
+- `mobile/tests/native-billing.test.ts`
+- `mobile/tests/walk-flow.test.tsx`
+- `package-lock.json`
+- `package.json`
+- `packages/i18n/src/locales/ar.json`
+- `packages/i18n/src/locales/da.json`
+- `packages/i18n/src/locales/de.json`
+- `packages/i18n/src/locales/en.json`
+- `packages/i18n/src/locales/es.json`
+- `packages/i18n/src/locales/nl.json`
+- `packages/i18n/src/locales/sv.json`
+- `packages/traveler-core/src/cityUnlock.ts`
+- `packages/traveler-core/src/index.ts`
+- `scripts/test-account-saved-walks.mjs`
+- `scripts/test-native-billing.mjs`
+- `src/app/api/commerce/city-unlock/[citySlug]/route.test.ts`
+- `src/app/api/commerce/city-unlock/[citySlug]/route.ts`
+- `src/app/api/commerce/native/context/route.ts`
+- `src/app/api/commerce/native/notifications/apple/route.ts`
+- `src/app/api/commerce/native/notifications/google/route.ts`
+- `src/db/commerceSchema.ts`
+- `src/lib/commerce/cityPassAccess.server.ts`
+- `src/lib/commerce/cityUnlock-compatibility.server.test.ts`
+- `src/lib/commerce/cityUnlock.server.test.ts`
+- `src/lib/commerce/cityUnlock.server.ts`
+- `src/lib/commerce/native/config.server.ts`
+- `src/lib/commerce/native/http.server.ts`
+- `src/lib/commerce/native/ledger.integration.test.ts`
+- `src/lib/commerce/native/ledger.server.ts`
+- `src/lib/commerce/native/native-billing.server.test.ts`
+- `src/lib/commerce/native/notifications.test.ts`
+- `src/lib/commerce/native/provider-boundary.test.ts`
+- `src/lib/commerce/native/providers.server.ts`
+- `src/lib/commerce/native/service.server.ts`
+- `src/lib/commerce/queries.server.ts`
+- `src/lib/commerce/webhook.server.ts`
+
+Held and unchanged: `mobile/src/lib/publicContentCache.ts`, `mobile/tests/public-content-cache.test.ts`, `tsconfig.json`, existing `.expo/`, ignored private environment files and the pre-existing stash. The generated Drizzle migration snapshot/journal are required schema source; no native build output is included.

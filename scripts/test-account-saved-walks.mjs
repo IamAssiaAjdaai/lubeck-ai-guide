@@ -20,10 +20,11 @@ try {
   const pool = new Pool({ connectionString: target.toString() });
   try {
     const journal = JSON.parse(await readFile("drizzle/meta/_journal.json", "utf8"));
-    assert.equal(journal.entries.at(-1).tag, "0014_orange_vision");
+    const savedMigration = journal.entries.findIndex(entry => entry.tag === "0014_orange_vision");
+    assert.ok(savedMigration > 0);
     baselineFolder = await mkdtemp(join(tmpdir(), "citywalk-saved-migration-"));
     await mkdir(join(baselineFolder, "meta"));
-    const previous = journal.entries.slice(0, -1);
+    const previous = journal.entries.slice(0, savedMigration);
     await writeFile(join(baselineFolder, "meta/_journal.json"), JSON.stringify({ ...journal, entries: previous }));
     for (const entry of previous) await copyFile(`drizzle/${entry.tag}.sql`, join(baselineFolder, `${entry.tag}.sql`));
     await migrate(drizzle(pool), { migrationsFolder: baselineFolder });

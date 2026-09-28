@@ -551,5 +551,47 @@
     "deleted": "Dein Konto und die darin gespeicherten Touren wurden gelöscht. Lokale Reisedaten bleiben erhalten.",
     "retentionBlocked": "Dieses Konto enthält Datensätze, deren Aufbewahrung geprüft werden muss. Die selbstständige Löschung ist derzeit nicht verfügbar. Es wurden keine Kontodaten gelöscht.",
     "reauthRequired": "Bestätige dein aktuelles Passwort. Falls deine Sitzung abgelaufen ist, melde dich vor dem Löschen erneut an."
+  },
+  "unlock": {
+    "title": "{city} freischalten",
+    "subtitle": "{city}, ganz persönlich.",
+    "description": "Eine Stadt. Dein Tempo. Deine Interessen. Deine Zeit.",
+    "once": "Einmal kaufen. Voller CITYWALK-Zugang für {city}.",
+    "availability": "Geschichten und lokale Antworten hängen von verfügbaren Inhalten und Sprachen ab.",
+    "purchase": "{city} freischalten — {price}",
+    "restore": "Käufe wiederherstellen",
+    "notNow": "Nicht jetzt",
+    "retry": "Erneut prüfen",
+    "continue": "Dieses Erlebnis starten",
+    "account": "Melde dich an oder erstelle ein Konto, um deinen Stadtzugang zu behalten. Deine Route bleibt unverändert.",
+    "benefits": {
+      "route": "Dein Tag, nach deinen Wünschen geplant.",
+      "adapt": "Pläne ändern, ohne neu anzufangen.",
+      "stories": "Geschichten, soweit in deiner Sprache verfügbar",
+      "guide": "Frag CITYWALK unterwegs nach lokaler Hilfe",
+      "discoveries": "Kuratierte Entdeckungen entlang deines Wegs"
+    },
+    "states": {
+      "store_product_loading": "Dein Stadtzugang wird geprüft…",
+      "store_product_unavailable": "Käufe sind noch nicht verfügbar. Deine Route bleibt unverändert.",
+      "ready": "Dein {city}-Erlebnis wartet auf dich.",
+      "purchase_started": "Der Store wird geöffnet…",
+      "purchase_pending": "Dein Kauf ist noch ausstehend. Hier wird kein weiterer Kauf gestartet.",
+      "purchase_cancelled": "Kauf abgebrochen. Deine Route bleibt unverändert.",
+      "purchase_failed": "Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
+      "verification_pending": "Dein Kauf wird überprüft…",
+      "verification_failed": "Dein Kauf konnte nicht bestätigt werden. Prüfe erneut oder stelle Käufe wieder her.",
+      "entitlement_activating": "Dein Stadtzugang wird aktiviert…",
+      "unlocked": "{city} freigeschaltet. Dein CITYWALK ist bereit.",
+      "already_owned": "{city} ist bereits freigeschaltet.",
+      "restore_started": "Deine Store-Käufe werden geprüft…",
+      "restore_success": "Dein {city}-Zugang wurde wiederhergestellt.",
+      "nothing_to_restore": "Für dieses Store-Konto wurde kein {city}-Kauf gefunden.",
+      "restore_failed": "Käufe konnten nicht wiederhergestellt werden. Bitte versuche es erneut.",
+      "account_required": "Melde dich beim CITYWALK-Konto an, das mit deinem Kauf verknüpft ist.",
+      "access_unavailable": "Dein Stadtzugang konnte nicht geprüft werden. Bitte versuche es erneut.",
+      "account_conflict": "Dieser Kauf gehört zu einem anderen CITYWALK-Konto. Melde dich beim ursprünglichen Konto an, um ihn wiederherzustellen.",
+      "purchase_revoked": "Dieser Kauf ist nicht mehr aktiv. Prüfe dein Store-Konto oder kontaktiere den Support."
+    }
   }
 }

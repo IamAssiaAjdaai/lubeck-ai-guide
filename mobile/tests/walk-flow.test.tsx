@@ -42,6 +42,7 @@ vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { fetchAuthenticated: a
   return Response.json({ walk: record });
 } } }));
 vi.mock("../src/lib/storeReview", () => ({ storeReview: { afterCompletion: async () => ({ status: "unavailable" }), configuredUrl: () => undefined } }));
+vi.mock("../src/components/ImageOverlayHero", () => ({ ImageOverlayHero: () => null }));
 vi.mock("expo-router", () => ({
   useFocusEffect: (callback: () => void) => useEffect(callback, [callback]),
   Stack: { Screen: () => null },
@@ -51,6 +52,7 @@ vi.mock("expo-router", () => ({
   useRouter: () => ({ replace: vi.fn() }), router: { push: vi.fn() },
 }));
 vi.mock("react-native", () => ({
+  Platform: { OS: "ios" },
   StyleSheet: { create: (styles: unknown) => styles },
   View: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   ActivityIndicator: () => <span>Loading</span>,
@@ -284,14 +286,14 @@ const places: PublicPlaceCard[] = Array.from({ length: 6 }, (_, i) => ({
   didFallback: false,
   content: { name: `Place ${i}`, shortDescription: "Published place" },
 }));
-function setup() {
+function setup(authorizeStart?: () => Promise<boolean>) {
   mocks.load.mockResolvedValue(undefined);
   mocks.persist.mockResolvedValue(undefined);
   mocks.save.mockResolvedValue(undefined);
   mocks.feedback.mockResolvedValue(undefined);
   mocks.share.mockResolvedValue({});
   mocks.location.mockResolvedValue({ status: "denied" });
-  render(<NativeWalkFlow citySlug="city" cityName="City" places={places} />);
+  render(<NativeWalkFlow citySlug="city" cityName="City" places={places} authorizeStart={authorizeStart} />);
 }
 afterEach(() => {
   mocks.holdPresentation = false; mocks.presented = undefined;
@@ -311,6 +313,35 @@ async function preview() {
   await screen.findByRole("button", { name: t.startWalk });
 }
 describe("rendered native V2 flow (native bridges mocked, not device acceptance)", () => {
+  it("revalidates the plan when its last stop disappears during Start authorization", async () => {
+    let allow!: (value: boolean) => void;
+    const authorize = vi.fn(() => new Promise<boolean>(resolve => { allow = resolve; }));
+    setup(authorize); await preview();
+    const writes = mocks.persist.mock.calls.length;
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").startWalk }));
+    await waitFor(() => expect(authorize).toHaveBeenCalledOnce());
+    act(() => { mocks.current = { ...mocks.current!, journey: { ...mocks.current!.journey, remaining: [] } }; });
+    await act(async () => { allow(true); });
+    expect(mocks.current?.phase).toBe("preview");
+    expect(mocks.persist).toHaveBeenCalledTimes(writes);
+    expect(screen.queryByRole("button", { name: walkCopy("en").visited })).toBeNull();
+  });
+  it("keeps the exact preview when Start authorization is dismissed, then starts once authorized", async () => {
+    const authorize = vi.fn().mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+    setup(authorize);
+    await preview();
+    const before = structuredClone(mocks.current);
+    const writes = mocks.persist.mock.calls.length;
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").startWalk }));
+    await waitFor(() => expect(authorize).toHaveBeenCalledOnce());
+    await waitFor(() => expect(screen.getByRole("button", { name: walkCopy("en").startWalk }).hasAttribute("disabled")).toBe(false));
+    expect(mocks.current).toEqual(before);
+    expect(mocks.persist).toHaveBeenCalledTimes(writes);
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").startWalk }));
+    await screen.findByRole("button", { name: walkCopy("en").visited });
+    expect(authorize).toHaveBeenCalledTimes(2);
+    expect(mocks.persist).toHaveBeenCalledTimes(writes + 1);
+  });
   it.each(sharedLocales)(
     "plans, previews, saves and starts in %s",
     async (locale) => {

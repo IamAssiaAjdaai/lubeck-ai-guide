@@ -137,3 +137,18 @@ describe("CITYWALK native app configuration", () => {
     });
   });
 });
+
+it("sandbox billing requires Preview/HTTPS and uses the Store identifier", () => {
+  const previousBilling=process.env.EXPO_PUBLIC_CITYWALK_BILLING, previousOrigin=process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN;
+  try {
+    process.env.EXPO_PUBLIC_CITYWALK_BILLING="sandbox"; delete process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN;
+    expect(()=>createCitywalkExpoConfig({name:"CITYWALK",slug:"citywalk-mobile"},"preview")).toThrow();
+    process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN="https://isolated-preview.example.test";
+    const config=createCitywalkExpoConfig({name:"CITYWALK",slug:"citywalk-mobile"},"preview");
+    expect(config.ios?.bundleIdentifier).toBe("com.citywalk.app");expect(config.android?.package).toBe("com.citywalk.app");
+    expect(()=>createCitywalkExpoConfig({name:"CITYWALK",slug:"citywalk-mobile"},"production")).toThrow();
+  } finally {
+    if(previousBilling===undefined)delete process.env.EXPO_PUBLIC_CITYWALK_BILLING;else process.env.EXPO_PUBLIC_CITYWALK_BILLING=previousBilling;
+    if(previousOrigin===undefined)delete process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN;else process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN=previousOrigin;
+  }
+});

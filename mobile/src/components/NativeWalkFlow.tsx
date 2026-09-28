@@ -90,6 +90,7 @@ export function NativeWalkFlow({
   addSlug,
   accountSaved = false,
   contentStatus = "available",
+  authorizeStart,
 }: {
   citySlug: string;
   cityName: string;
@@ -98,6 +99,7 @@ export function NativeWalkFlow({
   accountSaved?: boolean;
   addSlug?: string;
   contentStatus?: "available" | "loading" | "error";
+  authorizeStart?: () => Promise<boolean>;
 }) {
   const { locale, messages } = useNativeLocale(),
     t = walkCopy(locale),
@@ -450,6 +452,8 @@ export function NativeWalkFlow({
     if (!journey || updateLock.current) return;
     updateLock.current = true; setUpdating(true);
     try {
+      if (walkStartStatus(journey, places, contentStatus === "available") !== "ready") return;
+      if (authorizeStart && !await authorizeStart()) return;
       const next = await startCurrentWalk(citySlug, journey.id, places, contentStatus === "available");
       setJourney(next.journey); setNow(Date.now()); setStage("active");
     } catch (error) {

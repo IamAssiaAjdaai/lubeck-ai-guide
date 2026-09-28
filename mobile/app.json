@@ -68,7 +68,8 @@
           "imageWidth": 168,
           "resizeMode": "contain"
         }
-      ]
+      ],
+      "expo-iap"
     ],
     "experiments": {
       "typedRoutes": true,

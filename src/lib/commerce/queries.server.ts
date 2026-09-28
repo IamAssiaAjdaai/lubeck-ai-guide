@@ -193,10 +193,12 @@ export async function getAdminCommerceOverview() {
 }
 
 export function formatMinorCurrency(
-  amount: number,
-  currency: string,
+  amount: number | null,
+  currency: string | null,
   locale: string,
 ): string {
+  // Native verification may not provide authoritative paid monetary data.
+  if (amount === null || currency === null) return "—";
   const formatter = new Intl.NumberFormat(locale, {
     style: "currency",
     currency: currency.toUpperCase(),

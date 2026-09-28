@@ -1,0 +1,18 @@
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
+vi.mock("server-only",()=>({}));
+const m=vi.hoisted(()=>({notification:vi.fn(),transaction:vi.fn(),normalize:vi.fn(),google:vi.fn(),authorization:vi.fn(),deliver:vi.fn()}));
+vi.mock("./providers.server",()=>({appleClients:()=>({verifier:{verifyAndDecodeNotification:m.notification,verifyAndDecodeTransaction:m.transaction}}),normalizeApple:m.normalize,verifyGoogle:m.google,verifyGooglePushAuthorization:m.authorization}));
+vi.mock("./ledger.server",()=>({deliverNativePurchase:m.deliver}));
+import { POST as apple } from "@/app/api/commerce/native/notifications/apple/route";
+import { POST as google } from "@/app/api/commerce/native/notifications/google/route";
+const request=(body:unknown)=>new Request("https://preview.test/notification",{method:"POST",headers:{"Content-Type":"application/json",authorization:"Bearer fake-test-only"},body:JSON.stringify(body)});
+const purchase={provider:"apple_sandbox",transactionKey:"hash",binding:"owner-binding",state:"revoked"};
+afterEach(()=>vi.unstubAllEnvs());
+beforeEach(()=>{vi.stubEnv("VERCEL_ENV","preview");vi.stubEnv("CITYWALK_NATIVE_BILLING_MODE","sandbox");vi.stubEnv("CITYWALK_NATIVE_ACCOUNT_SECRET","s".repeat(40));vi.stubEnv("CITYWALK_GOOGLE_TEST_PURCHASES","1");vi.stubEnv("CITYWALK_GOOGLE_SERVICE_ACCOUNT",JSON.stringify({type:"service_account",client_email:"test@example.test",private_key:"synthetic-test-only"}));vi.clearAllMocks();m.notification.mockResolvedValue({data:{signedTransactionInfo:"signed"}});m.transaction.mockResolvedValue({});m.normalize.mockReturnValue(purchase);m.authorization.mockResolvedValue(undefined);m.google.mockResolvedValue({...purchase,provider:"google_test"});m.deliver.mockResolvedValue("revoked");});
+it("Apple validates outer and nested signatures before revoking",async()=>{expect((await apple(request({signedPayload:"signed-notification"}))).status).toBe(200);expect(m.transaction).toHaveBeenCalledWith("signed");expect(m.deliver).toHaveBeenCalledWith(purchase);});
+it("invalid Apple signature cannot reach mutation or expose evidence",async()=>{m.notification.mockRejectedValue(new Error("sensitive evidence"));const r=await apple(request({signedPayload:"forged"}));expect(r.status).toBe(503);expect(await r.text()).not.toContain("sensitive");expect(m.deliver).not.toHaveBeenCalled();});
+it("Apple stale success notification never creates/reactivates a grant",async()=>{m.normalize.mockReturnValue({...purchase,state:"purchased"});expect((await apple(request({signedPayload:"signed"}))).status).toBe(200);expect(m.deliver).not.toHaveBeenCalled();});
+const message=(extra={})=>({message:{data:Buffer.from(JSON.stringify({packageName:"com.citywalk.app",oneTimeProductNotification:{purchaseToken:"token"},...extra})).toString("base64")}});
+it("Google authenticates push then verifies current ownership before revocation",async()=>{expect((await google(request(message()))).status).toBe(200);expect(m.authorization).toHaveBeenCalledWith("Bearer fake-test-only");expect(m.google).toHaveBeenCalledWith("token");expect(m.deliver).toHaveBeenCalledOnce();});
+it("Google invalid OIDC or wrong package cannot mutate",async()=>{m.authorization.mockRejectedValueOnce(new Error("invalid"));expect((await google(request(message()))).status).toBe(503);expect((await google(request(message({packageName:"other"})))).status).toBe(400);expect(m.google).not.toHaveBeenCalled();expect(m.deliver).not.toHaveBeenCalled();});
+it("Google delayed success cannot grant from a notification",async()=>{m.google.mockResolvedValue({...purchase,state:"purchased"});expect((await google(request(message()))).status).toBe(200);expect(m.deliver).not.toHaveBeenCalled();});

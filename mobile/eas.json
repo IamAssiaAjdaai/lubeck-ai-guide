@@ -44,6 +44,22 @@
       "env": {
         "EXPO_PUBLIC_CITYWALK_ENV": "production"
       }
+    },
+    "billing-sandbox": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "environment": "preview",
+      "env": {
+        "EXPO_PUBLIC_CITYWALK_ENV": "preview",
+        "EXPO_PUBLIC_CITYWALK_BILLING": "sandbox",
+        "EXPO_PUBLIC_CITYWALK_UNLOCK_PREVIEW": "1"
+      },
+      "ios": {
+        "buildConfiguration": "Debug"
+      },
+      "android": {
+        "buildType": "apk"
+      }
     }
   },
   "submit": {

@@ -32,8 +32,8 @@ type StoredOrder = Readonly<{
     | "refunded"
     | "canceled"
     | "failed";
-  currency: string;
-  amountTotal: number;
+  currency: string | null;
+  amountTotal: number | null;
 }>;
 
 type ProductGrant = Readonly<{
@@ -127,7 +127,7 @@ export async function applyNormalizedProviderEvent(
     }
     if (
       order.amountTotal !== event.amountTotal ||
-      order.currency.toLowerCase() !== event.currency.toLowerCase()
+      order.currency?.toLowerCase() !== event.currency.toLowerCase()
     ) {
       throw new CommerceWebhookError("AMOUNT_MISMATCH");
     }

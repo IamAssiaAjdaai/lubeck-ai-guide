@@ -551,5 +551,47 @@
     "deleted": "Ditt konto och dina kontosparade promenader har raderats. Lokala resedata finns kvar.",
     "retentionBlocked": "Kontot innehåller uppgifter vars lagring behöver granskas. Självbetjänad radering är inte tillgänglig just nu. Inga kontouppgifter har raderats.",
     "reauthRequired": "Bekräfta ditt nuvarande lösenord. Om sessionen har gått ut ska du logga in igen innan du raderar kontot."
+  },
+  "unlock": {
+    "title": "Lås upp {city}",
+    "subtitle": "{city}, på ditt sätt.",
+    "description": "En stad. Ditt tempo. Dina intressen. Din tid.",
+    "once": "Ett köp. Full CITYWALK-tillgång till {city}.",
+    "availability": "Berättelser och lokala svar beror på tillgängligt innehåll och språk.",
+    "purchase": "Lås upp {city} — {price}",
+    "restore": "Återställ köp",
+    "notNow": "Inte nu",
+    "retry": "Kontrollera igen",
+    "continue": "Starta upplevelsen",
+    "account": "Logga in eller skapa ett konto för att behålla din tillgång till staden. Din rutt ändras inte.",
+    "benefits": {
+      "route": "Din dag, planerad för dig.",
+      "adapt": "Ändra planer utan att börja om.",
+      "stories": "Berättelser där de finns på ditt språk",
+      "guide": "Fråga CITYWALK om lokal hjälp under promenaden",
+      "discoveries": "Utvalda upptäckter längs vägen"
+    },
+    "states": {
+      "store_product_loading": "Kontrollerar din tillgång till staden…",
+      "store_product_unavailable": "Köp är inte tillgängliga ännu. Din rutt är oförändrad.",
+      "ready": "Din {city}-upplevelse är redo att låsas upp.",
+      "purchase_started": "Öppnar butiken…",
+      "purchase_pending": "Ditt köp väntar. Inget nytt köp startas här.",
+      "purchase_cancelled": "Köp avbrutet. Din rutt är oförändrad.",
+      "purchase_failed": "Köpet kunde inte slutföras. Försök igen.",
+      "verification_pending": "Verifierar ditt köp…",
+      "verification_failed": "Ditt köp kunde inte verifieras. Kontrollera igen eller återställ köp.",
+      "entitlement_activating": "Aktiverar din tillgång till staden…",
+      "unlocked": "{city} är upplåst. Din CITYWALK är redo.",
+      "already_owned": "{city} är redan upplåst.",
+      "restore_started": "Kontrollerar dina butiksköp…",
+      "restore_success": "Tillgång till {city} återställd.",
+      "nothing_to_restore": "Inget {city}-köp hittades för detta butikskonto.",
+      "restore_failed": "Köp kunde inte återställas. Försök igen.",
+      "account_required": "Logga in på CITYWALK-kontot som är kopplat till ditt köp.",
+      "access_unavailable": "Din tillgång till staden kunde inte kontrolleras. Försök igen.",
+      "account_conflict": "Det här köpet tillhör ett annat CITYWALK-konto. Logga in på det ursprungliga kontot för att återställa det.",
+      "purchase_revoked": "Det här köpet är inte längre aktivt. Kontrollera ditt butikskonto eller kontakta support."
+    }
   }
 }

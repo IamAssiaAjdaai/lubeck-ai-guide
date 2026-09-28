@@ -1,0 +1,4 @@
+ALTER TABLE "commerce_orders" ALTER COLUMN "price_id" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "commerce_orders" ALTER COLUMN "currency" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "commerce_orders" ALTER COLUMN "amount_total" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "commerce_orders" ADD CONSTRAINT "commerce_orders_financial_evidence" CHECK (("commerce_orders"."price_id" IS NOT NULL AND "commerce_orders"."currency" IS NOT NULL AND "commerce_orders"."amount_total" IS NOT NULL) OR ("commerce_orders"."provider" IN ('apple_sandbox', 'google_test') AND "commerce_orders"."price_id" IS NULL AND "commerce_orders"."currency" IS NULL AND "commerce_orders"."amount_total" IS NULL));
