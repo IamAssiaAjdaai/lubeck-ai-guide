@@ -26,7 +26,7 @@ export function buildLiveWalkPresentation(
   position: Point,
   observedAt = Date.now(),
 ): LiveWalkPresentation | undefined {
-  const target = session.takeBack ? session.finish : session.stops[0];
+  const target = session.takeBack ? session.finish : session.stops[0] ?? session.finish;
   if (!target) return undefined;
 
   const targetPoint = "point" in target ? target.point : undefined;
