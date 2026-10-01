@@ -593,5 +593,31 @@
       "account_conflict": "Det här köpet tillhör ett annat CITYWALK-konto. Logga in på det ursprungliga kontot för att återställa det.",
       "purchase_revoked": "Det här köpet är inte längre aktivt. Kontrollera ditt butikskonto eller kontakta support."
     }
+  },
+  "liveWalk": {
+    "liveWalk": "Live Walk",
+    "next": "NÄSTA",
+    "almostThere": "Nästan framme",
+    "arrived": "Du är framme",
+    "storyReady": "Berättelse klar",
+    "routeUpdated": "Rutten uppdaterad",
+    "backTo": "TILLBAKA TILL",
+    "distanceEta": "{distance} bort · ~{minutes} min",
+    "stops": "{visited} / {total} stopp",
+    "remaining": "{time} kvar",
+    "finish": "Slut ~{time}",
+    "backBy": "Tillbaka senast {time}",
+    "ahead": "{minutes} min före",
+    "onSchedule": "I tid",
+    "behind": "{minutes} min efter",
+    "turnOn": "Slå på Live Walk",
+    "turnOff": "Stäng av Live Walk",
+    "continueWalk": "Fortsätt promenaden",
+    "manageWalk": "Hantera promenad",
+    "permissionHelp": "Håll promenaden uppdaterad på låsskärmen medan CITYWALK körs i bakgrunden.",
+    "locationNeeded": "Tillåt platsåtkomst i bakgrunden för att använda Live Walk.",
+    "unavailable": "Live Walk är inte tillgänglig på den här enheten.",
+    "enabled": "Live Walk är på",
+    "inspect": "Inspektera Live Walk"
   }
 }
