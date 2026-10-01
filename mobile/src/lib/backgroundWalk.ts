@@ -181,7 +181,7 @@ export async function getLiveWalkRuntimeStatus() {
     taskRegistered,
     status: session?.enabled ? "enabled" : "disabled",
     journeyEligible: Boolean(
-      session && (session.takeBack ? session.finish : session.stops[0]),
+      session && (session.takeBack ? session.finish : session.stops[0] ?? session.finish),
     ),
     featureEnabled: session?.enabled ?? false,
   };
@@ -213,7 +213,7 @@ async function publishPoint(
   timestamp: number,
   force: boolean,
 ): Promise<void> {
-  const target = session.takeBack ? session.finish : session.stops[0];
+  const target = session.takeBack ? session.finish : session.stops[0] ?? session.finish;
   if (!target) return;
   const { distanceMeters } = liveWalkDistanceAndEta(point, target.point);
   const proximity = updateLiveWalkProximity(
