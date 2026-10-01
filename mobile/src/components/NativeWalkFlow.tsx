@@ -749,13 +749,30 @@ export function NativeWalkFlow({
   const eta =
     (stage === "preview" ? generatedAt : now) + (route?.minutes ?? 0) * 60000;
   const deadline = journey?.settings.deadline;
-  const itinerary = (items: PublicPlaceCard[], interactive = true) => (
+  const livePresentation =
+    journey &&
+    liveSession?.journeyId === journey.id
+      ? buildLiveWalkPresentation(
+          liveSession,
+          liveSession.lastPublished?.point ?? journey.position,
+          now,
+        )
+      : undefined;
+  const liveNavigationTarget = journey?.takeBack
+    ? journey.finish
+    : current?.coordinates ?? journey?.finish;
+  const itinerary = (
+    items: PublicPlaceCard[],
+    interactive = true,
+    removeInOverflow = false,
+  ) => (
     <View style={styles.section}>
       <SectionTitle>{t.itinerary}</SectionTitle>
       <V2Itinerary
         places={items}
         citySlug={citySlug}
         interactive={interactive}
+        removeInOverflow={removeInOverflow}
       />
     </View>
   );
@@ -1026,7 +1043,11 @@ export function NativeWalkFlow({
                 </AppText>
               ) : null}
               <SectionTitle>
-                {current ? nativePlaceName(citySlug, current.slug, current.content.name, locale) : t.remaining}
+                {current
+                  ? nativePlaceName(citySlug, current.slug, current.content.name, locale)
+                  : journey.takeBack
+                    ? finishNameFor(journey) ?? t.destination
+                    : t.remaining}
               </SectionTitle>
               {current ? (
                 <AppText numberOfLines={1} style={styles.muted}>
@@ -1036,7 +1057,7 @@ export function NativeWalkFlow({
             </View>
           )}
           {stage === "preview" ? summary(route) : null}
-          <View
+          {stage === "preview" ? <View
             style={[
               styles.returnCard,
               deadline && eta > deadline ? styles.lateCard : undefined,
@@ -1065,8 +1086,8 @@ export function NativeWalkFlow({
                 </AppText>
               ) : null}
             </View>
-          </View>
-          {deadline && eta > deadline ? (
+          </View> : null}
+          {stage === "preview" && deadline && eta > deadline ? (
             <StatusMessage>{t.late}</StatusMessage>
           ) : null}
           {stage === "preview" ? (
@@ -1086,9 +1107,12 @@ export function NativeWalkFlow({
               routeStart={journey.position}
               routeFinish={journey.finish}
               currentSlug={current?.slug}
+              compact={stage === "active"}
               onLocation={(point) => {
-                if (stage === "active")
+                if (stage === "active") {
+                  void publishForegroundLiveWalkLocation(point);
                   void update({ ...journey, position: point });
+                }
               }}
             />
           ) : null}
@@ -1131,32 +1155,93 @@ export function NativeWalkFlow({
             </>
           ) : (
             <>
+              {livePresentation ? (
+                <NativeLiveWalkCard presentation={livePresentation} />
+              ) : null}
+              {Platform.OS === "ios" && !liveSession?.enabled ? (
+                <>
+                  <AppText variant="metadata" style={styles.muted}>
+                    {translate(locale, "liveWalk.permissionHelp")}
+                  </AppText>
+                  <PrimaryButton
+                    label={translate(locale, "liveWalk.turnOn")}
+                    busy={liveBusy}
+                    onPress={() => void toggleLiveWalk()}
+                  />
+                </>
+              ) : null}
+              <PrimaryButton
+                label={translate(locale, "liveWalk.continueWalk")}
+                disabled={!liveNavigationTarget}
+                onPress={() => {
+                  if (liveNavigationTarget) void navigate(liveNavigationTarget);
+                }}
+              />
+
+              <SectionTitle>{t.tripControls}</SectionTitle>
+              <View style={styles.controls}>
+                <PrimaryButton
+                  compact
+                  style={styles.control}
+                  wrapLabel
+                  tone="secondary"
+                  label={t.add}
+                  disabled={journey.takeBack === true}
+                  onPress={() => {
+                    setProposalKind("adaptation");
+                    setProposalMessage("");
+                    setPanel("add");
+                  }}
+                  leadingIcon={<NativeIcon ios="plus" android="add" />}
+                />
+                <PrimaryButton
+                  compact
+                  style={styles.control}
+                  wrapLabel
+                  tone="secondary"
+                  label={t.shorten}
+                  disabled={!current || journey.takeBack === true}
+                  onPress={shorten}
+                  leadingIcon={
+                    <NativeIcon
+                      ios="arrow.triangle.branch"
+                      android="alt_route"
+                    />
+                  }
+                />
+                <PrimaryButton
+                  compact
+                  style={styles.control}
+                  wrapLabel
+                  tone="secondary"
+                  label={t.takeBack}
+                  onPress={() => setPanel("back")}
+                  leadingIcon={
+                    <NativeIcon ios="arrow.uturn.backward" android="undo" />
+                  }
+                />
+              </View>
+
+              {panel === "back" ? (
+                <View style={styles.section}>
+                  <PrimaryButton
+                    label={t.tripStart}
+                    onPress={() => back(journey.settings.start)}
+                  />
+                  <WalkPlacePicker
+                    label={t.destination}
+                    options={options}
+                    selected={[]}
+                    onSelect={(slug) => {
+                      const place = places.find((candidate) => candidate.slug === slug);
+                      if (place) back(place.coordinates);
+                    }}
+                  />
+                </View>
+              ) : null}
+
               {current ? (
                 <>
-                  <View style={styles.navigationBar}>
-                    <AppText style={styles.flex}>
-                      {duration(
-                        estimateWalkingMinutes(
-                          calculateDistanceMeters(
-                            journey.position,
-                            current.coordinates,
-                          ) ?? 0,
-                        ) ?? 0,
-                      )}{" "}
-                      ·{" "}
-                      {distance(
-                        calculateDistanceMeters(
-                          journey.position,
-                          current.coordinates,
-                        ) ?? 0,
-                      )}
-                    </AppText>
-                    <PrimaryButton
-                      style={styles.flex}
-                      label={t.navigate}
-                      onPress={() => void navigate(current.coordinates)}
-                    />
-                  </View>
                   <View style={styles.actionRow}>
                     {[
                       {
@@ -1222,119 +1307,72 @@ export function NativeWalkFlow({
                       />
                     </Link>
                   </View>
-                </>
-              ) : journey.finish ? (
-                <PrimaryButton
-                  label={t.navigate}
-                  onPress={() => void navigate(journey.finish!)}
-                />
-              ) : null}
-              <SectionTitle>{t.tripControls}</SectionTitle>
-              <View style={styles.controls}>
-                {current ? (
-                  <PrimaryButton
-                    compact
-                    style={styles.control}
-                    wrapLabel
-                    tone="secondary"
-                    label={t.skip}
-                    leadingIcon={
-                      <NativeIcon ios="forward.end" android="skip_next" />
-                    }
-                    onPress={() =>
-                      setProposed(
-                        measureWalk(
-                          route.places.slice(1),
-                          journey.position,
-                          journey.finish,
-                        ),
-                      )
-                    }
-                  />
-                ) : null}
-                <PrimaryButton
-                  compact
-                  style={styles.control}
-                  wrapLabel
-                  tone="secondary"
-                  label={t.shorten}
-                  onPress={shorten}
-                  leadingIcon={
-                    <NativeIcon
-                      ios="arrow.triangle.branch"
-                      android="alt_route"
+                  <View style={styles.actionRow}>
+                    <PrimaryButton
+                      style={styles.flex}
+                      label={t.visited}
+                      busy={updating}
+                      onPress={() =>
+                        void update(advanceWalk(journey, current, true))
+                      }
                     />
-                  }
-                />
-                <PrimaryButton
-                  compact
-                  style={styles.control}
-                  wrapLabel
-                  tone="secondary"
-                  label={t.add}
-                  onPress={() => { setProposalMessage(""); setPanel("add"); }}
-                  leadingIcon={<NativeIcon ios="plus" android="add" />}
-                />
-                <PrimaryButton
-                  compact
-                  style={styles.control}
-                  wrapLabel
-                  tone="secondary"
-                  label={t.takeBack}
-                  onPress={() => setPanel("back")}
-                  leadingIcon={
-                    <NativeIcon ios="arrow.uturn.backward" android="undo" />
-                  }
-                />
-              </View>
-              <View style={styles.assistant}>
-                <View style={styles.handle} />
-                <AppText variant="caption" style={styles.eyebrow}>
-                  CITYWALK · {t.ask}
-                </AppText>
-                <View style={styles.actionRow}>
-                  <PrimaryButton
-                    style={styles.flex}
-                    wrapLabel
-                    tone="secondary"
-                    label={`${t.tired} · ${t.shorten}`}
-                    onPress={shorten}
-                  />
-                  <PrimaryButton
-                    style={styles.flex}
-                    wrapLabel
-                    tone="secondary"
-                    label={t.runningLate}
-                    onPress={shorten}
-                  />
-                </View>
-              </View>
-              {panel === "back" ? (
-                <>
-                  <PrimaryButton
-                    label={t.tripStart}
-                    onPress={() => back(journey.settings.start)}
-                  />
-                  <WalkPlacePicker
-                    label={t.destination}
-                    options={options}
-                    selected={[]}
-                    onSelect={(slug) =>
-                      back(places.find((p) => p.slug === slug)!.coordinates)
-                    }
-                  />
+                    <PrimaryButton
+                      style={styles.flex}
+                      label={t.skip}
+                      tone="secondary"
+                      onPress={() => {
+                        setProposalKind("adaptation");
+                        setProposed(
+                          measureWalk(
+                            route.places.slice(1),
+                            journey.position,
+                            journey.finish,
+                          ),
+                        );
+                      }}
+                    />
+                  </View>
                 </>
               ) : null}
-              {current ? (
-                <PrimaryButton
-                  label={t.visited}
-                  busy={updating}
-                  onPress={() =>
-                    void update(advanceWalk(journey, current, true))
-                  }
-                />
+
+              {route.places.length ? itinerary(route.places, true, true) : null}
+
+              <PrimaryButton
+                label={translate(locale, "liveWalk.manageWalk")}
+                tone="secondary"
+                onPress={() => setShowManageWalk((value) => !value)}
+              />
+              {showManageWalk ? (
+                <View style={styles.section}>
+                  {saveFeedback}
+                  <PrimaryButton
+                    label={saveLabel}
+                    disabled={
+                      saveStatus !== "ready" ||
+                      account.loading ||
+                      savedState === "saved"
+                    }
+                    busy={saving}
+                    tone="secondary"
+                    onPress={() => void save()}
+                  />
+                  <PrimaryButton
+                    label={t.rebuild}
+                    tone="secondary"
+                    busy={updating}
+                    onPress={() => void requestRebuild()}
+                  />
+                  {liveSession?.enabled ? (
+                    <PrimaryButton
+                      label={translate(locale, "liveWalk.turnOff")}
+                      tone="secondary"
+                      busy={liveBusy}
+                      onPress={() => void toggleLiveWalk()}
+                    />
+                  ) : null}
+                </View>
               ) : null}
-              {itinerary(route.places)}
+
               <PrimaryButton
                 label={t.finish}
                 busy={updating}
@@ -1351,20 +1389,39 @@ export function NativeWalkFlow({
                           ) ?? 0)
                         : 0),
                   };
-                  void update(next).then(ok => { if (ok) setStage("finished"); });
+                  void update(next).then(async (ok) => {
+                    if (!ok) return;
+                    await completeCitywalkLiveWalk();
+                    setLiveSession(undefined);
+                    setStage("finished");
+                  });
                 }}
               />
-              {saveFeedback}
-              <PrimaryButton
-                label={saveLabel}
-                disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
-                  busy={saving}
-                tone="secondary"
-                onPress={() => void save()}
-              />
+
+              {__DEV__ ? (
+                <>
+                  <PrimaryButton
+                    label={translate(locale, "liveWalk.inspect")}
+                    tone="secondary"
+                    onPress={() => void inspectLiveWalk()}
+                  />
+                  {showLiveInspect && liveInspect ? (
+                    <AppText selectable variant="caption" style={styles.diagnostic}>
+                      {liveInspect}
+                    </AppText>
+                  ) : null}
+                </>
+              ) : null}
             </>
           )}
-          <PrimaryButton label={t.rebuild} tone="secondary" busy={updating} onPress={() => void requestRebuild()} />
+          {stage === "preview" ? (
+            <PrimaryButton
+              label={t.rebuild}
+              tone="secondary"
+              busy={updating}
+              onPress={() => void requestRebuild()}
+            />
+          ) : null}
         </>
       ) : null}
       {journey && stage === "finished" ? (
