@@ -277,6 +277,24 @@ export function NativeWalkFlow({
     }
     return nextSession;
   }
+  const liveSyncKey = journey
+    ? JSON.stringify([
+        journey.id,
+        journey.remaining,
+        journey.visited,
+        journey.finish,
+        journey.takeBack === true,
+        journey.settings.minutes,
+        journey.settings.deadline,
+        locale,
+      ])
+    : "";
+  useEffect(() => {
+    if (stage !== "active" || !journey) return;
+    void syncLiveCompanion(journey);
+    // Sync only execution identity/route changes; raw GPS publishes separately.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage, liveSyncKey]);
   const dynamicTags = [
     ...new Set(eligible.flatMap((p) => p.tags ?? [])),
   ].filter(
@@ -526,7 +544,11 @@ export function NativeWalkFlow({
       setStage("plan");
     }
   }
-  async function update(next: WalkJourney, phase: "preview" | "active" = stage === "preview" ? "preview" : "active") {
+  async function update(
+    next: WalkJourney,
+    phase: "preview" | "active" = stage === "preview" ? "preview" : "active",
+    liveRouteUpdated = false,
+  ) {
     if (updateLock.current) return false;
     updateLock.current = true; setUpdating(true);
     try {
@@ -536,7 +558,12 @@ export function NativeWalkFlow({
         if (changesStops && JSON.stringify([current.journey.remaining, current.journey.visited]) !== JSON.stringify([journey?.remaining, journey?.visited])) throw new Error("Walk changed");
         return { phase, journey: changesStops ? next : { ...next, remaining: current.journey.remaining, visited: current.journey.visited } };
       });
-      setJourney(result.journey); setNow(Date.now()); return true;
+      setJourney(result.journey);
+      setNow(Date.now());
+      if (phase === "active") {
+        await syncLiveCompanion(result.journey, liveRouteUpdated);
+      }
+      return true;
     } catch { setMessage(messages.tripSaveFailed); return false; }
     finally { updateLock.current = false; setUpdating(false); }
   }
@@ -564,7 +591,10 @@ export function NativeWalkFlow({
       if (walkStartStatus(journey, places, contentStatus === "available") !== "ready") return;
       if (authorizeStart && !await authorizeStart()) return;
       const next = await startCurrentWalk(citySlug, journey.id, places, contentStatus === "available");
-      setJourney(next.journey); setNow(Date.now()); setStage("active");
+      await syncLiveCompanion(next.journey);
+      setJourney(next.journey);
+      setNow(Date.now());
+      setStage("active");
     } catch (error) {
       const code = error instanceof Error ? error.message : "";
       setMessage(code === "walk-start-empty" ? t.emptyHelp
@@ -584,8 +614,10 @@ export function NativeWalkFlow({
     if (!rebuildConfirmation || updateLock.current) return;
     updateLock.current = true; setUpdating(true);
     try {
+      await completeCitywalkLiveWalk();
       await clearCurrentWalk(citySlug, rebuildConfirmation.current);
       setJourney(undefined); setProposed(undefined); setPanel(undefined);
+      setLiveSession(undefined); setShowManageWalk(false); setShowLiveInspect(false);
       setProposalMessage(""); setMessage(""); setBuildError(undefined);
       setStep(1); setMinutes(120); setReturnBy("");
       setInterests(["history", "architecture"]); setCategories([]); setWalking("balanced");
@@ -601,6 +633,7 @@ export function NativeWalkFlow({
   function shorten() {
     if (!journey) return;
     try {
+      setProposalKind("adaptation");
       setProposed(
         proposeShorterWalk(
           named(journey.remaining),
@@ -628,6 +661,7 @@ export function NativeWalkFlow({
       journey.startedAt,
     );
     if (next) {
+      setProposalKind("adaptation");
       setProposed(next);
       setPanel(undefined);
       setProposalMessage("");
@@ -635,6 +669,7 @@ export function NativeWalkFlow({
   }
   function back(point: Point) {
     if (journey) {
+      setProposalKind("take_back");
       setProposed(measureWalk([], journey.position, point));
       setPanel(undefined);
     }
@@ -647,6 +682,45 @@ export function NativeWalkFlow({
     } catch {
       setMessage(messages.unavailable);
     }
+  }
+  async function toggleLiveWalk() {
+    if (!journey || liveBusy) return;
+    setLiveBusy(true);
+    setMessage("");
+    try {
+      if (liveSession?.enabled) {
+        await disableCitywalkLiveWalk();
+        setLiveSession(await loadLiveWalkSession());
+        return;
+      }
+      await syncLiveCompanion(journey);
+      const result = await enableCitywalkLiveWalk();
+      setLiveSession(await loadLiveWalkSession());
+      if (result === "enabled") {
+        await refreshCitywalkLiveActivity(journey.position);
+        setMessage(translate(locale, "liveWalk.enabled"));
+      } else if (result === "denied") {
+        setMessage(translate(locale, "liveWalk.locationNeeded"));
+      } else {
+        setMessage(translate(locale, "liveWalk.unavailable"));
+      }
+    } finally {
+      setLiveBusy(false);
+    }
+  }
+
+  async function inspectLiveWalk() {
+    if (!journey) return;
+    const session = await loadLiveWalkSession();
+    const runtime = await getLiveWalkRuntimeStatus();
+    const diagnostics = session
+      ? buildLiveWalkDiagnostics(
+          session,
+          session.lastPublished?.point ?? journey.position,
+        )
+      : undefined;
+    setLiveInspect(JSON.stringify({ ...runtime, diagnostics }, null, 2));
+    setShowLiveInspect(true);
   }
   async function feedback(key: "rating" | "fit", value: string) {
     if (!journey || feedbackLock.current) return;
