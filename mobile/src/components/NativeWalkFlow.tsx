@@ -38,7 +38,6 @@ import {
 } from "@citywalk/traveler-core/walkJourney";
 import {
   calculateDistanceMeters,
-  estimateWalkingMinutes,
   isEligibleTourPlace,
 } from "@citywalk/traveler-core";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
@@ -1522,7 +1521,12 @@ export function NativeWalkFlow({
         visible={panel === "add" || !!proposed}
         animationType="slide"
         presentationStyle="pageSheet"
-        onRequestClose={() => { setPanel(undefined); setProposed(undefined); setProposalMessage(""); }}
+        onRequestClose={() => {
+          setPanel(undefined);
+          setProposed(undefined);
+          setProposalKind("adaptation");
+          setProposalMessage("");
+        }}
       >
         <Screen includeTopSafeArea navigation={false} brand={false}
           footer={panel === "add" ? <>
@@ -1567,11 +1571,25 @@ export function NativeWalkFlow({
                 setProposalMessage(t.late);
                 return;
               }
-              void update({
+              const next: WalkJourney = {
                 ...journey,
                 remaining: proposed.places.map((p) => p.slug),
                 finish: proposed.finish,
-              }).then(ok => { if (ok) { setProposed(undefined); setProposalMessage(""); } else setProposalMessage(messages.tripSaveFailed); });
+                takeBack: proposalKind === "take_back",
+              };
+              void update(
+                next,
+                stage === "preview" ? "preview" : "active",
+                stage === "active",
+              ).then((ok) => {
+                if (ok) {
+                  setProposed(undefined);
+                  setProposalKind("adaptation");
+                  setProposalMessage("");
+                } else {
+                  setProposalMessage(messages.tripSaveFailed);
+                }
+              });
             }}
           />
           <PrimaryButton
@@ -1580,6 +1598,7 @@ export function NativeWalkFlow({
             label={t.keep}
             onPress={() => {
               setProposed(undefined);
+              setProposalKind("adaptation");
               setProposalMessage("");
             }}
           />
