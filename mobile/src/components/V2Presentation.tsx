@@ -1,6 +1,7 @@
 import { nativeTextBlock, nativeTextStyle } from "../design/rtlPresentation";
 import { nativeCategoryLabel } from "../lib/contentLabels";
 import { WalkMembershipControl } from "./WalkMembershipControl";
+import { WalkItineraryOverflow } from "./WalkItineraryOverflow";
 import { nativePlaceName } from "../lib/displayNames";
 import { useEffect, useState, type ReactNode } from "react";
 import { Animated, StyleSheet, View } from "react-native";
@@ -105,10 +106,12 @@ export function V2Itinerary({
   places,
   citySlug,
   interactive = true,
+  removeInOverflow = false,
 }: {
   places: readonly PublicPlaceCard[];
   citySlug: string;
   interactive?: boolean;
+  removeInOverflow?: boolean;
 }) {
   const { locale, direction } = useNativeLocale(),
     t = walkCopy(locale);
@@ -158,7 +161,7 @@ export function V2Itinerary({
                   : nativeCategoryLabel(place.category, locale)}
               </AppText>
             </View>
-            {interactive ? (
+            {interactive && !removeInOverflow ? (
               <NativeIcon
                 ios={direction === "rtl" ? "chevron.left" : "chevron.right"}
                 android={direction === "rtl" ? "chevron_left" : "chevron_right"}
@@ -168,23 +171,60 @@ export function V2Itinerary({
             ) : null}
           </View>
         );
+        const placeName = nativePlaceName(
+          citySlug,
+          place.slug,
+          place.content.name,
+          locale,
+        );
         return interactive ? (
           <View key={place.slug}>
-          <Link
-            href={{
-              pathname: "/city/[citySlug]/place/[placeSlug]",
-              params: { citySlug, placeSlug: place.slug },
-            }}
-            asChild
-          >
-            <PressableSurface
-              accessibilityRole="link"
-              accessibilityLabel={nativePlaceName(citySlug, place.slug, place.content.name, locale)}
-            >
-              {row}
-            </PressableSurface>
-          </Link>
-          <WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} onlyMember />
+            {removeInOverflow ? (
+              <View style={styles.itineraryActionRow}>
+                <Link
+                  href={{
+                    pathname: "/city/[citySlug]/place/[placeSlug]",
+                    params: { citySlug, placeSlug: place.slug },
+                  }}
+                  asChild
+                >
+                  <PressableSurface
+                    accessibilityRole="link"
+                    accessibilityLabel={placeName}
+                    style={styles.itineraryMain}
+                  >
+                    {row}
+                  </PressableSurface>
+                </Link>
+                <WalkItineraryOverflow
+                  citySlug={citySlug}
+                  placeSlug={place.slug}
+                  placeName={placeName}
+                />
+              </View>
+            ) : (
+              <>
+                <Link
+                  href={{
+                    pathname: "/city/[citySlug]/place/[placeSlug]",
+                    params: { citySlug, placeSlug: place.slug },
+                  }}
+                  asChild
+                >
+                  <PressableSurface
+                    accessibilityRole="link"
+                    accessibilityLabel={placeName}
+                  >
+                    {row}
+                  </PressableSurface>
+                </Link>
+                <WalkMembershipControl
+                  citySlug={citySlug}
+                  placeSlug={place.slug}
+                  onlyMember
+                />
+              </>
+            )}
           </View>
         ) : (
           <View key={place.slug}>{row}</View>
@@ -356,6 +396,8 @@ const styles = StyleSheet.create({
   metricDivider: { borderStartWidth: 1, borderColor: colors.border },
   metricValue: { flexDirection: "row", gap: spacing.xs, alignItems: "center" },
   metricText: { flexShrink: 1 },
+  itineraryActionRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  itineraryMain: { flex: 1, minWidth: 0 },
   itinerary: { gap: spacing.sm },
   itineraryRow: {
     flexDirection: "row",

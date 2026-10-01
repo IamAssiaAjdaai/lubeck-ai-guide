@@ -71,6 +71,27 @@ describe("CITYWALK native app configuration", () => {
     }]);
   });
 
+  it("enables iOS-only active-walk background location and local Live Activities", () => {
+    const location = appJson.expo.plugins.find((entry) =>
+      Array.isArray(entry) && entry[0] === "expo-location",
+    );
+    expect(location).toEqual(["expo-location", {
+      locationWhenInUsePermission:
+        "Allow CITYWALK to show your position on the city map while you use the app.",
+      locationAlwaysAndWhenInUsePermission:
+        "Allow CITYWALK to keep your active walk updated on the Lock Screen while you are walking.",
+      isIosBackgroundLocationEnabled: true,
+      isAndroidBackgroundLocationEnabled: false,
+    }]);
+
+    const widgets = appJson.expo.plugins.find((entry) =>
+      Array.isArray(entry) && entry[0] === "expo-widgets",
+    );
+    expect(widgets).toEqual(["expo-widgets", {
+      enablePushNotifications: false,
+    }]);
+  });
+
   it("keeps the approved launcher artwork wired for standard and adaptive icons", () => {
     expect(appJson.expo.icon).toBe("./assets/images/icon.png");
     expect(appJson.expo.android.adaptiveIcon).toMatchObject({
@@ -136,4 +157,19 @@ describe("CITYWALK native app configuration", () => {
       ios: { ascAppId: "6815815964" },
     });
   });
+});
+
+it("sandbox billing requires Preview/HTTPS and uses the Store identifier", () => {
+  const previousBilling=process.env.EXPO_PUBLIC_CITYWALK_BILLING, previousOrigin=process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN;
+  try {
+    process.env.EXPO_PUBLIC_CITYWALK_BILLING="sandbox"; delete process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN;
+    expect(()=>createCitywalkExpoConfig({name:"CITYWALK",slug:"citywalk-mobile"},"preview")).toThrow();
+    process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN="https://isolated-preview.example.test";
+    const config=createCitywalkExpoConfig({name:"CITYWALK",slug:"citywalk-mobile"},"preview");
+    expect(config.ios?.bundleIdentifier).toBe("com.citywalk.app");expect(config.android?.package).toBe("com.citywalk.app");
+    expect(()=>createCitywalkExpoConfig({name:"CITYWALK",slug:"citywalk-mobile"},"production")).toThrow();
+  } finally {
+    if(previousBilling===undefined)delete process.env.EXPO_PUBLIC_CITYWALK_BILLING;else process.env.EXPO_PUBLIC_CITYWALK_BILLING=previousBilling;
+    if(previousOrigin===undefined)delete process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN;else process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN=previousOrigin;
+  }
 });

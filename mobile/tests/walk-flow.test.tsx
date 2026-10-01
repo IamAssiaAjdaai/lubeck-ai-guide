@@ -42,6 +42,7 @@ vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { fetchAuthenticated: a
   return Response.json({ walk: record });
 } } }));
 vi.mock("../src/lib/storeReview", () => ({ storeReview: { afterCompletion: async () => ({ status: "unavailable" }), configuredUrl: () => undefined } }));
+vi.mock("../src/components/ImageOverlayHero", () => ({ ImageOverlayHero: () => null }));
 vi.mock("expo-router", () => ({
   useFocusEffect: (callback: () => void) => useEffect(callback, [callback]),
   Stack: { Screen: () => null },
@@ -51,6 +52,7 @@ vi.mock("expo-router", () => ({
   useRouter: () => ({ replace: vi.fn() }), router: { push: vi.fn() },
 }));
 vi.mock("react-native", () => ({
+  Platform: { OS: "ios" },
   StyleSheet: { create: (styles: unknown) => styles },
   View: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   ActivityIndicator: () => <span>Loading</span>,
@@ -213,6 +215,49 @@ vi.mock("../src/components/V2Presentation", () => ({
 vi.mock("../src/components/NativeCityMap", () => ({
   NativeCityMap: () => <div>Native map boundary</div>,
 }));
+vi.mock("../src/components/NativeLiveWalkCard", () => ({
+  NativeLiveWalkCard: () => <div>Live Walk companion</div>,
+}));
+vi.mock("../src/lib/backgroundWalk", () => ({
+  completeCitywalkLiveWalk: vi.fn(async () => undefined),
+  disableCitywalkLiveWalk: vi.fn(async () => undefined),
+  enableCitywalkLiveWalk: vi.fn(async () => "enabled"),
+  getLiveWalkRuntimeStatus: vi.fn(async () => ({ status: "disabled" })),
+  publishForegroundLiveWalkLocation: vi.fn(async () => undefined),
+  refreshCitywalkLiveActivity: vi.fn(async () => true),
+}));
+vi.mock("../src/lib/liveWalkStorage", () => ({
+  loadLiveWalkSession: vi.fn(async () => undefined),
+  subscribeLiveWalkSession: vi.fn(() => () => undefined),
+  markLiveWalkRouteUpdated: vi.fn(async () => undefined),
+  syncLiveWalkSession: vi.fn(async (input: Record<string, unknown>) => ({
+    version: 1,
+    ...input,
+    enabled: false,
+    routeSignature: "test-route",
+    proximity: { state: "normal", arrivalSamples: 0 },
+  })),
+}));
+vi.mock("../src/lib/liveWalkPresentation", () => ({
+  buildLiveWalkDiagnostics: vi.fn(() => ({ baseline: "duration_budget" })),
+  buildLiveWalkPresentation: vi.fn(() => ({
+    props: {
+      cityLabel: "CITYWALK · City",
+      state: "normal",
+      stateLabel: "NEXT",
+      destination: "Place 0",
+      distanceEta: "620 m away · ~8 min",
+      progress: 0,
+      progressLabel: "0 / 4 stops",
+      remainingLabel: "2 h left",
+      finishLabel: "Finish ~19:00",
+      compactEta: "8m",
+    },
+    timing: {},
+    targetDistanceMeters: 620,
+    targetEtaMinutes: 8,
+  })),
+}));
 vi.mock("../src/lib/location.expo", () => ({
   expoForegroundLocationAdapter: {},
 }));
@@ -284,14 +329,14 @@ const places: PublicPlaceCard[] = Array.from({ length: 6 }, (_, i) => ({
   didFallback: false,
   content: { name: `Place ${i}`, shortDescription: "Published place" },
 }));
-function setup() {
+function setup(authorizeStart?: () => Promise<boolean>) {
   mocks.load.mockResolvedValue(undefined);
   mocks.persist.mockResolvedValue(undefined);
   mocks.save.mockResolvedValue(undefined);
   mocks.feedback.mockResolvedValue(undefined);
   mocks.share.mockResolvedValue({});
   mocks.location.mockResolvedValue({ status: "denied" });
-  render(<NativeWalkFlow citySlug="city" cityName="City" places={places} />);
+  render(<NativeWalkFlow citySlug="city" cityName="City" places={places} authorizeStart={authorizeStart} />);
 }
 afterEach(() => {
   mocks.holdPresentation = false; mocks.presented = undefined;
@@ -311,6 +356,35 @@ async function preview() {
   await screen.findByRole("button", { name: t.startWalk });
 }
 describe("rendered native V2 flow (native bridges mocked, not device acceptance)", () => {
+  it("revalidates the plan when its last stop disappears during Start authorization", async () => {
+    let allow!: (value: boolean) => void;
+    const authorize = vi.fn(() => new Promise<boolean>(resolve => { allow = resolve; }));
+    setup(authorize); await preview();
+    const writes = mocks.persist.mock.calls.length;
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").startWalk }));
+    await waitFor(() => expect(authorize).toHaveBeenCalledOnce());
+    act(() => { mocks.current = { ...mocks.current!, journey: { ...mocks.current!.journey, remaining: [] } }; });
+    await act(async () => { allow(true); });
+    expect(mocks.current?.phase).toBe("preview");
+    expect(mocks.persist).toHaveBeenCalledTimes(writes);
+    expect(screen.queryByRole("button", { name: walkCopy("en").visited })).toBeNull();
+  });
+  it("keeps the exact preview when Start authorization is dismissed, then starts once authorized", async () => {
+    const authorize = vi.fn().mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+    setup(authorize);
+    await preview();
+    const before = structuredClone(mocks.current);
+    const writes = mocks.persist.mock.calls.length;
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").startWalk }));
+    await waitFor(() => expect(authorize).toHaveBeenCalledOnce());
+    await waitFor(() => expect(screen.getByRole("button", { name: walkCopy("en").startWalk }).hasAttribute("disabled")).toBe(false));
+    expect(mocks.current).toEqual(before);
+    expect(mocks.persist).toHaveBeenCalledTimes(writes);
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").startWalk }));
+    await screen.findByRole("button", { name: walkCopy("en").visited });
+    expect(authorize).toHaveBeenCalledTimes(2);
+    expect(mocks.persist).toHaveBeenCalledTimes(writes + 1);
+  });
   it.each(sharedLocales)(
     "plans, previews, saves and starts in %s",
     async (locale) => {
@@ -333,16 +407,13 @@ describe("rendered native V2 flow (native bridges mocked, not device acceptance)
     const t = walkCopy("en");
     fireEvent.click(screen.getByRole("button", { name: t.startWalk }));
     await screen.findByRole("button", { name: t.visited });
-    fireEvent.click(
-      screen.getByRole("button", { name: `${t.tired} · ${t.shorten}` }),
-    );
+    expect(screen.getAllByRole("button", { name: t.shorten })).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: t.shorten }));
     expect(screen.getByRole("dialog")).toBeTruthy();
     const before = mocks.persist.mock.calls.length;
     fireEvent.click(screen.getByRole("button", { name: t.keep }));
     expect(mocks.persist).toHaveBeenCalledTimes(before);
-    fireEvent.click(
-      screen.getByRole("button", { name: `${t.tired} · ${t.shorten}` }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: t.shorten }));
     await act(async () => fireEvent.click(screen.getByRole("button", { name: t.confirm })));
     expect(mocks.persist).toHaveBeenCalledTimes(before + 1);
     expect(mocks.persist.mock.lastCall![0].remaining.length).toBeLessThan(
@@ -402,8 +473,13 @@ describe("rendered native V2 flow (native bridges mocked, not device acceptance)
     await act(async () => fireEvent.click(screen.getByRole("button", { name: t.confirm })));
     expect(mocks.persist.mock.lastCall![0].remaining).toEqual([]);
     expect(mocks.persist.mock.lastCall![0].visited).toEqual(["place-0"]);
-    expect(screen.getByRole("heading", { name: t.remaining })).toBeTruthy();
-    expect(screen.getByRole("button", { name: t.navigate })).toBeTruthy();
+    expect(mocks.persist.mock.lastCall![0].takeBack).toBe(true);
+    expect(screen.getByRole("heading", { name: t.tripStart })).toBeTruthy();
+    expect(
+      screen.getByRole("button", {
+        name: translate("en", "liveWalk.continueWalk"),
+      }),
+    ).toBeTruthy();
   });
   it.each(["en", "de"])("offers a closable Add stop sheet and confirms one addition in %s", async (locale) => {
     mocks.locale = locale;
@@ -708,6 +784,11 @@ describe("empty previews and confirmed start-over planning", () => {
     await screen.findByRole("button", { name: t.visited });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: t.visited })));
     const before = structuredClone(mocks.current), writes = mocks.persist.mock.calls.length;
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: translate(locale, "liveWalk.manageWalk"),
+      }),
+    );
     fireEvent.click(screen.getByRole("button", { name: t.rebuild }));
     let dialog = await screen.findByRole("dialog");
     expect(within(dialog).getByText(t.rebuildHelp)).toBeTruthy();

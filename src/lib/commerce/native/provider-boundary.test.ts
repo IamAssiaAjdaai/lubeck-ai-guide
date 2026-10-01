@@ -1,0 +1,22 @@
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
+vi.mock("server-only",()=>({}));
+const m=vi.hoisted(()=>({transaction:vi.fn(),current:vi.fn(),request:vi.fn()}));
+vi.mock("@apple/app-store-server-library",()=>({Environment:{SANDBOX:"Sandbox",PRODUCTION:"Production"},Type:{NON_CONSUMABLE:"Non-Consumable",CONSUMABLE:"Consumable"},InAppOwnershipType:{PURCHASED:"PURCHASED",FAMILY_SHARED:"FAMILY_SHARED"},SignedDataVerifier:class{verifyAndDecodeTransaction=m.transaction;},AppStoreServerAPIClient:class{getTransactionInfo=m.current;}}));
+vi.mock("google-auth-library",()=>({GoogleAuth:class{async getClient(){return {request:m.request};}},OAuth2Client:class{}}));
+import { acknowledgeGoogle, verifyApple } from "./providers.server";
+import { nativeProduct } from "./config.server";
+beforeEach(()=>{vi.clearAllMocks();vi.stubEnv("CITYWALK_NATIVE_BILLING_MODE","sandbox");vi.stubEnv("CITYWALK_NATIVE_ACCOUNT_SECRET","s".repeat(40));vi.stubEnv("VERCEL_ENV","preview");vi.stubEnv("CITYWALK_GOOGLE_TEST_PURCHASES","1");vi.stubEnv("CITYWALK_GOOGLE_SERVICE_ACCOUNT",JSON.stringify({type:"service_account",client_email:"test@example.test",private_key:"synthetic-test-only"}));vi.stubEnv("CITYWALK_APPLE_ROOT_CERTIFICATES",'["test-only-root"]');});
+afterEach(()=>vi.unstubAllEnvs());
+const data={environment:"Sandbox",bundleId:"com.citywalk.app",productId:nativeProduct.productId,type:"Non-Consumable",inAppOwnershipType:"PURCHASED",quantity:1,originalTransactionId:"original",transactionId:"tx",appAccountToken:"binding"};
+it("Apple verifies submitted and freshly fetched evidence; current revocation wins",async()=>{m.transaction.mockResolvedValueOnce(data).mockResolvedValueOnce({...data,revocationDate:1});m.current.mockResolvedValue({signedTransactionInfo:"fresh-jws"});expect((await verifyApple("old-jws")).state).toBe("revoked");expect(m.transaction.mock.calls).toEqual([["old-jws"],["fresh-jws"]]);expect(m.current).toHaveBeenCalledWith("tx");});
+it("Apple rejects signature failure before making a current-ownership request",async()=>{m.transaction.mockRejectedValue(new Error("invalid signature"));await expect(verifyApple("forged")).rejects.toThrow();expect(m.current).not.toHaveBeenCalled();});
+it("Apple current evidence cannot switch original identity",async()=>{m.transaction.mockResolvedValueOnce(data).mockResolvedValueOnce({...data,originalTransactionId:"other"});m.current.mockResolvedValue({signedTransactionInfo:"fresh"});await expect(verifyApple("old")).rejects.toThrow("INVALID_PURCHASE");});
+const google=(ack:string)=>({data:{testPurchaseContext:{fopType:"TEST"},purchaseStateContext:{purchaseState:"PURCHASED"},productLineItem:[{productId:nativeProduct.productId,productOfferDetails:{quantity:1,refundableQuantity:1}}],obfuscatedExternalAccountId:"binding",acknowledgementState:ack}});
+it("Google already acknowledged restore never posts ack again",async()=>{m.request.mockResolvedValue(google("ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED"));await acknowledgeGoogle("token");expect(m.request).toHaveBeenCalledOnce();expect(m.request.mock.calls[0][0].method).toBeUndefined();});
+it("Google lost acknowledgement response is recovered by a fresh read",async()=>{m.request.mockResolvedValueOnce(google("ACKNOWLEDGEMENT_STATE_PENDING")).mockRejectedValueOnce(new Error("lost response")).mockResolvedValueOnce(google("ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED"));await acknowledgeGoogle("token");expect(m.request.mock.calls.map(([r])=>r.method??"GET")).toEqual(["GET","POST","GET"]);});
+it("Apple verification remains configured independently when Google is disabled",async()=>{
+ vi.stubEnv("CITYWALK_GOOGLE_TEST_PURCHASES","0");vi.stubEnv("CITYWALK_GOOGLE_SERVICE_ACCOUNT",undefined);
+ m.transaction.mockResolvedValue(data);m.current.mockResolvedValue({signedTransactionInfo:"fresh"});
+ expect((await verifyApple("old")).state).toBe("purchased");
+ expect(m.current).toHaveBeenCalledWith("tx");expect(m.request).not.toHaveBeenCalled();
+});

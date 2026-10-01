@@ -19,6 +19,17 @@ export function createCitywalkExpoConfig(
     throw new Error("CITYWALK Expo configuration requires a name and slug.");
   }
 
+  if (process.env.EXPO_PUBLIC_CITYWALK_BILLING === "sandbox") {
+    const origin = process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN;
+    if (environment !== "preview" || !origin || !/^https:\/\//.test(origin)) {
+      throw new Error("Sandbox billing requires Preview and an explicitly approved HTTPS API origin.");
+    }
+    const url = new URL(origin);
+    if (url.username || url.password || url.search || url.hash || url.pathname !== "/") {
+      throw new Error("Sandbox billing requires a credential-free API origin.");
+    }
+  }
+
   const applicationIdentifier = environment === "development"
     ? CITYWALK_DEVELOPMENT_IDENTIFIER
     : CITYWALK_STORE_IDENTIFIER;

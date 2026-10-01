@@ -18,6 +18,8 @@ export type WalkJourney = {
   historyDistance: number;
   startedAt: number;
   finishedAt?: number;
+  /** Active execution mode only; never part of Saved Walk identity. */
+  takeBack?: boolean;
 };
 export function remainingWalkBudget(
   settings: WalkSettings,
@@ -152,6 +154,7 @@ export function isWalkJourney(value: unknown): value is WalkJourney {
     Number.isFinite(j.historyDistance) &&
     j.historyDistance >= 0 &&
     (j.finishedAt === undefined || Number.isFinite(j.finishedAt)) &&
+    (j.takeBack === undefined || typeof j.takeBack === "boolean") &&
     [j.remaining, j.visited].every(
       (a) =>
         Array.isArray(a) &&

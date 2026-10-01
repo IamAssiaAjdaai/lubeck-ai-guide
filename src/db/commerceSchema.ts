@@ -1,5 +1,6 @@
 import {
   boolean,
+  check,
   index,
   integer,
   pgEnum,
@@ -9,6 +10,7 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 import { user } from "@/db/authSchema";
 
@@ -147,20 +149,20 @@ export const commerceOrders = pgTable(
       .notNull()
       .references(() => commerceProducts.id, { onDelete: "restrict" }),
     priceId: integer("price_id")
-      .notNull()
       .references(() => commercePrices.id, { onDelete: "restrict" }),
     provider: text("provider").notNull(),
     providerCheckoutSessionId: text("provider_checkout_session_id"),
     providerPaymentIntentId: text("provider_payment_intent_id"),
     status: commerceOrderStatusEnum("status").default("pending").notNull(),
-    currency: text("currency").notNull(),
-    amountTotal: integer("amount_total").notNull(),
+    currency: text("currency"),
+    amountTotal: integer("amount_total"),
     paidAt: timestamp("paid_at", { withTimezone: true }),
     refundedAt: timestamp("refunded_at", { withTimezone: true }),
     canceledAt: timestamp("canceled_at", { withTimezone: true }),
     ...createTimestamps(),
   },
   (table) => [
+    check("commerce_orders_financial_evidence", sql`(${table.priceId} IS NOT NULL AND ${table.currency} IS NOT NULL AND ${table.amountTotal} IS NOT NULL) OR (${table.provider} IN ('apple_sandbox', 'google_test') AND ${table.priceId} IS NULL AND ${table.currency} IS NULL AND ${table.amountTotal} IS NULL)`),
     index("commerce_orders_user_id_idx").on(table.userId),
     index("commerce_orders_status_idx").on(table.status),
     uniqueIndex("commerce_orders_checkout_session_unique").on(

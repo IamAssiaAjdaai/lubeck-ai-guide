@@ -1,0 +1,11 @@
+import { beforeEach, expect, it, vi } from "vitest";
+const mocks=vi.hoisted(()=>({session:vi.fn(),fetch:vi.fn()}));
+vi.mock("../src/lib/auth/client",()=>({nativeAuthClient:{getSession:mocks.session}}));
+vi.mock("../src/lib/api/instance",()=>({citywalkApi:{fetchAuthenticated:mocks.fetch}}));
+import { readCityUnlock } from "../src/lib/cityUnlockAccess";
+beforeEach(()=>{vi.resetAllMocks();mocks.session.mockResolvedValue({data:{user:{id:"owner"}}});mocks.fetch.mockResolvedValue(Response.json({citySlug:"lubeck",entitlement:"city:luebeck:premium",active:true}));});
+it("rechecks server ownership rather than trusting persisted client flags",async()=>{expect(await readCityUnlock("lubeck","owner")).toBe(true);expect(mocks.fetch).toHaveBeenCalledWith("/api/commerce/city-unlock/lubeck",{headers:{"X-Citywalk-Account":"owner"}});});
+it("guest never borrows the last signed-in user's access",async()=>{mocks.session.mockResolvedValue({data:null});expect(await readCityUnlock("lubeck")).toBe(false);expect(mocks.fetch).not.toHaveBeenCalled();});
+it("rejects a session change while the entitlement request is in flight",async()=>{mocks.session.mockResolvedValueOnce({data:{user:{id:"owner"}}}).mockResolvedValueOnce({data:{user:{id:"other"}}});await expect(readCityUnlock("lubeck","owner")).rejects.toThrow("account-changed");});
+it.each([401,403,503])("fails closed on HTTP %s",async status=>{mocks.fetch.mockResolvedValue(Response.json({active:true},{status}));await expect(readCityUnlock("lubeck","owner")).rejects.toThrow();});
+it("rejects malformed, wrong-city or wrong-entitlement evidence",async()=>{for(const body of [{active:true},{citySlug:"hamburg",entitlement:"city:luebeck:premium",active:true},{citySlug:"lubeck",entitlement:"city:lubeck:legacy",active:true}]){mocks.fetch.mockResolvedValue(Response.json(body));await expect(readCityUnlock("lubeck","owner")).rejects.toThrow();}});

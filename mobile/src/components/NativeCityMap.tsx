@@ -23,13 +23,14 @@ import { NativeIcon } from "./NativeIcon";
 
 const MAP_STYLE_URL = resolveMapStyleUrl();
 
-export function NativeCityMap({ citySlug, places, routeStart, routeFinish, currentSlug, onLocation }: Readonly<{
+export function NativeCityMap({ citySlug, places, routeStart, routeFinish, currentSlug, onLocation, compact = false }: Readonly<{
   citySlug?: string;
   places: readonly PublicPlaceCard[];
   routeStart?: { lat: number; lng: number };
   routeFinish?: { lat: number; lng: number };
   currentSlug?: string;
   onLocation?: (point: { lat: number; lng: number }) => void;
+  compact?: boolean;
 }>) {
   const { messages, locale } = useNativeLocale();
   const cameraRef = useRef<CameraRef>(null);
@@ -93,7 +94,7 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
   return (
     <View style={styles.shell}>
       {mapFailed ? (
-        <View accessibilityRole="alert" style={styles.fallback}>
+        <View accessibilityRole="alert" style={[styles.fallback, compact && styles.compactMap]}>
           <AppText variant="caption" style={styles.statusText}>{walkCopy(locale).mapUnavailable}</AppText>
           <AppText>{walkCopy(locale).mapFallbackHelp}</AppText>
           <PrimaryButton label={walkCopy(locale).retry} onPress={() => { setLoaded(false); setMapFailed(false); setAttempt(v => v + 1); }} />
@@ -103,7 +104,7 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
           key={attempt}
           mapStyle={MAP_STYLE_URL}
           onDidFinishRenderingMapFully={() => setLoaded(true)}
-          style={styles.map}
+          style={[styles.map, compact && styles.compactMap]}
           compass
           attribution
           onDidFailLoadingMap={() => setMapFailed(true)}
@@ -187,6 +188,7 @@ function getLocationStatusMessage(
 const styles = StyleSheet.create({
   shell: { gap: spacing.sm },
   map: { height: 320, borderRadius: radius.lg, overflow: "hidden" },
+  compactMap: { height: 200 },
   fallback: { height: 320, borderRadius: radius.lg, backgroundColor: "#EEF2FF", alignItems: "center", justifyContent: "center", padding: spacing.lg },
   placeMarker: { width: 22, height: 22, borderRadius: radius.pill, backgroundColor: colors.mapMarker, borderWidth: 3, borderColor: colors.surface },
   userMarker: { width: 24, height: 24, borderRadius: radius.pill, backgroundColor: colors.userMarker, borderWidth: 4, borderColor: colors.surface },

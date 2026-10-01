@@ -56,8 +56,15 @@
         "expo-location",
         {
           "locationWhenInUsePermission": "Allow CITYWALK to show your position on the city map while you use the app.",
-          "isIosBackgroundLocationEnabled": false,
-          "isAndroidBackgroundLocationEnabled": false
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": false,
+          "locationAlwaysAndWhenInUsePermission": "Allow CITYWALK to keep your active walk updated on the Lock Screen while you are walking."
+        }
+      ],
+      [
+        "expo-widgets",
+        {
+          "enablePushNotifications": false
         }
       ],
       [
@@ -68,7 +75,8 @@
           "imageWidth": 168,
           "resizeMode": "contain"
         }
-      ]
+      ],
+      "expo-iap"
     ],
     "experiments": {
       "typedRoutes": true,

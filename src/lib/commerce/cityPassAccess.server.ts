@@ -5,6 +5,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { commerceEntitlements } from "@/db/commerceSchema";
 import { getDb } from "@/db/client";
 import { isCitySlug } from "@/lib/commerce/cityPassConfig";
+import { hasCityUnlock } from "./cityUnlock.server";
 
 export type CityPassAccessState = Readonly<{
   status: "active" | "expired" | "revoked" | "none";
@@ -45,7 +46,11 @@ const defaultDependencies: CityPassAccessDependencies = {
         desc(commerceEntitlements.id),
       )
       .limit(100);
-    return resolveCityPassAccessState(rows, now);
+    const legacy = resolveCityPassAccessState(rows, now);
+    // Preserve legacy purchasers' existing access. A verified one-time unlock
+    // also grants these existing protected audio/Guide capabilities, never the reverse.
+    if (legacy.active || !await hasCityUnlock({ userId, citySlug, now })) return legacy;
+    return { status: "active", active: true };
   },
 };
 
