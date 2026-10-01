@@ -270,7 +270,6 @@ export function NativeWalkFlow({
     const nextSession = routeUpdated
       ? await markLiveWalkRouteUpdated() ?? session
       : session;
-    setLiveSession(nextSession);
     if (nextSession.enabled) {
       await refreshCitywalkLiveActivity(walk.position);
     }
