@@ -39,8 +39,14 @@ export type LiveWalkEnableResult =
   | "denied"
   | "unavailable";
 
+function activityKitSupported(): boolean {
+  if (Platform.OS !== "ios") return false;
+  const version = Number.parseFloat(String(Platform.Version));
+  return Number.isFinite(version) && version >= 16.1;
+}
+
 export async function enableCitywalkLiveWalk(): Promise<LiveWalkEnableResult> {
-  if (Platform.OS !== "ios") return "unavailable";
+  if (!activityKitSupported()) return "unavailable";
 
   const session = await loadLiveWalkSession();
   if (!session || !(session.takeBack ? session.finish : session.stops[0])) {
@@ -174,7 +180,7 @@ export async function getLiveWalkRuntimeStatus() {
     platform: Platform.OS,
     taskManagerAvailable,
     locationModuleAvailable: true,
-    liveActivitySupported: Platform.OS === "ios",
+    liveActivitySupported: activityKitSupported(),
     backgroundLocationSupported: Platform.OS === "ios",
     foregroundPermission: foreground?.status ?? "unknown",
     backgroundPermission: background?.status ?? "unknown",
