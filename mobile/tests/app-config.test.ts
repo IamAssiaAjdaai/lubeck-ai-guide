@@ -71,6 +71,27 @@ describe("CITYWALK native app configuration", () => {
     }]);
   });
 
+  it("enables iOS-only active-walk background location and local Live Activities", () => {
+    const location = appJson.expo.plugins.find((entry) =>
+      Array.isArray(entry) && entry[0] === "expo-location",
+    );
+    expect(location).toEqual(["expo-location", {
+      locationWhenInUsePermission:
+        "Allow CITYWALK to show your position on the city map while you use the app.",
+      locationAlwaysAndWhenInUsePermission:
+        "Allow CITYWALK to keep your active walk updated on the Lock Screen while you are walking.",
+      isIosBackgroundLocationEnabled: true,
+      isAndroidBackgroundLocationEnabled: false,
+    }]);
+
+    const widgets = appJson.expo.plugins.find((entry) =>
+      Array.isArray(entry) && entry[0] === "expo-widgets",
+    );
+    expect(widgets).toEqual(["expo-widgets", {
+      enablePushNotifications: false,
+    }]);
+  });
+
   it("keeps the approved launcher artwork wired for standard and adaptive icons", () => {
     expect(appJson.expo.icon).toBe("./assets/images/icon.png");
     expect(appJson.expo.android.adaptiveIcon).toMatchObject({
