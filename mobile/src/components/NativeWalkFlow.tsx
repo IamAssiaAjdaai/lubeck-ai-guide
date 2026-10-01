@@ -1397,7 +1397,7 @@ export function NativeWalkFlow({
                 }}
               />
 
-              {__DEV__ ? (
+              {(typeof __DEV__ !== "undefined" ? __DEV__ : process.env.NODE_ENV !== "production") ? (
                 <>
                   <PrimaryButton
                     label={translate(locale, "liveWalk.inspect")}
