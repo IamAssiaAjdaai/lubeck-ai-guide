@@ -593,5 +593,31 @@
       "account_conflict": "Dette køb tilhører en anden CITYWALK-konto. Log ind på den oprindelige konto for at gendanne det.",
       "purchase_revoked": "Dette køb er ikke længere aktivt. Tjek din butikskonto, eller kontakt support."
     }
+  },
+  "liveWalk": {
+    "liveWalk": "Live Walk",
+    "next": "NÆSTE",
+    "almostThere": "Næsten fremme",
+    "arrived": "Du er fremme",
+    "storyReady": "Historie klar",
+    "routeUpdated": "Ruten er opdateret",
+    "backTo": "TILBAGE TIL",
+    "distanceEta": "{distance} væk · ~{minutes} min",
+    "stops": "{visited} / {total} stop",
+    "remaining": "{time} tilbage",
+    "finish": "Slut ~{time}",
+    "backBy": "Tilbage senest {time}",
+    "ahead": "{minutes} min foran",
+    "onSchedule": "Til tiden",
+    "behind": "{minutes} min bagefter",
+    "turnOn": "Slå Live Walk til",
+    "turnOff": "Slå Live Walk fra",
+    "continueWalk": "Fortsæt turen",
+    "manageWalk": "Administrer tur",
+    "permissionHelp": "Hold turen opdateret på låseskærmen, mens CITYWALK kører i baggrunden.",
+    "locationNeeded": "Tillad placering i baggrunden for at bruge Live Walk.",
+    "unavailable": "Live Walk er ikke tilgængelig på denne enhed.",
+    "enabled": "Live Walk er aktiv",
+    "inspect": "Undersøg Live Walk"
   }
 }
