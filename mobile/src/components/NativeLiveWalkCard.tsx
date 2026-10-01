@@ -42,7 +42,9 @@ export function NativeLiveWalkCard({
         <View
           style={[
             styles.fill,
-            { width: String(Math.round(props.progress * 100)) + "%" },
+            {
+              width: `${Math.round(props.progress * 100)}%` as `${number}%`,
+            },
           ]}
         />
       </View>
