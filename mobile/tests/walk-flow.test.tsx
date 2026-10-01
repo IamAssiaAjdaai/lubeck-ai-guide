@@ -473,8 +473,13 @@ describe("rendered native V2 flow (native bridges mocked, not device acceptance)
     await act(async () => fireEvent.click(screen.getByRole("button", { name: t.confirm })));
     expect(mocks.persist.mock.lastCall![0].remaining).toEqual([]);
     expect(mocks.persist.mock.lastCall![0].visited).toEqual(["place-0"]);
-    expect(screen.getByRole("heading", { name: t.remaining })).toBeTruthy();
-    expect(screen.getByRole("button", { name: t.navigate })).toBeTruthy();
+    expect(mocks.persist.mock.lastCall![0].takeBack).toBe(true);
+    expect(screen.getByRole("heading", { name: t.tripStart })).toBeTruthy();
+    expect(
+      screen.getByRole("button", {
+        name: translate("en", "liveWalk.continueWalk"),
+      }),
+    ).toBeTruthy();
   });
   it.each(["en", "de"])("offers a closable Add stop sheet and confirms one addition in %s", async (locale) => {
     mocks.locale = locale;
@@ -779,6 +784,11 @@ describe("empty previews and confirmed start-over planning", () => {
     await screen.findByRole("button", { name: t.visited });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: t.visited })));
     const before = structuredClone(mocks.current), writes = mocks.persist.mock.calls.length;
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: translate(locale, "liveWalk.manageWalk"),
+      }),
+    );
     fireEvent.click(screen.getByRole("button", { name: t.rebuild }));
     let dialog = await screen.findByRole("dialog");
     expect(within(dialog).getByText(t.rebuildHelp)).toBeTruthy();
