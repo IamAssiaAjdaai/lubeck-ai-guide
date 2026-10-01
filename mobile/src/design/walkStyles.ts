@@ -38,9 +38,10 @@ export const walkStyles = StyleSheet.create({
   },
   controls: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   control: {
-    flex: 1,
-    minWidth: 0,
-    minHeight: 75,
+    flexGrow: 1,
+    flexBasis: 120,
+    minWidth: 104,
+    minHeight: 64,
     paddingHorizontal: spacing.xs,
   },
   assistant: {
@@ -56,6 +57,13 @@ export const walkStyles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: colors.borderStrong,
     alignSelf: "center",
+  },
+  diagnostic: {
+    color: colors.textMuted,
+    fontFamily: "Courier",
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.md,
+    padding: spacing.md,
   },
   finishCheck: {
     width: 62,
