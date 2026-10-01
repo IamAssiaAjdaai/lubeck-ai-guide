@@ -593,5 +593,31 @@
       "account_conflict": "This purchase belongs to another CITYWALK account. Sign in to the original account to restore it.",
       "purchase_revoked": "This purchase is no longer active. Check your Store account or contact support."
     }
+  },
+  "liveWalk": {
+    "liveWalk": "Live Walk",
+    "next": "NEXT",
+    "almostThere": "Almost there",
+    "arrived": "You’ve arrived",
+    "storyReady": "Story ready",
+    "routeUpdated": "Route updated",
+    "backTo": "BACK TO",
+    "distanceEta": "{distance} away · ~{minutes} min",
+    "stops": "{visited} / {total} stops",
+    "remaining": "{time} left",
+    "finish": "Finish ~{time}",
+    "backBy": "Back by {time}",
+    "ahead": "{minutes} min ahead",
+    "onSchedule": "On schedule",
+    "behind": "{minutes} min behind",
+    "turnOn": "Turn on Live Walk",
+    "turnOff": "Turn off Live Walk",
+    "continueWalk": "Continue walk",
+    "manageWalk": "Manage walk",
+    "permissionHelp": "Keep your walk updated on the Lock Screen while CITYWALK is in the background.",
+    "locationNeeded": "Allow background location to use Live Walk.",
+    "unavailable": "Live Walk is unavailable on this device.",
+    "enabled": "Live Walk is on",
+    "inspect": "Inspect Live Walk"
   }
 }
