@@ -215,6 +215,49 @@ vi.mock("../src/components/V2Presentation", () => ({
 vi.mock("../src/components/NativeCityMap", () => ({
   NativeCityMap: () => <div>Native map boundary</div>,
 }));
+vi.mock("../src/components/NativeLiveWalkCard", () => ({
+  NativeLiveWalkCard: () => <div>Live Walk companion</div>,
+}));
+vi.mock("../src/lib/backgroundWalk", () => ({
+  completeCitywalkLiveWalk: vi.fn(async () => undefined),
+  disableCitywalkLiveWalk: vi.fn(async () => undefined),
+  enableCitywalkLiveWalk: vi.fn(async () => "enabled"),
+  getLiveWalkRuntimeStatus: vi.fn(async () => ({ status: "disabled" })),
+  publishForegroundLiveWalkLocation: vi.fn(async () => undefined),
+  refreshCitywalkLiveActivity: vi.fn(async () => true),
+}));
+vi.mock("../src/lib/liveWalkStorage", () => ({
+  loadLiveWalkSession: vi.fn(async () => undefined),
+  subscribeLiveWalkSession: vi.fn(() => () => undefined),
+  markLiveWalkRouteUpdated: vi.fn(async () => undefined),
+  syncLiveWalkSession: vi.fn(async (input: Record<string, unknown>) => ({
+    version: 1,
+    ...input,
+    enabled: false,
+    routeSignature: "test-route",
+    proximity: { state: "normal", arrivalSamples: 0 },
+  })),
+}));
+vi.mock("../src/lib/liveWalkPresentation", () => ({
+  buildLiveWalkDiagnostics: vi.fn(() => ({ baseline: "duration_budget" })),
+  buildLiveWalkPresentation: vi.fn(() => ({
+    props: {
+      cityLabel: "CITYWALK · City",
+      state: "normal",
+      stateLabel: "NEXT",
+      destination: "Place 0",
+      distanceEta: "620 m away · ~8 min",
+      progress: 0,
+      progressLabel: "0 / 4 stops",
+      remainingLabel: "2 h left",
+      finishLabel: "Finish ~19:00",
+      compactEta: "8m",
+    },
+    timing: {},
+    targetDistanceMeters: 620,
+    targetEtaMinutes: 8,
+  })),
+}));
 vi.mock("../src/lib/location.expo", () => ({
   expoForegroundLocationAdapter: {},
 }));
@@ -364,16 +407,13 @@ describe("rendered native V2 flow (native bridges mocked, not device acceptance)
     const t = walkCopy("en");
     fireEvent.click(screen.getByRole("button", { name: t.startWalk }));
     await screen.findByRole("button", { name: t.visited });
-    fireEvent.click(
-      screen.getByRole("button", { name: `${t.tired} · ${t.shorten}` }),
-    );
+    expect(screen.getAllByRole("button", { name: t.shorten })).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: t.shorten }));
     expect(screen.getByRole("dialog")).toBeTruthy();
     const before = mocks.persist.mock.calls.length;
     fireEvent.click(screen.getByRole("button", { name: t.keep }));
     expect(mocks.persist).toHaveBeenCalledTimes(before);
-    fireEvent.click(
-      screen.getByRole("button", { name: `${t.tired} · ${t.shorten}` }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: t.shorten }));
     await act(async () => fireEvent.click(screen.getByRole("button", { name: t.confirm })));
     expect(mocks.persist).toHaveBeenCalledTimes(before + 1);
     expect(mocks.persist.mock.lastCall![0].remaining.length).toBeLessThan(
