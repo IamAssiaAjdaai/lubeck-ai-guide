@@ -148,6 +148,11 @@ export function NativeWalkFlow({
     buildPresented.current?.();
     buildPresented.current = undefined;
   }, []);
+  const [liveSession, setLiveSession] = useState<LiveWalkSession>();
+  const [liveBusy, setLiveBusy] = useState(false);
+  const [showManageWalk, setShowManageWalk] = useState(false);
+  const [showLiveInspect, setShowLiveInspect] = useState(false);
+  const [liveInspect, setLiveInspect] = useState("");
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -201,11 +206,6 @@ export function NativeWalkFlow({
   const [proposalKind, setProposalKind] = useState<"adaptation" | "take_back">(
     "adaptation",
   );
-  const [liveSession, setLiveSession] = useState<LiveWalkSession>();
-  const [liveBusy, setLiveBusy] = useState(false);
-  const [showManageWalk, setShowManageWalk] = useState(false);
-  const [showLiveInspect, setShowLiveInspect] = useState(false);
-  const [liveInspect, setLiveInspect] = useState("");
   const eligible = places.filter(isEligibleTourPlace);
   const named = (slugs: string[]) =>
     slugs.flatMap((slug) => places.find((p) => p.slug === slug) ?? []);
