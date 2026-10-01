@@ -593,5 +593,31 @@
       "account_conflict": "هذا الشراء مرتبط بحساب CITYWALK آخر. سجّل الدخول إلى الحساب الأصلي لاستعادته.",
       "purchase_revoked": "هذا الشراء لم يعد نشطًا. تحقق من حساب المتجر أو تواصل مع الدعم."
     }
+  },
+  "liveWalk": {
+    "liveWalk": "المشي المباشر",
+    "next": "التالي",
+    "almostThere": "كدت تصل",
+    "arrived": "لقد وصلت",
+    "storyReady": "القصة جاهزة",
+    "routeUpdated": "تم تحديث المسار",
+    "backTo": "العودة إلى",
+    "distanceEta": "يبعد {distance} · حوالي {minutes} د",
+    "stops": "{visited} / {total} محطات",
+    "remaining": "متبقي {time}",
+    "finish": "النهاية ~{time}",
+    "backBy": "العودة بحلول {time}",
+    "ahead": "متقدم بـ {minutes} د",
+    "onSchedule": "في الموعد",
+    "behind": "متأخر بـ {minutes} د",
+    "turnOn": "تشغيل المشي المباشر",
+    "turnOff": "إيقاف المشي المباشر",
+    "continueWalk": "متابعة الجولة",
+    "manageWalk": "إدارة الجولة",
+    "permissionHelp": "حافظ على تحديث الجولة على شاشة القفل أثناء عمل CITYWALK في الخلفية.",
+    "locationNeeded": "اسمح بالموقع في الخلفية لاستخدام المشي المباشر.",
+    "unavailable": "المشي المباشر غير متاح على هذا الجهاز.",
+    "enabled": "المشي المباشر يعمل",
+    "inspect": "فحص المشي المباشر"
   }
 }
