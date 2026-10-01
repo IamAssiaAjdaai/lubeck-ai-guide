@@ -91,22 +91,14 @@ export async function syncLiveWalkSession(
   const previous = await loadLiveWalkSession(store);
   const routeSignature = liveWalkRouteSignature(input);
   const sameJourney = previous?.journeyId === input.journeyId;
-  const routeChanged = Boolean(
-    sameJourney &&
-      previous &&
-      previous.routeSignature !== routeSignature,
-  );
-
   const session: LiveWalkSession = {
     version: VERSION,
     ...input,
     enabled: sameJourney ? previous?.enabled ?? false : false,
     routeSignature,
-    ...(routeChanged
-      ? { routeUpdatedUntil: now + 60_000 }
-      : sameJourney && previous?.routeUpdatedUntil
-        ? { routeUpdatedUntil: previous.routeUpdatedUntil }
-        : {}),
+    ...(sameJourney && previous?.routeUpdatedUntil
+      ? { routeUpdatedUntil: previous.routeUpdatedUntil }
+      : {}),
     proximity: sameJourney
       ? previous?.proximity ?? { state: "normal", arrivalSamples: 0 }
       : { state: "normal", arrivalSamples: 0 },
@@ -117,6 +109,17 @@ export async function syncLiveWalkSession(
 
   await saveLiveWalkSession(session, store);
   return session;
+}
+
+export async function markLiveWalkRouteUpdated(
+  store: Store = AsyncStorage,
+  now = Date.now(),
+): Promise<LiveWalkSession | undefined> {
+  const session = await loadLiveWalkSession(store);
+  if (!session) return undefined;
+  const next = { ...session, routeUpdatedUntil: now + 60_000 };
+  await saveLiveWalkSession(next, store);
+  return next;
 }
 
 export async function setLiveWalkEnabled(
