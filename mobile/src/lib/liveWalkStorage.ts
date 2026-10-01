@@ -36,6 +36,19 @@ type Store = Pick<
   "getItem" | "setItem" | "removeItem"
 >;
 
+const listeners = new Set<(session: LiveWalkSession | undefined) => void>();
+
+export function subscribeLiveWalkSession(
+  listener: (session: LiveWalkSession | undefined) => void,
+) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function notify(session: LiveWalkSession | undefined) {
+  for (const listener of listeners) listener(session);
+}
+
 export function liveWalkRouteSignature(input: Readonly<{
   stops: readonly LiveWalkRouteStop[];
   finish?: LiveWalkFinish;
@@ -67,12 +80,14 @@ export async function saveLiveWalkSession(
   store: Store = AsyncStorage,
 ): Promise<void> {
   await store.setItem(LIVE_WALK_STORAGE_KEY, JSON.stringify(session));
+  notify(session);
 }
 
 export async function clearLiveWalkSession(
   store: Store = AsyncStorage,
 ): Promise<void> {
   await store.removeItem(LIVE_WALK_STORAGE_KEY);
+  notify(undefined);
 }
 
 export async function syncLiveWalkSession(
