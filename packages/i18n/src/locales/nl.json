@@ -593,5 +593,31 @@
       "account_conflict": "Deze aankoop hoort bij een ander CITYWALK-account. Meld je aan bij het oorspronkelijke account om de aankoop te herstellen.",
       "purchase_revoked": "Deze aankoop is niet meer actief. Controleer je winkelaccount of neem contact op met de klantenservice."
     }
+  },
+  "liveWalk": {
+    "liveWalk": "Live Walk",
+    "next": "VOLGENDE",
+    "almostThere": "Bijna daar",
+    "arrived": "Je bent aangekomen",
+    "storyReady": "Verhaal klaar",
+    "routeUpdated": "Route bijgewerkt",
+    "backTo": "TERUG NAAR",
+    "distanceEta": "{distance} verder · ~{minutes} min",
+    "stops": "{visited} / {total} stops",
+    "remaining": "Nog {time}",
+    "finish": "Einde ~{time}",
+    "backBy": "Terug om {time}",
+    "ahead": "{minutes} min voor",
+    "onSchedule": "Op schema",
+    "behind": "{minutes} min achter",
+    "turnOn": "Live Walk inschakelen",
+    "turnOff": "Live Walk uitschakelen",
+    "continueWalk": "Wandeling voortzetten",
+    "manageWalk": "Wandeling beheren",
+    "permissionHelp": "Houd je wandeling bij op het toegangsscherm terwijl CITYWALK op de achtergrond actief is.",
+    "locationNeeded": "Sta locatie op de achtergrond toe om Live Walk te gebruiken.",
+    "unavailable": "Live Walk is niet beschikbaar op dit apparaat.",
+    "enabled": "Live Walk staat aan",
+    "inspect": "Live Walk inspecteren"
   }
 }
