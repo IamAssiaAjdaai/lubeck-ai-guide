@@ -14,6 +14,7 @@ import {
   BackHandler,
   Linking,
   Modal,
+  Platform,
   ScrollView,
   Share,
   View,
@@ -60,8 +61,28 @@ import { loadLocalTrips } from "../lib/tripStorage";
 import { createMobileTripId } from "../lib/tripNavigation";
 import { requestForegroundLocation } from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
+import {
+  completeCitywalkLiveWalk,
+  disableCitywalkLiveWalk,
+  enableCitywalkLiveWalk,
+  getLiveWalkRuntimeStatus,
+  publishForegroundLiveWalkLocation,
+  refreshCitywalkLiveActivity,
+} from "../lib/backgroundWalk";
+import {
+  loadLiveWalkSession,
+  markLiveWalkRouteUpdated,
+  subscribeLiveWalkSession,
+  syncLiveWalkSession,
+  type LiveWalkSession,
+} from "../lib/liveWalkStorage";
+import {
+  buildLiveWalkDiagnostics,
+  buildLiveWalkPresentation,
+} from "../lib/liveWalkPresentation";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { NativeCityMap } from "./NativeCityMap";
+import { NativeLiveWalkCard } from "./NativeLiveWalkCard";
 import {
   AppText,
   PrimaryButton,
@@ -133,6 +154,19 @@ export function NativeWalkFlow({
     mounted.current = true;
     return () => { mounted.current = false; buildLayoutReady.current?.(); buildPresented.current?.(); };
   }, []);
+  useEffect(() => {
+    let alive = true;
+    void loadLiveWalkSession().then((session) => {
+      if (alive) setLiveSession(session);
+    });
+    const unsubscribe = subscribeLiveWalkSession((session) => {
+      if (alive) setLiveSession(session);
+    });
+    return () => {
+      alive = false;
+      unsubscribe();
+    };
+  }, []);
   const [step, setStep] = useState(1),
     [minutes, setMinutes] = useState(120),
     [returnBy, setReturnBy] = useState("");
@@ -165,9 +199,84 @@ export function NativeWalkFlow({
   const [rating, setRating] = useState<string[]>([]),
     [fit, setFit] = useState<string[]>([]);
   const [proposalMessage, setProposalMessage] = useState("");
+  const [proposalKind, setProposalKind] = useState<"adaptation" | "take_back">(
+    "adaptation",
+  );
+  const [liveSession, setLiveSession] = useState<LiveWalkSession>();
+  const [liveBusy, setLiveBusy] = useState(false);
+  const [showManageWalk, setShowManageWalk] = useState(false);
+  const [showLiveInspect, setShowLiveInspect] = useState(false);
+  const [liveInspect, setLiveInspect] = useState("");
   const eligible = places.filter(isEligibleTourPlace);
   const named = (slugs: string[]) =>
     slugs.flatMap((slug) => places.find((p) => p.slug === slug) ?? []);
+
+  const samePoint = (left: Point | undefined, right: Point | undefined) =>
+    Boolean(
+      left &&
+        right &&
+        Math.abs(left.lat - right.lat) < 0.000001 &&
+        Math.abs(left.lng - right.lng) < 0.000001,
+    );
+  const finishNameFor = (walk: WalkJourney) => {
+    if (!walk.finish) return undefined;
+    if (samePoint(walk.finish, walk.settings.start)) return t.tripStart;
+    const place = places.find((candidate) =>
+      samePoint(candidate.coordinates, walk.finish),
+    );
+    return place
+      ? nativePlaceName(citySlug, place.slug, place.content.name, locale)
+      : t.destination;
+  };
+  const liveStopsFor = (walk: WalkJourney) =>
+    walk.remaining.flatMap((slug) => {
+      const place = places.find((candidate) => candidate.slug === slug);
+      if (!place) return [];
+      return [{
+        slug,
+        name: nativePlaceName(citySlug, slug, place.content.name, locale),
+        point: place.coordinates,
+        durationMinutes: place.durationMinutes,
+        storyReady: place.media.some(
+          (media) =>
+            media.kind === "audio" &&
+            media.purpose === "audio" &&
+            media.locale === locale,
+        ),
+      }];
+    });
+  async function syncLiveCompanion(
+    walk: WalkJourney,
+    routeUpdated = false,
+  ) {
+    const finishName = finishNameFor(walk);
+    const session = await syncLiveWalkSession({
+      journeyId: walk.id,
+      citySlug,
+      cityName: nativeCityName(citySlug, cityName, locale),
+      locale,
+      plannedMinutes: walk.settings.minutes,
+      startedAt: walk.startedAt,
+      ...(walk.settings.deadline === undefined
+        ? {}
+        : { deadline: walk.settings.deadline }),
+      visitedCount: walk.visited.length,
+      totalStops: walk.visited.length + walk.remaining.length,
+      stops: liveStopsFor(walk),
+      ...(walk.finish && finishName
+        ? { finish: { name: finishName, point: walk.finish } }
+        : {}),
+      takeBack: walk.takeBack === true,
+    });
+    const nextSession = routeUpdated
+      ? await markLiveWalkRouteUpdated() ?? session
+      : session;
+    setLiveSession(nextSession);
+    if (nextSession.enabled) {
+      await refreshCitywalkLiveActivity(walk.position);
+    }
+    return nextSession;
+  }
   const dynamicTags = [
     ...new Set(eligible.flatMap((p) => p.tags ?? [])),
   ].filter(
