@@ -3,7 +3,7 @@ import { uxCopy } from "../../design/uxCopy";
 import { getLocaleLabel, t, type TranslationKey } from "@citywalk/i18n";
 import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BackHandler, StyleSheet, Text, TextInput, View } from "react-native";
+import { BackHandler, StyleSheet, TextInput, View } from "react-native";
 
 import { NativeIcon } from "../../components/NativeIcon";
 import { PasswordField } from "../../components/PasswordField";
@@ -181,9 +181,9 @@ export default function AccountScreen() {
       importantForAccessibility="no-hide-descendants"
       style={styles.socialIcon}
     >
-      <Text style={styles.socialIconText}>
+      <AppText style={styles.socialIconText}>
         {provider === "apple" ? "" : "G"}
-      </Text>
+      </AppText>
     </View>
   );
   const nameField = <>
