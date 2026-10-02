@@ -267,4 +267,4 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     backgroundColor: "#2E86E6",
   },
-};
+});
