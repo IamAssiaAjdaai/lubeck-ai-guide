@@ -356,6 +356,56 @@ describe("POST /api/guide", () => {
     );
   });
 
+
+  it("never sends precise walk coordinates or deadline timestamps to Groq", async () => {
+    const preciseStart = { lat: 53.861234, lng: 10.681234 };
+    const preciseFinish = { lat: 53.872345, lng: 10.692345 };
+    const preciseDeadline = 1_800_123_456_789;
+
+    const response = await POST(
+      new Request("http://localhost/api/guide", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: "I am tired. What should I do?",
+          citySlug: "lubeck",
+          placeSlug: "holstentor",
+          locale: "en",
+          walkContext: {
+            visited: [],
+            remaining: ["holstentor"],
+            interests: ["architecture"],
+            walking: "balanced",
+            minutesRemaining: 60,
+            deadline: preciseDeadline,
+            start: preciseStart,
+            finish: preciseFinish,
+          },
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(createCompletion).toHaveBeenCalledOnce();
+
+    const groqRequest = createCompletion.mock.calls[0][0];
+    const serializedGroqRequest = JSON.stringify(groqRequest);
+
+    expect(serializedGroqRequest).not.toContain(String(preciseStart.lat));
+    expect(serializedGroqRequest).not.toContain(String(preciseStart.lng));
+    expect(serializedGroqRequest).not.toContain(String(preciseFinish.lat));
+    expect(serializedGroqRequest).not.toContain(String(preciseFinish.lng));
+    expect(serializedGroqRequest).not.toContain(String(preciseDeadline));
+    expect(serializedGroqRequest).not.toMatch(/"lat"|"lng"|"start"|"finish"|"deadline"/);
+
+    const currentTurn = groqRequest.messages[groqRequest.messages.length - 1];
+    expect(currentTurn.content).toContain("privacy-minimized");
+    expect(currentTurn.content).toContain('"hasDeadline":true');
+    expect(currentTurn.content).toContain('"hasFinishPoint":true');
+    expect(currentTurn.content).toContain('"minutesRemaining":60');
+    expect(currentTurn.content).toContain('"remaining":["holstentor"]');
+  });
+
   it("returns the official source for a grounded Holstentor answer", async () => {
     createCompletion.mockResolvedValueOnce({
       choices: [
