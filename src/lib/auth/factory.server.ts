@@ -22,6 +22,9 @@ export function createCitywalkAuth(
 ) {
   const environment = getBetterAuthEnvironment();
   const socialAuth = getCitywalkSocialAuthConfiguration();
+  const hasSocialProviders =
+    Boolean(socialAuth.socialProviders.google) ||
+    Boolean(socialAuth.socialProviders.apple);
 
   return betterAuth({
     appName: "CITYWALK",
@@ -33,7 +36,9 @@ export function createCitywalkAuth(
       ...socialAuth.trustedOrigins,
     ],
     plugins: [expo()],
-    socialProviders: socialAuth.socialProviders,
+    ...(hasSocialProviders
+      ? { socialProviders: socialAuth.socialProviders }
+      : {}),
     account: {
       accountLinking: {
         enabled: true,
