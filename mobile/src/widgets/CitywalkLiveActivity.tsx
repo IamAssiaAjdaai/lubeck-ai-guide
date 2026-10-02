@@ -22,13 +22,15 @@ import { createLiveActivity } from "expo-widgets";
 
 import type { CitywalkLiveActivityProps } from "../lib/liveWalk";
 
-const BLUE = "#6EB6FF";
-const NAVY = "#081624";
-const MUTED = "#AFC0CE";
-const LINE = "#45596C";
-
 const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
   "widget";
+
+  // expo-widgets serializes only this function body into the isolated widget
+  // runtime. Keep every runtime value inside the widget function.
+  const BLUE = "#6EB6FF";
+  const NAVY = "#081624";
+  const MUTED = "#AFC0CE";
+  const LINE = "#45596C";
 
   const icon =
     props.state === "arrived"
