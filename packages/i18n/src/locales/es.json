@@ -432,7 +432,11 @@
     "connectApple": "Conectar Apple",
     "googleConnected": "Google conectado",
     "appleConnected": "Apple conectado",
-    "socialLinked": "Conexión de la cuenta actualizada."
+    "socialLinked": "Conexión de la cuenta actualizada.",
+    "emailNotVerified": "Verifica tu correo electrónico antes de iniciar sesión.",
+    "verificationSent": "Revisa tu bandeja de entrada o spam y verifica tu correo antes de iniciar sesión.",
+    "resendVerification": "Reenviar correo de verificación",
+    "verificationResent": "Si esta cuenta aún necesita verificación, revisa tu bandeja de entrada o spam para encontrar un nuevo correo de verificación."
   },
   "explore": {
     "all": "Todos",
@@ -557,7 +561,10 @@
     "deletePermanently": "Eliminar cuenta permanentemente",
     "deleted": "Tu cuenta y las rutas guardadas en ella se han eliminado. Los datos locales de viaje se han conservado.",
     "retentionBlocked": "Esta cuenta contiene registros cuya conservación requiere revisión. La eliminación automática no está disponible por ahora. No se ha eliminado ningún dato de la cuenta.",
-    "reauthRequired": "Confirma tu contraseña actual. Si la sesión ha caducado, vuelve a iniciar sesión antes de eliminar tu cuenta."
+    "reauthRequired": "Confirma tu contraseña actual. Si la sesión ha caducado, vuelve a iniciar sesión antes de eliminar tu cuenta.",
+    "verificationEmailSubject": "Verifica tu correo de CITYWALK",
+    "verificationEmailBody": "Usa el siguiente enlace de CITYWALK para verificar tu dirección de correo. Caduca en 1 hora.",
+    "verificationEmailIgnore": "Si no has creado ni intentado acceder a una cuenta de CITYWALK, ignora este correo."
   },
   "unlock": {
     "title": "Desbloquea {city}",

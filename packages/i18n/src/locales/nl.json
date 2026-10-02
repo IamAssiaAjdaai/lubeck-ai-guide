@@ -432,7 +432,11 @@
     "connectApple": "Apple koppelen",
     "googleConnected": "Google gekoppeld",
     "appleConnected": "Apple gekoppeld",
-    "socialLinked": "Accountkoppeling bijgewerkt."
+    "socialLinked": "Accountkoppeling bijgewerkt.",
+    "emailNotVerified": "Verifieer je e-mailadres voordat je inlogt.",
+    "verificationSent": "Controleer je inbox of spammap en verifieer je e-mailadres voordat je inlogt.",
+    "resendVerification": "Verificatiemail opnieuw versturen",
+    "verificationResent": "Als dit account nog moet worden geverifieerd, controleer dan je inbox of spammap voor een nieuwe verificatiemail."
   },
   "explore": {
     "all": "Alles",
@@ -557,7 +561,10 @@
     "deletePermanently": "Account definitief verwijderen",
     "deleted": "Je account en je daarin opgeslagen wandelingen zijn verwijderd. Lokale reisgegevens zijn behouden.",
     "retentionBlocked": "Dit account bevat gegevens waarvan de bewaring moet worden beoordeeld. Zelf verwijderen is momenteel niet beschikbaar. Er zijn geen accountgegevens verwijderd.",
-    "reauthRequired": "Bevestig je huidige wachtwoord. Als je sessie is verlopen, log dan opnieuw in voordat je het account verwijdert."
+    "reauthRequired": "Bevestig je huidige wachtwoord. Als je sessie is verlopen, log dan opnieuw in voordat je het account verwijdert.",
+    "verificationEmailSubject": "Verifieer je CITYWALK-e-mailadres",
+    "verificationEmailBody": "Gebruik de volgende CITYWALK-link om je e-mailadres te verifiëren. De link verloopt na 1 uur.",
+    "verificationEmailIgnore": "Als je geen CITYWALK-account hebt aangemaakt of geprobeerd hebt toegang te krijgen, kun je deze e-mail negeren."
   },
   "unlock": {
     "title": "Ontgrendel {city}",
