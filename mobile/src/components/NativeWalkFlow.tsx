@@ -1156,7 +1156,14 @@ export function NativeWalkFlow({
           ) : (
             <>
               {livePresentation ? (
-                <NativeLiveWalkCard presentation={livePresentation} />
+                <NativeLiveWalkCard
+                  presentation={livePresentation}
+                  continueLabel={translate(locale, "liveWalk.continueWalk")}
+                  continueDisabled={!liveNavigationTarget}
+                  onContinue={() => {
+                    if (liveNavigationTarget) void navigate(liveNavigationTarget);
+                  }}
+                />
               ) : null}
               {Platform.OS === "ios" && !liveSession?.enabled ? (
                 <>
@@ -1170,13 +1177,15 @@ export function NativeWalkFlow({
                   />
                 </>
               ) : null}
-              <PrimaryButton
-                label={translate(locale, "liveWalk.continueWalk")}
-                disabled={!liveNavigationTarget}
-                onPress={() => {
-                  if (liveNavigationTarget) void navigate(liveNavigationTarget);
-                }}
-              />
+              {!livePresentation ? (
+                <PrimaryButton
+                  label={translate(locale, "liveWalk.continueWalk")}
+                  disabled={!liveNavigationTarget}
+                  onPress={() => {
+                    if (liveNavigationTarget) void navigate(liveNavigationTarget);
+                  }}
+                />
+              ) : null}
 
               <AppText variant="label" style={styles.routeLabel}>
                 {t.tripControls}
