@@ -31,6 +31,7 @@ describe("native account diagnostics", () => {
   it("validates email and classifies safe Better Auth errors", () => {
     expect(validateNativeAuthInput("invalid", "twelve-chars!")).toBe("invalid_email");
     expect(classifyNativeAuthError({ code: "USER_ALREADY_EXISTS" })).toBe("account_exists");
+    expect(classifyNativeAuthError({ code: "EMAIL_NOT_VERIFIED", status: 403 })).toBe("email_not_verified");
     expect(classifyNativeAuthError({ code: "INVALID_EMAIL_OR_PASSWORD" })).toBe("invalid_credentials");
     expect(classifyNativeAuthError(new Error("offline"))).toBe("unknown");
     expect(classifyNativeAuthError(undefined)).toBe("network");

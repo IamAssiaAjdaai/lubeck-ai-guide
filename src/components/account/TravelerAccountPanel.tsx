@@ -33,6 +33,7 @@ export function TravelerAccountPanel({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [verificationEmail, setVerificationEmail] = useState<string | null>(null);
 
   async function linkGuestTrip(): Promise<boolean> {
     const identity = getBrowserVisitorSessionIdentity();
@@ -53,6 +54,7 @@ export function TravelerAccountPanel({
     setIsLoading(true);
     setError(null);
     setNotice(null);
+    setVerificationEmail(null);
 
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get("email") ?? "").trim();
@@ -61,7 +63,19 @@ export function TravelerAccountPanel({
     try {
       const result = await authClient.signIn.email({ email, password });
       if (result.error) {
-        setError(copy.genericSignInError);
+        const code =
+          typeof result.error === "object" &&
+          result.error !== null &&
+          "code" in result.error &&
+          typeof result.error.code === "string"
+            ? result.error.code.toUpperCase()
+            : "";
+        if (code.includes("EMAIL_NOT_VERIFIED")) {
+          setVerificationEmail(email);
+          setError(copy.emailNotVerified);
+        } else {
+          setError(copy.genericSignInError);
+        }
         return;
       }
 
@@ -92,16 +106,45 @@ export function TravelerAccountPanel({
     const password = String(formData.get("password") ?? "");
 
     try {
-      const result = await authClient.signUp.email({ name, email, password });
+      const result = await authClient.signUp.email({
+        name,
+        email,
+        password,
+        callbackURL: `/${locale}/account`,
+        fetchOptions: { headers: { "X-Citywalk-Locale": locale } },
+      });
       if (result.error) {
         setError(copy.genericSignUpError);
         return;
       }
 
       setMode("sign-in");
-      setNotice(copy.accountCreated);
+      setNotice(copy.verificationSent);
     } catch {
       setError(copy.genericSignUpError);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleResendVerification() {
+    if (!verificationEmail) return;
+    setIsLoading(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const result = await authClient.sendVerificationEmail({
+        email: verificationEmail,
+        callbackURL: `/${locale}/account`,
+        fetchOptions: { headers: { "X-Citywalk-Locale": locale } },
+      });
+      if (result.error) {
+        setError(copy.genericSignInError);
+        return;
+      }
+      setNotice(copy.verificationResent);
+    } catch {
+      setError(copy.genericSignInError);
     } finally {
       setIsLoading(false);
     }
@@ -159,6 +202,7 @@ export function TravelerAccountPanel({
             setMode("sign-in");
             setError(null);
             setNotice(null);
+            setVerificationEmail(null);
           }}
         >
           {copy.signIn}
@@ -171,6 +215,7 @@ export function TravelerAccountPanel({
             setMode("sign-up");
             setError(null);
             setNotice(null);
+            setVerificationEmail(null);
           }}
         >
           {copy.signUp}
@@ -238,6 +283,16 @@ export function TravelerAccountPanel({
           <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
             {error}
           </p>
+        ) : null}
+        {verificationEmail ? (
+          <button
+            type="button"
+            className="button-secondary w-full disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isLoading}
+            onClick={() => void handleResendVerification()}
+          >
+            {copy.resendVerification}
+          </button>
         ) : null}
 
         <button

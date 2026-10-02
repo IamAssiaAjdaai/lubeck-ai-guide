@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
   signInEmail: vi.fn(),
   signUpEmail: vi.fn(),
   signOut: vi.fn(),
+  sendVerificationEmail: vi.fn(),
   getIdentity: vi.fn(),
 }));
 
@@ -28,6 +29,7 @@ vi.mock("@/lib/auth/client", () => ({
     signIn: { email: mocks.signInEmail },
     signUp: { email: mocks.signUpEmail },
     signOut: mocks.signOut,
+    sendVerificationEmail: mocks.sendVerificationEmail,
   },
 }));
 
@@ -56,6 +58,7 @@ describe("TravelerAccountPanel", () => {
       visitorId: "00000000-0000-4000-8000-000000000001",
       sessionId: "00000000-0000-4000-8000-000000000002",
     });
+    mocks.sendVerificationEmail.mockResolvedValue({ data: { status: true }, error: null });
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true }));
   });
 
@@ -102,9 +105,39 @@ describe("TravelerAccountPanel", () => {
     fireEvent.click(createButtons[createButtons.length - 1]!);
 
     expect((await screen.findByRole("status")).textContent).toContain(
-      copy.accountCreated,
+      copy.verificationSent,
     );
     expect(mocks.signInEmail).not.toHaveBeenCalled();
+  });
+
+  it("shows verified-email guidance and lets the authenticated credential owner resend safely", async () => {
+    mocks.signInEmail.mockResolvedValue({
+      data: null,
+      error: { code: "EMAIL_NOT_VERIFIED", status: 403 },
+    });
+    renderPanel();
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "traveler@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "a-secure-password" },
+    });
+    const buttons = screen.getAllByRole("button", { name: "Sign in" });
+    fireEvent.click(buttons[buttons.length - 1]!);
+
+    expect((await screen.findByRole("alert")).textContent).toContain(
+      copy.emailNotVerified,
+    );
+    fireEvent.click(screen.getByRole("button", { name: copy.resendVerification }));
+    expect((await screen.findByRole("status")).textContent).toContain(
+      copy.verificationResent,
+    );
+    expect(mocks.sendVerificationEmail).toHaveBeenCalledWith({
+      email: "traveler@example.com",
+      callbackURL: "/en/account",
+      fetchOptions: { headers: { "X-Citywalk-Locale": "en" } },
+    });
   });
 
   it("links the anonymous guest identity before returning to the trip", async () => {
