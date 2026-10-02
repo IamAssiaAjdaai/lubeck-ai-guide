@@ -425,7 +425,14 @@
     "passwordMismatch": "De nya lösenorden matchar inte.",
     "invalidName": "Ange ett visningsnamn med 1 till 100 tecken.",
     "currentPasswordRequired": "Ange ditt nuvarande lösenord.",
-    "currentPasswordIncorrect": "Ditt nuvarande lösenord är felaktigt."
+    "currentPasswordIncorrect": "Ditt nuvarande lösenord är felaktigt.",
+    "continueWithGoogle": "Fortsätt med Google",
+    "continueWithApple": "Fortsätt med Apple",
+    "connectGoogle": "Anslut Google",
+    "connectApple": "Anslut Apple",
+    "googleConnected": "Google är anslutet",
+    "appleConnected": "Apple är anslutet",
+    "socialLinked": "Kontoanslutningen har uppdaterats."
   },
   "explore": {
     "all": "Alla",
