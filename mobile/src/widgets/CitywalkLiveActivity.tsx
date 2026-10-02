@@ -75,7 +75,7 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
             ) : (
               <Circle
                 modifiers={[
-                  frame({ width: 12, height: 12 }),
+                  frame({ width: 14, height: 14 }),
                   foregroundStyle(complete ? BLUE : LINE),
                 ]}
               />
