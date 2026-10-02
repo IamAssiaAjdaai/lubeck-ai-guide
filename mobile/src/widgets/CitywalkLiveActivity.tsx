@@ -1,26 +1,88 @@
 import {
+  Circle,
+  Divider,
   HStack,
   Image,
-  ProgressView,
+  Rectangle,
   Spacer,
   Text,
   VStack,
+  ZStack,
 } from "@expo/ui/swift-ui";
 import {
   background,
   cornerRadius,
   font,
   foregroundStyle,
+  frame,
   lineLimit,
   padding,
-  tint,
 } from "@expo/ui/swift-ui/modifiers";
 import { createLiveActivity } from "expo-widgets";
 
 import type { CitywalkLiveActivityProps } from "../lib/liveWalk";
 
+const BLUE = "#6EB6FF";
+const NAVY = "#081624";
+const MUTED = "#AFC0CE";
+const LINE = "#45596C";
+
 const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
   "widget";
+
+  const icon =
+    props.state === "arrived"
+      ? "checkmark.circle.fill"
+      : props.state === "take_back"
+        ? "arrow.uturn.backward.circle.fill"
+        : "location.fill";
+  const showProgress = props.state !== "take_back" && props.totalStops > 0;
+  const count = Math.max(1, Math.min(props.totalStops, 7));
+  const current = Math.min(Math.max(props.visitedCount, 0), count - 1);
+
+  const progressDots = showProgress ? (
+    <HStack spacing={0}>
+      {Array.from({ length: count }).map((_, index) => {
+        const complete = index < props.visitedCount;
+        const active = index === current && props.visitedCount < props.totalStops;
+        return (
+          <HStack key={index} spacing={0}>
+            {index > 0 ? (
+              <Rectangle
+                modifiers={[
+                  frame({ width: 18, height: 2 }),
+                  foregroundStyle(index <= props.visitedCount ? BLUE : LINE),
+                ]}
+              />
+            ) : null}
+            {active ? (
+              <ZStack>
+                <Circle
+                  modifiers={[
+                    frame({ width: 22, height: 22 }),
+                    foregroundStyle(BLUE),
+                  ]}
+                />
+                <Circle
+                  modifiers={[
+                    frame({ width: 12, height: 12 }),
+                    foregroundStyle(NAVY),
+                  ]}
+                />
+              </ZStack>
+            ) : (
+              <Circle
+                modifiers={[
+                  frame({ width: 12, height: 12 }),
+                  foregroundStyle(complete ? BLUE : LINE),
+                ]}
+              />
+            )}
+          </HStack>
+        );
+      })}
+    </HStack>
+  ) : null;
 
   return {
     banner: (
@@ -28,18 +90,22 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
         spacing={8}
         modifiers={[
           padding({ all: 16 }),
-          background("#081624"),
-          cornerRadius(22),
+          background(NAVY),
+          cornerRadius(24),
         ]}
       >
-        <Text
-          modifiers={[
-            font({ size: 12, weight: "semibold" }),
-            foregroundStyle("#58B9EA"),
-          ]}
-        >
-          {props.cityLabel}
-        </Text>
+        <HStack spacing={8}>
+          <Image systemName={icon} color={BLUE} />
+          <Text
+            modifiers={[
+              font({ size: 12, weight: "semibold" }),
+              foregroundStyle(BLUE),
+            ]}
+          >
+            {props.cityLabel}
+          </Text>
+        </HStack>
+
         <Text
           modifiers={[
             font({ size: 11, weight: "semibold" }),
@@ -48,87 +114,118 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
         >
           {props.stateLabel}
         </Text>
+
         <Text
           modifiers={[
-            font({ size: 20, weight: "bold" }),
+            font({ size: 24, weight: "bold" }),
             foregroundStyle("#FFFFFF"),
             lineLimit(2),
           ]}
         >
           {props.destination}
         </Text>
+
         {props.storyLabel ? (
-          <Text
-            modifiers={[
-              font({ size: 13, weight: "medium" }),
-              foregroundStyle("#D9F3FF"),
-            ]}
-          >
-            {props.storyLabel}
-          </Text>
+          <HStack spacing={6}>
+            <Image systemName="book.fill" color="#D9F3FF" />
+            <Text
+              modifiers={[
+                font({ size: 13, weight: "medium" }),
+                foregroundStyle("#D9F3FF"),
+              ]}
+            >
+              {props.storyLabel}
+            </Text>
+          </HStack>
         ) : props.distanceEta ? (
-          <Text
-            modifiers={[
-              font({ size: 14, weight: "medium" }),
-              foregroundStyle("#D5DEE6"),
-            ]}
-          >
-            {props.distanceEta}
-          </Text>
+          <HStack spacing={6}>
+            <Image systemName="figure.walk" color="#FFFFFF" />
+            <Text
+              modifiers={[
+                font({ size: 14, weight: "medium" }),
+                foregroundStyle("#E7EEF5"),
+              ]}
+            >
+              {props.distanceEta}
+            </Text>
+          </HStack>
         ) : null}
-        <ProgressView value={props.progress} modifiers={[tint("#159ED5")]} />
-        <HStack>
+
+        {progressDots}
+        {showProgress ? (
           <Text
             modifiers={[
               font({ size: 12, weight: "medium" }),
-              foregroundStyle("#D5DEE6"),
+              foregroundStyle(MUTED),
             ]}
           >
             {props.progressLabel}
           </Text>
-          <Spacer />
-          <Text
-            modifiers={[
-              font({ size: 12, weight: "medium" }),
-              foregroundStyle("#D5DEE6"),
-            ]}
-          >
-            {props.remainingLabel}
-          </Text>
-        </HStack>
+        ) : null}
+
+        <Divider />
+
         <HStack>
-          <Text
-            modifiers={[
-              font({ size: 12, weight: "medium" }),
-              foregroundStyle("#FFFFFF"),
-            ]}
-          >
-            {props.finishLabel}
-          </Text>
+          <VStack spacing={1}>
+            <Text
+              modifiers={[
+                font({ size: 13, weight: "semibold" }),
+                foregroundStyle("#FFFFFF"),
+              ]}
+            >
+              {props.remainingLabel}
+            </Text>
+            <Text
+              modifiers={[
+                font({ size: 11, weight: "medium" }),
+                foregroundStyle(MUTED),
+              ]}
+            >
+              {props.finishLabel}
+            </Text>
+          </VStack>
+
           <Spacer />
-          <Text
-            modifiers={[
-              font({ size: 12, weight: "semibold" }),
-              foregroundStyle(
-                props.scheduleLabel ? "#58B9EA" : "#91A4B5",
-              ),
-            ]}
-          >
-            {props.scheduleLabel ?? props.deadlineLabel ?? ""}
-          </Text>
+
+          {props.scheduleLabel || props.deadlineLabel ? (
+            <VStack spacing={1}>
+              <HStack spacing={4}>
+                <Text
+                  modifiers={[
+                    font({ size: 12, weight: "semibold" }),
+                    foregroundStyle(BLUE),
+                  ]}
+                >
+                  {props.scheduleLabel ?? props.deadlineLabel ?? ""}
+                </Text>
+                <Image systemName="checkmark" color={BLUE} />
+              </HStack>
+              {props.scheduleLabel && props.deadlineLabel ? (
+                <Text
+                  modifiers={[
+                    font({ size: 10, weight: "medium" }),
+                    foregroundStyle(MUTED),
+                  ]}
+                >
+                  {props.deadlineLabel}
+                </Text>
+              ) : null}
+            </VStack>
+          ) : null}
         </HStack>
       </VStack>
     ),
+
     bannerSmall: (
       <HStack
         spacing={8}
         modifiers={[
           padding({ all: 12 }),
-          background("#081624"),
+          background(NAVY),
           cornerRadius(18),
         ]}
       >
-        <Image systemName="location.fill" modifiers={[foregroundStyle("#159ED5")]} />
+        <Image systemName={icon} color={BLUE} />
         <VStack spacing={2}>
           <Text
             modifiers={[
@@ -150,9 +247,8 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
         </VStack>
       </HStack>
     ),
-    compactLeading: (
-      <Image systemName="location.fill" modifiers={[foregroundStyle("#159ED5")]} />
-    ),
+
+    compactLeading: <Image systemName={icon} color={BLUE} />,
     compactTrailing: (
       <Text
         modifiers={[
@@ -163,25 +259,20 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
         {props.compactEta}
       </Text>
     ),
-    minimal: (
-      <Image systemName="location.fill" modifiers={[foregroundStyle("#159ED5")]} />
-    ),
+    minimal: <Image systemName={icon} color={BLUE} />,
+
     expandedLeading: (
-      <Text
-        modifiers={[
-          padding({ leading: 8 }),
-          font({ size: 12, weight: "semibold" }),
-          foregroundStyle("#58B9EA"),
-        ]}
-      >
-        CITYWALK
-      </Text>
+      <Image
+        systemName={icon}
+        color={BLUE}
+        modifiers={[padding({ leading: 8 })]}
+      />
     ),
     expandedCenter: (
       <VStack spacing={2}>
         <Text
           modifiers={[
-            font({ size: 11, weight: "semibold" }),
+            font({ size: 10, weight: "semibold" }),
             foregroundStyle("#91A4B5"),
           ]}
         >
@@ -189,13 +280,32 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
         </Text>
         <Text
           modifiers={[
-            font({ size: 15, weight: "bold" }),
+            font({ size: 17, weight: "bold" }),
             foregroundStyle("#FFFFFF"),
             lineLimit(2),
           ]}
         >
           {props.destination}
         </Text>
+        {props.distanceEta ? (
+          <Text
+            modifiers={[
+              font({ size: 11, weight: "medium" }),
+              foregroundStyle(MUTED),
+            ]}
+          >
+            {props.distanceEta}
+          </Text>
+        ) : props.storyLabel ? (
+          <Text
+            modifiers={[
+              font({ size: 11, weight: "medium" }),
+              foregroundStyle("#D9F3FF"),
+            ]}
+          >
+            {props.storyLabel}
+          </Text>
+        ) : null}
       </VStack>
     ),
     expandedTrailing: (
@@ -210,13 +320,13 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
       </Text>
     ),
     expandedBottom: (
-      <VStack spacing={5} modifiers={[padding({ horizontal: 8, bottom: 8 })]}>
-        <ProgressView value={props.progress} modifiers={[tint("#159ED5")]} />
+      <VStack spacing={6} modifiers={[padding({ horizontal: 8, bottom: 8 })]}>
+        {progressDots}
         <HStack>
           <Text
             modifiers={[
               font({ size: 11, weight: "medium" }),
-              foregroundStyle("#D5DEE6"),
+              foregroundStyle(MUTED),
             ]}
           >
             {props.progressLabel}
@@ -224,11 +334,11 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
           <Spacer />
           <Text
             modifiers={[
-              font({ size: 11, weight: "medium" }),
-              foregroundStyle("#D5DEE6"),
+              font({ size: 11, weight: "semibold" }),
+              foregroundStyle(props.scheduleLabel ? BLUE : MUTED),
             ]}
           >
-            {props.remainingLabel}
+            {props.scheduleLabel ?? props.deadlineLabel ?? props.remainingLabel}
           </Text>
         </HStack>
       </VStack>
