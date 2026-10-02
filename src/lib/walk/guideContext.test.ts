@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { resolveWalkGuideContext } from "./guideContext";
+import {
+  resolveWalkGuideContext,
+  toWalkGuidePromptContext,
+} from "./guideContext";
 import { lubeckPlaces } from "@/data/places";
 const context = {
   visited: [],
@@ -57,4 +60,32 @@ describe("traveler walk context boundary", () => {
       ),
     ).not.toHaveProperty("prompt");
   });
+  it("projects validated walk context without precise coordinates or deadline timestamps", () => {
+    const resolved = resolveWalkGuideContext(
+      {
+        ...context,
+        deadline: 1_800_000_000_000,
+        finish: { lat: 53.870123, lng: 10.690456 },
+      },
+      lubeckPlaces,
+      "holstentor",
+    );
+    expect(resolved).toBeDefined();
+
+    const promptContext = toWalkGuidePromptContext(resolved!);
+    expect(promptContext).toEqual({
+      visited: [],
+      remaining: ["holstentor"],
+      interests: ["architecture"],
+      walking: "balanced",
+      minutesRemaining: 60,
+      hasDeadline: true,
+      hasFinishPoint: true,
+    });
+    expect(promptContext).not.toHaveProperty("start");
+    expect(promptContext).not.toHaveProperty("finish");
+    expect(promptContext).not.toHaveProperty("deadline");
+    expect(JSON.stringify(promptContext)).not.toMatch(/53\.86|10\.68|53\.870123|10\.690456|1800000000000/);
+  });
+
 });
