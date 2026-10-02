@@ -89,50 +89,50 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
   return {
     banner: (
       <VStack
-        spacing={8}
+        spacing={5}
         modifiers={[
-          padding({ all: 16 }),
+          padding({ horizontal: 14, vertical: 10 }),
           background(NAVY),
-          cornerRadius(24),
+          cornerRadius(22),
         ]}
       >
-        <HStack spacing={8}>
+        <HStack spacing={6}>
           <Image systemName={icon} color={BLUE} />
           <Text
             modifiers={[
-              font({ size: 12, weight: "semibold" }),
+              font({ size: 11, weight: "semibold" }),
               foregroundStyle(BLUE),
             ]}
           >
             {props.cityLabel}
           </Text>
+          <Spacer />
+          <Text
+            modifiers={[
+              font({ size: 10, weight: "semibold" }),
+              foregroundStyle("#91A4B5"),
+            ]}
+          >
+            {props.stateLabel}
+          </Text>
         </HStack>
 
         <Text
           modifiers={[
-            font({ size: 11, weight: "semibold" }),
-            foregroundStyle("#91A4B5"),
-          ]}
-        >
-          {props.stateLabel}
-        </Text>
-
-        <Text
-          modifiers={[
-            font({ size: 24, weight: "bold" }),
+            font({ size: 21, weight: "bold" }),
             foregroundStyle("#FFFFFF"),
-            lineLimit(2),
+            lineLimit(1),
           ]}
         >
           {props.destination}
         </Text>
 
         {props.storyLabel ? (
-          <HStack spacing={6}>
+          <HStack spacing={5}>
             <Image systemName="book.fill" color="#D9F3FF" />
             <Text
               modifiers={[
-                font({ size: 13, weight: "medium" }),
+                font({ size: 12, weight: "medium" }),
                 foregroundStyle("#D9F3FF"),
               ]}
             >
@@ -140,11 +140,11 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
             </Text>
           </HStack>
         ) : props.distanceEta ? (
-          <HStack spacing={6}>
+          <HStack spacing={5}>
             <Image systemName="figure.walk" color="#FFFFFF" />
             <Text
               modifiers={[
-                font({ size: 14, weight: "medium" }),
+                font({ size: 12, weight: "medium" }),
                 foregroundStyle("#E7EEF5"),
               ]}
             >
@@ -153,25 +153,28 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
           </HStack>
         ) : null}
 
-        {progressDots}
         {showProgress ? (
-          <Text
-            modifiers={[
-              font({ size: 12, weight: "medium" }),
-              foregroundStyle(MUTED),
-            ]}
-          >
-            {props.progressLabel}
-          </Text>
+          <HStack spacing={8}>
+            {progressDots}
+            <Spacer />
+            <Text
+              modifiers={[
+                font({ size: 10, weight: "medium" }),
+                foregroundStyle(MUTED),
+              ]}
+            >
+              {props.progressLabel}
+            </Text>
+          </HStack>
         ) : null}
 
         <Divider />
 
         <HStack>
-          <VStack spacing={1}>
+          <VStack spacing={0}>
             <Text
               modifiers={[
-                font({ size: 13, weight: "semibold" }),
+                font({ size: 11, weight: "semibold" }),
                 foregroundStyle("#FFFFFF"),
               ]}
             >
@@ -179,7 +182,7 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
             </Text>
             <Text
               modifiers={[
-                font({ size: 11, weight: "medium" }),
+                font({ size: 9, weight: "medium" }),
                 foregroundStyle(MUTED),
               ]}
             >
@@ -190,11 +193,11 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
           <Spacer />
 
           {props.scheduleLabel || props.deadlineLabel ? (
-            <VStack spacing={1}>
-              <HStack spacing={4}>
+            <VStack spacing={0}>
+              <HStack spacing={3}>
                 <Text
                   modifiers={[
-                    font({ size: 12, weight: "semibold" }),
+                    font({ size: 10, weight: "semibold" }),
                     foregroundStyle(BLUE),
                   ]}
                 >
@@ -205,7 +208,7 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
               {props.scheduleLabel && props.deadlineLabel ? (
                 <Text
                   modifiers={[
-                    font({ size: 10, weight: "medium" }),
+                    font({ size: 9, weight: "medium" }),
                     foregroundStyle(MUTED),
                   ]}
                 >
