@@ -425,7 +425,14 @@
     "passwordMismatch": "The new passwords do not match.",
     "invalidName": "Enter a display name between 1 and 100 characters.",
     "currentPasswordRequired": "Enter your current password.",
-    "currentPasswordIncorrect": "Your current password is incorrect."
+    "currentPasswordIncorrect": "Your current password is incorrect.",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple",
+    "connectGoogle": "Connect Google",
+    "connectApple": "Connect Apple",
+    "googleConnected": "Google connected",
+    "appleConnected": "Apple connected",
+    "socialLinked": "Account connection updated."
   },
   "explore": {
     "all": "All",
