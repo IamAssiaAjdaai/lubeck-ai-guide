@@ -1,6 +1,5 @@
 import {
   Circle,
-  Divider,
   HStack,
   Image,
   Rectangle,
