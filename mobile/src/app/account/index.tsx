@@ -12,17 +12,20 @@ import { CitywalkLoading } from "../../components/CitywalkLoading";
 import { colors, radius, spacing, typography } from "../../design/tokens";
 import { deleteNativeAccount } from "../../lib/auth/lifecycle";
 import { nativeAuthClient } from "../../lib/auth/client";
+import { getNativeSocialAuthAvailability } from "../../lib/auth/configuration";
 import { classifyNativeAuthError, type NativeAuthErrorCode, validateDisplayName, validateNativeAuthInput, validateNewPassword } from "../../lib/auth/errors";
 import { triggerCitywalkHaptic } from "../../lib/haptics";
 import { useNativeLocale } from "../../localization/LocaleProvider";
 
 type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "change-password" | "delete";
-type Action = "sign-in" | "sign-up" | "edit" | "change-password" | "sign-out" | "reset" | "delete";
+type SocialProvider = "google" | "apple";
+type Action = "sign-in" | "sign-up" | "edit" | "change-password" | "sign-out" | "reset" | "delete" | "social-google" | "social-apple" | "link-google" | "link-apple";
 
 export default function AccountScreen() {
   const { locale, direction, messages } = useNativeLocale();
   const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string }>();
   const { data: session, isPending } = nativeAuthClient.useSession();
+  const socialAuth = getNativeSocialAuthAvailability();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -38,17 +41,25 @@ export default function AccountScreen() {
   const mounted = useRef(true);
   const request = useRef(0);
   const [providerReload, setProviderReload] = useState(0);
-  const [credential, setCredential] = useState<{ userId: string; status: "yes" | "no" | "error" }>();
+  const [credential, setCredential] = useState<{ userId: string; status: "yes" | "no" | "error"; providers: string[] }>();
   const userId = session?.user.id;
   // Provider IDs are used only to gate password management, never displayed or logged.
   useEffect(() => {
     let active = true;
     if (userId) void nativeAuthClient.listAccounts().then(result => {
-      if (active) setCredential({ userId, status: result.error ? "error" : result.data?.some(account => account.providerId === "credential") ? "yes" : "no" });
-    }).catch(() => { if (active) setCredential({ userId, status: "error" }); });
+      const providers = result.data?.map(account => account.providerId) ?? [];
+      if (active) setCredential({
+        userId,
+        status: result.error ? "error" : providers.includes("credential") ? "yes" : "no",
+        providers,
+      });
+    }).catch(() => { if (active) setCredential({ userId, status: "error", providers: [] }); });
     return () => { active = false; };
   }, [userId, providerReload]);
   const hasCredential = credential?.userId === userId && credential?.status === "yes";
+  const linkedProviders = credential?.userId === userId ? credential.providers : [];
+  const hasGoogle = linkedProviders.includes("google");
+  const hasApple = linkedProviders.includes("apple");
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   function clearPasswords() { setPassword(""); setNewPassword(""); setConfirmation(""); }
   const open = useCallback((next?: Entry) => {
@@ -103,6 +114,35 @@ export default function AccountScreen() {
         if (mode === "sign-up") { setEntry("sign-in"); setNotice("profile.accountCreated"); }
         else { setEntry(undefined); if (params.returnToWalk === "1" && router.canGoBack()) router.back(); }
       });
+  }
+  function socialSignIn(provider: SocialProvider) {
+    if (submitLock.current) return;
+    void perform(
+      `social-${provider}`,
+      () => nativeAuthClient.signIn.social({
+        provider,
+        callbackURL: "/account",
+      }),
+      () => {
+        setEntry(undefined);
+        setProviderReload(value => value + 1);
+        if (params.returnToWalk === "1" && router.canGoBack()) router.back();
+      },
+    );
+  }
+  function linkSocial(provider: SocialProvider) {
+    if (submitLock.current || !session) return;
+    void perform(
+      `link-${provider}`,
+      () => nativeAuthClient.linkSocial({
+        provider,
+        callbackURL: "/account",
+      }),
+      () => {
+        setProviderReload(value => value + 1);
+        setNotice("profile.socialLinked");
+      },
+    );
   }
   function saveProfile() {
     if (submitLock.current || !session) return;
@@ -171,6 +211,24 @@ export default function AccountScreen() {
           <PrimaryButton label={messages.retry} tone="secondary" onPress={() => { setCredential(undefined); setProviderReload(value => value + 1); }} />
         </> : null}
         {hasCredential ? <PrimaryButton label={label("profile.changePassword")} tone="secondary" onPress={() => open("change-password")} /> : null}
+        {socialAuth.apple ? hasApple
+          ? <AppText variant="metadata">{label("profile.appleConnected")}</AppText>
+          : <PrimaryButton
+              label={label("profile.connectApple")}
+              tone="secondary"
+              busy={busy === "link-apple"}
+              disabled={Boolean(busy)}
+              onPress={() => linkSocial("apple")}
+            /> : null}
+        {socialAuth.google ? hasGoogle
+          ? <AppText variant="metadata">{label("profile.googleConnected")}</AppText>
+          : <PrimaryButton
+              label={label("profile.connectGoogle")}
+              tone="secondary"
+              busy={busy === "link-google"}
+              disabled={Boolean(busy)}
+              onPress={() => linkSocial("google")}
+            /> : null}
         <PrimaryButton label={messages.signOut} busy={busy === "sign-out"} onPress={() => void perform("sign-out", () => nativeAuthClient.signOut(), () => setEntry(undefined))} tone="secondary" />
         <PressableSurface accessibilityRole="button" onPress={() => open("delete")} style={styles.deleteAction}>
           <AppText variant="label" style={styles.destructive}>{label("profile.deleteAccount")}</AppText>
@@ -178,11 +236,37 @@ export default function AccountScreen() {
       </Card>
     </> : null}
     {!session && !entry ? <Card>
-      <PrimaryButton label={messages.signUp} disabled={isPending} onPress={() => open("sign-up")} />
-      <PrimaryButton label={messages.signIn} disabled={isPending} tone="secondary" onPress={() => open("sign-in")} />
+      {socialAuth.apple ? <PrimaryButton
+        label={label("profile.continueWithApple")}
+        busy={busy === "social-apple"}
+        disabled={isPending || Boolean(busy)}
+        onPress={() => socialSignIn("apple")}
+      /> : null}
+      {socialAuth.google ? <PrimaryButton
+        label={label("profile.continueWithGoogle")}
+        busy={busy === "social-google"}
+        disabled={isPending || Boolean(busy)}
+        tone="secondary"
+        onPress={() => socialSignIn("google")}
+      /> : null}
+      <PrimaryButton label={messages.signUp} disabled={isPending || Boolean(busy)} onPress={() => open("sign-up")} />
+      <PrimaryButton label={messages.signIn} disabled={isPending || Boolean(busy)} tone="secondary" onPress={() => open("sign-in")} />
       <PrimaryButton label={messages.continueAsGuest} tone="secondary" onPress={leave} />
     </Card> : null}
     {isEmailEntry ? <Card>
+      {socialAuth.apple ? <PrimaryButton
+        label={label("profile.continueWithApple")}
+        busy={busy === "social-apple"}
+        disabled={isPending || Boolean(busy)}
+        onPress={() => socialSignIn("apple")}
+      /> : null}
+      {socialAuth.google ? <PrimaryButton
+        label={label("profile.continueWithGoogle")}
+        busy={busy === "social-google"}
+        disabled={isPending || Boolean(busy)}
+        tone="secondary"
+        onPress={() => socialSignIn("google")}
+      /> : null}
       <AppText variant="heading">{entry === "sign-up" ? messages.signUp : messages.signIn}</AppText>
       {entry === "sign-up" ? nameField : null}
       {emailField}
