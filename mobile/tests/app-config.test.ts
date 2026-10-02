@@ -131,12 +131,14 @@ describe("CITYWALK native app configuration", () => {
         EXPO_PUBLIC_CITYWALK_ENV: "preview",
         EXPO_PUBLIC_CITYWALK_API_ORIGIN:
           "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app",
+        EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH: "1",
+        EXPO_PUBLIC_CITYWALK_APPLE_AUTH: "1",
       },
     });
   });
 
-  it("configures internal preview builds against the restored develop Preview API", () => {
-    expect(easJson.build.preview).toEqual({
+  it("configures internal preview builds against the restored develop Preview API with social auth enabled", () => {
+    expect(easJson.build.preview).toMatchObject({
       developmentClient: false,
       autoIncrement: true,
       android: { buildType: "apk" },
@@ -147,6 +149,8 @@ describe("CITYWALK native app configuration", () => {
         EXPO_PUBLIC_CITYWALK_ENV: "preview",
         EXPO_PUBLIC_CITYWALK_API_ORIGIN:
           "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app",
+        EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH: "1",
+        EXPO_PUBLIC_CITYWALK_APPLE_AUTH: "1",
       },
     });
   });

@@ -175,6 +175,17 @@ export default function AccountScreen() {
   }
   const isEmailEntry = !session && (entry === "sign-in" || entry === "sign-up");
   const label = (key: TranslationKey) => t(locale, key);
+  const socialIcon = (provider: SocialProvider) => (
+    <View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={styles.socialIcon}
+    >
+      <AppText style={styles.socialIconText}>
+        {provider === "apple" ? "" : "G"}
+      </AppText>
+    </View>
+  );
   const nameField = <>
     <AppText variant="label">{label("profile.accountDisplayName")}</AppText>
     <TextInput accessibilityLabel={label("profile.accountDisplayName")} value={name} onChangeText={setName}
@@ -216,6 +227,7 @@ export default function AccountScreen() {
           ? <AppText variant="metadata">{label("profile.appleConnected")}</AppText>
           : <PrimaryButton
               label={label("profile.connectApple")}
+              leadingIcon={socialIcon("apple")}
               tone="secondary"
               busy={busy === "link-apple"}
               disabled={Boolean(busy)}
@@ -225,6 +237,7 @@ export default function AccountScreen() {
           ? <AppText variant="metadata">{label("profile.googleConnected")}</AppText>
           : <PrimaryButton
               label={label("profile.connectGoogle")}
+              leadingIcon={socialIcon("google")}
               tone="secondary"
               busy={busy === "link-google"}
               disabled={Boolean(busy)}
@@ -239,12 +252,14 @@ export default function AccountScreen() {
     {!session && !entry ? <Card>
       {socialAuth.apple ? <PrimaryButton
         label={label("profile.continueWithApple")}
+        leadingIcon={socialIcon("apple")}
         busy={busy === "social-apple"}
         disabled={isPending || Boolean(busy)}
         onPress={() => socialSignIn("apple")}
       /> : null}
       {socialAuth.google ? <PrimaryButton
         label={label("profile.continueWithGoogle")}
+        leadingIcon={socialIcon("google")}
         busy={busy === "social-google"}
         disabled={isPending || Boolean(busy)}
         tone="secondary"
@@ -257,12 +272,14 @@ export default function AccountScreen() {
     {isEmailEntry ? <Card>
       {socialAuth.apple ? <PrimaryButton
         label={label("profile.continueWithApple")}
+        leadingIcon={socialIcon("apple")}
         busy={busy === "social-apple"}
         disabled={isPending || Boolean(busy)}
         onPress={() => socialSignIn("apple")}
       /> : null}
       {socialAuth.google ? <PrimaryButton
         label={label("profile.continueWithGoogle")}
+        leadingIcon={socialIcon("google")}
         busy={busy === "social-google"}
         disabled={isPending || Boolean(busy)}
         tone="secondary"
@@ -338,4 +355,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md, paddingVertical: spacing.sm, color: colors.text, backgroundColor: colors.surface, ...typography.body },
   deleteAction: { minHeight: 48, justifyContent: "center", padding: spacing.sm },
   destructive: { color: colors.danger },
+  socialIcon: {
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    height: 28,
+    justifyContent: "center",
+    width: 28,
+  },
+  socialIconText: {
+    color: colors.text,
+    fontSize: 17,
+    fontWeight: "700",
+    lineHeight: 20,
+    textAlign: "center",
+  },
 });

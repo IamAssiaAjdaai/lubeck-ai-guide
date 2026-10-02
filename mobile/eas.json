@@ -38,7 +38,9 @@
       },
       "env": {
         "EXPO_PUBLIC_CITYWALK_ENV": "preview",
-        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app"
+        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app",
+        "EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH": "1",
+        "EXPO_PUBLIC_CITYWALK_APPLE_AUTH": "1"
       }
     },
     "production": {
