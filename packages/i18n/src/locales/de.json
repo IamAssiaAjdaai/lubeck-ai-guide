@@ -425,7 +425,14 @@
     "passwordMismatch": "Die neuen Passwörter stimmen nicht überein.",
     "invalidName": "Gib einen Anzeigenamen mit 1 bis 100 Zeichen ein.",
     "currentPasswordRequired": "Gib dein aktuelles Passwort ein.",
-    "currentPasswordIncorrect": "Dein aktuelles Passwort ist falsch."
+    "currentPasswordIncorrect": "Dein aktuelles Passwort ist falsch.",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "continueWithApple": "Mit Apple fortfahren",
+    "connectGoogle": "Google verbinden",
+    "connectApple": "Apple verbinden",
+    "googleConnected": "Google verbunden",
+    "appleConnected": "Apple verbunden",
+    "socialLinked": "Kontoverknüpfung aktualisiert."
   },
   "explore": {
     "all": "Alle",
