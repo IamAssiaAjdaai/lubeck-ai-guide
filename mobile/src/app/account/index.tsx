@@ -57,7 +57,8 @@ export default function AccountScreen() {
     return () => { active = false; };
   }, [userId, providerReload]);
   const hasCredential = credential?.userId === userId && credential?.status === "yes";
-  const linkedProviders = credential?.userId === userId ? credential.providers : [];
+  const linkedProviders =
+    credential && credential.userId === userId ? credential.providers : [];
   const hasGoogle = linkedProviders.includes("google");
   const hasApple = linkedProviders.includes("apple");
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
