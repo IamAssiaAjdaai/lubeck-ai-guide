@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({
   params: {} as Record<string, string>,
   locale: "en", session: null as null | { user: { id: string; name: string; email: string } },
   deleteAccount: vi.fn(), listAccounts: vi.fn(), updateUser: vi.fn(), changePassword: vi.fn(), requestPasswordReset: vi.fn(), deleteUser: vi.fn(),
-  signIn: vi.fn(), signUp: vi.fn(), signOut: vi.fn(), back: vi.fn(), replace: vi.fn(),
+  signIn: vi.fn(), socialSignIn: vi.fn(), linkSocial: vi.fn(), signUp: vi.fn(), signOut: vi.fn(), back: vi.fn(), replace: vi.fn(),
   data: new Map<string, string>(), write: vi.fn(), remove: vi.fn(), clear: vi.fn(),
 }));
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: {
@@ -19,7 +19,7 @@ vi.mock("../src/lib/auth/lifecycle", () => ({ deleteNativeAccount: mocks.deleteA
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: {
   useSession: () => ({ data: mocks.session, isPending: false }),
   listAccounts: mocks.listAccounts, updateUser: mocks.updateUser, changePassword: mocks.changePassword, requestPasswordReset: mocks.requestPasswordReset, deleteUser: mocks.deleteUser,
-  signIn: { email: mocks.signIn }, signUp: { email: mocks.signUp }, signOut: mocks.signOut,
+  signIn: { email: mocks.signIn, social: mocks.socialSignIn }, linkSocial: mocks.linkSocial, signUp: { email: mocks.signUp }, signOut: mocks.signOut,
 } }));
 vi.mock("../src/localization/LocaleProvider", () => ({ useNativeLocale: () => ({ locale: mocks.locale, direction: mocks.locale === "ar" ? "rtl" : "ltr", messages: nativeCopy(mocks.locale) }) }));
 vi.mock("../src/lib/haptics", () => ({ triggerCitywalkHaptic: async () => {} }));
@@ -63,10 +63,11 @@ beforeEach(() => {
   mocks.listAccounts.mockResolvedValue({ data: [{ providerId: "credential" }] });
   mocks.deleteAccount.mockResolvedValue({}); mocks.requestPasswordReset.mockResolvedValue({ data: { status: true } });
   mocks.updateUser.mockResolvedValue({}); mocks.changePassword.mockResolvedValue({});
-  mocks.signIn.mockResolvedValue({}); mocks.signUp.mockResolvedValue({}); mocks.signOut.mockResolvedValue({});
+  mocks.signIn.mockResolvedValue({}); mocks.socialSignIn.mockResolvedValue({}); mocks.linkSocial.mockResolvedValue({});
+  mocks.signUp.mockResolvedValue({}); mocks.signOut.mockResolvedValue({});
   mocks.data = new Map(["citywalk:native:v2:saved", "citywalk:native:v2:places", "citywalk:native:v2:active:lubeck", "citywalk:local-trips:v2", "citywalk:native:locale:v1", "citywalk:native:public-review:v1"].map(key => [key, `existing-${key}`]));
 });
-afterEach(cleanup);
+afterEach(() => { vi.unstubAllEnvs(); cleanup(); });
 describe("guest-first account", () => {
   it.each(sharedLocales)("offers truthful choices and localized email flow in %s without gating guests", locale => {
     mocks.locale = locale; const before = new Map(mocks.data); render(<AccountScreen />);
@@ -80,6 +81,26 @@ describe("guest-first account", () => {
     open(); fireEvent.click(screen.getByRole("button", { name: messages().continueAsGuest }));
     expect(mocks.back).toHaveBeenCalledOnce(); expect(mocks.locale).toBe(locale); unchanged(before);
   });
+  it("offers opt-in Google and Apple sign-in without touching guest data", async () => {
+    vi.stubEnv("EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH", "1");
+    vi.stubEnv("EXPO_PUBLIC_CITYWALK_APPLE_AUTH", "1");
+    const before = new Map(mocks.data);
+    render(<AccountScreen />);
+
+    fireEvent.click(screen.getByRole("button", { name: copy("profile.continueWithApple") }));
+    await waitFor(() => expect(mocks.socialSignIn).toHaveBeenCalledWith({
+      provider: "apple",
+      callbackURL: "/account",
+    }));
+
+    fireEvent.click(screen.getByRole("button", { name: copy("profile.continueWithGoogle") }));
+    await waitFor(() => expect(mocks.socialSignIn).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/account",
+    }));
+    unchanged(before);
+  });
+
   it("validation and failed authentication retain guest data and language", async () => {
     mocks.locale = "de"; mocks.signIn.mockResolvedValue({ error: { code: "INVALID_EMAIL_OR_PASSWORD" } });
     const before = new Map(mocks.data); render(<AccountScreen />); open(); open();
@@ -161,6 +182,20 @@ describe("account management with real capability boundaries", () => {
     await screen.findByText(messages().authError); press("profile.saveProfile");
     await screen.findByText(copy("profile.profileUpdated")); expect(screen.getByText("New name")).toBeTruthy(); expect(mocks.updateUser).toHaveBeenLastCalledWith({ name: "New name" }); unchanged(before);
   });
+  it("lets a signed-in user explicitly connect Google without implicit account linking", async () => {
+    vi.stubEnv("EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH", "1");
+    signedIn();
+    mocks.listAccounts.mockResolvedValue({ data: [{ providerId: "credential" }] });
+    render(<AccountScreen />);
+    const connect = await screen.findByRole("button", { name: copy("profile.connectGoogle") });
+    fireEvent.click(connect);
+    await waitFor(() => expect(mocks.linkSocial).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/account",
+    }));
+    await screen.findByText(copy("profile.socialLinked"));
+  });
+
   it("gates password controls by the authenticated account provider", async () => {
     signedIn(); mocks.listAccounts.mockResolvedValue({ data: [{ providerId: "google" }] });
     render(<AccountScreen />); await waitFor(() => expect(mocks.listAccounts).toHaveBeenCalledOnce());

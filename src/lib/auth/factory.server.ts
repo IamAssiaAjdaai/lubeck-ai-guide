@@ -7,6 +7,7 @@ import { AUTH_MIN_PASSWORD_LENGTH, AUTH_MAX_PASSWORD_LENGTH } from "@citywalk/tr
 import * as authSchema from "@/db/authSchema";
 import { getDb } from "@/db/client";
 import { getBetterAuthEnvironment } from "@/lib/auth/env";
+import { getCitywalkSocialAuthConfiguration } from "@/lib/auth/socialProviders.server";
 
 export const AUTH_ROUTE_PATH = "/api/auth";
 export const PUBLIC_EMAIL_SIGN_UP_ENABLED = true;
@@ -20,14 +21,31 @@ export function createCitywalkAuth(
   options: CreateAuthOptions = {},
 ) {
   const environment = getBetterAuthEnvironment();
+  const socialAuth = getCitywalkSocialAuthConfiguration();
+  const hasSocialProviders =
+    Boolean(socialAuth.socialProviders.google) ||
+    Boolean(socialAuth.socialProviders.apple);
 
   return betterAuth({
     appName: "CITYWALK",
     baseURL: environment.baseURL,
     basePath: AUTH_ROUTE_PATH,
     secret: environment.secret,
-    trustedOrigins: [...NATIVE_AUTH_TRUSTED_ORIGINS],
+    trustedOrigins: [
+      ...NATIVE_AUTH_TRUSTED_ORIGINS,
+      ...socialAuth.trustedOrigins,
+    ],
     plugins: [expo()],
+    ...(hasSocialProviders
+      ? { socialProviders: socialAuth.socialProviders }
+      : {}),
+    account: {
+      accountLinking: {
+        enabled: true,
+        disableImplicitLinking: true,
+        trustedProviders: ["google", "apple"],
+      },
+    },
     // The factory also supports the existing plain-Node admin bootstrap. Load
     // Next/server-only recovery dependencies only for a recovery request.
     hooks: { before: createAuthMiddleware(async ctx => {

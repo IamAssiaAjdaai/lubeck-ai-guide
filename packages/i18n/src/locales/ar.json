@@ -425,7 +425,14 @@
     "passwordMismatch": "كلمتا المرور الجديدتان غير متطابقتين.",
     "invalidName": "أدخل اسم عرض يتراوح بين حرف واحد و100 حرف.",
     "currentPasswordRequired": "أدخل كلمة المرور الحالية.",
-    "currentPasswordIncorrect": "كلمة المرور الحالية غير صحيحة."
+    "currentPasswordIncorrect": "كلمة المرور الحالية غير صحيحة.",
+    "continueWithGoogle": "المتابعة باستخدام Google",
+    "continueWithApple": "المتابعة باستخدام Apple",
+    "connectGoogle": "ربط Google",
+    "connectApple": "ربط Apple",
+    "googleConnected": "تم ربط Google",
+    "appleConnected": "تم ربط Apple",
+    "socialLinked": "تم تحديث ربط الحساب."
   },
   "explore": {
     "all": "الكل",

@@ -425,7 +425,14 @@
     "passwordMismatch": "De nieuwe wachtwoorden komen niet overeen.",
     "invalidName": "Voer een weergavenaam in van 1 tot 100 tekens.",
     "currentPasswordRequired": "Voer je huidige wachtwoord in.",
-    "currentPasswordIncorrect": "Je huidige wachtwoord is onjuist."
+    "currentPasswordIncorrect": "Je huidige wachtwoord is onjuist.",
+    "continueWithGoogle": "Doorgaan met Google",
+    "continueWithApple": "Doorgaan met Apple",
+    "connectGoogle": "Google koppelen",
+    "connectApple": "Apple koppelen",
+    "googleConnected": "Google gekoppeld",
+    "appleConnected": "Apple gekoppeld",
+    "socialLinked": "Accountkoppeling bijgewerkt."
   },
   "explore": {
     "all": "Alles",

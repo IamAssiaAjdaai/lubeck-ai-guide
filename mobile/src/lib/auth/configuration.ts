@@ -17,3 +17,24 @@ export function getNativeAuthConfiguration(apiOrigin: string): NativeAuthConfigu
     callbackURL: `${NATIVE_AUTH_SCHEME}://account`,
   };
 }
+
+
+export type NativeSocialAuthAvailability = Readonly<{
+  google: boolean;
+  apple: boolean;
+}>;
+
+export function getNativeSocialAuthAvailability(
+  environment: Readonly<{
+    google?: string;
+    apple?: string;
+  }> = {
+    google: process.env.EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH,
+    apple: process.env.EXPO_PUBLIC_CITYWALK_APPLE_AUTH,
+  },
+): NativeSocialAuthAvailability {
+  return {
+    google: environment.google === "1",
+    apple: environment.apple === "1",
+  };
+}

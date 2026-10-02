@@ -425,7 +425,14 @@
     "passwordMismatch": "De nye adgangskoder er ikke ens.",
     "invalidName": "Indtast et visningsnavn på mellem 1 og 100 tegn.",
     "currentPasswordRequired": "Indtast din nuværende adgangskode.",
-    "currentPasswordIncorrect": "Din nuværende adgangskode er forkert."
+    "currentPasswordIncorrect": "Din nuværende adgangskode er forkert.",
+    "continueWithGoogle": "Fortsæt med Google",
+    "continueWithApple": "Fortsæt med Apple",
+    "connectGoogle": "Forbind Google",
+    "connectApple": "Forbind Apple",
+    "googleConnected": "Google er forbundet",
+    "appleConnected": "Apple er forbundet",
+    "socialLinked": "Kontoforbindelsen er opdateret."
   },
   "explore": {
     "all": "Alle",
