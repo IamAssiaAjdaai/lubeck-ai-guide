@@ -1,6 +1,17 @@
 import type { TourBuilderPlace } from "./tourBuilder";
 import { isEligibleTourPlace } from "./tourBuilder";
 import { interestTags, type Interest, type Point } from "./walkPlanner";
+export type WalkGuidePromptContext = {
+  visited: string[];
+  remaining: string[];
+  interests: Interest[];
+  categories?: string[];
+  walking: "easy" | "balanced" | "long";
+  minutesRemaining: number;
+  hasDeadline: boolean;
+  hasFinishPoint: boolean;
+};
+
 export type WalkGuideContext = {
   visited: string[];
   remaining: string[];
@@ -76,6 +87,27 @@ export function resolveWalkGuideContext(
     ...(value.finish
       ? { finish: { lat: value.finish.lat, lng: value.finish.lng } }
       : {}),
+  };
+}
+
+/**
+ * Privacy-minimized metadata safe to send to an external language model.
+ * Precise route coordinates and deadline timestamps stay inside CITYWALK.
+ */
+export function toWalkGuidePromptContext(
+  context: WalkGuideContext,
+): WalkGuidePromptContext {
+  return {
+    visited: [...context.visited],
+    remaining: [...context.remaining],
+    interests: [...context.interests],
+    ...(context.categories?.length
+      ? { categories: [...context.categories] }
+      : {}),
+    walking: context.walking,
+    minutesRemaining: context.minutesRemaining,
+    hasDeadline: context.deadline !== undefined,
+    hasFinishPoint: context.finish !== undefined,
   };
 }
 
