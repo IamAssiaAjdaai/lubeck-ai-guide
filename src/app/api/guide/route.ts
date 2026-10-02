@@ -1,4 +1,7 @@
-import { resolveWalkGuideContext } from "@/lib/walk/guideContext";
+import {
+  resolveWalkGuideContext,
+  toWalkGuidePromptContext,
+} from "@/lib/walk/guideContext";
 import Groq from "groq-sdk";
 import { NextResponse } from "next/server";
 
@@ -183,6 +186,9 @@ export async function POST(request: Request) {
     }
 
     const walkContext = resolveWalkGuideContext(body.walkContext, snapshot.places, placeSlug);
+    const walkPromptContext = walkContext
+      ? toWalkGuidePromptContext(walkContext)
+      : undefined;
     const history = parseGuideHistory(body.history);
     const systemPrompt = buildGuideSystemPrompt({
       citySlug,
@@ -205,10 +211,10 @@ export async function POST(request: Request) {
       '"this building", "this church", or "this gate"',
       "in the CURRENT QUESTION refer to CURRENT STOP.",
       "",
-      ...(walkContext ? [
-        "TRAVELER NAVIGATION METADATA (self-reported, not verified factual evidence):",
-        JSON.stringify(walkContext),
-        "Use only for conversational context. Never claim a route change was performed. Direct changes to the trip controls, which require confirmation. Do not invent places or precise time savings. Verified knowledge remains the only factual evidence.",
+      ...(walkPromptContext ? [
+        "TRAVELER NAVIGATION METADATA (self-reported, privacy-minimized, not verified factual evidence):",
+        JSON.stringify(walkPromptContext),
+        "Precise start/finish coordinates and deadline timestamps are intentionally withheld from the language model. Use only for conversational context. Never claim a route change was performed. Direct changes to the trip controls, which require confirmation. Do not invent places, coordinates, routes, or precise time savings. Verified knowledge remains the only factual evidence.",
         "",
       ] : []),
       "CURRENT QUESTION:",
