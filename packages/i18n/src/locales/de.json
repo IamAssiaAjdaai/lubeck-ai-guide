@@ -432,7 +432,11 @@
     "connectApple": "Apple verbinden",
     "googleConnected": "Google verbunden",
     "appleConnected": "Apple verbunden",
-    "socialLinked": "Kontoverknüpfung aktualisiert."
+    "socialLinked": "Kontoverknüpfung aktualisiert.",
+    "emailNotVerified": "Bitte bestätige deine E-Mail-Adresse, bevor du dich anmeldest.",
+    "verificationSent": "Prüfe deinen Posteingang oder Spam-Ordner und bestätige deine E-Mail-Adresse, bevor du dich anmeldest.",
+    "resendVerification": "Bestätigungs-E-Mail erneut senden",
+    "verificationResent": "Falls dieses Konto noch bestätigt werden muss, findest du eine neue Bestätigungs-E-Mail in deinem Posteingang oder Spam-Ordner."
   },
   "explore": {
     "all": "Alle",
@@ -557,7 +561,10 @@
     "deletePermanently": "Konto dauerhaft löschen",
     "deleted": "Dein Konto und die darin gespeicherten Touren wurden gelöscht. Lokale Reisedaten bleiben erhalten.",
     "retentionBlocked": "Dieses Konto enthält Datensätze, deren Aufbewahrung geprüft werden muss. Die selbstständige Löschung ist derzeit nicht verfügbar. Es wurden keine Kontodaten gelöscht.",
-    "reauthRequired": "Bestätige dein aktuelles Passwort. Falls deine Sitzung abgelaufen ist, melde dich vor dem Löschen erneut an."
+    "reauthRequired": "Bestätige dein aktuelles Passwort. Falls deine Sitzung abgelaufen ist, melde dich vor dem Löschen erneut an.",
+    "verificationEmailSubject": "Bestätige deine CITYWALK-E-Mail-Adresse",
+    "verificationEmailBody": "Bestätige deine E-Mail-Adresse über den folgenden CITYWALK-Link. Er ist 1 Stunde gültig.",
+    "verificationEmailIgnore": "Wenn du kein CITYWALK-Konto erstellt hast und dich nicht anmelden wolltest, ignoriere diese E-Mail."
   },
   "unlock": {
     "title": "{city} freischalten",
