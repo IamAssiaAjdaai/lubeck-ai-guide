@@ -145,15 +145,13 @@ function ProgressDots({
         const complete = index < visited;
         const active = index === current && visited < total;
         return (
-          <View key={index} style={styles.progressItem}>
-            {index > 0 ? (
-              <View
-                style={[
-                  styles.connector,
-                  index <= visited && styles.connectorComplete,
-                ]}
-              />
-            ) : null}
+          <View
+            key={index}
+            style={[
+              styles.progressStep,
+              index < count - 1 && styles.progressStepGrow,
+            ]}
+          >
             <View
               style={[
                 styles.dotOuter,
@@ -163,6 +161,14 @@ function ProgressDots({
             >
               {active ? <View style={styles.dotInner} /> : null}
             </View>
+            {index < count - 1 ? (
+              <View
+                style={[
+                  styles.connector,
+                  index < visited && styles.connectorComplete,
+                ]}
+              />
+            ) : null}
           </View>
         );
       })}
@@ -215,12 +221,11 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     paddingHorizontal: 4,
   },
-  progressItem: {
-    flex: 1,
-    minWidth: 0,
+  progressStep: {
     flexDirection: "row",
     alignItems: "center",
   },
+  progressStepGrow: { flex: 1, minWidth: 0 },
   connector: {
     flex: 1,
     height: 2,
