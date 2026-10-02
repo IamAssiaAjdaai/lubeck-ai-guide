@@ -107,11 +107,13 @@ export function V2Itinerary({
   citySlug,
   interactive = true,
   removeInOverflow = false,
+  compact = false,
 }: {
   places: readonly PublicPlaceCard[];
   citySlug: string;
   interactive?: boolean;
   removeInOverflow?: boolean;
+  compact?: boolean;
 }) {
   const { locale, direction } = useNativeLocale(),
     t = walkCopy(locale);
@@ -125,7 +127,7 @@ export function V2Itinerary({
           "thumbnail",
         );
         const row = (
-          <View style={[styles.itineraryRow, { direction }]}>
+          <View style={[styles.itineraryRow, compact && styles.compactItineraryRow, { direction }]}>
             <View style={styles.number}>
               <AppText style={styles.numberText}>{index + 1}</AppText>
             </View>
@@ -137,7 +139,7 @@ export function V2Itinerary({
                   : undefined
               }
               contentFit="cover"
-              style={styles.thumbnail}
+              style={[styles.thumbnail, compact && styles.compactThumbnail]}
               accessibilityLabel={nativePlaceName(citySlug, place.slug, place.content.name, locale)}
             />
             <View style={styles.rowCopy}>
@@ -408,6 +410,14 @@ const styles = StyleSheet.create({
     paddingEnd: spacing.sm,
     ...shadows.card,
   },
+  compactItineraryRow: {
+    minHeight: 64,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+  },
   number: {
     width: 25,
     height: 25,
@@ -422,6 +432,7 @@ const styles = StyleSheet.create({
     height: layout.itineraryPhoto,
     borderRadius: radius.sm,
   },
+  compactThumbnail: { width: 52, height: 52 },
   rowCopy: { flex: 1, minWidth: 0, gap: spacing.xs },
   ring: {
     width: 174,

@@ -143,7 +143,11 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
         accessibilityState={{ busy: locationStatus === "requesting", disabled: locationStatus === "requesting" }}
         disabled={locationStatus === "requesting"}
         onPress={() => void handleLocationRequest()}
-        style={({ pressed }) => [styles.locationButton, pressed && styles.locationButtonPressed]}
+        style={({ pressed }) => [
+          styles.locationButton,
+          compact && styles.compactLocationButton,
+          pressed && styles.locationButtonPressed,
+        ]}
       >
         <NativeIcon ios="location.fill" android="my_location" color={colors.primary} size={18} />
         <Text style={styles.locationButtonText} numberOfLines={1} adjustsFontSizeToFit>
@@ -193,6 +197,7 @@ const styles = StyleSheet.create({
   placeMarker: { width: 22, height: 22, borderRadius: radius.pill, backgroundColor: colors.mapMarker, borderWidth: 3, borderColor: colors.surface },
   userMarker: { width: 24, height: 24, borderRadius: radius.pill, backgroundColor: colors.userMarker, borderWidth: 4, borderColor: colors.surface },
   locationButton: { minHeight: 48, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, alignItems: "center", flexDirection: "row", gap: spacing.sm, justifyContent: "center", paddingHorizontal: spacing.md },
+  compactLocationButton: { minHeight: 44, alignSelf: "flex-start", maxWidth: "100%" },
   locationButtonPressed: { backgroundColor: "#F3F4F6" },
   locationButtonText: { ...typography.label, color: colors.text },
   settingsButton: { minHeight: 44, alignItems: "center", justifyContent: "center" },

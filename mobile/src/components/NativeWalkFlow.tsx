@@ -763,6 +763,7 @@ export function NativeWalkFlow({
     items: PublicPlaceCard[],
     interactive = true,
     removeInOverflow = false,
+    compact = false,
   ) => (
     <View style={styles.section}>
       <SectionTitle>{t.itinerary}</SectionTitle>
@@ -771,6 +772,7 @@ export function NativeWalkFlow({
         citySlug={citySlug}
         interactive={interactive}
         removeInOverflow={removeInOverflow}
+        compact={compact}
       />
     </View>
   );
@@ -1154,7 +1156,14 @@ export function NativeWalkFlow({
           ) : (
             <>
               {livePresentation ? (
-                <NativeLiveWalkCard presentation={livePresentation} />
+                <NativeLiveWalkCard
+                  presentation={livePresentation}
+                  continueLabel={translate(locale, "liveWalk.continueWalk")}
+                  continueDisabled={!liveNavigationTarget}
+                  onContinue={() => {
+                    if (liveNavigationTarget) void navigate(liveNavigationTarget);
+                  }}
+                />
               ) : null}
               {Platform.OS === "ios" && !liveSession?.enabled ? (
                 <>
@@ -1168,15 +1177,19 @@ export function NativeWalkFlow({
                   />
                 </>
               ) : null}
-              <PrimaryButton
-                label={translate(locale, "liveWalk.continueWalk")}
-                disabled={!liveNavigationTarget}
-                onPress={() => {
-                  if (liveNavigationTarget) void navigate(liveNavigationTarget);
-                }}
-              />
+              {!livePresentation ? (
+                <PrimaryButton
+                  label={translate(locale, "liveWalk.continueWalk")}
+                  disabled={!liveNavigationTarget}
+                  onPress={() => {
+                    if (liveNavigationTarget) void navigate(liveNavigationTarget);
+                  }}
+                />
+              ) : null}
 
-              <SectionTitle>{t.tripControls}</SectionTitle>
+              <AppText variant="label" style={styles.routeLabel}>
+                {t.tripControls}
+              </AppText>
               <View style={styles.controls}>
                 <PrimaryButton
                   compact
@@ -1239,8 +1252,21 @@ export function NativeWalkFlow({
               ) : null}
 
               {current ? (
-                <>
-                  <View style={styles.actionRow}>
+                <View style={styles.currentStopPanel}>
+                  <View style={styles.currentStopHeader}>
+                    <AppText variant="caption" style={styles.eyebrow}>
+                      {t.stop
+                        .replace("{number}", String(journey.visited.length + 1))
+                        .replace(
+                          "{total}",
+                          String(journey.visited.length + journey.remaining.length),
+                        )}
+                    </AppText>
+                    <AppText variant="label" numberOfLines={1}>
+                      {nativePlaceName(citySlug, current.slug, current.content.name, locale)}
+                    </AppText>
+                  </View>
+                  <View style={styles.currentActions}>
                     {[
                       {
                         label: t.listen,
@@ -1270,7 +1296,7 @@ export function NativeWalkFlow({
                       >
                         <PrimaryButton
                           compact
-                          style={styles.flex}
+                          style={styles.currentAction}
                           wrapLabel
                           tone="secondary"
                           label={action.label}
@@ -1295,7 +1321,7 @@ export function NativeWalkFlow({
                     >
                       <PrimaryButton
                         compact
-                        style={styles.flex}
+                        style={styles.currentAction}
                         wrapLabel
                         tone="secondary"
                         label={t.ask}
@@ -1305,7 +1331,7 @@ export function NativeWalkFlow({
                       />
                     </Link>
                   </View>
-                  <View style={styles.actionRow}>
+                  <View style={styles.progressActions}>
                     <PrimaryButton
                       style={styles.flex}
                       label={t.visited}
@@ -1330,10 +1356,10 @@ export function NativeWalkFlow({
                       }}
                     />
                   </View>
-                </>
+                </View>
               ) : null}
 
-              {route.places.length ? itinerary(route.places, true, true) : null}
+              {route.places.length ? itinerary(route.places, true, true, true) : null}
 
               <PrimaryButton
                 label={translate(locale, "liveWalk.manageWalk")}

@@ -103,6 +103,8 @@ export function buildLiveWalkPresentation(
       session.totalStops > 0
         ? Math.max(0, Math.min(1, session.visitedCount / session.totalStops))
         : 1,
+    visitedCount: session.visitedCount,
+    totalStops: session.totalStops,
     progressLabel: t(session.locale, "liveWalk.stops")
       .replace("{visited}", String(session.visitedCount))
       .replace("{total}", String(session.totalStops)),

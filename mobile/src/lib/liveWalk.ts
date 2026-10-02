@@ -64,6 +64,8 @@ export type CitywalkLiveActivityProps = Readonly<{
   distanceEta?: string;
   storyLabel?: string;
   progress: number;
+  visitedCount: number;
+  totalStops: number;
   progressLabel: string;
   remainingLabel: string;
   finishLabel: string;
