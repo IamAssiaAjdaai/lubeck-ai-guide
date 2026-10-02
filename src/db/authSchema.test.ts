@@ -29,6 +29,18 @@ describe("auth and staff database schema", () => {
     ]);
   });
 
+  it("keeps the legacy issuer column nullable and without the 1.7.0-1.7.2 unique index", () => {
+    const accountConfig = getTableConfig(account);
+    expect(
+      accountConfig.columns.find((column) => column.name === "issuer")?.notNull,
+    ).toBe(false);
+    expect(
+      accountConfig.indexes.some(
+        (index) => index.config.name === "account_issuer_account_id_unique",
+      ),
+    ).toBe(false);
+  });
+
   it("enforces one membership per identity and one city scope pair", () => {
     const membershipConfig = getTableConfig(staffMemberships);
     const cityScopeConfig = getTableConfig(staffCityAccess);
