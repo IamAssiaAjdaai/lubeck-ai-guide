@@ -162,7 +162,7 @@ describe.runIf(process.env.NATIVE_BILLING_DB_INTEGRATION === "1")("Phase 3B real
 
   it.each(["apple_sandbox","google_test"] as const)("native %s ownership blocks account deletion without losing account/session/order/grant",async provider=>{
     const id=randomUUID(),sid=randomUUID();await getDb().insert(user).values({id,name:"Retention test",email:`${id}@example.test`});
-    await getDb().insert(account).values({id:randomUUID(),accountId:id,providerId:"credential",issuer:"credential",userId:id,password:"synthetic-test-hash"});
+    await getDb().insert(account).values({id:randomUUID(),accountId:id,providerId:"credential",userId:id,password:"synthetic-test-hash"});
     await getDb().insert(session).values({id:sid,userId:id,token:randomUUID(),expiresAt:new Date(Date.now()+3600000)});
     const p={...evidence(provider),binding:accountBinding(id)};await deliverNativePurchase(p,id);
     const before=await snapshot();await expect(deleteTravelerAccount({userId:id,sessionId:sid,password:"synthetic",verify:async()=>true})).rejects.toMatchObject({code:"RETENTION_REVIEW_REQUIRED",status:409});

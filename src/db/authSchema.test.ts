@@ -29,16 +29,27 @@ describe("auth and staff database schema", () => {
     ]);
   });
 
-  it("keeps the legacy issuer column nullable and without the 1.7.0-1.7.2 unique index", () => {
+  it("matches Better Auth 1.7 account schema without the retired issuer identity key", () => {
     const accountConfig = getTableConfig(account);
-    expect(
-      accountConfig.columns.find((column) => column.name === "issuer")?.notNull,
-    ).toBe(false);
-    expect(
-      accountConfig.indexes.some(
-        (index) => index.config.name === "account_issuer_account_id_unique",
-      ),
-    ).toBe(false);
+
+    expect(accountConfig.columns.map((column) => column.name)).toEqual([
+      "id",
+      "account_id",
+      "provider_id",
+      "user_id",
+      "access_token",
+      "refresh_token",
+      "id_token",
+      "access_token_expires_at",
+      "refresh_token_expires_at",
+      "scope",
+      "password",
+      "created_at",
+      "updated_at",
+    ]);
+    expect(accountConfig.indexes.map((index) => index.config.name)).toEqual([
+      "account_user_id_idx",
+    ]);
   });
 
   it("enforces one membership per identity and one city scope pair", () => {
