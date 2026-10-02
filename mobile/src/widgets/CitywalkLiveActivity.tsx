@@ -52,7 +52,7 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
             {index > 0 ? (
               <Rectangle
                 modifiers={[
-                  frame({ width: 18, height: 2 }),
+                  frame({ width: 22, height: 2 }),
                   foregroundStyle(index <= props.visitedCount ? BLUE : LINE),
                 ]}
               />
@@ -61,13 +61,13 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
               <ZStack>
                 <Circle
                   modifiers={[
-                    frame({ width: 22, height: 22 }),
+                    frame({ width: 26, height: 26 }),
                     foregroundStyle(BLUE),
                   ]}
                 />
                 <Circle
                   modifiers={[
-                    frame({ width: 12, height: 12 }),
+                    frame({ width: 14, height: 14 }),
                     foregroundStyle(NAVY),
                   ]}
                 />
@@ -89,9 +89,10 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
   return {
     banner: (
       <VStack
-        spacing={5}
+        alignment="leading"
+        spacing={4}
         modifiers={[
-          padding({ horizontal: 14, vertical: 10 }),
+          padding({ horizontal: 14, top: 10, bottom: 12 }),
           background(NAVY),
           cornerRadius(22),
         ]}
@@ -106,16 +107,16 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
           >
             {props.cityLabel}
           </Text>
-          <Spacer />
-          <Text
-            modifiers={[
-              font({ size: 10, weight: "semibold" }),
-              foregroundStyle("#91A4B5"),
-            ]}
-          >
-            {props.stateLabel}
-          </Text>
         </HStack>
+
+        <Text
+          modifiers={[
+            font({ size: 10, weight: "semibold" }),
+            foregroundStyle("#91A4B5"),
+          ]}
+        >
+          {props.stateLabel}
+        </Text>
 
         <Text
           modifiers={[
@@ -153,25 +154,22 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
           </HStack>
         ) : null}
 
+        {showProgress ? progressDots : null}
         {showProgress ? (
-          <HStack spacing={8}>
-            {progressDots}
-            <Spacer />
-            <Text
-              modifiers={[
-                font({ size: 10, weight: "medium" }),
-                foregroundStyle(MUTED),
-              ]}
-            >
-              {props.progressLabel}
-            </Text>
-          </HStack>
+          <Text
+            modifiers={[
+              font({ size: 10, weight: "medium" }),
+              foregroundStyle(MUTED),
+            ]}
+          >
+            {props.progressLabel}
+          </Text>
         ) : null}
 
         <Divider />
 
         <HStack>
-          <VStack spacing={0}>
+          <VStack alignment="leading" spacing={0}>
             <Text
               modifiers={[
                 font({ size: 11, weight: "semibold" }),
@@ -193,7 +191,7 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
           <Spacer />
 
           {props.scheduleLabel || props.deadlineLabel ? (
-            <VStack spacing={0}>
+            <VStack alignment="trailing" spacing={0}>
               <HStack spacing={3}>
                 <Text
                   modifiers={[
@@ -274,7 +272,7 @@ const CitywalkLiveActivity = (props: CitywalkLiveActivityProps) => {
       />
     ),
     expandedCenter: (
-      <VStack spacing={2}>
+      <VStack alignment="leading" spacing={2}>
         <Text
           modifiers={[
             font({ size: 10, weight: "semibold" }),
