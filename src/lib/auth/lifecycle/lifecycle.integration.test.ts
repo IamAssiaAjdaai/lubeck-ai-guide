@@ -2,6 +2,7 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
+import { t } from "@citywalk/i18n";
 vi.mock("server-only", () => ({}));
 const mocks = vi.hoisted(() => ({
   getAuth: vi.fn(), limit: vi.fn(), mail: vi.fn(), tasks: [] as (() => Promise<void>)[],
@@ -26,6 +27,10 @@ const req = (path: string, body: unknown, cookie = "", owner = "") => new Reques
 async function createTraveler() {
   const email = `${randomUUID()}@example.test`;
   const signup = await auth.api.signUpEmail({ body: { email, password, name: "Synthetic traveler" } });
+  // Most lifecycle tests exercise already-verified accounts. Discard the deferred
+  // verification send and mark this fixture verified explicitly.
+  mocks.tasks = [];
+  await getDb().update(user).set({ emailVerified: true }).where(eq(user.id, signup.user.id));
   const signin = await auth.api.signInEmail({ body: { email, password }, asResponse: true });
   const cookie = signin.headers.get("set-cookie")!.split(";")[0];
   return { id: signup.user.id, email, cookie };
@@ -53,6 +58,69 @@ describe.runIf(process.env.LIFECYCLE_DB_INTEGRATION === "1")("isolated real Bett
     mocks.limit.mockReset().mockResolvedValue(undefined); mocks.tasks = []; mocks.mail.mockReset().mockResolvedValue(new Response(null, { status: 202 })); vi.stubGlobal("fetch", mocks.mail);
   });
   afterAll(async () => { await closeDb(); vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
+  it("creates one unverified user for duplicate signups and blocks password sign-in until verification", async () => {
+    const email = `${randomUUID()}@example.test`;
+    const body = { email, password, name: "Verification traveler", callbackURL: "/account" };
+    const first = await auth.handler(req("/api/auth/sign-up/email", body));
+    const duplicate = await auth.handler(req("/api/auth/sign-up/email", body));
+    expect(first.status).toBe(200);
+    expect(duplicate.status).toBe(200);
+    const rows = await getDb().select().from(user).where(eq(user.email, email));
+    expect(rows).toHaveLength(1);
+    expect(rows[0].emailVerified).toBe(false);
+
+    mocks.tasks = [];
+    const signin = await auth.handler(req("/api/auth/sign-in/email", { email, password, callbackURL: "/account" }));
+    expect(signin.status).toBe(403);
+    expect(await signin.json()).toMatchObject({ code: "EMAIL_NOT_VERIFIED" });
+    expect(await getDb().select().from(session).where(eq(session.userId, rows[0].id))).toHaveLength(0);
+    expect(mocks.tasks).toHaveLength(1);
+  });
+
+  it("sends a localized verification link, verifies without auto-sign-in, then permits password sign-in", async () => {
+    const email = `${randomUUID()}@example.test`;
+    const signupRequest = req("/api/auth/sign-up/email", {
+      email,
+      password,
+      name: "Localized verification traveler",
+      callbackURL: "/account",
+    });
+    signupRequest.headers.set("X-Citywalk-Locale", "de");
+    expect((await auth.handler(signupRequest)).status).toBe(200);
+    expect(mocks.tasks).toHaveLength(1);
+    await mocks.tasks[0]();
+
+    const mailBody = JSON.parse(mocks.mail.mock.lastCall![1].body);
+    expect(mailBody.subject).toBe(t("de", "lifecycle.verificationEmailSubject"));
+    const verificationUrl = mailBody.text.split("\n\n")[1];
+    expect(new URL(verificationUrl).pathname).toBe("/api/auth/verify-email");
+    expect(verificationUrl).not.toContain(email);
+    const record = (await getDb().select().from(user).where(eq(user.email, email)))[0];
+    expect(record.emailVerified).toBe(false);
+
+    const verified = await auth.handler(new Request(verificationUrl));
+    expect([200, 302, 303, 307]).toContain(verified.status);
+    expect((await getDb().select().from(user).where(eq(user.email, email)))[0].emailVerified).toBe(true);
+    expect(await getDb().select().from(session).where(eq(session.userId, record.id))).toHaveLength(0);
+
+    const signin = await auth.api.signInEmail({ body: { email, password } });
+    expect(signin.user.id).toBe(record.id);
+  });
+
+  it("resends verification without exposing whether an anonymous email exists", async () => {
+    const email = `${randomUUID()}@example.test`;
+    await auth.api.signUpEmail({ body: { email, password, name: "Resend traveler" } });
+    mocks.tasks = [];
+
+    const known = await auth.handler(req("/api/auth/send-verification-email", { email, callbackURL: "/account" }));
+    const unknown = await auth.handler(req("/api/auth/send-verification-email", { email: "unknown-verification@example.test", callbackURL: "/account" }));
+    expect(known.status).toBe(200);
+    expect(unknown.status).toBe(200);
+    expect(await known.json()).toEqual(await unknown.json());
+    // Only the real unverified account can enqueue mail; the public response stays identical.
+    expect(mocks.tasks).toHaveLength(1);
+  });
+
   it("returns identical generic responses for existing and unknown addresses; only existing receives mail", async () => {
     const owner = await createTraveler();
     const existing = await resetRequest(owner.email); const absent = await resetRequest("unknown@example.test");

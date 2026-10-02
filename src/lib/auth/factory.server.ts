@@ -39,6 +39,14 @@ export function createCitywalkAuth(
     ...(hasSocialProviders
       ? { socialProviders: socialAuth.socialProviders }
       : {}),
+    emailVerification: {
+      sendVerificationEmail: async (data, request) =>
+        (await import("./lifecycle/email.server")).sendEmailVerificationEmail(data, request),
+      sendOnSignUp: true,
+      sendOnSignIn: true,
+      autoSignInAfterVerification: false,
+      expiresIn: 60 * 60,
+    },
     account: {
       accountLinking: {
         enabled: true,
@@ -65,6 +73,7 @@ export function createCitywalkAuth(
       minPasswordLength: AUTH_MIN_PASSWORD_LENGTH,
       maxPasswordLength: AUTH_MAX_PASSWORD_LENGTH,
       autoSignIn: false,
+      requireEmailVerification: true,
       sendResetPassword: async (data, request) => (await import("./lifecycle/email.server")).sendPasswordResetEmail(data, request),
       resetPasswordTokenExpiresIn: 30 * 60,
       revokeSessionsOnPasswordReset: true,

@@ -17,6 +17,10 @@ export type AccountCopy = Readonly<{
   signOut: string;
   signingOut: string;
   accountCreated: string;
+  verificationSent: string;
+  emailNotVerified: string;
+  resendVerification: string;
+  verificationResent: string;
   genericSignInError: string;
   genericSignUpError: string;
   guestLinkError: string;
@@ -43,6 +47,10 @@ const fr: AccountCopy = {
   signOut: "Se déconnecter",
   signingOut: "Déconnexion…",
   accountCreated: "Compte créé. Connectez-vous pour associer ce voyage.",
+  verificationSent: "Vérifiez votre boîte de réception ou vos courriers indésirables et confirmez votre e-mail avant de vous connecter.",
+  emailNotVerified: "Veuillez confirmer votre e-mail avant de vous connecter.",
+  resendVerification: "Renvoyer l’e-mail de vérification",
+  verificationResent: "Si ce compte doit encore être vérifié, consultez votre boîte de réception ou vos courriers indésirables pour un nouvel e-mail de vérification.",
   genericSignInError: "Échec de la connexion. Vérifiez vos informations et réessayez.",
   genericSignUpError: "Impossible de créer le compte. Vérifiez vos informations et réessayez.",
   guestLinkError: "Vous êtes connecté, mais ce voyage invité n’a pas pu être associé automatiquement.",
