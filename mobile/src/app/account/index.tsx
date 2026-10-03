@@ -1,6 +1,7 @@
 import { nativeRowStyle, nativeTextBlock } from "../../design/rtlPresentation";
 import { uxCopy } from "../../design/uxCopy";
 import { t, type TranslationKey } from "@citywalk/i18n";
+import { cityLaunches } from "@citywalk/traveler-core/cityAvailability";
 import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BackHandler, StyleSheet, TextInput, View } from "react-native";
@@ -16,6 +17,7 @@ import { getNativeSocialAuthAvailability } from "../../lib/auth/configuration";
 import { classifyNativeAuthError, type NativeAuthErrorCode, validateDisplayName, validateNativeAuthInput, validateNewPassword } from "../../lib/auth/errors";
 import { triggerCitywalkHaptic } from "../../lib/haptics";
 import { useNativeLocale } from "../../localization/LocaleProvider";
+import { nativeCityName } from "../../lib/displayNames";
 import { useAccountWalks } from "../../hooks/useAccountWalks";
 import { readCityUnlock } from "../../lib/cityUnlockAccess";
 import { loadLocalTrips } from "../../lib/tripStorage";
@@ -274,6 +276,7 @@ export default function AccountScreen() {
     loading: accountWalks.loading || localActivity.loading,
     error: accountWalks.error || localActivity.error,
   };
+  const lubeckName = nativeCityName("lubeck", cityLaunches.lubeck.name, locale);
   const isEmailEntry = !session && (entry === "sign-in" || entry === "sign-up");
   const label = (key: TranslationKey) => t(locale, key);
   const socialIcon = (provider: SocialProvider) => (
@@ -351,13 +354,13 @@ export default function AccountScreen() {
           {passState === "active" ? <AppText variant="metadata" style={styles.connected}>{label("profile.passActive")}</AppText> : null}
         </View>
         {passState === "loading" ? <CitywalkLoading compact label={uxCopy(locale).account} /> : <>
-          <AppText variant="label">{passState === "active" ? label("profile.lubeckExplorerPass") : passState === "free" ? label("profile.freePlan") : label("profile.passUnavailable")}</AppText>
+          <AppText variant="label">{passState === "active" ? label("profile.cityExplorerPass").replace("{city}", lubeckName) : passState === "free" ? label("profile.freePlan") : label("profile.passUnavailable")}</AppText>
           <AppText variant="metadata" style={styles.muted}>
             {passState === "active" ? label("profile.passActiveDescription") : passState === "free" ? label("profile.passFreeDescription") : label("profile.passUnavailableDescription")}
           </AppText>
           {passState !== "unavailable" ? (
             <Link href={{ pathname: "/city/[citySlug]", params: { citySlug: "lubeck" } }} asChild>
-              <PrimaryButton tone="secondary" label={passState === "active" ? label("profile.openLubeck") : label("profile.explorePass")} />
+              <PrimaryButton tone="secondary" label={passState === "active" ? label("profile.openCity").replace("{city}", lubeckName) : label("profile.explorePass")} />
             </Link>
           ) : null}
         </>}
