@@ -1,6 +1,6 @@
 import { nativeRowStyle, nativeTextBlock } from "../../design/rtlPresentation";
 import { uxCopy } from "../../design/uxCopy";
-import { getLocaleLabel, t, type TranslationKey } from "@citywalk/i18n";
+import { t, type TranslationKey } from "@citywalk/i18n";
 import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BackHandler, StyleSheet, TextInput, View } from "react-native";
@@ -16,6 +16,10 @@ import { getNativeSocialAuthAvailability } from "../../lib/auth/configuration";
 import { classifyNativeAuthError, type NativeAuthErrorCode, validateDisplayName, validateNativeAuthInput, validateNewPassword } from "../../lib/auth/errors";
 import { triggerCitywalkHaptic } from "../../lib/haptics";
 import { useNativeLocale } from "../../localization/LocaleProvider";
+import { useAccountWalks } from "../../hooks/useAccountWalks";
+import { readCityUnlock } from "../../lib/cityUnlockAccess";
+import { loadLocalTrips } from "../../lib/tripStorage";
+import { loadSavedPlaces, loadSavedWalks } from "../../lib/walkStorage";
 
 type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "change-password" | "delete";
 type SocialProvider = "google" | "apple";
@@ -26,6 +30,7 @@ export default function AccountScreen() {
   const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string; error?: string }>();
   const { data: session, isPending } = nativeAuthClient.useSession();
   const socialAuth = getNativeSocialAuthAvailability();
+  const accountWalks = useAccountWalks();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -41,6 +46,14 @@ export default function AccountScreen() {
   const mounted = useRef(true);
   const request = useRef(0);
   const [providerReload, setProviderReload] = useState(0);
+  const [localActivity, setLocalActivity] = useState<{
+    walkKeys: string[];
+    citySlugs: string[];
+    savedPlaces: number;
+    loading: boolean;
+    error: boolean;
+  }>({ walkKeys: [], citySlugs: [], savedPlaces: 0, loading: true, error: false });
+  const [passState, setPassState] = useState<"loading" | "free" | "active" | "unavailable">("loading");
   const [credential, setCredential] = useState<{ userId: string; status: "yes" | "no" | "error"; providers: string[] }>();
   const userId = session?.user.id;
   // Provider IDs are used only to gate password management, never displayed or logged.
@@ -62,6 +75,46 @@ export default function AccountScreen() {
   const hasGoogle = linkedProviders.includes("google");
   const hasApple = linkedProviders.includes("apple");
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  useEffect(() => {
+    let active = true;
+    void Promise.all([loadSavedWalks(), loadLocalTrips(), loadSavedPlaces()])
+      .then(([savedWalks, legacyTrips, savedPlaces]) => {
+        if (!active) return;
+        const walkKeys = [
+          ...savedWalks.map((walk) => `${walk.citySlug}:${walk.id}`),
+          ...legacyTrips.map((walk) => `${walk.citySlug}:${walk.id}`),
+        ];
+        const citySlugs = [
+          ...savedWalks.map((walk) => walk.citySlug),
+          ...legacyTrips.map((walk) => walk.citySlug),
+          ...savedPlaces.map((place) => place.citySlug),
+        ];
+        setLocalActivity({
+          walkKeys,
+          citySlugs,
+          savedPlaces: savedPlaces.length,
+          loading: false,
+          error: false,
+        });
+      })
+      .catch(() => {
+        if (active) setLocalActivity((current) => ({ ...current, loading: false, error: true }));
+      });
+    return () => { active = false; };
+  }, [userId]);
+  useEffect(() => {
+    if (!userId) return;
+    let active = true;
+    void readCityUnlock("lubeck", userId)
+      .then((unlocked) => { if (active) setPassState(unlocked ? "active" : "free"); })
+      .catch(() => { if (active) setPassState("unavailable"); });
+    return () => { active = false; };
+  }, [userId]);
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(undefined), 2800);
+    return () => clearTimeout(timer);
+  }, [notice]);
   useEffect(() => {
     if (!params.error) return;
     const oauthError = params.error;
@@ -205,6 +258,22 @@ export default function AccountScreen() {
     if (!password) { setFailure("current_password_required"); return; }
     void perform("delete", () => deleteNativeAccount(session.user.id, password), () => { setEntry(undefined); setNotice("lifecycle.deleted"); });
   }
+  const localWalkKeys = new Set(localActivity.walkKeys);
+  const walkKeys = new Set([
+    ...accountWalks.walks.map((walk) => `${walk.citySlug}:${walk.id}`),
+    ...localWalkKeys,
+  ]);
+  const citySlugs = new Set([
+    ...accountWalks.walks.map((walk) => walk.citySlug),
+    ...localActivity.citySlugs,
+  ]);
+  const activity = {
+    cities: citySlugs.size,
+    walks: walkKeys.size,
+    saved: localActivity.savedPlaces,
+    loading: accountWalks.loading || localActivity.loading,
+    error: accountWalks.error || localActivity.error,
+  };
   const isEmailEntry = !session && (entry === "sign-in" || entry === "sign-up");
   const label = (key: TranslationKey) => t(locale, key);
   const socialIcon = (provider: SocialProvider) => (
@@ -241,12 +310,59 @@ export default function AccountScreen() {
     {!session && !entry ? <AppText>{label("profile.accountValue")}</AppText> : null}
     {isPending ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
     {session && !entry ? <>
+      <View style={styles.profileHero}>
+        <View style={styles.profileAvatar}>
+          <NativeIcon ios="person.crop.circle.fill" android="account_circle" color={colors.primary} size={48} />
+        </View>
+        <AppText variant="title" style={styles.profileName}>{session.user.name}</AppText>
+        <AppText variant="metadata" style={styles.profileEyebrow}>{label("profile.explorerTitle")}</AppText>
+        {!activity.loading ? (
+          <AppText variant="metadata" style={styles.muted}>
+            {activity.cities} {label("profile.activityCities")} · {activity.walks} {label("profile.activityWalks")}
+          </AppText>
+        ) : null}
+        <PrimaryButton compact label={label("profile.editProfile")} tone="secondary" onPress={() => open("edit")} />
+      </View>
+
       <Card>
-        <AppText variant="heading">{session.user.name}</AppText>
-        <AppText>{session.user.email}</AppText>
-        <PrimaryButton label={label("profile.editProfile")} tone="secondary" onPress={() => open("edit")} />
-        <AppText variant="metadata">{messages.language} · {getLocaleLabel(locale)}</AppText>
+        <AppText variant="heading">{label("profile.yourActivity")}</AppText>
+        {activity.loading ? <CitywalkLoading compact label={uxCopy(locale).account} /> : (
+          <View style={styles.metrics}>
+            <View style={styles.metric}>
+              <AppText variant="title">{activity.cities}</AppText>
+              <AppText variant="metadata" style={styles.muted}>{label("profile.activityCities")}</AppText>
+            </View>
+            <View style={styles.metric}>
+              <AppText variant="title">{activity.walks}</AppText>
+              <AppText variant="metadata" style={styles.muted}>{label("profile.activityWalks")}</AppText>
+            </View>
+            <View style={styles.metric}>
+              <AppText variant="title">{activity.saved}</AppText>
+              <AppText variant="metadata" style={styles.muted}>{label("profile.activitySavedPlaces")}</AppText>
+            </View>
+          </View>
+        )}
+        {activity.error ? <AppText variant="metadata" style={styles.muted}>{label("profile.activityUnavailable")}</AppText> : null}
       </Card>
+
+      <Card>
+        <View style={styles.cardHeaderRow}>
+          <AppText variant="heading">{label("profile.citywalkPass")}</AppText>
+          {passState === "active" ? <AppText variant="metadata" style={styles.connected}>{label("profile.passActive")}</AppText> : null}
+        </View>
+        {passState === "loading" ? <CitywalkLoading compact label={uxCopy(locale).account} /> : <>
+          <AppText variant="label">{passState === "active" ? label("profile.lubeckExplorerPass") : passState === "free" ? label("profile.freePlan") : label("profile.passUnavailable")}</AppText>
+          <AppText variant="metadata" style={styles.muted}>
+            {passState === "active" ? label("profile.passActiveDescription") : passState === "free" ? label("profile.passFreeDescription") : label("profile.passUnavailableDescription")}
+          </AppText>
+          {passState !== "unavailable" ? (
+            <Link href={{ pathname: "/city/[citySlug]", params: { citySlug: "lubeck" } }} asChild>
+              <PrimaryButton tone="secondary" label={passState === "active" ? label("profile.openLubeck") : label("profile.explorePass")} />
+            </Link>
+          ) : null}
+        </>}
+      </Card>
+
       <Card>
         <AppText variant="heading">{messages.account}</AppText>
         {credential?.userId !== userId ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
@@ -254,27 +370,30 @@ export default function AccountScreen() {
           <StatusMessage>{messages.authNetworkError}</StatusMessage>
           <PrimaryButton label={messages.retry} tone="secondary" onPress={() => { setCredential(undefined); setProviderReload(value => value + 1); }} />
         </> : null}
+
+        {socialAuth.apple ? (
+          <View style={styles.accountRow}>
+            <View style={styles.accountRowLabel}>{socialIcon("apple")}<AppText variant="label">Apple</AppText></View>
+            {hasApple ? <AppText variant="metadata" style={styles.connected}>{label("profile.connected")}</AppText> :
+              <PressableSurface accessibilityRole="button" style={styles.compactAction} disabled={Boolean(busy)} onPress={() => linkSocial("apple")}>
+                <AppText variant="label" style={styles.actionText}>{label("profile.connect")}</AppText>
+              </PressableSurface>}
+          </View>
+        ) : null}
+        {socialAuth.google ? (
+          <View style={styles.accountRow}>
+            <View style={styles.accountRowLabel}>{socialIcon("google")}<AppText variant="label">Google</AppText></View>
+            {hasGoogle ? <AppText variant="metadata" style={styles.connected}>{label("profile.connected")}</AppText> :
+              <PressableSurface accessibilityRole="button" style={styles.compactAction} disabled={Boolean(busy)} onPress={() => linkSocial("google")}>
+                <AppText variant="label" style={styles.actionText}>{label("profile.connect")}</AppText>
+              </PressableSurface>}
+          </View>
+        ) : null}
+        <View style={styles.accountRow}>
+          <AppText variant="label">{messages.email}</AppText>
+          <AppText variant="metadata" style={[styles.muted, styles.accountEmail]} numberOfLines={1}>{session.user.email}</AppText>
+        </View>
         {hasCredential ? <PrimaryButton label={label("profile.changePassword")} tone="secondary" onPress={() => open("change-password")} /> : null}
-        {socialAuth.apple ? hasApple
-          ? <AppText variant="metadata">{label("profile.appleConnected")}</AppText>
-          : <PrimaryButton
-              label={label("profile.connectApple")}
-              leadingIcon={socialIcon("apple")}
-              tone="secondary"
-              busy={busy === "link-apple"}
-              disabled={Boolean(busy)}
-              onPress={() => linkSocial("apple")}
-            /> : null}
-        {socialAuth.google ? hasGoogle
-          ? <AppText variant="metadata">{label("profile.googleConnected")}</AppText>
-          : <PrimaryButton
-              label={label("profile.connectGoogle")}
-              leadingIcon={socialIcon("google")}
-              tone="secondary"
-              busy={busy === "link-google"}
-              disabled={Boolean(busy)}
-              onPress={() => linkSocial("google")}
-            /> : null}
         <PrimaryButton label={messages.signOut} busy={busy === "sign-out"} onPress={() => void perform("sign-out", () => nativeAuthClient.signOut(), () => setEntry(undefined))} tone="secondary" />
         <PressableSurface accessibilityRole="button" onPress={() => open("delete")} style={styles.deleteAction}>
           <AppText variant="label" style={styles.destructive}>{label("profile.deleteAccount")}</AppText>
@@ -370,7 +489,6 @@ export default function AccountScreen() {
     {notice ? <StatusMessage tone="success">{label(notice)}</StatusMessage> : null}
     {entry ? <PrimaryButton label={label("common.back")} tone="secondary" onPress={back} /> : null}
     {!session && entry ? <PrimaryButton label={messages.continueAsGuest} tone="secondary" onPress={leave} /> : null}
-    <Link href="/saved" asChild><PrimaryButton label={messages.savedTrips} tone="secondary" /></Link>
   </Screen>;
 }
 function authFailureMessage(failure: NativeAuthErrorCode, locale: string, messages: ReturnType<typeof useNativeLocale>["messages"]): string {
@@ -389,6 +507,19 @@ function authFailureMessage(failure: NativeAuthErrorCode, locale: string, messag
 }
 const styles = StyleSheet.create({
   introduction: { alignItems: "center", flexDirection: "row", gap: spacing.md },
+  profileHero: { alignItems: "center", gap: spacing.xs, paddingVertical: spacing.md },
+  profileAvatar: { alignItems: "center", justifyContent: "center", width: 84, height: 84, borderRadius: radius.pill, backgroundColor: colors.primarySoft, marginBottom: spacing.xs },
+  profileName: { textAlign: "center" },
+  profileEyebrow: { color: colors.primary, fontWeight: "700" },
+  metrics: { flexDirection: "row", gap: spacing.sm },
+  metric: { flex: 1, minWidth: 0, alignItems: "center", gap: spacing.xs, paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: colors.surfaceMuted },
+  cardHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm },
+  accountRow: { minHeight: 48, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border, paddingVertical: spacing.sm },
+  accountRowLabel: { flexDirection: "row", alignItems: "center", gap: spacing.sm, flexShrink: 1 },
+  accountEmail: { flex: 1, textAlign: "right" },
+  compactAction: { minHeight: 36, justifyContent: "center", paddingHorizontal: spacing.sm },
+  actionText: { color: colors.primary },
+  connected: { color: colors.success, fontWeight: "700" },
   introductionText: { flex: 1, gap: spacing.xs },
   accountIcon: { alignItems: "center", backgroundColor: colors.primarySoft, borderRadius: radius.pill, height: 56, justifyContent: "center", width: 56 },
   muted: { color: colors.textMuted },
