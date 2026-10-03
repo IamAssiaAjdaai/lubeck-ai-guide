@@ -1080,7 +1080,7 @@ export function NativeWalkFlow({
               color={
                 deadline && eta > deadline ? colors.warning : colors.success
               }
-              size={28}
+              size={22}
             />
             <View style={styles.flex}>
               <AppText variant="label">
