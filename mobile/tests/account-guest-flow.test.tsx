@@ -217,6 +217,10 @@ describe("account management with real capability boundaries", () => {
     mocks.readCityUnlock.mockResolvedValue(true);
     render(<AccountScreen />);
     expect(await screen.findByText(copy("profile.explorerTitle"))).toBeTruthy();
+    expect(screen.getByText(copy("profile.travelStyle"))).toBeTruthy();
+    expect(screen.getByText(copy("profile.interest_history"))).toBeTruthy();
+    expect(screen.getByText(copy("profile.interest_architecture"))).toBeTruthy();
+    expect(screen.getByRole("button", { name: copy("profile.editPreferences") })).toBeTruthy();
     expect(screen.getByText(copy("profile.yourActivity"))).toBeTruthy();
     expect(screen.getByText(copy("profile.cityExplorerPass").replace("{city}", "Lübeck"))).toBeTruthy();
     expect(screen.getByText(copy("profile.passActive"))).toBeTruthy();
