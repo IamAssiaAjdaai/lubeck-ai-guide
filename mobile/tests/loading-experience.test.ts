@@ -35,6 +35,8 @@ describe("CITYWALK loading experience", () => {
     expect(loadingSource).not.toMatch(/setTimeout|delay/);
     expect(loadingSource).not.toContain("ActivityIndicator");
     expect(loadingSource).not.toContain("styles.mark");
+    expect(loadingSource).toContain("minHeight: 150");
+    expect(loadingSource).toContain("minHeight: 82");
   });
 
   it("uses inline chat thinking after a question instead of a full-screen loader", () => {
