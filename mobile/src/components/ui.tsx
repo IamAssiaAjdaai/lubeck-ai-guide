@@ -119,7 +119,7 @@ export function Screen({
           {footer}
         </View>
       ) : null}
-      {showNavigation ? {showNavigation ? <NativeBottomNavigation onScrollToTop={scrollToTop} /> : null} : null}
+      {showNavigation ? <NativeBottomNavigation onScrollToTop={scrollToTop} /> : null}
     </SafeAreaView>
   );
 }
