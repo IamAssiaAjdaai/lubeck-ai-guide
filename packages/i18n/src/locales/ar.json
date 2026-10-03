@@ -314,6 +314,9 @@
   "place": {
     "verified": "تم التحقق بواسطة CITYWALK",
     "verifiedHelp": "معلومات تستند إلى مصادر مع تاريخ التحقق. قد تتغير مواعيد العمل والظروف.",
+    "verifiedSummary": "معلومات تستند إلى مصادر.",
+    "viewSources": "عرض المصادر",
+    "hideSources": "إخفاء المصادر",
     "lastChecked": "آخر تحقق",
     "official": "مصدر رسمي",
     "sourceMap": "مصدر خرائط",

@@ -314,6 +314,9 @@
   "place": {
     "verified": "Geverifieerd door CITYWALK",
     "verifiedHelp": "Informatie op basis van bronnen, gecontroleerd op onderstaande datums. Openingstijden en omstandigheden kunnen zijn gewijzigd.",
+    "verifiedSummary": "Informatie op basis van bronnen.",
+    "viewSources": "Bronnen bekijken",
+    "hideSources": "Bronnen verbergen",
     "lastChecked": "Laatst gecontroleerd",
     "official": "Officiële bron",
     "sourceMap": "Kaartbron",

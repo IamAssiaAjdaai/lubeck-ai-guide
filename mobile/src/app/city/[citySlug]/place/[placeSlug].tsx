@@ -20,6 +20,7 @@ import {
   AppText,
   EmptyState,
   MotionView,
+  PressableSurface,
   PrimaryButton,
   Screen,
   SectionTitle,
@@ -47,6 +48,16 @@ export default function PlaceScreen() {
   const { citySlug, placeSlug } = useLocalSearchParams();
   // A different place must not inherit local audio, completion or scroll state.
   return <PlaceContent key={`${citySlug}:${placeSlug}`} />;
+}
+
+function formatVerifiedDate(locale: string, value: string) {
+  const timestamp = Date.parse(value);
+  if (Number.isNaN(timestamp)) return value;
+  try {
+    return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(timestamp);
+  } catch {
+    return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(timestamp);
+  }
 }
 
 function PlaceContent() {
@@ -111,6 +122,7 @@ function PlaceContent() {
   );
   const [savingPlace, setSavingPlace] = useState(false);
   const [tripCompleted, setTripCompleted] = useState(false);
+  const [sourcesExpanded, setSourcesExpanded] = useState(false);
   const placeState = usePublicPlace(
     identity?.citySlug ?? "invalid",
     identity?.placeSlug ?? "invalid",
@@ -161,6 +173,14 @@ function PlaceContent() {
   );
   const audio = selectExactLocaleAudio(place.media, locale);
   const hasStory = Boolean(place.content.story?.trim());
+  const verifiedSources = placeState.data.verifiedSources ?? [];
+  const latestVerifiedAt = verifiedSources.reduce<string | undefined>(
+    (latest, source) =>
+      !latest || Date.parse(source.verifiedAt) > Date.parse(latest)
+        ? source.verifiedAt
+        : latest,
+    undefined,
+  );
   const previousStop = trip ? adjacentMobileTripParams(trip, -1) : undefined;
   const nextStop = trip ? adjacentMobileTripParams(trip, 1) : undefined;
 
@@ -335,22 +355,82 @@ function PlaceContent() {
             ))}
           </View>
         ) : null}
-        {placeState.data.verifiedSources?.length ? (
-          <View style={styles.section}>
-            <SectionTitle>{t.verified}</SectionTitle>
-            <AppText>{t.verifiedHelp}</AppText>
-            {placeState.data.verifiedSources.map((source) => (
-              <PrimaryButton
-                key={source.url}
-                tone="secondary"
-                label={`${source.label} · ${t.lastChecked}: ${source.verifiedAt}`}
-                onPress={() => {
-                  void Linking.openURL(source.url).catch(() =>
-                    setSaveMessage(messages.unavailable),
-                  );
-                }}
+        {verifiedSources.length ? (
+          <View style={styles.verifiedCard}>
+            <View style={styles.verifiedHeader}>
+              <View style={styles.verifiedBadge}>
+                <NativeIcon
+                  ios="checkmark.shield.fill"
+                  android="verified"
+                  color={colors.teal}
+                  size={20}
+                />
+              </View>
+              <View style={styles.verifiedCopy}>
+                <AppText variant="cardTitle">{t.verified}</AppText>
+                <AppText variant="metadata" style={styles.muted}>
+                  {translate(locale, "place.verifiedSummary")}
+                </AppText>
+              </View>
+            </View>
+            {latestVerifiedAt ? (
+              <AppText variant="metadata" style={styles.muted}>
+                {t.lastChecked}: {formatVerifiedDate(locale, latestVerifiedAt)}
+              </AppText>
+            ) : null}
+            <PressableSurface
+              accessibilityLabel={translate(
+                locale,
+                sourcesExpanded ? "place.hideSources" : "place.viewSources",
+              )}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: sourcesExpanded }}
+              onPress={() => setSourcesExpanded((current) => !current)}
+              style={styles.sourcesToggle}
+            >
+              <AppText variant="label" style={styles.sourcesToggleText}>
+                {translate(
+                  locale,
+                  sourcesExpanded ? "place.hideSources" : "place.viewSources",
+                )}
+              </AppText>
+              <NativeIcon
+                ios={sourcesExpanded ? "chevron.up" : "chevron.down"}
+                android={sourcesExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down"}
+                color={colors.textMuted}
+                size={17}
               />
-            ))}
+            </PressableSurface>
+            {sourcesExpanded ? (
+              <MotionView style={styles.sourceList}>
+                {verifiedSources.map((source) => (
+                  <PressableSurface
+                    key={source.url}
+                    accessibilityLabel={source.label}
+                    accessibilityRole="link"
+                    onPress={() => {
+                      void Linking.openURL(source.url).catch(() =>
+                        setSaveMessage(messages.unavailable),
+                      );
+                    }}
+                    style={styles.sourceRow}
+                  >
+                    <View style={styles.sourceCopy}>
+                      <AppText variant="label">{source.label}</AppText>
+                      <AppText variant="metadata" style={styles.muted}>
+                        {t.lastChecked}: {formatVerifiedDate(locale, source.verifiedAt)}
+                      </AppText>
+                    </View>
+                    <NativeIcon
+                      ios="arrow.up.right"
+                      android="open_in_new"
+                      color={colors.primary}
+                      size={17}
+                    />
+                  </PressableSurface>
+                ))}
+              </MotionView>
+            ) : null}
           </View>
         ) : null}
         {guideState.status === "available" && guideState.data.eligible ? (
@@ -503,7 +583,46 @@ const styles = StyleSheet.create({
   quickActionButton: { flex: 1, minWidth: 0, minHeight: 64, paddingHorizontal: spacing.xs },
   description: { color: colors.textMuted },
   eyebrow: { color: colors.primary, marginBottom: spacing.sm },
+  muted: { color: colors.textMuted },
   section: { gap: spacing.sm },
+  verifiedCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: spacing.sm,
+    padding: spacing.md,
+  },
+  verifiedHeader: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
+  verifiedBadge: {
+    alignItems: "center",
+    backgroundColor: colors.tealSoft,
+    borderRadius: radius.pill,
+    height: 38,
+    justifyContent: "center",
+    width: 38,
+  },
+  verifiedCopy: { flex: 1, gap: spacing.xs, minWidth: 0 },
+  sourcesToggle: {
+    alignItems: "center",
+    borderTopColor: colors.border,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    minHeight: 40,
+    paddingTop: spacing.sm,
+  },
+  sourcesToggleText: { color: colors.primary },
+  sourceList: { gap: spacing.xs },
+  sourceRow: {
+    alignItems: "center",
+    borderRadius: radius.sm,
+    flexDirection: "row",
+    gap: spacing.sm,
+    minHeight: 48,
+    paddingVertical: spacing.xs,
+  },
+  sourceCopy: { flex: 1, gap: spacing.xs, minWidth: 0 },
   note: {
     backgroundColor: colors.primarySoft,
     borderRadius: radius.md,
