@@ -51,7 +51,7 @@ export function V2Hero({
       /> : null}
       <View style={[styles.heroCopy, city && styles.cityHeroCopy, compact && styles.compactHeroCopy, nativeTextBlock(direction)]}>
       {children}
-      <AppText variant={city ? "hero" : "screenTitle"} style={[styles.heroTitle, direction === "rtl" && [styles.arabicHeroTitle, nativeTextStyle(direction)]]}>
+      <AppText variant={city ? "hero" : compact ? "title" : "screenTitle"} style={[styles.heroTitle, direction === "rtl" && [styles.arabicHeroTitle, nativeTextStyle(direction)]]}>
         {title}
       </AppText>
       {subtitle ? <AppText style={[styles.subtitle, nativeTextStyle(direction)]}>{subtitle}</AppText> : null}
@@ -346,14 +346,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.borderStrong,
   },
   dotActive: { backgroundColor: colors.primary },
-  metrics: { flexDirection: "row", marginVertical: spacing.md },
+  metrics: { flexDirection: "row", marginVertical: spacing.sm },
   metric: { flex: 1, gap: spacing.xs, paddingHorizontal: spacing.sm },
   metricDivider: { borderStartWidth: 1, borderColor: colors.border },
   metricValue: { flexDirection: "row", gap: spacing.xs, alignItems: "center" },
   metricText: { flexShrink: 1 },
   itineraryActionRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
   itineraryMain: { flex: 1, minWidth: 0 },
-  itinerary: { gap: spacing.sm },
+  itinerary: { gap: spacing.xs },
   itineraryRow: {
     flexDirection: "row",
     alignItems: "center",
