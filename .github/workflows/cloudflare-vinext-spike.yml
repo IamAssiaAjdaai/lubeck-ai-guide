@@ -94,6 +94,16 @@ jobs:
             echo
             echo "This is a build-only compatibility probe. Nothing was deployed."
             echo
+            echo "### Generated vite.config.ts"
+            echo '~~~ts'
+            cat vite.config.ts 2>/dev/null || true
+            echo '~~~'
+            echo
+            echo "### Generated cloudflare.config.ts"
+            echo '~~~ts'
+            cat cloudflare.config.ts 2>/dev/null || true
+            echo '~~~'
+            echo
             echo "### vinext check (exit ${CHECK_EXIT:-not-run})"
             echo '~~~text'
             tail -n 220 vinext-check.txt 2>/dev/null || true
