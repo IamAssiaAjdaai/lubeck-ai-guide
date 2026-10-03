@@ -218,7 +218,7 @@ describe("account management with real capability boundaries", () => {
     render(<AccountScreen />);
     expect(await screen.findByText(copy("profile.explorerTitle"))).toBeTruthy();
     expect(screen.getByText(copy("profile.yourActivity"))).toBeTruthy();
-    expect(screen.getByText(copy("profile.lubeckExplorerPass"))).toBeTruthy();
+    expect(screen.getByText(copy("profile.cityExplorerPass").replace("{city}", "Lübeck"))).toBeTruthy();
     expect(screen.getByText(copy("profile.passActive"))).toBeTruthy();
     await waitFor(() => expect(screen.getAllByText("2").length).toBeGreaterThanOrEqual(2));
     expect(screen.getByText("1")).toBeTruthy();
