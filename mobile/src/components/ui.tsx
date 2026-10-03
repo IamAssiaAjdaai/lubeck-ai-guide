@@ -28,6 +28,7 @@ import {
   type ViewProps,
   type ViewStyle,
 } from "react-native";
+import { usePathname } from "expo-router";
 import { NativeBrand, NativeBottomNavigation } from "./NativeChrome";
 import { useRootTabScroll } from "../lib/tabNavigation";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -54,7 +55,7 @@ export function Screen({
   includeTopSafeArea = true,
   scrollViewRef,
   footer,
-  navigation = true,
+  navigation,
   brand = true,
   onBack,
   scrollDiagnostics,
@@ -68,6 +69,8 @@ export function Screen({
   scrollDiagnostics?: string;
 }>) {
   const { direction } = useNativeLocale();
+  const path = usePathname();
+  const showNavigation = navigation ?? path === "/" || path === "/saved" || path === "/account";
   const { width } = useWindowDimensions();
   const scroll = useRef<ScrollView>(null);
   const scrollProbe = useRef({ y: 0, pending: false });
@@ -116,7 +119,7 @@ export function Screen({
           {footer}
         </View>
       ) : null}
-      {navigation ? <NativeBottomNavigation onScrollToTop={scrollToTop} /> : null}
+      {showNavigation ? {showNavigation ? <NativeBottomNavigation onScrollToTop={scrollToTop} /> : null} : null}
     </SafeAreaView>
   );
 }
@@ -125,13 +128,17 @@ export function VirtualizedScreen<T>({
   includeTopSafeArea = true,
   contentContainerStyle,
   ListHeaderComponent,
+  navigation,
   ref: listRef,
   ...props
 }: FlatListProps<T> & {
   includeTopSafeArea?: boolean;
+  navigation?: boolean;
   ref?: Ref<FlatList<T>>;
 }) {
   const { direction } = useNativeLocale();
+  const path = usePathname();
+  const showNavigation = navigation ?? path === "/" || path === "/saved" || path === "/account";
   const { width } = useWindowDimensions();
   const list = useRef<FlatList<T>>(null);
   useImperativeHandle(listRef, () => list.current!, []);
