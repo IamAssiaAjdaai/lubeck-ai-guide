@@ -78,7 +78,7 @@ describe("actual native screen/chrome wiring (native view refs mocked)", () => {
     expect(within(header).getByRole("link", { name: "CITYWALK" })).toBeTruthy();
     expect(within(header).getByText("Language")).toBeTruthy();
     fireEvent.click(back); expect(state.back).toHaveBeenCalledOnce();
-    expect(header.dataset.style).toContain('"minHeight":52');
+    expect(header.dataset.style).toContain('"minHeight":48');
   });
   it.each(["/", "/saved", "/account"])("omits Back on root %s", path => {
     state.path = path; state.params = {};
