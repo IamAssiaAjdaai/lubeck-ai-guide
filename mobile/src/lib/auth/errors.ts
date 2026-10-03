@@ -14,6 +14,7 @@ export type NativeAuthErrorCode =
   | "current_password_required"
   | "account_exists"
   | "email_not_verified"
+  | "social_account_in_use"
   | "invalid_credentials"
   | "network"
   | "unknown";
@@ -44,6 +45,7 @@ export function classifyNativeAuthError(error: unknown): NativeAuthErrorCode {
   if (code.includes("PASSWORD_TOO_LONG")) return "password_too_long";
   if (code.includes("USER_ALREADY_EXISTS") || message.includes("already exists")) return "account_exists";
   if (code.includes("EMAIL_NOT_VERIFIED")) return "email_not_verified";
+  if (code.includes("ACCOUNT_ALREADY_LINKED_TO_DIFFERENT_USER") || code.includes("LINKED_ACCOUNT_ALREADY_EXISTS")) return "social_account_in_use";
   if (code.includes("INVALID_EMAIL_OR_PASSWORD") || code.includes("INVALID_PASSWORD")) return "invalid_credentials";
   if (code.includes("INVALID_EMAIL") || message.includes("invalid email")) return "invalid_email";
   return "unknown";
