@@ -41,6 +41,14 @@ describe("native city experience parity", () => {
     expect(walkSource).toContain("changeCurrentWalk(citySlug");
   });
 
+  it("keeps place detail as a focused subflow with compact real-world actions", () => {
+    expect(placeSource).toContain("navigation={false}");
+    expect(placeSource).toContain("styles.quickActions");
+    expect(placeSource).toContain("place.directions");
+    expect(placeSource).toContain("maps.apple.com");
+    expect(placeSource).toContain("google.com/maps/dir");
+  });
+
   it("uses one sequential trip model for published and personalized routes", () => {
     expect(tourSource).toContain("createMobileTripPlaceParams(tripIdentity, 0)");
     expect(tourSource).toContain('source: "published"');

@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testi
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PublicPlace } from "../src/lib/api/contracts";
 // AsyncStorage uses its real browser adapter in jsdom, shared by both screens.
-const state = vi.hoisted(() => ({ locale: "en" as "en" | "de" | "ar" }));
+const state = vi.hoisted(() => ({ locale: "en" as "en" | "de" | "ar", openURL: vi.fn() }));
 vi.mock("expo-router", () => ({
   Stack: { Screen: () => null },
   useLocalSearchParams: () => ({ citySlug: "lubeck", placeSlug: "holstentor" }),
@@ -18,7 +18,8 @@ vi.mock("react-native", () => ({
   useWindowDimensions: () => ({ width: 390, fontScale: 1 }),
   StyleSheet: { create: (styles: unknown) => styles, flatten: (styles: unknown) => Array.isArray(styles) ? Object.assign({}, ...styles.flat(Infinity).filter(Boolean)) : styles },
   View: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
-  Linking: { openURL: vi.fn() },
+  Platform: { OS: "ios" },
+  Linking: { openURL: state.openURL },
 }));
 vi.mock("../src/components/ui", () => ({
   Card: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
@@ -66,7 +67,7 @@ const place: PublicPlace = {
   requestedLocale: "en", resolvedLocale: "en", didFallback: false, tags: ["history"], media: [],
   content: { name: "Holstentor", shortDescription: "Historic gate", story: "Published story" },
 };
-beforeEach(() => { window.localStorage.clear(); state.locale = "en"; });
+beforeEach(() => { window.localStorage.clear(); state.locale = "en"; state.openURL.mockReset().mockResolvedValue(undefined); });
 afterEach(cleanup);
 function surfaces() {
   render(<><section aria-label="Explore"><CityScreen /></section><section aria-label="Detail"><PlaceScreen /></section></>);
@@ -108,7 +109,7 @@ describe("actual Explore and Detail share current-walk state (native bridges moc
     await toggleSavedPlace({ citySlug: "lubeck", slug: "holstentor", name: "Holstentor" });
     expect(await loadSavedPlaces()).toEqual([{ citySlug: "lubeck", slug: "holstentor", name: "Holstentor" }]);
     const { explore, detail } = surfaces();
-    await detail.findByRole("button", { name: `${walkCopy("en").saved} ✓` });
+    await detail.findByRole("button", { name: "Saved" });
     expect(await detail.findByRole("button", { name: "Add to my walk" })).toBeTruthy();
     fireEvent.click(explore.getByRole("button", { name: "Add to my walk" }));
     fireEvent.click(await detail.findByRole("button", { name: "Remove from walk" }));
@@ -120,7 +121,14 @@ describe("actual Explore and Detail share current-walk state (native bridges moc
     const { detail } = surfaces();
     await detail.findByRole("button", { name: "Remove from walk", pressed: true });
     expect(detail.queryByRole("button", { name: "Add to my walk" })).toBeNull();
-    expect(detail.getByRole("button", { name: walkCopy("en").saved }).getAttribute("aria-pressed")).toBe("false");
+    expect(detail.getByRole("button", { name: "Save" }).getAttribute("aria-pressed")).toBe("false");
     expect(await loadSavedPlaces()).toEqual([]);
+  });
+  it("opens walking directions from the published place coordinates", async () => {
+    const { detail } = surfaces();
+    fireEvent.click(await detail.findByRole("button", { name: "Directions" }));
+    expect(state.openURL).toHaveBeenCalledWith(
+      "https://maps.apple.com/?daddr=53.86,10.68&dirflg=w",
+    );
   });
 });

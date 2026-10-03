@@ -9,7 +9,7 @@ import { loadSavedPlaces, toggleSavedPlace } from "../../../../lib/walkStorage";
 import { NativeContentImage as Image } from "../../../../components/NativeContentImage";
 import { Link, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useRef, useState } from "react";
-import { Linking, ScrollView, StyleSheet, View } from "react-native";
+import { Linking, Platform, ScrollView, StyleSheet, View } from "react-native";
 
 import { NativeAudioPlayer } from "../../../../components/NativeAudioPlayer";
 import { MediaAttribution } from "../../../../components/MediaAttribution";
@@ -147,6 +147,10 @@ function PlaceContent() {
       </Screen>
     );
   }
+  const directionsUrl =
+    Platform.OS === "ios"
+      ? `https://maps.apple.com/?daddr=${place.coordinates.lat},${place.coordinates.lng}&dirflg=w`
+      : `https://www.google.com/maps/dir/?api=1&destination=${place.coordinates.lat},${place.coordinates.lng}&travelmode=walking`;
   const contentTextStyle = nativeContentTextStyle(locale, place.resolvedLocale);
   const imageMedia = selectPrimaryImageMedia(place.media);
   const image = selectImageUrl(
@@ -161,7 +165,7 @@ function PlaceContent() {
   const nextStop = trip ? adjacentMobileTripParams(trip, 1) : undefined;
 
   return (
-    <Screen scrollViewRef={scroll}>
+    <Screen scrollViewRef={scroll} navigation={false}>
       <Stack.Screen options={{ title: nativePlaceName(identity.citySlug, place.slug, place.content.name, locale) }} />
       {saveMessage ? <StatusMessage>{saveMessage}</StatusMessage> : null}
       {trip ? (
@@ -208,6 +212,63 @@ function PlaceContent() {
           </AppText>
           {direction === "rtl" && place.didFallback ? <AppText variant="caption">{messages.fallbackContent}</AppText> : null}
         </View>
+        <View style={styles.quickActions}>
+          <View style={styles.quickAction}>
+            <WalkMembershipControl
+              citySlug={identity.citySlug}
+              placeSlug={place.slug}
+              dense
+              compact
+            />
+          </View>
+          <PrimaryButton
+            compact
+            label={translate(locale, saved ? "common.saved" : "common.save")}
+            busy={savingPlace}
+            accessibilityState={{ selected: saved }}
+            tone="secondary"
+            style={styles.quickActionButton}
+            leadingIcon={
+              <NativeIcon
+                ios={saved ? "heart.fill" : "heart"}
+                android={saved ? "favorite" : "favorite_border"}
+                color={colors.primary}
+                size={20}
+              />
+            }
+            onPress={() => {
+              if (savingPlace) return;
+              setSavingPlace(true);
+              void toggleSavedPlace({
+                citySlug: identity.citySlug,
+                slug: place.slug,
+                name: place.content.name,
+              })
+                .then(setSaved)
+                .catch(() => setSaveMessage(messages.tripSaveFailed))
+                .finally(() => setSavingPlace(false));
+            }}
+          />
+          <PrimaryButton
+            compact
+            label={translate(locale, "place.directions")}
+            tone="secondary"
+            style={styles.quickActionButton}
+            leadingIcon={
+              <NativeIcon
+                ios="location"
+                android="directions"
+                color={colors.primary}
+                size={20}
+              />
+            }
+            onPress={() => {
+              void Linking.openURL(directionsUrl).catch(() =>
+                setSaveMessage(messages.unavailable),
+              );
+            }}
+          />
+        </View>
         {place.content.visitNote ? (
           <View style={styles.note}>
             <View style={styles.noteHeading}>
@@ -235,24 +296,6 @@ function PlaceContent() {
             <AppText style={contentTextStyle}>{place.content.story}</AppText>
           </View>
         ) : null}
-        <PrimaryButton
-          label={`${t.saved}${saved ? " ✓" : ""}`}
-          busy={savingPlace}
-          accessibilityState={{ selected: saved }}
-          tone="secondary"
-          onPress={() => {
-            if (savingPlace) return;
-            setSavingPlace(true);
-            void toggleSavedPlace({
-              citySlug: identity.citySlug,
-              slug: place.slug,
-              name: place.content.name,
-            })
-              .then(setSaved)
-              .catch(() => setSaveMessage(messages.tripSaveFailed)).finally(() => setSavingPlace(false));
-          }}
-        />
-        <WalkMembershipControl citySlug={identity.citySlug} placeSlug={place.slug} />
         <View
           testID="place-audio-section"
           onLayout={(event) => {
@@ -452,6 +495,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primarySoft,
   },
   introduction: { gap: spacing.sm },
+  quickActions: { flexDirection: "row", alignItems: "stretch", gap: spacing.sm },
+  quickAction: { flex: 1, minWidth: 0 },
+  quickActionButton: { flex: 1, minWidth: 0, minHeight: 64, paddingHorizontal: spacing.xs },
   description: { color: colors.textMuted },
   eyebrow: { color: colors.primary, marginBottom: spacing.sm },
   section: { gap: spacing.sm },
