@@ -1,6 +1,8 @@
 import type { Interest, WalkSettings } from "@citywalk/traveler-core/walkPlanner";
 
 export const TRAVELER_STYLE_STORAGE_KEY = "citywalk:native:v1:traveler-style";
+export const travelerStyleStorageKey = (userId: string) => `${TRAVELER_STYLE_STORAGE_KEY}:${userId}`;
+// Do not migrate the older unscoped preview value: without an owner it could leak one traveler's defaults into another account.
 export const TRAVELER_STYLE_VERSION = 1;
 export const TRAVELER_STYLE_INTERESTS = [
   "history",
@@ -53,19 +55,28 @@ async function defaultStore(): Promise<Store> {
   return (await import("@react-native-async-storage/async-storage")).default;
 }
 
-export async function loadTravelerStyle(store?: Store): Promise<TravelerStyle> {
+export async function loadTravelerStyle(
+  userId: string | undefined,
+  store?: Store,
+): Promise<TravelerStyle> {
+  if (!userId) return DEFAULT_TRAVELER_STYLE;
   try {
-    const raw = await (store ?? await defaultStore()).getItem(TRAVELER_STYLE_STORAGE_KEY);
+    const raw = await (store ?? await defaultStore()).getItem(travelerStyleStorageKey(userId));
     return raw ? parse(JSON.parse(raw)) : DEFAULT_TRAVELER_STYLE;
   } catch {
     return DEFAULT_TRAVELER_STYLE;
   }
 }
 
-export async function saveTravelerStyle(style: TravelerStyle, store?: Store): Promise<TravelerStyle> {
+export async function saveTravelerStyle(
+  userId: string | undefined,
+  style: TravelerStyle,
+  store?: Store,
+): Promise<TravelerStyle> {
+  if (!userId) throw new Error("Account required.");
   const validated = parse({ version: TRAVELER_STYLE_VERSION, ...style });
   await (store ?? await defaultStore()).setItem(
-    TRAVELER_STYLE_STORAGE_KEY,
+    travelerStyleStorageKey(userId),
     JSON.stringify({ version: TRAVELER_STYLE_VERSION, ...validated }),
   );
   return validated;

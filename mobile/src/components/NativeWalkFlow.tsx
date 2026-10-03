@@ -59,6 +59,7 @@ import {
 import { loadLocalTrips } from "../lib/tripStorage";
 import { createMobileTripId } from "../lib/tripNavigation";
 import { loadTravelerStyle } from "../lib/travelerStyle";
+import { nativeAuthClient } from "../lib/auth/client";
 import { requestForegroundLocation } from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import {
@@ -399,7 +400,8 @@ export function NativeWalkFlow({
         }
         setMessage(t.noEligible);
       }
-      const style = await loadTravelerStyle();
+      const auth = await nativeAuthClient.getSession().catch(() => ({ data: null }));
+      const style = await loadTravelerStyle(auth.data?.user.id);
       if (!alive) return;
       setMinutes(style.minutes);
       setInterests([...style.interests]);

@@ -27,10 +27,23 @@ const mocks = vi.hoisted(() => ({
   contentStatus: "available",
   holdPresentation: false,
   presented: undefined as (() => void) | undefined,
+  travelerStyle: {
+    interests: ["history", "architecture"],
+    walking: "balanced",
+    minutes: 120,
+  } as {
+    interests: import("@citywalk/traveler-core/walkPlanner").Interest[];
+    walking: import("@citywalk/traveler-core/walkPlanner").WalkSettings["walking"];
+    minutes: 60 | 90 | 120 | 180;
+  },
+  loadTravelerStyle: vi.fn(),
 }));
 
 vi.mock("../src/hooks/useAccountWalks", () => ({ useAccountWalks: () => { const [, refresh] = React.useReducer(n => n + 1, 0); useEffect(() => subscribeAccountWalks(() => refresh()), []); return { userId: mocks.guest ? undefined : "test-user", walks: mocks.saved, loading: false, error: false, refresh: vi.fn() }; } }));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { getSession: async () => ({ data: mocks.guest ? null : { user: { id: "test-user" } } }) } }));
+vi.mock("../src/lib/travelerStyle", () => ({
+  loadTravelerStyle: mocks.loadTravelerStyle,
+}));
 vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { fetchAuthenticated: async (_path: string, init: RequestInit) => {
   if (init.method === "GET") return Response.json({ walks: mocks.saved.map(w => ({ id: w.id, route: { citySlug: w.citySlug, stopSlugs: [...w.visited, ...w.remaining], settings: w.settings, finish: w.finish }, createdAt: "2026-09-27T00:00:00Z", updatedAt: "2026-09-27T00:00:00Z" })) });
   const { route, id } = JSON.parse(init.body as string);
@@ -336,6 +349,7 @@ function setup(authorizeStart?: () => Promise<boolean>) {
   mocks.feedback.mockResolvedValue(undefined);
   mocks.share.mockResolvedValue({});
   mocks.location.mockResolvedValue({ status: "denied" });
+  mocks.loadTravelerStyle.mockImplementation(async () => mocks.travelerStyle);
   render(<NativeWalkFlow citySlug="city" cityName="City" places={places} authorizeStart={authorizeStart} />);
 }
 afterEach(() => {
@@ -345,6 +359,12 @@ afterEach(() => {
   vi.clearAllMocks();
   mocks.locale = "en"; mocks.guest = false;
   mocks.contentStatus = "available";
+  mocks.travelerStyle = {
+    interests: ["history", "architecture"],
+    walking: "balanced",
+    minutes: 120,
+  };
+  mocks.loadTravelerStyle.mockImplementation(async () => mocks.travelerStyle);
   vi.unstubAllGlobals();
 });
 async function preview() {
@@ -355,6 +375,67 @@ async function preview() {
   fireEvent.click(screen.getByRole("button", { name: t.buildAction }));
   await screen.findByRole("button", { name: t.startWalk });
 }
+describe("traveler Profile defaults in the native planner", () => {
+  it("uses only the active CITYWALK user's style for a brand-new walk", async () => {
+    mocks.travelerStyle = {
+      interests: ["food"],
+      walking: "easy",
+      minutes: 180,
+    };
+    setup();
+    const t = walkCopy("en");
+    const threeHours = await screen.findByRole("button", { name: t.hour3 });
+    expect(threeHours.getAttribute("aria-pressed")).toBe("true");
+    expect(mocks.loadTravelerStyle).toHaveBeenCalledWith("test-user");
+
+    fireEvent.click(screen.getByRole("button", { name: t.continue }));
+    expect(screen.getByRole("button", { name: t.food }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: t.history }).getAttribute("aria-pressed")).toBe("false");
+    expect(screen.getByRole("button", { name: t.easy }).getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("uses launch defaults for a guest instead of another account's saved style", async () => {
+    mocks.guest = true;
+    mocks.travelerStyle = {
+      interests: ["history", "architecture"],
+      walking: "balanced",
+      minutes: 120,
+    };
+    setup();
+    await screen.findByRole("button", { name: walkCopy("en").hour2 });
+    expect(mocks.loadTravelerStyle).toHaveBeenCalledWith(undefined);
+  });
+
+  it("does not reapply Profile defaults to an existing preview", async () => {
+    mocks.current = {
+      phase: "preview",
+      journey: {
+        id: "existing-preview",
+        citySlug: "city",
+        remaining: ["place-0"],
+        visited: [],
+        settings: {
+          minutes: 60,
+          interests: ["nature"],
+          walking: "long",
+          start: places[0].coordinates,
+        },
+        position: places[0].coordinates,
+        historyDistance: 0,
+        startedAt: 10,
+      },
+    };
+    render(<NativeWalkFlow citySlug="city" cityName="City" places={places} />);
+    await screen.findByRole("button", { name: walkCopy("en").startWalk });
+    expect(mocks.loadTravelerStyle).not.toHaveBeenCalled();
+    expect(mocks.current.journey.settings).toMatchObject({
+      minutes: 60,
+      interests: ["nature"],
+      walking: "long",
+    });
+  });
+});
+
 describe("rendered native V2 flow (native bridges mocked, not device acceptance)", () => {
   it("revalidates the plan when its last stop disappears during Start authorization", async () => {
     let allow!: (value: boolean) => void;
