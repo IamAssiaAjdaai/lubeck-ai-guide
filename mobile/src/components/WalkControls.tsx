@@ -5,16 +5,13 @@ import {
   Text,
   TextInput,
   View,
-  useWindowDimensions,
 } from "react-native";
 import { AppText, PressableSurface, PrimaryButton, Screen } from "./ui";
 import { useResponsiveTextLayout } from "../design/responsiveText";
 import { NativeIcon } from "./NativeIcon";
 import {
   colors,
-  layout,
   radius,
-  shadows,
   spacing,
   typography,
 } from "../design/tokens";
@@ -59,7 +56,6 @@ export function WalkChoices<T extends string | number>({
   showHeading?: boolean;
   compact?: boolean;
 }) {
-  const { width } = useWindowDimensions();
   const { categoryColumns } = useResponsiveTextLayout();
   const wrapSegments = compact && options.length > categoryColumns;
   const { direction } = useNativeLocale();
@@ -109,7 +105,6 @@ export function WalkChoices<T extends string | number>({
               onPress={() => onSelect(option.value)}
               style={[
                 styles.option,
-                variant === "chips" && width >= 380 && styles.wideChip,
                 variant === "time" && styles.time,
                 variant === "segment" && styles.segmentOption,
                 variant === "radio" && styles.radio,
@@ -122,7 +117,7 @@ export function WalkChoices<T extends string | number>({
                 <View style={variant === "time" ? styles.timeIcon : undefined}>
                   <NativeIcon
                     {...icon}
-                    size={variant === "time" ? 32 : 22}
+                    size={variant === "time" ? 24 : 20}
                     color={
                       variant === "segment" && checked
                         ? colors.surface
@@ -231,16 +226,18 @@ export function WalkInput({
   value,
   onChangeText,
   placeholder,
+  compact = false,
 }: {
   label: string;
   value: string;
   onChangeText: (value: string) => void;
   placeholder?: string;
+  compact?: boolean;
 }) {
   const { direction } = useNativeLocale();
   return (
-    <View style={styles.section}>
-      <AppText>{label}</AppText>
+    <View style={[styles.section, compact && styles.inlineField]}>
+      <AppText variant={compact ? "label" : "body"}>{label}</AppText>
       <TextInput
         accessibilityLabel={label}
         value={value}
@@ -249,6 +246,7 @@ export function WalkInput({
         placeholderTextColor={colors.textMuted}
         style={[
           styles.input,
+          compact && styles.compactInput,
           {
             writingDirection: direction,
             textAlign: direction === "rtl" ? "right" : "left",
@@ -274,33 +272,31 @@ const styles = StyleSheet.create({
   options: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   option: {
     flexGrow: 1,
-    flexBasis: "44%",
-    minHeight: 56,
+    flexBasis: "46%",
+    minHeight: 50,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    padding: 12,
+    padding: 10,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surface,
   },
-  wideChip: { flexBasis: "29%", minWidth: 0, paddingHorizontal: spacing.sm },
   optionText: { flex: 1 },
   selected: {
     borderColor: colors.primary,
     backgroundColor: colors.primarySoft,
   },
   time: {
-    minHeight: layout.timeCardHeight,
+    minHeight: 96,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "center",
-    ...shadows.card,
   },
   timeIcon: {
-    width: 54,
-    height: 54,
+    width: 38,
+    height: 38,
     borderRadius: radius.pill,
     alignItems: "center",
     justifyContent: "center",
@@ -327,6 +323,8 @@ const styles = StyleSheet.create({
   compactLabel: { ...typography.metadata, color: colors.text, textAlign: "center" },
   radioList: { flexDirection: "column" },
   radio: { flexBasis: "auto", width: "100%" },
+  inlineField: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  compactInput: { flex: 1, minHeight: 42, paddingVertical: spacing.sm, backgroundColor: colors.surface },
   input: {
     minHeight: 48,
     padding: spacing.md,

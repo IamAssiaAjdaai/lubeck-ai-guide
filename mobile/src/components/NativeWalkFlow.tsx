@@ -85,6 +85,7 @@ import { NativeCityMap } from "./NativeCityMap";
 import { NativeLiveWalkCard } from "./NativeLiveWalkCard";
 import {
   AppText,
+  PressableSurface,
   PrimaryButton,
   Screen,
   SectionTitle,
@@ -199,6 +200,7 @@ export function NativeWalkFlow({
   const [now, setNow] = useState(() => Date.now()),
     [generatedAt, setGeneratedAt] = useState(() => Date.now());
   const [showMap, setShowMap] = useState(false);
+  const [showMoreInterests, setShowMoreInterests] = useState(false);
   const [buildError, setBuildError] = useState<"empty" | "error">();
   const [buildStage, setBuildStage] = useState<WalkBuildStage>("matching");
   const [rating, setRating] = useState<string[]>([]),
@@ -623,8 +625,10 @@ export function NativeWalkFlow({
       setJourney(undefined); setProposed(undefined); setPanel(undefined);
       setLiveSession(undefined); setShowManageWalk(false); setShowLiveInspect(false);
       setProposalMessage(""); setMessage(""); setBuildError(undefined);
-      setStep(1); setMinutes(120); setReturnBy("");
-      setInterests(["history", "architecture"]); setCategories([]); setWalking("balanced");
+      const defaults = await loadTravelerStyle();
+      setStep(1); setMinutes(defaults.minutes); setReturnBy("");
+      setInterests([...defaults.interests]); setCategories([]); setWalking(defaults.walking);
+      setShowMoreInterests(false);
       setStartSlug(places[0]?.slug ?? ""); setEndSlug(places[0]?.slug ?? "");
       setGps(undefined); setStartMode("place"); setEndMode("loop");
       setShowMap(false); setBuildStage("matching");
@@ -851,7 +855,7 @@ export function NativeWalkFlow({
           ? () => setStep((value) => value - 1)
           : undefined
       }
-      navigation={stage !== "plan" && stage !== "building"}
+      navigation={false}
       footer={
         stage === "plan" && !buildError ? (
           <PrimaryButton
@@ -922,22 +926,21 @@ export function NativeWalkFlow({
                 onSelect={setMinutes}
               />
               <View style={styles.deadline}>
-                <SectionTitle>{t.deadlineQuestion}</SectionTitle>
-                <AppText style={styles.muted}>{t.deadlineHelp}</AppText>
+                <AppText variant="label">{t.deadlineQuestion}</AppText>
+                <WalkInput
+                  compact
+                  label={t.returnBy}
+                  value={returnBy}
+                  onChangeText={setReturnBy}
+                  placeholder={translate(locale, "planner.timePlaceholder")}
+                />
               </View>
-              <WalkInput
-                label={t.returnBy}
-                value={returnBy}
-                onChangeText={setReturnBy}
-                placeholder={translate(locale, "planner.timePlaceholder")}
-              />
             </>
           ) : step === 2 ? (
             <>
               <WalkChoices
                 label={t.interests}
                 help={t.interestsHelp}
-                number={1}
                 multiple
                 options={(Object.keys(interestTags) as Interest[]).map(
                   (value) => ({ value, label: t[value] }),
@@ -950,37 +953,46 @@ export function NativeWalkFlow({
                 }
               />
               {dynamicTags.length ? (
-                <WalkChoices
-                  label={t.categories}
-                  multiple
-                  options={dynamicTags.map((value) => ({
-                    value,
-                    label: nativeCategoryLabel(value, locale),
-                  }))}
-                  selected={categories}
-                  onSelect={(key) =>
-                    setCategories((v) =>
-                      v.includes(key)
-                        ? v.filter((k) => k !== key)
-                        : [...v, key],
-                    )
-                  }
-                />
+                <>
+                  <PressableSurface
+                    accessibilityRole="button"
+                    accessibilityLabel={showMoreInterests ? t.showFewerInterests : t.showMoreInterests}
+                    style={styles.tertiaryAction}
+                    onPress={() => setShowMoreInterests((value) => !value)}
+                  >
+                    <AppText variant="label" style={styles.tertiaryText}>
+                      {showMoreInterests ? t.showFewerInterests : t.showMoreInterests}
+                    </AppText>
+                  </PressableSurface>
+                  {showMoreInterests ? (
+                    <WalkChoices
+                      label={t.categories}
+                      multiple
+                      options={dynamicTags.map((value) => ({
+                        value,
+                        label: nativeCategoryLabel(value, locale),
+                      }))}
+                      selected={categories}
+                      onSelect={(key) =>
+                        setCategories((v) =>
+                          v.includes(key)
+                            ? v.filter((k) => k !== key)
+                            : [...v, key],
+                        )
+                      }
+                    />
+                  ) : null}
+                </>
               ) : null}
               <WalkChoices
                 label={t.walking}
                 variant="segment"
-                number={2}
+                compact
                 options={(["easy", "balanced", "long"] as const).map(
                   (value) => ({ value, label: t[value] }),
                 )}
                 selected={[walking]}
                 onSelect={setWalking}
-              />
-              <PrimaryButton
-                label={t.back}
-                tone="secondary"
-                onPress={() => setStep(1)}
               />
             </>
           ) : (
@@ -1005,7 +1017,6 @@ export function NativeWalkFlow({
               <WalkChoices
                 label={t.end}
                 variant="radio"
-                number={4}
                 options={(["anywhere", "loop", "destination"] as const).map(
                   (value) => ({ value, label: t[value] }),
                 )}
@@ -1021,12 +1032,6 @@ export function NativeWalkFlow({
                 />
               ) : null}
 
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={t.back}
-                onPress={() => setStep(2)}
-              />
             </>
           )}
           {!eligible.length ? <StatusMessage>{t.empty}</StatusMessage> : null}
@@ -1075,7 +1080,7 @@ export function NativeWalkFlow({
               color={
                 deadline && eta > deadline ? colors.warning : colors.success
               }
-              size={28}
+              size={22}
             />
             <View style={styles.flex}>
               <AppText variant="label">
@@ -1124,7 +1129,7 @@ export function NativeWalkFlow({
           ) : null}
           {stage === "preview" ? (
             <>
-              {itinerary(route.places)}
+              {itinerary(route.places, true, true, true)}
               {startStatus === "loading" ? <CitywalkLoading compact label={discoveryCopy(locale).loadingWalkContent} /> :
                 startStatus !== "ready" ? <StatusMessage>{startStatus === "empty" ? t.emptyHelp : t.planContentUnavailable}</StatusMessage> : null}
               <PrimaryButton
@@ -1445,12 +1450,15 @@ export function NativeWalkFlow({
             </>
           )}
           {stage === "preview" ? (
-            <PrimaryButton
-              label={t.rebuild}
-              tone="secondary"
-              busy={updating}
+            <PressableSurface
+              accessibilityRole="button"
+              accessibilityLabel={t.rebuild}
+              disabled={updating}
+              style={styles.tertiaryAction}
               onPress={() => void requestRebuild()}
-            />
+            >
+              <AppText variant="label" style={styles.tertiaryText}>{t.rebuild}</AppText>
+            </PressableSurface>
           ) : null}
         </>
       ) : null}

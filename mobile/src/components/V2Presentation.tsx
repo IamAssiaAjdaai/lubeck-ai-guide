@@ -51,7 +51,7 @@ export function V2Hero({
       /> : null}
       <View style={[styles.heroCopy, city && styles.cityHeroCopy, compact && styles.compactHeroCopy, nativeTextBlock(direction)]}>
       {children}
-      <AppText variant={city ? "hero" : "screenTitle"} style={[styles.heroTitle, direction === "rtl" && [styles.arabicHeroTitle, nativeTextStyle(direction)]]}>
+      <AppText variant={city ? "hero" : compact ? "title" : "screenTitle"} style={[styles.heroTitle, direction === "rtl" && [styles.arabicHeroTitle, nativeTextStyle(direction)]]}>
         {title}
       </AppText>
       {subtitle ? <AppText style={[styles.subtitle, nativeTextStyle(direction)]}>{subtitle}</AppText> : null}
@@ -243,8 +243,6 @@ export function V2Loading({ stage = "matching", onReady, onPresented }: { stage?
   useEffect(() => {
     if (reduced) {
       entrance.setValue(1);
-      // Layout alone does not mean pixels have been presented. Cross a frame
-      // boundary even when the system requests no animation.
       let next = 0;
       const first = requestAnimationFrame(() => { next = requestAnimationFrame(() => onPresented?.()); });
       return () => { cancelAnimationFrame(first); cancelAnimationFrame(next); };
@@ -255,67 +253,22 @@ export function V2Loading({ stage = "matching", onReady, onPresented }: { stage?
     transition.start(({ finished }) => { if (finished) onPresented?.(); });
     return () => transition.stop();
   }, [entrance, reduced, onPresented]);
-  const [rotation] = useState(() => new Animated.Value(0));
-  useEffect(() => {
-    if (reduced) return;
-    const animation = Animated.loop(
-      Animated.timing(rotation, {
-        toValue: 1,
-        duration: 1700,
-        useNativeDriver: true,
-      }),
-    );
-    animation.start();
-    return () => animation.stop();
-  }, [rotation, reduced]);
   return (
-    <Animated.View onLayout={onReady} testID="walk-building-progress" style={{ direction, opacity: entrance }} accessibilityRole="progressbar" accessibilityLabel={t.loading} accessibilityValue={{ text: t[stage] }}>
-      <V2Hero title={t.loading} subtitle={t.loadingSubtitle} />
-      <View style={styles.ring}>
-        <NativeIcon
-          ios="figure.walk"
-          android="directions_walk"
-          size={48}
-          color={colors.primary}
-        />
-        <Animated.View
-          style={[
-            styles.orbit,
-            {
-              transform: [
-                {
-                  rotate: rotation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ["0deg", "360deg"],
-                  }),
-                },
-              ],
-            },
-          ]}
-        />
+    <Animated.View
+      onLayout={onReady}
+      testID="walk-building-progress"
+      style={[styles.building, { direction, opacity: entrance }]}
+      accessibilityRole="progressbar"
+      accessibilityLabel={t.loading}
+      accessibilityValue={{ text: t[stage] }}
+    >
+      <V2Hero compact title={t.loading} subtitle={t[stage]} />
+      <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={styles.buildSkeleton}>
+        <View style={styles.buildSkeletonHero} />
+        <View style={styles.buildSkeletonLine} />
+        <View style={styles.buildSkeletonShortLine} />
       </View>
-      <View style={styles.stages}>
-        {(["matching", "checking", "fitting", "choosing"] as const).map((key, index, stages) => {
-          const current = stages.indexOf(stage), completed = index < current, active = index === current;
-          return <View key={key} style={styles.stage} testID={`build-${key}-${completed ? "completed" : active ? "current" : "upcoming"}`}>
-            <NativeIcon
-              ios={completed ? "checkmark.circle.fill" : active ? "circle.dotted" : "circle"}
-              android={completed ? "check_circle" : active ? "pending" : "radio_button_unchecked"}
-              color={completed || active ? colors.primary : colors.borderStrong}
-              size={26}
-            />
-            <AppText accessibilityLiveRegion={active ? "polite" : "none"} style={[styles.rowCopy, !active && styles.muted]}>{t[key]}</AppText>
-          </View>;
-        })}
-      </View>
-      <View style={styles.reassurance}>
-        <NativeIcon
-          ios="sparkles"
-          android="auto_awesome"
-          color={colors.primary}
-        />
-        <AppText style={styles.rowCopy}>{t.reassurance}</AppText>
-      </View>
+      <AppText testID={`build-${stage}-current`} variant="metadata" style={styles.muted}>{t[stage]}</AppText>
     </Animated.View>
   );
 }
@@ -393,14 +346,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.borderStrong,
   },
   dotActive: { backgroundColor: colors.primary },
-  metrics: { flexDirection: "row", marginVertical: spacing.md },
+  metrics: { flexDirection: "row", marginVertical: spacing.sm },
   metric: { flex: 1, gap: spacing.xs, paddingHorizontal: spacing.sm },
   metricDivider: { borderStartWidth: 1, borderColor: colors.border },
   metricValue: { flexDirection: "row", gap: spacing.xs, alignItems: "center" },
   metricText: { flexShrink: 1 },
   itineraryActionRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
   itineraryMain: { flex: 1, minWidth: 0 },
-  itinerary: { gap: spacing.sm },
+  itinerary: { gap: spacing.xs },
   itineraryRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -434,37 +387,11 @@ const styles = StyleSheet.create({
   },
   compactThumbnail: { width: 52, height: 52 },
   rowCopy: { flex: 1, minWidth: 0, gap: spacing.xs },
-  ring: {
-    width: 174,
-    height: 174,
-    borderRadius: radius.pill,
-    borderWidth: 9,
-    borderColor: colors.border,
-    alignSelf: "center",
-    marginVertical: spacing.lg,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  orbit: {
-    position: "absolute",
-    inset: -9,
-    borderWidth: 9,
-    borderColor: "transparent",
-    borderTopColor: colors.primary,
-    borderEndColor: colors.primary,
-    borderRadius: radius.pill,
-  },
-  stages: { gap: 20, paddingHorizontal: spacing.md },
-  stage: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  reassurance: {
-    marginTop: spacing.xl,
-    padding: 20,
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.md,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-  },
+  building: { gap: spacing.md },
+  buildSkeleton: { gap: spacing.sm },
+  buildSkeletonHero: { height: 96, borderRadius: radius.lg, backgroundColor: colors.surfaceMuted },
+  buildSkeletonLine: { height: 14, width: "78%", borderRadius: radius.pill, backgroundColor: colors.border },
+  buildSkeletonShortLine: { height: 14, width: "52%", borderRadius: radius.pill, backgroundColor: colors.border },
   error: { gap: spacing.md },
   errorArt: {
     height: 220,

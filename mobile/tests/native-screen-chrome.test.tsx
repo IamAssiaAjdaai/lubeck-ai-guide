@@ -61,12 +61,11 @@ describe("actual native screen/chrome wiring (native view refs mocked)", () => {
     expect(state.scroll).toHaveBeenCalledExactlyOnceWith({ y: 0, animated: true });
     expect(state.log).toHaveBeenCalledExactlyOnceWith(`[TAB_PRESS] ${tab} active=true action=scroll-top`);
   });
-  it("one Explore press reaches the FlatList ref", () => {
+  it("hides bottom tabs on nested city content", () => {
     state.path = "/city/lubeck"; state.params = { citySlug: "lubeck" };
     render(<VirtualizedScreen data={[]} renderItem={() => null} />);
-    fireEvent.click(screen.getByRole("tab", { name: "Explore" }));
-    expect(state.offset).toHaveBeenCalledExactlyOnceWith({ offset: 0, animated: true });
-    expect(state.log).toHaveBeenCalledOnce();
+    expect(screen.queryByRole("tablist")).toBeNull();
+    expect(state.offset).not.toHaveBeenCalled();
   });
   it.each(["/city/lubeck", "/city/lubeck/place/holstentor", "/city/lubeck/walk"])("keeps Back in one compact header outside content at %s", path => {
     state.path = path; state.params = { citySlug: "lubeck" };
@@ -78,7 +77,7 @@ describe("actual native screen/chrome wiring (native view refs mocked)", () => {
     expect(within(header).getByRole("link", { name: "CITYWALK" })).toBeTruthy();
     expect(within(header).getByText("Language")).toBeTruthy();
     fireEvent.click(back); expect(state.back).toHaveBeenCalledOnce();
-    expect(header.dataset.style).toContain('"minHeight":52');
+    expect(header.dataset.style).toContain('"minHeight":48');
   });
   it.each(["/", "/saved", "/account"])("omits Back on root %s", path => {
     state.path = path; state.params = {};
