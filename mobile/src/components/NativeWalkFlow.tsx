@@ -787,34 +787,12 @@ export function NativeWalkFlow({
     </View>
   );
   const summary = (r: WalkRoute<PublicPlaceCard>) => (
-    <View>
-      <MetricSummary
-        items={[
-          {
-            label: t.duration,
-            value: duration(r.minutes),
-            icon: <NativeIcon ios="clock" android="schedule" size={20} />,
-          },
-          {
-            label: t.distance,
-            value: distance(r.distance),
-            icon: <NativeIcon ios="mappin" android="place" size={20} />,
-          },
-          {
-            label: t.stops,
-            value: String(r.places.length),
-            icon: (
-              <NativeIcon
-                ios="point.topleft.down.to.point.bottomright.curvepath"
-                android="route"
-                size={20}
-              />
-            ),
-          },
-        ]}
-      />
+    <View style={styles.previewSummary}>
+      <AppText variant="label">
+        {duration(r.minutes)} · {distance(r.distance)} · {r.places.length} {t.stops}
+      </AppText>
       <AppText variant="caption" style={styles.muted}>
-        {t.estimated}
+        {translate(locale, "walk.estimateShort")}
         {r.finish ? ` · ${t.returnLeg}` : ""}
       </AppText>
     </View>
@@ -855,7 +833,7 @@ export function NativeWalkFlow({
           ? () => setStep((value) => value - 1)
           : undefined
       }
-      navigation={stage !== "plan" && stage !== "building"}
+      navigation={false}
       footer={
         stage === "plan" && !buildError ? (
           <PrimaryButton
@@ -1091,7 +1069,7 @@ export function NativeWalkFlow({
               color={
                 deadline && eta > deadline ? colors.warning : colors.success
               }
-              size={28}
+              size={20}
             />
             <View style={styles.flex}>
               <AppText variant="label">
@@ -1140,7 +1118,7 @@ export function NativeWalkFlow({
           ) : null}
           {stage === "preview" ? (
             <>
-              {itinerary(route.places)}
+              {itinerary(route.places, true, true, true)}
               {startStatus === "loading" ? <CitywalkLoading compact label={discoveryCopy(locale).loadingWalkContent} /> :
                 startStatus !== "ready" ? <StatusMessage>{startStatus === "empty" ? t.emptyHelp : t.planContentUnavailable}</StatusMessage> : null}
               <PrimaryButton
@@ -1461,12 +1439,15 @@ export function NativeWalkFlow({
             </>
           )}
           {stage === "preview" ? (
-            <PrimaryButton
-              label={t.rebuild}
-              tone="secondary"
-              busy={updating}
+            <PressableSurface
+              accessibilityRole="button"
+              accessibilityLabel={t.rebuild}
+              style={styles.tertiaryAction}
+              disabled={updating}
               onPress={() => void requestRebuild()}
-            />
+            >
+              <AppText variant="label" style={styles.tertiaryText}>{t.rebuild}</AppText>
+            </PressableSurface>
           ) : null}
         </>
       ) : null}

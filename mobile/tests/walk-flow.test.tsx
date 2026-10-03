@@ -103,6 +103,9 @@ vi.mock("../src/components/ui", () => ({
   StatusMessage: ({ children }: { children: React.ReactNode }) => (
     <div role="status">{children}</div>
   ),
+  PressableSurface: ({ children, onPress, accessibilityLabel, disabled }: React.PropsWithChildren<{ onPress?: () => void; accessibilityLabel?: string; disabled?: boolean }>) => (
+    <button aria-label={accessibilityLabel} disabled={disabled} onClick={onPress}>{children}</button>
+  ),
   PrimaryButton: ({
     label,
     onPress,

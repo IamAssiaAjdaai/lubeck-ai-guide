@@ -50,6 +50,7 @@
     "backCity": "Tilbage til byen",
     "preview": "Din CITYWALK",
     "estimated": "Tiderne beregnes ud fra luftlinje og ganghastighed, ikke aktuelle gaderuter. Forhold og omveje kan ændre din ankomsttid.",
+    "estimateShort": "Tiderne er estimater baseret på dit gangtempo.",
     "eta": "Forventet afslutning {time}",
     "buffer": "Mål {time} · {minutes} min ekstra",
     "startWalk": "Start gåtur",

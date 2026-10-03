@@ -50,6 +50,7 @@
     "backCity": "Zurück zur Stadt",
     "preview": "Dein CITYWALK",
     "estimated": "Schätzungen basieren auf Luftlinien und Gehgeschwindigkeit, nicht auf Live-Routing. Umwege und Bedingungen können die Ankunft verändern.",
+    "estimateShort": "Zeiten sind Schätzungen auf Basis deines Gehtempos.",
     "eta": "Geschätztes Ende {time}",
     "buffer": "Ziel {time} · {minutes} Min. Puffer",
     "startWalk": "Spaziergang starten",

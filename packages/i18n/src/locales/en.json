@@ -50,6 +50,7 @@
     "backCity": "Back to city",
     "preview": "Your CITYWALK",
     "estimated": "Estimates use straight-line distances and walking speed, not live street routing. Conditions and detours may change your arrival time.",
+    "estimateShort": "Times are estimates based on walking pace.",
     "eta": "Estimated finish {time}",
     "buffer": "Target {time} · {minutes} min buffer",
     "startWalk": "Start walk",
