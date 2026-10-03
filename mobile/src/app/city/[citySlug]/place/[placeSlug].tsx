@@ -207,9 +207,6 @@ function PlaceContent() {
           <AppText variant="screenTitle">
             {nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)}
           </AppText>
-          <AppText style={[contentTextStyle, styles.description]}>
-            {place.content.description ?? place.content.shortDescription}
-          </AppText>
           {direction === "rtl" && place.didFallback ? <AppText variant="caption">{messages.fallbackContent}</AppText> : null}
         </View>
         <View style={styles.quickActions}>
@@ -269,6 +266,33 @@ function PlaceContent() {
             }}
           />
         </View>
+        <View
+          testID="place-audio-section"
+          onLayout={(event) => {
+            sections.current.audio = event.nativeEvent.layout.y;
+            focusSection();
+          }}
+        >
+          {audio ? (
+            <NativeAudioPlayer
+              key={`${identity.citySlug}:${place.slug}:${locale}`}
+              source={citywalkApi.resolveUrl(audio.url)}
+              title={`${nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)} ${messages.audioGuide}`}
+              durationSeconds={audio.durationSeconds}
+              assetLocale={audio.locale}
+            />
+          ) : (
+            <View testID="audio-unavailable-notice" style={[styles.audioNotice, nativeTextBlock(direction)]}>
+              <AppText>{translate(locale, "place.audioMissingDescription")}</AppText>
+            </View>
+          )}
+        </View>
+        <View style={styles.section}>
+          <SectionTitle>{translate(locale, "place.whyItMatters")}</SectionTitle>
+          <AppText style={[contentTextStyle, styles.description]}>
+            {place.content.description ?? place.content.shortDescription}
+          </AppText>
+        </View>
         {place.content.visitNote ? (
           <View style={styles.note}>
             <View style={styles.noteHeading}>
@@ -296,30 +320,9 @@ function PlaceContent() {
             <AppText style={contentTextStyle}>{place.content.story}</AppText>
           </View>
         ) : null}
-        <View
-          testID="place-audio-section"
-          onLayout={(event) => {
-            sections.current.audio = event.nativeEvent.layout.y;
-            focusSection();
-          }}
-        >
-          {audio ? (
-            <NativeAudioPlayer
-              key={`${identity.citySlug}:${place.slug}:${locale}`}
-              source={citywalkApi.resolveUrl(audio.url)}
-              title={`${nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)} ${messages.audioGuide}`}
-              durationSeconds={audio.durationSeconds}
-              assetLocale={audio.locale}
-            />
-          ) : (
-            <View testID="audio-unavailable-notice" style={[styles.audioNotice, nativeTextBlock(direction)]}>
-              <AppText>{translate(locale, "place.audioMissingDescription")}</AppText>
-            </View>
-          )}
-        </View>
         {place.content.facts?.length ? (
           <View style={styles.factsList}>
-            <SectionTitle>{messages.facts}</SectionTitle>
+            <SectionTitle>{translate(locale, "place.quickFacts")}</SectionTitle>
             {place.content.facts.map((fact, index) => (
               <View key={`${place.slug}-fact-${index}`} style={styles.fact}>
                 {fact.label ? (
