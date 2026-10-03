@@ -50,11 +50,11 @@ describe("native city experience parity", () => {
     expect(placeSource).toContain("messages.finishTrip");
   });
 
-  it("links Profile to the canonical Saved screen with both native and historical trips", () => {
-    expect(accountSource).toContain('href="/saved"');
+  it("keeps Saved in canonical navigation instead of duplicating it inside Profile", () => {
+    expect(accountSource).not.toContain('href="/saved"');
+    expect(accountSource).not.toContain("messages.savedTrips");
     expect(savedSource).toContain("loadLocalTrips");
     expect(savedSource).toContain("loadSavedWalks");
-    expect(accountSource).toContain("messages.savedTrips");
     expect(savedSource).toContain('pathname: "/city/[citySlug]/walk"');
   });
 

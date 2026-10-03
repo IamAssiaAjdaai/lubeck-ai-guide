@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => ({
   locale: "en", session: null as null | { user: { id: string; name: string; email: string } },
   deleteAccount: vi.fn(), listAccounts: vi.fn(), updateUser: vi.fn(), changePassword: vi.fn(), requestPasswordReset: vi.fn(), sendVerificationEmail: vi.fn(), deleteUser: vi.fn(),
   signIn: vi.fn(), socialSignIn: vi.fn(), linkSocial: vi.fn(), signUp: vi.fn(), signOut: vi.fn(), back: vi.fn(), replace: vi.fn(),
+  readCityUnlock: vi.fn(), accountWalks: [] as Array<{ id: string; citySlug: string }>,
+  savedWalks: [] as Array<{ id: string; citySlug: string }>, localTrips: [] as Array<{ id: string; citySlug: string }>, savedPlaces: [] as Array<{ citySlug: string; slug: string; name: string }>,
   data: new Map<string, string>(), write: vi.fn(), remove: vi.fn(), clear: vi.fn(),
 }));
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: {
@@ -16,6 +18,12 @@ vi.mock("@react-native-async-storage/async-storage", () => ({ default: {
   setItem: mocks.write, removeItem: mocks.remove, clear: mocks.clear,
 } }));
 vi.mock("../src/lib/auth/lifecycle", () => ({ deleteNativeAccount: mocks.deleteAccount }));
+vi.mock("../src/lib/cityUnlockAccess", () => ({ readCityUnlock: mocks.readCityUnlock }));
+vi.mock("../src/hooks/useAccountWalks", () => ({ useAccountWalks: () => ({
+  userId: mocks.session?.user.id, walks: mocks.accountWalks, loading: false, error: false, refresh: vi.fn(),
+}) }));
+vi.mock("../src/lib/walkStorage", () => ({ loadSavedWalks: async () => mocks.savedWalks, loadSavedPlaces: async () => mocks.savedPlaces }));
+vi.mock("../src/lib/tripStorage", () => ({ loadLocalTrips: async () => mocks.localTrips }));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: {
   useSession: () => ({ data: mocks.session, isPending: false }),
   listAccounts: mocks.listAccounts, updateUser: mocks.updateUser, changePassword: mocks.changePassword, requestPasswordReset: mocks.requestPasswordReset, sendVerificationEmail: mocks.sendVerificationEmail, deleteUser: mocks.deleteUser,
@@ -38,7 +46,7 @@ vi.mock("../src/components/NativeIcon", () => ({ NativeIcon: () => null }));
 vi.mock("../src/components/CitywalkLoading", () => ({ CitywalkLoading: () => <span>Pending</span> }));
 vi.mock("../src/components/ui", () => ({
   Screen: ({ children, onBack }: React.PropsWithChildren<{ onBack?: () => void }>) => <main>{onBack ? <button onClick={onBack}>Header back</button> : null}{children}</main>,
-  PressableSurface: ({ children, onPress }: React.PropsWithChildren<{ onPress: () => void }>) => <button onClick={onPress}>{children}</button>,
+  PressableSurface: ({ children, onPress, accessibilityLabel, disabled }: React.PropsWithChildren<{ onPress: () => void; accessibilityLabel?: string; disabled?: boolean }>) => <button aria-label={accessibilityLabel} disabled={disabled} onClick={onPress}>{children}</button>,
   Card: ({ children }: React.PropsWithChildren) => <section>{children}</section>,
   AppText: ({ children }: React.PropsWithChildren) => <span>{children}</span>,
   StatusMessage: ({ children }: React.PropsWithChildren) => <p role="status">{children}</p>,
@@ -64,6 +72,7 @@ beforeEach(() => {
   mocks.deleteAccount.mockResolvedValue({}); mocks.requestPasswordReset.mockResolvedValue({ data: { status: true } });
   mocks.sendVerificationEmail.mockResolvedValue({ data: { status: true } });
   mocks.updateUser.mockResolvedValue({}); mocks.changePassword.mockResolvedValue({});
+  mocks.readCityUnlock.mockResolvedValue(false); mocks.accountWalks = []; mocks.savedWalks = []; mocks.localTrips = []; mocks.savedPlaces = [];
   mocks.signIn.mockResolvedValue({}); mocks.socialSignIn.mockResolvedValue({}); mocks.linkSocial.mockResolvedValue({});
   mocks.signUp.mockResolvedValue({}); mocks.signOut.mockResolvedValue({});
   mocks.data = new Map(["citywalk:native:v2:saved", "citywalk:native:v2:places", "citywalk:native:v2:active:lubeck", "citywalk:local-trips:v2", "citywalk:native:locale:v1", "citywalk:native:public-review:v1"].map(key => [key, `existing-${key}`]));
@@ -198,6 +207,25 @@ describe("account management with real capability boundaries", () => {
     await screen.findByText(copy("lifecycle.unavailable")); expect(screen.queryByText(copy("lifecycle.resetRequested"))).toBeNull();
     press("profile.sendResetLink"); await screen.findByText(copy("lifecycle.resetRequested"));
   });
+  it("renders a traveler-first profile from real saved activity and entitlement state", async () => {
+    signedIn();
+    mocks.accountWalks = [{ id: "account-walk-1", citySlug: "lubeck" }];
+    mocks.savedPlaces = [
+      { citySlug: "lubeck", slug: "holstentor", name: "Holstentor" },
+      { citySlug: "hamburg", slug: "speicherstadt", name: "Speicherstadt" },
+    ];
+    mocks.readCityUnlock.mockResolvedValue(true);
+    render(<AccountScreen />);
+    expect(await screen.findByText(copy("profile.explorerTitle"))).toBeTruthy();
+    expect(screen.getByText(copy("profile.yourActivity"))).toBeTruthy();
+    expect(screen.getByText(copy("profile.cityExplorerPass").replace("{city}", "Lübeck"))).toBeTruthy();
+    expect(screen.getByText(copy("profile.passActive"))).toBeTruthy();
+    await waitFor(() => expect(screen.getAllByText("2").length).toBeGreaterThanOrEqual(2));
+    expect(screen.getByText("1")).toBeTruthy();
+    expect(screen.queryByText(`${messages().language} · English`)).toBeNull();
+    expect(screen.queryByRole("button", { name: messages().savedTrips })).toBeNull();
+  });
+
   it("shows profile identity, edits only the name, and recovers from an update failure", async () => {
     signedIn(); mocks.updateUser.mockResolvedValueOnce({ error: { code: "INTERNAL_SERVER_ERROR" } }).mockImplementationOnce(async () => { mocks.session!.user.name = "New name"; return {}; });
     const before = new Map(mocks.data); render(<AccountScreen />);
