@@ -322,6 +322,7 @@
     "fallbackContent": "This content is shown in its available language.",
     "places": "Places",
     "map": "City map",
+    "directions": "Directions",
     "visitMinutes": "min visit",
     "story": "Story",
     "facts": "Facts",

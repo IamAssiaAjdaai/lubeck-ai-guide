@@ -6,6 +6,8 @@ import { act, cleanup, fireEvent, render, screen, within } from "@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({ account: false, locale: "en" as "en" | "de" | "ar" | "da" | "sv" | "nl" | "es", fontScale: 1, staleMessages: false, noAudio: false, noStory: false, placeLoading: false, scrollTo: vi.fn(), showTour: false, focus: undefined as string | undefined, placeSlug: "holstentor", responseSlug: undefined as string | undefined, saved: false, emptySaved: false, reduced: true, entranceFinished: undefined as ((result: { finished: boolean }) => void) | undefined }));
 vi.mock("react-native", () => ({
+  Platform: { OS: "ios" },
+  Linking: { openURL: vi.fn() },
   ActivityIndicator: () => <span role="progressbar" />,
   Text: ({ children, style }: React.PropsWithChildren<{ style?: unknown }>) => <span data-style={JSON.stringify(style)}>{children}</span>,
   StyleSheet: { create: (s: unknown) => s, flatten: (styles: unknown) => Array.isArray(styles) ? Object.assign({}, ...styles.flat(Infinity).filter(Boolean)) : styles },
@@ -64,7 +66,7 @@ vi.mock("../src/lib/location", () => ({ requestForegroundLocation: vi.fn() }));
 vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { resolveUrl: (url: string) => url } }));
 vi.mock("../src/hooks/usePublicContent", () => ({
   usePublicPlace: (_city: string, slug: string) => state.placeLoading ? { status: "loading" } : ({ status: "available", data: {
-    city: { slug: "lubeck" }, place: { slug: state.responseSlug ?? slug, category: "see", resolvedLocale: "en", durationMinutes: 10,
+    city: { slug: "lubeck" }, place: { slug: state.responseSlug ?? slug, category: "see", coordinates: { lat: 53.86, lng: 10.68 }, resolvedLocale: "en", durationMinutes: 10,
       content: { name: slug, story: state.noStory ? "  " : `${slug} story` },
       media: state.noAudio ? [] : [{ assetKey: slug, kind: "audio", purpose: "audio", locale: "en", url: `/api/media/${slug}`, mimeType: "audio/mpeg" }],
     },
