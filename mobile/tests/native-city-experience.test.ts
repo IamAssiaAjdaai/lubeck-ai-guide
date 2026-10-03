@@ -49,6 +49,18 @@ describe("native city experience parity", () => {
     expect(placeSource).toContain("google.com/maps/dir");
   });
 
+  it("uses an editorial place-detail reading order without inventing new place data", () => {
+    const audio = placeSource.indexOf('testID="place-audio-section"');
+    const why = placeSource.indexOf('"place.whyItMatters"');
+    const story = placeSource.indexOf('testID="place-story-section"');
+    const facts = placeSource.indexOf('"place.quickFacts"');
+    expect(audio).toBeGreaterThan(0);
+    expect(why).toBeGreaterThan(audio);
+    expect(story).toBeGreaterThan(why);
+    expect(facts).toBeGreaterThan(story);
+    expect(placeSource).toContain("place.content.description ?? place.content.shortDescription");
+  });
+
   it("uses one sequential trip model for published and personalized routes", () => {
     expect(tourSource).toContain("createMobileTripPlaceParams(tripIdentity, 0)");
     expect(tourSource).toContain('source: "published"');
