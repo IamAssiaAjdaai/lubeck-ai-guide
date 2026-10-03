@@ -22,10 +22,19 @@ import { useAccountWalks } from "../../hooks/useAccountWalks";
 import { readCityUnlock } from "../../lib/cityUnlockAccess";
 import { loadLocalTrips } from "../../lib/tripStorage";
 import { loadSavedPlaces, loadSavedWalks } from "../../lib/walkStorage";
+import {
+  DEFAULT_TRAVELER_STYLE,
+  TRAVELER_STYLE_DURATIONS,
+  TRAVELER_STYLE_INTERESTS,
+  TRAVELER_STYLE_WALKING,
+  loadTravelerStyle,
+  saveTravelerStyle,
+  type TravelerStyle,
+} from "../../lib/travelerStyle";
 
-type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "change-password" | "delete";
+type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "preferences" | "change-password" | "delete";
 type SocialProvider = "google" | "apple";
-type Action = "sign-in" | "sign-up" | "edit" | "change-password" | "sign-out" | "reset" | "resend-verification" | "delete" | "social-google" | "social-apple" | "link-google" | "link-apple";
+type Action = "sign-in" | "sign-up" | "edit" | "preferences" | "change-password" | "sign-out" | "reset" | "resend-verification" | "delete" | "social-google" | "social-apple" | "link-google" | "link-apple";
 
 export default function AccountScreen() {
   const { locale, direction, messages } = useNativeLocale();
@@ -56,8 +65,19 @@ export default function AccountScreen() {
     error: boolean;
   }>({ walkKeys: [], citySlugs: [], savedPlaces: 0, loading: true, error: false });
   const [passState, setPassState] = useState<"loading" | "free" | "active" | "unavailable">("loading");
+  const [travelerStyle, setTravelerStyle] = useState<TravelerStyle>(DEFAULT_TRAVELER_STYLE);
+  const [styleDraft, setStyleDraft] = useState<TravelerStyle>(DEFAULT_TRAVELER_STYLE);
   const [credential, setCredential] = useState<{ userId: string; status: "yes" | "no" | "error"; providers: string[] }>();
   const userId = session?.user.id;
+  useEffect(() => {
+    let active = true;
+    void loadTravelerStyle().then((style) => {
+      if (!active) return;
+      setTravelerStyle(style);
+      setStyleDraft(style);
+    });
+    return () => { active = false; };
+  }, []);
   // Provider IDs are used only to gate password management, never displayed or logged.
   useEffect(() => {
     let active = true;
@@ -136,8 +156,9 @@ export default function AccountScreen() {
     setPassword(""); setNewPassword(""); setConfirmation("");
     setFailure(undefined); setNotice(undefined); setEntry(next);
     if (next === "edit") setName(session?.user.name ?? "");
+    if (next === "preferences") setStyleDraft(travelerStyle);
     if (next === "sign-up") setName("");
-  }, [session?.user.name]);
+  }, [session?.user.name, travelerStyle]);
   function back() { open(entry === "reset" ? "sign-in" : undefined); }
   useEffect(() => {
     const listener = BackHandler.addEventListener("hardwareBackPress", () => {
