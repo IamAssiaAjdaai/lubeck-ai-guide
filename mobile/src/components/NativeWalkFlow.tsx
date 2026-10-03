@@ -2,7 +2,7 @@ import { useAccountWalks } from "../hooks/useAccountWalks";
 import { accountWalkState, saveAccountWalk, loadAccountWalkForOpen } from "../lib/accountWalks";
 import { SaveAccountGate } from "./SaveAccountGate";
 import { PublicStoreReview } from "./PublicStoreReview";
-import { t as translate } from "@citywalk/i18n";
+import { t as translate, type TranslationKey } from "@citywalk/i18n";
 import { nativeCategoryLabel } from "../lib/contentLabels";
 import { uxCopy } from "../design/uxCopy";
 import { CitywalkLoading } from "./CitywalkLoading";
@@ -85,6 +85,7 @@ import { NativeCityMap } from "./NativeCityMap";
 import { NativeLiveWalkCard } from "./NativeLiveWalkCard";
 import {
   AppText,
+  PressableSurface,
   PrimaryButton,
   Screen,
   SectionTitle,
@@ -199,6 +200,7 @@ export function NativeWalkFlow({
   const [now, setNow] = useState(() => Date.now()),
     [generatedAt, setGeneratedAt] = useState(() => Date.now());
   const [showMap, setShowMap] = useState(false);
+  const [showMoreInterests, setShowMoreInterests] = useState(false);
   const [buildError, setBuildError] = useState<"empty" | "error">();
   const [buildStage, setBuildStage] = useState<WalkBuildStage>("matching");
   const [rating, setRating] = useState<string[]>([]),
@@ -905,7 +907,13 @@ export function NativeWalkFlow({
           <V2Hero
             compact
             title={t.build}
-            subtitle={step === 1 ? t.timeQuestion : undefined}
+            subtitle={
+              step === 1
+                ? t.timeQuestion
+                : step === 2
+                  ? translate(locale, "planner.stepTwoTitle")
+                  : translate(locale, "planner.stepThreeTitle")
+            }
           />
           {step === 1 ? (
             <>
@@ -922,8 +930,8 @@ export function NativeWalkFlow({
                 onSelect={setMinutes}
               />
               <View style={styles.deadline}>
-                <SectionTitle>{t.deadlineQuestion}</SectionTitle>
-                <AppText style={styles.muted}>{t.deadlineHelp}</AppText>
+                <AppText variant="label">{t.deadlineQuestion}</AppText>
+                <AppText variant="metadata" style={styles.muted}>{t.deadlineHelp}</AppText>
               </View>
               <WalkInput
                 label={t.returnBy}
@@ -937,8 +945,8 @@ export function NativeWalkFlow({
               <WalkChoices
                 label={t.interests}
                 help={t.interestsHelp}
-                number={1}
                 multiple
+                compact
                 options={(Object.keys(interestTags) as Interest[]).map(
                   (value) => ({ value, label: t[value] }),
                 )}
@@ -950,37 +958,50 @@ export function NativeWalkFlow({
                 }
               />
               {dynamicTags.length ? (
-                <WalkChoices
-                  label={t.categories}
-                  multiple
-                  options={dynamicTags.map((value) => ({
-                    value,
-                    label: nativeCategoryLabel(value, locale),
-                  }))}
-                  selected={categories}
-                  onSelect={(key) =>
-                    setCategories((v) =>
-                      v.includes(key)
-                        ? v.filter((k) => k !== key)
-                        : [...v, key],
-                    )
-                  }
-                />
+                <>
+                  <PressableSurface
+                    accessibilityRole="button"
+                    accessibilityLabel={translate(locale, showMoreInterests ? "planner.showLess" : "planner.showMore")}
+                    style={styles.tertiaryAction}
+                    onPress={() => setShowMoreInterests((value) => !value)}
+                  >
+                    <AppText variant="label" style={styles.tertiaryText}>
+                      {translate(locale, "planner.moreInterests")} · {translate(locale, showMoreInterests ? "planner.showLess" : "planner.showMore")}
+                    </AppText>
+                  </PressableSurface>
+                  {showMoreInterests || categories.length ? (
+                    <WalkChoices
+                      label=""
+                      multiple
+                      compact
+                      options={dynamicTags.map((value) => ({
+                        value,
+                        label: nativeCategoryLabel(value, locale),
+                      }))}
+                      selected={categories}
+                      onSelect={(key) =>
+                        setCategories((v) =>
+                          v.includes(key)
+                            ? v.filter((k) => k !== key)
+                            : [...v, key],
+                        )
+                      }
+                    />
+                  ) : null}
+                </>
               ) : null}
               <WalkChoices
                 label={t.walking}
                 variant="segment"
-                number={2}
+                compact
                 options={(["easy", "balanced", "long"] as const).map(
-                  (value) => ({ value, label: t[value] }),
+                  (value) => ({
+                    value,
+                    label: translate(locale, `profile.walking_${value}` as TranslationKey),
+                  }),
                 )}
                 selected={[walking]}
                 onSelect={setWalking}
-              />
-              <PrimaryButton
-                label={t.back}
-                tone="secondary"
-                onPress={() => setStep(1)}
               />
             </>
           ) : (
@@ -1005,7 +1026,6 @@ export function NativeWalkFlow({
               <WalkChoices
                 label={t.end}
                 variant="radio"
-                number={4}
                 options={(["anywhere", "loop", "destination"] as const).map(
                   (value) => ({ value, label: t[value] }),
                 )}
@@ -1021,12 +1041,6 @@ export function NativeWalkFlow({
                 />
               ) : null}
 
-              <PrimaryButton
-                wrapLabel
-                tone="secondary"
-                label={t.back}
-                onPress={() => setStep(2)}
-              />
             </>
           )}
           {!eligible.length ? <StatusMessage>{t.empty}</StatusMessage> : null}
