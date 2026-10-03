@@ -43,7 +43,7 @@ vi.mock("../src/components/NativeIcon", () => ({ NativeIcon: () => null }));
 vi.mock("../src/components/CitywalkLoading", () => ({ CitywalkLoading: () => <span>Pending</span> }));
 vi.mock("../src/components/ui", () => ({
   Screen: ({ children, onBack }: React.PropsWithChildren<{ onBack?: () => void }>) => <main>{onBack ? <button onClick={onBack}>Header back</button> : null}{children}</main>,
-  PressableSurface: ({ children, onPress }: React.PropsWithChildren<{ onPress: () => void }>) => <button onClick={onPress}>{children}</button>,
+  PressableSurface: ({ children, onPress, accessibilityLabel, disabled }: React.PropsWithChildren<{ onPress: () => void; accessibilityLabel?: string; disabled?: boolean }>) => <button aria-label={accessibilityLabel} disabled={disabled} onClick={onPress}>{children}</button>,
   Card: ({ children }: React.PropsWithChildren) => <section>{children}</section>,
   AppText: ({ children }: React.PropsWithChildren) => <span>{children}</span>,
   StatusMessage: ({ children }: React.PropsWithChildren) => <p role="status">{children}</p>,
@@ -217,7 +217,7 @@ describe("account management with real capability boundaries", () => {
     expect(screen.getByText(copy("profile.yourActivity"))).toBeTruthy();
     expect(screen.getByText(copy("profile.lubeckExplorerPass"))).toBeTruthy();
     expect(screen.getByText(copy("profile.passActive"))).toBeTruthy();
-    expect(screen.getAllByText("2").length).toBeGreaterThanOrEqual(2);
+    await waitFor(() => expect(screen.getAllByText("2").length).toBeGreaterThanOrEqual(2));
     expect(screen.getByText("1")).toBeTruthy();
     expect(screen.queryByText(`${messages().language} · English`)).toBeNull();
     expect(screen.queryByRole("button", { name: messages().savedTrips })).toBeNull();
