@@ -433,6 +433,7 @@
     "googleConnected": "Google er forbundet",
     "appleConnected": "Apple er forbundet",
     "socialLinked": "Kontoforbindelsen er opdateret.",
+    "socialAccountInUse": "Dette login er allerede forbundet med en anden CITYWALK-konto. Af hensyn til din sikkerhed blev kontiene ikke automatisk slået sammen.",
     "emailNotVerified": "Bekræft din e-mailadresse, før du logger ind.",
     "verificationSent": "Tjek din indbakke eller spammappe, og bekræft din e-mailadresse, før du logger ind.",
     "resendVerification": "Send bekræftelsesmail igen",

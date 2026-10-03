@@ -23,7 +23,7 @@ type Action = "sign-in" | "sign-up" | "edit" | "change-password" | "sign-out" | 
 
 export default function AccountScreen() {
   const { locale, direction, messages } = useNativeLocale();
-  const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string }>();
+  const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string; error?: string }>();
   const { data: session, isPending } = nativeAuthClient.useSession();
   const socialAuth = getNativeSocialAuthAvailability();
   const [email, setEmail] = useState("");
@@ -62,6 +62,18 @@ export default function AccountScreen() {
   const hasGoogle = linkedProviders.includes("google");
   const hasApple = linkedProviders.includes("apple");
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  useEffect(() => {
+    if (!params.error) return;
+    const oauthError = params.error;
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (!active) return;
+      setNotice(undefined);
+      setFailure(classifyNativeAuthError({ code: oauthError }));
+      router.replace("/account");
+    });
+    return () => { active = false; };
+  }, [params.error]);
   function clearPasswords() { setPassword(""); setNewPassword(""); setConfirmation(""); }
   const open = useCallback((next?: Entry) => {
     request.current++;
@@ -130,6 +142,7 @@ export default function AccountScreen() {
       () => nativeAuthClient.signIn.social({
         provider,
         callbackURL: "citywalk://account",
+        errorCallbackURL: "citywalk://account",
       }),
       () => {
         setEntry(undefined);
@@ -145,6 +158,7 @@ export default function AccountScreen() {
       () => nativeAuthClient.linkSocial({
         provider,
         callbackURL: "citywalk://account",
+        errorCallbackURL: "citywalk://account",
       }),
       () => {
         setProviderReload(value => value + 1);
@@ -368,6 +382,7 @@ function authFailureMessage(failure: NativeAuthErrorCode, locale: string, messag
   if (failure === "current_password_required") return t(locale, "profile.currentPasswordRequired");
   if (failure === "account_exists") return messages.accountExists;
   if (failure === "email_not_verified") return t(locale, "profile.emailNotVerified");
+  if (failure === "social_account_in_use") return t(locale, "profile.socialAccountInUse");
   if (failure === "invalid_credentials") return messages.invalidCredentials;
   if (failure === "network") return messages.authNetworkError;
   return messages.authError;

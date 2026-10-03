@@ -433,6 +433,7 @@
     "googleConnected": "Google connected",
     "appleConnected": "Apple connected",
     "socialLinked": "Account connection updated.",
+    "socialAccountInUse": "This social sign-in is already connected to another CITYWALK account. For your security, the accounts were not merged automatically.",
     "emailNotVerified": "Please verify your email before signing in.",
     "verificationSent": "Check your inbox or spam folder and verify your email before signing in.",
     "resendVerification": "Resend verification email",

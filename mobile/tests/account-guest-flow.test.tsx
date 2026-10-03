@@ -92,12 +92,14 @@ describe("guest-first account", () => {
     await waitFor(() => expect(mocks.socialSignIn).toHaveBeenCalledWith({
       provider: "apple",
       callbackURL: "citywalk://account",
+      errorCallbackURL: "citywalk://account",
     }));
 
     fireEvent.click(screen.getByRole("button", { name: copy("profile.continueWithGoogle") }));
     await waitFor(() => expect(mocks.socialSignIn).toHaveBeenCalledWith({
       provider: "google",
       callbackURL: "citywalk://account",
+      errorCallbackURL: "citywalk://account",
     }));
     unchanged(before);
   });
@@ -217,8 +219,17 @@ describe("account management with real capability boundaries", () => {
     await waitFor(() => expect(mocks.linkSocial).toHaveBeenCalledWith({
       provider: "google",
       callbackURL: "citywalk://account",
+      errorCallbackURL: "citywalk://account",
     }));
     await screen.findByText(copy("profile.socialLinked"));
+  });
+
+  it("returns OAuth link conflicts to the native account screen without merging users", async () => {
+    signedIn();
+    mocks.params = { error: "account_already_linked_to_different_user" };
+    render(<AccountScreen />);
+    expect(await screen.findByText(copy("profile.socialAccountInUse"))).toBeTruthy();
+    expect(mocks.replace).toHaveBeenCalledWith("/account");
   });
 
   it("gates password controls by the authenticated account provider", async () => {

@@ -433,6 +433,7 @@
     "googleConnected": "تم ربط Google",
     "appleConnected": "تم ربط Apple",
     "socialLinked": "تم تحديث ربط الحساب.",
+    "socialAccountInUse": "تسجيل الدخول هذا مرتبط بالفعل بحساب CITYWALK آخر. حفاظًا على أمانك، لم يتم دمج الحسابين تلقائيًا.",
     "emailNotVerified": "يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.",
     "verificationSent": "تحقق من صندوق الوارد أو البريد العشوائي وأكّد بريدك الإلكتروني قبل تسجيل الدخول.",
     "resendVerification": "إعادة إرسال رسالة التحقق",
