@@ -21,6 +21,17 @@ describe("native conversational guide experience", () => {
     expect(guideSource).toContain("styles.thinkingBubble");
   });
 
+  it("starts with focused place suggestions and no root bottom tabs", () => {
+    expect(guideSource).toContain("messages.guideSuggestionsTitle");
+    expect(guideSource).toContain("messages.guideSuggestionImportant");
+    expect(guideSource).toContain("messages.guideSuggestionNotice");
+    expect(guideSource).toContain("messages.guideSuggestionOneMinute");
+    expect(guideSource).toContain("submitQuestion(suggestion)");
+    expect(guideSource).toContain("hasTravelerMessage");
+    expect(guideSource).not.toContain("NativeBottomNavigation");
+    expect(guideSource).toContain("navigation={false}");
+  });
+
   it("uses a keyboard-aware accessible composer and RTL-aware message alignment", () => {
     expect(guideSource).toContain("<KeyboardAvoidingView");
     expect(guideSource).toContain('accessibilityRole="button"');
@@ -44,7 +55,8 @@ describe("native conversational guide experience", () => {
     expect(guideSource).toContain("guideUpgradePath(citySlug, locale)");
     expect(guideSource).toContain("messages.guideAbuseLimited");
     expect(guideSource).toContain("messages.guideError");
-    expect(guideSource).toContain("if (!canSend) return;");
+    expect(guideSource).toContain("const canSubmit = canSubmitGuideQuestion");
+    expect(guideSource).toContain("if (!canSubmit) return;");
     expect(guideSource).toContain("const sendDisabled = !canSend;");
     expect(guideSource).toContain("editable={!busy && hydrated && !limitReached}");
   });
