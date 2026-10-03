@@ -52,6 +52,10 @@ describe("CITYWALK native product-design polish", () => {
     expect(guideSource).toContain("<MotionView");
   });
 
+  it("keeps secondary actions outlined instead of pale-blue filled", () => {
+    expect(uiSource).toContain("secondaryButton: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderStrong }");
+  });
+
   it("uses designed empty and success/error states rather than isolated placeholder text", () => {
     expect(accountSource).toContain('"profile.guestFirst"');
     expect(accountSource).toContain("<StatusMessage");
