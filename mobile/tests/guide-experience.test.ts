@@ -21,6 +21,17 @@ describe("native conversational guide experience", () => {
     expect(guideSource).toContain("styles.thinkingBubble");
   });
 
+  it("starts with focused place suggestions and no root bottom tabs", () => {
+    expect(guideSource).toContain("messages.guideSuggestionsTitle");
+    expect(guideSource).toContain("messages.guideSuggestionImportant");
+    expect(guideSource).toContain("messages.guideSuggestionNotice");
+    expect(guideSource).toContain("messages.guideSuggestionOneMinute");
+    expect(guideSource).toContain("submitQuestion(suggestion)");
+    expect(guideSource).toContain("hasTravelerMessage");
+    expect(guideSource).not.toContain("NativeBottomNavigation");
+    expect(guideSource).toContain("navigation={false}");
+  });
+
   it("uses a keyboard-aware accessible composer and RTL-aware message alignment", () => {
     expect(guideSource).toContain("<KeyboardAvoidingView");
     expect(guideSource).toContain('accessibilityRole="button"');

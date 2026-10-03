@@ -1,7 +1,7 @@
 import { ContentRecovery } from "../../../../components/ContentRecovery";
 import { uxCopy } from "../../../../design/uxCopy";
 import { nativePlaceName } from "../../../../lib/displayNames";
-import { NativeBrand, NativeBottomNavigation } from "../../../../components/NativeChrome";
+import { NativeBrand } from "../../../../components/NativeChrome";
 import { buildWalkGuideContext } from "@citywalk/traveler-core/walkGuideContext";
 import { remainingWalkBudget } from "@citywalk/traveler-core/walkJourney";
 import { loadActiveWalk } from "../../../../lib/walkStorage";
@@ -91,12 +91,12 @@ export default function GuideScreen() {
     scrollRef.current?.scrollToEnd({ animated: conversation.length > 1 });
   }, [busy, conversation]);
 
-  if (!identity) return <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
+  if (!identity) return <Screen navigation={false}><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
   if (placeState.status === "loading" || guideState.status === "loading") {
-    return <Screen><AppText variant="screenTitle">{messages.askGuideTitle}</AppText><AppText accessibilityLiveRegion="polite">{uxCopy(locale).assistant}</AppText><InlineLoadingDots /></Screen>;
+    return <Screen navigation={false}><AppText variant="screenTitle">{messages.askGuideTitle}</AppText><AppText accessibilityLiveRegion="polite">{uxCopy(locale).assistant}</AppText><InlineLoadingDots /></Screen>;
   }
   if (placeState.status === "error" || guideState.status === "error") {
-    return <Screen><AppText variant="screenTitle">{messages.askGuideTitle}</AppText><ContentRecovery citySlug={identity.citySlug} retry={() => { placeState.retry(); guideState.retry(); }} /></Screen>;
+    return <Screen navigation={false}><AppText variant="screenTitle">{messages.askGuideTitle}</AppText><ContentRecovery citySlug={identity.citySlug} retry={() => { placeState.retry(); guideState.retry(); }} /></Screen>;
   }
 
   const place = placeState.data.place;
@@ -106,7 +106,7 @@ export default function GuideScreen() {
     !guideState.data.eligible
   ) {
     return (
-      <Screen>
+      <Screen navigation={false}>
         <EmptyState
           description={messages.guideUnavailable}
           icon={<NativeIcon ios="sparkles" android="auto_awesome" color={colors.violet} size={28} />}
@@ -117,7 +117,7 @@ export default function GuideScreen() {
   }
   const { citySlug, placeSlug } = identity;
 
-  if (!hydrated) return <Screen><AppText variant="screenTitle">{messages.askGuideTitle}</AppText><AppText accessibilityLiveRegion="polite">{uxCopy(locale).assistant}</AppText><InlineLoadingDots /></Screen>;
+  if (!hydrated) return <Screen navigation={false}><AppText variant="screenTitle">{messages.askGuideTitle}</AppText><AppText accessibilityLiveRegion="polite">{uxCopy(locale).assistant}</AppText><InlineLoadingDots /></Screen>;
 
   const canSend = canSubmitGuideQuestion({ busy, hydrated, allowance, failure, question });
 
@@ -131,9 +131,21 @@ export default function GuideScreen() {
     return id;
   }
 
-  async function submitQuestion() {
-    if (!canSend) return;
-    const turn = startGuideTurn(conversation, question, nextMessageId("user"));
+  async function submitQuestion(nextQuestion = question) {
+    const submittedQuestion = nextQuestion.trim();
+    const canSubmit = canSubmitGuideQuestion({
+      busy,
+      hydrated,
+      allowance,
+      failure,
+      question: submittedQuestion,
+    });
+    if (!canSubmit) return;
+    const turn = startGuideTurn(
+      conversation,
+      submittedQuestion,
+      nextMessageId("user"),
+    );
     if (!turn) return;
 
     setConversation(turn.messages);
@@ -179,6 +191,12 @@ export default function GuideScreen() {
   const limitReached = isGuideAllowanceExhausted(allowance) || failure === "daily_allowance";
   const upgradePath = allowance?.tier === "free" ? guideUpgradePath(citySlug, locale) : undefined;
   const sendDisabled = !canSend;
+  const hasTravelerMessage = conversation.some((message) => message.role === "user");
+  const suggestions = [
+    messages.guideSuggestionImportant,
+    messages.guideSuggestionNotice,
+    messages.guideSuggestionOneMinute,
+  ];
 
   return (
     <SafeAreaView edges={getScreenSafeAreaEdges(true)} style={[styles.safeArea, { direction }]}>
@@ -212,6 +230,31 @@ export default function GuideScreen() {
               </AppText>
             ) : null}
           </View>
+
+          {!hasTravelerMessage && !busy && !limitReached ? (
+            <View style={styles.suggestionSection}>
+              <AppText variant="label" style={styles.suggestionHeading}>
+                {messages.guideSuggestionsTitle}
+              </AppText>
+              <View style={styles.suggestionList}>
+                {suggestions.map((suggestion) => (
+                  <Pressable
+                    accessibilityRole="button"
+                    key={suggestion}
+                    onPress={() => void submitQuestion(suggestion)}
+                    style={({ pressed }) => [
+                      styles.suggestionChip,
+                      pressed && styles.suggestionChipPressed,
+                    ]}
+                  >
+                    <AppText variant="metadata" style={styles.suggestionText}>
+                      {suggestion}
+                    </AppText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          ) : null}
 
           <View style={styles.messages}>
             {conversation.map((message) => (
@@ -301,7 +344,6 @@ export default function GuideScreen() {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
-      <NativeBottomNavigation onScrollToTop={() => scrollRef.current?.scrollTo({ y: 0, animated: true })} />
     </SafeAreaView>
   );
 }
@@ -398,6 +440,21 @@ const styles = StyleSheet.create({
   guideHeading: { flex: 1 },
   placeName: { color: colors.textMuted },
   allowance: { color: colors.teal },
+  suggestionSection: { gap: spacing.sm },
+  suggestionHeading: { color: colors.textMuted },
+  suggestionList: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  suggestionChip: {
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: "center",
+    minHeight: 40,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  suggestionChipPressed: { backgroundColor: colors.primarySoft, opacity: 0.9 },
+  suggestionText: { color: colors.primary },
   messages: { flex: 1, gap: spacing.sm, justifyContent: "flex-end" },
   bubble: {
     borderRadius: radius.lg,
