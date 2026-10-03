@@ -33,6 +33,8 @@ describe("CITYWALK loading experience", () => {
     expect(loadingSource).toContain("heroPlaceholder");
     expect(loadingSource).toContain("cardPlaceholder");
     expect(loadingSource).not.toMatch(/setTimeout|delay/);
+    expect(loadingSource).not.toContain("ActivityIndicator");
+    expect(loadingSource).not.toContain("styles.mark");
   });
 
   it("uses inline chat thinking after a question instead of a full-screen loader", () => {
