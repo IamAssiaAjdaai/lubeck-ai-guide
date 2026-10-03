@@ -64,9 +64,15 @@ export default function AccountScreen() {
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   useEffect(() => {
     if (!params.error) return;
-    setNotice(undefined);
-    setFailure(classifyNativeAuthError({ code: params.error }));
-    router.replace("/account");
+    const oauthError = params.error;
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (!active) return;
+      setNotice(undefined);
+      setFailure(classifyNativeAuthError({ code: oauthError }));
+      router.replace("/account");
+    });
+    return () => { active = false; };
   }, [params.error]);
   function clearPasswords() { setPassword(""); setNewPassword(""); setConfirmation(""); }
   const open = useCallback((next?: Entry) => {
