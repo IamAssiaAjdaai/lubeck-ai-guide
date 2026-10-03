@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 import { colors, radius, shadows, spacing } from "./tokens";
 export const walkStyles = StyleSheet.create({
   section: { gap: spacing.sm },
+  previewSummary: { gap: spacing.xs, paddingVertical: spacing.xs },
   tertiaryAction: { minHeight: 36, alignSelf: "flex-start", justifyContent: "center", paddingVertical: spacing.xs },
   tertiaryText: { color: colors.primary },
   flex: { flex: 1, minWidth: 0 },
@@ -23,7 +24,7 @@ export const walkStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,
-    padding: spacing.md,
+    padding: spacing.sm,
     backgroundColor: colors.successSoft,
     borderRadius: radius.md,
   },

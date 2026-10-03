@@ -50,6 +50,7 @@
     "backCity": "Tillbaka till staden",
     "preview": "Din CITYWALK",
     "estimated": "Tiderna beräknas utifrån fågelvägen och gånghastighet, inte aktuella gaturutter. Förhållanden och omvägar kan ändra din ankomsttid.",
+    "estimateShort": "Tiderna är uppskattningar baserade på ditt gångtempo.",
     "eta": "Beräknad sluttid {time}",
     "buffer": "Mål {time} · {minutes} min marginal",
     "startWalk": "Starta promenaden",

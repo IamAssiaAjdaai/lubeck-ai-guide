@@ -50,6 +50,7 @@
     "backCity": "Terug naar de stad",
     "preview": "Jouw CITYWALK",
     "estimated": "De schatting gebruikt hemelsbrede afstanden en loopsnelheid, geen actuele straatroutes. Omstandigheden en omwegen kunnen je aankomsttijd veranderen.",
+    "estimateShort": "Tijden zijn schattingen op basis van je wandeltempo.",
     "eta": "Geschat einde {time}",
     "buffer": "Doeltijd {time} · {minutes} min speling",
     "startWalk": "Start wandeling",

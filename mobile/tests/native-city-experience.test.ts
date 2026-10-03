@@ -58,6 +58,12 @@ describe("native city experience parity", () => {
     expect(savedSource).toContain('pathname: "/city/[citySlug]/walk"');
   });
 
+  it("keeps walk subflows focused and preview itinerary compact", () => {
+    expect(walkSource).toContain("navigation={false}");
+    expect(walkSource).toContain("itinerary(route.places, true, true, true)");
+    expect(walkSource).toContain('walk.estimateShort');
+  });
+
   it("surfaces actionable account validation and successful creation", () => {
     expect(accountSource).toContain("validateNativeAuthInput");
     expect(accountSource).toContain("classifyNativeAuthError");

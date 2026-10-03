@@ -50,6 +50,7 @@
     "backCity": "Volver a la ciudad",
     "preview": "Tu CITYWALK",
     "estimated": "Los tiempos se calculan con distancias en línea recta y velocidad a pie, no con rutas por calles en tiempo real. Las condiciones y los desvíos pueden cambiar tu hora de llegada.",
+    "estimateShort": "Los tiempos son estimaciones basadas en tu ritmo al caminar.",
     "eta": "Final previsto: {time}",
     "buffer": "Objetivo: {time} · {minutes} min de margen",
     "startWalk": "Iniciar paseo",
