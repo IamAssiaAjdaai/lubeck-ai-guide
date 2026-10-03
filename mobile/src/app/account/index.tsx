@@ -336,7 +336,7 @@ export default function AccountScreen() {
   const walkingLabel = (walking: WalkSettings["walking"]) =>
     label(walking === "easy" ? "planner.easy" : walking === "long" ? "planner.long" : "planner.balanced");
   const durationLabel = (minutes: TravelerWalkDuration) =>
-    label(minutes === 60 ? "planner.hour1" : minutes === 90 ? "planner.minutes90" : minutes === 180 ? "planner.hour3" : "planner.hour2");
+    label(minutes === 60 ? "planner.hour1" : minutes === 120 ? "planner.hour2" : minutes === 180 ? "planner.hour3" : "planner.halfDay");
   const socialIcon = (provider: SocialProvider) => (
     <View
       accessibilityElementsHidden
