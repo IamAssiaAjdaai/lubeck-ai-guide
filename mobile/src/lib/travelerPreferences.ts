@@ -8,7 +8,7 @@ export const TRAVELER_PREFERENCES_VERSION = 1;
 export const TRAVELER_PREFERENCES_STORAGE_KEY =
   `citywalk:native:traveler-preferences:v${TRAVELER_PREFERENCES_VERSION}`;
 
-export const TRAVELER_WALK_DURATIONS = [60, 90, 120, 180] as const;
+export const TRAVELER_WALK_DURATIONS = [60, 120, 180, 240] as const;
 export type TravelerWalkDuration = (typeof TRAVELER_WALK_DURATIONS)[number];
 
 export type TravelerPreferences = Readonly<{
