@@ -1,0 +1,107 @@
+name: Cloudflare vinext spike
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - ".github/workflows/cloudflare-vinext-spike.yml"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  vinext:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run vinext compatibility check
+        id: check
+        shell: bash
+        run: |
+          set +e
+          npx --yes vinext@latest check 2>&1 | tee vinext-check.txt
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Initialize Cloudflare config ephemerally
+        id: init
+        shell: bash
+        run: |
+          set +e
+          npx --yes vinext@latest init \
+            --skip-check \
+            --platform=cloudflare \
+            --data-cache=none \
+            --cdn-cache=none \
+            --image-optimization=none \
+            --no-prerender 2>&1 | tee vinext-init.txt
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Build Cloudflare vinext target
+        id: build
+        if: steps.init.outputs.exit_code == '0'
+        shell: bash
+        run: |
+          set +e
+          npm run build:vinext 2>&1 | tee vinext-build.txt
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Write compatibility report
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          CHECK_EXIT: ${{ steps.check.outputs.exit_code }}
+          INIT_EXIT: ${{ steps.init.outputs.exit_code }}
+          BUILD_EXIT: ${{ steps.build.outputs.exit_code }}
+        run: |
+          {
+            echo "## Cloudflare vinext spike"
+            echo
+            echo "This is a build-only compatibility probe. Nothing was deployed."
+            echo
+            echo "### vinext check (exit ${CHECK_EXIT:-not-run})"
+            echo '~~~text'
+            tail -n 220 vinext-check.txt 2>/dev/null || true
+            echo '~~~'
+            echo
+            echo "### vinext init (exit ${INIT_EXIT:-not-run})"
+            echo '~~~text'
+            tail -n 140 vinext-init.txt 2>/dev/null || true
+            echo '~~~'
+            echo
+            echo "### Cloudflare build (exit ${BUILD_EXIT:-not-run})"
+            echo '~~~text'
+            tail -n 180 vinext-build.txt 2>/dev/null || true
+            echo '~~~'
+          } > vinext-report.md
+          cat vinext-report.md >> "$GITHUB_STEP_SUMMARY"
+          gh pr comment "$PR_NUMBER" --body-file vinext-report.md
+
+      - name: Enforce init and build result
+        if: always()
+        shell: bash
+        env:
+          INIT_EXIT: ${{ steps.init.outputs.exit_code }}
+          BUILD_EXIT: ${{ steps.build.outputs.exit_code }}
+        run: |
+          test "${INIT_EXIT}" = "0"
+          test "${BUILD_EXIT}" = "0"
