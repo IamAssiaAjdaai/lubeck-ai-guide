@@ -129,7 +129,7 @@ export default function AccountScreen() {
       `social-${provider}`,
       () => nativeAuthClient.signIn.social({
         provider,
-        callbackURL: "/account",
+        callbackURL: "citywalk://account",
       }),
       () => {
         setEntry(undefined);
@@ -144,7 +144,7 @@ export default function AccountScreen() {
       `link-${provider}`,
       () => nativeAuthClient.linkSocial({
         provider,
-        callbackURL: "/account",
+        callbackURL: "citywalk://account",
       }),
       () => {
         setProviderReload(value => value + 1);
