@@ -19,9 +19,10 @@ describe("native traveler style", () => {
       setItem: vi.fn(async (_key: string, value: string) => { raw = value; }),
     };
     const style = { interests: ["food", "hidden-gems"] as const, walking: "easy" as const, minutes: 90 as const };
-    await expect(saveTravelerStyle(style, store)).resolves.toEqual(style);
+    const canonical = { interests: ["hidden-gems", "food"] as const, walking: "easy" as const, minutes: 90 as const };
+    await expect(saveTravelerStyle(style, store)).resolves.toEqual(canonical);
     expect(store.setItem).toHaveBeenCalledWith(TRAVELER_STYLE_STORAGE_KEY, expect.any(String));
-    await expect(loadTravelerStyle(store)).resolves.toEqual(style);
+    await expect(loadTravelerStyle(store)).resolves.toEqual(canonical);
   });
 
   it("fails closed to defaults for malformed stored values", async () => {
