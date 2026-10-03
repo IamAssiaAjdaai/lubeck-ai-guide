@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   deleteAccount: vi.fn(), listAccounts: vi.fn(), updateUser: vi.fn(), changePassword: vi.fn(), requestPasswordReset: vi.fn(), sendVerificationEmail: vi.fn(), deleteUser: vi.fn(),
   signIn: vi.fn(), socialSignIn: vi.fn(), linkSocial: vi.fn(), signUp: vi.fn(), signOut: vi.fn(), back: vi.fn(), replace: vi.fn(),
   readCityUnlock: vi.fn(), accountWalks: [] as Array<{ id: string; citySlug: string }>,
+  travelerPreferences: { interests: ["history", "architecture"], walking: "balanced", typicalMinutes: 120 } as { interests: string[]; walking: "easy" | "balanced" | "long"; typicalMinutes: 60 | 120 | 180 | 240 }, saveTravelerPreferences: vi.fn(),
   savedWalks: [] as Array<{ id: string; citySlug: string }>, localTrips: [] as Array<{ id: string; citySlug: string }>, savedPlaces: [] as Array<{ citySlug: string; slug: string; name: string }>,
   data: new Map<string, string>(), write: vi.fn(), remove: vi.fn(), clear: vi.fn(),
 }));
@@ -24,6 +25,12 @@ vi.mock("../src/hooks/useAccountWalks", () => ({ useAccountWalks: () => ({
 }) }));
 vi.mock("../src/lib/walkStorage", () => ({ loadSavedWalks: async () => mocks.savedWalks, loadSavedPlaces: async () => mocks.savedPlaces }));
 vi.mock("../src/lib/tripStorage", () => ({ loadLocalTrips: async () => mocks.localTrips }));
+vi.mock("../src/lib/travelerPreferences", () => ({
+  DEFAULT_TRAVELER_PREFERENCES: { interests: ["history", "architecture"], walking: "balanced", typicalMinutes: 120 },
+  TRAVELER_WALK_DURATIONS: [60, 120, 180, 240],
+  loadTravelerPreferences: async () => mocks.travelerPreferences,
+  saveTravelerPreferences: mocks.saveTravelerPreferences,
+}));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: {
   useSession: () => ({ data: mocks.session, isPending: false }),
   listAccounts: mocks.listAccounts, updateUser: mocks.updateUser, changePassword: mocks.changePassword, requestPasswordReset: mocks.requestPasswordReset, sendVerificationEmail: mocks.sendVerificationEmail, deleteUser: mocks.deleteUser,
@@ -73,6 +80,8 @@ beforeEach(() => {
   mocks.sendVerificationEmail.mockResolvedValue({ data: { status: true } });
   mocks.updateUser.mockResolvedValue({}); mocks.changePassword.mockResolvedValue({});
   mocks.readCityUnlock.mockResolvedValue(false); mocks.accountWalks = []; mocks.savedWalks = []; mocks.localTrips = []; mocks.savedPlaces = [];
+  mocks.travelerPreferences = { interests: ["history", "architecture"], walking: "balanced", typicalMinutes: 120 };
+  mocks.saveTravelerPreferences.mockImplementation(async (_userId: string, preferences: typeof mocks.travelerPreferences) => preferences);
   mocks.signIn.mockResolvedValue({}); mocks.socialSignIn.mockResolvedValue({}); mocks.linkSocial.mockResolvedValue({});
   mocks.signUp.mockResolvedValue({}); mocks.signOut.mockResolvedValue({});
   mocks.data = new Map(["citywalk:native:v2:saved", "citywalk:native:v2:places", "citywalk:native:v2:active:lubeck", "citywalk:local-trips:v2", "citywalk:native:locale:v1", "citywalk:native:public-review:v1"].map(key => [key, `existing-${key}`]));
@@ -224,6 +233,27 @@ describe("account management with real capability boundaries", () => {
     expect(screen.getByText("1")).toBeTruthy();
     expect(screen.queryByText(`${messages().language} · English`)).toBeNull();
     expect(screen.queryByRole("button", { name: messages().savedTrips })).toBeNull();
+  });
+
+  it("edits and saves travel style as real planner defaults for the signed-in user", async () => {
+    signedIn();
+    render(<AccountScreen />);
+    await screen.findByText(copy("profile.yourTravelStyle"));
+    expect(screen.getByText(copy("categories.history"))).toBeTruthy();
+    expect(screen.getByText(copy("categories.architecture"))).toBeTruthy();
+
+    press("profile.editPreferences");
+    fireEvent.click(screen.getByText(copy("categories.food")));
+    fireEvent.click(screen.getByText(copy("planner.easy")));
+    fireEvent.click(screen.getByText(copy("planner.hour3")));
+    press("profile.savePreferences");
+
+    await screen.findByText(copy("profile.preferencesSaved"));
+    expect(mocks.saveTravelerPreferences).toHaveBeenCalledWith("private-user-id", {
+      interests: ["history", "architecture", "food"],
+      walking: "easy",
+      typicalMinutes: 180,
+    });
   });
 
   it("shows profile identity, edits only the name, and recovers from an update failure", async () => {

@@ -22,10 +22,19 @@ import { useAccountWalks } from "../../hooks/useAccountWalks";
 import { readCityUnlock } from "../../lib/cityUnlockAccess";
 import { loadLocalTrips } from "../../lib/tripStorage";
 import { loadSavedPlaces, loadSavedWalks } from "../../lib/walkStorage";
+import {
+  DEFAULT_TRAVELER_PREFERENCES,
+  TRAVELER_WALK_DURATIONS,
+  loadTravelerPreferences,
+  saveTravelerPreferences,
+  type TravelerPreferences,
+  type TravelerWalkDuration,
+} from "../../lib/travelerPreferences";
+import { interestTags, type Interest, type WalkSettings } from "@citywalk/traveler-core/walkPlanner";
 
-type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "change-password" | "delete";
+type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "travel-style" | "change-password" | "delete";
 type SocialProvider = "google" | "apple";
-type Action = "sign-in" | "sign-up" | "edit" | "change-password" | "sign-out" | "reset" | "resend-verification" | "delete" | "social-google" | "social-apple" | "link-google" | "link-apple";
+type Action = "sign-in" | "sign-up" | "edit" | "save-preferences" | "change-password" | "sign-out" | "reset" | "resend-verification" | "delete" | "social-google" | "social-apple" | "link-google" | "link-apple";
 
 export default function AccountScreen() {
   const { locale, direction, messages } = useNativeLocale();
@@ -56,6 +65,8 @@ export default function AccountScreen() {
     error: boolean;
   }>({ walkKeys: [], citySlugs: [], savedPlaces: 0, loading: true, error: false });
   const [passState, setPassState] = useState<"loading" | "free" | "active" | "unavailable">("loading");
+  const [travelerPreferenceState, setTravelerPreferenceState] = useState<{ userId: string; preferences: TravelerPreferences }>();
+  const [preferenceDraft, setPreferenceDraft] = useState<TravelerPreferences>(DEFAULT_TRAVELER_PREFERENCES);
   const [credential, setCredential] = useState<{ userId: string; status: "yes" | "no" | "error"; providers: string[] }>();
   const userId = session?.user.id;
   // Provider IDs are used only to gate password management, never displayed or logged.
@@ -110,6 +121,20 @@ export default function AccountScreen() {
     void readCityUnlock("lubeck", userId)
       .then((unlocked) => { if (active) setPassState(unlocked ? "active" : "free"); })
       .catch(() => { if (active) setPassState("unavailable"); });
+    return () => { active = false; };
+  }, [userId]);
+  useEffect(() => {
+    if (!userId) return;
+    let active = true;
+    void loadTravelerPreferences(userId)
+      .then((preferences) => {
+        if (!active) return;
+        setTravelerPreferenceState({ userId, preferences });
+        setPreferenceDraft(preferences);
+      })
+      .catch(() => {
+        if (active) setTravelerPreferenceState({ userId, preferences: DEFAULT_TRAVELER_PREFERENCES });
+      });
     return () => { active = false; };
   }, [userId]);
   useEffect(() => {
@@ -255,6 +280,24 @@ export default function AccountScreen() {
       return result.error ? { error: result.error } : result.data?.status === true ? {} : { error: { code: "UNAVAILABLE" } };
     }, () => setNotice("profile.verificationResent"));
   }
+  async function savePreferences() {
+    if (!userId || busy) return;
+    setBusy("save-preferences");
+    setFailure(undefined);
+    try {
+      const saved = await saveTravelerPreferences(userId, preferenceDraft);
+      if (!mounted.current) return;
+      setTravelerPreferenceState({ userId, preferences: saved });
+      setPreferenceDraft(saved);
+      setEntry(undefined);
+      setNotice("profile.preferencesSaved");
+      void triggerCitywalkHaptic("success");
+    } catch {
+      if (mounted.current) setFailure("unknown");
+    } finally {
+      if (mounted.current) setBusy(undefined);
+    }
+  }
   function deleteAccount() {
     if (!session || !deleteConfirmed || !hasCredential) return;
     if (!password) { setFailure("current_password_required"); return; }
@@ -269,6 +312,11 @@ export default function AccountScreen() {
     ...accountWalks.walks.map((walk) => walk.citySlug),
     ...localActivity.citySlugs,
   ]);
+  const travelerPreferences =
+    userId && travelerPreferenceState?.userId === userId
+      ? travelerPreferenceState.preferences
+      : DEFAULT_TRAVELER_PREFERENCES;
+  const preferencesLoading = Boolean(userId && travelerPreferenceState?.userId !== userId);
   const activity = {
     cities: citySlugs.size,
     walks: walkKeys.size,
@@ -279,6 +327,19 @@ export default function AccountScreen() {
   const lubeckName = nativeCityName("lubeck", cityLaunches.lubeck.name, locale);
   const isEmailEntry = !session && (entry === "sign-in" || entry === "sign-up");
   const label = (key: TranslationKey) => t(locale, key);
+  const interestLabel = (interest: Interest) => label(({
+    history: "categories.history",
+    architecture: "categories.architecture",
+    "hidden-gems": "categories.hidden-gems",
+    nature: "categories.nature",
+    food: "categories.food",
+    culture: "categories.culture",
+    family: "categories.family",
+  } as const)[interest]);
+  const walkingLabel = (walking: WalkSettings["walking"]) =>
+    label(walking === "easy" ? "planner.easy" : walking === "long" ? "planner.long" : "planner.balanced");
+  const durationLabel = (minutes: TravelerWalkDuration) =>
+    label(minutes === 60 ? "planner.hour1" : minutes === 120 ? "planner.hour2" : minutes === 180 ? "planner.hour3" : "planner.halfDay");
   const socialIcon = (provider: SocialProvider) => (
     <View
       accessibilityElementsHidden
@@ -326,6 +387,31 @@ export default function AccountScreen() {
         ) : null}
         <PrimaryButton compact label={label("profile.editProfile")} tone="secondary" onPress={() => open("edit")} />
       </View>
+
+      <Card>
+        <AppText variant="heading">{label("profile.yourTravelStyle")}</AppText>
+        {preferencesLoading ? <CitywalkLoading compact label={uxCopy(locale).account} /> : <>
+          <View style={styles.preferenceChips}>
+            {travelerPreferences.interests.length ? travelerPreferences.interests.map((interest) => (
+              <View key={interest} style={styles.preferenceTag}>
+                <AppText variant="metadata" style={styles.preferenceTagText}>{interestLabel(interest)}</AppText>
+              </View>
+            )) : <AppText variant="metadata" style={styles.muted}>{label("profile.noPreferredInterests")}</AppText>}
+          </View>
+          <AppText variant="metadata" style={styles.muted}>
+            {walkingLabel(travelerPreferences.walking)} · {durationLabel(travelerPreferences.typicalMinutes)}
+          </AppText>
+          <AppText variant="metadata" style={styles.muted}>{label("profile.travelStyleHelp")}</AppText>
+          <PrimaryButton
+            tone="secondary"
+            label={label("profile.editPreferences")}
+            onPress={() => {
+              setPreferenceDraft(travelerPreferences);
+              open("travel-style");
+            }}
+          />
+        </>}
+      </Card>
 
       <Card>
         <AppText variant="heading">{label("profile.yourActivity")}</AppText>
@@ -460,6 +546,77 @@ export default function AccountScreen() {
       <AppText variant="metadata">{label("profile.emailReadOnly")}</AppText>
       <PrimaryButton label={label("profile.saveProfile")} busy={Boolean(busy)} onPress={saveProfile} />
     </Card> : null}
+    {session && entry === "travel-style" ? <Card>
+      <AppText variant="heading">{label("profile.yourTravelStyle")}</AppText>
+      <AppText variant="metadata" style={styles.muted}>{label("profile.travelStyleHelp")}</AppText>
+
+      <AppText variant="label">{label("planner.interests")}</AppText>
+      <View style={styles.preferenceChips}>
+        {(Object.keys(interestTags) as Interest[]).map((interest) => {
+          const selected = preferenceDraft.interests.includes(interest);
+          return (
+            <PressableSurface
+              key={interest}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: selected }}
+              style={[styles.preferenceChoice, selected && styles.preferenceChoiceSelected]}
+              onPress={() => setPreferenceDraft((current) => ({
+                ...current,
+                interests: selected
+                  ? current.interests.filter((value) => value !== interest)
+                  : [...current.interests, interest],
+              }))}
+            >
+              <AppText variant="metadata" style={selected ? styles.preferenceChoiceTextSelected : undefined}>
+                {interestLabel(interest)}
+              </AppText>
+            </PressableSurface>
+          );
+        })}
+      </View>
+
+      <AppText variant="label">{label("profile.walkingPace")}</AppText>
+      <View style={styles.preferenceChips}>
+        {(["easy", "balanced", "long"] as const).map((walking) => {
+          const selected = preferenceDraft.walking === walking;
+          return (
+            <PressableSurface
+              key={walking}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: selected }}
+              style={[styles.preferenceChoice, selected && styles.preferenceChoiceSelected]}
+              onPress={() => setPreferenceDraft((current) => ({ ...current, walking }))}
+            >
+              <AppText variant="metadata" style={selected ? styles.preferenceChoiceTextSelected : undefined}>
+                {walkingLabel(walking)}
+              </AppText>
+            </PressableSurface>
+          );
+        })}
+      </View>
+
+      <AppText variant="label">{label("profile.typicalWalk")}</AppText>
+      <View style={styles.preferenceChips}>
+        {TRAVELER_WALK_DURATIONS.map((typicalMinutes) => {
+          const selected = preferenceDraft.typicalMinutes === typicalMinutes;
+          return (
+            <PressableSurface
+              key={typicalMinutes}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: selected }}
+              style={[styles.preferenceChoice, selected && styles.preferenceChoiceSelected]}
+              onPress={() => setPreferenceDraft((current) => ({ ...current, typicalMinutes }))}
+            >
+              <AppText variant="metadata" style={selected ? styles.preferenceChoiceTextSelected : undefined}>
+                {durationLabel(typicalMinutes)}
+              </AppText>
+            </PressableSurface>
+          );
+        })}
+      </View>
+
+      <PrimaryButton label={label("profile.savePreferences")} busy={busy === "save-preferences"} onPress={() => void savePreferences()} />
+    </Card> : null}
     {session && entry === "change-password" ? <Card>
       <AppText variant="heading">{label("profile.changePassword")}</AppText>
       <PasswordField label={label("profile.currentPassword")} value={password} onChange={setPassword} disabled={Boolean(busy)} />
@@ -515,6 +672,12 @@ const styles = StyleSheet.create({
   profileName: { textAlign: "center" },
   profileEyebrow: { color: colors.primary, fontWeight: "700" },
   metrics: { flexDirection: "row", gap: spacing.sm },
+  preferenceChips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  preferenceTag: { borderRadius: radius.pill, backgroundColor: colors.primarySoft, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
+  preferenceTagText: { color: colors.primary, fontWeight: "700" },
+  preferenceChoice: { minHeight: 38, justifyContent: "center", borderRadius: radius.pill, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.borderStrong, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
+  preferenceChoiceSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
+  preferenceChoiceTextSelected: { color: "#FFFFFF", fontWeight: "700" },
   metric: { flex: 1, minWidth: 0, alignItems: "center", gap: spacing.xs, paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: colors.surfaceMuted },
   cardHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm },
   accountRow: { minHeight: 48, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border, paddingVertical: spacing.sm },
