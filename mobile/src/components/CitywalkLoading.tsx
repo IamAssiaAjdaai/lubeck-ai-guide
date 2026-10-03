@@ -64,11 +64,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: spacing.sm,
-    minHeight: 180,
+    minHeight: 150,
     paddingVertical: spacing.lg,
   },
   compact: {
-    minHeight: 96,
+    minHeight: 82,
     paddingVertical: spacing.md,
   },
   skeleton: { alignSelf: "stretch", gap: spacing.sm },
