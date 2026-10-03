@@ -87,7 +87,7 @@ export const layout = {
   navigationHeight: 64,
   heroHeight: 180,
   cityHeroHeight: 218,
-  timeCardHeight: 150,
+  timeCardHeight: 104,
   itineraryPhoto: 60,
 } as const;
 export const shadows = {
