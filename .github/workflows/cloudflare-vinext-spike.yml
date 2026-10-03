@@ -36,13 +36,27 @@ jobs:
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
 
+      - name: Install vinext spike dependencies
+        shell: bash
+        run: |
+          npm install --no-save \
+            vinext@latest \
+            @vinext/cloudflare@latest \
+            react-server-dom-webpack@19.2.8 \
+            vite@8.3.0 \
+            @vitejs/plugin-react@latest \
+            @vitejs/plugin-rsc@latest \
+            @cloudflare/vite-plugin@beta \
+            cf@latest
+
       - name: Initialize Cloudflare config ephemerally
         id: init
         shell: bash
         run: |
           set +e
-          npx --yes vinext@latest init \
+          npx vinext init \
             --skip-check \
+            --no-install \
             --platform=cloudflare \
             --data-cache=none \
             --cdn-cache=none \
