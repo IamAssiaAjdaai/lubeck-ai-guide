@@ -151,6 +151,8 @@ export const walkKeys = {
   "removePlace": "saved.removePlace",
   "savedPlacesEmpty": "emptyStates.savedPlaces",
   "categories": "planner.categories",
+  "showMoreInterests": "planner.showMoreInterests",
+  "showFewerInterests": "planner.showFewerInterests",
   "mapUnavailable": "walk.mapUnavailable",
   "refreshLocation": "walk.refreshLocation",
   "recalculate": "walk.recalculate"
