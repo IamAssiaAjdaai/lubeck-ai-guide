@@ -91,13 +91,13 @@ describe("guest-first account", () => {
     fireEvent.click(screen.getByRole("button", { name: copy("profile.continueWithApple") }));
     await waitFor(() => expect(mocks.socialSignIn).toHaveBeenCalledWith({
       provider: "apple",
-      callbackURL: "/account",
+      callbackURL: "citywalk://account",
     }));
 
     fireEvent.click(screen.getByRole("button", { name: copy("profile.continueWithGoogle") }));
     await waitFor(() => expect(mocks.socialSignIn).toHaveBeenCalledWith({
       provider: "google",
-      callbackURL: "/account",
+      callbackURL: "citywalk://account",
     }));
     unchanged(before);
   });
@@ -216,7 +216,7 @@ describe("account management with real capability boundaries", () => {
     fireEvent.click(connect);
     await waitFor(() => expect(mocks.linkSocial).toHaveBeenCalledWith({
       provider: "google",
-      callbackURL: "/account",
+      callbackURL: "citywalk://account",
     }));
     await screen.findByText(copy("profile.socialLinked"));
   });
