@@ -57,6 +57,8 @@ import {
   type CurrentWalk,
 } from "../lib/walkStorage";
 import { loadLocalTrips } from "../lib/tripStorage";
+import { loadTravelerPreferences } from "../lib/travelerPreferences";
+import { nativeAuthClient } from "../lib/auth/client";
 import { createMobileTripId } from "../lib/tripNavigation";
 import { requestForegroundLocation } from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
@@ -396,6 +398,12 @@ export function NativeWalkFlow({
         }
         setMessage(t.noEligible);
       }
+      const auth = await nativeAuthClient.getSession().catch(() => ({ data: null }));
+      const defaults = await loadTravelerPreferences(auth.data?.user.id);
+      if (!alive) return;
+      setMinutes(defaults.typicalMinutes);
+      setInterests([...defaults.interests]);
+      setWalking(defaults.walking);
       setStage("plan");
     })().catch(() => {
       if (alive) {
