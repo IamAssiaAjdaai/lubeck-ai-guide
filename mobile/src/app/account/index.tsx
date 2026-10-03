@@ -375,7 +375,7 @@ export default function AccountScreen() {
           <View style={styles.accountRow}>
             <View style={styles.accountRowLabel}>{socialIcon("apple")}<AppText variant="label">Apple</AppText></View>
             {hasApple ? <AppText variant="metadata" style={styles.connected}>{label("profile.connected")}</AppText> :
-              <PressableSurface accessibilityRole="button" style={styles.compactAction} disabled={Boolean(busy)} onPress={() => linkSocial("apple")}>
+              <PressableSurface accessibilityRole="button" accessibilityLabel={label("profile.connectApple")} style={styles.compactAction} disabled={Boolean(busy)} onPress={() => linkSocial("apple")}>
                 <AppText variant="label" style={styles.actionText}>{label("profile.connect")}</AppText>
               </PressableSurface>}
           </View>
@@ -384,7 +384,7 @@ export default function AccountScreen() {
           <View style={styles.accountRow}>
             <View style={styles.accountRowLabel}>{socialIcon("google")}<AppText variant="label">Google</AppText></View>
             {hasGoogle ? <AppText variant="metadata" style={styles.connected}>{label("profile.connected")}</AppText> :
-              <PressableSurface accessibilityRole="button" style={styles.compactAction} disabled={Boolean(busy)} onPress={() => linkSocial("google")}>
+              <PressableSurface accessibilityRole="button" accessibilityLabel={label("profile.connectGoogle")} style={styles.compactAction} disabled={Boolean(busy)} onPress={() => linkSocial("google")}>
                 <AppText variant="label" style={styles.actionText}>{label("profile.connect")}</AppText>
               </PressableSurface>}
           </View>
