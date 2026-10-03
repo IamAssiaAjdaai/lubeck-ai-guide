@@ -65,9 +65,8 @@ export default function AccountScreen() {
     error: boolean;
   }>({ walkKeys: [], citySlugs: [], savedPlaces: 0, loading: true, error: false });
   const [passState, setPassState] = useState<"loading" | "free" | "active" | "unavailable">("loading");
-  const [travelerPreferences, setTravelerPreferences] = useState<TravelerPreferences>(DEFAULT_TRAVELER_PREFERENCES);
+  const [travelerPreferenceState, setTravelerPreferenceState] = useState<{ userId: string; preferences: TravelerPreferences }>();
   const [preferenceDraft, setPreferenceDraft] = useState<TravelerPreferences>(DEFAULT_TRAVELER_PREFERENCES);
-  const [preferencesLoading, setPreferencesLoading] = useState(true);
   const [credential, setCredential] = useState<{ userId: string; status: "yes" | "no" | "error"; providers: string[] }>();
   const userId = session?.user.id;
   // Provider IDs are used only to gate password management, never displayed or logged.
@@ -130,12 +129,11 @@ export default function AccountScreen() {
     void loadTravelerPreferences(userId)
       .then((preferences) => {
         if (!active) return;
-        setTravelerPreferences(preferences);
+        setTravelerPreferenceState({ userId, preferences });
         setPreferenceDraft(preferences);
-        setPreferencesLoading(false);
       })
       .catch(() => {
-        if (active) setPreferencesLoading(false);
+        if (active) setTravelerPreferenceState({ userId, preferences: DEFAULT_TRAVELER_PREFERENCES });
       });
     return () => { active = false; };
   }, [userId]);
@@ -289,7 +287,7 @@ export default function AccountScreen() {
     try {
       const saved = await saveTravelerPreferences(userId, preferenceDraft);
       if (!mounted.current) return;
-      setTravelerPreferences(saved);
+      setTravelerPreferenceState({ userId, preferences: saved });
       setPreferenceDraft(saved);
       setEntry(undefined);
       setNotice("profile.preferencesSaved");
@@ -314,6 +312,11 @@ export default function AccountScreen() {
     ...accountWalks.walks.map((walk) => walk.citySlug),
     ...localActivity.citySlugs,
   ]);
+  const travelerPreferences =
+    userId && travelerPreferenceState?.userId === userId
+      ? travelerPreferenceState.preferences
+      : DEFAULT_TRAVELER_PREFERENCES;
+  const preferencesLoading = Boolean(userId && travelerPreferenceState?.userId !== userId);
   const activity = {
     cities: citySlugs.size,
     walks: walkKeys.size,
