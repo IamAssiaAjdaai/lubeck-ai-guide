@@ -17,11 +17,11 @@ export type TravelerPreferences = Readonly<{
   typicalMinutes: TravelerWalkDuration;
 }>;
 
-export const DEFAULT_TRAVELER_PREFERENCES: TravelerPreferences = Object.freeze({
-  interests: ["history", "architecture"],
-  walking: "balanced",
-  typicalMinutes: 120,
-});
+export const DEFAULT_TRAVELER_PREFERENCES = Object.freeze({
+  interests: ["history", "architecture"] as const,
+  walking: "balanced" as const,
+  typicalMinutes: 120 as const,
+}) satisfies TravelerPreferences;
 
 type PreferenceStore = Readonly<{
   getItem(key: string): Promise<string | null>;
