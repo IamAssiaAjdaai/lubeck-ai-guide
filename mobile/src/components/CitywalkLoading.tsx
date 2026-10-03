@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Animated, StyleSheet, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 
 import { colors, radius, spacing } from "../design/tokens";
 import { useNativeLocale } from "../localization/LocaleProvider";
@@ -43,14 +43,6 @@ export function CitywalkLoading({
       accessibilityRole="progressbar"
       style={[styles.container, isCompact && styles.compact, { direction }, direction === "rtl" && { alignItems: "stretch" }]}
     >
-      <View
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-        style={styles.mark}
-      >
-        <View style={styles.route} />
-        <View style={styles.pin} />
-      </View>
       <Animated.View
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
@@ -62,10 +54,7 @@ export function CitywalkLoading({
         {!isCompact ? <View style={styles.shortCopyPlaceholder} /> : null}
         {hasCards ? <View style={styles.cardPlaceholder} /> : null}
       </Animated.View>
-      <View style={styles.loadingLabel}>
-        <ActivityIndicator color={colors.primary} size="small" />
-        <AppText variant="caption" style={styles.label}>{loadingLabel}</AppText>
-      </View>
+      <AppText variant="caption" style={styles.label}>{loadingLabel}</AppText>
     </View>
   );
 }
@@ -75,11 +64,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: spacing.sm,
-    minHeight: 180,
+    minHeight: 150,
     paddingVertical: spacing.lg,
   },
   compact: {
-    minHeight: 96,
+    minHeight: 82,
     paddingVertical: spacing.md,
   },
   skeleton: { alignSelf: "stretch", gap: spacing.sm },
@@ -114,31 +103,6 @@ const styles = StyleSheet.create({
     height: 110,
     marginTop: spacing.sm,
     width: "100%",
-  },
-  loadingLabel: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
-  mark: {
-    alignItems: "center",
-    height: 28,
-    justifyContent: "center",
-    width: 58,
-  },
-  route: {
-    borderColor: "#BFDBFE",
-    borderRadius: radius.pill,
-    borderStyle: "dashed",
-    borderWidth: 2,
-    height: 18,
-    position: "absolute",
-    transform: [{ rotate: "-10deg" }],
-    width: 54,
-  },
-  pin: {
-    backgroundColor: colors.primary,
-    borderColor: "#DBEAFE",
-    borderRadius: radius.pill,
-    borderWidth: 4,
-    height: 18,
-    width: 18,
   },
   label: {
     color: colors.textMuted,
