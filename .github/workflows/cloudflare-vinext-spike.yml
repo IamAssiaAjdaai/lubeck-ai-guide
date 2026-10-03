@@ -47,7 +47,9 @@ jobs:
             @vitejs/plugin-react@latest \
             @vitejs/plugin-rsc@latest \
             @cloudflare/vite-plugin@beta \
-            cf@latest
+            cf@latest \
+            vite-css-modules@latest \
+            postcss@latest
 
       - name: Initialize Cloudflare config ephemerally
         id: init
