@@ -55,7 +55,8 @@ describe("native conversational guide experience", () => {
     expect(guideSource).toContain("guideUpgradePath(citySlug, locale)");
     expect(guideSource).toContain("messages.guideAbuseLimited");
     expect(guideSource).toContain("messages.guideError");
-    expect(guideSource).toContain("if (!canSend) return;");
+    expect(guideSource).toContain("const canSubmit = canSubmitGuideQuestion");
+    expect(guideSource).toContain("if (!canSubmit) return;");
     expect(guideSource).toContain("const sendDisabled = !canSend;");
     expect(guideSource).toContain("editable={!busy && hydrated && !limitReached}");
   });
