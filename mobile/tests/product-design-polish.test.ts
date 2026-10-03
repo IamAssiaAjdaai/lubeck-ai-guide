@@ -8,6 +8,7 @@ import homeSource from "../src/app/index.tsx?raw";
 import loadingSource from "../src/components/CitywalkLoading.tsx?raw";
 import presentationSource from "../src/components/V2Presentation.tsx?raw";
 import plannerSource from "../src/components/NativeWalkFlow.tsx?raw";
+import walkControlsSource from "../src/components/WalkControls.tsx?raw";
 import uiSource from "../src/components/ui.tsx?raw";
 import motionSource from "../src/lib/motion.ts?raw";
 import { motion, radius, typography } from "../src/design/tokens";
@@ -43,6 +44,17 @@ describe("CITYWALK native product-design polish", () => {
     expect(placeSource).toContain("<TripProgress");
     expect(placeSource).toContain("messages.tripComplete");
     expect(placeSource).toContain('tone="secondary"');
+  });
+
+  it("keeps P0 navigation and planner hierarchy compact", () => {
+    expect(uiSource).toContain('path === "/" || path === "/saved" || path === "/account"');
+    expect(uiSource).toContain("borderColor: colors.borderStrong");
+    expect(plannerSource).toContain("navigation={false}");
+    expect(plannerSource).toContain("showMoreInterests");
+    expect(plannerSource).toContain("itinerary(route.places, true, true, true)");
+    expect(plannerSource).not.toContain("number={4}");
+    expect(walkControlsSource).not.toContain("wideChip");
+    expect(walkControlsSource).toContain('minHeight: 96');
   });
 
   it("keeps the guide conversational with compact expandable verified sources", () => {
