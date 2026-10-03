@@ -2,10 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-const { getMediaObjectStore, getPublicMediaDeliveryAsset, transformPublicImage } = vi.hoisted(() => ({
+const { getMediaObjectStore, getPublicMediaDeliveryAsset } = vi.hoisted(() => ({
   getMediaObjectStore: vi.fn(),
   getPublicMediaDeliveryAsset: vi.fn(),
-  transformPublicImage: vi.fn(),
 }));
 
 vi.mock("@/lib/media/publicMedia.server", () => ({
@@ -13,13 +12,6 @@ vi.mock("@/lib/media/publicMedia.server", () => ({
 }));
 vi.mock("@/lib/media/storage/storage.server", () => ({
   getMediaObjectStore,
-}));
-vi.mock("@/lib/media/imageTransform.server", () => ({
-  PUBLIC_IMAGE_CACHE_CONTROL: "public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000",
-  transformPublicImage,
-  publicImageResponse: (body: Uint8Array) => new Response(Uint8Array.from(body).buffer, {
-    headers: { "Content-Type": "image/webp", "Content-Length": String(body.byteLength) },
-  }),
 }));
 
 import { GET } from "@/app/api/media/[assetKey]/route";
@@ -97,17 +89,18 @@ describe("public media delivery", () => {
     expect(getMediaObjectStore).not.toHaveBeenCalled();
   });
 
-  it("serves a bounded WebP variant without exposing the original storage key", async () => {
+  it("keeps variant URLs valid without request-time native image transforms", async () => {
+    const readObject = vi.fn().mockResolvedValue({
+      body: byteStream([1, 2, 3]),
+      contentLength: 3,
+    });
     getPublicMediaDeliveryAsset.mockResolvedValue({
       objectKey: "private/original-city-image.jpg",
       mimeType: "image/jpeg",
       sizeBytes: 3,
       kind: "image",
     });
-    getMediaObjectStore.mockReturnValue({
-      readObject: vi.fn().mockResolvedValue({ body: byteStream([1, 2, 3]), contentLength: 3 }),
-    });
-    transformPublicImage.mockResolvedValue(Uint8Array.from([8, 9]));
+    getMediaObjectStore.mockReturnValue({ readObject });
 
     const response = await GET(
       new Request("https://citywalk.test/api/media/key?variant=card"),
@@ -115,9 +108,10 @@ describe("public media delivery", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(response.headers.get("content-type")).toBe("image/webp");
-    expect(transformPublicImage).toHaveBeenCalledWith(expect.any(ArrayBuffer), "card");
-    expect((await response.arrayBuffer()).byteLength).toBe(2);
+    expect(response.headers.get("content-type")).toBe("image/jpeg");
+    expect(response.headers.get("cache-control")).toContain("s-maxage=604800");
+    expect(readObject).toHaveBeenCalledWith("private/original-city-image.jpg");
+    expect((await response.arrayBuffer()).byteLength).toBe(3);
   });
 
   it("fails closed for invalid image variants and variants on non-images", async () => {
