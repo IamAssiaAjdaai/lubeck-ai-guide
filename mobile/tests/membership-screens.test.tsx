@@ -30,7 +30,15 @@ vi.mock("../src/components/ui", () => ({
   SectionTitle: ({ children }: React.PropsWithChildren) => <h2>{children}</h2>,
   StatusMessage: ({ children }: React.PropsWithChildren) => <div role="alert">{children}</div>,
   EmptyState: ({ title }: { title: string }) => <span>{title}</span>,
-  PressableSurface: ({ children, accessibilityLabel }: React.PropsWithChildren<{ accessibilityLabel?: string }>) => <div aria-label={accessibilityLabel}>{children}</div>,
+  PressableSurface: ({ children, accessibilityLabel, accessibilityRole, accessibilityState, onPress }: React.PropsWithChildren<{ accessibilityLabel?: string; accessibilityRole?: string; accessibilityState?: { expanded?: boolean }; onPress?: () => void }>) =>
+    <button
+      aria-expanded={accessibilityState?.expanded}
+      aria-label={accessibilityLabel}
+      onClick={onPress}
+      role={accessibilityRole}
+    >
+      {children}
+    </button>,
   PrimaryButton: ({ label, busy, disabled, onPress, accessibilityState }: { label: string; busy?: boolean; disabled?: boolean; onPress?: () => void; accessibilityState?: { selected: boolean } }) => <button disabled={busy || disabled} aria-pressed={accessibilityState?.selected} onClick={onPress}>{label}</button>,
 }));
 vi.mock("../src/components/WalkControls", () => ({ WalkChoices: () => null }));
@@ -49,7 +57,25 @@ vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { resolveUrl: (value: s
 vi.mock("../src/localization/LocaleProvider", () => ({ useNativeLocale: () => ({ locale: state.locale, direction: state.locale === "ar" ? "rtl" : "ltr", messages: getNativeMessages(state.locale) }) }));
 vi.mock("../src/hooks/usePublicContent", () => ({
   usePublicCity: () => ({ status: "available", data: { city, places: [place], tours: [] } }),
-  usePublicPlace: () => ({ status: "available", data: { city, place } }),
+  usePublicPlace: () => ({
+    status: "available",
+    data: {
+      city,
+      place,
+      verifiedSources: [
+        {
+          label: "Official Holstentor",
+          url: "https://example.com/holstentor",
+          verifiedAt: "2026-09-04T12:00:00.000Z",
+        },
+        {
+          label: "City archive",
+          url: "https://example.com/archive",
+          verifiedAt: "2026-08-20T12:00:00.000Z",
+        },
+      ],
+    },
+  }),
   useGuideEligibility: () => ({ status: "available", data: { eligible: false } }),
   prefetchPublicCity: async () => undefined, prefetchPublicPlace: async () => undefined,
 }));
@@ -130,5 +156,18 @@ describe("actual Explore and Detail share current-walk state (native bridges moc
     expect(state.openURL).toHaveBeenCalledWith(
       "https://maps.apple.com/?daddr=53.86,10.68&dirflg=w",
     );
+  });
+  it("keeps verified sources compact until the traveler asks to view them", async () => {
+    const { detail } = surfaces();
+    const toggle = await detail.findByRole("button", { name: "View sources" });
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(detail.queryByRole("link", { name: "Official Holstentor" })).toBeNull();
+    expect(detail.getByText("Last checked: Sep 4, 2026")).toBeTruthy();
+
+    fireEvent.click(toggle);
+    expect(detail.getByRole("button", { name: "Hide sources" }).getAttribute("aria-expanded")).toBe("true");
+    const source = detail.getByRole("link", { name: "Official Holstentor" });
+    fireEvent.click(source);
+    expect(state.openURL).toHaveBeenCalledWith("https://example.com/holstentor");
   });
 });

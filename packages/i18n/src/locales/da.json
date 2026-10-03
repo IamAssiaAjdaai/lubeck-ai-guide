@@ -314,6 +314,9 @@
   "place": {
     "verified": "Verificeret af CITYWALK",
     "verifiedHelp": "Oplysninger fra kilder, kontrolleret på datoerne nedenfor. Åbningstider og forhold kan have ændret sig.",
+    "verifiedSummary": "Kildebaseret information.",
+    "viewSources": "Vis kilder",
+    "hideSources": "Skjul kilder",
     "lastChecked": "Senest tjekket",
     "official": "Officiel kilde",
     "sourceMap": "Kortkilde",

@@ -314,6 +314,9 @@
   "place": {
     "verified": "Verificado por CITYWALK",
     "verifiedHelp": "Información basada en fuentes y comprobada en las fechas indicadas. Los horarios y las condiciones pueden haber cambiado.",
+    "verifiedSummary": "Información respaldada por fuentes.",
+    "viewSources": "Ver fuentes",
+    "hideSources": "Ocultar fuentes",
     "lastChecked": "Última comprobación",
     "official": "Fuente oficial",
     "sourceMap": "Fuente del mapa",

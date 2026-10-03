@@ -314,6 +314,9 @@
   "place": {
     "verified": "Verifierat av CITYWALK",
     "verifiedHelp": "Källbaserad information, kontrollerad på datumen nedan. Öppettider och förhållanden kan ha ändrats.",
+    "verifiedSummary": "Källbaserad information.",
+    "viewSources": "Visa källor",
+    "hideSources": "Dölj källor",
     "lastChecked": "Senast kontrollerat",
     "official": "Officiell källa",
     "sourceMap": "Kartkälla",
