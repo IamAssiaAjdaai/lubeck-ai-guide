@@ -34,14 +34,14 @@ describe("traveler preferences", () => {
       {
         interests: ["food", "history", "food"],
         walking: "easy",
-        typicalMinutes: 90,
+        typicalMinutes: 180,
       },
       store,
     );
     expect(saved).toEqual({
       interests: ["food", "history"],
       walking: "easy",
-      typicalMinutes: 90,
+      typicalMinutes: 180,
     });
     expect(await loadTravelerPreferences("user-1", store)).toEqual(saved);
   });
