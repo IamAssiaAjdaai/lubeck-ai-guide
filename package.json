@@ -42,7 +42,11 @@
     "mobile:lint": "npm --prefix mobile run lint",
     "mobile:typecheck": "npm --prefix mobile run typecheck",
     "mobile:config": "npm --prefix mobile run config:validate",
-    "i18n:check": "node packages/i18n/scripts/check.mjs"
+    "i18n:check": "node packages/i18n/scripts/check.mjs",
+    "dev:vinext": "vite dev --port 3001",
+    "build:vinext": "vite build",
+    "start:vinext": "vite preview",
+    "deploy:vinext": "vinext-cloudflare deploy"
   },
   "dependencies": {
     "@apple/app-store-server-library": "3.1.0",
@@ -69,7 +73,10 @@
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
     "stripe": "^22.4.0",
-    "jose": "^6.2.12"
+    "jose": "^6.2.12",
+    "@vinext/cloudflare": "1.0.1",
+    "react-server-dom-webpack": "19.2.8",
+    "vinext": "1.0.1"
   },
   "devDependencies": {
     "@google-cloud/text-to-speech": "^7.0.0",
@@ -95,12 +102,20 @@
     "tsx": "^4.23.13",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "@cloudflare/vite-plugin": "^2.0.0-beta.sha-52b0dc0e9",
+    "@vitejs/plugin-rsc": "^0.5.35",
+    "cf": "^1.0.0-beta.12",
+    "oxc-transform-react": "^0.145.0",
+    "postcss": "^8.5.28",
+    "vite": "^8.3.0",
+    "vite-css-modules": "^1.16.0"
   },
   "engines": {
     "node": "22.x"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "type": "module"
 }
