@@ -1,35 +1,75 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_TRAVELER_STYLE,
-  TRAVELER_STYLE_STORAGE_KEY,
+  travelerStyleStorageKey,
   loadTravelerStyle,
   saveTravelerStyle,
 } from "../src/lib/travelerStyle";
 
+function memoryStore() {
+  const data = new Map<string, string>();
+  return {
+    getItem: vi.fn(async (key: string) => data.get(key) ?? null),
+    setItem: vi.fn(async (key: string, value: string) => { data.set(key, value); }),
+  };
+}
+
 describe("native traveler style", () => {
-  it("uses stable launch defaults when no preference exists", async () => {
-    const store = { getItem: vi.fn().mockResolvedValue(null), setItem: vi.fn() };
-    await expect(loadTravelerStyle(store)).resolves.toEqual(DEFAULT_TRAVELER_STYLE);
+  it("uses stable defaults for guests and accounts without saved preferences", async () => {
+    const store = memoryStore();
+    await expect(loadTravelerStyle(undefined, store)).resolves.toEqual(DEFAULT_TRAVELER_STYLE);
+    await expect(loadTravelerStyle("user-1", store)).resolves.toEqual(DEFAULT_TRAVELER_STYLE);
   });
 
-  it("validates and round-trips traveler defaults", async () => {
-    let raw: string | null = null;
-    const store = {
-      getItem: vi.fn(async () => raw),
-      setItem: vi.fn(async (_key: string, value: string) => { raw = value; }),
+  it("validates and round-trips defaults for the active CITYWALK user", async () => {
+    const store = memoryStore();
+    const style = {
+      interests: ["food", "hidden-gems"] as const,
+      walking: "easy" as const,
+      minutes: 90 as const,
     };
-    const style = { interests: ["food", "hidden-gems"] as const, walking: "easy" as const, minutes: 90 as const };
-    const canonical = { interests: ["hidden-gems", "food"] as const, walking: "easy" as const, minutes: 90 as const };
-    await expect(saveTravelerStyle(style, store)).resolves.toEqual(canonical);
-    expect(store.setItem).toHaveBeenCalledWith(TRAVELER_STYLE_STORAGE_KEY, expect.any(String));
-    await expect(loadTravelerStyle(store)).resolves.toEqual(canonical);
+    const canonical = {
+      interests: ["hidden-gems", "food"] as const,
+      walking: "easy" as const,
+      minutes: 90 as const,
+    };
+    await expect(saveTravelerStyle("user-1", style, store)).resolves.toEqual(canonical);
+    expect(store.setItem).toHaveBeenCalledWith(travelerStyleStorageKey("user-1"), expect.any(String));
+    await expect(loadTravelerStyle("user-1", store)).resolves.toEqual(canonical);
+  });
+
+  it("never leaks one account's travel style into another account on the same device", async () => {
+    const store = memoryStore();
+    await saveTravelerStyle("user-1", {
+      interests: ["nature"],
+      walking: "long",
+      minutes: 180,
+    }, store);
+
+    await expect(loadTravelerStyle("user-2", store)).resolves.toEqual(DEFAULT_TRAVELER_STYLE);
+    await expect(loadTravelerStyle(undefined, store)).resolves.toEqual(DEFAULT_TRAVELER_STYLE);
+  });
+
+  it("refuses to save account preferences without an authenticated owner", async () => {
+    const store = memoryStore();
+    await expect(
+      saveTravelerStyle(undefined, DEFAULT_TRAVELER_STYLE, store),
+    ).rejects.toThrow("Account required");
+    expect(store.setItem).not.toHaveBeenCalled();
   });
 
   it("fails closed to defaults for malformed stored values", async () => {
-    const store = {
-      getItem: vi.fn().mockResolvedValue(JSON.stringify({ version: 1, interests: ["unknown"], walking: "fast", minutes: 999 })),
-      setItem: vi.fn(),
-    };
-    await expect(loadTravelerStyle(store)).resolves.toEqual(DEFAULT_TRAVELER_STYLE);
+    const key = travelerStyleStorageKey("user-1");
+    const store = memoryStore();
+    await store.setItem(
+      key,
+      JSON.stringify({
+        version: 1,
+        interests: ["unknown"],
+        walking: "fast",
+        minutes: 999,
+      }),
+    );
+    await expect(loadTravelerStyle("user-1", store)).resolves.toEqual(DEFAULT_TRAVELER_STYLE);
   });
 });
