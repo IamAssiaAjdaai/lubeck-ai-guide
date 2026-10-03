@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonPressed: { opacity: 0.9, transform: [{ scale: 0.985 }] },
   textActionButton: { alignSelf: "stretch", paddingVertical: spacing.sm },
-  secondaryButton: { backgroundColor: colors.primarySoft },
+  secondaryButton: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderStrong },
   aiButton: { backgroundColor: colors.violet },
   successButton: { backgroundColor: colors.success },
   buttonText: { color: "#FFFFFF", ...typography.label },
