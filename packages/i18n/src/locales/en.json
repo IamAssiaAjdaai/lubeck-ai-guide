@@ -432,7 +432,11 @@
     "connectApple": "Connect Apple",
     "googleConnected": "Google connected",
     "appleConnected": "Apple connected",
-    "socialLinked": "Account connection updated."
+    "socialLinked": "Account connection updated.",
+    "emailNotVerified": "Please verify your email before signing in.",
+    "verificationSent": "Check your inbox or spam folder and verify your email before signing in.",
+    "resendVerification": "Resend verification email",
+    "verificationResent": "If this account still needs verification, check your inbox or spam folder for a new verification email."
   },
   "explore": {
     "all": "All",
@@ -557,7 +561,10 @@
     "deletePermanently": "Permanently delete account",
     "deleted": "Your account and account-backed Saved Walks were deleted. Device-local traveler data was kept.",
     "retentionBlocked": "This account has records that require a retention review. Self-service deletion is currently unavailable. No account data was deleted.",
-    "reauthRequired": "Confirm your current password. If your session has expired, sign in again before deleting your account."
+    "reauthRequired": "Confirm your current password. If your session has expired, sign in again before deleting your account.",
+    "verificationEmailSubject": "Verify your CITYWALK email",
+    "verificationEmailBody": "Use the following CITYWALK link to verify your email address. It expires in 1 hour.",
+    "verificationEmailIgnore": "If you did not create or try to access a CITYWALK account, ignore this email."
   },
   "unlock": {
     "title": "Unlock {city}",

@@ -7,7 +7,7 @@ import { sharedLocales, t } from "@citywalk/i18n";
 const mocks = vi.hoisted(() => ({
   params: {} as Record<string, string>,
   locale: "en", session: null as null | { user: { id: string; name: string; email: string } },
-  deleteAccount: vi.fn(), listAccounts: vi.fn(), updateUser: vi.fn(), changePassword: vi.fn(), requestPasswordReset: vi.fn(), deleteUser: vi.fn(),
+  deleteAccount: vi.fn(), listAccounts: vi.fn(), updateUser: vi.fn(), changePassword: vi.fn(), requestPasswordReset: vi.fn(), sendVerificationEmail: vi.fn(), deleteUser: vi.fn(),
   signIn: vi.fn(), socialSignIn: vi.fn(), linkSocial: vi.fn(), signUp: vi.fn(), signOut: vi.fn(), back: vi.fn(), replace: vi.fn(),
   data: new Map<string, string>(), write: vi.fn(), remove: vi.fn(), clear: vi.fn(),
 }));
@@ -18,7 +18,7 @@ vi.mock("@react-native-async-storage/async-storage", () => ({ default: {
 vi.mock("../src/lib/auth/lifecycle", () => ({ deleteNativeAccount: mocks.deleteAccount }));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: {
   useSession: () => ({ data: mocks.session, isPending: false }),
-  listAccounts: mocks.listAccounts, updateUser: mocks.updateUser, changePassword: mocks.changePassword, requestPasswordReset: mocks.requestPasswordReset, deleteUser: mocks.deleteUser,
+  listAccounts: mocks.listAccounts, updateUser: mocks.updateUser, changePassword: mocks.changePassword, requestPasswordReset: mocks.requestPasswordReset, sendVerificationEmail: mocks.sendVerificationEmail, deleteUser: mocks.deleteUser,
   signIn: { email: mocks.signIn, social: mocks.socialSignIn }, linkSocial: mocks.linkSocial, signUp: { email: mocks.signUp }, signOut: mocks.signOut,
 } }));
 vi.mock("../src/localization/LocaleProvider", () => ({ useNativeLocale: () => ({ locale: mocks.locale, direction: mocks.locale === "ar" ? "rtl" : "ltr", messages: nativeCopy(mocks.locale) }) }));
@@ -62,6 +62,7 @@ beforeEach(() => {
   vi.clearAllMocks(); mocks.params = {}; mocks.locale = "en"; mocks.session = null;
   mocks.listAccounts.mockResolvedValue({ data: [{ providerId: "credential" }] });
   mocks.deleteAccount.mockResolvedValue({}); mocks.requestPasswordReset.mockResolvedValue({ data: { status: true } });
+  mocks.sendVerificationEmail.mockResolvedValue({ data: { status: true } });
   mocks.updateUser.mockResolvedValue({}); mocks.changePassword.mockResolvedValue({});
   mocks.signIn.mockResolvedValue({}); mocks.socialSignIn.mockResolvedValue({}); mocks.linkSocial.mockResolvedValue({});
   mocks.signUp.mockResolvedValue({}); mocks.signOut.mockResolvedValue({});
@@ -107,6 +108,24 @@ describe("guest-first account", () => {
     expect(screen.getByText(messages().invalidEmail)).toBeTruthy(); expect(mocks.signIn).not.toHaveBeenCalled();
     fill(); open(); await screen.findByText(messages().invalidCredentials); expect(mocks.locale).toBe("de"); unchanged(before);
   });
+  it("blocks unverified password sign-in and offers an explicit safe resend", async () => {
+    mocks.signIn.mockResolvedValueOnce({ error: { code: "EMAIL_NOT_VERIFIED", status: 403 } });
+    const before = new Map(mocks.data);
+    render(<AccountScreen />);
+    open();
+    fill();
+    open();
+    await screen.findByText(copy("profile.emailNotVerified"));
+    fireEvent.click(screen.getByRole("button", { name: copy("profile.resendVerification") }));
+    await screen.findByText(copy("profile.verificationResent"));
+    expect(mocks.sendVerificationEmail).toHaveBeenCalledWith({
+      email: "traveler@example.test",
+      callbackURL: "citywalk://account",
+      fetchOptions: { headers: { "X-Citywalk-Locale": "en" } },
+    });
+    unchanged(before);
+  });
+
   it("successful sign-in/sign-out preserve all device-local data", async () => {
     const before = new Map(mocks.data); const view = render(<AccountScreen />); open(); fill(); open();
     await waitFor(() => expect(screen.queryByLabelText(messages().password)).toBeNull());
@@ -118,7 +137,7 @@ describe("guest-first account", () => {
   });
   it("signup explains explicit sign-in (backend autoSignIn is false) without migrating local data", async () => {
     const before = new Map(mocks.data); render(<AccountScreen />); open("signUp"); fill(); open("signUp");
-    await screen.findByText(messages().accountCreated); expect(screen.getByRole("button", { name: messages().signIn })).toBeTruthy();
+    await screen.findByText(copy("profile.verificationSent")); expect(screen.getByRole("button", { name: messages().signIn })).toBeTruthy();
     expect(mocks.signUp).toHaveBeenCalledOnce(); expect(mocks.signIn).not.toHaveBeenCalled(); unchanged(before);
   });
   it("prevents repeated submissions and ignores a late response after closing the email flow", async () => {
@@ -141,8 +160,14 @@ describe("account management with real capability boundaries", () => {
   it("validates the signup name and sends it trimmed with email and password", async () => {
     render(<AccountScreen />); open("signUp"); open("signUp");
     expect(screen.getByText(copy("profile.invalidName"))).toBeTruthy(); expect(mocks.signUp).not.toHaveBeenCalled();
-    fill(); open("signUp"); await screen.findByText(messages().accountCreated);
-    expect(mocks.signUp).toHaveBeenCalledWith({ name: "Alex Traveler", email: "traveler@example.test", password: "a-local-test-password" });
+    fill(); open("signUp"); await screen.findByText(copy("profile.verificationSent"));
+    expect(mocks.signUp).toHaveBeenCalledWith({
+      name: "Alex Traveler",
+      email: "traveler@example.test",
+      password: "a-local-test-password",
+      callbackURL: "citywalk://account",
+      fetchOptions: { headers: { "X-Citywalk-Locale": "en" } },
+    });
   });
   it("uses secure entry with independent eye controls and current/new password autofill", () => {
     render(<AccountScreen />); open();
@@ -260,7 +285,7 @@ it("deduplicates signup requests while showing the busy state", async () => {
   const before = new Map(mocks.data); render(<AccountScreen />); open("signUp"); fill(); open("signUp"); open("signUp");
   expect(mocks.signUp).toHaveBeenCalledOnce();
   expect((screen.getByRole("button", { name: messages().signUp }) as HTMLButtonElement).disabled).toBe(true);
-  await act(async () => finish({})); await screen.findByText(messages().accountCreated); unchanged(before);
+  await act(async () => finish({})); await screen.findByText(copy("profile.verificationSent")); unchanged(before);
 });
 it("deduplicates display-name saves and preserves a rejected draft for retry", async () => {
   signedIn(); let finish!: (result: object) => void;
@@ -275,7 +300,7 @@ it("deduplicates display-name saves and preserves a rejected draft for retry", a
 it("returns to the pending walk only after explicit sign-in, without saving or changing traveler data", async () => {
   mocks.params = { entry: "sign-up", returnToWalk: "1" };
   const before = new Map(mocks.data); render(<AccountScreen />); fill(); open("signUp");
-  await screen.findByText(messages().accountCreated); expect(mocks.back).not.toHaveBeenCalled();
+  await screen.findByText(copy("profile.verificationSent")); expect(mocks.back).not.toHaveBeenCalled();
   fireEvent.change(screen.getByLabelText(messages().password), { target: { value: "a-local-test-password" } }); open();
   await waitFor(() => expect(mocks.back).toHaveBeenCalledOnce()); unchanged(before);
 });

@@ -19,7 +19,7 @@ import { useNativeLocale } from "../../localization/LocaleProvider";
 
 type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "change-password" | "delete";
 type SocialProvider = "google" | "apple";
-type Action = "sign-in" | "sign-up" | "edit" | "change-password" | "sign-out" | "reset" | "delete" | "social-google" | "social-apple" | "link-google" | "link-apple";
+type Action = "sign-in" | "sign-up" | "edit" | "change-password" | "sign-out" | "reset" | "resend-verification" | "delete" | "social-google" | "social-apple" | "link-google" | "link-apple";
 
 export default function AccountScreen() {
   const { locale, direction, messages } = useNativeLocale();
@@ -109,10 +109,17 @@ export default function AccountScreen() {
     if (submitLock.current) return;
     const error = (mode === "sign-up" ? validateDisplayName(name) : undefined) ?? validateNativeAuthInput(email.trim(), password);
     if (error) { setFailure(error); setNotice(undefined); return; }
+    const fetchOptions = { headers: { "X-Citywalk-Locale": locale } };
     void perform(mode, () => mode === "sign-in"
-      ? nativeAuthClient.signIn.email({ email: email.trim(), password })
-      : nativeAuthClient.signUp.email({ email: email.trim(), password, name: name.trim() }), () => {
-        if (mode === "sign-up") { setEntry("sign-in"); setNotice("profile.accountCreated"); }
+      ? nativeAuthClient.signIn.email({ email: email.trim(), password, fetchOptions })
+      : nativeAuthClient.signUp.email({
+          email: email.trim(),
+          password,
+          name: name.trim(),
+          callbackURL: "citywalk://account",
+          fetchOptions,
+        }), () => {
+        if (mode === "sign-up") { setEntry("sign-in"); setNotice("profile.verificationSent"); }
         else { setEntry(undefined); if (params.returnToWalk === "1" && router.canGoBack()) router.back(); }
       });
   }
@@ -167,6 +174,17 @@ export default function AccountScreen() {
       const result = await nativeAuthClient.requestPasswordReset({ email: email.trim(), fetchOptions: { headers: { "X-Citywalk-Locale": locale } } });
       return result.error ? { error: result.error } : result.data?.status === true ? {} : { error: { code: "UNAVAILABLE" } };
     }, () => setNotice("lifecycle.resetRequested"));
+  }
+  function resendVerification() {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setFailure("invalid_email"); setNotice(undefined); return; }
+    void perform("resend-verification", async () => {
+      const result = await nativeAuthClient.sendVerificationEmail({
+        email: email.trim(),
+        callbackURL: "citywalk://account",
+        fetchOptions: { headers: { "X-Citywalk-Locale": locale } },
+      });
+      return result.error ? { error: result.error } : result.data?.status === true ? {} : { error: { code: "UNAVAILABLE" } };
+    }, () => setNotice("profile.verificationResent"));
   }
   function deleteAccount() {
     if (!session || !deleteConfirmed || !hasCredential) return;
@@ -327,6 +345,13 @@ export default function AccountScreen() {
       </> : <StatusMessage>{label("lifecycle.reauthRequired")}</StatusMessage>}
     </Card> : null}
     {failure ? <StatusMessage tone="error">{failure === "invalid_credentials" && entry === "change-password" ? label("profile.currentPasswordIncorrect") : authFailureMessage(failure, locale, messages)}</StatusMessage> : null}
+    {failure === "email_not_verified" && !session && entry === "sign-in" ? <PrimaryButton
+      label={label("profile.resendVerification")}
+      tone="secondary"
+      busy={busy === "resend-verification"}
+      disabled={Boolean(busy)}
+      onPress={resendVerification}
+    /> : null}
     {lifecycleFailure ? <StatusMessage tone="error">{label(lifecycleFailure)}</StatusMessage> : null}
     {notice ? <StatusMessage tone="success">{label(notice)}</StatusMessage> : null}
     {entry ? <PrimaryButton label={label("common.back")} tone="secondary" onPress={back} /> : null}
@@ -342,6 +367,7 @@ function authFailureMessage(failure: NativeAuthErrorCode, locale: string, messag
   if (failure === "invalid_name") return t(locale, "profile.invalidName");
   if (failure === "current_password_required") return t(locale, "profile.currentPasswordRequired");
   if (failure === "account_exists") return messages.accountExists;
+  if (failure === "email_not_verified") return t(locale, "profile.emailNotVerified");
   if (failure === "invalid_credentials") return messages.invalidCredentials;
   if (failure === "network") return messages.authNetworkError;
   return messages.authError;

@@ -61,6 +61,7 @@ describe("native city experience parity", () => {
   it("surfaces actionable account validation and successful creation", () => {
     expect(accountSource).toContain("validateNativeAuthInput");
     expect(accountSource).toContain("classifyNativeAuthError");
-    expect(accountSource).toContain("profile.accountCreated");
+    expect(accountSource).toContain("profile.verificationSent");
+    expect(accountSource).toContain("profile.resendVerification");
   });
 });

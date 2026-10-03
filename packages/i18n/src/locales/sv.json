@@ -432,7 +432,11 @@
     "connectApple": "Anslut Apple",
     "googleConnected": "Google är anslutet",
     "appleConnected": "Apple är anslutet",
-    "socialLinked": "Kontoanslutningen har uppdaterats."
+    "socialLinked": "Kontoanslutningen har uppdaterats.",
+    "emailNotVerified": "Verifiera din e-postadress innan du loggar in.",
+    "verificationSent": "Kontrollera inkorgen eller skräpposten och verifiera din e-postadress innan du loggar in.",
+    "resendVerification": "Skicka verifieringsmejl igen",
+    "verificationResent": "Om kontot fortfarande behöver verifieras, kontrollera inkorgen eller skräpposten efter ett nytt verifieringsmejl."
   },
   "explore": {
     "all": "Alla",
@@ -557,7 +561,10 @@
     "deletePermanently": "Radera kontot permanent",
     "deleted": "Ditt konto och dina kontosparade promenader har raderats. Lokala resedata finns kvar.",
     "retentionBlocked": "Kontot innehåller uppgifter vars lagring behöver granskas. Självbetjänad radering är inte tillgänglig just nu. Inga kontouppgifter har raderats.",
-    "reauthRequired": "Bekräfta ditt nuvarande lösenord. Om sessionen har gått ut ska du logga in igen innan du raderar kontot."
+    "reauthRequired": "Bekräfta ditt nuvarande lösenord. Om sessionen har gått ut ska du logga in igen innan du raderar kontot.",
+    "verificationEmailSubject": "Verifiera din CITYWALK-e-post",
+    "verificationEmailBody": "Använd följande CITYWALK-länk för att verifiera din e-postadress. Länken upphör att gälla efter 1 timme.",
+    "verificationEmailIgnore": "Om du inte skapade eller försökte komma åt ett CITYWALK-konto kan du ignorera det här mejlet."
   },
   "unlock": {
     "title": "Lås upp {city}",

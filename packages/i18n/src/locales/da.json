@@ -432,7 +432,11 @@
     "connectApple": "Forbind Apple",
     "googleConnected": "Google er forbundet",
     "appleConnected": "Apple er forbundet",
-    "socialLinked": "Kontoforbindelsen er opdateret."
+    "socialLinked": "Kontoforbindelsen er opdateret.",
+    "emailNotVerified": "Bekræft din e-mailadresse, før du logger ind.",
+    "verificationSent": "Tjek din indbakke eller spammappe, og bekræft din e-mailadresse, før du logger ind.",
+    "resendVerification": "Send bekræftelsesmail igen",
+    "verificationResent": "Hvis denne konto stadig skal bekræftes, så tjek din indbakke eller spammappe for en ny bekræftelsesmail."
   },
   "explore": {
     "all": "Alle",
@@ -557,7 +561,10 @@
     "deletePermanently": "Slet konto permanent",
     "deleted": "Din konto og dine kontogemte ture er slettet. Lokale rejsedata er bevaret.",
     "retentionBlocked": "Kontoen har oplysninger, hvis opbevaring skal vurderes. Selvbetjent sletning er ikke tilgængelig lige nu. Ingen kontodata er slettet.",
-    "reauthRequired": "Bekræft din nuværende adgangskode. Hvis sessionen er udløbet, skal du logge ind igen før sletning."
+    "reauthRequired": "Bekræft din nuværende adgangskode. Hvis sessionen er udløbet, skal du logge ind igen før sletning.",
+    "verificationEmailSubject": "Bekræft din CITYWALK-e-mail",
+    "verificationEmailBody": "Brug følgende CITYWALK-link til at bekræfte din e-mailadresse. Linket udløber efter 1 time.",
+    "verificationEmailIgnore": "Hvis du ikke har oprettet eller forsøgt at få adgang til en CITYWALK-konto, kan du ignorere denne e-mail."
   },
   "unlock": {
     "title": "Lås {city} op",
