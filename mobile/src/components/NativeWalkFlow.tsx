@@ -58,6 +58,7 @@ import {
 } from "../lib/walkStorage";
 import { loadLocalTrips } from "../lib/tripStorage";
 import { createMobileTripId } from "../lib/tripNavigation";
+import { loadTravelerStyle } from "../lib/travelerStyle";
 import { requestForegroundLocation } from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import {
@@ -396,6 +397,11 @@ export function NativeWalkFlow({
         }
         setMessage(t.noEligible);
       }
+      const style = await loadTravelerStyle();
+      if (!alive) return;
+      setMinutes(style.minutes);
+      setInterests([...style.interests]);
+      setWalking(style.walking);
       setStage("plan");
     })().catch(() => {
       if (alive) {
