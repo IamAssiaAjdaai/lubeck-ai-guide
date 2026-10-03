@@ -70,7 +70,7 @@ export function Screen({
 }>) {
   const { direction } = useNativeLocale();
   const path = usePathname();
-  const showNavigation = navigation ?? path === "/" || path === "/saved" || path === "/account";
+  const showNavigation = navigation ?? (path === "/" || path === "/saved" || path === "/account");
   const { width } = useWindowDimensions();
   const scroll = useRef<ScrollView>(null);
   const scrollProbe = useRef({ y: 0, pending: false });
@@ -138,7 +138,7 @@ export function VirtualizedScreen<T>({
 }) {
   const { direction } = useNativeLocale();
   const path = usePathname();
-  const showNavigation = navigation ?? path === "/" || path === "/saved" || path === "/account";
+  const showNavigation = navigation ?? (path === "/" || path === "/saved" || path === "/account");
   const { width } = useWindowDimensions();
   const list = useRef<FlatList<T>>(null);
   useImperativeHandle(listRef, () => list.current!, []);
