@@ -71,13 +71,13 @@ export default function AccountScreen() {
   const userId = session?.user.id;
   useEffect(() => {
     let active = true;
-    void loadTravelerStyle().then((style) => {
+    void loadTravelerStyle(userId).then((style) => {
       if (!active) return;
       setTravelerStyle(style);
       setStyleDraft(style);
     });
     return () => { active = false; };
-  }, []);
+  }, [userId]);
   // Provider IDs are used only to gate password management, never displayed or logged.
   useEffect(() => {
     let active = true;
@@ -251,10 +251,10 @@ export default function AccountScreen() {
     });
   }
   function savePreferences() {
-    if (submitLock.current) return;
+    if (submitLock.current || !userId) return;
     void perform("preferences", async () => {
       try {
-        const saved = await saveTravelerStyle(styleDraft);
+        const saved = await saveTravelerStyle(userId, styleDraft);
         setTravelerStyle(saved);
         return {};
       } catch {
