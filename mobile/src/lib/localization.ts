@@ -69,6 +69,10 @@ export type NativeMessages = Readonly<{
   guideUnlockPass: string;
   guideMaybeLater: string;
   guideWelcome: string;
+  guideSuggestionsTitle: string;
+  guideSuggestionImportant: string;
+  guideSuggestionNotice: string;
+  guideSuggestionOneMinute: string;
   guideThinking: string;
   guideQuestionRemaining: string;
   guideQuestionsRemaining: string;
