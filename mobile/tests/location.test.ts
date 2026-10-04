@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import expoAdapterSource from "../src/lib/location.expo.ts?raw";
+import cityMapSource from "../src/components/NativeCityMap.tsx?raw";
 import {
   LAST_KNOWN_LOCATION_TIMEOUT_MS,
   recheckForegroundLocationProvider,
@@ -203,6 +204,16 @@ describe("foreground-only native location", () => {
       requestPermission: async () => "granted",
       getCurrentPosition: () => new Promise(() => undefined),
     }, { timeoutMs: 5 })).resolves.toEqual({ status: "fix_failed" });
+  });
+
+  it("keeps explicitly enabled active-walk foreground location fresh and cleans it up", () => {
+    expect(expoAdapterSource).toContain("watchPositionAsync");
+    expect(expoAdapterSource).toContain("distanceInterval: 10");
+    expect(expoAdapterSource).toContain("timeInterval: 10_000");
+    expect(cityMapSource).toContain("followUserLocation");
+    expect(cityMapSource).toContain("!hasUserLocation");
+    expect(cityMapSource).toContain("expoForegroundLocationAdapter.watchPosition");
+    expect(cityMapSource).toContain("stopWatching?.()");
   });
 
   it("uses the Expo Android provider, cached-fix, and fresh-fix APIs", () => {

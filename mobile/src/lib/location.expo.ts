@@ -60,4 +60,20 @@ export const expoForegroundLocationAdapter: ForegroundLocationAdapter = {
       longitude: result.coords.longitude,
     };
   },
+  async watchPosition(onLocation) {
+    const subscription = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.High,
+        distanceInterval: 10,
+        timeInterval: 10_000,
+      },
+      (result) => {
+        onLocation({
+          latitude: result.coords.latitude,
+          longitude: result.coords.longitude,
+        });
+      },
+    );
+    return () => subscription.remove();
+  },
 };

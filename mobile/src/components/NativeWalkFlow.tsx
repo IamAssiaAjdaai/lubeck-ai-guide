@@ -152,6 +152,7 @@ export function NativeWalkFlow({
     buildPresented.current = undefined;
   }, []);
   const [liveSession, setLiveSession] = useState<LiveWalkSession>();
+  const [foregroundPoint, setForegroundPoint] = useState<Point>();
   const [liveBusy, setLiveBusy] = useState(false);
   const [showManageWalk, setShowManageWalk] = useState(false);
   const [showLiveInspect, setShowLiveInspect] = useState(false);
@@ -625,7 +626,8 @@ export function NativeWalkFlow({
       await completeCitywalkLiveWalk();
       await clearCurrentWalk(citySlug, rebuildConfirmation.current);
       setJourney(undefined); setProposed(undefined); setPanel(undefined);
-      setLiveSession(undefined); setShowManageWalk(false); setShowLiveInspect(false);
+      setLiveSession(undefined); setForegroundPoint(undefined);
+      setShowManageWalk(false); setShowLiveInspect(false);
       setProposalMessage(""); setMessage(""); setBuildError(undefined);
       setStep(1); setMinutes(120); setReturnBy("");
       setInterests(["history", "architecture"]); setCategories([]); setWalking("balanced");
@@ -762,7 +764,7 @@ export function NativeWalkFlow({
     liveSession?.journeyId === journey.id
       ? buildLiveWalkPresentation(
           liveSession,
-          liveSession.lastPublished?.point ?? journey.position,
+          foregroundPoint ?? liveSession.lastPublished?.point ?? journey.position,
           now,
         )
       : undefined;
@@ -1108,10 +1110,16 @@ export function NativeWalkFlow({
               routeFinish={journey.finish}
               currentSlug={current?.slug}
               compact={stage === "active"}
+              followUserLocation={stage === "active"}
               onLocation={(point) => {
                 if (stage === "active") {
+                  setForegroundPoint(point);
+                  setJourney((currentJourney) =>
+                    currentJourney?.id === journey.id
+                      ? { ...currentJourney, position: point }
+                      : currentJourney,
+                  );
                   void publishForegroundLiveWalkLocation(point);
-                  void update({ ...journey, position: point });
                 }
               }}
             />

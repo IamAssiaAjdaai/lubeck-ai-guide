@@ -23,17 +23,19 @@ import { NativeIcon } from "./NativeIcon";
 
 const MAP_STYLE_URL = resolveMapStyleUrl();
 
-export function NativeCityMap({ citySlug, places, routeStart, routeFinish, currentSlug, onLocation, compact = false }: Readonly<{
+export function NativeCityMap({ citySlug, places, routeStart, routeFinish, currentSlug, onLocation, followUserLocation = false, compact = false }: Readonly<{
   citySlug?: string;
   places: readonly PublicPlaceCard[];
   routeStart?: { lat: number; lng: number };
   routeFinish?: { lat: number; lng: number };
   currentSlug?: string;
   onLocation?: (point: { lat: number; lng: number }) => void;
+  followUserLocation?: boolean;
   compact?: boolean;
 }>) {
   const { messages, locale } = useNativeLocale();
   const cameraRef = useRef<CameraRef>(null);
+  const onLocationRef = useRef(onLocation);
   const [locationStatus, setLocationStatus] = useState<NativeLocationStatus>("idle");
   const [userLocation, setUserLocation] = useState<NativeUserLocation>();
   const [mapFailed, setMapFailed] = useState(false);
@@ -50,6 +52,11 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
     ? [places[0].coordinates.lng, places[0].coordinates.lat]
     : [0, 0];
   const statusMessage = getLocationStatusMessage(locationStatus, messages);
+  const hasUserLocation = Boolean(userLocation);
+
+  useEffect(() => {
+    onLocationRef.current = onLocation;
+  }, [onLocation]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextState) => {
@@ -67,12 +74,38 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
     return () => subscription.remove();
   }, [locationStatus]);
 
+  useEffect(() => {
+    if (
+      !followUserLocation ||
+      !hasUserLocation ||
+      !expoForegroundLocationAdapter.watchPosition
+    ) return;
+
+    let alive = true;
+    let stopWatching: (() => void) | undefined;
+    void expoForegroundLocationAdapter.watchPosition((location) => {
+      if (!alive) return;
+      setUserLocation(location);
+      onLocationRef.current?.({
+        lat: location.latitude,
+        lng: location.longitude,
+      });
+    }).then((stop) => {
+      if (!alive) {
+        stop();
+        return;
+      }
+      stopWatching = stop;
+    }).catch(() => undefined);
+
+    return () => {
+      alive = false;
+      stopWatching?.();
+    };
+  }, [followUserLocation, hasUserLocation]);
+
   async function handleLocationRequest() {
     void triggerCitywalkHaptic("light");
-    if (userLocation) {
-      cameraRef.current?.easeTo({ center: [userLocation.longitude, userLocation.latitude], zoom: 15, duration: 350 });
-      return;
-    }
     setLocationStatus("requesting");
     const result = await requestForegroundLocation(expoForegroundLocationAdapter);
     setLocationStatus(result.status);

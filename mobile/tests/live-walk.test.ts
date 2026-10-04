@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 
+import liveWalkCardSource from "../src/components/NativeLiveWalkCard.tsx?raw";
+import nativeWalkFlowSource from "../src/components/NativeWalkFlow.tsx?raw";
+
 import {
   LIVE_WALK_ARRIVAL_SAMPLES,
   deriveLiveWalkTiming,
@@ -10,6 +13,20 @@ import {
 } from "../src/lib/liveWalk";
 
 describe("Live Walk execution semantics", () => {
+  it("uses the fresh foreground point for in-app next-stop distance", () => {
+    expect(nativeWalkFlowSource).toContain(
+      "foregroundPoint ?? liveSession.lastPublished?.point ?? journey.position",
+    );
+    expect(nativeWalkFlowSource).toContain('followUserLocation={stage === "active"}');
+    expect(nativeWalkFlowSource).toContain("setForegroundPoint(point)");
+  });
+
+  it("keeps the in-app Live Walk card on the light CITYWALK surface", () => {
+    expect(liveWalkCardSource).toContain("backgroundColor: colors.surface");
+    expect(liveWalkCardSource).toContain("borderColor: colors.borderStrong");
+    expect(liveWalkCardSource).not.toContain("#081624");
+  });
+
   it("formats domain meters explicitly and never lets Intl convert them to miles", () => {
     expect(formatLiveWalkDistance(620)).toBe("620 m");
     expect(formatLiveWalkDistance(999)).toBe("999 m");
