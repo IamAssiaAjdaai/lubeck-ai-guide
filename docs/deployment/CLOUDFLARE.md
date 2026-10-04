@@ -32,6 +32,8 @@ At minimum, configure the values CITYWALK actually uses, including:
 - `BETTER_AUTH_SECRET`
 - `BETTER_AUTH_URL=https://<production-domain>`
 - enabled Google / Apple auth credentials
+- `RESEND_API_KEY`
+- `CITYWALK_EMAIL_FROM` on a verified sender domain
 - S3-compatible media credentials
 - Upstash Redis credentials when Ask CITYWALK rate limiting is enabled
 - Stripe secrets when web checkout is enabled
@@ -43,6 +45,10 @@ Never commit these values.
 ### Important portability rule
 
 Outside Vercel, always set `BETTER_AUTH_URL` explicitly. Auth and checkout code otherwise have Vercel-specific URL fallbacks.
+
+For production, CITYWALK should use one canonical HTTPS web/API origin. Configure that same origin as `BETTER_AUTH_URL` on the Worker and as `EXPO_PUBLIC_CITYWALK_API_ORIGIN` in the EAS Production environment. Do not use a Vercel Preview hostname or a temporary `workers.dev` hostname as the final mobile production origin. A temporary Worker hostname is only for pre-cutover runtime smoke tests.
+
+The current Vercel fallback remains for existing Preview acceptance only. Cloudflare production must not depend on `VERCEL_URL` or `VERCEL_BRANCH_URL`.
 
 ## Database migrations
 
@@ -103,4 +109,4 @@ Verify on a Cloudflare preview / temporary hostname before moving the real domai
 10. Google Play test-purchase verification and push authorization
 11. admin core content/media flows
 
-The admin manifest path importer still assumes a host filesystem and should not be treated as a production Workers workflow until separately replaced by an upload-based import.
+The legacy content-image API no longer reads from the host filesystem or requires a native image-processing dependency; it redirects approved legacy assets to the static asset tree. The remaining manifest path loader uses `node:fs`, but it is currently consumed by the operator CLI import script rather than the traveler runtime. Keep that CLI outside the Worker deployment path unless it is later replaced by an upload-based import.
