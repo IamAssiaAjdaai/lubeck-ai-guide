@@ -3,7 +3,7 @@ import { bindings, defineConfig, defineWorker } from "cf/config";
 export default defineConfig({
   worker: defineWorker({
     name: "citywalk-production",
-    entrypoint: "vinext/server/fetch-handler",
+    entrypoint: "./src/cloudflare/entrypoint.ts",
     compatibilityDate: "2026-10-03",
     compatibilityFlags: ["nodejs_compat"],
     assets: { notFoundHandling: "none" },
@@ -11,7 +11,10 @@ export default defineConfig({
       ASSETS: bindings.assets(),
       CITYWALK_CONTENT_SOURCE: bindings.text("database"),
       CITYWALK_MEDIA_STORAGE: bindings.text("s3"),
-      DATABASE_URL: bindings.secret(),
+      CITYWALK_DATABASE_RUNTIME: bindings.text("hyperdrive"),
+      HYPERDRIVE: bindings.hyperdrive({
+        id: "390958927c2946be8571ec5282b35ce6",
+      }),
       BETTER_AUTH_SECRET: bindings.secret(),
       BETTER_AUTH_URL: bindings.secret(),
       RESEND_API_KEY: bindings.secret(),
