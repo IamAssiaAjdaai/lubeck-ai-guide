@@ -16,7 +16,7 @@ describe("public image variants", () => {
       hero: { width: 1600, quality: 82 },
     });
     expect(isPublicImageVariant("card")).toBe(true);
-    expect(isPublicImageVariant("original")).toBe(false);
+    expect(isPublicImageVariant("original")).toBe(false);\n    expect(isPublicImageVariant("constructor")).toBe(false);\n    expect(isPublicImageVariant("__proto__")).toBe(false);
   });
 
   it("keeps storage keys private and preserves encoded legacy paths", () => {
