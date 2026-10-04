@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 
 import type { LiveWalkPresentation } from "../lib/liveWalkPresentation";
-import { radius, shadows, spacing } from "../design/tokens";
+import { colors, radius, shadows, spacing } from "../design/tokens";
 import { AppText, Card, PrimaryButton } from "./ui";
 import { NativeIcon } from "./NativeIcon";
 
@@ -40,7 +40,7 @@ export function NativeLiveWalkCard({
                 ? "undo"
                 : "place"
           }
-          color="#6EB6FF"
+          color={colors.primary}
           size={22}
         />
         <AppText variant="metadata" style={styles.state}>
@@ -54,14 +54,14 @@ export function NativeLiveWalkCard({
 
       {props.storyLabel ? (
         <View style={styles.distanceRow}>
-          <NativeIcon ios="book" android="menu_book" color="#C9D8E8" size={18} />
+          <NativeIcon ios="book" android="menu_book" color={colors.textMuted} size={18} />
           <AppText variant="label" style={styles.primaryMeta}>
             {props.storyLabel}
           </AppText>
         </View>
       ) : props.distanceEta ? (
         <View style={styles.distanceRow}>
-          <NativeIcon ios="figure.walk" android="directions_walk" color="#FFFFFF" size={20} />
+          <NativeIcon ios="figure.walk" android="directions_walk" color={colors.text} size={20} />
           <AppText variant="label" style={styles.primaryMeta}>
             {props.distanceEta}
           </AppText>
@@ -85,7 +85,7 @@ export function NativeLiveWalkCard({
       <View style={styles.timingRow}>
         <View style={styles.timingBlock}>
           <View style={styles.metaRow}>
-            <NativeIcon ios="clock" android="schedule" color="#DCE8F4" size={18} />
+            <NativeIcon ios="clock" android="schedule" color={colors.textMuted} size={18} />
             <AppText variant="label" style={styles.finishPrimary}>
               {props.remainingLabel}
             </AppText>
@@ -101,7 +101,7 @@ export function NativeLiveWalkCard({
               <AppText variant="label" style={styles.schedule}>
                 {props.scheduleLabel ?? props.deadlineLabel}
               </AppText>
-              <NativeIcon ios="checkmark" android="check" color="#77B8FF" size={16} />
+              <NativeIcon ios="checkmark" android="check" color={colors.primary} size={16} />
             </View>
             {props.scheduleLabel && props.deadlineLabel ? (
               <AppText variant="metadata" style={styles.secondary}>
@@ -178,15 +178,15 @@ function ProgressDots({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#081624",
-    borderColor: "#173249",
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
     borderRadius: 28,
     gap: 10,
     padding: spacing.md,
     ...shadows.card,
   },
   liveLabel: {
-    color: "#6EB6FF",
+    color: colors.primary,
     fontWeight: "800",
     letterSpacing: 2.4,
   },
@@ -197,11 +197,11 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   state: {
-    color: "#AFC0CE",
+    color: colors.textMuted,
     fontWeight: "600",
   },
   destination: {
-    color: "#FFFFFF",
+    color: colors.text,
     fontSize: 28,
     lineHeight: 34,
     fontWeight: "800",
@@ -212,8 +212,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.sm,
   },
-  primaryMeta: { color: "#E7EEF5", fontSize: 17, lineHeight: 23 },
-  secondary: { color: "#AFC0CE" },
+  primaryMeta: { color: colors.text, fontSize: 17, lineHeight: 23 },
+  secondary: { color: colors.textMuted },
   progress: {
     minHeight: 28,
     flexDirection: "row",
@@ -229,9 +229,9 @@ const styles = StyleSheet.create({
   connector: {
     flex: 1,
     height: 2,
-    backgroundColor: "#45596C",
+    backgroundColor: colors.borderStrong,
   },
-  connectorComplete: { backgroundColor: "#6EB6FF" },
+  connectorComplete: { backgroundColor: colors.primary },
   dotOuter: {
     width: 16,
     height: 16,
@@ -240,11 +240,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  dotComplete: { backgroundColor: "#6EB6FF" },
+  dotComplete: { backgroundColor: colors.primary },
   dotActive: {
     width: 26,
     height: 26,
-    backgroundColor: "#6EB6FF",
+    backgroundColor: colors.primary,
   },
   dotInner: {
     width: 14,
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: "#2C4255",
+    backgroundColor: colors.border,
     marginTop: spacing.xs,
   },
   timingRow: {
@@ -266,10 +266,10 @@ const styles = StyleSheet.create({
   timingBlock: { flex: 1, minWidth: 0, gap: 2 },
   timingRight: { alignItems: "flex-end" },
   metaRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  finishPrimary: { color: "#FFFFFF", fontWeight: "700" },
-  schedule: { color: "#77B8FF", fontWeight: "700", textAlign: "right" },
+  finishPrimary: { color: colors.text, fontWeight: "700" },
+  schedule: { color: colors.primary, fontWeight: "700", textAlign: "right" },
   continueButton: {
     marginTop: spacing.xs,
-    backgroundColor: "#2E86E6",
+    backgroundColor: colors.primary,
   },
 });
