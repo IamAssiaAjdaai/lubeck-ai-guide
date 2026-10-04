@@ -298,7 +298,6 @@ it("localizes planner itinerary names and keeps the selected stop identity", () 
 
 vi.mock("../src/components/WalkMembershipControl", () => ({ WalkMembershipControl: () => null }));
 
-
 describe("Expo Router Slot-bound card styles", () => {
   it.each(["en", "de", "ar"] as const)("renders place links with an object style and preserved direction in %s", locale => {
     state.locale = locale;
@@ -374,7 +373,9 @@ it.each(["en", "de", "da", "sv", "nl", "es", "ar"] as const)("adapts quick actio
     state.fontScale = scale; view.rerender(<CityScreen />);
     const quick = screen.getByRole("button", { name: t.places });
     const style = JSON.parse(quick.dataset.style!);
-    expect(style.width).toBe(scale === 1 ? 79.5 : scale === 3 ? 342 : 167);
+    // Three normal shortcuts share the 342-point content width with two 8-point gaps.
+    expect(style.width).toBeCloseTo(scale === 1 ? (342 - 2 * 8) / 3 : scale === 3 ? 342 : 167);
+    expect(within(screen.getByTestId("city-hub-quick-actions")).getAllByRole("button")).toHaveLength(3);
     expect(style.height).toBeUndefined();
     const start = screen.getByText(getNativeMessages(locale).startTour);
     const linkStyle = JSON.parse(start.closest("a")!.dataset.childStyle!);

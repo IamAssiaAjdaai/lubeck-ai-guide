@@ -48,7 +48,7 @@ import { parseCityRouteIdentity } from "../../../lib/routing";
 import { useNativeLocale } from "../../../localization/LocaleProvider";
 
 export default function CityScreen() {
-  const textLayout = useResponsiveTextLayout();
+  const textLayout = useResponsiveTextLayout(3);
   const params = useLocalSearchParams<{
     citySlug?: string | string[];
     section?: string;
@@ -137,7 +137,7 @@ export default function CityScreen() {
                 }
               />
             </Link>
-            <View style={[styles.quickActions, { direction: appDirection }]}>
+            <View testID="city-hub-quick-actions" style={[styles.quickActions, { direction: appDirection }]}>
               <PrimaryButton
                 compact
                 style={StyleSheet.flatten([styles.quickAction, { flex: 0, width: textLayout.quickWidth }])}
@@ -151,7 +151,7 @@ export default function CityScreen() {
                   })
                 }
                 leadingIcon={
-                  <NativeIcon ios="map" android="map" color={colors.primary} />
+                  <NativeIcon ios="map" android="map" color={colors.primary} size={20} />
                 }
               />
               <PrimaryButton
@@ -166,6 +166,7 @@ export default function CityScreen() {
                     ios="mappin.and.ellipse"
                     android="place"
                     color={colors.primary}
+                    size={20}
                   />
                 }
                 onPress={() => {
@@ -188,29 +189,10 @@ export default function CityScreen() {
                   });
                 }}
               />
-              <Link
-                href={{ pathname: "/saved", params: { citySlug: city.slug } }}
-                asChild
-              >
-                <PrimaryButton
-                  compact
-                  style={StyleSheet.flatten([styles.quickAction, { flex: 0, width: textLayout.quickWidth }])}
-                  tone="secondary"
-                  label={t.saved}
-                  wrapLabel
-                  leadingIcon={
-                    <NativeIcon
-                      ios="heart"
-                      android="favorite_border"
-                      color={colors.primary}
-                    />
-                  }
-                />
-              </Link>
               <Link href={cityAssistantRoute(city.slug)} asChild>
                 <PrimaryButton compact style={StyleSheet.flatten([styles.quickAction, { flex: 0, width: textLayout.quickWidth }])} tone="secondary"
                   label={t.ask} wrapLabel
-                  leadingIcon={<NativeIcon ios="bubble.left" android="chat_bubble_outline" color={colors.primary} />} />
+                  leadingIcon={<NativeIcon ios="bubble.left" android="chat_bubble_outline" color={colors.primary} size={20} />} />
               </Link>
             </View>
             {locationMessage ? (
@@ -508,7 +490,7 @@ const styles = StyleSheet.create({
   quickAction: {
     flex: 1,
     minWidth: 0,
-    minHeight: 90,
+    minHeight: 64,
     paddingHorizontal: spacing.xs,
   },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
