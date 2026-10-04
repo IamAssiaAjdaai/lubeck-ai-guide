@@ -20,6 +20,7 @@ export default defineConfig({
     "./src/db/authSchema.ts",
     "./src/db/travelerSchema.ts",
     "./src/db/commerceSchema.ts",
+    "./src/db/rateLimitSchema.ts",
   ],
   out: "./drizzle",
   ...(databaseUrl
