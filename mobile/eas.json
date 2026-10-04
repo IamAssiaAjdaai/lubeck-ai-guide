@@ -47,7 +47,8 @@
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_CITYWALK_ENV": "production"
-      }
+      },
+      "environment": "production"
     },
     "billing-sandbox": {
       "developmentClient": true,
