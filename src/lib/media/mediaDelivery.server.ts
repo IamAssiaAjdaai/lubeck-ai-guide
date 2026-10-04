@@ -1,10 +1,7 @@
 import "server-only";
 
 import { getMediaObjectStore } from "@/lib/media/storage/storage.server";
-import {
-  publicImageResponse,
-  transformPublicImage,
-} from "@/lib/media/imageTransform.server";
+import { storedImageVariantKey } from "@/lib/media/imageVariantGeneration.server";
 import type { PublicImageVariant } from "@/lib/media/types";
 
 export const PUBLIC_MEDIA_CACHE_CONTROL =
@@ -75,10 +72,19 @@ export async function deliverPublicImageVariant(
   variant: PublicImageVariant,
 ): Promise<Response> {
   try {
-    const object = await getMediaObjectStore().readObject(asset.objectKey);
+    const object = await getMediaObjectStore().readObject(
+      storedImageVariantKey(asset.objectKey, variant),
+    );
     if (!object) return mediaUnavailableResponse();
-    const source = await new Response(object.body).arrayBuffer();
-    return publicImageResponse(await transformPublicImage(source, variant));
+    const headers = new Headers({
+      "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000",
+      "Content-Type": "image/webp",
+      "X-Content-Type-Options": "nosniff",
+    });
+    if (object.contentLength !== undefined) {
+      headers.set("Content-Length", String(object.contentLength));
+    }
+    return new Response(object.body, { headers });
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
       console.error(
