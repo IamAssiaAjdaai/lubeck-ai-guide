@@ -11,6 +11,13 @@ import savedSource from "../src/app/saved.tsx?raw";
 import accountSource from "../src/app/account/index.tsx?raw";
 
 describe("native city experience parity", () => {
+  it("keeps Places filters compact without a redundant Map heading", () => {
+    expect(citySource).toContain("styles.placeControls");
+    const hiddenHeadings = citySource.match(/showHeading=\{false\}/g) ?? [];
+    expect(hiddenHeadings.length).toBeGreaterThanOrEqual(2);
+    expect(citySource).toContain("placeControls: { gap: spacing.sm }");
+  });
+
   it("keeps suggested walks compact and factual", () => {
     expect(citySource).toContain('variant="cardTitle"');
     expect(citySource).toContain("styles.tourImage");

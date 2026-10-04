@@ -226,28 +226,31 @@ export default function CityScreen() {
               }}
             >
               <SectionTitle>{messages.places}</SectionTitle>
-              <WalkChoices
-                label={messages.places}
-                showHeading={false}
-                variant="segment"
-                compact
-                options={(["all", "see", "eat", "fun"] as const).map(
-                  (value) => ({ value, label: labels[value] }),
-                )}
-                selected={[category]}
-                onSelect={setCategory}
-              />
-              <WalkChoices
-                label={messages.map}
-                variant="segment"
-                compact
-                options={[
-                  { value: "list", label: labels.list },
-                  { value: "map", label: labels.map },
-                ]}
-                selected={[mapVisible ? "map" : "list"]}
-                onSelect={(value) => setMapVisible(value === "map")}
-              />
+              <View style={styles.placeControls}>
+                <WalkChoices
+                  label={messages.places}
+                  showHeading={false}
+                  variant="segment"
+                  compact
+                  options={(["all", "see", "eat", "fun"] as const).map(
+                    (value) => ({ value, label: labels[value] }),
+                  )}
+                  selected={[category]}
+                  onSelect={setCategory}
+                />
+                <WalkChoices
+                  label={messages.map}
+                  showHeading={false}
+                  variant="segment"
+                  compact
+                  options={[
+                    { value: "list", label: labels.list },
+                    { value: "map", label: labels.map },
+                  ]}
+                  selected={[mapVisible ? "map" : "list"]}
+                  onSelect={(value) => setMapVisible(value === "map")}
+                />
+              </View>
               {mapVisible ? <NativeCityMap citySlug={city.slug} places={visiblePlaces} /> : null}
             </View>
           </MotionView>
@@ -502,6 +505,7 @@ const styles = StyleSheet.create({
   },
   cityIntroduction: { gap: spacing.sm },
   section: { gap: spacing.md },
+  placeControls: { gap: spacing.sm },
   placeImage: {
     width: "37%",
     minHeight: 150,
