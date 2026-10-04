@@ -48,7 +48,7 @@
     "start:vinext": "vite preview",
     "deploy:vinext": "vinext-cloudflare deploy",
     "deploy:vinext:dry-run": "vinext-cloudflare deploy --dry-run",
-    "rate-limit:test:integration": "tsx scripts/run-rate-limit-integration-tests.ts"
+    "rate-limit:test:integration": "node --conditions=react-server --import tsx scripts/run-rate-limit-integration-tests.ts"
   },
   "dependencies": {
     "@apple/app-store-server-library": "3.1.0",
