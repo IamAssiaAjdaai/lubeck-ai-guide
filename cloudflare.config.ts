@@ -22,8 +22,6 @@ export default defineConfig({
       CITYWALK_MEDIA_S3_ACCESS_KEY_ID: bindings.secret(),
       CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY: bindings.secret(),
       GROQ_API_KEY: bindings.secret(),
-      UPSTASH_REDIS_REST_URL: bindings.secret(),
-      UPSTASH_REDIS_REST_TOKEN: bindings.secret(),
     },
   }),
 });
