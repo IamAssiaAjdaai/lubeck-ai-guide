@@ -103,7 +103,7 @@ describe("real membership/button presentation (native bridges mocked)", () => {
     expect(screen.getByText(t.add).dataset.fit).toBe("false");
     expect(screen.getByText(t.add).dataset.scaling).not.toBe("false");
     const row = screen.getByText(t.add).parentElement!;
-    expect(JSON.parse(row.dataset.style!)).toMatchObject({ flexDirection: "row", direction: locale === "ar" ? "rtl" : "ltr" });
+    expect(JSON.parse(row.dataset.style!)).toMatchObject({ width: "auto", maxWidth: "100%", flexDirection: "row", direction: locale === "ar" ? "rtl" : "ltr" });
 
     state.included = true;
     rerender(<WalkMembershipControl citySlug="lubeck" placeSlug="holstentor" dense inline />);
@@ -112,6 +112,7 @@ describe("real membership/button presentation (native bridges mocked)", () => {
     expect(remove.dataset.hint).toBe(t.included);
     expect(within(remove).getByTestId("membership-icon").dataset.icon).toBe("checkmark");
     expect(screen.getByText(t.remove).dataset.lines).toBeUndefined();
+    expect(JSON.parse(screen.getByText(t.remove).parentElement!.dataset.style!)).toMatchObject({ width: "auto", maxWidth: "100%" });
     expect(screen.getAllByRole("button")).toHaveLength(1);
   });
 
@@ -136,5 +137,6 @@ describe("real membership/button presentation (native bridges mocked)", () => {
     expect(buttonStyle(add)).toMatchObject({ alignSelf: "stretch", minHeight: 64, backgroundColor: colors.primary });
     expect(buttonStyle(add).maxWidth).toBeUndefined();
     expect(within(add).getByTestId("membership-icon").dataset.color).toBe("#FFFFFF");
+    expect(JSON.parse(screen.getByText(uxCopy("en").add).parentElement!.dataset.style!)).toMatchObject({ width: "100%" });
   });
 });

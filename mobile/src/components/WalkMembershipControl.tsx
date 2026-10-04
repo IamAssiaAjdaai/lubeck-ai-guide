@@ -29,6 +29,7 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
     alignSelf: inline ? "flex-start" : "stretch",
     ...(inline ? { maxWidth: "100%" as const } : {}),
   } : undefined;
+  const actionContentStyle: ViewStyle | undefined = inline ? { width: "auto", maxWidth: "100%" } : undefined;
   const actionTone = inline ? "secondary" as const : undefined;
   const membershipCheck = <View accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants"><NativeIcon ios="checkmark" android="check" size={18} color={colors.primary} /></View>;
   async function change(action: "add" | "remove") {
@@ -50,11 +51,11 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
   if (readOnly) return included ? <View accessible accessibilityLabel={t.included} accessibilityLiveRegion="polite">{membershipCheck}</View> : null;
   if (onlyMember && !included && !busy && !error) return null;
   return <View style={{ gap: spacing.sm, alignSelf: "stretch" }}>
-    {state.status === "loading" ? <PrimaryButton compact={compact} wrapLabel style={actionStyle} tone={actionTone} label={t.checking} busy disabled />
-      : state.status === "error" ? <><StatusMessage>{t.failed}</StatusMessage><PrimaryButton compact={compact} wrapLabel style={actionStyle} tone={actionTone} label={messages.retry} onPress={() => void state.retry()} /></>
-      : included ? <PrimaryButton compact={compact} wrapLabel style={actionStyle} label={busy === "remove" ? t.removing : t.remove} leadingIcon={membershipCheck} accessibilityHint={t.included} accessibilityState={{ selected: true }} busy={Boolean(busy)} tone="secondary" onPress={() => void change("remove")} />
-      : <PrimaryButton compact={compact} wrapLabel style={actionStyle} tone={actionTone} label={busy ? t.adding : t.add} leadingIcon={compact || inline ? <NativeIcon ios="plus" android="add" size={18} color={inline ? colors.primary : "#FFFFFF"} /> : undefined} busy={Boolean(busy)} onPress={() => void change("add")} />}
+    {state.status === "loading" ? <PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone={actionTone} label={t.checking} busy disabled />
+      : state.status === "error" ? <><StatusMessage>{t.failed}</StatusMessage><PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone={actionTone} label={messages.retry} onPress={() => void state.retry()} /></>
+      : included ? <PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} label={busy === "remove" ? t.removing : t.remove} leadingIcon={membershipCheck} accessibilityHint={t.included} accessibilityState={{ selected: true }} busy={Boolean(busy)} tone="secondary" onPress={() => void change("remove")} />
+      : <PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone={actionTone} label={busy ? t.adding : t.add} leadingIcon={compact || inline ? <NativeIcon ios="plus" android="add" size={18} color={inline ? colors.primary : "#FFFFFF"} /> : undefined} busy={Boolean(busy)} onPress={() => void change("add")} />}
     {error ? <StatusMessage>{error}</StatusMessage> : null}
-    {error === t.budget ? <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild><PrimaryButton compact={compact} wrapLabel style={actionStyle} tone="secondary" label={walkCopy(locale).customize} /></Link> : null}
+    {error === t.budget ? <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild><PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone="secondary" label={walkCopy(locale).customize} /></Link> : null}
   </View>;
 }
