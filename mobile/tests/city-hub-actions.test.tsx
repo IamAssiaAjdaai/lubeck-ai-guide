@@ -2,11 +2,11 @@
 import React from "react";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { PublicPlaceCard } from "../src/lib/api/contracts";
+import type { NativeLocale, PublicPlaceCard } from "../src/lib/api/contracts";
 
 type LayoutEvent = { nativeEvent: { layout: { y: number } } };
 const state = vi.hoisted(() => ({
-  width: 390, fontScale: 1, locale: "en", citySlug: "lubeck",
+  width: 390, fontScale: 1, locale: "en" as NativeLocale, citySlug: "lubeck",
   scrollToOffset: vi.fn(), requestLocation: vi.fn(),
   headerLayout: undefined as ((event: LayoutEvent) => void) | undefined,
   placesLayout: undefined as ((event: LayoutEvent) => void) | undefined,
@@ -115,7 +115,7 @@ function routeFor(button: HTMLElement) {
 }
 
 describe("focused native City Hub actions (native bridges mocked)", () => {
-  it.each(["en", "de", "da", "sv", "nl", "es", "ar"])("offers three secondary shortcuts and one primary builder in %s", locale => {
+  it.each(["en", "de", "da", "sv", "nl", "es", "ar"] as const)("offers three secondary shortcuts and one primary builder in %s", locale => {
     state.locale = locale;
     render(<CityScreen />);
     const t = walkCopy(locale);
@@ -138,7 +138,7 @@ describe("focused native City Hub actions (native bridges mocked)", () => {
     expect(state.requestLocation).not.toHaveBeenCalled();
   });
 
-  it.each([320, 390, 430])("adapts three actions live to larger text at width %s without clipping labels", width => {
+  it.each([320, 390, 430])("adapts three actions live to larger text at width %s without clamping labels", width => {
     state.width = width;
     const view = render(<CityScreen />);
     for (const scale of [1, 1.1, 1.3, 2, 3, 1]) {
