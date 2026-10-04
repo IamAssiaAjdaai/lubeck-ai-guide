@@ -1,13 +1,9 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
 import { cities } from "@/data/cities";
 import { lubeckPlaces } from "@/data/places";
-import { isPublicImageVariant } from "@/lib/media/imageVariants";
 import {
-  publicImageResponse,
-  transformPublicImage,
-} from "@/lib/media/imageTransform.server";
+  isPublicImageVariant,
+  legacyImageVariantPath,
+} from "@/lib/media/imageVariants";
 import { mediaUnavailableResponse } from "@/lib/media/mediaDelivery.server";
 
 export const runtime = "nodejs";
@@ -25,11 +21,9 @@ export async function GET(request: Request): Promise<Response> {
   if (!source || !legacyImages.has(source) || !isPublicImageVariant(variant)) {
     return mediaUnavailableResponse();
   }
-  try {
-    const relativePath = source.replace(/^\/+/, "");
-    const bytes = await readFile(path.join(process.cwd(), "public", relativePath));
-    return publicImageResponse(await transformPublicImage(bytes, variant));
-  } catch {
-    return mediaUnavailableResponse();
-  }
+
+  return Response.redirect(
+    new URL(legacyImageVariantPath(source, variant), request.url),
+    307,
+  );
 }
