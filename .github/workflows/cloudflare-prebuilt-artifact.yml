@@ -25,6 +25,9 @@ jobs:
       - name: Build Cloudflare Worker target
         run: npm run build:vinext
 
+      - name: Verify vinext SSR module
+        run: test -f .cloudflare/output/v0/workers/default/bundle/ssr/index.js
+
       - name: Validate deploy path without upload
         run: npm run deploy:vinext:dry-run
 
