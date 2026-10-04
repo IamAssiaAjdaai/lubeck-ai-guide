@@ -49,3 +49,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /lubeck-ai-guide/
+
+# generated at build time; shipped as static assets
+/public/generated/image-variants/
