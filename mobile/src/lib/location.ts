@@ -20,6 +20,9 @@ export type ForegroundLocationAdapter = Readonly<{
   openLocationSettings?(): Promise<void>;
   getLastKnownPosition?(): Promise<NativeUserLocation | undefined>;
   getCurrentPosition(): Promise<NativeUserLocation>;
+  watchPosition?(
+    onLocation: (location: NativeUserLocation) => void,
+  ): Promise<() => void>;
 }>;
 
 export type NativeLocationResult =
