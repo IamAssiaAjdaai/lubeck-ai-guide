@@ -20,6 +20,7 @@ import {
   type AudioDurationExtractor,
 } from "@/lib/media/audioMetadata.server";
 import { parseExternalVideoUrl } from "@/lib/media/externalVideo";
+import { generateStoredImageVariants } from "@/lib/media/imageVariantGeneration.server";
 import {
   validateMediaPurpose,
   validateUploadedObject,
@@ -123,6 +124,9 @@ export async function finalizeAuthorizedUpload(
       initialBytes,
     },
   );
+  if (asset.kind === "image") {
+    await generateStoredImageVariants(store, asset.objectKey);
+  }
   const durationSeconds =
     asset.kind === "audio"
       ? await safelyExtractAudioDuration(extractDuration, {
