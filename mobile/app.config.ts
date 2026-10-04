@@ -7,6 +7,41 @@ const DEVELOPMENT_HTTP_PLUGIN = "./plugins/with-development-http.js";
 export const CITYWALK_STORE_IDENTIFIER = "com.citywalk.app";
 export const CITYWALK_DEVELOPMENT_IDENTIFIER = `${CITYWALK_STORE_IDENTIFIER}.dev`;
 
+export function assertProductionBuildEnvironment(
+  environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
+  configuredOrigin = process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN,
+): void {
+  if (environment !== "production") return;
+  const origin = configuredOrigin?.trim();
+  if (!origin) {
+    throw new Error(
+      "Production builds require EXPO_PUBLIC_CITYWALK_API_ORIGIN.",
+    );
+  }
+
+  let url: URL;
+  try {
+    url = new URL(origin);
+  } catch {
+    throw new Error(
+      "Production EXPO_PUBLIC_CITYWALK_API_ORIGIN must be an absolute HTTPS origin.",
+    );
+  }
+
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.pathname !== "/" ||
+    url.search ||
+    url.hash
+  ) {
+    throw new Error(
+      "Production EXPO_PUBLIC_CITYWALK_API_ORIGIN must be an absolute HTTPS origin.",
+    );
+  }
+}
+
 export function createCitywalkExpoConfig(
   config: Partial<ExpoConfig>,
   environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
@@ -66,5 +101,8 @@ export function createCitywalkExpoConfig(
   };
 }
 
-export default ({ config }: ConfigContext): ExpoConfig =>
-  createCitywalkExpoConfig(config);
+export default ({ config }: ConfigContext): ExpoConfig => {
+  const environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development";
+  assertProductionBuildEnvironment(environment);
+  return createCitywalkExpoConfig(config, environment);
+};
