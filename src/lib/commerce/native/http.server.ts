@@ -1,8 +1,6 @@
 import "server-only";
-import { createHmac } from "node:crypto";
-import { Redis } from "@upstash/redis";
-import { Ratelimit } from "@upstash/ratelimit";
 import { getAuth } from "@/lib/auth/server";
+import { consumeDatabaseRateLimit } from "@/lib/databaseRateLimit.server";
 import { NativeBillingError, requireSandbox } from "./config.server";
 export const nativeJson = (value: unknown, status = 200) => Response.json(value, { status, headers: { "Cache-Control": "private, no-store" } });
 export function nativeFailure(error: unknown) { return nativeJson({ code: error instanceof NativeBillingError ? error.code : "UNAVAILABLE" }, error instanceof NativeBillingError ? error.status : 503); }
@@ -15,13 +13,18 @@ export async function nativeUser(request: Request) {
   return session.user.id;
 }
 export async function limitNativeVerification(userId: string) {
-  const url = process.env.UPSTASH_REDIS_REST_URL, token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) throw new NativeBillingError("UNAVAILABLE");
-  const limiter = new Ratelimit({ redis: new Redis({ url, token }), prefix: "citywalk-native-sandbox-verification", limiter: Ratelimit.slidingWindow(30, "1 m"), analytics: false });
-  const key = createHmac("sha256", process.env.CITYWALK_NATIVE_ACCOUNT_SECRET!).update(userId).digest("hex");
-  const result = await limiter.limit(key);
-  if (result.reason === "timeout") throw new NativeBillingError("UNAVAILABLE");
-  if (!result.success) throw new NativeBillingError("RATE_LIMITED", 429);
+  try {
+    const result = await consumeDatabaseRateLimit({
+      scope: "citywalk-native-sandbox-verification",
+      identifier: userId,
+      maxRequests: 30,
+      windowMs: 60 * 1_000,
+    });
+    if (!result.success) throw new NativeBillingError("RATE_LIMITED", 429);
+  } catch (error) {
+    if (error instanceof NativeBillingError) throw error;
+    throw new NativeBillingError("UNAVAILABLE");
+  }
 }
 export async function nativeBody(request: Request): Promise<Record<string, unknown>> {
   if (!request.headers.get("content-type")?.startsWith("application/json")) throw new NativeBillingError("INVALID_PURCHASE", 415);
