@@ -30,3 +30,6 @@ jobs:
 
       - name: Build Cloudflare Worker target
         run: npm run build:vinext
+
+      - name: Validate production deploy without upload
+        run: npm run deploy:vinext:dry-run
