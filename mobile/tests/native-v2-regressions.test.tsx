@@ -337,7 +337,10 @@ describe("image-overlay discovery heroes", () => {
     expect(within(hero).getByText(subtitle)).toBeTruthy();
     expect(screen.getAllByText(title)).toHaveLength(1);
     expect(within(hero).getByTestId("content-image")).toBeTruthy();
-    const frame = JSON.parse(hero.dataset.style!);
+    const serializedFrame = JSON.parse(hero.dataset.style!);
+    const frame = Array.isArray(serializedFrame)
+      ? Object.assign({}, ...serializedFrame.filter(Boolean))
+      : serializedFrame;
     expect(frame.height).toBeUndefined();
     expect(frame.maxHeight).toBeUndefined();
     expect(frame.minHeight).toBe(244);
@@ -345,6 +348,18 @@ describe("image-overlay discovery heroes", () => {
     expect(textStyles).toContain(locale === "ar" ? '"textAlign":"right"' : '"textAlign":"left"');
     expect(within(hero).getByTestId("content-image").dataset.style).not.toMatch(/scaleX|rotate/);
   });
+  it("keeps compact Home hero flexible with the smaller minimum", () => {
+    render(<ImageOverlayHero compact title="Home" subtitle="Explore" />);
+    const hero = screen.getByTestId("image-overlay-hero");
+    const serializedFrame = JSON.parse(hero.dataset.style!);
+    const frame = Array.isArray(serializedFrame)
+      ? Object.assign({}, ...serializedFrame.filter(Boolean))
+      : serializedFrame;
+    expect(frame.height).toBeUndefined();
+    expect(frame.maxHeight).toBeUndefined();
+    expect(frame.minHeight).toBe(196);
+  });
+
   it.each([[342, 244], [280, 460], [760, 244]])("fills a %s × %s frame with the approved source region without distortion", (width, height) => {
     const crop = waterfrontCrop(width, height);
     const scale = crop.width / 1200;
