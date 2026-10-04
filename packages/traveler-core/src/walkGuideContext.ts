@@ -2,6 +2,10 @@ import type { TourBuilderPlace } from "./tourBuilder";
 import { isEligibleTourPlace } from "./tourBuilder";
 import { interestTags, type Interest, type Point } from "./walkPlanner";
 export type WalkGuidePromptContext = {
+  currentStopSlug: string | null;
+  currentStopNumber: number | null;
+  totalStops: number;
+  nextStopSlug: string | null;
   visited: string[];
   remaining: string[];
   interests: Interest[];
@@ -66,6 +70,7 @@ export function resolveWalkGuideContext(
     return;
   const published = new Map(places.map((place) => [place.slug, place]));
   if (
+    value.visited.some((slug) => value.remaining!.includes(slug)) ||
     !value.visited.every((slug) => published.has(slug)) ||
     !value.remaining.every(
       (slug) =>
@@ -93,11 +98,16 @@ export function resolveWalkGuideContext(
 /**
  * Privacy-minimized metadata safe to send to an external language model.
  * Precise route coordinates and deadline timestamps stay inside CITYWALK.
+ * Progress describes the current itinerary after skips/removals, not its original length.
  */
 export function toWalkGuidePromptContext(
   context: WalkGuideContext,
 ): WalkGuidePromptContext {
   return {
+    currentStopSlug: context.remaining[0] ?? null,
+    currentStopNumber: context.remaining.length ? context.visited.length + 1 : null,
+    totalStops: context.visited.length + context.remaining.length,
+    nextStopSlug: context.remaining[1] ?? null,
     visited: [...context.visited],
     remaining: [...context.remaining],
     interests: [...context.interests],

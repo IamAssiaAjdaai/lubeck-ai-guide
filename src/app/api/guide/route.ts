@@ -186,7 +186,8 @@ export async function POST(request: Request) {
     }
 
     const walkContext = resolveWalkGuideContext(body.walkContext, snapshot.places, placeSlug);
-    const walkPromptContext = walkContext
+    // Keep one navigation source: a resolved published tour retains precedence.
+    const walkPromptContext = !tourContext && walkContext
       ? toWalkGuidePromptContext(walkContext)
       : undefined;
     const history = parseGuideHistory(body.history);
@@ -199,6 +200,7 @@ export async function POST(request: Request) {
       },
       locale,
       tourContext,
+      walkContext: walkPromptContext,
       knowledge,
     });
     const currentTurnQuestion = [

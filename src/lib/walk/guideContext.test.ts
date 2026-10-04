@@ -74,6 +74,10 @@ describe("traveler walk context boundary", () => {
 
     const promptContext = toWalkGuidePromptContext(resolved!);
     expect(promptContext).toEqual({
+      currentStopSlug: "holstentor",
+      currentStopNumber: 1,
+      totalStops: 1,
+      nextStopSlug: null,
       visited: [],
       remaining: ["holstentor"],
       interests: ["architecture"],
@@ -88,4 +92,49 @@ describe("traveler walk context boundary", () => {
     expect(JSON.stringify(promptContext)).not.toMatch(/53\.86|10\.68|53\.870123|10\.690456|1800000000000/);
   });
 
+  it("derives current/next and progress from normalized stops, never client claims", () => {
+    const resolved = resolveWalkGuideContext({
+      ...context,
+      visited: ["rathaus", "rathaus"],
+      remaining: ["holstentor", "holstentor", "marienkirche"],
+      currentStopNumber: 99,
+      totalStops: 999,
+      nextStopSlug: "invented",
+    }, lubeckPlaces, "holstentor");
+    expect(resolved).toBeDefined();
+    expect(toWalkGuidePromptContext(resolved!)).toMatchObject({
+      currentStopSlug: "holstentor",
+      currentStopNumber: 2,
+      totalStops: 3,
+      nextStopSlug: "marienkirche",
+      visited: ["rathaus"],
+      remaining: ["holstentor", "marienkirche"],
+    });
+  });
+
+  it("rejects a stop reported as both visited and remaining", () => {
+    for (const visited of [["holstentor"], ["marienkirche"]]) {
+      expect(resolveWalkGuideContext({
+        ...context, visited, remaining: ["holstentor", "marienkirche"],
+      }, lubeckPlaces, "holstentor")).toBeUndefined();
+    }
+  });
+
+  it("does not invent a next stop or progress for an empty itinerary", () => {
+    expect(resolveWalkGuideContext({ ...context, remaining: [] }, lubeckPlaces, "holstentor")).toBeUndefined();
+    const resolved = resolveWalkGuideContext(context, lubeckPlaces, "holstentor")!;
+    expect(toWalkGuidePromptContext({ ...resolved, visited: ["holstentor"], remaining: [] })).toMatchObject({
+      currentStopSlug: null,
+      currentStopNumber: null,
+      totalStops: 1,
+      nextStopSlug: null,
+    });
+  });
+
+  it("keeps zero remaining minutes and missing deadline honest", () => {
+    const resolved = resolveWalkGuideContext({ ...context, minutesRemaining: 0 }, lubeckPlaces, "holstentor")!;
+    expect(toWalkGuidePromptContext(resolved)).toMatchObject({
+      minutesRemaining: 0, hasDeadline: false, hasFinishPoint: false,
+    });
+  });
 });

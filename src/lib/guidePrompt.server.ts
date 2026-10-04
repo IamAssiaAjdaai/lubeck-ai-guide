@@ -11,6 +11,7 @@ import type {
   ResolvedTourContext,
   TourStopContext,
 } from "@/lib/tourContext";
+import type { WalkGuidePromptContext } from "@/lib/walk/guideContext";
 
 function formatStopList(
   stops: readonly TourStopContext[],
@@ -64,12 +65,52 @@ ${retrieved.chunk.text}
     );
 }
 
+/** Only the server-validated, privacy-minimized projection belongs here. */
+function buildActiveWalkState(context: WalkGuidePromptContext): string {
+  const slugs = (values: readonly string[]) =>
+    values.length ? values.map((slug) => `- ${slug}`).join("\n") : "None";
+  return `
+PERSONALIZED ACTIVE WALK:
+Traveler-reported navigation state, not verified factual evidence or live GPS.
+
+PROGRESS:
+${context.currentStopNumber} of ${context.totalStops}
+This is the current itinerary after skips/removals, not the original route length.
+
+CURRENT STOP:
+${context.currentStopSlug}
+
+VISITED STOPS:
+${slugs(context.visited)}
+
+REMAINING STOPS:
+${slugs(context.remaining.slice(1))}
+
+NEXT STOP:
+${context.nextStopSlug ?? "None"}
+
+INTERESTS:
+${context.interests.join(", ") || "None"}
+
+WALKING STYLE:
+${context.walking}
+
+ESTIMATED TIME BUDGET REMAINING (MINUTES):
+${context.minutesRemaining}
+This is a planning budget, not a guaranteed arrival time or time to the next stop.
+
+VERIFIED LOOK-FOR CUES:
+None
+`.trim();
+}
+
 export function buildGuideSystemPrompt({
   citySlug,
   cityName,
   currentPlace,
   locale,
   tourContext,
+  walkContext,
   knowledge,
 }: {
   citySlug: string;
@@ -86,6 +127,8 @@ export function buildGuideSystemPrompt({
   tourContext:
     | ResolvedTourContext
     | null;
+
+  walkContext?: WalkGuidePromptContext;
 
   knowledge:
     readonly GuideKnowledgeItem[];
@@ -131,7 +174,9 @@ ${
     : "None"
 }
 `.trim()
-      : "No active tour context.";
+      : walkContext?.currentStopSlug === currentPlace.slug
+        ? buildActiveWalkState(walkContext)
+        : "No active tour context.";
 
   const retrievedKnowledge =
     buildRetrievedKnowledge(
@@ -164,6 +209,8 @@ IMPORTANT GROUNDING RULES:
 - Historical and factual claims may come ONLY from VERIFIED RETRIEVED KNOWLEDGE below.
 
 - CURRENT STOP IDENTITY and TOUR STATE are identity/navigation data only. They are not factual historical evidence.
+
+- PERSONALIZED ACTIVE WALK is traveler-reported navigation state. Use its explicit current/next stop and progress only as itinerary context, never as proof of physical presence. Interests and walking style may guide emphasis, not supply facts. Its remaining minutes are a planning budget, not a guaranteed arrival time. Never claim to change the route; direct route changes to trip controls for confirmation.
 
 - VERIFIED RETRIEVED KNOWLEDGE contains server-selected evidence from approved sources for the CURRENT STOP and verified VISITED STOPS only.
 
