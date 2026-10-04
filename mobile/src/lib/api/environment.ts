@@ -54,12 +54,8 @@ export function resolveApiOrigin({
     throw new Error(`${mode} API origin must use HTTPS.`);
   }
 
-  if (mode === "preview" && !parsed.hostname.endsWith(".vercel.app")) {
-    throw new Error("Preview API origin must be a Vercel Preview hostname.");
-  }
-
-  if (mode === "production" && isLocalHostname(parsed.hostname)) {
-    throw new Error("Production API origin cannot target a local host.");
+  if (mode !== "development" && isLocalHostname(parsed.hostname)) {
+    throw new Error(`${capitalize(mode)} API origin cannot target a local host.`);
   }
 
   return parsed.origin;
@@ -70,6 +66,10 @@ export function getConfiguredApiOrigin(): string {
     environment: process.env.EXPO_PUBLIC_CITYWALK_ENV,
     configuredOrigin: process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN,
   });
+}
+
+function capitalize(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function isLocalHostname(hostname: string): boolean {
