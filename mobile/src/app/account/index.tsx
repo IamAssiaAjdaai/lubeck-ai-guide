@@ -2,6 +2,7 @@ import { nativeRowStyle, nativeTextBlock } from "../../design/rtlPresentation";
 import { uxCopy } from "../../design/uxCopy";
 import { t, type TranslationKey } from "@citywalk/i18n";
 import { cityLaunches } from "@citywalk/traveler-core/cityAvailability";
+import Constants from "expo-constants";
 import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BackHandler, StyleSheet, TextInput, View } from "react-native";
@@ -22,6 +23,7 @@ import { useAccountWalks } from "../../hooks/useAccountWalks";
 import { readCityUnlock } from "../../lib/cityUnlockAccess";
 import { loadLocalTrips } from "../../lib/tripStorage";
 import { loadSavedPlaces, loadSavedWalks } from "../../lib/walkStorage";
+import { citywalkApi } from "../../lib/api/instance";
 import {
   DEFAULT_TRAVELER_STYLE,
   TRAVELER_STYLE_DURATIONS,
@@ -65,6 +67,7 @@ export default function AccountScreen() {
     error: boolean;
   }>({ walkKeys: [], citySlugs: [], savedPlaces: 0, loading: true, error: false });
   const [passState, setPassState] = useState<"loading" | "free" | "active" | "unavailable">("loading");
+  const [apiDiagnostic, setApiDiagnostic] = useState<"idle" | "running" | string>("idle");
   const [travelerStyle, setTravelerStyle] = useState<TravelerStyle>(DEFAULT_TRAVELER_STYLE);
   const [styleDraft, setStyleDraft] = useState<TravelerStyle>(DEFAULT_TRAVELER_STYLE);
   const [credential, setCredential] = useState<{ userId: string; status: "yes" | "no" | "error"; providers: string[] }>();
@@ -242,6 +245,17 @@ export default function AccountScreen() {
       },
     );
   }
+  async function runApiDiagnostic() {
+    if (apiDiagnostic === "running") return;
+    setApiDiagnostic("running");
+    try {
+      const result = await citywalkApi.getCities(locale);
+      const count = result.cities.length;
+      setApiDiagnostic(`OK · ${count} ${count === 1 ? "city" : "cities"}`);
+    } catch (error) {
+      setApiDiagnostic(`Error · ${error instanceof Error ? error.message : "Unknown API failure"}`);
+    }
+  }
   function saveProfile() {
     if (submitLock.current || !session) return;
     const error = validateDisplayName(name);
@@ -313,6 +327,9 @@ export default function AccountScreen() {
     error: accountWalks.error || localActivity.error,
   };
   const lubeckName = nativeCityName("lubeck", cityLaunches.lubeck.name, locale);
+  const buildEnvironment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development";
+  const appVersion = Constants.nativeAppVersion ?? Constants.expoConfig?.version ?? "unknown";
+  const buildVersion = Constants.nativeBuildVersion ?? "unknown";
   const isEmailEntry = !session && (entry === "sign-in" || entry === "sign-up");
   const label = (key: TranslationKey) => t(locale, key);
   const socialIcon = (provider: SocialProvider) => (
@@ -452,6 +469,22 @@ export default function AccountScreen() {
         <PressableSurface accessibilityRole="button" onPress={() => open("delete")} style={styles.deleteAction}>
           <AppText variant="label" style={styles.destructive}>{label("profile.deleteAccount")}</AppText>
         </PressableSurface>
+      </Card>
+
+      <Card>
+        <AppText variant="heading">Build diagnostics</AppText>
+        <AppText variant="metadata" style={styles.muted}>Environment · {buildEnvironment}</AppText>
+        <AppText variant="metadata" style={styles.muted}>Version · {appVersion} ({buildVersion})</AppText>
+        <AppText variant="metadata" style={styles.muted}>API · {citywalkApi.origin}</AppText>
+        <PrimaryButton
+          tone="secondary"
+          label={apiDiagnostic === "running" ? "Checking API…" : "Run API check"}
+          disabled={apiDiagnostic === "running"}
+          onPress={() => void runApiDiagnostic()}
+        />
+        {apiDiagnostic !== "idle" && apiDiagnostic !== "running" ? (
+          <AppText variant="metadata" style={styles.muted}>{apiDiagnostic}</AppText>
+        ) : null}
       </Card>
     </> : null}
     {!session && !entry ? <Card>
