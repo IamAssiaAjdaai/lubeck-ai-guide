@@ -513,6 +513,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     height: 64,
     justifyContent: "center",
+    width: 64,
   },
   emptyTitle: { textAlign: "center" },
   emptyDescription: {
