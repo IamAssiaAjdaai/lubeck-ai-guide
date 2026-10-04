@@ -4,14 +4,13 @@ Set values in Vercel's **Preview** scope, then redeploy. Never copy production D
 
 | Variable / setting | Classification | Requirement |
 | --- | --- | --- |
-| `DATABASE_URL` | Build + runtime required | PostgreSQL for committed migrations and public/auth/CMS/commerce reads. Preview must be isolated. |
-| `BETTER_AUTH_SECRET` | Runtime required; available during build's route initialization | Unique 32+ character secret, server-only. |
+| `DATABASE_URL` | Build + runtime required | PostgreSQL for committed migrations, public/auth/CMS/commerce reads, and shared rate limiting. Preview must be isolated. |
+| `BETTER_AUTH_SECRET` | Runtime required; available during build's route initialization | Unique 32+ character secret, server-only. Also keys pseudonymous rate-limit identifiers before database persistence. |
 | `BETTER_AUTH_URL` | Runtime required outside Vercel; optional on Vercel | Local absolute origin; in Preview omit to use validated deployment and branch hosts. An explicit value overrides dynamic hosts. Also determines checkout return origin. |
 | `VERCEL_URL`, `VERCEL_BRANCH_URL` | Platform runtime configuration | Auto-provided exact hosts; do not hardcode a deployment URL or weaken trusted origins. Email/password auth has no external OAuth callback. |
 | `CITYWALK_CONTENT_SOURCE` | Runtime selector, defaults to database in production | `database` for acceptance. `auto` is development-only; explicit `code` is not acceptable as a silent outage fallback. |
 | `NEXT_PUBLIC_CITY_MAP_STYLE_URL` | Optional build-time public setting | Defaults to `https://tiles.openfreemap.org/styles/liberty`; no key required. Changing it requires a rebuild. Never put secrets in the URL. |
 | `GROQ_API_KEY` | Feature-specific runtime secret | Existing assistant calls Groq with `openai/gpt-oss-20b`; no OpenAI key/model environment override is used by this route. |
-| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Feature-specific runtime configuration/secret | Required by assistant rate limiting; do not bypass limits when absent. |
 | `CITYWALK_MEDIA_STORAGE=s3` | Feature-specific runtime selector | Required for managed object delivery. |
 | `CITYWALK_MEDIA_S3_ENDPOINT`, `CITYWALK_MEDIA_S3_REGION`, `CITYWALK_MEDIA_S3_BUCKET` | Feature-specific runtime configuration | Isolated S3-compatible target; endpoint HTTPS except local development. |
 | `CITYWALK_MEDIA_S3_ACCESS_KEY_ID`, `CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY` | Feature-specific runtime secrets | Scoped to isolated bucket/prefix. Public and entitled media use same-origin delivery; no public media-base env or broad image-domain allowlist. |
