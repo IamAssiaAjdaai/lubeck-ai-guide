@@ -473,6 +473,8 @@ export const accountKeys = {
   "emailNotVerified": "profile.emailNotVerified",
   "resendVerification": "profile.resendVerification",
   "verificationResent": "profile.verificationResent",
+  "invalidCredentials": "profile.invalidCredentials",
+  "authUnavailable": "profile.authNetworkError",
   "genericSignInError": "profile.accountGenericSignInError",
   "genericSignUpError": "profile.accountGenericSignUpError",
   "guestLinkError": "profile.accountGuestLinkError",

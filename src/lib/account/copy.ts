@@ -21,6 +21,8 @@ export type AccountCopy = Readonly<{
   emailNotVerified: string;
   resendVerification: string;
   verificationResent: string;
+  invalidCredentials: string;
+  authUnavailable: string;
   genericSignInError: string;
   genericSignUpError: string;
   guestLinkError: string;
@@ -51,6 +53,8 @@ const fr: AccountCopy = {
   emailNotVerified: "Veuillez confirmer votre e-mail avant de vous connecter.",
   resendVerification: "Renvoyer l’e-mail de vérification",
   verificationResent: "Si ce compte doit encore être vérifié, consultez votre boîte de réception ou vos courriers indésirables pour un nouvel e-mail de vérification.",
+  invalidCredentials: "L’adresse e-mail ou le mot de passe est incorrect.",
+  authUnavailable: "CITYWALK ne peut pas joindre le service de compte pour le moment. Réessayez.",
   genericSignInError: "Échec de la connexion. Vérifiez vos informations et réessayez.",
   genericSignUpError: "Impossible de créer le compte. Vérifiez vos informations et réessayez.",
   guestLinkError: "Vous êtes connecté, mais ce voyage invité n’a pas pu être associé automatiquement.",
