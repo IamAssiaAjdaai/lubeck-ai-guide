@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
+import sharp from "sharp";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
@@ -366,6 +367,37 @@ describe("media service", () => {
       expect.not.objectContaining({ durationSeconds: expect.anything() }),
       "actor-1",
     );
+  });
+
+  it("generates public variants before finalizing an image upload", async () => {
+    const store = new FakeMediaObjectStore();
+    const bytes = new Uint8Array(
+      await sharp({
+        create: { width: 800, height: 600, channels: 3, background: "#2563eb" },
+      }).jpeg().toBuffer(),
+    );
+    store.seedObject("media/id/original.jpg", {
+      bytes,
+      contentType: "image/jpeg",
+    });
+    getMediaAsset.mockResolvedValue({
+      id: 19,
+      cityId: 7,
+      kind: "image",
+      sourceType: "upload",
+      objectKey: "media/id/original.jpg",
+      mimeType: "image/jpeg",
+      expectedSizeBytes: bytes.byteLength,
+      approvalStatus: "uploading",
+    });
+    finalizeMediaAsset.mockResolvedValue({ id: 19, approvalStatus: "pending_review" });
+
+    await finalizeAuthorizedUpload(19, store);
+
+    expect(await store.headObject("media/id/variants/thumbnail.webp")).toBeDefined();
+    expect(await store.headObject("media/id/variants/card.webp")).toBeDefined();
+    expect(await store.headObject("media/id/variants/detail.webp")).toBeDefined();
+    expect(await store.headObject("media/id/variants/hero.webp")).toBeDefined();
   });
 
   it("does not inspect duration for non-audio uploads", async () => {
