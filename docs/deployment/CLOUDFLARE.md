@@ -9,6 +9,14 @@ npm ci
 npm run build:vinext
 ```
 
+To validate the exact deployment path without uploading a Worker or making Cloudflare API changes:
+
+```bash
+npm run deploy:vinext:dry-run
+```
+
+The dry run uses the same vinext Cloudflare deploy command as production with `--dry-run`. It is safe to run before authentication and is also enforced by the Cloudflare validation workflow.
+
 To preview the Worker build locally:
 
 ```bash
