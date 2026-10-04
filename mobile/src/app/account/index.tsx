@@ -23,7 +23,8 @@ import { useAccountWalks } from "../../hooks/useAccountWalks";
 import { readCityUnlock } from "../../lib/cityUnlockAccess";
 import { loadLocalTrips } from "../../lib/tripStorage";
 import { loadSavedPlaces, loadSavedWalks } from "../../lib/walkStorage";
-import { citywalkApi } from "../../lib/api/instance";
+import { createCitywalkApiClient } from "../../lib/api/client";
+import { getConfiguredApiOrigin } from "../../lib/api/environment";
 import {
   DEFAULT_TRAVELER_STYLE,
   TRAVELER_STYLE_DURATIONS,
@@ -37,6 +38,8 @@ import {
 type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "preferences" | "change-password" | "delete";
 type SocialProvider = "google" | "apple";
 type Action = "sign-in" | "sign-up" | "edit" | "preferences" | "change-password" | "sign-out" | "reset" | "resend-verification" | "delete" | "social-google" | "social-apple" | "link-google" | "link-apple";
+
+const diagnosticApi = createCitywalkApiClient({ origin: getConfiguredApiOrigin() });
 
 export default function AccountScreen() {
   const { locale, direction, messages } = useNativeLocale();
@@ -249,7 +252,7 @@ export default function AccountScreen() {
     if (apiDiagnostic === "running") return;
     setApiDiagnostic("running");
     try {
-      const result = await citywalkApi.getCities(locale);
+      const result = await diagnosticApi.getCities(locale);
       const count = result.cities.length;
       setApiDiagnostic(`OK · ${count} ${count === 1 ? "city" : "cities"}`);
     } catch (error) {
@@ -475,7 +478,7 @@ export default function AccountScreen() {
         <AppText variant="heading">Build diagnostics</AppText>
         <AppText variant="metadata" style={styles.muted}>Environment · {buildEnvironment}</AppText>
         <AppText variant="metadata" style={styles.muted}>Version · {appVersion} ({buildVersion})</AppText>
-        <AppText variant="metadata" style={styles.muted}>API · {citywalkApi.origin}</AppText>
+        <AppText variant="metadata" style={styles.muted}>API · {diagnosticApi.origin}</AppText>
         <PrimaryButton
           tone="secondary"
           label={apiDiagnostic === "running" ? "Checking API…" : "Run API check"}
