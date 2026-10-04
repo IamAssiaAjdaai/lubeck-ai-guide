@@ -13,7 +13,7 @@ export const PUBLIC_IMAGE_VARIANT_SPECS = {
 >;
 
 export function isPublicImageVariant(value: unknown): value is PublicImageVariant {
-  return typeof value === "string" && value in PUBLIC_IMAGE_VARIANT_SPECS;
+  return (\n    typeof value === "string" &&\n    Object.hasOwn(PUBLIC_IMAGE_VARIANT_SPECS, value)\n  );
 }
 
 export function publicMediaImageVariants(assetKey: string): PublicImageVariantUrls {
