@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Client, Pool } from "pg";
 
 import { getDatabaseUrl } from "@/db/env";
@@ -21,13 +21,13 @@ function createPoolDatabase(databasePool: Pool) {
   return drizzle(databasePool, { schema: databaseSchema });
 }
 
-export type Database = ReturnType<typeof createPoolDatabase>;
+export type Database = NodePgDatabase<typeof databaseSchema>;
 
 const requestDatabase = new AsyncLocalStorage<Database>();
 let pool: Pool | undefined;
 
 export function createRequestDatabase(client: Client): Database {
-  return drizzle(client, { schema: databaseSchema }) as Database;
+  return drizzle(client, { schema: databaseSchema });
 }
 
 export function runWithRequestDatabase<T>(
