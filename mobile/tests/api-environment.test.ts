@@ -14,19 +14,14 @@ describe("mobile API origin", () => {
       .toThrow("cannot target a local host");
   });
 
-  it("accepts only HTTPS Vercel hosts in preview", () => {
+  it("accepts provider-neutral public HTTPS origins in preview", () => {
     expect(resolveApiOrigin({ environment: "preview", configuredOrigin: "https://citywalk-feature.vercel.app" }))
       .toBe("https://citywalk-feature.vercel.app");
-    expect(() => resolveApiOrigin({ environment: "preview", configuredOrigin: "https://example.com" }))
-      .toThrow("Vercel Preview");
-  });
-
-  it("requires a fixed HTTPS production build origin", () => {
-    expect(resolveApiOrigin({ environment: "production", configuredOrigin: "https://citywalk.example" }))
-      .toBe("https://citywalk.example");
-    expect(resolveApiOrigin({ environment: "production", configuredOrigin: "https://fcitywalk.example" }))
-      .toBe("https://fcitywalk.example");
-    expect(() => resolveApiOrigin({ environment: "production", configuredOrigin: "http://citywalk.example" }))
+    expect(resolveApiOrigin({ environment: "preview", configuredOrigin: "https://citywalk-preview.workers.dev" }))
+      .toBe("https://citywalk-preview.workers.dev");
+    expect(resolveApiOrigin({ environment: "preview", configuredOrigin: "https://preview.citywalk.example" }))
+      .toBe("https://preview.citywalk.example");
+    expect(() => resolveApiOrigin({ environment: "preview", configuredOrigin: "http://preview.citywalk.example" }))
       .toThrow("must use HTTPS");
   });
 
@@ -41,9 +36,20 @@ describe("mobile API origin", () => {
     "https://[::1]",
     "https://[fd00::1]",
     "https://[fe80::1]",
-  ])("rejects local or private production origin %s", (origin) => {
+  ])("rejects local or private non-development origin %s", (origin) => {
+    expect(() => resolveApiOrigin({ environment: "preview", configuredOrigin: origin }))
+      .toThrow("cannot target a local host");
     expect(() => resolveApiOrigin({ environment: "production", configuredOrigin: origin }))
       .toThrow("cannot target a local host");
+  });
+
+  it("requires a fixed HTTPS production build origin", () => {
+    expect(resolveApiOrigin({ environment: "production", configuredOrigin: "https://citywalk.example" }))
+      .toBe("https://citywalk.example");
+    expect(resolveApiOrigin({ environment: "production", configuredOrigin: "https://fcitywalk.example" }))
+      .toBe("https://fcitywalk.example");
+    expect(() => resolveApiOrigin({ environment: "production", configuredOrigin: "http://citywalk.example" }))
+      .toThrow("must use HTTPS");
   });
 
   it("rejects origins containing paths, credentials, query strings, or fragments", () => {
