@@ -233,6 +233,7 @@ export function PrimaryButton({
   haptic,
   wrapLabel = true,
   compact = false,
+  contentStyle,
   onPress,
   ...props
 }: PressableProps & {
@@ -244,6 +245,7 @@ export function PrimaryButton({
   haptic?: CitywalkHaptic;
   wrapLabel?: boolean;
   compact?: boolean;
+  contentStyle?: StyleProp<ViewStyle>;
 }) {
   const { direction } = useNativeLocale();
   const buttonTone =
@@ -276,7 +278,7 @@ export function PrimaryButton({
         typeof props.style === "function" ? props.style(state) : props.style,
       ]}
     >
-      <View style={[styles.buttonContent, { direction }, compact && styles.tileContent, compact && direction === "rtl" && { alignItems: "flex-start" }]}>
+      <View style={[styles.buttonContent, { direction }, compact && styles.tileContent, compact && direction === "rtl" && { alignItems: "flex-start" }, contentStyle]}>
           {busy ? <ActivityIndicator color={tone === "secondary" ? colors.primary : "#FFFFFF"} /> : leadingIcon}
           <Text
             numberOfLines={wrapLabel ? undefined : 1}
