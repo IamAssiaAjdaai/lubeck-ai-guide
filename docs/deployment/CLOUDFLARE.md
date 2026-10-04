@@ -42,7 +42,6 @@ At minimum, configure the values CITYWALK actually uses, including:
 - enabled Google / Apple auth credentials
 - `RESEND_API_KEY` and a verified-domain `CITYWALK_EMAIL_FROM` for account verification/password-reset delivery
 - S3-compatible media credentials
-- Upstash Redis credentials when Ask CITYWALK rate limiting is enabled
 - Stripe secrets when web checkout is enabled
 - Groq / other AI provider keys when Ask CITYWALK is enabled
 - native Apple / Google billing verification credentials when those flows are enabled
@@ -109,7 +108,7 @@ Verify on a Cloudflare preview / temporary hostname before moving the real domai
 3. email/password auth
 4. Sign in with Apple
 5. Sign in with Google
-6. Ask CITYWALK and Upstash rate limits
+6. Ask CITYWALK and PostgreSQL-backed rate limits
 7. S3 image/audio delivery
 8. Stripe checkout and webhook verification
 9. Apple native-purchase sandbox verification
