@@ -156,17 +156,21 @@ describe("CITYWALK native app configuration", () => {
     });
   });
 
-  it("selects the EAS Production environment without hardcoding a preview API origin", () => {
+  it("selects the EAS Production environment with the verified production API origin", () => {
     expect(easJson.build.production).toMatchObject({
       environment: "production",
       autoIncrement: true,
       env: {
         EXPO_PUBLIC_CITYWALK_ENV: "production",
+        EXPO_PUBLIC_CITYWALK_API_ORIGIN: "https://getcitywalk.com",
       },
     });
-    expect(easJson.build.production.env).not.toHaveProperty(
-      "EXPO_PUBLIC_CITYWALK_API_ORIGIN",
-    );
+    expect(() =>
+      assertProductionBuildEnvironment(
+        "production",
+        easJson.build.production.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN,
+      ),
+    ).not.toThrow();
   });
 
   it("fails a production build before bundling when its API origin is missing or unsafe", () => {
