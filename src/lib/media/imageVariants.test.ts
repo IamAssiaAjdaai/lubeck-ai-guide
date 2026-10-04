@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   PUBLIC_IMAGE_VARIANT_SPECS,
   isPublicImageVariant,
+  legacyImageVariantPath,
   publicLegacyImageVariants,
   publicMediaImageVariants,
 } from "@/lib/media/imageVariants";
@@ -17,6 +18,11 @@ describe("public image variants", () => {
     });
     expect(isPublicImageVariant("card")).toBe(true);
     expect(isPublicImageVariant("original")).toBe(false);\n    expect(isPublicImageVariant("constructor")).toBe(false);\n    expect(isPublicImageVariant("__proto__")).toBe(false);
+  });
+
+  it("maps legacy sources to deterministic generated WebP paths", () => {
+    expect(legacyImageVariantPath("/landmarks/holstentor.jpg", "card"))
+      .toBe("/generated/image-variants/card/landmarks/holstentor.webp");
   });
 
   it("keeps storage keys private and preserves encoded legacy paths", () => {
