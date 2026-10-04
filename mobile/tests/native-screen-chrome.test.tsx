@@ -3,6 +3,9 @@ import React from "react";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({ path: "/", params: {} as Record<string, string>, scroll: vi.fn(), offset: vi.fn(), back: vi.fn(), locale: "en", log: vi.fn() }));
+vi.mock("expo-constants", () => ({ default: {
+  nativeAppVersion: "1.0.0", nativeBuildVersion: "7", expoConfig: { version: "1.0.0" },
+} }));
 vi.mock("expo-router", () => ({
   Link: ({ children }: React.PropsWithChildren) => <>{children}</>,
   Stack: { Screen: () => null },
