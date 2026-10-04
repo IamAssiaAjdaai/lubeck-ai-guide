@@ -11,6 +11,13 @@ import savedSource from "../src/app/saved.tsx?raw";
 import accountSource from "../src/app/account/index.tsx?raw";
 
 describe("native city experience parity", () => {
+  it("keeps suggested walks compact and factual", () => {
+    expect(citySource).toContain('variant="cardTitle"');
+    expect(citySource).toContain("styles.tourImage");
+    expect(citySource).toContain('stopNames.join(" · ")');
+    expect(citySource).not.toContain("tour.content.shortDescription ?? tour.content.description");
+  });
+
   it("renders city hero, published tour stops, and the personalized planner", () => {
     expect(citySource).toContain("<ImageOverlayHero");
     expect(citySource).toContain('stopNames.join(" · ")');
