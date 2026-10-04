@@ -32,8 +32,6 @@ At minimum, configure the values CITYWALK actually uses, including:
 - `BETTER_AUTH_SECRET`
 - `BETTER_AUTH_URL=https://<production-domain>`
 - enabled Google / Apple auth credentials
-- `RESEND_API_KEY`
-- `CITYWALK_EMAIL_FROM` on a verified sender domain
 - S3-compatible media credentials
 - Upstash Redis credentials when Ask CITYWALK rate limiting is enabled
 - Stripe secrets when web checkout is enabled
