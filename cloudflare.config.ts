@@ -2,7 +2,7 @@ import { bindings, defineConfig, defineWorker } from "cf/config";
 
 export default defineConfig({
   worker: defineWorker({
-    name: "lubeck-ai-guide",
+    name: "citywalk-production",
     entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-10-03",
     compatibilityFlags: ["nodejs_compat"],
