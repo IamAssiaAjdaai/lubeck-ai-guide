@@ -5,7 +5,9 @@ import { eq } from "drizzle-orm";
 import { loadDatabaseEnvironment } from "@/db/loadEnvironment";
 
 loadDatabaseEnvironment();
-process.env.BETTER_AUTH_SECRET ??= "citywalk-rate-limit-integration-secret";
+if (!process.env.BETTER_AUTH_SECRET?.trim()) {
+  process.env.BETTER_AUTH_SECRET = "citywalk-rate-limit-integration-secret";
+}
 
 async function main(): Promise<void> {
   const [
