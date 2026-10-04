@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   CITYWALK_DEVELOPMENT_IDENTIFIER,
   CITYWALK_STORE_IDENTIFIER,
+  assertProductionBuildEnvironment,
   createCitywalkExpoConfig,
 } from "../app.config";
 import appJson from "../app.json";
@@ -153,6 +154,34 @@ describe("CITYWALK native app configuration", () => {
         EXPO_PUBLIC_CITYWALK_APPLE_AUTH: "1",
       },
     });
+  });
+
+  it("selects the EAS Production environment without hardcoding a preview API origin", () => {
+    expect(easJson.build.production).toMatchObject({
+      environment: "production",
+      autoIncrement: true,
+      env: {
+        EXPO_PUBLIC_CITYWALK_ENV: "production",
+      },
+    });
+    expect(easJson.build.production.env).not.toHaveProperty(
+      "EXPO_PUBLIC_CITYWALK_API_ORIGIN",
+    );
+  });
+
+  it("fails a production build before bundling when its API origin is missing or unsafe", () => {
+    expect(() => assertProductionBuildEnvironment("production", undefined))
+      .toThrow("Production builds require EXPO_PUBLIC_CITYWALK_API_ORIGIN");
+    expect(() => assertProductionBuildEnvironment("production", "http://api.citywalk.example"))
+      .toThrow("absolute HTTPS origin");
+    expect(() => assertProductionBuildEnvironment("production", "https://api.citywalk.example/path"))
+      .toThrow("absolute HTTPS origin");
+
+    expect(() => assertProductionBuildEnvironment(
+      "production",
+      "https://api.citywalk.example",
+    )).not.toThrow();
+    expect(() => assertProductionBuildEnvironment("preview", undefined)).not.toThrow();
   });
 
   it("keeps store beta submission limited to Google Play internal and TestFlight", () => {
