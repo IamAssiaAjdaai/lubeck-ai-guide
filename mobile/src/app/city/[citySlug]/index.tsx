@@ -477,7 +477,7 @@ function PlaceCard({
           </View>
         </PressableSurface>
       </Link>
-      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense /></View>
+      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense inline /></View>
       {imageMedia?.attribution ? <View style={styles.cardAttribution}>
         <MediaAttribution attribution={imageMedia.attribution} />
       </View> : null}
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
   },
   tourLink: { overflow: "hidden", flexDirection: "row" },
   tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: spacing.md },
-  cardActions: { paddingHorizontal: 12, paddingBottom: 12, paddingTop: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border },
+  cardActions: { paddingHorizontal: 12, paddingBottom: 12 },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
   stopName: { color: colors.textMuted, marginTop: spacing.xs },

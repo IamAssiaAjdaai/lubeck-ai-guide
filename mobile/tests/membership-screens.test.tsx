@@ -39,7 +39,7 @@ vi.mock("../src/components/ui", () => ({
     >
       {children}
     </button>,
-  PrimaryButton: ({ label, busy, disabled, onPress, accessibilityState }: { label: string; busy?: boolean; disabled?: boolean; onPress?: () => void; accessibilityState?: { selected: boolean } }) => <button disabled={busy || disabled} aria-pressed={accessibilityState?.selected} onClick={onPress}>{label}</button>,
+  PrimaryButton: ({ label, busy, disabled, onPress, accessibilityState, style, tone = "primary", compact = false }: { label: string; busy?: boolean; disabled?: boolean; onPress?: () => void; accessibilityState?: { selected: boolean }; style?: unknown; tone?: string; compact?: boolean }) => <button data-style={JSON.stringify(style)} data-tone={tone} data-compact={compact} disabled={busy || disabled} aria-pressed={accessibilityState?.selected} onClick={onPress}>{label}</button>,
 }));
 vi.mock("../src/components/WalkControls", () => ({ WalkChoices: () => null }));
 vi.mock("../src/components/V2Presentation", () => ({ V2Hero: ({ title }: { title: string }) => <h1>{title}</h1> }));
@@ -102,9 +102,19 @@ function surfaces() {
 describe("actual Explore and Detail share current-walk state (native bridges mocked)", () => {
   it.each(["en", "de", "ar"] as const)("adds from Explore and immediately updates Detail in %s", async locale => {
     state.locale = locale; const t = uxCopy(locale), { explore, detail } = surfaces();
-    fireEvent.click(await explore.findByRole("button", { name: t.add }));
+    const exploreAdd = await explore.findByRole("button", { name: t.add });
+    const detailAdd = await detail.findByRole("button", { name: t.add });
+    expect(JSON.parse(exploreAdd.dataset.style!)).toMatchObject({ alignSelf: "flex-start", maxWidth: "100%", minHeight: 44 });
+    expect(exploreAdd.dataset.tone).toBe("secondary");
+    expect(exploreAdd.dataset.compact).toBe("false");
+    expect(JSON.parse(detailAdd.dataset.style!)).toMatchObject({ alignSelf: "stretch", minHeight: 64 });
+    expect(detailAdd.dataset.tone).toBe("primary");
+    expect(detailAdd.dataset.compact).toBe("true");
+    fireEvent.click(exploreAdd);
     await detail.findByRole("button", { name: t.remove, pressed: true });
-    expect(explore.getByRole("button", { name: t.remove, pressed: true })).toBeTruthy();
+    const exploreRemove = explore.getByRole("button", { name: t.remove, pressed: true });
+    expect(JSON.parse(exploreRemove.dataset.style!)).toMatchObject({ alignSelf: "flex-start", maxWidth: "100%", minHeight: 44 });
+    expect(exploreRemove.dataset.tone).toBe("secondary");
     expect(screen.queryByText(t.included)).toBeNull();
     expect(detail.queryByRole("button", { name: t.add })).toBeNull();
     expect((await loadCurrentWalk("lubeck"))?.journey.remaining).toEqual(["holstentor"]);
