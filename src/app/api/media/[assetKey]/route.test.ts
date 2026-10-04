@@ -2,10 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-const { getMediaObjectStore, getPublicMediaDeliveryAsset, transformPublicImage } = vi.hoisted(() => ({
+const { getMediaObjectStore, getPublicMediaDeliveryAsset } = vi.hoisted(() => ({
   getMediaObjectStore: vi.fn(),
   getPublicMediaDeliveryAsset: vi.fn(),
-  transformPublicImage: vi.fn(),
 }));
 
 vi.mock("@/lib/media/publicMedia.server", () => ({
@@ -14,14 +13,6 @@ vi.mock("@/lib/media/publicMedia.server", () => ({
 vi.mock("@/lib/media/storage/storage.server", () => ({
   getMediaObjectStore,
 }));
-vi.mock("@/lib/media/imageTransform.server", () => ({
-  PUBLIC_IMAGE_CACHE_CONTROL: "public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000",
-  transformPublicImage,
-  publicImageResponse: (body: Uint8Array) => new Response(Uint8Array.from(body).buffer, {
-    headers: { "Content-Type": "image/webp", "Content-Length": String(body.byteLength) },
-  }),
-}));
-
 import { GET } from "@/app/api/media/[assetKey]/route";
 
 const params = Promise.resolve({ assetKey: "0193c9be-62d1-7f9d-8ff2-08fc48fcb771" });
@@ -104,10 +95,8 @@ describe("public media delivery", () => {
       sizeBytes: 3,
       kind: "image",
     });
-    getMediaObjectStore.mockReturnValue({
-      readObject: vi.fn().mockResolvedValue({ body: byteStream([1, 2, 3]), contentLength: 3 }),
-    });
-    transformPublicImage.mockResolvedValue(Uint8Array.from([8, 9]));
+    const readObject = vi.fn().mockResolvedValue({ body: byteStream([8, 9]), contentLength: 2 });
+    getMediaObjectStore.mockReturnValue({ readObject });
 
     const response = await GET(
       new Request("https://citywalk.test/api/media/key?variant=card"),
@@ -116,7 +105,7 @@ describe("public media delivery", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toBe("image/webp");
-    expect(transformPublicImage).toHaveBeenCalledWith(expect.any(ArrayBuffer), "card");
+    expect(readObject).toHaveBeenCalledWith("private/variants/card.webp");
     expect((await response.arrayBuffer()).byteLength).toBe(2);
   });
 
