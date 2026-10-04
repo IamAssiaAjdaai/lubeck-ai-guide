@@ -1,6 +1,8 @@
 // @vitest-environment node
+import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import envExample from "../../../../.env.example?raw";
+
+const envExample = readFileSync(new URL("../../../../.env.example", import.meta.url), "utf8");
 vi.mock("server-only", () => ({}));
 const tasks = vi.hoisted(() => ({ queue: [] as (() => Promise<void>)[] }));
 vi.mock("next/server", () => ({ after: (task: () => Promise<void>) => tasks.queue.push(task) }));
