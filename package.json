@@ -116,6 +116,5 @@
   },
   "workspaces": [
     "packages/*"
-  ],
-  "type": "module"
+  ]
 }
