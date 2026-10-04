@@ -20,9 +20,15 @@ vi.mock("@react-native-async-storage/async-storage", () => ({ default: {
 vi.mock("expo-constants", () => ({ default: {
   nativeAppVersion: "1.0.0", nativeBuildVersion: "7", expoConfig: { version: "1.0.0" },
 } }));
-vi.mock("../src/lib/api/instance", () => ({ citywalkApi: {
-  origin: "https://diagnostic.citywalk.test", getCities: mocks.getCities,
-} }));
+vi.mock("../src/lib/api/environment", () => ({
+  getConfiguredApiOrigin: () => "https://diagnostic.citywalk.test",
+}));
+vi.mock("../src/lib/api/client", () => ({
+  createCitywalkApiClient: () => ({
+    origin: "https://diagnostic.citywalk.test",
+    getCities: mocks.getCities,
+  }),
+}));
 vi.mock("../src/lib/auth/lifecycle", () => ({ deleteNativeAccount: mocks.deleteAccount }));
 vi.mock("../src/lib/cityUnlockAccess", () => ({ readCityUnlock: mocks.readCityUnlock }));
 vi.mock("../src/hooks/useAccountWalks", () => ({ useAccountWalks: () => ({
