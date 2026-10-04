@@ -9,13 +9,19 @@ const mocks = vi.hoisted(() => ({
   locale: "en", session: null as null | { user: { id: string; name: string; email: string } },
   deleteAccount: vi.fn(), listAccounts: vi.fn(), updateUser: vi.fn(), changePassword: vi.fn(), requestPasswordReset: vi.fn(), sendVerificationEmail: vi.fn(), deleteUser: vi.fn(),
   signIn: vi.fn(), socialSignIn: vi.fn(), linkSocial: vi.fn(), signUp: vi.fn(), signOut: vi.fn(), back: vi.fn(), replace: vi.fn(),
-  readCityUnlock: vi.fn(), accountWalks: [] as Array<{ id: string; citySlug: string }>,
+  readCityUnlock: vi.fn(), getCities: vi.fn(), accountWalks: [] as Array<{ id: string; citySlug: string }>,
   savedWalks: [] as Array<{ id: string; citySlug: string }>, localTrips: [] as Array<{ id: string; citySlug: string }>, savedPlaces: [] as Array<{ citySlug: string; slug: string; name: string }>,
   data: new Map<string, string>(), write: vi.fn(), remove: vi.fn(), clear: vi.fn(),
 }));
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: {
   getItem: async (key: string) => mocks.data.get(key) ?? null,
   setItem: mocks.write, removeItem: mocks.remove, clear: mocks.clear,
+} }));
+vi.mock("expo-constants", () => ({ default: {
+  nativeAppVersion: "1.0.0", nativeBuildVersion: "7", expoConfig: { version: "1.0.0" },
+} }));
+vi.mock("../src/lib/api/instance", () => ({ citywalkApi: {
+  origin: "https://diagnostic.citywalk.test", getCities: mocks.getCities,
 } }));
 vi.mock("../src/lib/auth/lifecycle", () => ({ deleteNativeAccount: mocks.deleteAccount }));
 vi.mock("../src/lib/cityUnlockAccess", () => ({ readCityUnlock: mocks.readCityUnlock }));
@@ -72,7 +78,7 @@ beforeEach(() => {
   mocks.deleteAccount.mockResolvedValue({}); mocks.requestPasswordReset.mockResolvedValue({ data: { status: true } });
   mocks.sendVerificationEmail.mockResolvedValue({ data: { status: true } });
   mocks.updateUser.mockResolvedValue({}); mocks.changePassword.mockResolvedValue({});
-  mocks.readCityUnlock.mockResolvedValue(false); mocks.accountWalks = []; mocks.savedWalks = []; mocks.localTrips = []; mocks.savedPlaces = [];
+  mocks.readCityUnlock.mockResolvedValue(false); mocks.getCities.mockResolvedValue({ cities: [{ slug: "lubeck" }] }); mocks.accountWalks = []; mocks.savedWalks = []; mocks.localTrips = []; mocks.savedPlaces = [];
   mocks.signIn.mockResolvedValue({}); mocks.socialSignIn.mockResolvedValue({}); mocks.linkSocial.mockResolvedValue({});
   mocks.signUp.mockResolvedValue({}); mocks.signOut.mockResolvedValue({});
   mocks.data = new Map(["citywalk:native:v2:saved", "citywalk:native:v2:places", "citywalk:native:v2:active:lubeck", "citywalk:local-trips:v2", "citywalk:native:locale:v1", "citywalk:native:public-review:v1"].map(key => [key, `existing-${key}`]));
@@ -228,6 +234,17 @@ describe("account management with real capability boundaries", () => {
     expect(screen.getByText("1")).toBeTruthy();
     expect(screen.queryByText(`${messages().language} · English`)).toBeNull();
     expect(screen.queryByRole("button", { name: messages().savedTrips })).toBeNull();
+  });
+
+  it("shows the exact build API diagnostics and can verify the parsed city response", async () => {
+    signedIn();
+    render(<AccountScreen />);
+    expect(await screen.findByText("Environment · development")).toBeTruthy();
+    expect(screen.getByText("Version · 1.0.0 (7)")).toBeTruthy();
+    expect(screen.getByText("API · https://diagnostic.citywalk.test")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Run API check" }));
+    expect(await screen.findByText("OK · 1 city")).toBeTruthy();
+    expect(mocks.getCities).toHaveBeenCalledWith("en");
   });
 
   it("shows profile identity, edits only the name, and recovers from an update failure", async () => {
