@@ -22,6 +22,42 @@ type TravelerAccountPanelProps = Readonly<{
 
 type AuthMode = "sign-in" | "sign-up";
 
+type SignInFailure = "email-not-verified" | "invalid-credentials" | "unavailable" | "generic";
+
+function classifySignInFailure(error: unknown): SignInFailure {
+  if (!error || typeof error !== "object") return "generic";
+
+  const candidate = error as Record<string, unknown>;
+  const code = typeof candidate.code === "string" ? candidate.code.toUpperCase() : "";
+  const message = typeof candidate.message === "string" ? candidate.message.toLowerCase() : "";
+  const status =
+    typeof candidate.status === "number"
+      ? candidate.status
+      : typeof candidate.statusCode === "number"
+        ? candidate.statusCode
+        : undefined;
+
+  if (
+    code.includes("EMAIL_NOT_VERIFIED") ||
+    (message.includes("email") && message.includes("not verified"))
+  ) {
+    return "email-not-verified";
+  }
+
+  if (
+    status === 401 ||
+    code.includes("INVALID_EMAIL_OR_PASSWORD") ||
+    code.includes("INVALID_PASSWORD") ||
+    code.includes("INVALID_CREDENTIAL") ||
+    message.includes("invalid email or password")
+  ) {
+    return "invalid-credentials";
+  }
+
+  if (typeof status === "number" && status >= 500) return "unavailable";
+  return "generic";
+}
+
 export function TravelerAccountPanel({
   locale,
   nextHref,
@@ -63,16 +99,14 @@ export function TravelerAccountPanel({
     try {
       const result = await authClient.signIn.email({ email, password });
       if (result.error) {
-        const code =
-          typeof result.error === "object" &&
-          result.error !== null &&
-          "code" in result.error &&
-          typeof result.error.code === "string"
-            ? result.error.code.toUpperCase()
-            : "";
-        if (code.includes("EMAIL_NOT_VERIFIED")) {
+        const failure = classifySignInFailure(result.error);
+        if (failure === "email-not-verified") {
           setVerificationEmail(email);
           setError(copy.emailNotVerified);
+        } else if (failure === "invalid-credentials") {
+          setError(copy.invalidCredentials);
+        } else if (failure === "unavailable") {
+          setError(copy.authUnavailable);
         } else {
           setError(copy.genericSignInError);
         }
@@ -88,7 +122,7 @@ export function TravelerAccountPanel({
       router.replace(nextHref);
       router.refresh();
     } catch {
-      setError(copy.genericSignInError);
+      setError(copy.authUnavailable);
     } finally {
       setIsLoading(false);
     }
