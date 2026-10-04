@@ -127,6 +127,13 @@
       "when": 1790982960000,
       "tag": "0017_better_auth_account_identity",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791129600000,
+      "tag": "0018_neon_rate_limits",
+      "breakpoints": true
     }
   ]
 }

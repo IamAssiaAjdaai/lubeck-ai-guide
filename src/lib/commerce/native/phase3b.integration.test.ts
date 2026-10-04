@@ -6,8 +6,6 @@ vi.mock("server-only", () => ({}));
 const mocks = vi.hoisted(() => ({ google: vi.fn(), apple: vi.fn(), push: vi.fn(), session: vi.fn() }));
 vi.mock("./providers.server", async original => ({ ...await original<typeof import("./providers.server")>(), verifyGoogle: mocks.google, verifyApple: mocks.apple, verifyGooglePushAuthorization: mocks.push }));
 vi.mock("@/lib/auth/server", () => ({ getAuth: () => ({ api: { getSession: mocks.session } }) }));
-vi.mock("@upstash/redis", () => ({ Redis: class {} }));
-vi.mock("@upstash/ratelimit", () => ({ Ratelimit: class { static slidingWindow() { return {}; } async limit() { return { success: true }; } } }));
 import { getDb, closeDb } from "@/db/client";
 import { user, account, session } from "@/db/authSchema";
 import { accountSavedWalks } from "@/db/travelerSchema";
@@ -41,7 +39,7 @@ describe.runIf(process.env.NATIVE_BILLING_DB_INTEGRATION === "1")("Phase 3B real
     if(target.hostname!=="127.0.0.1"||!/^\/cw_billing_\d+$/.test(target.pathname))throw new Error("New disposable loopback billing DB required");
     vi.stubEnv("VERCEL_ENV","preview");vi.stubEnv("CITYWALK_NATIVE_BILLING_MODE","sandbox");
     vi.stubEnv("CITYWALK_NATIVE_ACCOUNT_SECRET","synthetic-test-only-".repeat(3));vi.stubEnv("CITYWALK_NATIVE_SANDBOX_USERS",`${owner},${other}`);
-    vi.stubEnv("UPSTASH_REDIS_REST_URL","https://redis.example.test");vi.stubEnv("UPSTASH_REDIS_REST_TOKEN","synthetic-test-only");
+    vi.stubEnv("BETTER_AUTH_SECRET","synthetic-auth-secret-for-rate-limit-tests");
     await getDb().insert(user).values([owner,other].map(id=>({id,name:"Synthetic billing traveler",email:`${id}@example.test`})));
   });
   beforeEach(()=>{vi.clearAllMocks();googleConfiguration();mocks.session.mockResolvedValue({user:{id:owner}});mocks.push.mockResolvedValue(undefined);});

@@ -1,31 +1,50 @@
 import "server-only";
-import { createHmac } from "node:crypto";
-import { Redis } from "@upstash/redis";
-import { Ratelimit } from "@upstash/ratelimit";
+
+import { consumeDatabaseRateLimit } from "@/lib/databaseRateLimit.server";
 
 export class LifecycleError extends Error {
-  constructor(readonly code: "UNAVAILABLE" | "RATE_LIMITED" | "REAUTH_REQUIRED" | "RETENTION_REVIEW_REQUIRED" | "INVALID_REQUEST", readonly status = 503) {
+  constructor(
+    readonly code:
+      | "UNAVAILABLE"
+      | "RATE_LIMITED"
+      | "REAUTH_REQUIRED"
+      | "RETENTION_REVIEW_REQUIRED"
+      | "INVALID_REQUEST",
+    readonly status = 503,
+  ) {
     super(code);
   }
 }
-// Shared remote limiter; never silently fall back to per-process memory on Vercel.
-// Keys contain only a keyed digest, not email addresses, user IDs or reset tokens.
-export async function limitLifecycle(action: "request" | "reset" | "validate" | "delete", identity: string) {
-  const { UPSTASH_REDIS_REST_URL: url, UPSTASH_REDIS_REST_TOKEN: token, BETTER_AUTH_SECRET: secret } = process.env;
-  if (!url || !token || !secret) throw new LifecycleError("UNAVAILABLE");
+
+const FIFTEEN_MINUTES_MS = 15 * 60 * 1_000;
+
+// Shared PostgreSQL limiter. The database layer HMACs identifiers with
+// BETTER_AUTH_SECRET before persistence, so email addresses, user IDs and
+// reset tokens are never stored in the rate-limit table.
+export async function limitLifecycle(
+  action: "request" | "reset" | "validate" | "delete",
+  identity: string,
+) {
+  if (!process.env.BETTER_AUTH_SECRET?.trim()) {
+    throw new LifecycleError("UNAVAILABLE");
+  }
+
   try {
-    const redis = new Redis({ url, token });
-    const prefix = `citywalk-account-${action}`;
-    const global = new Ratelimit({ redis, prefix: `${prefix}-global`, limiter: Ratelimit.slidingWindow(60, "15 m"), analytics: false });
-    const personal = new Ratelimit({ redis, prefix, limiter: Ratelimit.slidingWindow(action === "request" ? 3 : 10, "15 m"), analytics: false });
-    const key = createHmac("sha256", secret).update(identity).digest("hex");
-    for (const [limiter, identifier] of [[global, "all"], [personal, key]] as const) {
-      const result = await limiter.limit(identifier);
-      // Upstash's default timeout result is success:true. Account mutations and
-      // email requests must explicitly reject this fail-open SDK response.
-      if (result.reason === "timeout") throw new LifecycleError("UNAVAILABLE");
-      if (!result.success) throw new LifecycleError("RATE_LIMITED", 429);
-    }
+    const global = await consumeDatabaseRateLimit({
+      scope: `citywalk-account-${action}-global`,
+      identifier: "all",
+      maxRequests: 60,
+      windowMs: FIFTEEN_MINUTES_MS,
+    });
+    if (!global.success) throw new LifecycleError("RATE_LIMITED", 429);
+
+    const personal = await consumeDatabaseRateLimit({
+      scope: `citywalk-account-${action}`,
+      identifier: identity,
+      maxRequests: action === "request" ? 3 : 10,
+      windowMs: FIFTEEN_MINUTES_MS,
+    });
+    if (!personal.success) throw new LifecycleError("RATE_LIMITED", 429);
   } catch (error) {
     if (error instanceof LifecycleError) throw error;
     throw new LifecycleError("UNAVAILABLE");

@@ -124,6 +124,9 @@ jobs:
       - name: Apply database migration
         run: npm run db:migrate
 
+      - name: Verify PostgreSQL rate limits
+        run: npm run rate-limit:test:integration
+
       - name: Seed database
         run: npm run db:seed
 

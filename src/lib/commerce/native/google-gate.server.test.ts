@@ -1,17 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
-const mocks = vi.hoisted(() => ({ db: vi.fn(), providerClient: vi.fn(), request: vi.fn(), oidc: vi.fn(), session: vi.fn() }));
+const mocks = vi.hoisted(() => ({ db: vi.fn(), providerClient: vi.fn(), request: vi.fn(), oidc: vi.fn(), session: vi.fn(), rateLimit: vi.fn() }));
 vi.mock("@/db/client", () => ({ getDb: mocks.db }));
 vi.mock("google-auth-library", () => ({
   GoogleAuth: class { getClient = mocks.providerClient; },
   OAuth2Client: class { verifyIdToken = mocks.oidc; },
 }));
 vi.mock("@/lib/auth/server", () => ({ getAuth: () => ({ api: { getSession: mocks.session } }) }));
-vi.mock("@upstash/redis", () => ({ Redis: class {} }));
-vi.mock("@upstash/ratelimit", () => ({ Ratelimit: class {
-  static slidingWindow() { return {}; }
-  async limit() { return { success: true }; }
-} }));
+vi.mock("@/lib/databaseRateLimit.server", () => ({ consumeDatabaseRateLimit: mocks.rateLimit }));
 import { accountBinding, googleBillingEnabled, sandboxContext, type VerifiedNativePurchase } from "./config.server";
 import { verifyAndDeliver } from "./service.server";
 import { deliverNativePurchase } from "./ledger.server";
@@ -28,9 +24,8 @@ beforeEach(() => {
   vi.stubEnv("CITYWALK_NATIVE_SANDBOX_USERS", "owner");
   vi.stubEnv("CITYWALK_GOOGLE_TEST_PURCHASES", "1");
   vi.stubEnv("CITYWALK_GOOGLE_SERVICE_ACCOUNT", credentials);
-  vi.stubEnv("UPSTASH_REDIS_REST_URL", "https://redis.example.test");
-  vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", "test-only");
   mocks.session.mockResolvedValue({ user: { id: "owner" } });
+  mocks.rateLimit.mockResolvedValue({ success: true, limit: 30, remaining: 29, reset: Date.now() + 60_000 });
   mocks.db.mockImplementation(() => { throw new Error("Unexpected database access"); });
   mocks.providerClient.mockResolvedValue({ request: mocks.request });
 });
