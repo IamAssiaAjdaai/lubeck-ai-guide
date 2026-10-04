@@ -1,39 +1,35 @@
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { consumeDatabaseRateLimit } from "@/lib/databaseRateLimit.server";
 
-const redis = Redis.fromEnv();
+const MINUTE_MS = 60 * 1_000;
+const DAY_MS = 24 * 60 * MINUTE_MS;
 
-export const aiGuideRateLimit = new Ratelimit({
-  redis,
-
-  limiter: Ratelimit.slidingWindow(
-    10,
-    "10 m"
-  ),
-
-  prefix: "citywalk-ai-guide",
-
-  analytics: true,
-});
-
-const dailyGuideLimiters = new Map<string, Ratelimit>();
+export const aiGuideRateLimit = {
+  limit(identifier: string) {
+    return consumeDatabaseRateLimit({
+      scope: "citywalk-ai-guide-abuse",
+      identifier,
+      maxRequests: 10,
+      windowMs: 10 * MINUTE_MS,
+    });
+  },
+};
 
 export function getAiGuideDailyRateLimit(
   tier: "free" | "premium",
   maxRequests: number,
-): Ratelimit {
+) {
   if (!Number.isSafeInteger(maxRequests) || maxRequests <= 0) {
     throw new Error("INVALID_GUIDE_ALLOWANCE");
   }
-  const key = `${tier}:${maxRequests}`;
-  const existing = dailyGuideLimiters.get(key);
-  if (existing) return existing;
-  const limiter = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(maxRequests, "24 h"),
-    prefix: `citywalk-ai-${tier}-${maxRequests}-daily`,
-    analytics: true,
-  });
-  dailyGuideLimiters.set(key, limiter);
-  return limiter;
+
+  return {
+    limit(identifier: string) {
+      return consumeDatabaseRateLimit({
+        scope: `citywalk-ai-${tier}-${maxRequests}-daily`,
+        identifier,
+        maxRequests,
+        windowMs: DAY_MS,
+      });
+    },
+  };
 }
