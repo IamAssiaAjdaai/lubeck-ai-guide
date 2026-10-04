@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: radius.pill,
-    backgroundColor: "#45596C",
+    backgroundColor: colors.borderStrong,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     width: 14,
     height: 14,
     borderRadius: radius.pill,
-    backgroundColor: "#081624",
+    backgroundColor: colors.surface,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
