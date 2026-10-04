@@ -47,7 +47,8 @@
     "build:vinext": "vite build",
     "start:vinext": "vite preview",
     "deploy:vinext": "vinext-cloudflare deploy",
-    "deploy:vinext:dry-run": "vinext-cloudflare deploy --dry-run"
+    "deploy:vinext:dry-run": "vinext-cloudflare deploy --dry-run",
+    "rate-limit:test:integration": "tsx scripts/run-rate-limit-integration-tests.ts"
   },
   "dependencies": {
     "@apple/app-store-server-library": "3.1.0",
@@ -57,8 +58,6 @@
     "@better-auth/expo": "^1.7.7",
     "@citywalk/i18n": "file:packages/i18n",
     "@citywalk/traveler-core": "file:packages/traveler-core",
-    "@upstash/ratelimit": "^2.0.8",
-    "@upstash/redis": "^1.38.3",
     "better-auth": "^1.7.7",
     "drizzle-orm": "^0.45.2",
     "google-auth-library": "11.1.0",
