@@ -105,8 +105,9 @@ export default function HomeScreen() {
     });
   return (
     <Screen scrollViewRef={scroll} scrollDiagnostics="home">
-      <ImageOverlayHero title={t.homeTitle} subtitle={t.homeSubtitle} />
+      <ImageOverlayHero compact title={t.homeTitle} subtitle={t.homeSubtitle} />
       <PrimaryButton
+        style={styles.locationButton}
         label={t.location}
         busy={locating}
         onPress={() => void locate()}
@@ -257,8 +258,9 @@ export default function HomeScreen() {
   );
 }
 const styles = StyleSheet.create({
+  locationButton: { minHeight: 48 },
   search: {
-    minHeight: 56,
+    minHeight: 52,
     flexDirection: "row",
     gap: spacing.sm,
     alignItems: "center",
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
   },
-  searchInput: { flex: 1, minHeight: 56, color: colors.text, fontSize: 16 },
+  searchInput: { flex: 1, minHeight: 52, color: colors.text, fontSize: 16 },
   cityCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -274,12 +276,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.md,
     paddingEnd: spacing.sm,
+    borderColor: colors.border,
+    borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
     ...shadows.card,
   },
   cityImage: {
-    width: "43%",
-    minHeight: 112,
+    width: "38%",
+    minHeight: 100,
     alignSelf: "stretch",
     borderRadius: radius.sm,
   },

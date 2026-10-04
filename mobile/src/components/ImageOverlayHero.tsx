@@ -19,11 +19,11 @@ export function waterfrontCrop(width: number, height: number) {
   };
 }
 
-export function ImageOverlayHero({ title, subtitle }: { title: string; subtitle?: string }) {
+export function ImageOverlayHero({ title, subtitle, compact = false }: { title: string; subtitle?: string; compact?: boolean }) {
   const { direction } = useNativeLocale();
   const [size, setSize] = useState({ width: 0, height: 0 });
   return (
-    <View testID="image-overlay-hero" style={styles.hero} onLayout={({ nativeEvent: { layout } }) => {
+    <View testID="image-overlay-hero" style={[styles.hero, compact && styles.compactHero]} onLayout={({ nativeEvent: { layout } }) => {
       setSize(previous => previous.width === layout.width && previous.height === layout.height
         ? previous : { width: layout.width, height: layout.height });
     }}>
@@ -35,9 +35,9 @@ export function ImageOverlayHero({ title, subtitle }: { title: string; subtitle?
           style={[styles.art, waterfrontCrop(size.width, size.height)]}
         /> : null}
       </View>
-      <View style={styles.copy}>
+      <View style={[styles.copy, compact && styles.compactCopy]}>
         <AppText accessibilityRole="header" variant="screenTitle" style={[styles.title, nativeTextStyle(direction)]}>{title}</AppText>
-        {subtitle ? <AppText style={[styles.subtitle, nativeTextStyle(direction)]}>{subtitle}</AppText> : null}
+        {subtitle ? <AppText style={[styles.subtitle, compact && styles.compactSubtitle, nativeTextStyle(direction)]}>{subtitle}</AppText> : null}
       </View>
     </View>
   );
@@ -45,6 +45,7 @@ export function ImageOverlayHero({ title, subtitle }: { title: string; subtitle?
 
 const styles = StyleSheet.create({
   hero: { minHeight: 244, justifyContent: "center", borderRadius: radius.hero, overflow: "hidden", backgroundColor: colors.primary },
+  compactHero: { minHeight: 196 },
   // Physical coordinates deliberately stay LTR: Arabic aligns the real text,
   // never mirrors or repositions the illustration.
   background: { ...StyleSheet.absoluteFill, direction: "ltr", overflow: "hidden" },
@@ -52,6 +53,8 @@ const styles = StyleSheet.create({
   // Contrast follows the intrinsic text block, leaving the surrounding artwork
   // at its original brightness. No opacity is applied to the text or image.
   copy: { margin: spacing.md, padding: spacing.md, gap: spacing.sm, borderRadius: radius.sm, backgroundColor: "rgba(7, 30, 64, 0.68)" },
+  compactCopy: { margin: spacing.sm, padding: spacing.md },
   title: { color: "#fff" },
   subtitle: { color: "#fff", fontSize: 17, lineHeight: 25 },
+  compactSubtitle: { fontSize: 16, lineHeight: 23 },
 });
