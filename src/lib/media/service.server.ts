@@ -20,7 +20,10 @@ import {
   type AudioDurationExtractor,
 } from "@/lib/media/audioMetadata.server";
 import { parseExternalVideoUrl } from "@/lib/media/externalVideo";
-import { generateStoredImageVariants } from "@/lib/media/imageVariantGeneration.server";
+import {
+  generateStoredImageVariants,
+  storedImageVariantKey,
+} from "@/lib/media/imageVariantGeneration.server";
 import {
   validateMediaPurpose,
   validateUploadedObject,
@@ -356,6 +359,11 @@ export async function deleteAuthorizedArchivedMediaObject(
   const context = await requireCityCapability(asset.cityId, "media:manage");
   const deletion = await prepareMediaObjectDeletion(id);
   await store.deleteObject(deletion.objectKey);
+  if (asset.kind === "image") {
+    for (const variant of ["thumbnail", "card", "detail", "hero"] as const) {
+      await store.deleteObject(storedImageVariantKey(deletion.objectKey, variant));
+    }
+  }
   return markMediaObjectDeleted(
     deletion.id,
     deletion.objectKey,
