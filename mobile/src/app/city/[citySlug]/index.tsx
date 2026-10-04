@@ -327,24 +327,16 @@ function TourCard({
               }
               cachePolicy="memory-disk"
               contentFit="cover"
-              style={[styles.placeImage, expanded && { width: "100%", minHeight: 0, aspectRatio: 1.8 }]}
+              style={[styles.tourImage, expanded && { width: "100%", minHeight: 0, aspectRatio: 2 }]}
               accessibilityLabel={nativeArabicDisplayText(tour.content.title, uiLocale)}
               transition={motion.component}
             />
           ) : null}
           <View style={[styles.tourContent, nativeTextBlock(appDirection), expanded && { flex: 0, width: "100%" }]}>
-            <AppText variant="heading" style={textStyle}>
+            <AppText variant="cardTitle" style={textStyle}>
               {nativeArabicDisplayText(tour.content.title, uiLocale)}
             </AppText>
-            {tour.content.shortDescription || tour.content.description ? (
-              <AppText
-                numberOfLines={expanded ? undefined : 3}
-                style={[textStyle, styles.description]}
-              >
-                {tour.content.shortDescription ?? tour.content.description}
-              </AppText>
-            ) : null}
-            <AppText variant="caption" style={styles.metadata}>
+            <AppText variant="metadata" style={styles.metadata}>
               {tour.estimatedDurationMinutes
                 ? `${tour.estimatedDurationMinutes} ${messages.minutes} · `
                 : ""}
@@ -543,16 +535,23 @@ const styles = StyleSheet.create({
   description: { color: colors.textMuted },
   tourCard: {
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    marginTop: spacing.md,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
   },
   tourLink: { overflow: "hidden", flexDirection: "row" },
-  tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: spacing.md },
+  tourImage: {
+    width: "34%",
+    minHeight: 124,
+    alignSelf: "stretch",
+    backgroundColor: colors.primarySoft,
+  },
+  tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: spacing.sm },
   cardActions: { paddingHorizontal: 12, paddingBottom: 12 },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
   stopName: { color: colors.textMuted, marginTop: spacing.xs },
   startTour: { color: colors.primary, flexShrink: 1 },
-  startTourRow: { alignItems: "center", flexDirection: "row", gap: spacing.sm, marginTop: spacing.sm },
+  startTourRow: { alignItems: "center", flexDirection: "row", gap: spacing.xs, marginTop: spacing.xs },
 });
