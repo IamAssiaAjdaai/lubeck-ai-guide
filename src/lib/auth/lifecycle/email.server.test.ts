@@ -1,5 +1,8 @@
 // @vitest-environment node
+import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const envExample = readFileSync(new URL("../../../../.env.example", import.meta.url), "utf8");
 vi.mock("server-only", () => ({}));
 const tasks = vi.hoisted(() => ({ queue: [] as (() => Promise<void>)[] }));
 vi.mock("next/server", () => ({ after: (task: () => Promise<void>) => tasks.queue.push(task) }));
@@ -14,6 +17,11 @@ beforeEach(() => {
 });
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 describe("reset email provider boundary", () => {
+  it("documents every server variable required for account email delivery", () => {
+    expect(envExample).toContain("RESEND_API_KEY=");
+    expect(envExample).toContain("CITYWALK_EMAIL_FROM=");
+  });
+
   it("fails closed without provider configuration, never inventing delivery", () => {
     vi.stubEnv("RESEND_API_KEY", ""); expect(() => resetEmailConfiguration()).toThrow("UNAVAILABLE"); expect(tasks.queue).toHaveLength(0);
   });
