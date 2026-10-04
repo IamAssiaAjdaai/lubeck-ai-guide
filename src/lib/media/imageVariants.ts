@@ -16,6 +16,18 @@ export function isPublicImageVariant(value: unknown): value is PublicImageVarian
   return (\n    typeof value === "string" &&\n    Object.hasOwn(PUBLIC_IMAGE_VARIANT_SPECS, value)\n  );
 }
 
+export function legacyImageVariantPath(
+  source: string,
+  variant: PublicImageVariant,
+): string {
+  const normalized = source.replace(/^\\/+/, "");
+  const extensionIndex = normalized.lastIndexOf(".");
+  const stem = extensionIndex > normalized.lastIndexOf("/")
+    ? normalized.slice(0, extensionIndex)
+    : normalized;
+  return `/generated/image-variants/${variant}/${stem}.webp`;
+}
+
 export function publicMediaImageVariants(assetKey: string): PublicImageVariantUrls {
   const base = `/api/media/${encodeURIComponent(assetKey)}`;
   return {
