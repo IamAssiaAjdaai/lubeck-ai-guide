@@ -84,6 +84,48 @@ describe("TravelerAccountPanel", () => {
     expect(screen.queryByText(/user not found/i)).toBeNull();
   });
 
+  it("shows a specific invalid-credentials message for rejected passwords", async () => {
+    mocks.signInEmail.mockResolvedValue({
+      data: null,
+      error: { code: "INVALID_EMAIL_OR_PASSWORD", status: 401, message: "Invalid email or password" },
+    });
+    renderPanel();
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "traveler@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "incorrect-password" },
+    });
+    const buttons = screen.getAllByRole("button", { name: "Sign in" });
+    fireEvent.click(buttons[buttons.length - 1]!);
+
+    expect((await screen.findByRole("alert")).textContent).toContain(
+      copy.invalidCredentials,
+    );
+  });
+
+  it("shows service guidance for a temporary sign-in outage", async () => {
+    mocks.signInEmail.mockResolvedValue({
+      data: null,
+      error: { code: "SERVICE_UNAVAILABLE", status: 503, message: "Unavailable" },
+    });
+    renderPanel();
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "traveler@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "a-secure-password" },
+    });
+    const buttons = screen.getAllByRole("button", { name: "Sign in" });
+    fireEvent.click(buttons[buttons.length - 1]!);
+
+    expect((await screen.findByRole("alert")).textContent).toContain(
+      copy.authUnavailable,
+    );
+  });
+
   it("creates an account without silently auto-signing in", async () => {
     mocks.signUpEmail.mockResolvedValue({
       data: { user: { id: "user-1" } },
