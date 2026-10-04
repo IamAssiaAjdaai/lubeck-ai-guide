@@ -6,7 +6,7 @@ on:
     paths:
       - "package.json"
       - "package-lock.json"
-      - "vite.config.ts"
+      - "vite.config.mts"
       - "cloudflare.config.ts"
       - "tsconfig.json"
       - ".github/workflows/cloudflare-vinext-validate.yml"
