@@ -5,7 +5,7 @@ const questions = [
   {
     id: "pricing",
     question: "Is CITYWALK free?",
-    answer: "Launch pricing is still being finalized. Pricing and any paid features will be explained before release.",
+    answer: "Yes. CITYWALK has a free experience. For Lübeck, a 72-hour City Pass is planned at €4.99. CITYWALK Premium is planned at €7.99 per month or €39.99 per year. Store prices may be localized by country.",
   },
   {
     id: "account",
