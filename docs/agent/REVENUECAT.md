@@ -1,7 +1,9 @@
 # CITYWALK RevenueCat foundation
 
 MON-02 adds the native RevenueCat SDK boundary only. It does not activate purchases or
-make RevenueCat client state authoritative for protected CITYWALK access.
+make RevenueCat client state authoritative for protected CITYWALK access. MON-01 is now
+merged into `develop`, so the PostgreSQL entitlement model below is the active codebase
+foundation for the remaining monetization work.
 
 ## Trust boundary
 
@@ -77,4 +79,4 @@ MON-02 deliberately does not include:
 - paid-access decisions from client CustomerInfo;
 - production deployment or store submission.
 
-Those are follow-up acceptance gates after MON-01 and MON-02 merge.
+Those are follow-up acceptance gates after MON-02 merges.
