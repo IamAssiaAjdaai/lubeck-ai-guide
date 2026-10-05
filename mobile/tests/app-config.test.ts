@@ -5,6 +5,7 @@ import {
   CITYWALK_DEVELOPMENT_IDENTIFIER,
   CITYWALK_STORE_IDENTIFIER,
   assertProductionBuildEnvironment,
+  assertRevenueCatBuildEnvironment,
   createCitywalkExpoConfig,
 } from "../app.config";
 import appJson from "../app.json";
@@ -186,6 +187,37 @@ describe("CITYWALK native app configuration", () => {
       "https://api.citywalk.example",
     )).not.toThrow();
     expect(() => assertProductionBuildEnvironment("preview", undefined)).not.toThrow();
+  });
+
+  it("rejects RevenueCat secret keys from every mobile build", () => {
+    expect(() => assertRevenueCatBuildEnvironment(
+      "preview",
+      "sk_secret_must_stay_server_side",
+      undefined,
+    )).toThrow("secret API keys must never be included");
+  });
+
+  it("allows RevenueCat Test Store only outside production", () => {
+    expect(() => assertRevenueCatBuildEnvironment(
+      "preview",
+      "test_preview_key",
+      "test_preview_key",
+    )).not.toThrow();
+    expect(() => assertRevenueCatBuildEnvironment(
+      "production",
+      "test_preview_key",
+      undefined,
+    )).toThrow("must not use a RevenueCat Test Store API key");
+    expect(() => assertRevenueCatBuildEnvironment(
+      "production",
+      "appl_public_key",
+      "goog_public_key",
+    )).not.toThrow();
+    expect(() => assertRevenueCatBuildEnvironment(
+      "production",
+      undefined,
+      undefined,
+    )).not.toThrow();
   });
 
   it("keeps store beta submission limited to Google Play internal and TestFlight", () => {
