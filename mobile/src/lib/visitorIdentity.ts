@@ -101,6 +101,14 @@ export function getNativeVisitorId(): Promise<string> {
   return activeResolution;
 }
 
+export async function clearNativeVisitorIdentity(
+  storage: Pick<typeof AsyncStorage, "removeItem"> = AsyncStorage,
+): Promise<void> {
+  memoryIdentity = undefined;
+  activeResolution = undefined;
+  await storage.removeItem(NATIVE_VISITOR_STORAGE_KEY);
+}
+
 export function resetNativeVisitorIdentityForTests(): void {
   memoryIdentity = undefined;
   activeResolution = undefined;
