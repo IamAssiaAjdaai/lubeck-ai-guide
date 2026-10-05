@@ -8,6 +8,7 @@ import { CityUnlockController, cityUnlockPreviewEnabled, revenueCatCityPassEnabl
 import { nativeBilling } from "../lib/nativeBillingRuntime";
 import { nativeCityName } from "../lib/displayNames";
 import { readCityUnlock } from "../lib/cityUnlockAccess";
+import { premiumEnabled } from "../lib/revenueCatPremiumCore";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { ImageOverlayHero } from "./ImageOverlayHero";
 import { AppText, PrimaryButton, Screen, StatusMessage } from "./ui";
@@ -78,6 +79,10 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
     setAuthenticating(true);
     router.push({ pathname: "/account", params: { entry, returnToWalk: "1" } });
   }
+  function openPremium() {
+    close(false);
+    router.push("/premium");
+  }
   const busy = ["store_product_loading", "purchase_started", "restore_started", "verification_pending", "entitlement_activating"].includes(state.state);
   const owned = ["unlocked", "already_owned", "restore_success"].includes(state.state);
   return <><AuthorizedContent authorize={authorize}>{children}</AuthorizedContent><Modal visible={visible && !authenticating} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => close()}>
@@ -98,6 +103,9 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
         </> : <PrimaryButton label={state.product ? copy("unlock.purchase", { price: state.product.localizedPrice }) : copy("unlock.title")}
           disabled={!state.product || busy || state.state === "purchase_pending"} busy={busy}
           onPress={() => void controller.run("purchase")} />}
+        {useRevenueCat && premiumEnabled() ? (
+          <PrimaryButton label="Choose CITYWALK Premium" tone="secondary" disabled={busy} onPress={openPremium} />
+        ) : null}
         <PrimaryButton label={copy("unlock.restore")} tone="secondary" disabled={busy} onPress={() => void controller.run("restore")} />
         <PrimaryButton label={copy("unlock.retry")} tone="secondary" disabled={busy} onPress={() => void controller.load()} />
       </>}
