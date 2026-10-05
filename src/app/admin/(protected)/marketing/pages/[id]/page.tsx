@@ -6,13 +6,22 @@ import {
   MarketingFormShell,
   MarketingPageFields,
 } from "@/components/admin/MarketingForms";
+import { MarketingWorkflowPanel } from "@/components/admin/MarketingWorkflowPanel";
 import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
-import { updateMarketingPageAction } from "@/app/admin/(protected)/marketing/actions";
+import {
+  changeMarketingPageWorkflowAction,
+  updateMarketingPageAction,
+} from "@/app/admin/(protected)/marketing/actions";
 import {
   getMarketingEditorOptions,
   getMarketingPage,
   MarketingNotFoundError,
 } from "@/lib/admin/marketing/service.server";
+import {
+  MARKETING_PAGE_TRANSITIONS,
+  isMarketingPageState,
+} from "@/lib/admin/marketing/workflow";
+import { getMarketingWorkflowAccess } from "@/lib/admin/marketing/workflow.server";
 
 export const metadata = {
   title: "Marketing page | CITYWALK Control Center",
@@ -36,8 +45,20 @@ export default async function MarketingPageEditor({
     if (error instanceof MarketingNotFoundError) notFound();
     throw error;
   }
-  const options = await getMarketingEditorOptions();
+
+  const [options, workflowAccess] = await Promise.all([
+    getMarketingEditorOptions(),
+    getMarketingWorkflowAccess(page.cityId),
+  ]);
   const canEdit = options.canManage && page.publicationStatus === "draft";
+  const currentStatus = isMarketingPageState(page.publicationStatus)
+    ? page.publicationStatus
+    : "draft";
+  const workflowActions = MARKETING_PAGE_TRANSITIONS.filter(
+    (transition) =>
+      transition.from === currentStatus &&
+      canUseWorkflowCapability(transition.capability, workflowAccess),
+  ).map(({ to, label }) => ({ to, label }));
 
   return (
     <section>
@@ -46,7 +67,7 @@ export default async function MarketingPageEditor({
       </Link>
       <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
         <AdminPageHeader
-          description="Edit traveler-facing marketing copy while this page is still a draft. Review and publish stay separate."
+          description="Edit the draft, submit it for editorial review, then approve and publish with separate permissions."
           eyebrow={`Marketing · ${page.kind}`}
           title={page.title}
         />
@@ -66,9 +87,30 @@ export default async function MarketingPageEditor({
         </MarketingFormShell>
       ) : (
         <p className="surface-card mt-6 p-5 text-sm leading-6 text-text-secondary">
-          This page is read-only here. Only draft marketing pages can be edited in the draft editor.
+          The page copy is read-only outside draft status. Use the workflow below to review, publish or return it to draft.
         </p>
       )}
+
+      <MarketingWorkflowPanel
+        action={changeMarketingPageWorkflowAction.bind(null, page.id)}
+        actions={workflowActions}
+        currentStatus={currentStatus}
+        description="Editors can submit drafts. Reviewers can approve or return them. Publishing permission is required before this page can become published. Public rendering is added separately."
+        title="Marketing page workflow"
+      />
     </section>
   );
+}
+
+function canUseWorkflowCapability(
+  capability: "marketing:manage" | "publishing:review" | "publishing:publish",
+  access: Readonly<{
+    canManage: boolean;
+    canReview: boolean;
+    canPublish: boolean;
+  }>,
+) {
+  if (capability === "marketing:manage") return access.canManage;
+  if (capability === "publishing:review") return access.canReview;
+  return access.canPublish;
 }
