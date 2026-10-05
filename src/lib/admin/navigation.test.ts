@@ -25,28 +25,31 @@ describe("admin navigation", () => {
     );
   });
 
-  it("keeps content editors focused on creation and operations", () => {
+  it("keeps content editors focused on creation, marketing and operations", () => {
     const ids = getVisibleAdminSections(staff("content_editor")).map(
       ({ id }) => id,
     );
 
     expect(ids).toContain("cities");
     expect(ids).toContain("places");
+    expect(ids).toContain("marketing");
     expect(ids).toContain("operations");
     expect(ids).not.toContain("review");
   });
 
-  it("shows the review queue to reviewers", () => {
+  it("shows marketing read access and the review queue to reviewers", () => {
     const ids = getVisibleAdminSections(staff("reviewer_publisher")).map(
       ({ id }) => id,
     );
 
     expect(ids).toContain("review");
     expect(ids).toContain("media");
+    expect(ids).toContain("marketing");
   });
 
   it("resolves only known protected subroutes", () => {
     expect(getAdminSection("places")?.capability).toBe("places:view");
+    expect(getAdminSection("marketing")?.capability).toBe("marketing:view");
     expect(getAdminSection("review")?.capability).toBe("publishing:review");
     expect(getAdminSection("signup")).toBeUndefined();
   });
