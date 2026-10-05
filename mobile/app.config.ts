@@ -42,6 +42,26 @@ export function assertProductionBuildEnvironment(
   }
 }
 
+export function assertRevenueCatBuildEnvironment(
+  environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
+  iosKey = process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
+  androidKey = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
+): void {
+  const configuredKeys = [iosKey, androidKey]
+    .map((key) => key?.trim())
+    .filter((key): key is string => Boolean(key));
+
+  if (configuredKeys.some((key) => key.startsWith("sk_"))) {
+    throw new Error("RevenueCat secret API keys must never be included in a mobile build.");
+  }
+  if (
+    environment === "production" &&
+    configuredKeys.some((key) => key.startsWith("test_"))
+  ) {
+    throw new Error("Production builds must not use a RevenueCat Test Store API key.");
+  }
+}
+
 export function createCitywalkExpoConfig(
   config: Partial<ExpoConfig>,
   environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
@@ -104,5 +124,6 @@ export function createCitywalkExpoConfig(
 export default ({ config }: ConfigContext): ExpoConfig => {
   const environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development";
   assertProductionBuildEnvironment(environment);
+  assertRevenueCatBuildEnvironment(environment);
   return createCitywalkExpoConfig(config, environment);
 };
