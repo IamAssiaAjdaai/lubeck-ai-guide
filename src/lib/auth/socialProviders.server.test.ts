@@ -35,6 +35,17 @@ describe("CITYWALK social auth configuration", () => {
     ).toThrow(/Google social auth is partially configured/);
   });
 
+  it("does not enable Apple OAuth from the native app bundle identifier alone", () => {
+    expect(
+      getCitywalkSocialAuthConfiguration({
+        CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER: "com.citywalk.app",
+      }),
+    ).toEqual({
+      socialProviders: {},
+      trustedOrigins: [],
+    });
+  });
+
   it("registers Apple only from a complete credential set", () => {
     const config = getCitywalkSocialAuthConfiguration({
       CITYWALK_APPLE_OAUTH_CLIENT_ID: "com.citywalk.web",
