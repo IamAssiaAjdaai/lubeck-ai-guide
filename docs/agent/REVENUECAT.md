@@ -140,9 +140,39 @@ Ordinary Store cancellation maps to a benign cancelled state. If the webhook-bac
 entitlement does not appear, the flow fails closed and the traveler can retry; there is
 no local paid-access boolean.
 
+## MON-05 Premium flow
+
+Premium subscriptions are also opt-in until store/dashboard acceptance:
+
+`EXPO_PUBLIC_CITYWALK_REVENUECAT_PREMIUM=1`
+
+The flag is ignored while the legacy billing sandbox is selected. The `/premium` native
+screen loads only canonical `$rc_monthly` and `$rc_annual` packages and requires these
+exact store product identifiers:
+
+- `com.citywalk.premium.monthly`
+- `com.citywalk.premium.yearly`
+
+The screen displays RevenueCat/store localized prices. The €7.99 monthly and €39.99 yearly
+figures are launch targets only; they are never used as client purchase evidence.
+
+Purchase and restore follow the same trust boundary as City Pass:
+
+1. require a signed-in Better Auth account;
+2. synchronize RevenueCat to the immutable Better Auth `user.id`;
+3. execute `purchasePackage()` for the selected canonical package, or
+   `restorePurchases()` from the explicit Restore action;
+4. ignore CustomerInfo as authorization evidence;
+5. poll authenticated `/api/commerce/premium` for a short bounded window;
+6. only server-confirmed `feature:premium` access is treated as active.
+
+A successful Store callback without a reconciled PostgreSQL entitlement fails closed.
+Premium AI remains bounded by server policy (currently 20 verified answers per 24 hours),
+not unlimited. No free trial is configured by this code.
+
 ## Deployment state
 
-MON-01 through MON-03 are merged. MON-04 prepares the opt-in City Pass purchase/restore
-path, but merging this code does **not** configure RevenueCat dashboard products, add real
-SDK keys, set the feature flag in production, deploy production, run store acceptance or
-enable live purchases. Those remain explicit release actions.
+MON-01 through MON-04 are merged. MON-05 prepares an opt-in Premium purchase/restore
+surface, but merging it does **not** configure RevenueCat dashboard products, add real SDK
+keys, set either purchase feature flag in production, deploy production, run Apple/Google
+sandbox acceptance, or enable live purchases. Those remain explicit release actions.
