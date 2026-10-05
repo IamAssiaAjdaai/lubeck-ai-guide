@@ -7,6 +7,8 @@ export const CITYWALK_REVENUECAT_PACKAGE_IDS = Object.freeze({
   cityPass72h: "city_pass_72h",
 });
 
+const REVENUECAT_ANONYMOUS_PREFIX = "$RCAnonymousID:";
+
 export type RevenueCatPlanKind = "monthly" | "annual" | "city_pass_72h";
 
 export type RevenueCatPlan = Readonly<{
@@ -22,7 +24,7 @@ export type RevenueCatFoundationStatus =
   | Readonly<{ configured: false; reason: "unsupported_platform" | "missing_public_key" }>
   | Readonly<{ configured: true; platform: "ios" | "android" }>;
 
-type OfferingPackage = Readonly<{
+export type OfferingPackage = Readonly<{
   identifier: string;
   product: Readonly<{
     identifier: string;
@@ -32,14 +34,13 @@ type OfferingPackage = Readonly<{
   }>;
 }>;
 
-type CurrentOffering = Readonly<{
+export type CurrentOffering = Readonly<{
   availablePackages: readonly OfferingPackage[];
 }> | null;
 
-type RevenueCatDependencies = Readonly<{
+export type RevenueCatDependencies = Readonly<{
   configure: (options: { apiKey: string }) => void;
   getAppUserID: () => Promise<string>;
-  isAnonymous: () => Promise<boolean>;
   logIn: (appUserID: string) => Promise<unknown>;
   logOut: () => Promise<unknown>;
   getCurrentOffering: () => Promise<CurrentOffering>;
@@ -48,7 +49,6 @@ type RevenueCatDependencies = Readonly<{
 const defaultDependencies: RevenueCatDependencies = {
   configure: (options) => Purchases.configure(options),
   getAppUserID: () => Purchases.getAppUserID(),
-  isAnonymous: () => Purchases.isAnonymous(),
   logIn: (appUserID) => Purchases.logIn(appUserID),
   logOut: () => Purchases.logOut(),
   async getCurrentOffering() {
@@ -96,13 +96,15 @@ export async function syncRevenueCatIdentity(
   const status = configureRevenueCat(dependencies);
   if (!status.configured) return status;
 
+  const currentUserId = await dependencies.getAppUserID();
   if (userId) {
-    const currentUserId = await dependencies.getAppUserID();
     if (currentUserId !== userId) await dependencies.logIn(userId);
     return status;
   }
 
-  if (!(await dependencies.isAnonymous())) await dependencies.logOut();
+  if (!currentUserId.startsWith(REVENUECAT_ANONYMOUS_PREFIX)) {
+    await dependencies.logOut();
+  }
   return status;
 }
 
