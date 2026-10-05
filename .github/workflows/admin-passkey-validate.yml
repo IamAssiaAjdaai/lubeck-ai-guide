@@ -1,0 +1,63 @@
+name: Validate admin passkey security
+
+on:
+  push:
+    branches:
+      - feat/admin-passkey-v1
+    paths:
+      - .github/workflows/admin-passkey-validate.yml
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://citywalk:citywalk@127.0.0.1:5432/citywalk_build
+      BETTER_AUTH_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: echo "BETTER_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run i18n:check
+      - run: npm run lint
+      - run: npm run test:run
+      - run: npx tsc --noEmit
+      - run: npm run build
+
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: citywalk
+          POSTGRES_USER: citywalk
+          POSTGRES_PASSWORD: citywalk
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U citywalk -d citywalk"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://citywalk:citywalk@localhost:5432/citywalk
+      BETTER_AUTH_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: echo "BETTER_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - run: npm run db:verify
+      - run: npm run cms:import-lubeck
+      - run: npm run cms:test:integration
