@@ -1,0 +1,25 @@
+name: MON-02 lockfile
+
+on:
+  pull_request:
+    paths:
+      - "mobile/package.json"
+      - ".github/workflows/mon-02-lockfile.yml"
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Refresh mobile lockfile only
+        working-directory: mobile
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Upload generated lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: mon-02-mobile-package-lock
+          path: mobile/package-lock.json
+          if-no-files-found: error
