@@ -37,6 +37,28 @@ export function readMarketingAttribution(
   });
 }
 
+export function appendMarketingAttributionToPath(
+  path: string,
+  attribution: MarketingAttribution,
+): string {
+  const [pathname, existingQuery = ""] = path.split("?", 2);
+  const params = new URLSearchParams(existingQuery);
+
+  const values = [
+    ["utm_source", attribution.source],
+    ["utm_medium", attribution.medium],
+    ["utm_campaign", attribution.campaign],
+    ["utm_content", attribution.contentId],
+  ] as const;
+
+  for (const [key, value] of values) {
+    if (value) params.set(key, value);
+  }
+
+  const query = params.toString();
+  return query ? `${pathname}?${query}` : pathname;
+}
+
 export function marketingAttributionPostHogProperties(
   attribution: MarketingAttribution,
 ): Readonly<Record<string, string>> {
