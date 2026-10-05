@@ -88,10 +88,9 @@ describe("MarketingLandingTracker", () => {
       }),
     );
 
-    expect(screen.getByRole("link", { name: "Build my walk" })).toHaveAttribute(
-      "href",
-      "/en/lubeck",
-    );
+    expect(
+      screen.getByRole("link", { name: "Build my walk" }).getAttribute("href"),
+    ).toBe("/en/lubeck");
   });
 
   it("keeps the page usable when analytics is opted out", async () => {
