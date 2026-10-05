@@ -210,6 +210,7 @@ export const commerceSubscriptions = pgTable(
       withTimezone: true,
     }),
     willRenew: boolean("will_renew").default(false).notNull(),
+    providerEventAt: timestamp("provider_event_at", { withTimezone: true }),
     ...createTimestamps(),
   },
   (table) => [
