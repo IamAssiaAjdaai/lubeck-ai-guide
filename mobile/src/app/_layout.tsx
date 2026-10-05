@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { NativeBillingRecovery } from "../components/NativeBillingRecovery";
 import { NativeHeaderActions } from "../components/NativeHeaderActions";
+import { RevenueCatIdentitySync } from "../components/RevenueCatIdentitySync";
 import { colors } from "../design/tokens";
 import { NativeLocaleProvider } from "../localization/LocaleProvider";
 import { NativeTabScrollProvider } from "../lib/tabNavigation";
@@ -16,6 +17,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <NativeLocaleProvider>
           <NativeTabScrollProvider>
+          <RevenueCatIdentitySync />
           <NativeBillingRecovery />
           <StatusBar style="dark" />
           <Stack
