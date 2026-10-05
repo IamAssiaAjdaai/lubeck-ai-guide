@@ -1,3 +1,4 @@
+import { CitywalkLogo, CitywalkMark } from "@/components/brand/CitywalkLogo";
 import styles from "./landing.module.css";
 
 const benefits = [
@@ -14,18 +15,6 @@ const steps = [
 ] as const;
 
 type SymbolName = (typeof benefits)[number]["symbol"];
-
-function RouteMark() {
-  return (
-    <svg viewBox="0 0 48 28" width="48" height="28" fill="none" aria-hidden="true" focusable="false">
-      <path d="m4 19 10-11 12 12L43 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      <g fill="currentColor" stroke="white" strokeWidth="1.4">
-        <circle cx="4" cy="19" r="3.6" /><circle cx="14" cy="8" r="3.6" />
-        <circle cx="26" cy="20" r="3.6" /><circle cx="43" cy="8" r="3.6" />
-      </g>
-    </svg>
-  );
-}
 
 function BenefitIcon({ name }: { name: SymbolName }) {
   const paths = {
@@ -45,7 +34,7 @@ function LandingHeader() {
   return (
     <header className={styles.header}>
       <a className={styles.brand} href="#the-app" aria-label="CITYWALK — back to introduction">
-        <RouteMark /><span>CITYWALK</span>
+        <CitywalkLogo className={styles.brandLockup} markClassName={styles.brandMark} wordmarkClassName={styles.brandWordmark} />
       </a>
       <nav className={styles.navigation} aria-label="Landing page">
         <a href="#the-app">The app</a>
@@ -64,7 +53,7 @@ function PhoneIllustration() {
       <div className={styles.phone} aria-hidden="true">
         <div className={styles.phoneScreen}>
           <div className={styles.phoneTop}><span>9:41</span><span className={styles.phoneIsland} /><span>•••</span></div>
-          <div className={styles.phoneBrand}><RouteMark /><strong>CITYWALK</strong></div>
+          <div className={styles.phoneBrand}><CitywalkMark /><strong>CITYWALK</strong></div>
           <div className={styles.phoneHeading}><span>Your walk</span><strong>A little more discovery.</strong></div>
           <svg className={styles.map} viewBox="0 0 280 270" fill="none" focusable="false">
             <rect width="280" height="270" fill="#f1f5ef" />
