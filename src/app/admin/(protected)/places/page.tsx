@@ -22,7 +22,7 @@ export default async function PlacesPage({ searchParams }: { searchParams: Promi
       <input aria-label="Search places" className="min-h-11 rounded-xl border border-border px-3" defaultValue={query.q} name="q" placeholder="Search" />
       <select aria-label="City filter" className="min-h-11 rounded-xl border border-border px-3" defaultValue={query.city} name="city"><option value="">All cities</option>{citySlugs.map((slug) => <option key={slug}>{slug}</option>)}</select>
       <select aria-label="Category filter" className="min-h-11 rounded-xl border border-border px-3" defaultValue={query.category} name="category"><option value="">All categories</option><option>see</option><option>eat</option><option>fun</option></select>
-      <select aria-label="Publication filter" className="min-h-11 rounded-xl border border-border px-3" defaultValue={query.status} name="status"><option value="">All publication states</option><option>draft</option><option>published</option><option>archived</option></select>
+      <select aria-label="Publication filter" className="min-h-11 rounded-xl border border-border px-3" defaultValue={query.status} name="status"><option value="">All publication states</option><option>draft</option><option>in_review</option><option>approved</option><option>published</option><option>archived</option></select>
       <button className="button-secondary min-h-11 px-4" type="submit">Filter</button>
     </form>
     {places.length === 0 ? <EmptyContent>No matching places.</EmptyContent> : <ContentTable>
