@@ -73,11 +73,14 @@ function userCancelled(error: unknown): boolean {
 export class RevenueCatCityPassBilling {
   private busy = false;
   private observers = new Set<(outcome?: "cancelled" | "failed") => void>();
+  private dependencies: RevenueCatCityPassDependencies;
 
   constructor(
-    private dependencies: RevenueCatCityPassDependencies = defaultDependencies,
+    dependencies: Partial<RevenueCatCityPassDependencies> = {},
     private citySlug = "lubeck",
-  ) {}
+  ) {
+    this.dependencies = { ...defaultDependencies, ...dependencies };
+  }
 
   subscribe(callback: (outcome?: "cancelled" | "failed") => void) {
     this.observers.add(callback);
