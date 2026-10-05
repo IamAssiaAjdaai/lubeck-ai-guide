@@ -45,10 +45,11 @@ describe("landing Header / Hero checkpoint", () => {
 
   it("labels the phone illustration instead of claiming a real app capture", () => {
     render(<LandingPreviewPage />);
-    const figure = screen.getByRole("figure");
-    expect(figure.textContent).toContain("Illustrative preview · final app captures to follow.");
-    expect(figure.querySelector('[aria-hidden="true"]')).not.toBeNull();
-    expect(figure.querySelector("button, a, input")).toBeNull();
+    const caption = screen.getByText("Illustrative preview · final app captures to follow.");
+    const figure = caption.closest("figure");
+    expect(figure).not.toBeNull();
+    expect(figure?.querySelector('[aria-hidden="true"]')).not.toBeNull();
+    expect(figure?.querySelector("button, a, input")).toBeNull();
   });
 
   it("explains the preview step without offering a second web traveler app", () => {
@@ -57,7 +58,28 @@ describe("landing Header / Hero checkpoint", () => {
     expect(screen.queryByRole("link", { name: /explore lübeck|start walking|build my walk/i })).toBeNull();
   });
 
-  it("reuses an existing local decorative asset without new external media requests", () => {
+
+  it("explains return-by timing without promising an arrival time", () => {
+    render(<LandingPreviewPage />);
+    expect(screen.getByRole("heading", { name: "A walk that fits your day." })).toBeDefined();
+    expect(screen.getByText("Projected finish")).toBeDefined();
+    expect(screen.getByText("Schedule estimate")).toBeDefined();
+    expect(screen.getByText("Walking times are estimates, not a guaranteed arrival time.")).toBeDefined();
+    expect(screen.queryByText(/guaranteed to get you back|always on time/i)).toBeNull();
+  });
+
+  it("keeps the return-by timing card explicitly illustrative and non-interactive", () => {
+    render(<LandingPreviewPage />);
+    const caption = screen.getByText("Illustrative timing example · estimates update with the walk.");
+    const figure = caption.closest("figure");
+    expect(figure).not.toBeNull();
+    expect(figure?.querySelector("button, a, input")).toBeNull();
+    expect(figure?.textContent).toContain("Back by");
+    expect(figure?.textContent).toContain("17:30");
+  });
+
+  it("reuses existing local decorative assets without new external media requests", () => {
     expect(existsSync("public/images/citywalk-waterfront.webp")).toBe(true);
+    expect(existsSync("public/landmarks/holstentor.jpg")).toBe(true);
   });
 });
