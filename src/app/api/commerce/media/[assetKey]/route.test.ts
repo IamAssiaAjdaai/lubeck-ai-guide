@@ -15,8 +15,8 @@ vi.mock("@/lib/auth/server", () => ({
 vi.mock("@/lib/commerce/premiumMedia.server", () => ({
   getPremiumMediaDeliveryAsset: mocks.getAsset,
 }));
-vi.mock("@/lib/commerce/cityPassAccess.server", () => ({
-  requireCityPass: mocks.requirePass,
+vi.mock("@/lib/commerce/premiumAccess.server", () => ({
+  requirePaidCityAccess: mocks.requirePass,
 }));
 vi.mock("@/lib/media/mediaDelivery.server", () => ({
   deliverPrivateMediaObject: mocks.deliver,
@@ -50,7 +50,7 @@ describe("premium media delivery", () => {
     expect(mocks.deliver).not.toHaveBeenCalled();
   });
 
-  it("denies a signed-in traveler without an active city entitlement", async () => {
+  it("denies a signed-in traveler without active paid city access", async () => {
     mocks.getSession.mockResolvedValue({ user: { id: "user-1" } });
     mocks.requirePass.mockRejectedValue(new Error("CITY_PASS_REQUIRED"));
     const response = await GET(new Request("https://citywalk.example/api/commerce/media/key"), context);
@@ -58,7 +58,7 @@ describe("premium media delivery", () => {
     expect(mocks.deliver).not.toHaveBeenCalled();
   });
 
-  it("streams only after the authenticated city entitlement is verified", async () => {
+  it("streams only after the authenticated paid city access is verified", async () => {
     mocks.getSession.mockResolvedValue({ user: { id: "user-1" } });
     const request = new Request("https://citywalk.example/api/commerce/media/key");
     const response = await GET(request, context);
