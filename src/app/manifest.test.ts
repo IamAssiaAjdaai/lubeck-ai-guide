@@ -24,7 +24,7 @@ describe("CITYWALK web app identity", () => {
       },
       {
         src: "/apple-icon.png",
-        sizes: "1024x1024",
+        sizes: "180x180",
         type: "image/png",
         purpose: "any",
       },

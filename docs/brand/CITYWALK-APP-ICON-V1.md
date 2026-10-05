@@ -28,7 +28,7 @@ The native splash uses the same launcher master on the same Canvas background. B
 ## Web / PWA
 
 - `src/app/icon.svg`: browser/app icon using the approved colors.
-- `src/app/apple-icon.png`: opaque Apple web-app icon generated from the same launcher master.
+- `src/app/apple-icon.png`: opaque 180×180 Apple web-app icon generated from the same approved artwork. It is intentionally compact and stored as a standard RGB PNG for reliable Next.js metadata decoding.
 - `public/pwa/maskable.svg`: reduced-size mark with extra safe area for aggressive PWA masks.
 - `src/app/manifest.ts`: installable-web identity and theme colors.
 
@@ -37,5 +37,6 @@ The native splash uses the same launcher master on the same Canvas background. B
 - Native raster launcher/adaptive sources stay 1024×1024.
 - Foreground and monochrome adaptive layers retain transparency.
 - Launcher/background assets remain opaque.
+- The Apple web-app icon stays 180×180 and opaque.
 - App icon source files must not contain platform-specific rounded corners.
 - Store screenshots, promotional art, and social creatives may use the wider brand system, but they must not replace the launcher mark with unrelated artwork.

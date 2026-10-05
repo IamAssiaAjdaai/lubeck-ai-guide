@@ -43,4 +43,12 @@ describe("CITYWALK raster app-icon assets", () => {
       hasTransparencyChunk: false,
     });
   });
+
+  it("ships a compact opaque Apple web-app icon for Next metadata", () => {
+    expect(readPng("src/app/apple-icon.png")).toEqual({
+      width: 180,
+      height: 180,
+      hasTransparencyChunk: false,
+    });
+  });
 });
