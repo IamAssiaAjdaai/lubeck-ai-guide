@@ -1,4 +1,5 @@
-import { FileText, Megaphone, Newspaper, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { FileText, Megaphone, Newspaper, Plus, Sparkles } from "lucide-react";
 
 import {
   AdminPageHeader,
@@ -28,6 +29,15 @@ function MetricCard({
   );
 }
 
+function NewDraftLink({ href, label }: Readonly<{ href: string; label: string }>) {
+  return (
+    <Link className="button-secondary inline-flex min-h-10 items-center gap-2 px-4" href={href}>
+      <Plus aria-hidden="true" size={16} />
+      {label}
+    </Link>
+  );
+}
+
 export const metadata = {
   title: "Marketing | CITYWALK Control Center",
 };
@@ -49,6 +59,14 @@ export default async function MarketingPage() {
         eyebrow="Growth workspace"
         title="Marketing"
       />
+
+      {workspace.canManage ? (
+        <div className="mt-5 flex flex-wrap gap-3">
+          <NewDraftLink href="/admin/marketing/campaigns/new" label="New campaign" />
+          <NewDraftLink href="/admin/marketing/pages/new" label="New page" />
+          <NewDraftLink href="/admin/marketing/social/new" label="New social draft" />
+        </div>
+      ) : null}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
@@ -125,19 +143,23 @@ export default async function MarketingPage() {
           <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
             Creates one draft campaign, the <strong>/lubeck/2-hours</strong> landing page and the first short-form content draft <strong>CW-LUB-TIME-001</strong>. Nothing is published automatically.
           </p>
-          {canCreateLubeckStarter ? (
-            <form action={createLubeckStarterCampaignAction} className="mt-5">
-              <button className="button-primary min-h-11 px-5" type="submit">
-                Create starter campaign
-              </button>
-            </form>
-          ) : (
+          <div className="mt-5 flex flex-wrap gap-3">
+            {canCreateLubeckStarter ? (
+              <form action={createLubeckStarterCampaignAction}>
+                <button className="button-primary min-h-11 px-5" type="submit">
+                  Create starter campaign
+                </button>
+              </form>
+            ) : null}
+            {workspace.canManage ? (
+              <NewDraftLink href="/admin/marketing/campaigns/new" label="Create another campaign" />
+            ) : null}
+          </div>
+          {!canCreateLubeckStarter && !workspace.canManage ? (
             <p className="mt-4 text-sm font-semibold text-text-secondary">
-              {workspace.canManage
-                ? "Import or authorize the Lübeck city first to create this starter campaign."
-                : "Marketing edit access is required to create the starter campaign."}
+              Marketing edit access is required to create campaigns.
             </p>
-          )}
+          ) : null}
         </div>
       ) : (
         <ContentTable>
@@ -151,7 +173,9 @@ export default async function MarketingPage() {
             {workspace.campaigns.slice(0, 8).map((campaign) => (
               <tr key={campaign.id}>
                 <Cell>
-                  <strong>{campaign.name}</strong>
+                  <Link className="font-bold text-primary hover:underline" href={`/admin/marketing/campaigns/${campaign.id}`}>
+                    {campaign.name}
+                  </Link>
                   <span className="mt-1 block text-xs text-text-secondary">
                     {campaign.slug}
                   </span>
@@ -169,12 +193,19 @@ export default async function MarketingPage() {
 
       <div className="mt-10 grid gap-8 xl:grid-cols-2">
         <div>
-          <div className="flex items-center gap-3">
-            <Newspaper aria-hidden="true" className="text-primary" size={20} />
-            <div>
-              <p className="eyebrow">Pages</p>
-              <h2 className="mt-1 text-xl font-extrabold">Landing + blog</h2>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Newspaper aria-hidden="true" className="text-primary" size={20} />
+              <div>
+                <p className="eyebrow">Pages</p>
+                <h2 className="mt-1 text-xl font-extrabold">Landing + blog</h2>
+              </div>
             </div>
+            {workspace.canManage ? (
+              <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing/pages/new">
+                New page
+              </Link>
+            ) : null}
           </div>
           {workspace.pages.length === 0 ? (
             <EmptyContent>No marketing pages yet.</EmptyContent>
@@ -189,7 +220,9 @@ export default async function MarketingPage() {
                 {workspace.pages.slice(0, 6).map((page) => (
                   <tr key={page.id}>
                     <Cell>
-                      <strong>{page.title}</strong>
+                      <Link className="font-bold text-primary hover:underline" href={`/admin/marketing/pages/${page.id}`}>
+                        {page.title}
+                      </Link>
                       <span className="mt-1 block text-xs text-text-secondary">
                         {page.path}
                       </span>
@@ -206,12 +239,19 @@ export default async function MarketingPage() {
         </div>
 
         <div>
-          <div className="flex items-center gap-3">
-            <Sparkles aria-hidden="true" className="text-primary" size={20} />
-            <div>
-              <p className="eyebrow">Social</p>
-              <h2 className="mt-1 text-xl font-extrabold">Content pipeline</h2>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Sparkles aria-hidden="true" className="text-primary" size={20} />
+              <div>
+                <p className="eyebrow">Social</p>
+                <h2 className="mt-1 text-xl font-extrabold">Content pipeline</h2>
+              </div>
             </div>
+            {workspace.canManage ? (
+              <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing/social/new">
+                New draft
+              </Link>
+            ) : null}
           </div>
           {workspace.content.length === 0 ? (
             <EmptyContent>No social content drafts yet.</EmptyContent>
@@ -226,7 +266,9 @@ export default async function MarketingPage() {
                 {workspace.content.slice(0, 6).map((item) => (
                   <tr key={item.id}>
                     <Cell>
-                      <strong>{item.contentCode}</strong>
+                      <Link className="font-bold text-primary hover:underline" href={`/admin/marketing/social/${item.id}`}>
+                        {item.contentCode}
+                      </Link>
                       <span className="mt-1 block max-w-xs text-xs text-text-secondary">
                         {item.hook}
                       </span>
