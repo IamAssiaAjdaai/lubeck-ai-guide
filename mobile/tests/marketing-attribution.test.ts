@@ -1,5 +1,18 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const storage = vi.hoisted(() => new Map<string, string>());
+
+vi.mock("@react-native-async-storage/async-storage", () => ({
+  default: {
+    getItem: vi.fn(async (key: string) => storage.get(key) ?? null),
+    setItem: vi.fn(async (key: string, value: string) => {
+      storage.set(key, value);
+    }),
+    clear: vi.fn(async () => {
+      storage.clear();
+    }),
+  },
+}));
 
 import {
   loadNativeMarketingAttribution,
@@ -8,8 +21,9 @@ import {
 } from "../src/lib/marketingAttribution";
 
 describe("native marketing attribution", () => {
-  beforeEach(async () => {
-    await AsyncStorage.clear();
+  beforeEach(() => {
+    storage.clear();
+    vi.clearAllMocks();
   });
 
   it("normalizes incoming Expo Router params", () => {
