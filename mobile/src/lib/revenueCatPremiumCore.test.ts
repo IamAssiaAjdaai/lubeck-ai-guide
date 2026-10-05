@@ -3,8 +3,13 @@ import { describe, expect, it, vi } from "vitest";
 import {
   CITYWALK_PREMIUM_PRODUCTS,
   RevenueCatPremiumBilling,
+  type PremiumPlan,
   type RevenueCatPremiumDependencies,
 } from "./revenueCatPremiumCore";
+
+type MutableDependencies = {
+  -readonly [Key in keyof RevenueCatPremiumDependencies]: RevenueCatPremiumDependencies[Key];
+};
 
 function fixture() {
   let access = false;
@@ -16,26 +21,27 @@ function fixture() {
     identifier: "$rc_annual",
     product: { identifier: "com.citywalk.premium.yearly" },
   };
-  const dependencies: RevenueCatPremiumDependencies = {
+  const plans: readonly PremiumPlan[] = [
+    {
+      kind: "monthly",
+      packageIdentifier: "$rc_monthly",
+      productIdentifier: "com.citywalk.premium.monthly",
+      localizedPrice: "7,99 €",
+      currencyCode: "EUR",
+      price: 7.99,
+    },
+    {
+      kind: "annual",
+      packageIdentifier: "$rc_annual",
+      productIdentifier: "com.citywalk.premium.yearly",
+      localizedPrice: "39,99 €",
+      currencyCode: "EUR",
+      price: 39.99,
+    },
+  ];
+  const dependencies: MutableDependencies = {
     ensureConfigured: vi.fn(async () => true),
-    loadPlans: vi.fn(async () => [
-      {
-        kind: "monthly",
-        packageIdentifier: "$rc_monthly",
-        productIdentifier: "com.citywalk.premium.monthly",
-        localizedPrice: "7,99 €",
-        currencyCode: "EUR",
-        price: 7.99,
-      },
-      {
-        kind: "annual",
-        packageIdentifier: "$rc_annual",
-        productIdentifier: "com.citywalk.premium.yearly",
-        localizedPrice: "39,99 €",
-        currencyCode: "EUR",
-        price: 39.99,
-      },
-    ]),
+    loadPlans: vi.fn(async () => plans),
     getOfferings: vi.fn(async () => ({
       current: { availablePackages: [monthlyPackage, annualPackage] },
     })),
@@ -70,7 +76,7 @@ describe("RevenueCat Premium billing", () => {
 
   it("ignores a package whose store product id does not match the canonical contract", async () => {
     const f = fixture();
-    f.dependencies.loadPlans = vi.fn(async () => [{
+    f.dependencies.loadPlans = vi.fn(async (): Promise<readonly PremiumPlan[]> => [{
       kind: "monthly",
       packageIdentifier: "$rc_monthly",
       productIdentifier: "com.citywalk.wrong",
