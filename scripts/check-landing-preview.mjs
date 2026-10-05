@@ -13,6 +13,30 @@ assert.equal(parsed.protocol, "http:");
 const output = path.resolve(process.env.CITYWALK_PREVIEW_OUTPUT || "artifacts/landing-preview");
 await mkdir(output, { recursive: true });
 
+async function checkFaq(page) {
+  const details = page.locator("#faq details");
+  assert.equal(await details.count(), 4);
+  assert.equal(await page.locator("#faq details[open]").count(), 0);
+  const summary = details.first().locator("summary");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  await details.first().locator("p").waitFor({ state: "visible" });
+  assert.equal(await details.first().evaluate(element => element.open), true);
+  await page.keyboard.press("Space");
+  await details.first().locator("p").waitFor({ state: "hidden" });
+  for (const item of await details.all()) {
+    assert.ok((await item.locator("summary").boundingBox()).height >= 44);
+    await item.locator("summary").click();
+    await item.locator("p").waitFor({ state: "visible" });
+  }
+  const overflow = await page.locator("#faq *").evaluateAll(elements => elements
+    .filter(element => {
+      const rect = element.getBoundingClientRect();
+      return rect.width > 0 && (rect.left < -1 || rect.right > innerWidth + 1 || element.scrollWidth > element.clientWidth + 1);
+    }).map(element => element.tagName));
+  assert.deepEqual(overflow, [], "Expanded FAQ fits the viewport");
+}
+
 const browser = await chromium.launch({ headless: true });
 const results = [];
 try {
@@ -51,20 +75,43 @@ try {
     assert.equal(await page.locator(":focus").getAttribute("id"), "landing-content");
     await page.evaluate(() => { document.activeElement?.blur(); window.scrollTo(0, 0); });
     await page.screenshot({ path: path.join(output, `landing-${width}.png`), fullPage: true });
+    await checkFaq(page);
+    await page.locator("#faq").screenshot({ path: path.join(output, `faq-open-${width}.png`) });
     assert.deepEqual(pageErrors, [], `Client errors at ${width}px`);
-    results.push({ width, status: 200, overflow: false, keyboardSkip: true });
+    results.push({ width, status: 200, overflow: false, keyboardSkip: true, faqKeyboardAndPointer: true });
     await page.close();
   }
 
   const page = await browser.newPage({ viewport: { width: 390, height: 1000 }, reducedMotion: "reduce" });
   await page.goto(`${origin}/landing-preview`, { waitUntil: "networkidle" });
   await page.addStyleTag({ content: "html { font-size: 200% !important; }" });
+  await checkFaq(page);
   const pageWidth = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }));
-  assert.ok(pageWidth.document <= pageWidth.viewport + 1, "Reflow at 200% text");
-  assert.ok(await page.getByRole("heading", { level: 1 }).isVisible());
+  const reflow = await page.evaluate(() => ({
+    viewport: innerWidth,
+    document: document.documentElement.scrollWidth,
+    scrollX,
+    overflow: [...document.querySelectorAll("main *, header *, footer *")].flatMap(element => {
+      const box = element.getBoundingClientRect();
+      if (box.width === 0 || (box.left >= -1 && box.right <= innerWidth + 1 && element.scrollWidth <= element.clientWidth + 1)) return [];
+      return [{ tag: element.tagName, className: element.getAttribute("class"), left: box.left,
+        right: box.right, clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }];
+    }),
+  }));
   await page.screenshot({ path: path.join(output, "landing-390-text-200.png"), fullPage: true });
-  results.push({ width: 390, textScale: "200%", reducedMotion: true });
+  await writeFile(path.join(output, "reflow-200.json"), JSON.stringify(reflow, null, 2));
+  assert.ok(pageWidth.document <= pageWidth.viewport + 1, `Reflow at 200% text: ${JSON.stringify(reflow)}`);
+  assert.ok(await page.getByRole("heading", { level: 1 }).isVisible());
+  results.push({ width: 390, textScale: "200%", reducedMotion: true, expandedFaq: true });
   await page.close();
+  const noJs = await browser.newPage({ viewport: { width: 390, height: 1000 }, javaScriptEnabled: false });
+  const noJsResponse = await noJs.goto(`${origin}/landing-preview`, { waitUntil: "load" });
+  assert.equal(noJsResponse?.status(), 200);
+  const noJsItem = noJs.locator("#faq details").first();
+  await noJsItem.locator("summary").click();
+  await noJsItem.locator("p").waitFor({ state: "visible" });
+  await noJs.close();
+  results.push({ width: 390, javaScriptEnabled: false, faqPointer: true });
   await writeFile(path.join(output, "checks.json"), JSON.stringify(results, null, 2));
   console.log(JSON.stringify({ result: "passed", checks: results }, null, 2));
 } finally {

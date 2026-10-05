@@ -1,0 +1,71 @@
+.eyebrow { font-size: .6875rem; font-weight: 700; letter-spacing: .2em; line-height: 1.5; }
+.launch { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .6fr); gap: 2rem; align-items: center; width: calc(100% - 3rem); max-width: 75rem; margin: 1.5rem auto 0; padding: clamp(2rem, 4vw, 3.5rem); border-radius: 1.25rem; background: #071c36; color: #fff; }
+.launchCopy { min-width: 0; }
+.launch .eyebrow { color: #bacde5; }
+.launch h2 { margin-top: .8rem; max-width: 34rem; font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 780; letter-spacing: -.05em; line-height: 1.08; overflow-wrap: anywhere; }
+.launchLead { max-width: 34rem; margin-top: 1rem !important; color: #d6e3f2; font-size: 1rem; line-height: 1.7; }
+.platforms { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem !important; }
+.platforms li { display: inline-flex; align-items: center; flex-wrap: wrap; gap: .55rem; padding: .45rem .75rem; border: 1px solid #45607e; border-radius: 999px; color: #fff; font-size: .8125rem; }
+.platforms span { color: #c5d5e9; font-size: .75rem; }
+.launchActions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
+.launchPrimary, .launchSecondary { display: inline-flex; align-items: center; justify-content: center; gap: .8rem; min-height: 3rem; padding: .8rem 1rem; border-radius: .65rem; font-size: .875rem; font-weight: 650; text-align: center; overflow-wrap: anywhere; }
+.launch .launchPrimary { background: #fff; color: #071c36; }
+.launch .launchPrimary:hover { background: #eaf1ff; }
+.launch .launchSecondary { color: #fff; border: 1px solid #6c84a0; }
+.launch .launchSecondary:hover { background: #143354; }
+.launch a:focus-visible { outline: 3px solid #b4d1ff; outline-offset: 5px; }
+.launchNote { max-width: 35rem; margin-top: 1.25rem !important; color: #bacde5; font-size: .75rem; line-height: 1.6; }
+.launchArt { display: flex; flex-direction: column; align-items: center; gap: .5rem; min-width: 0; padding: 1rem; text-align: center; }
+.brandTile { display: grid; place-items: center; width: 7.5rem; aspect-ratio: 1; padding: 1.3rem; margin-bottom: .8rem; border-radius: 1.7rem; background: #fff; box-shadow: 0 18px 45px rgb(0 0 0 / 18%); }
+.brandTile svg { display: block; width: 100%; height: auto; color: var(--landing-blue); }
+.launchArt strong { font-size: 1.15rem; letter-spacing: .06em; }
+.launchArt > span { color: #bacde5; font-size: .8125rem; }
+.faq { max-width: 80rem; margin-inline: auto; padding: 4.5rem 2.5rem; }
+.faq .eyebrow { color: #43546e; }
+.faq h2 { margin-top: .7rem; font-size: clamp(1.8rem, 3vw, 2.7rem); font-weight: 760; letter-spacing: -.045em; line-height: 1.15; }
+.faqGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; gap: .85rem; margin-top: 1.75rem; }
+.faqItem { min-width: 0; border: 1px solid #dce5f0; border-radius: .85rem; background: #fff; }
+.faqItem summary { display: flex; align-items: center; justify-content: space-between; gap: .7rem; min-height: 4rem; padding: 1rem; list-style: none; cursor: pointer; font-size: .875rem; line-height: 1.5; font-weight: 650; overflow-wrap: anywhere; }
+.faqItem summary::-webkit-details-marker { display: none; }
+.faqItem summary:focus-visible { outline: 3px solid var(--landing-blue); outline-offset: 4px; border-radius: .85rem; }
+.faqItem summary:hover { color: var(--landing-blue); }
+.disclosure { flex: 0 0 1rem; width: 1rem; height: 1rem; stroke: var(--landing-blue); stroke-width: 1.75; stroke-linecap: round; fill: none; }
+.faqItem[open] .vertical { display: none; }
+.faqItem[open] { border-color: #adc3f5; }
+.faqItem > p { padding: 0 1rem 1.2rem; color: var(--landing-text); font-size: .875rem; line-height: 1.65; overflow-wrap: anywhere; }
+.footer { max-width: 80rem; margin-inline: auto; padding: 2rem 2.5rem 1.5rem; border-top: 1px solid #e3eaf3; }
+.footerGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+.footerGrid > * { min-width: 0; }
+.footer a { display: inline-flex; align-items: center; min-height: 2.75rem; overflow-wrap: anywhere; font-size: .8125rem; }
+.footer a:hover { color: var(--landing-blue); }
+.brandLink { color: var(--landing-ink); }
+.brandLockup { display: inline-flex; align-items: center; gap: .55rem; }
+.brandMark { width: 2.5rem; height: auto; flex-shrink: 0; color: var(--landing-blue); }
+.wordmark { font-size: 1.15rem; font-weight: 800; letter-spacing: -.04em; }
+.footerBrand p { color: var(--landing-text); font-size: .8125rem; line-height: 1.6; }
+.footerNav { display: flex; flex-wrap: wrap; gap: .1rem 1.2rem; }
+.footerHeading { color: var(--landing-ink); font-size: .8125rem; font-weight: 650; line-height: 1.6; }
+.support a { color: var(--landing-text); max-width: 100%; }
+.legalPending { margin-top: 1.75rem; padding: 1rem 1.15rem; border: 1px solid #e3eaf3; border-radius: .75rem; background: #f8fbff; }
+.legalPending ul { display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; margin-top: .55rem !important; color: var(--landing-text); font-size: .8125rem; }
+.legalPending > p:last-child { margin-top: .65rem; color: var(--landing-text); font-size: .75rem; line-height: 1.6; }
+.footerBottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; margin-top: 1.5rem; color: var(--landing-text); font-size: .75rem; line-height: 1.6; }
+@media (max-width: 70rem) {
+  .faqGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footerGrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .support { grid-column: 1 / -1; }
+}
+@media (max-width: 48rem) {
+  .launch { grid-template-columns: minmax(0, 1fr); gap: 0; width: calc(100% - 48px); padding: 2rem min(1.5rem, 6vw); }
+  .launchArt { display: none; }
+  .faq { padding: 3.5rem min(1.5rem, 6vw); }
+  .faqGrid { grid-template-columns: minmax(0, 1fr); }
+  .footer { padding: 1.75rem min(1.5rem, 6vw); }
+  .footerGrid { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .support { grid-column: auto; }
+  .footerBottom { flex-direction: column; }
+}
+@media (max-width: 24rem) {
+  .launch { width: calc(100% - 32px); padding-inline: min(1.15rem, 6vw); }
+  .launchActions { flex-direction: column; align-items: stretch; }
+}
