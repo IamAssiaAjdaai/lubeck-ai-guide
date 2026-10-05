@@ -21,6 +21,8 @@ import {
   endCitywalkLiveActivity,
   upsertCitywalkLiveActivity,
 } from "./liveWalkActivity";
+import { nativeAuthClient } from "./auth/client";
+import { readPremiumAccess } from "./premiumAccess";
 
 export const LIVE_WALK_LOCATION_TASK = "citywalk-live-walk-location-v1";
 
@@ -45,8 +47,20 @@ function activityKitSupported(): boolean {
   return Number.isFinite(version) && version >= 16.1;
 }
 
+async function hasPremiumLiveWalkAccess(): Promise<boolean> {
+  try {
+    const session = await nativeAuthClient.getSession();
+    const account = session.data?.user.id;
+    if (session.error || !account) return false;
+    return await readPremiumAccess(account);
+  } catch {
+    return false;
+  }
+}
+
 export async function enableCitywalkLiveWalk(): Promise<LiveWalkEnableResult> {
   if (!activityKitSupported()) return "unavailable";
+  if (!await hasPremiumLiveWalkAccess()) return "unavailable";
 
   const session = await loadLiveWalkSession();
   if (!session || !(session.takeBack ? session.finish : session.stops[0])) {
