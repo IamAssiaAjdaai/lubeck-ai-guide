@@ -55,6 +55,17 @@ function withinCityScope<T extends { cityId: number }>(
   return rows.filter((row) => staff.cityIds.includes(row.cityId));
 }
 
+function withinCityIdScope<T extends { id: number }>(
+  rows: readonly T[],
+  staff: StaffAccess,
+): T[] {
+  if (staff.role === "super_admin" || staff.globalAccess) {
+    return [...rows];
+  }
+
+  return rows.filter((row) => staff.cityIds.includes(row.id));
+}
+
 function assertCityCapability(
   staff: StaffAccess,
   cityId: number,
@@ -130,10 +141,7 @@ export async function getMarketingWorkspace() {
   const scopedCampaigns = withinCityScope(campaigns, context.staff);
   const scopedPages = withinCityScope(pages, context.staff);
   const scopedContent = withinCityScope(content, context.staff);
-  const scopedCities = withinCityScope(
-    cities.map((city) => ({ ...city, cityId: city.id })),
-    context.staff,
-  ).map(({ cityId: _cityId, ...city }) => city);
+  const scopedCities = withinCityIdScope(cities, context.staff);
 
   return {
     canManage: hasActiveStaffCapability(context.staff, "marketing:manage"),
@@ -185,14 +193,9 @@ export async function getMarketingEditorOptions() {
       .orderBy(marketingPagesTable.title),
   ]);
 
-  const scopedCities = withinCityScope(
-    cities.map((city) => ({ ...city, cityId: city.id })),
-    context.staff,
-  ).map(({ cityId: _cityId, ...city }) => city);
-
   return {
     canManage: hasActiveStaffCapability(context.staff, "marketing:manage"),
-    cities: scopedCities,
+    cities: withinCityIdScope(cities, context.staff),
     campaigns: withinCityScope(campaigns, context.staff),
     pages: withinCityScope(pages, context.staff),
   };
@@ -266,13 +269,17 @@ export async function updateMarketingCampaign(
   assertCityCapability(context.staff, current.cityId, "marketing:manage");
   assertCityCapability(context.staff, validated.cityId, "marketing:manage");
   assertDraftCampaign(current);
+  if (current.cityId !== validated.cityId) {
+    throw new MarketingConflictError(
+      "Campaign city cannot be changed after creation. Create a new campaign for another city.",
+    );
+  }
   await assertCityExists(validated.cityId);
   await assertCampaignSlugAvailable(validated.cityId, validated.slug, id);
 
   const [updated] = await getDb()
     .update(marketingCampaignsTable)
     .set({
-      cityId: validated.cityId,
       slug: validated.slug,
       name: validated.name,
       objective: validated.objective,
@@ -327,6 +334,11 @@ export async function updateMarketingPage(id: number, input: MarketingPageInput)
   assertCityCapability(context.staff, current.cityId, "marketing:manage");
   assertCityCapability(context.staff, validated.cityId, "marketing:manage");
   assertDraftPage(current);
+  if (current.cityId !== validated.cityId) {
+    throw new MarketingConflictError(
+      "Marketing page city cannot be changed after creation. Create a new page for another city.",
+    );
+  }
   await assertCityExists(validated.cityId);
   await assertCampaignMatchesCity(validated.campaignId, validated.cityId);
   await assertPageIdentityAvailable(validated, id);
@@ -334,7 +346,6 @@ export async function updateMarketingPage(id: number, input: MarketingPageInput)
   const [updated] = await getDb()
     .update(marketingPagesTable)
     .set({
-      cityId: validated.cityId,
       campaignId: validated.campaignId ?? null,
       kind: validated.kind,
       slug: validated.slug,
