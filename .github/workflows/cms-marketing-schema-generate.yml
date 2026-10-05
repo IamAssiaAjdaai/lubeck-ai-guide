@@ -1,3 +1,4 @@
+# Temporary workflow: remove after the generated migration is committed.
 name: Generate CMS marketing migration
 
 on:
