@@ -11,6 +11,7 @@ const result = spawnSync(
     "run",
     "src/lib/commerce/webhook.integration.test.ts",
     "src/lib/commerce/subscriptionSource.integration.test.ts",
+    "src/lib/commerce/revenueCatWebhook.integration.test.ts",
   ],
   {
     env: { ...process.env, COMMERCE_DB_INTEGRATION: "1" },
