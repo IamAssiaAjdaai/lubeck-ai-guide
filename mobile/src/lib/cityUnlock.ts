@@ -1,14 +1,16 @@
 import { getCityUnlockProduct, type CityUnlockState } from "@citywalk/traveler-core";
 
 export type StoreProduct = Readonly<{ id: string; localizedPrice: string }>;
-export type PurchaseResult = Readonly<{ status: "purchased" | "already-owned"; proof: string }> | Readonly<{ status: "pending" }> | Readonly<{ status: "cancelled" }>;
+export type PurchaseResult = Readonly<{ status: "purchased" | "already-owned"; proof?: string }> | Readonly<{ status: "pending" }> | Readonly<{ status: "cancelled" }>;
+export type RestoreResult = readonly string[] | Readonly<{ storeSynced: true }>;
 export type CityUnlockPorts = {
   account(): string | undefined;
   product(id: string): Promise<StoreProduct | undefined>;
   purchase(id: string, account: string): Promise<PurchaseResult>;
-  restore(id: string, account: string): Promise<readonly string[]>;
+  restore(id: string, account: string): Promise<RestoreResult>;
   verify(proof: string, account: string, productId: string): Promise<void>;
   access(account: string | undefined): Promise<boolean>;
+  activate?(account: string): Promise<boolean>;
 };
 export type UnlockSnapshot = Readonly<{ state: CityUnlockState; product?: StoreProduct }>;
 
@@ -60,10 +62,10 @@ export class CityUnlockController {
     this.busy = true;
     const revision = ++this.revision;
     const current = () => revision === this.revision && account === this.ports.account();
-    let phase: "store" | "verify" = "store";
+    let phase: "store" | "verify" | "activate" = "store";
     this.set(action === "purchase" ? "purchase_started" : "restore_started");
     try {
-      let proofs: readonly string[], owned = false;
+      let proofs: readonly string[] = [], owned = false;
       if (action === "purchase") {
         const result = await this.ports.purchase(product.productId, account);
         if (!current()) return;
@@ -71,27 +73,40 @@ export class CityUnlockController {
           if (result.status === "pending") this.pendingAccount = account;
           this.set(result.status === "cancelled" ? "purchase_cancelled" : "purchase_pending"); return;
         }
-        proofs = [result.proof]; owned = result.status === "already-owned";
+        proofs = result.proof ? [result.proof] : [];
+        owned = result.status === "already-owned";
       } else {
-        proofs = await this.ports.restore(product.productId, account);
+        const restored = await this.ports.restore(product.productId, account);
         if (!current()) return;
-        if (!proofs.length) { this.set("nothing_to_restore"); return; }
+        if (Array.isArray(restored)) {
+          proofs = restored;
+          if (!proofs.length) { this.set("nothing_to_restore"); return; }
+        }
       }
-      phase = "verify"; this.set("verification_pending");
-      // Production verifier must enforce product/app/environment/account ownership and
-      // transaction uniqueness before writing the existing ledger. No client grant path.
-      for (const proof of new Set(proofs)) {
-        if (!proof) throw new Error("invalid-proof");
-        await this.ports.verify(proof, account, product.productId);
-        if (!current()) return;
+      if (proofs.length) {
+        phase = "verify"; this.set("verification_pending");
+        // Legacy direct-store evidence is verified server-side before it can activate access.
+        for (const proof of new Set(proofs)) {
+          if (!proof) throw new Error("invalid-proof");
+          await this.ports.verify(proof, account, product.productId);
+          if (!current()) return;
+        }
       }
+      phase = "activate";
       this.set("entitlement_activating");
-      if (!await this.ports.access(account)) throw new Error("not-active");
-      if (current()) this.set(action === "restore" ? "restore_success" : owned ? "already_owned" : "unlocked");
+      const active = this.ports.activate
+        ? await this.ports.activate(account)
+        : await this.ports.access(account);
+      if (!current()) return;
+      if (!active) {
+        if (action === "restore") { this.set("nothing_to_restore"); return; }
+        throw new Error("not-active");
+      }
+      this.set(action === "restore" ? "restore_success" : owned ? "already_owned" : "unlocked");
     } catch (error) {
       if (current() && error instanceof Error && error.message === "ACCOUNT_CONFLICT") this.set("account_conflict");
       else if (current() && error instanceof Error && error.message === "PURCHASE_REVOKED") this.set("purchase_revoked");
-      else if (current()) this.set(action === "restore" ? "restore_failed" : phase === "verify" ? "verification_failed" : "purchase_failed");
+      else if (current()) this.set(action === "restore" ? "restore_failed" : phase === "store" ? "purchase_failed" : "verification_failed");
     } finally { this.busy = false; }
   }
 }
@@ -101,4 +116,9 @@ export function cityUnlockPreviewEnabled(): boolean {
     (typeof __DEV__ !== "undefined" && __DEV__) ||
     (process.env.EXPO_PUBLIC_CITYWALK_ENV === "preview" && process.env.EXPO_PUBLIC_CITYWALK_BILLING === "sandbox")
   );
+}
+
+export function revenueCatCityPassEnabled(): boolean {
+  return process.env.EXPO_PUBLIC_CITYWALK_REVENUECAT_CITY_PASS === "1" &&
+    process.env.EXPO_PUBLIC_CITYWALK_BILLING !== "sandbox";
 }
