@@ -221,7 +221,7 @@ function ProgressDots({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderColor: colors.border,
+    borderColor: colors.borderStrong,
     borderRadius: radius.md,
     gap: spacing.sm,
     padding: spacing.md,
