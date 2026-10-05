@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import TravelerAccountShortcut from "@/components/account/TravelerAccountShortcut";
 import VisitorJourneyTracker from "@/components/VisitorJourneyTracker";
+import { CITYWALK_PUBLIC_ORIGIN } from "@/lib/site";
 
 import "./globals.css";
 
@@ -17,6 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(CITYWALK_PUBLIC_ORIGIN),
   title: "CITYWALK",
   description: "Discover cities one step at a time with multilingual walking tours, audio stories, and a local AI guide.",
 };
