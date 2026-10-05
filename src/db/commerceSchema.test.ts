@@ -7,6 +7,8 @@ import {
   commerceOrderStatusEnum,
   commerceOrders,
   commercePrices,
+  commerceSubscriptions,
+  commerceSubscriptionStatusEnum,
   commerceProductGrants,
   commerceProducts,
   commerceProviderEvents,
@@ -21,6 +23,7 @@ describe("commerce database schema", () => {
         commerceProductGrants,
         commerceCustomers,
         commerceOrders,
+        commerceSubscriptions,
         commerceProviderEvents,
         commerceEntitlements,
       ].map((table) => getTableConfig(table).name),
@@ -30,6 +33,7 @@ describe("commerce database schema", () => {
       "commerce_product_grants",
       "commerce_customers",
       "commerce_orders",
+      "commerce_subscriptions",
       "commerce_provider_events",
       "commerce_entitlements",
     ]);
@@ -44,10 +48,20 @@ describe("commerce database schema", () => {
       "canceled",
       "failed",
     ]);
+    expect(commerceSubscriptionStatusEnum.enumValues).toEqual([
+      "active",
+      "grace_period",
+      "billing_issue",
+      "paused",
+      "canceled",
+      "expired",
+      "revoked",
+    ]);
   });
 
-  it("enforces provider-event idempotency and one entitlement per order scope", () => {
+  it("enforces provider-event idempotency and one entitlement per source scope", () => {
     const providerEvents = getTableConfig(commerceProviderEvents);
+    const subscriptions = getTableConfig(commerceSubscriptions);
     const entitlements = getTableConfig(commerceEntitlements);
 
     expect(
@@ -59,10 +73,32 @@ describe("commerce database schema", () => {
       ),
     ).toBe(true);
     expect(
+      subscriptions.indexes.some(
+        (index) =>
+          index.config.name ===
+            "commerce_subscriptions_provider_subscription_unique" &&
+          index.config.unique,
+      ),
+    ).toBe(true);
+    expect(
       entitlements.indexes.some(
         (index) =>
           index.config.name === "commerce_entitlements_order_scope_unique" &&
           index.config.unique,
+      ),
+    ).toBe(true);
+    expect(
+      entitlements.indexes.some(
+        (index) =>
+          index.config.name ===
+            "commerce_entitlements_subscription_scope_unique" &&
+          index.config.unique,
+      ),
+    ).toBe(true);
+    expect(
+      entitlements.checks.some(
+        (constraint) =>
+          constraint.name === "commerce_entitlements_exactly_one_source",
       ),
     ).toBe(true);
   });
@@ -71,6 +107,7 @@ describe("commerce database schema", () => {
     const columnNames = [
       commerceCustomers,
       commerceOrders,
+      commerceSubscriptions,
       commerceProviderEvents,
       commerceEntitlements,
     ].flatMap((table) =>

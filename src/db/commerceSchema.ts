@@ -40,6 +40,19 @@ export const commerceOrderStatusEnum = pgEnum("commerce_order_status", [
   "failed",
 ]);
 
+export const commerceSubscriptionStatusEnum = pgEnum(
+  "commerce_subscription_status",
+  [
+    "active",
+    "grace_period",
+    "billing_issue",
+    "paused",
+    "canceled",
+    "expired",
+    "revoked",
+  ],
+);
+
 export const commerceEntitlementScopeEnum = pgEnum(
   "commerce_entitlement_scope",
   ["city", "feature"],
@@ -176,6 +189,47 @@ export const commerceOrders = pgTable(
   ],
 );
 
+export const commerceSubscriptions = pgTable(
+  "commerce_subscriptions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    productId: integer("product_id")
+      .notNull()
+      .references(() => commerceProducts.id, { onDelete: "restrict" }),
+    provider: text("provider").notNull(),
+    providerSubscriptionId: text("provider_subscription_id").notNull(),
+    providerProductId: text("provider_product_id").notNull(),
+    store: text("store").notNull(),
+    environment: text("environment").notNull(),
+    originalTransactionId: text("original_transaction_id"),
+    status: commerceSubscriptionStatusEnum("status").default("active").notNull(),
+    currentPeriodEndsAt: timestamp("current_period_ends_at", {
+      withTimezone: true,
+    }),
+    willRenew: boolean("will_renew").default(false).notNull(),
+    ...createTimestamps(),
+  },
+  (table) => [
+    index("commerce_subscriptions_user_status_period_idx").on(
+      table.userId,
+      table.status,
+      table.currentPeriodEndsAt,
+    ),
+    uniqueIndex("commerce_subscriptions_provider_subscription_unique").on(
+      table.provider,
+      table.providerSubscriptionId,
+    ),
+    uniqueIndex("commerce_subscriptions_provider_original_unique").on(
+      table.provider,
+      table.store,
+      table.originalTransactionId,
+    ),
+  ],
+);
+
 export const commerceProviderEvents = pgTable(
   "commerce_provider_events",
   {
@@ -206,9 +260,14 @@ export const commerceEntitlements = pgTable(
     productId: integer("product_id")
       .notNull()
       .references(() => commerceProducts.id, { onDelete: "restrict" }),
-    sourceOrderId: text("source_order_id")
-      .notNull()
-      .references(() => commerceOrders.id, { onDelete: "restrict" }),
+    sourceOrderId: text("source_order_id").references(
+      () => commerceOrders.id,
+      { onDelete: "restrict" },
+    ),
+    sourceSubscriptionId: text("source_subscription_id").references(
+      () => commerceSubscriptions.id,
+      { onDelete: "restrict" },
+    ),
     scopeType: commerceEntitlementScopeEnum("scope_type").notNull(),
     scopeKey: text("scope_key").notNull(),
     status: commerceEntitlementStatusEnum("status")
@@ -223,6 +282,10 @@ export const commerceEntitlements = pgTable(
     ...createTimestamps(),
   },
   (table) => [
+    check(
+      "commerce_entitlements_exactly_one_source",
+      sql`((${table.sourceOrderId} IS NOT NULL AND ${table.sourceSubscriptionId} IS NULL) OR (${table.sourceOrderId} IS NULL AND ${table.sourceSubscriptionId} IS NOT NULL))`,
+    ),
     index("commerce_entitlements_user_scope_idx").on(
       table.userId,
       table.scopeType,
@@ -230,9 +293,18 @@ export const commerceEntitlements = pgTable(
       table.status,
     ),
     index("commerce_entitlements_source_order_idx").on(table.sourceOrderId),
+    index("commerce_entitlements_source_subscription_idx").on(
+      table.sourceSubscriptionId,
+    ),
     uniqueIndex("commerce_entitlements_order_scope_unique").on(
       table.userId,
       table.sourceOrderId,
+      table.scopeType,
+      table.scopeKey,
+    ),
+    uniqueIndex("commerce_entitlements_subscription_scope_unique").on(
+      table.userId,
+      table.sourceSubscriptionId,
       table.scopeType,
       table.scopeKey,
     ),
@@ -242,4 +314,5 @@ export const commerceEntitlements = pgTable(
 export type CommerceProductRow = typeof commerceProducts.$inferSelect;
 export type CommercePriceRow = typeof commercePrices.$inferSelect;
 export type CommerceOrderRow = typeof commerceOrders.$inferSelect;
+export type CommerceSubscriptionRow = typeof commerceSubscriptions.$inferSelect;
 export type CommerceEntitlementRow = typeof commerceEntitlements.$inferSelect;

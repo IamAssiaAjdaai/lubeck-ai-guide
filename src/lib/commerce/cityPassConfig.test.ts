@@ -15,7 +15,7 @@ describe("city pass configuration", () => {
       productSlug: "lubeck-digital-guide-pass-72h",
       entitlement: { scopeType: "city", scopeKey: "lubeck" },
       durationDays: 3,
-      recommendedLaunchPrice: { currency: "eur", unitAmount: 699 },
+      recommendedLaunchPrice: { currency: "eur", unitAmount: 499 },
     });
     expect(listCityPassConfigurations()).toEqual([LUBECK_CITY_PASS]);
     expect(getCityPassConfiguration("test-city")).toBeUndefined();

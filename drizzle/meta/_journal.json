@@ -134,6 +134,13 @@
       "when": 1791129600000,
       "tag": "0018_neon_rate_limits",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791200000000,
+      "tag": "0019_subscription_entitlements",
+      "breakpoints": true
     }
   ]
 }

@@ -1,10 +1,12 @@
 # CITYWALK Payments, Products & Entitlements
 
-PAY-01 separates payment processing from CITYWALK access rules.
+PAY-01 separates payment processing from CITYWALK access rules. MON-01 extends that
+model so subscriptions can become a trusted entitlement source without replacing the
+existing order/Stripe ledger.
 
 ## Trust boundary
 
-- PostgreSQL is the source of truth for products, prices, orders and entitlements.
+- PostgreSQL is the source of truth for products, prices, orders, subscriptions and entitlements.
 - A Checkout success redirect is informational only and never grants access.
 - Paid access is granted or revoked only after a verified provider webhook is processed server-side.
 - Entitlement authorization is server-side through `hasActiveEntitlement` / `requireActiveEntitlement`.
@@ -13,9 +15,25 @@ PAY-01 separates payment processing from CITYWALK access rules.
 
 ## Product model
 
-`commerce_products` describes a sellable city pass or feature bundle. `commerce_prices` maps a CITYWALK price to a provider price id. `commerce_product_grants` declares the city/feature scopes that become entitlements after payment.
+\`commerce_products\` describes a logical sellable city pass or feature bundle. \`commerce_prices\`
+maps the existing hosted Stripe checkout to provider price ids. \`commerce_product_grants\`
+declares the city/feature scopes that become entitlements after a trusted purchase.
 
-PAY-01 intentionally does not choose the final Lübeck package or price. CW-26 owns that product decision. A product and price must both be active in the database before the checkout endpoint can sell them.
+\`commerce_subscriptions\` is a provider-neutral lifecycle ledger for recurring native
+subscriptions. It records normalized provider/store identity and period state, but does
+not itself authorize content. Authorization still comes only from an active
+\`commerce_entitlements\` row.
+
+An entitlement is backed by exactly one trusted source:
+
+- \`source_order_id\` for the existing one-time/order path; or
+- \`source_subscription_id\` for recurring subscription reconciliation.
+
+The database constraint rejects rows with neither source or both sources. Existing
+order-backed entitlements remain valid.
+
+The approved v1 access model and target launch pricing are documented in
+\`docs/agent/MONETIZATION.md\`.
 
 ## Purchase flow
 
@@ -31,7 +49,10 @@ PAY-01 intentionally does not choose the final Lübeck package or price. CW-26 o
 
 ## Idempotency
 
-`commerce_provider_events(provider, provider_event_id)` is unique. Duplicate deliveries return `duplicate` without repeating business mutations. Entitlements also have a unique order/scope key so a second successful payment event for the same order cannot duplicate access.
+\`commerce_provider_events(provider, provider_event_id)\` is unique. Duplicate deliveries
+return \`duplicate\` without repeating business mutations. Order-backed entitlements have
+a unique order/scope key; subscription-backed entitlements have a unique
+subscription/scope key. A provider subscription identity is also unique per provider.
 
 ## Refund and cancellation rules
 
@@ -43,16 +64,29 @@ PAY-01 intentionally does not choose the final Lübeck package or price. CW-26 o
 
 ## Account deletion
 
-Traveler entitlements and provider-customer mappings cascade with the user account. Financial order records remain for commerce/accounting integrity, with their user reference set to null when the user identity is deleted. This keeps account deletion possible without silently deleting the payment ledger.
+Traveler entitlements and provider-customer mappings cascade with the user account.
+Financial order and subscription lifecycle records remain for commerce/accounting
+integrity, with their user reference set to null when the user identity is deleted.
+This keeps account deletion possible without silently deleting the payment ledger.
 
 ## Admin visibility
 
 Only `admin` and `super_admin` have `commerce:view`. The Admin Commerce page is read-only and exposes order/access state without full card data.
 
-## Future extensions
+## Access model after MON-01
 
-- CW-26 can create/activate the real Lübeck city-pass product, price and grants.
-- Product grants support city-specific access and reusable feature bundles.
-- Optional `duration_days` supports time-limited passes.
-- The provider column and provider adapter boundary allow a later payment provider without making provider state the entitlement source of truth.
-- Subscriptions and native-store purchases remain out of scope for PAY-01.
+- Global CITYWALK Premium is represented by `feature:premium`.
+- A 72-hour City Pass remains a city-scoped entitlement with an expiry.
+- The unified server resolver returns `premium > city_pass > free`.
+- Existing Lübeck legacy/native sandbox grants remain compatible through the city-pass
+  access layer.
+- Premium media and AI allowance authorization can accept either global Premium or a
+  valid city-scoped pass.
+- Free AI remains 3 verified answers per 24 hours; paid access remains bounded at 20.
+
+## Follow-up boundaries
+
+MON-01 does **not** integrate RevenueCat or create live store subscriptions. Follow-ups
+own SDK identity/offerings, verified webhooks, store purchase/restore/manage UI and
+eventual retirement of the direct native sandbox purchase path. Provider state must
+never become the client-side entitlement authority.
