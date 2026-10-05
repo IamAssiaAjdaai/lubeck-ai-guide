@@ -44,6 +44,16 @@ describe("landing launch / FAQ / footer checkpoint", () => {
     expect(screen.getByText(/City rollout and app-store release are announced separately/)).toBeDefined();
   });
 
+  it("shows social channels without inventing account links before they are live", () => {
+    const { container } = render(<LandingFooter />);
+    expect(screen.getByText("Follow CITYWALK")).toBeDefined();
+    expect(screen.getByText("Instagram")).toBeDefined();
+    expect(screen.getByText("YouTube")).toBeDefined();
+    expect(screen.getAllByText("@getcitywalk")).toHaveLength(2);
+    expect(screen.getAllByText("Soon")).toHaveLength(2);
+    expect(container.querySelector('a[href*="instagram.com"], a[href*="youtube.com"]')).toBeNull();
+  });
+
   it("shows legal work as pending text, not broken links or a deletion service", () => {
     render(<LandingFooter />);
     expect(screen.getByText("Legal pages · in preparation")).toBeDefined();
