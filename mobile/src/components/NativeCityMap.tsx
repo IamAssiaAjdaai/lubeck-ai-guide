@@ -153,7 +153,7 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
             >
               <View
                 accessible
-                accessibilityLabel={`${index + 1}. ${nativePlaceName(citySlug ?? "", place.slug, place.content.name, locale)}`
+                accessibilityLabel={`${index + 1}. ${nativePlaceName(citySlug ?? "", place.slug, place.content.name, locale)}`}
                 style={[styles.placeMarker, place.slug === currentSlug && { backgroundColor: colors.success }]}
               ><Text style={{ color: "white", fontSize: 10, textAlign: "center" }}>{index + 1}</Text></View>
             </Marker>
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   placeMarker: { width: 22, height: 22, borderRadius: radius.pill, backgroundColor: colors.mapMarker, borderWidth: 3, borderColor: colors.surface },
   userMarker: { width: 24, height: 24, borderRadius: radius.pill, backgroundColor: colors.userMarker, borderWidth: 4, borderColor: colors.surface },
   locationButton: { minHeight: 48, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, alignItems: "center", flexDirection: "row", gap: spacing.sm, justifyContent: "center", paddingHorizontal: spacing.md },
-  compactLocationButton: { minHeight: 40, alignSelf: "flex-start", maxWidth: "100%", paddingHorizontal: spacing.sm },
+  compactLocationButton: { minHeight: 40, alignSelf: "flex-start", maxWidth: "100%" },
   locationButtonPressed: { backgroundColor: "#F3F4F6" },
   locationButtonText: { ...typography.label, color: colors.text },
   settingsButton: { minHeight: 44, alignItems: "center", justifyContent: "center" },
