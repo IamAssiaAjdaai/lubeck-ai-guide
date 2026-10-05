@@ -41,7 +41,7 @@ describe("public Marketing page", () => {
     vi.clearAllMocks();
   });
 
-  it("renders CMS-authored published content and forwards UTM attribution to the planner", async () => {
+  it("renders CMS-authored content and forwards UTM attribution to the native app handoff", async () => {
     render(
       await MarketingPage({
         params: Promise.resolve({ marketingSlug: "2-hours" }),
@@ -66,7 +66,7 @@ describe("public Marketing page", () => {
 
     const cta = screen.getByRole("link", { name: "Build my walk" });
     expect(cta.getAttribute("href")).toBe(
-      "/en/lubeck?utm_source=instagram&utm_medium=social&utm_campaign=two-hours-in-lubeck&utm_content=CW-LUB-TIME-001",
+      "/open/lubeck/2-hours?intent=build_walk&utm_source=instagram&utm_medium=social&utm_campaign=two-hours-in-lubeck&utm_content=CW-LUB-TIME-001",
     );
     expect(mocks.getPublishedMarketingPageByPath).toHaveBeenCalledWith(
       "/lubeck/2-hours",
