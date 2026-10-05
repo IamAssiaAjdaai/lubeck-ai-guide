@@ -85,7 +85,7 @@ describe("review queue", () => {
     expect(mocks.requireAdminCapability).toHaveBeenCalledWith("publishing:review");
     expect(screen.getByRole("heading", { name: "Review queue" })).toBeInTheDocument();
     expect(screen.getByText("4 items waiting for review.")).toBeInTheDocument();
-    expect(screen.getByText("Lübeck")).toBeInTheDocument();
+    expect(screen.getAllByText("Lübeck")).toHaveLength(3);
     expect(screen.getByText("Holstentor")).toBeInTheDocument();
     expect(screen.getByText("2 Hours in Lübeck")).toBeInTheDocument();
     expect(screen.getByText("CW-LUB-TIME-001")).toBeInTheDocument();
