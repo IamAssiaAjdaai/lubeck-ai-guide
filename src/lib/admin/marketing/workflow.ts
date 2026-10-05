@@ -22,11 +22,16 @@ export const MARKETING_SOCIAL_STATES = [
 
 export type MarketingSocialState = (typeof MARKETING_SOCIAL_STATES)[number];
 
+export type MarketingWorkflowCapability = Extract<
+  AdminCapability,
+  "marketing:manage" | "publishing:review" | "publishing:publish"
+>;
+
 export type MarketingWorkflowTransition<TState extends string> = Readonly<{
   from: TState;
   to: TState;
   label: string;
-  capability: AdminCapability;
+  capability: MarketingWorkflowCapability;
 }>;
 
 export const MARKETING_PAGE_TRANSITIONS: readonly MarketingWorkflowTransition<MarketingPageState>[] = [
