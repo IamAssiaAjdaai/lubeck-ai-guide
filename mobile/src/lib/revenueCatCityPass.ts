@@ -2,9 +2,17 @@ import { CITYWALK_CITY_PASS_72H } from "@citywalk/traveler-core";
 
 import { readCityUnlock } from "./cityUnlockAccess";
 import type { PurchaseResult, RestoreResult, StoreProduct } from "./cityUnlock";
-import type { RevenueCatPlan } from "./revenueCat";
 
 const cityPass = CITYWALK_CITY_PASS_72H.lubeck;
+
+type CityPassPlan = Readonly<{
+  kind: "city_pass_72h";
+  packageIdentifier: string;
+  productIdentifier: string;
+  localizedPrice: string;
+  currencyCode?: string;
+  price?: number;
+}>;
 
 export type RevenueCatStorePackage = Readonly<{
   identifier: string;
@@ -13,7 +21,7 @@ export type RevenueCatStorePackage = Readonly<{
 
 export type RevenueCatCityPassDependencies = Readonly<{
   ensureConfigured: (account?: string) => Promise<boolean>;
-  loadPlans: () => Promise<readonly RevenueCatPlan[]>;
+  loadPlans: () => Promise<readonly CityPassPlan[]>;
   getOfferings: () => Promise<Readonly<{ current?: Readonly<{ availablePackages: readonly RevenueCatStorePackage[] }> | null }>>;
   purchasePackage: (pkg: RevenueCatStorePackage) => Promise<unknown>;
   restorePurchases: () => Promise<unknown>;
@@ -30,11 +38,13 @@ const defaultDependencies: RevenueCatCityPassDependencies = {
     return status.configured;
   },
   async loadPlans() {
-    return (await import("./revenueCat")).loadRevenueCatPlans();
+    const plans = await (await import("./revenueCat")).loadRevenueCatPlans();
+    return plans.filter((plan): plan is CityPassPlan => plan.kind === "city_pass_72h");
   },
   async getOfferings() {
     const Purchases = (await import("react-native-purchases")).default;
-    return Purchases.getOfferings();
+    const offerings = await Purchases.getOfferings();
+    return offerings as unknown as Readonly<{ current?: Readonly<{ availablePackages: readonly RevenueCatStorePackage[] }> | null }>;
   },
   async purchasePackage(pkg) {
     const Purchases = (await import("react-native-purchases")).default;
@@ -65,8 +75,7 @@ export class RevenueCatCityPassBilling {
     if (id !== cityPass.productIdentifier) return undefined;
     if (!await this.dependencies.ensureConfigured()) return undefined;
     const plan = (await this.dependencies.loadPlans()).find(
-      (candidate) => candidate.kind === "city_pass_72h" &&
-        candidate.packageIdentifier === cityPass.packageIdentifier &&
+      (candidate) => candidate.packageIdentifier === cityPass.packageIdentifier &&
         candidate.productIdentifier === cityPass.productIdentifier,
     );
     return plan?.localizedPrice
