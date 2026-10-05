@@ -19,34 +19,35 @@ function staff(role: string): StaffAccess {
 }
 
 describe("admin navigation", () => {
-  it("gives a super admin all sections", () => {
+  it("gives a super admin all control-center sections", () => {
     expect(getVisibleAdminSections(staff("super_admin"))).toEqual(
       ADMIN_SECTIONS,
     );
   });
 
-  it("hides staff and publishing from content editors", () => {
+  it("keeps content editors focused on creation and operations", () => {
     const ids = getVisibleAdminSections(staff("content_editor")).map(
       ({ id }) => id,
     );
 
+    expect(ids).toContain("cities");
     expect(ids).toContain("places");
     expect(ids).toContain("operations");
-    expect(ids).not.toContain("staff");
-    expect(ids).not.toContain("publishing");
+    expect(ids).not.toContain("review");
   });
 
-  it("shows publishing but not staff to reviewers", () => {
+  it("shows the review queue to reviewers", () => {
     const ids = getVisibleAdminSections(staff("reviewer_publisher")).map(
       ({ id }) => id,
     );
 
-    expect(ids).toContain("publishing");
-    expect(ids).not.toContain("staff");
+    expect(ids).toContain("review");
+    expect(ids).toContain("media");
   });
 
   it("resolves only known protected subroutes", () => {
     expect(getAdminSection("places")?.capability).toBe("places:view");
+    expect(getAdminSection("review")?.capability).toBe("publishing:review");
     expect(getAdminSection("signup")).toBeUndefined();
   });
 });
