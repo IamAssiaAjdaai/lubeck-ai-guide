@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   listAuthorizedCities: vi.fn(),
   listAuthorizedPlaces: vi.fn(),
   listAuthorizedTours: vi.fn(),
+  listMarketingReviewQueue: vi.fn(),
 }));
 
 vi.mock("@/lib/admin/authorization.server", () => ({
@@ -16,6 +17,9 @@ vi.mock("@/lib/admin/content/service.server", () => ({
   listAuthorizedCities: mocks.listAuthorizedCities,
   listAuthorizedPlaces: mocks.listAuthorizedPlaces,
   listAuthorizedTours: mocks.listAuthorizedTours,
+}));
+vi.mock("@/lib/admin/marketing/workflow.server", () => ({
+  listMarketingReviewQueue: mocks.listMarketingReviewQueue,
 }));
 
 import ReviewQueuePage from "./page";
@@ -50,6 +54,24 @@ describe("review queue", () => {
         localizations: [{ title: "Historic center" }],
       },
     ]);
+    mocks.listMarketingReviewQueue.mockResolvedValue([
+      {
+        type: "Marketing page",
+        id: 4,
+        title: "2 Hours in Lübeck",
+        cityName: "Lübeck",
+        status: "in_review",
+        href: "/admin/marketing/pages/4",
+      },
+      {
+        type: "Social",
+        id: 5,
+        title: "CW-LUB-TIME-001",
+        cityName: "Lübeck",
+        status: "in_review",
+        href: "/admin/marketing/social/5",
+      },
+    ]);
   });
 
   afterEach(() => {
@@ -57,15 +79,17 @@ describe("review queue", () => {
     vi.clearAllMocks();
   });
 
-  it("shows only content waiting for editorial review", async () => {
+  it("shows editorial and Marketing content waiting for review", async () => {
     render(await ReviewQueuePage());
 
     expect(mocks.requireAdminCapability).toHaveBeenCalledWith("publishing:review");
     expect(screen.getByRole("heading", { name: "Review queue" })).toBeInTheDocument();
-    expect(screen.getByText("2 items waiting for review.")).toBeInTheDocument();
+    expect(screen.getByText("4 items waiting for review.")).toBeInTheDocument();
     expect(screen.getByText("Lübeck")).toBeInTheDocument();
     expect(screen.getByText("Holstentor")).toBeInTheDocument();
+    expect(screen.getByText("2 Hours in Lübeck")).toBeInTheDocument();
+    expect(screen.getByText("CW-LUB-TIME-001")).toBeInTheDocument();
     expect(screen.queryByText("Historic center")).not.toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "Review" })).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: "Review" })).toHaveLength(4);
   });
 });
