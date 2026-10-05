@@ -6,7 +6,7 @@ export function CitywalkMark({
 }: SVGProps<SVGSVGElement>) {
   return (
     <svg
-      viewBox="0 0 48 28"
+      viewBox="0 0 64 64"
       fill="none"
       aria-hidden="true"
       focusable="false"
@@ -14,18 +14,16 @@ export function CitywalkMark({
       {...props}
     >
       <path
-        d="m4 19 10-11 12 12L43 8"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        d="M32 5.5c-8.2 0-14.8 6.6-14.8 14.8 0 10.6 13 24 14.1 25.1a1 1 0 0 0 1.4 0c1.1-1.1 14.1-14.5 14.1-25.1C46.8 12.1 40.2 5.5 32 5.5Z"
+        fill="var(--citywalk-mark-pin, #0B3150)"
       />
-      <g fill="currentColor" stroke="white" strokeWidth="1.4">
-        <circle cx="4" cy="19" r="3.6" />
-        <circle cx="14" cy="8" r="3.6" />
-        <circle cx="26" cy="20" r="3.6" />
-        <circle cx="43" cy="8" r="3.6" />
-      </g>
+      <circle cx="32" cy="20.2" r="6" fill="white" />
+      <path
+        d="M42.8 39.2c7.1 1.2 11.1 3.7 11.1 6.4 0 4.6-10.8 7.2-19.2 8.4-8.1 1.1-17.8.9-22.3-2.3-3.3-2.4-2.8-5.8.6-8.9 3.5-3.2 9.8-5.6 17.7-7.3"
+        stroke="var(--citywalk-mark-route, #12B7B3)"
+        strokeWidth="5.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
