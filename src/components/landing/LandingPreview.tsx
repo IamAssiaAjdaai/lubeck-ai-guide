@@ -1,4 +1,5 @@
 import { CitywalkLogo, CitywalkMark } from "@/components/brand/CitywalkLogo";
+import { cityLaunches } from "@/data/cityAvailability";
 import styles from "./landing.module.css";
 
 const benefits = [
@@ -101,6 +102,7 @@ function LandingHeader() {
       <nav className={styles.navigation} aria-label="Landing page">
         <a href="#the-app">The app</a>
         <a href="#how-it-works">How it works</a>
+        <a href="#cities">Cities</a>
         <a href="mailto:support@getcitywalk.com">Support</a>
       </nav>
       <a className={`${styles.primary} ${styles.headerAction}`} href="#launch-information">Launch information</a>
@@ -294,6 +296,47 @@ export function LandingPreview() {
             </p>
           </section>
 
+          <section id="cities" className={styles.cities} aria-labelledby="cities-title">
+            <div className={styles.citiesIntro}>
+              <p className={styles.eyebrow}>CITIES</p>
+              <h2 id="cities-title">Starting in Lübeck. Built for more cities.</h2>
+              <p>
+                CITYWALK begins with Lübeck. The current launch configuration also marks Hamburg and Düsseldorf as coming soon.
+              </p>
+            </div>
+
+            <div className={styles.cityGrid}>
+              {Object.entries(cityLaunches)
+                .filter(([, city]) => city.status !== "unpublished")
+                .map(([slug, city]) => (
+                  <article className={styles.cityCard} key={slug}>
+                    <div
+                      className={styles.cityImage}
+                      role="img"
+                      aria-label={city.name}
+                      style={city.heroImage ? { backgroundImage: `url("${city.heroImage}")` } : undefined}
+                    />
+                    <div className={styles.cityCardBody}>
+                      <div>
+                        <h3>{city.name}</h3>
+                        <p>{city.status === "available" ? "First CITYWALK city" : "Coming soon"}</p>
+                      </div>
+                      <span className={city.status === "available" ? styles.cityStatusFirst : styles.cityStatusSoon}>
+                        {city.status === "available" ? "First city" : "Soon"}
+                      </span>
+                    </div>
+                    {city.credit ? (
+                      <p className={styles.cityCredit}>Image credit: {city.credit.text}</p>
+                    ) : null}
+                  </article>
+                ))}
+            </div>
+
+            <p className={styles.citiesFootnote}>
+              City rollout follows the launch configuration; store availability is announced separately.
+            </p>
+          </section>
+
           <section id="launch-information" className={styles.launchInfo} aria-labelledby="launch-title">
             <div><p className={styles.eyebrow}>COMING TO IPHONE & ANDROID</p><h2 id="launch-title">Your next walk is waiting.</h2><p>We’re preparing CITYWALK for launch. Store links and launch notifications will be added when they’re ready.</p></div>
             <a className={styles.contact} href="mailto:support@getcitywalk.com">Contact CITYWALK <span aria-hidden="true">↗</span></a>
@@ -301,7 +344,7 @@ export function LandingPreview() {
         </main>
       </div>
       <footer className={styles.previewNote}>
-        <span>Design preview · Stories, audio + Ask CITYWALK checkpoint</span>
+        <span>Design preview · Cities checkpoint</span>
         <span>Not a live download or email signup page.</span>
       </footer>
     </div>
