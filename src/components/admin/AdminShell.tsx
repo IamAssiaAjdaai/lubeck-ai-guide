@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   KeyRound,
   MapPin,
+  Megaphone,
   Route,
   ShieldCheck,
   type LucideIcon,
@@ -31,6 +32,7 @@ const sectionIcons: Record<AdminSection["icon"], LucideIcon> = {
   languages: Languages,
   "badge-check": BadgeCheck,
   "key-round": KeyRound,
+  megaphone: Megaphone,
 };
 
 function formatRole(role: string): string {
