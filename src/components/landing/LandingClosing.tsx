@@ -24,6 +24,29 @@ const questions = [
   },
 ] as const;
 
+const socialChannels = [
+  { name: "Instagram", handle: "@getcitywalk", icon: "instagram" },
+  { name: "YouTube", handle: "@getcitywalk", icon: "youtube" },
+] as const;
+
+function SocialIcon({ name }: { name: (typeof socialChannels)[number]["icon"] }) {
+  if (name === "youtube") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <rect x="3.2" y="6.2" width="17.6" height="11.6" rx="3.2" />
+        <path d="m10.2 9.4 5 2.6-5 2.6V9.4Z" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <rect x="4" y="4" width="16" height="16" rx="4.5" />
+      <circle cx="12" cy="12" r="3.6" />
+      <circle cx="17.3" cy="6.8" r=".9" className={styles.socialDot} />
+    </svg>
+  );
+}
+
 /** Prelaunch information only: no subscriber collection or pretend store links. */
 export function LandingLaunchSection() {
   return (
@@ -86,6 +109,18 @@ export function LandingFooter() {
             <CitywalkLogo className={styles.brandLockup} markClassName={styles.brandMark} wordmarkClassName={styles.wordmark} />
           </a>
           <p>Walk the city your way.</p>
+          <div className={styles.socialBlock} aria-label="CITYWALK social media">
+            <p className={styles.footerHeading}>Follow CITYWALK</p>
+            <div className={styles.socialRow}>
+              {socialChannels.map(({ name, handle, icon }) => (
+                <span className={styles.socialChip} key={name} title={`${name} · coming soon`}>
+                  <span className={styles.socialIcon}><SocialIcon name={icon} /></span>
+                  <span className={styles.socialLabel}><strong>{name}</strong><small>{handle}</small></span>
+                  <span className={styles.socialSoon}>Soon</span>
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
         <nav className={styles.footerNav} aria-label="Footer navigation">
           <a href="#the-app">The app</a>
