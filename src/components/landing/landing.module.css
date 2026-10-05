@@ -203,6 +203,22 @@
 .guideSourceNote { margin-top: auto; color: #67768a; font-size: .62rem; }
 .discoveryFootnote { margin-top: 1rem !important; color: #67768a; font-size: .72rem; line-height: 1.5; }
 
+.cities { max-width: 80rem; margin-inline: auto; padding: 4.75rem 2.5rem 5rem; background: #f8fbff; }
+.citiesIntro { max-width: 46rem; }
+.citiesIntro h2 { margin-top: .75rem; font-size: clamp(2rem, 3.4vw, 3.15rem); line-height: 1.06; font-weight: 780; letter-spacing: -.055em; }
+.citiesIntro > p:last-child { margin-top: 1rem; color: var(--landing-text); font-size: 1rem; line-height: 1.7; }
+.cityGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.15rem; margin-top: 2.2rem; }
+.cityCard { overflow: hidden; border: 1px solid #e1e8f0; border-radius: 1rem; background: #fff; box-shadow: 0 10px 24px rgb(7 28 54 / 5%); }
+.cityImage { min-height: 12.5rem; background-color: #e9eff6; background-position: center; background-size: cover; }
+.cityCardBody { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.15rem .9rem; }
+.cityCardBody h3 { font-size: 1.05rem; font-weight: 740; letter-spacing: -.025em; }
+.cityCardBody p { margin-top: .25rem; color: var(--landing-text); font-size: .78rem; }
+.cityStatusFirst, .cityStatusSoon { display: inline-flex; min-height: 1.8rem; align-items: center; padding: .3rem .55rem; border-radius: 999px; font-size: .67rem; font-weight: 750; white-space: nowrap; }
+.cityStatusFirst { background: #eaf7ef; color: #18864b; }
+.cityStatusSoon { background: #edf3ff; color: var(--landing-blue); }
+.cityCredit { padding: 0 1.15rem 1rem; color: #748197; font-size: .62rem; line-height: 1.45; }
+.citiesFootnote { margin-top: 1rem !important; color: #67768a; font-size: .72rem; line-height: 1.5; }
+
 .launchInfo { display: flex; align-items: center; justify-content: space-between; gap: 2rem; margin: 1rem auto 0; max-width: 75rem; padding: 2rem; border: 1px solid var(--landing-line); border-radius: 1rem; background: #f5f8ff; }
 .launchInfo > div { max-width: 39rem; }
 .launchInfo h2 { margin-top: .6rem; font-size: 1.6rem; font-weight: 730; line-height: 1.2; letter-spacing: -.04em; }
@@ -252,6 +268,11 @@
   .featureMedia, .guidePreview { min-height: 13.5rem; }
   .featureCard { max-width: 34rem; width: 100%; margin-inline: auto; }
   .discoveryFootnote { max-width: 34rem; margin-inline: auto; }
+  .cities { padding: 3.5rem 1.5rem 4rem; }
+  .cityGrid { grid-template-columns: 1fr; gap: 1rem; }
+  .cityCard { max-width: 34rem; width: 100%; margin-inline: auto; }
+  .cityImage { min-height: 13rem; }
+  .citiesFootnote { max-width: 34rem; margin-inline: auto; }
   .launchInfo { flex-direction: column; align-items: start; padding: 1.5rem; margin-inline: 1.5rem; gap: 1.25rem; }
   .previewNote { padding: 1.5rem; flex-direction: column; gap: .3rem; }
 }
