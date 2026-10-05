@@ -10,7 +10,7 @@ npm ci
 cp .env.example .env.local
 ```
 
-Set `BETTER_AUTH_SECRET` in the ignored `.env.local` to a unique random value of at least 32 characters. Generate it locally, for example with `openssl rand -base64 48`; do not put the output in source control or shared logs. Keep `BETTER_AUTH_URL=http://localhost:3000` for this local server. The example database URL is only for the repository's local Compose service, never a production credential. Optional social providers are fail-closed: leave every Google field empty unless both Google credentials are configured, and leave every Apple field empty unless the complete Apple credential set (including the app bundle identifier) is configured.
+Set `BETTER_AUTH_SECRET` in the ignored `.env.local` to a unique random value of at least 32 characters. Generate it locally, for example with `openssl rand -base64 48`; do not put the output in source control or shared logs. Keep `BETTER_AUTH_URL=http://localhost:3000` for this local server. The example database URL is only for the repository's local Compose service, never a production credential. Optional social providers are fail-closed: leave every Google OAuth credential empty unless both Google credentials are configured. The native Apple app bundle identifier may stay configured on its own; Apple web OAuth remains disabled until at least one Apple OAuth credential is supplied, at which point the complete Apple credential set is required.
 
 ```bash
 npm run db:up
