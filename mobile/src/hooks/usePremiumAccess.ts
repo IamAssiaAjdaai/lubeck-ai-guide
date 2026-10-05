@@ -1,0 +1,56 @@
+import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+
+import { nativeAuthClient } from "../lib/auth/client";
+import { readPremiumAccess } from "../lib/premiumAccess";
+
+export type PremiumAccessState =
+  | Readonly<{ status: "loading"; active: false }>
+  | Readonly<{ status: "guest"; active: false }>
+  | Readonly<{ status: "free"; active: false }>
+  | Readonly<{ status: "premium"; active: true }>
+  | Readonly<{ status: "unavailable"; active: false }>;
+
+export function usePremiumAccess(): PremiumAccessState {
+  const { data: session, isPending } = nativeAuthClient.useSession();
+  const account = session?.user.id;
+  const [state, setState] = useState<PremiumAccessState>({
+    status: "loading",
+    active: false,
+  });
+
+  const refresh = useCallback(async () => {
+    if (isPending) {
+      setState({ status: "loading", active: false });
+      return;
+    }
+    if (!account) {
+      setState({ status: "guest", active: false });
+      return;
+    }
+
+    setState({ status: "loading", active: false });
+    try {
+      const active = await readPremiumAccess(account);
+      setState(
+        active
+          ? { status: "premium", active: true }
+          : { status: "free", active: false },
+      );
+    } catch {
+      setState({ status: "unavailable", active: false });
+    }
+  }, [account, isPending]);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  useFocusEffect(
+    useCallback(() => {
+      void refresh();
+    }, [refresh]),
+  );
+
+  return state;
+}
