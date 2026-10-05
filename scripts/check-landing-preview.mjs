@@ -87,9 +87,21 @@ try {
   await page.addStyleTag({ content: "html { font-size: 200% !important; }" });
   await checkFaq(page);
   const pageWidth = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }));
-  assert.ok(pageWidth.document <= pageWidth.viewport + 1, "Reflow at 200% text");
-  assert.ok(await page.getByRole("heading", { level: 1 }).isVisible());
+  const reflow = await page.evaluate(() => ({
+    viewport: innerWidth,
+    document: document.documentElement.scrollWidth,
+    scrollX,
+    overflow: [...document.querySelectorAll("main *, header *, footer *")].flatMap(element => {
+      const box = element.getBoundingClientRect();
+      if (box.width === 0 || (box.left >= -1 && box.right <= innerWidth + 1 && element.scrollWidth <= element.clientWidth + 1)) return [];
+      return [{ tag: element.tagName, className: element.getAttribute("class"), left: box.left,
+        right: box.right, clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }];
+    }),
+  }));
   await page.screenshot({ path: path.join(output, "landing-390-text-200.png"), fullPage: true });
+  await writeFile(path.join(output, "reflow-200.json"), JSON.stringify(reflow, null, 2));
+  assert.ok(pageWidth.document <= pageWidth.viewport + 1, `Reflow at 200% text: ${JSON.stringify(reflow)}`);
+  assert.ok(await page.getByRole("heading", { level: 1 }).isVisible());
   results.push({ width: 390, textScale: "200%", reducedMotion: true, expandedFaq: true });
   await page.close();
   const noJs = await browser.newPage({ viewport: { width: 390, height: 1000 }, javaScriptEnabled: false });
