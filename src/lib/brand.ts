@@ -10,7 +10,7 @@ export const CITYWALK_BRAND = {
     white: "#FFFFFF",
   },
   assets: {
-    mark: "/brand/citywalk-mark.png",
+    mark: "/brand/citywalk-mark.svg",
   },
 } as const;
 
