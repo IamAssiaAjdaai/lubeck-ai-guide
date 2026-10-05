@@ -27,6 +27,8 @@ try {
     assert.match(await page.locator('meta[name="robots"]').getAttribute("content"), /noindex/);
     assert.equal(await page.locator("form, input, iframe").count(), 0);
     assert.equal(await page.getByRole("navigation", { name: "Landing page" }).count(), 1);
+    assert.equal(await page.getByRole("heading", { name: "A walk that fits your day." }).count(), 1);
+    assert.equal(await page.getByText("Walking times are estimates, not a guaranteed arrival time.").count(), 1);
 
     const overflow = await page.evaluate(() => [...document.querySelectorAll("main *, header *, footer *")]
       .filter(element => {
