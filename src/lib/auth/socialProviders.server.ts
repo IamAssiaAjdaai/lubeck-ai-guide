@@ -43,16 +43,25 @@ export function getCitywalkSocialAuthConfiguration(
   const appleBundleIdentifier =
     environment.CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER?.trim();
 
-  assertCompleteProvider(
-    "Apple",
-    [
-      ["CITYWALK_APPLE_OAUTH_CLIENT_ID", appleClientId],
-      ["CITYWALK_APPLE_TEAM_ID", appleTeamId],
-      ["CITYWALK_APPLE_KEY_ID", appleKeyId],
-      ["CITYWALK_APPLE_PRIVATE_KEY", applePrivateKey],
-      ["CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER", appleBundleIdentifier],
-    ],
-  );
+  const appleOAuthCredentials = [
+    ["CITYWALK_APPLE_OAUTH_CLIENT_ID", appleClientId],
+    ["CITYWALK_APPLE_TEAM_ID", appleTeamId],
+    ["CITYWALK_APPLE_KEY_ID", appleKeyId],
+    ["CITYWALK_APPLE_PRIVATE_KEY", applePrivateKey],
+  ] as const;
+
+  // The native app bundle identifier is shared configuration, not proof that
+  // Apple web OAuth is enabled. Only validate a complete Apple provider after
+  // at least one actual OAuth credential has been supplied.
+  if (appleOAuthCredentials.some(([, value]) => Boolean(value))) {
+    assertCompleteProvider(
+      "Apple",
+      [
+        ...appleOAuthCredentials,
+        ["CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER", appleBundleIdentifier],
+      ],
+    );
+  }
 
   return {
     socialProviders: {
