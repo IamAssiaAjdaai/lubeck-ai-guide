@@ -132,7 +132,7 @@ export const marketingContentTable = pgTable(
     pageId: integer("page_id").references(() => marketingPagesTable.id, {
       onDelete: "set null",
     }),
-    contentCode: text("content_code").notNull().unique(),
+    contentCode: text("content_code").notNull(),
     platform: text("platform").notNull(),
     format: text("format").notNull(),
     hook: text("hook").notNull(),
@@ -146,6 +146,7 @@ export const marketingContentTable = pgTable(
     ...marketingTimestamps(),
   },
   (table) => [
+    uniqueIndex("marketing_content_code_unique").on(table.contentCode),
     index("marketing_content_city_status_idx").on(table.cityId, table.status),
     index("marketing_content_campaign_idx").on(table.campaignId),
     index("marketing_content_page_idx").on(table.pageId),
