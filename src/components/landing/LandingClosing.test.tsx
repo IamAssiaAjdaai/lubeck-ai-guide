@@ -25,13 +25,14 @@ describe("landing launch / FAQ / footer checkpoint", () => {
       expect(item.firstElementChild?.tagName).toBe("SUMMARY");
       expect(item.querySelector("p")?.textContent?.length).toBeGreaterThan(30);
     }
-    // Interaction is verified with real Chromium, not simulated jsdom toggling.
     expect(container.querySelector("button, input, form")).toBeNull();
   });
 
-  it("does not invent pricing or promise full offline use", () => {
+  it("shows the approved launch pricing without promising unlimited or full-offline access", () => {
     render(<LandingFaq />);
-    expect(screen.getByText(/Launch pricing is still being finalized/)).toBeDefined();
+    expect(screen.getByText(/72-hour City Pass is planned at €4\.99/)).toBeDefined();
+    expect(screen.getByText(/€7\.99 per month or €39\.99 per year/)).toBeDefined();
+    expect(screen.getByText(/Store prices may be localized by country/)).toBeDefined();
     expect(screen.getByText(/A fully offline experience is not promised for launch/)).toBeDefined();
     expect(screen.queryByText(/free forever|works entirely offline|unlimited access/i)).toBeNull();
   });
