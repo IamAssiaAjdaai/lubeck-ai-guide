@@ -118,42 +118,46 @@ export function V2Itinerary({
   const { locale, direction } = useNativeLocale(),
     t = walkCopy(locale);
   return (
-    <View style={styles.itinerary}>
+    <View style={[styles.itinerary, compact && styles.compactItinerary]}>
       {places.map((place, index) => {
-        const url = selectImageUrl(
-          selectPrimaryImageMedia(place.media),
-          place.image,
-          place.imageVariants,
-          "thumbnail",
-        );
+        const url = compact
+          ? undefined
+          : selectImageUrl(
+              selectPrimaryImageMedia(place.media),
+              place.image,
+              place.imageVariants,
+              "thumbnail",
+            );
         const row = (
           <View style={[styles.itineraryRow, compact && styles.compactItineraryRow, { direction }]}>
-            <View style={styles.number}>
-              <AppText style={styles.numberText}>{index + 1}</AppText>
+            <View style={[styles.number, compact && styles.compactNumber]}>
+              <AppText style={[styles.numberText, compact && styles.compactNumberText]}>{index + 1}</AppText>
             </View>
-            <NativeContentImage
-              source={url ? { uri: citywalkApi.resolveUrl(url) } : undefined}
-              fallbackSource={
-                place.image
-                  ? { uri: citywalkApi.resolveUrl(place.image) }
-                  : undefined
-              }
-              contentFit="cover"
-              style={[styles.thumbnail, compact && styles.compactThumbnail]}
-              accessibilityLabel={nativePlaceName(citySlug, place.slug, place.content.name, locale)}
-            />
+            {!compact ? (
+              <NativeContentImage
+                source={url ? { uri: citywalkApi.resolveUrl(url) } : undefined}
+                fallbackSource={
+                  place.image
+                    ? { uri: citywalkApi.resolveUrl(place.image) }
+                    : undefined
+                }
+                contentFit="cover"
+                style={styles.thumbnail}
+                accessibilityLabel={nativePlaceName(citySlug, place.slug, place.content.name, locale)}
+              />
+            ) : null}
             <View style={styles.rowCopy}>
               <AppText
                 variant="label"
+                numberOfLines={compact ? 1 : undefined}
                 style={{
-                  writingDirection:
-                    direction,
+                  writingDirection: direction,
                   textAlign: direction === "rtl" ? "right" : "left",
                 }}
               >
                 {nativePlaceName(citySlug, place.slug, place.content.name, locale)}
               </AppText>
-              <AppText variant="caption" style={styles.muted}>
+              <AppText variant="caption" numberOfLines={1} style={styles.muted}>
                 {t.minutes.replace("{minutes}", String(place.durationMinutes))}{" "}
                 ·{" "}
                 {place.category === "see" ||
@@ -182,7 +186,7 @@ export function V2Itinerary({
         return interactive ? (
           <View key={place.slug}>
             {removeInOverflow ? (
-              <View style={styles.itineraryActionRow}>
+              <View style={[styles.itineraryActionRow, compact && styles.compactItineraryActionRow]}>
                 <Link
                   href={{
                     pathname: "/city/[citySlug]/place/[placeSlug]",
@@ -243,8 +247,6 @@ export function V2Loading({ stage = "matching", onReady, onPresented }: { stage?
   useEffect(() => {
     if (reduced) {
       entrance.setValue(1);
-      // Layout alone does not mean pixels have been presented. Cross a frame
-      // boundary even when the system requests no animation.
       let next = 0;
       const first = requestAnimationFrame(() => { next = requestAnimationFrame(() => onPresented?.()); });
       return () => { cancelAnimationFrame(first); cancelAnimationFrame(next); };
@@ -399,8 +401,14 @@ const styles = StyleSheet.create({
   metricValue: { flexDirection: "row", gap: spacing.xs, alignItems: "center" },
   metricText: { flexShrink: 1 },
   itineraryActionRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  compactItineraryActionRow: {
+    minHeight: 54,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+  },
   itineraryMain: { flex: 1, minWidth: 0 },
   itinerary: { gap: spacing.sm },
+  compactItinerary: { gap: 0 },
   itineraryRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -411,9 +419,11 @@ const styles = StyleSheet.create({
     ...shadows.card,
   },
   compactItineraryRow: {
-    minHeight: 64,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
+    minHeight: 54,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.xs,
+    borderRadius: 0,
+    backgroundColor: "transparent",
     shadowOpacity: 0,
     shadowRadius: 0,
     elevation: 0,
@@ -426,13 +436,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  compactNumber: {
+    width: 24,
+    height: 24,
+    backgroundColor: colors.primarySoft,
+  },
   numberText: { color: colors.surface, fontSize: 13 },
+  compactNumberText: { color: colors.primary, fontSize: 12, fontWeight: "600" },
   thumbnail: {
     width: layout.itineraryPhoto,
     height: layout.itineraryPhoto,
     borderRadius: radius.sm,
   },
-  compactThumbnail: { width: 52, height: 52 },
   rowCopy: { flex: 1, minWidth: 0, gap: spacing.xs },
   ring: {
     width: 174,
