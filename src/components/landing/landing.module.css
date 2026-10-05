@@ -31,8 +31,10 @@
   margin-inline: auto;
   padding: 1.25rem 2.5rem;
 }
-.brand { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; flex-shrink: 0; font-size: 1.25rem; font-weight: 800; letter-spacing: -.04em; }
-.brand svg { width: 2.5rem; color: var(--landing-blue); }
+.brand { display: inline-flex; align-items: center; min-height: 2.75rem; flex-shrink: 0; color: var(--landing-ink); }
+.brandLockup { display: inline-flex; align-items: center; gap: .55rem; }
+.brandMark { width: 2.5rem; height: auto; flex-shrink: 0; color: var(--landing-blue); }
+.brandWordmark { font-size: 1.25rem; font-weight: 800; letter-spacing: -.04em; }
 .navigation { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1.75rem; }
 .navigation a { display: inline-flex; align-items: center; min-height: 2.75rem; font-size: .875rem; font-weight: 550; }
 .navigation a:hover { color: var(--landing-blue); }
@@ -132,8 +134,8 @@
 }
 @media (max-width: 48rem) {
   .header { padding: 1rem 1.25rem .5rem; flex-wrap: wrap; gap: .4rem 1rem; }
-  .brand { font-size: 1.1rem; }
-  .brand svg { width: 2rem; }
+  .brandWordmark { font-size: 1.1rem; }
+  .brandMark { width: 2rem; }
   .headerAction { margin-inline-start: auto; font-size: .75rem; padding-inline: .75rem; }
   .navigation { order: 3; flex-basis: 100%; gap: 1.75rem; }
   .navigation a { font-size: .8125rem; }
