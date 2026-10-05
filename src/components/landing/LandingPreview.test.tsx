@@ -99,9 +99,23 @@ describe("landing Header / Hero checkpoint", () => {
     expect(screen.getByText("Illustrative guide example")).toBeDefined();
   });
 
+  it("renders the configured city rollout without implying store availability", () => {
+    render(<LandingPreviewPage />);
+    expect(screen.getByRole("heading", { name: "Starting in Lübeck. Built for more cities." })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Lübeck" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Hamburg" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Düsseldorf" })).toBeDefined();
+    expect(screen.getByText("First CITYWALK city")).toBeDefined();
+    expect(screen.getAllByText("Coming soon")).toHaveLength(2);
+    expect(screen.getByText(/store availability is announced separately/i)).toBeDefined();
+    expect(screen.queryByText(/available now/i)).toBeNull();
+  });
+
   it("reuses existing local decorative assets without new external media requests", () => {
     expect(existsSync("public/images/citywalk-waterfront.webp")).toBe(true);
     expect(existsSync("public/landmarks/holstentor.jpg")).toBe(true);
     expect(existsSync("public/landmarks/marienkirche.jpg")).toBe(true);
+    expect(existsSync("public/images/city-hamburg.webp")).toBe(true);
+    expect(existsSync("public/images/city-duesseldorf.webp")).toBe(true);
   });
 });
