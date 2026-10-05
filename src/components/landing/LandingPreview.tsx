@@ -9,12 +9,25 @@ const benefits = [
 ] as const;
 
 const steps = [
-  { title: "Tell us your time", body: "Choose how much time you have and when you’d like to be back." },
-  { title: "Pick your interests", body: "History, architecture, nature or hidden corners. Make it your walk." },
-  { title: "Preview your walk. Then go.", body: "See your route before you start, with stories and an estimated return time." },
+  {
+    symbol: "time",
+    title: "Tell us your time",
+    body: "Choose how much time you have and when you’d like to be back.",
+  },
+  {
+    symbol: "interests",
+    title: "Pick your interests",
+    body: "History, architecture, nature or hidden corners. Make it your walk.",
+  },
+  {
+    symbol: "preview",
+    title: "Preview your walk. Then go.",
+    body: "See your route before you start, with stories and an estimated return time.",
+  },
 ] as const;
 
 type SymbolName = (typeof benefits)[number]["symbol"];
+type StepSymbolName = (typeof steps)[number]["symbol"];
 
 function BenefitIcon({ name }: { name: SymbolName }) {
   const paths = {
@@ -26,6 +39,30 @@ function BenefitIcon({ name }: { name: SymbolName }) {
   return (
     <svg viewBox="0 0 26 28" width="26" height="28" fill="none" aria-hidden="true" focusable="false">
       <path d={paths[name]} stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function StepIcon({ name }: { name: StepSymbolName }) {
+  if (name === "time") {
+    return (
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+        <circle cx="16" cy="16" r="10.5" stroke="currentColor" strokeWidth="2.2" />
+        <path d="M16 9.5v7l4.5 2.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  if (name === "interests") {
+    return (
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+        <path d="M16 26S6 20.2 6 12.8C6 9.6 8.4 7 11.5 7c1.9 0 3.5 1 4.5 2.5C17 8 18.6 7 20.5 7 23.6 7 26 9.6 26 12.8 26 20.2 16 26 16 26Z" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+      <path d="m6.5 15.5 19-9-7.8 19-2.3-7.6-8.9-2.4Z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m15.5 17.5 4.8-4.8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -85,6 +122,30 @@ function PhoneIllustration() {
   );
 }
 
+function ReturnByExample() {
+  return (
+    <figure className={styles.returnExample}>
+      <div className={styles.returnCard}>
+        <div className={styles.returnCardHeader}>
+          <span className={styles.returnClock} aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" />
+              <path d="M12 7.5V12l3 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </span>
+          <div><span>Back by</span><strong>17:30</strong></div>
+        </div>
+        <dl className={styles.returnMetrics}>
+          <div><dt>Projected finish</dt><dd>17:16</dd></div>
+          <div><dt>Schedule estimate</dt><dd>14 min ahead</dd></div>
+          <div><dt>Places remaining</dt><dd>3</dd></div>
+        </dl>
+      </div>
+      <figcaption>Illustrative timing example · estimates update with the walk.</figcaption>
+    </figure>
+  );
+}
+
 export function LandingPreview() {
   return (
     <div className={styles.page} lang="en" dir="ltr">
@@ -113,13 +174,44 @@ export function LandingPreview() {
               <PhoneIllustration />
             </div>
           </section>
+
           <section id="how-it-works" className={styles.howItWorks} aria-labelledby="how-title">
             <p className={styles.eyebrow}>HOW IT WORKS</p>
             <h2 id="how-title">Your time. Your interests. Your walk.</h2>
             <ol className={styles.steps}>
-              {steps.map(({ title, body }, index) => <li key={title}><span className={styles.stepNumber} aria-hidden="true">0{index + 1}</span><h3>{title}</h3><p>{body}</p></li>)}
+              {steps.map(({ symbol, title, body }, index) => (
+                <li key={title}>
+                  <div className={styles.stepTop}>
+                    <span className={styles.stepNumber} aria-hidden="true">{index + 1}</span>
+                    <span className={styles.stepIcon}><StepIcon name={symbol} /></span>
+                  </div>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
+                </li>
+              ))}
             </ol>
           </section>
+
+          <section id="return-by" className={styles.returnBy} aria-labelledby="return-title">
+            <div className={styles.returnCopy}>
+              <p className={styles.eyebrow}>RETURN-BY PLANNING</p>
+              <h2 id="return-title">A walk that fits your day.</h2>
+              <p className={styles.returnLead}>
+                Choose when you’d like to be back. CITYWALK uses that target when planning and keeps your projected finish visible while you walk.
+              </p>
+              <ul className={styles.returnPoints}>
+                <li><span aria-hidden="true">✓</span>Set a back-by time before you start.</li>
+                <li><span aria-hidden="true">✓</span>See remaining time and your projected finish.</li>
+                <li><span aria-hidden="true">✓</span>See whether the current estimate is ahead, on schedule or behind.</li>
+              </ul>
+              <ReturnByExample />
+              <p className={styles.returnDisclaimer}>Walking times are estimates, not a guaranteed arrival time.</p>
+            </div>
+            <div className={styles.returnPhoto} role="img" aria-label="Lübeck Holstentor">
+              <p aria-hidden="true">Make time<br />for the city.</p>
+            </div>
+          </section>
+
           <section id="launch-information" className={styles.launchInfo} aria-labelledby="launch-title">
             <div><p className={styles.eyebrow}>COMING TO IPHONE & ANDROID</p><h2 id="launch-title">Your next walk is waiting.</h2><p>We’re preparing CITYWALK for launch. Store links and launch notifications will be added when they’re ready.</p></div>
             <a className={styles.contact} href="mailto:support@getcitywalk.com">Contact CITYWALK <span aria-hidden="true">↗</span></a>
@@ -127,7 +219,7 @@ export function LandingPreview() {
         </main>
       </div>
       <footer className={styles.previewNote}>
-        <span>Design preview · Header & Hero checkpoint</span>
+        <span>Design preview · How it works + Return-by checkpoint</span>
         <span>Not a live download or email signup page.</span>
       </footer>
     </div>

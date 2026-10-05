@@ -110,14 +110,68 @@
 .phoneAction { display: flex; justify-content: space-between; border-radius: .5rem; padding: .6rem .65rem; background: var(--landing-ink); color: white; font-size: .6rem; font-weight: 650; }
 .homeIndicator { position: absolute; bottom: .45rem; left: 35%; width: 30%; height: .2rem; background: #151c27; border-radius: 1rem; }
 .phoneFigure figcaption { position: relative; margin: 1.75rem -1rem 0; padding: .35rem .55rem; text-align: center; background: rgb(255 255 255 / 92%); color: #425570; font-size: .625rem; line-height: 1.5; border-radius: .35rem; }
-.howItWorks { padding: 4rem 2.5rem; background: #fff; max-width: 80rem; margin-inline: auto; text-align: center; }
-.howItWorks h2 { margin-top: .7rem; font-size: clamp(1.65rem, 2.4vw, 2.25rem); line-height: 1.2; font-weight: 730; letter-spacing: -.045em; }
-.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; max-width: 65rem; margin: 2.25rem auto 0 !important; text-align: start; }
-.steps li { min-width: 0; padding-inline: 1rem; }
-.steps li + li { border-inline-start: 1px solid var(--landing-line); }
-.stepNumber { display: block; margin-bottom: .6rem; color: var(--landing-blue); font-size: .8125rem; font-weight: 700; }
-.steps h3 { font-size: 1rem; font-weight: 700; letter-spacing: -.025em; }
-.steps p { margin-top: .5rem; font-size: .875rem; line-height: 1.65; color: var(--landing-text); }
+.howItWorks { padding: 4.5rem 2.5rem 5rem; background: #fff; max-width: 80rem; margin-inline: auto; text-align: center; }
+.howItWorks h2 { margin-top: .7rem; font-size: clamp(1.8rem, 2.7vw, 2.45rem); line-height: 1.18; font-weight: 760; letter-spacing: -.045em; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem; max-width: 67rem; margin: 2.6rem auto 0 !important; text-align: start; }
+.steps li { position: relative; min-width: 0; padding-inline: 1rem; }
+.steps li:not(:last-child)::after { content: "→"; position: absolute; top: .95rem; inset-inline-end: -1.7rem; color: #a5b5ca; font-size: 1.5rem; font-weight: 350; }
+.stepTop { display: flex; align-items: center; gap: .8rem; margin-bottom: 1rem; }
+.stepNumber { display: inline-flex; width: 2.15rem; height: 2.15rem; align-items: center; justify-content: center; border-radius: 999px; background: #edf3ff; color: var(--landing-blue); font-size: .875rem; font-weight: 750; }
+.stepIcon { display: inline-flex; width: 2.1rem; height: 2.1rem; align-items: center; justify-content: center; color: var(--landing-blue); }
+.steps li:nth-child(2) .stepIcon { color: #e24f87; }
+.stepIcon svg { width: 2rem; height: 2rem; }
+.steps h3 { font-size: 1.05rem; font-weight: 720; letter-spacing: -.025em; }
+.steps p { margin-top: .55rem; max-width: 18rem; font-size: .875rem; line-height: 1.65; color: var(--landing-text); }
+
+.returnBy {
+  display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  max-width: 90rem;
+  margin-inline: auto;
+  background: #fff;
+  border-block: 1px solid #edf1f6;
+}
+.returnCopy { padding: clamp(3.75rem, 6vw, 5.5rem) clamp(2rem, 6vw, 5.25rem); }
+.returnCopy h2 { margin-top: .8rem; max-width: 24rem; font-size: clamp(2rem, 3.2vw, 3.15rem); line-height: 1.04; font-weight: 780; letter-spacing: -.055em; }
+.returnLead { margin-top: 1.2rem !important; max-width: 31rem; color: var(--landing-text); font-size: 1rem; line-height: 1.7; }
+.returnPoints { display: grid; gap: .7rem; margin-top: 1.5rem !important; max-width: 31rem; color: #263f5c; font-size: .875rem; line-height: 1.55; }
+.returnPoints li { display: flex; gap: .7rem; align-items: flex-start; }
+.returnPoints li > span { display: inline-flex; width: 1.2rem; height: 1.2rem; flex: 0 0 1.2rem; align-items: center; justify-content: center; border-radius: 999px; margin-top: .1rem; background: #eaf7ef; color: #18864b; font-size: .7rem; font-weight: 800; }
+.returnExample { max-width: 30rem; margin-top: 2rem !important; }
+.returnCard { padding: 1.15rem 1.2rem; border: 1px solid #e0e7f0; border-radius: 1rem; background: #fff; box-shadow: 0 14px 32px rgb(7 28 54 / 8%); }
+.returnCardHeader { display: flex; align-items: center; gap: .8rem; padding-bottom: 1rem; border-bottom: 1px solid #e8edf3; }
+.returnClock { display: inline-flex; width: 2.5rem; height: 2.5rem; align-items: center; justify-content: center; border-radius: 999px; background: #edf3ff; color: var(--landing-blue); }
+.returnClock svg { width: 1.45rem; height: 1.45rem; }
+.returnCardHeader > div { display: flex; flex-direction: column; gap: .05rem; }
+.returnCardHeader span { color: var(--landing-text); font-size: .72rem; }
+.returnCardHeader strong { font-size: 1.5rem; line-height: 1.05; letter-spacing: -.04em; }
+.returnMetrics { display: grid; gap: .7rem; margin: .95rem 0 0; }
+.returnMetrics > div { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.returnMetrics dt { color: var(--landing-text); font-size: .78rem; }
+.returnMetrics dd { margin: 0; color: var(--landing-ink); font-size: .86rem; font-weight: 700; text-align: end; }
+.returnExample figcaption { margin-top: .55rem; color: #67768a; font-size: .68rem; line-height: 1.5; }
+.returnDisclaimer { margin-top: .9rem !important; max-width: 30rem; color: #67768a; font-size: .72rem; line-height: 1.5; }
+.returnPhoto {
+  position: relative;
+  min-height: 35rem;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgb(7 28 54 / 2%) 20%, rgb(7 28 54 / 25%) 100%),
+    url('/landmarks/holstentor.jpg') center / cover no-repeat;
+}
+.returnPhoto p {
+  position: absolute;
+  top: 3rem;
+  inset-inline-end: 2.5rem;
+  color: white;
+  font-family: Georgia, serif;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-style: italic;
+  line-height: 1.25;
+  text-align: end;
+  text-shadow: 0 2px 12px rgb(7 28 54 / 45%);
+  transform: rotate(4deg);
+}
 .launchInfo { display: flex; align-items: center; justify-content: space-between; gap: 2rem; margin: 1rem auto 0; max-width: 75rem; padding: 2rem; border: 1px solid var(--landing-line); border-radius: 1rem; background: #f5f8ff; }
 .launchInfo > div { max-width: 39rem; }
 .launchInfo h2 { margin-top: .6rem; font-size: 1.6rem; font-weight: 730; line-height: 1.2; letter-spacing: -.04em; }
@@ -150,10 +204,18 @@
   .heroVisual { padding-block: 1.75rem .25rem; }
   .phoneFigure { width: min(17rem, 80%); }
   .phone { transform: rotate(3deg); }
-  .howItWorks { padding: 2.5rem 1.5rem; }
-  .steps { grid-template-columns: 1fr; gap: 1.5rem; max-width: 34rem; }
-  .steps li { padding: 0; }
-  .steps li + li { border-inline-start: 0; border-top: 1px solid var(--landing-line); padding-top: 1.5rem; }
+  .howItWorks { padding: 3rem 1.5rem 3.5rem; }
+  .steps { grid-template-columns: 1fr; gap: 0; max-width: 34rem; margin-top: 2rem !important; }
+  .steps li { padding: 1.35rem 0; }
+  .steps li + li { border-top: 1px solid var(--landing-line); }
+  .steps li:not(:last-child)::after { display: none; }
+  .stepTop { margin-bottom: .8rem; }
+  .returnBy { grid-template-columns: 1fr; }
+  .returnCopy { padding: 3rem 1.5rem 2.5rem; }
+  .returnCopy h2 { max-width: 20rem; font-size: clamp(2rem, 10vw, 2.75rem); }
+  .returnPhoto { min-height: 19rem; order: 2; background-position: center 42%; }
+  .returnPhoto p { top: 1.75rem; inset-inline-end: 1.5rem; }
+  .returnExample { max-width: none; }
   .launchInfo { flex-direction: column; align-items: start; padding: 1.5rem; margin-inline: 1.5rem; gap: 1.25rem; }
   .previewNote { padding: 1.5rem; flex-direction: column; gap: .3rem; }
 }
