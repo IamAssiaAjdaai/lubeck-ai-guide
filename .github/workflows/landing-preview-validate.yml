@@ -47,6 +47,7 @@ jobs:
           done
           CITYWALK_PLAYWRIGHT_MODULE="$RUNNER_TEMP/citywalk-ui/node_modules/playwright" node scripts/check-landing-preview.mjs
       - name: Upload design-review screenshots
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: citywalk-landing-preview

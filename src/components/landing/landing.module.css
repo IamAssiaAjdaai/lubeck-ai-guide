@@ -287,3 +287,16 @@
 @media (prefers-reduced-motion: reduce) {
   .page :where(a) { transition: none; }
 }
+
+/* Reflow actual content instead of clipping it when the reader enlarges text. */
+.returnCopy { min-width: 0; }
+.returnMetrics > div { flex-wrap: wrap; gap: .35rem 1rem; }
+.returnMetrics dt, .returnMetrics dd { min-width: 0; overflow-wrap: anywhere; }
+.featureBody { flex-wrap: wrap; }
+.featureBody > div { flex: 1 1 8rem; min-width: 0; overflow-wrap: anywhere; }
+.cityCardBody { flex-wrap: wrap; }
+.cityCardBody > div { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 48rem) {
+  .returnBy { grid-template-columns: minmax(0, 1fr); }
+  .benefits { grid-template-columns: repeat(auto-fit, minmax(min(100%, 4rem), 1fr)); }
+}
