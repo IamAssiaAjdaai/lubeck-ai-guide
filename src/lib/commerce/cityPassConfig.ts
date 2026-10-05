@@ -1,3 +1,4 @@
+import { CITYWALK_GUIDE_DAILY_LIMITS } from "@citywalk/traveler-core";
 import type { Locale } from "@/lib/i18n";
 
 export type CityPassConfiguration = Readonly<{
@@ -44,7 +45,7 @@ export const LUBECK_CITY_PASS = defineCityPassConfiguration({
   durationDays: 3,
   recommendedLaunchPrice: {
     currency: "eur",
-    unitAmount: 699,
+    unitAmount: 499,
   },
   primaryPremiumFeature: {
     id: "hidden_lubeck_audio",
@@ -52,8 +53,8 @@ export const LUBECK_CITY_PASS = defineCityPassConfiguration({
     placement: "place_detail",
   },
   guideAllowance: {
-    freeAnswersPer24Hours: 3,
-    premiumAnswersPer24Hours: 20,
+    freeAnswersPer24Hours: CITYWALK_GUIDE_DAILY_LIMITS.free,
+    premiumAnswersPer24Hours: CITYWALK_GUIDE_DAILY_LIMITS.paid,
   },
   copyKey: "hidden-lubeck",
 });
@@ -104,8 +105,8 @@ export function getCityGuideAllowancePolicy(citySlug: string): Readonly<{
   premiumAnswersPer24Hours: number;
 }> {
   return getCityPassConfiguration(citySlug)?.guideAllowance ?? {
-    freeAnswersPer24Hours: 3,
-    premiumAnswersPer24Hours: 20,
+    freeAnswersPer24Hours: CITYWALK_GUIDE_DAILY_LIMITS.free,
+    premiumAnswersPer24Hours: CITYWALK_GUIDE_DAILY_LIMITS.paid,
   };
 }
 
