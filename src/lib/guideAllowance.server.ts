@@ -3,7 +3,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 
 import { getPublicSession } from "@/lib/auth/publicSession.server";
-import { canUseCityPremiumFeature } from "@/lib/commerce/cityPassAccess.server";
+import { canUsePaidCityFeature } from "@/lib/commerce/premiumAccess.server";
 import { getCityGuideAllowancePolicy } from "@/lib/commerce/cityPassConfig";
 import { getAiGuideDailyRateLimit } from "@/lib/rateLimit";
 
@@ -34,7 +34,7 @@ const defaultDependencies: GuideAllowanceDependencies = {
     const session = await getPublicSession(request.headers);
     return session?.user.id;
   },
-  hasPremiumAccess: canUseCityPremiumFeature,
+  hasPremiumAccess: canUsePaidCityFeature,
   limitDaily: ({ citySlug, tier, key, maxRequests }) =>
     getAiGuideDailyRateLimit(tier, maxRequests).limit(`${citySlug}:${key}`),
 };
