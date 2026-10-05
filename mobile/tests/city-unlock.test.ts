@@ -82,7 +82,7 @@ describe("city unlock safety and lifecycle", () => {
   it("restores RevenueCat store state without client-granting access", async () => {
     vi.stubEnv("EXPO_PUBLIC_CITYWALK_REVENUECAT_CITY_PASS", "1");
     const h = harness();
-    h.ports.restore = vi.fn(async () => ({ storeSynced: true }));
+    h.ports.restore = vi.fn(async () => ({ storeSynced: true as const }));
     h.ports.activate = vi.fn(async () => false);
     await h.controller.run("restore");
     expect(h.ports.verify).not.toHaveBeenCalled();
