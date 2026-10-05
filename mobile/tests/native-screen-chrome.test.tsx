@@ -47,7 +47,7 @@ vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { resolveUrl: (url: str
 vi.mock("../src/lib/location", () => ({ requestForegroundLocation: vi.fn() }));
 vi.mock("../src/lib/location.expo", () => ({ expoForegroundLocationAdapter: {} }));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { useSession: () => ({ data: undefined, isPending: false }) } }));
-vi.mock("../src/lib/tripStorage", () => ({ loadLocalTrips: async () => [] }));
+vi.mock("../src/lib/tripStorage", () => ({ LOCAL_TRIPS_STORAGE_KEY: "citywalk:local-trips:v2", loadLocalTrips: async () => [] }));
 import { t as translate } from "@citywalk/i18n";
 import { getNativeMessages } from "../src/lib/localization";
 import AccountScreen from "../src/app/account";
@@ -81,7 +81,7 @@ describe("actual native screen/chrome wiring (native view refs mocked)", () => {
     expect(within(header).getByRole("link", { name: "CITYWALK" })).toBeTruthy();
     expect(within(header).getByText("Language")).toBeTruthy();
     fireEvent.click(back); expect(state.back).toHaveBeenCalledOnce();
-    expect(header.dataset.style).toContain('"minHeight":48');
+    expect(header.dataset.style).toContain('\"minHeight\":48');
   });
   it.each(["/", "/saved", "/account"])("omits Back on root %s", path => {
     state.path = path; state.params = {};
@@ -93,12 +93,11 @@ describe("actual native screen/chrome wiring (native view refs mocked)", () => {
     state.path = "/city/lubeck"; state.params = { citySlug: "lubeck" }; state.locale = "ar";
     render(<Screen>Content</Screen>);
     const header = screen.getByTestId("native-header");
-    expect(header.dataset.style).toContain('"direction":"rtl"');
+    expect(header.dataset.style).toContain('\"direction\":\"rtl\"');
     expect(within(header).getByTestId("icon").dataset.icon).toBe("chevron.right");
     expect(header.dataset.style).not.toContain("scaleX");
   });
 });
-
 
 it.each(["en", "ar"])("wires the real %s Home route, its forwarded ref and one active Home press", locale => {
   state.path = "/"; state.params = {}; state.locale = locale;
@@ -114,7 +113,7 @@ it.each(["en", "ar"])("wires the real %s Home route, its forwarded ref and one a
 it("keeps Arabic Home direction and all five bottom labels on wrapping tabs", () => {
   state.path = "/"; state.params = {}; state.locale = "ar";
   render(<HomeScreen />);
-  expect(screen.getByTestId("safe-area").dataset.style).toContain('"direction":"rtl"');
+  expect(screen.getByTestId("safe-area").dataset.style).toContain('\"direction\":\"rtl\"');
   const t = walkCopy("ar");
   expect(screen.getAllByRole("tab").map(tab => tab.getAttribute("aria-label"))).toEqual([t.home, t.explore, t.trips, t.saved, t.profile]);
   for (const tab of screen.getAllByRole("tab")) expect(tab.querySelector("[data-lines]")).toBeNull();
@@ -122,7 +121,6 @@ it("keeps Arabic Home direction and all five bottom labels on wrapping tabs", ()
   expect(screen.getByText("هامبورغ")).toBeTruthy();
   expect(screen.getByText("دوسلدورف")).toBeTruthy();
 });
-
 
 it("right-aligns Arabic headings and fallback prose despite legacy left/center styles", () => {
   state.locale = "ar";
@@ -134,7 +132,6 @@ it("right-aligns Arabic headings and fallback prose despite legacy left/center s
   const title = screen.getByText("لا توجد نتائج");
   expect(JSON.parse(title.dataset.style!).at(-1)).toEqual({ writingDirection: "rtl", textAlign: "right" });
 });
-
 
 it.each(["ar", "de"] as const)("keeps one header language control on the actual %s Profile screen", async locale => {
   state.path = "/account"; state.params = {}; state.locale = locale;
@@ -154,12 +151,11 @@ it("uses Arabic embedded city names before bidi-isolating the CITYWALK brand", (
   expect(screen.getByText("المركز التاريخي لمدينة لوبيك · \u2068CITYWALK\u2069")).toBeTruthy();
 });
 
-
 it("keeps readable unbounded tab labels in the bar below the scroll content", () => {
   state.path = "/"; state.params = {}; state.locale = "de";
   render(<HomeScreen />);
   const bar = screen.getByRole("tablist");
-  expect(bar.dataset.style).toContain('"flexShrink":0');
+  expect(bar.dataset.style).toContain('\"flexShrink\":0');
   expect(bar.parentElement).toBe(screen.getByTestId("safe-area"));
   expect(screen.getByTestId("scroll-content").nextElementSibling).toBe(bar);
   for (const tab of screen.getAllByRole("tab")) {
