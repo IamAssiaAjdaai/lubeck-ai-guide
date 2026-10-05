@@ -1,5 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import {
+  configureRevenueCat,
+  getRevenueCatPublicKey,
+  loadRevenueCatPlans,
+  resetRevenueCatFoundationForTests,
+  revenueCatPlanKind,
+  syncRevenueCatIdentity,
+  type RevenueCatDependencies,
+} from "./revenueCat";
+
 vi.mock("react-native", () => ({ Platform: { OS: "ios" } }));
 vi.mock("react-native-purchases", () => ({
   default: {
@@ -10,16 +20,6 @@ vi.mock("react-native-purchases", () => ({
     getOfferings: vi.fn(),
   },
 }));
-
-import {
-  configureRevenueCat,
-  getRevenueCatPublicKey,
-  loadRevenueCatPlans,
-  resetRevenueCatFoundationForTests,
-  revenueCatPlanKind,
-  syncRevenueCatIdentity,
-  type RevenueCatDependencies,
-} from "./revenueCat";
 
 function dependencies(overrides: Partial<RevenueCatDependencies> = {}): RevenueCatDependencies {
   return {
