@@ -55,6 +55,12 @@ describe("RevenueCat mobile foundation", () => {
     expect(getRevenueCatPublicKey("web", environment)).toBeUndefined();
   });
 
+  it("rejects a RevenueCat secret key from the mobile bundle", () => {
+    expect(getRevenueCatPublicKey("ios", {
+      EXPO_PUBLIC_REVENUECAT_IOS_API_KEY: "sk_must-stay-server-side",
+    })).toBeUndefined();
+  });
+
   it("fails benignly when the platform public key is missing", () => {
     vi.stubEnv("EXPO_PUBLIC_REVENUECAT_IOS_API_KEY", "");
     const deps = dependencies();
