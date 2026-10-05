@@ -10,6 +10,7 @@ import {
   TableHead,
 } from "@/components/admin/AdminContentUi";
 import { getMarketingWorkspace } from "@/lib/admin/marketing/service.server";
+import { createLubeckStarterCampaignAction } from "./actions";
 
 function MetricCard({
   label,
@@ -33,6 +34,13 @@ export const metadata = {
 
 export default async function MarketingPage() {
   const workspace = await getMarketingWorkspace();
+  const hasLubeckStarter = workspace.campaigns.some(
+    ({ slug }) => slug === "two-hours-in-lubeck",
+  );
+  const canCreateLubeckStarter =
+    workspace.canManage &&
+    !hasLubeckStarter &&
+    workspace.cities.some(({ slug }) => slug === "lubeck");
 
   return (
     <section>
@@ -111,9 +119,26 @@ export default async function MarketingPage() {
         </span>
       </div>
       {workspace.campaigns.length === 0 ? (
-        <EmptyContent>
-          No campaigns yet. The first recommended campaign is “2 Hours in Lübeck” once creation forms are enabled.
-        </EmptyContent>
+        <div className="surface-card mt-6 p-6 sm:p-8">
+          <p className="eyebrow">First CITYWALK campaign</p>
+          <h3 className="mt-2 text-xl font-extrabold">2 Hours in Lübeck</h3>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
+            Creates one draft campaign, the <strong>/lubeck/2-hours</strong> landing page and the first short-form content draft <strong>CW-LUB-TIME-001</strong>. Nothing is published automatically.
+          </p>
+          {canCreateLubeckStarter ? (
+            <form action={createLubeckStarterCampaignAction} className="mt-5">
+              <button className="button-primary min-h-11 px-5" type="submit">
+                Create starter campaign
+              </button>
+            </form>
+          ) : (
+            <p className="mt-4 text-sm font-semibold text-text-secondary">
+              {workspace.canManage
+                ? "Import or authorize the Lübeck city first to create this starter campaign."
+                : "Marketing edit access is required to create the starter campaign."}
+            </p>
+          )}
+        </div>
       ) : (
         <ContentTable>
           <TableHead>
