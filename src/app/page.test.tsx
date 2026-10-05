@@ -32,7 +32,8 @@ vi.mock("@/components/LanguageSelector", () => ({
 }));
 vi.mock("next/image", () => ({ default: ({src, alt}: {src:string;alt:string}) => <span data-image={src} role="img" aria-label={alt}/> }));
 
-import Home from "@/app/page";
+import HomePage, { metadata as homeMetadata } from "@/app/page";
+import ExplorePage from "@/app/explore/page";
 import { cities } from "@/data/cities";
 import { getTranslations, locales } from "@/lib/i18n";
 import type { PublicMedia } from "@/lib/media/types";
@@ -40,7 +41,17 @@ import type { PublicMedia } from "@/lib/media/types";
 const cardMedia: PublicMedia = { assetKey: "card", kind: "image", purpose: "card", url: "/api/media/card", mimeType: "image/jpeg" };
 const heroMedia: PublicMedia = { assetKey: "hero", kind: "image", purpose: "hero", url: "/api/media/hero", mimeType: "image/jpeg" };
 
-describe("Home available cities", () => {
+describe("Homepage cutover", () => {
+  afterEach(cleanup);
+
+  it("renders the reviewed CITYWALK landing at root with indexable metadata", () => {
+    render(<HomePage />);
+    expect(screen.getByRole("heading", { level: 1, name: /A better way to walk a city/i })).not.toBeNull();
+    expect(homeMetadata.robots).toEqual({ index: true, follow: true });
+  });
+});
+
+describe("Explore available cities", () => {
   beforeEach(() => {
     mocks.connection.mockResolvedValue(undefined);
     mocks.getContentSource.mockReturnValue("database");
@@ -54,25 +65,25 @@ describe("Home available cities", () => {
 
   it("prefers approved city card media over hero media", async () => {
     mocks.getPublicCitySummaries.mockResolvedValue([summary([heroMedia, cardMedia])]);
-    await renderHome();
+    await renderExplore();
     expect(featuredImage()).toBe(cardMedia.url);
   });
 
   it("uses approved hero media when card media is absent", async () => {
     mocks.getPublicCitySummaries.mockResolvedValue([summary([heroMedia])]);
-    await renderHome();
+    await renderExplore();
     expect(featuredImage()).toBe(heroMedia.url);
   });
 
   it("keeps the legacy image when the public city has no eligible CMS media", async () => {
-    await renderHome();
+    await renderExplore();
     expect(featuredImage()).toBe(cities.lubeck.heroImage);
   });
 
   it.each(["pending", "rejected", "archived", "unpublished", "unattached"])(
     "keeps the legacy image when %s media is excluded from the public summaries",
     async () => {
-      await renderHome();
+      await renderExplore();
       expect(featuredImage()).toBe(cities.lubeck.heroImage);
     },
   );
@@ -80,7 +91,7 @@ describe("Home available cities", () => {
   it("keeps code-source behavior static even if an invalid caller supplies CMS media", async () => {
     mocks.getContentSource.mockReturnValue("code");
     mocks.getPublicCitySummaries.mockResolvedValue([summary([cardMedia])]);
-    await renderHome();
+    await renderExplore();
     expect(featuredImage()).toBe(cities.lubeck.heroImage);
     expect(mocks.connection).not.toHaveBeenCalled();
     expect(mocks.getPublicCitySummaries).toHaveBeenCalledWith("code");
@@ -89,7 +100,7 @@ describe("Home available cities", () => {
   it("opts into request-time rendering for database and auto content", async () => {
     for (const source of ["database", "auto"] as const) {
       mocks.getContentSource.mockReturnValue(source);
-      await renderHome();
+      await renderExplore();
       expect(mocks.connection).toHaveBeenCalledTimes(1);
       cleanup();
       mocks.connection.mockClear();
@@ -97,7 +108,7 @@ describe("Home available cities", () => {
   });
 
   it("offers optional location, search, and non-navigable upcoming cities", async () => {
-    await renderHome();
+    await renderExplore();
     expect(screen.getByRole("button", { name: "Use my location" })).not.toBeNull();
     expect(screen.getByRole("searchbox", { name: "Search city" })).not.toBeNull();
     expect(screen.getByRole("heading", { name: "Available cities" })).not.toBeNull();
@@ -106,7 +117,7 @@ describe("Home available cities", () => {
   });
 
   it("renders Lübeck as the currently published available city", async () => {
-    await renderHome();
+    await renderExplore();
     expect(screen.getByRole("heading", { name: "Lübeck" })).not.toBeNull();
     expect(screen.getByTestId("available-city-lubeck").getAttribute("href")).toBe("/en/lubeck");
   });
@@ -116,18 +127,17 @@ describe("Home available cities", () => {
       summary([], "lubeck", "Lübeck"),
       summary([], "ghent", "Ghent", "A published city description."),
     ]);
-    await renderHome();
+    await renderExplore();
 
     expect(screen.getAllByTestId(/^available-city-/)).toHaveLength(2);
     expect(screen.getByTestId("available-city-lubeck")).not.toBeNull();
-    expect(screen.getByTestId("available-city-ghent")).not.toBeNull();
     expect(screen.getByTestId("available-city-ghent")).not.toBeNull();
     expect(screen.getByText("A published city description.")).not.toBeNull();
   });
 
   it("does not fabricate missing descriptions or show fake Coming Soon cities", async () => {
     mocks.getPublicCitySummaries.mockResolvedValue([summary([], "ghent", "Ghent", "")]);
-    await renderHome();
+    await renderExplore();
 
     expect(screen.queryByText(/Barcelona|Amsterdam|Paris/)).toBeNull();
     expect(screen.queryByText(getLubeckEditorial("en")["home.featuredCityDescription"])).toBeNull();
@@ -143,8 +153,8 @@ describe("Home available cities", () => {
   });
 });
 
-async function renderHome() {
-  render(await Home());
+async function renderExplore() {
+  render(await ExplorePage());
 }
 
 function featuredImage(): string | null {
