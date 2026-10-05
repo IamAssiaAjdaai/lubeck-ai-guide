@@ -22,14 +22,15 @@ export default async function AdminLoginPage() {
           <ShieldCheck aria-hidden="true" size={25} />
         </span>
         <p className="mt-6 text-xs font-bold tracking-[0.15em] text-primary uppercase">
-          CITYWALK Admin
+          CITYWALK Control Center
         </p>
         <h1 className="mt-2 text-3xl font-extrabold tracking-tight">
           Staff sign in
         </h1>
         <p className="mt-3 text-sm leading-6 text-text-secondary">
-          Use your authorized CITYWALK staff account. Traveler accounts do not
-          have access to this console.
+          Use a registered passkey for everyday staff access. Password remains
+          a recovery fallback and can be protected with an authenticator.
+          Traveler accounts do not gain access to this console.
         </p>
         <AdminLoginForm />
       </section>
