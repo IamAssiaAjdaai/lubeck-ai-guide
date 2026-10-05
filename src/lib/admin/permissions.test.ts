@@ -40,6 +40,7 @@ describe("CITYWALK admin permissions", () => {
   it("gives admins platform/content access but reserves super-admin grants", () => {
     expect(hasAdminCapability("admin", "staff:manage")).toBe(true);
     expect(hasAdminCapability("admin", "places:manage")).toBe(true);
+    expect(hasAdminCapability("admin", "marketing:manage")).toBe(true);
     expect(hasAdminCapability("admin", "publishing:publish")).toBe(true);
     expect(hasAdminCapability("admin", "staff:manage_super_admin")).toBe(
       false,
@@ -49,13 +50,15 @@ describe("CITYWALK admin permissions", () => {
     expect(canManageStaffRole("super_admin", "super_admin")).toBe(true);
   });
 
-  it("allows editors to work on content but not publish or manage staff", () => {
+  it("allows editors to create marketing/content but not publish or manage staff", () => {
     expect(hasAdminCapability("content_editor", "places:manage")).toBe(
       true,
     );
     expect(
       hasAdminCapability("content_editor", "translations:manage"),
     ).toBe(true);
+    expect(hasAdminCapability("content_editor", "marketing:view")).toBe(true);
+    expect(hasAdminCapability("content_editor", "marketing:manage")).toBe(true);
     expect(hasAdminCapability("content_editor", "publishing:publish")).toBe(
       false,
     );
@@ -63,13 +66,15 @@ describe("CITYWALK admin permissions", () => {
     expect(hasAdminCapability("content_editor", "media:manage")).toBe(true);
   });
 
-  it("allows reviewers to review and publish but not manage staff", () => {
+  it("allows reviewers to view marketing and publish but not edit drafts", () => {
     expect(
       hasAdminCapability("reviewer_publisher", "publishing:review"),
     ).toBe(true);
     expect(
       hasAdminCapability("reviewer_publisher", "publishing:publish"),
     ).toBe(true);
+    expect(hasAdminCapability("reviewer_publisher", "marketing:view")).toBe(true);
+    expect(hasAdminCapability("reviewer_publisher", "marketing:manage")).toBe(false);
     expect(
       hasAdminCapability("reviewer_publisher", "places:manage"),
     ).toBe(false);
@@ -92,24 +97,24 @@ describe("CITYWALK admin permissions", () => {
   });
 
   it("enforces city scopes without trusting a client-provided role", () => {
-    expect(hasCityCapability(staff(), 1, "places:manage")).toBe(true);
-    expect(hasCityCapability(staff(), 2, "places:manage")).toBe(false);
+    expect(hasCityCapability(staff(), 1, "marketing:manage")).toBe(true);
+    expect(hasCityCapability(staff(), 2, "marketing:manage")).toBe(false);
     expect(
       hasCityCapability(
         staff({ role: "reviewer_publisher" }),
         1,
-        "places:manage",
+        "marketing:manage",
       ),
     ).toBe(false);
     expect(
       hasCityCapability(
         staff({ role: "super_admin", cityIds: [] }),
         999,
-        "places:manage",
+        "marketing:manage",
       ),
     ).toBe(true);
     expect(
-      hasCityCapability(staff({ globalAccess: true }), 999, "places:manage"),
+      hasCityCapability(staff({ globalAccess: true }), 999, "marketing:manage"),
     ).toBe(true);
   });
 });
