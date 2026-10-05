@@ -6,19 +6,6 @@ import {
   type RevenueCatCityPassDependencies,
 } from "../src/lib/revenueCatCityPass";
 
-vi.mock("react-native", () => ({ Platform: { OS: "ios" } }));
-vi.mock("react-native-purchases", () => ({
-  default: {
-    configure: vi.fn(),
-    getAppUserID: vi.fn(),
-    logIn: vi.fn(),
-    logOut: vi.fn(),
-    getOfferings: vi.fn(),
-    purchasePackage: vi.fn(),
-    restorePurchases: vi.fn(),
-  },
-}));
-
 const pass = CITYWALK_CITY_PASS_72H.lubeck;
 const storePackage = {
   identifier: pass.packageIdentifier,
@@ -26,7 +13,7 @@ const storePackage = {
 };
 
 function fixture() {
-  const configure = vi.fn(() => ({ configured: true as const, platform: "ios" as const }));
+  const ensureConfigured = vi.fn(async () => true);
   const loadPlans = vi.fn(async () => [{
     kind: "city_pass_72h" as const,
     packageIdentifier: pass.packageIdentifier,
@@ -35,27 +22,24 @@ function fixture() {
     currencyCode: "EUR",
     price: 4.99,
   }]);
-  const syncIdentity = vi.fn(async () => ({ configured: true as const, platform: "ios" as const }));
   const getOfferings = vi.fn(async () => ({ current: { availablePackages: [storePackage] } }));
   const purchasePackage = vi.fn(async () => ({ customerInfo: {} }));
   const restorePurchases = vi.fn(async () => ({}));
   const access = vi.fn(async () => false);
   const wait = vi.fn(async () => undefined);
   const deps = {
-    configure,
+    ensureConfigured,
     loadPlans,
-    syncIdentity,
     getOfferings,
     purchasePackage,
     restorePurchases,
     access,
     wait,
-  } as unknown as RevenueCatCityPassDependencies;
+  } as RevenueCatCityPassDependencies;
   return {
     billing: new RevenueCatCityPassBilling(deps),
-    configure,
+    ensureConfigured,
     loadPlans,
-    syncIdentity,
     getOfferings,
     purchasePackage,
     restorePurchases,
@@ -73,13 +57,14 @@ describe("RevenueCat City Pass adapter", () => {
       id: pass.productIdentifier,
       localizedPrice: "4,99 €",
     });
+    expect(h.ensureConfigured).toHaveBeenCalledWith();
     await expect(h.billing.product("wrong-product")).resolves.toBeUndefined();
   });
 
   it("synchronizes immutable CITYWALK identity before an explicit purchase", async () => {
     const h = fixture();
     await expect(h.billing.purchase(pass.productIdentifier, "user-123")).resolves.toEqual({ status: "purchased" });
-    expect(h.syncIdentity).toHaveBeenCalledWith("user-123");
+    expect(h.ensureConfigured).toHaveBeenCalledWith("user-123");
     expect(h.purchasePackage).toHaveBeenCalledWith(storePackage);
   });
 
@@ -92,7 +77,7 @@ describe("RevenueCat City Pass adapter", () => {
   it("restores only after identity sync and returns store-synced evidence, not local access", async () => {
     const h = fixture();
     await expect(h.billing.restore(pass.productIdentifier, "user-123")).resolves.toEqual({ storeSynced: true });
-    expect(h.syncIdentity).toHaveBeenCalledWith("user-123");
+    expect(h.ensureConfigured).toHaveBeenCalledWith("user-123");
     expect(h.restorePurchases).toHaveBeenCalledTimes(1);
   });
 
