@@ -8,6 +8,7 @@ export const CITYWALK_REVENUECAT_PACKAGE_IDS = Object.freeze({
 });
 
 const REVENUECAT_ANONYMOUS_PREFIX = "$RCAnonymousID:";
+const REVENUECAT_SECRET_KEY_PREFIX = "sk_";
 
 export type RevenueCatPlanKind = "monthly" | "annual" | "city_pass_72h";
 
@@ -69,7 +70,8 @@ export function getRevenueCatPublicKey(
       ? environment.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY
       : undefined;
   const trimmed = value?.trim();
-  return trimmed || undefined;
+  if (!trimmed || trimmed.startsWith(REVENUECAT_SECRET_KEY_PREFIX)) return undefined;
+  return trimmed;
 }
 
 export function configureRevenueCat(
