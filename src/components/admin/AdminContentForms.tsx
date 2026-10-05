@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 import {
-  PLACE_CATEGORIES,
   PLACE_ENVIRONMENTS,
   PLACE_PRICING,
   PLACE_STATUSES,
