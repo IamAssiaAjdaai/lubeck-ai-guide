@@ -4,7 +4,7 @@ import { PgTable } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import { user, account, session, verification, staffMemberships } from "@/db/authSchema";
 import * as editorial from "@/db/schema";
-import { commerceCustomers, commerceOrders, commerceEntitlements } from "@/db/commerceSchema";
+import { commerceCustomers, commerceOrders, commerceSubscriptions, commerceEntitlements } from "@/db/commerceSchema";
 import { LifecycleError } from "./rateLimit.server";
 
 // Editorial actor references are plain text, not FKs. Cover former staff too.
@@ -29,7 +29,7 @@ export async function deleteTravelerAccount(input: {
     if (!credential?.password || !await input.verify({ hash: credential.password, password: input.password })) throw new LifecycleError("REAUTH_REQUIRED", 401);
     // Existing FKs serialize inserts behind the parent user lock. Never apply the
     // commerce CASCADE/SET NULL rules without an approved financial retention policy.
-    for (const table of [commerceCustomers, commerceOrders, commerceEntitlements]) {
+    for (const table of [commerceCustomers, commerceOrders, commerceSubscriptions, commerceEntitlements]) {
       if ((await tx.select({ id: table.id }).from(table).where(eq(table.userId, input.userId)).limit(1)).length) throw new LifecycleError("RETENTION_REVIEW_REQUIRED", 409);
     }
     if ((await tx.select({ id: staffMemberships.id }).from(staffMemberships).where(or(eq(staffMemberships.userId, input.userId), eq(staffMemberships.createdByUserId, input.userId))).limit(1)).length) throw new LifecycleError("RETENTION_REVIEW_REQUIRED", 409);
