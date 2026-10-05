@@ -104,6 +104,7 @@ try {
   assert.ok(await page.getByRole("heading", { level: 1 }).isVisible());
   results.push({ width: 390, textScale: "200%", reducedMotion: true, expandedFaq: true });
   await page.close();
+
   const noJs = await browser.newPage({ viewport: { width: 390, height: 1000 }, javaScriptEnabled: false });
   const noJsResponse = await noJs.goto(`${origin}/landing-preview`, { waitUntil: "load" });
   assert.equal(noJsResponse?.status(), 200);
@@ -112,6 +113,24 @@ try {
   await noJsItem.locator("p").waitFor({ state: "visible" });
   await noJs.close();
   results.push({ width: 390, javaScriptEnabled: false, faqPointer: true });
+
+  const homepage = await browser.newPage({ viewport: { width: 390, height: 1000 } });
+  const homepageResponse = await homepage.goto(`${origin}/`, { waitUntil: "networkidle" });
+  assert.equal(homepageResponse?.status(), 200);
+  assert.equal(await homepage.getByRole("heading", { level: 1, name: /A better way to walk a city/i }).count(), 1);
+  const rootRobots = await homepage.locator('meta[name="robots"]').getAttribute("content");
+  assert.ok(!rootRobots || !/noindex/i.test(rootRobots), "Homepage must not inherit preview noindex metadata");
+  await homepage.screenshot({ path: path.join(output, "homepage-390.png"), fullPage: true });
+  await homepage.close();
+  results.push({ route: "/", status: 200, indexable: true, landing: true });
+
+  const explore = await browser.newPage({ viewport: { width: 390, height: 1000 } });
+  const exploreResponse = await explore.goto(`${origin}/explore`, { waitUntil: "networkidle" });
+  assert.equal(exploreResponse?.status(), 200);
+  assert.equal(await explore.locator("main.app-shell").count(), 1);
+  await explore.close();
+  results.push({ route: "/explore", status: 200, travelerCitySelector: true });
+
   await writeFile(path.join(output, "checks.json"), JSON.stringify(results, null, 2));
   console.log(JSON.stringify({ result: "passed", checks: results }, null, 2));
 } finally {
