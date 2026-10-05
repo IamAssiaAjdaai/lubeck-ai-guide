@@ -1,6 +1,6 @@
 name: Validate CMS Marketing Workflow
 
-# Temporary branch-only validation gate. Rerun after the review-queue assertion fix.
+# Temporary branch-only validation gate. Rerun after narrowing Marketing workflow capability types.
 on:
   push:
     branches:
