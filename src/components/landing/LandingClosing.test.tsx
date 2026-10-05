@@ -48,7 +48,7 @@ describe("landing launch / FAQ / footer checkpoint", () => {
     expect(screen.getByText("Legal pages · in preparation")).toBeDefined();
     for (const label of ["Privacy", "Terms", "Imprint", "Account deletion"]) {
       expect(screen.getByText(label)).toBeDefined();
-      expect(screen.queryByRole("link", { name: label, exact: true })).toBeNull();
+      expect(screen.queryByRole("link", { name: label })).toBeNull();
     }
     expect(screen.getByText(/not published policies or an account-deletion service/)).toBeDefined();
   });
