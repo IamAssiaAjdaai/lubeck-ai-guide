@@ -2,7 +2,7 @@
 .launch { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .6fr); gap: 2rem; align-items: center; width: calc(100% - 3rem); max-width: 75rem; margin: 1.5rem auto 0; padding: clamp(2rem, 4vw, 3.5rem); border-radius: 1.25rem; background: #071c36; color: #fff; }
 .launchCopy { min-width: 0; }
 .launch .eyebrow { color: #bacde5; }
-.launch h2 { margin-top: .8rem; max-width: 34rem; font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 780; letter-spacing: -.05em; line-height: 1.08; }
+.launch h2 { margin-top: .8rem; max-width: 34rem; font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 780; letter-spacing: -.05em; line-height: 1.08; overflow-wrap: anywhere; }
 .launchLead { max-width: 34rem; margin-top: 1rem !important; color: #d6e3f2; font-size: 1rem; line-height: 1.7; }
 .platforms { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem !important; }
 .platforms li { display: inline-flex; align-items: center; flex-wrap: wrap; gap: .55rem; padding: .45rem .75rem; border: 1px solid #45607e; border-radius: 999px; color: #fff; font-size: .8125rem; }
@@ -56,16 +56,16 @@
   .support { grid-column: 1 / -1; }
 }
 @media (max-width: 48rem) {
-  .launch { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 2rem 1.5rem; }
+  .launch { grid-template-columns: minmax(0, 1fr); gap: 0; width: calc(100% - 48px); padding: 2rem min(1.5rem, 6vw); }
   .launchArt { display: none; }
-  .faq { padding: 3.5rem 1.5rem; }
+  .faq { padding: 3.5rem min(1.5rem, 6vw); }
   .faqGrid { grid-template-columns: minmax(0, 1fr); }
-  .footer { padding: 1.75rem 1.5rem; }
+  .footer { padding: 1.75rem min(1.5rem, 6vw); }
   .footerGrid { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
   .support { grid-column: auto; }
   .footerBottom { flex-direction: column; }
 }
 @media (max-width: 24rem) {
-  .launch { width: calc(100% - 2rem); padding-inline: 1.15rem; }
+  .launch { width: calc(100% - 32px); padding-inline: min(1.15rem, 6vw); }
   .launchActions { flex-direction: column; align-items: stretch; }
 }
