@@ -1,4 +1,5 @@
 import { useAccountWalks } from "../hooks/useAccountWalks";
+import { usePremiumAccess } from "../hooks/usePremiumAccess";
 import { accountWalkState, saveAccountWalk, loadAccountWalkForOpen } from "../lib/accountWalks";
 import { SaveAccountGate } from "./SaveAccountGate";
 import { PublicStoreReview } from "./PublicStoreReview";
@@ -131,6 +132,7 @@ export function NativeWalkFlow({
     "hydrate" | "plan" | "building" | "preview" | "active" | "finished"
   >("hydrate");
   const account = useAccountWalks();
+  const premium = usePremiumAccess();
   const savedMessage = translate(locale, "saved.accountDone");
   const [saveGate, setSaveGate] = useState(false);
 
@@ -331,7 +333,7 @@ export function NativeWalkFlow({
         if (!restored && !accountSaved) {
           const legacy = (await loadLocalTrips()).find(
             (w) => w.id === savedId && w.citySlug === citySlug,
-          );
+          )?.coordinates;
           const start = places.find(
             (p) => p.slug === legacy?.stopSlugs[0],
           )?.coordinates;
@@ -640,7 +642,14 @@ export function NativeWalkFlow({
     } catch { setMessage(messages.tripSaveFailed); }
     finally { updateLock.current = false; setUpdating(false); }
   }
+  function unlockPremium() {
+    router.push("/premium");
+  }
   function shorten() {
+    if (!premium.active) {
+      unlockPremium();
+      return;
+    }
     if (!journey) return;
     try {
       setProposalKind("adaptation");
@@ -658,6 +667,10 @@ export function NativeWalkFlow({
     }
   }
   function add(slug: string) {
+    if (!premium.active) {
+      unlockPremium();
+      return;
+    }
     if (!journey) return;
     const place = places.find((p) => p.slug === slug);
     if (!place) return;
@@ -678,6 +691,10 @@ export function NativeWalkFlow({
     } else setProposalMessage(t.noEligible);
   }
   function back(point: Point) {
+    if (!premium.active) {
+      unlockPremium();
+      return;
+    }
     if (journey) {
       setProposalKind("take_back");
       setProposed(measureWalk([], journey.position, point));
@@ -1173,7 +1190,7 @@ export function NativeWalkFlow({
                   }}
                 />
               ) : null}
-              {Platform.OS === "ios" && !liveSession?.enabled ? (
+              {Platform.OS === "ios" && premium.active && !liveSession?.enabled ? (
                 <>
                   <AppText variant="metadata" style={styles.muted}>
                     {translate(locale, "liveWalk.permissionHelp")}
@@ -1198,50 +1215,66 @@ export function NativeWalkFlow({
               <AppText variant="label" style={styles.routeLabel}>
                 {t.tripControls}
               </AppText>
-              <View style={styles.controls}>
-                <PrimaryButton
-                  compact
-                  style={styles.control}
-                  wrapLabel
-                  tone="secondary"
-                  label={t.add}
-                  disabled={journey.takeBack === true}
-                  onPress={() => {
-                    setProposalKind("adaptation");
-                    setProposalMessage("");
-                    setPanel("add");
-                  }}
-                  leadingIcon={<NativeIcon ios="plus" android="add" />}
-                />
-                <PrimaryButton
-                  compact
-                  style={styles.control}
-                  wrapLabel
-                  tone="secondary"
-                  label={t.shorten}
-                  disabled={!current || journey.takeBack === true}
-                  onPress={shorten}
-                  leadingIcon={
-                    <NativeIcon
-                      ios="arrow.triangle.branch"
-                      android="alt_route"
-                    />
-                  }
-                />
-                <PrimaryButton
-                  compact
-                  style={styles.control}
-                  wrapLabel
-                  tone="secondary"
-                  label={t.takeBack}
-                  onPress={() => setPanel("back")}
-                  leadingIcon={
-                    <NativeIcon ios="arrow.uturn.backward" android="undo" />
-                  }
-                />
-              </View>
+              {premium.active ? (
+                <View style={styles.controls}>
+                  <PrimaryButton
+                    compact
+                    style={styles.control}
+                    wrapLabel
+                    tone="secondary"
+                    label={t.add}
+                    disabled={journey.takeBack === true}
+                    onPress={() => {
+                      setProposalKind("adaptation");
+                      setProposalMessage("");
+                      setPanel("add");
+                    }}
+                    leadingIcon={<NativeIcon ios="plus" android="add" />}
+                  />
+                  <PrimaryButton
+                    compact
+                    style={styles.control}
+                    wrapLabel
+                    tone="secondary"
+                    label={t.shorten}
+                    disabled={!current || journey.takeBack === true}
+                    onPress={shorten}
+                    leadingIcon={
+                      <NativeIcon
+                        ios="arrow.triangle.branch"
+                        android="alt_route"
+                      />
+                    }
+                  />
+                  <PrimaryButton
+                    compact
+                    style={styles.control}
+                    wrapLabel
+                    tone="secondary"
+                    label={t.takeBack}
+                    onPress={() => setPanel("back")}
+                    leadingIcon={
+                      <NativeIcon ios="arrow.uturn.backward" android="undo" />
+                    }
+                  />
+                </View>
+              ) : (
+                <View style={styles.section}>
+                  <AppText variant="metadata" style={styles.muted}>
+                    Add stops, shorten your route and get back on time with CITYWALK Premium.
+                  </AppText>
+                  <PrimaryButton
+                    compact
+                    wrapLabel
+                    tone="secondary"
+                    label="Unlock smart controls"
+                    onPress={unlockPremium}
+                    leadingIcon={<NativeIcon ios="sparkles" android="auto_awesome" />}
+                  />
+                </View>
+              )}
 
-              {panel === "back" ? (
+              {premium.active && panel === "back" ? (
                 <View style={styles.section}>
                   <PrimaryButton
                     label={t.tripStart}
@@ -1394,7 +1427,7 @@ export function NativeWalkFlow({
                     busy={updating}
                     onPress={() => void requestRebuild()}
                   />
-                  {liveSession?.enabled ? (
+                  {premium.active && liveSession?.enabled ? (
                     <PrimaryButton
                       label={translate(locale, "liveWalk.turnOff")}
                       tone="secondary"
@@ -1554,7 +1587,7 @@ export function NativeWalkFlow({
         </Screen>
       </Modal>
       <Modal
-        visible={panel === "add" || !!proposed}
+        visible={premium.active && (panel === "add" || !!proposed)}
         animationType="slide"
         presentationStyle="pageSheet"
         onRequestClose={() => {
