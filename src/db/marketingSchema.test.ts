@@ -57,8 +57,11 @@ describe("marketing database schema", () => {
       ),
     ).toBe(true);
     expect(
-      contentConfig.columns.find((column) => column.name === "content_code")
-        ?.isUnique,
+      contentConfig.indexes.some(
+        (index) =>
+          index.config.name === "marketing_content_code_unique" &&
+          index.config.unique,
+      ),
     ).toBe(true);
     expect(pageConfig.foreignKeys).toHaveLength(2);
     expect(contentConfig.foreignKeys).toHaveLength(3);
