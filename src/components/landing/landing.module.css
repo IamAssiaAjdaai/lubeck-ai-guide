@@ -1,0 +1,170 @@
+.page {
+  --landing-ink: #071c36;
+  --landing-text: #43546e;
+  --landing-blue: #2559e8;
+  --landing-line: #dde5f0;
+  color: var(--landing-ink);
+  background: #fff;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.page *, .page *::before, .page *::after { box-sizing: border-box; }
+.page :where(h1, h2, h3, p, figure, ul, ol) { margin: 0; }
+.page :where(a) { color: inherit; text-decoration: none; }
+.page :where(a):focus-visible { outline: 3px solid var(--landing-blue); outline-offset: 5px; }
+.page :where(section, main) { scroll-margin-block-start: 1.5rem; }
+.page :where(ul, ol) { padding: 0; list-style: none; }
+.skipLink { position: absolute; inset-inline-start: 1rem; top: .75rem; transform: translateY(-200%); z-index: 20; padding: .75rem 1rem; background: white; border-radius: .5rem; }
+.skipLink:focus { transform: translateY(0); }
+.heroBackground {
+  background: linear-gradient(180deg, #f0f6ff 0, #fff 54rem);
+}
+.header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: 1.25rem 2.5rem;
+}
+.brand { display: inline-flex; align-items: center; min-height: 2.75rem; flex-shrink: 0; color: var(--landing-ink); }
+.brandLockup { display: inline-flex; align-items: center; gap: .55rem; }
+.brandMark { width: 2.5rem; height: auto; flex-shrink: 0; color: var(--landing-blue); }
+.brandWordmark { font-size: 1.25rem; font-weight: 800; letter-spacing: -.04em; }
+.navigation { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1.75rem; }
+.navigation a { display: inline-flex; align-items: center; min-height: 2.75rem; font-size: .875rem; font-weight: 550; }
+.navigation a:hover { color: var(--landing-blue); }
+.primary, .secondary, .contact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .85rem;
+  min-height: 3.25rem;
+  padding: .85rem 1.3rem;
+  border-radius: .6rem;
+  font-size: .9375rem;
+  font-weight: 650;
+  text-align: center;
+  overflow-wrap: anywhere;
+  transition: background-color 150ms ease;
+}
+.page .primary { background: var(--landing-blue); color: white; box-shadow: 0 6px 18px rgb(37 89 232 / 12%); }
+.page .primary:hover { background: #1647ce; }
+.headerAction { min-height: 2.75rem; font-size: .8125rem; padding: .65rem 1.05rem; }
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1.08fr .92fr;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding: 3rem max(2.5rem, calc((100% - 75rem) / 2)) 2.5rem;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -6rem 0 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, #f0f6ff 0%, rgb(240 246 255 / 98%) 32%, rgb(240 246 255 / 36%) 66%, rgb(240 246 255 / 8%) 100%), url('/images/citywalk-waterfront.webp') right bottom / auto 82% no-repeat;
+}
+.heroCopy { position: relative; z-index: 1; min-width: 0; padding-block: 1.5rem; }
+.eyebrow { color: #425570; font-size: .6875rem; font-weight: 700; letter-spacing: .22em; }
+.heroCopy h1 { margin-block: 1.1rem 1.35rem; font-size: clamp(2.8rem, 4.65vw, 4.65rem); font-weight: 780; line-height: 1.05; letter-spacing: -.055em; }
+.description { max-width: 28.5rem; font-size: 1.0625rem; line-height: 1.7; color: var(--landing-text); }
+.description strong { font-weight: 650; color: var(--landing-ink); }
+.availability { margin-top: 1.5rem !important; font-size: .875rem; color: #243750; }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.4rem; }
+.secondary { background: rgb(255 255 255 / 80%); border: 1px solid #d4deed; }
+.secondary:hover { background: #fff; }
+.benefits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; max-width: 28rem; margin-top: 2.75rem !important; }
+.benefits li { display: flex; flex-direction: column; gap: .65rem; font-size: .6875rem; color: #263f5c; }
+.benefits svg { width: 1.625rem; height: 1.75rem; }
+.heroVisual { position: relative; min-width: 0; display: flex; justify-content: center; padding: 1rem .75rem .75rem; }
+.visualNote { position: absolute; top: 1.5rem; inset-inline-end: -.5rem; font-family: Georgia, serif; font-style: italic; font-size: 1.25rem; line-height: 1.35; transform: rotate(7deg); }
+.phoneFigure { position: relative; width: min(19rem, 82%); }
+.phone { border-radius: 2.5rem; background: #10161f; border: 2px solid #89919b; padding: .4rem; box-shadow: 0 22px 46px rgb(7 28 54 / 24%), inset 0 0 0 2px #333; transform: rotate(5deg); }
+.phoneScreen { position: relative; border-radius: 2rem; overflow: hidden; background: #fff; padding-bottom: 1.5rem; }
+.phoneTop { display: flex; align-items: center; justify-content: space-between; gap: .65rem; min-height: 2.1rem; padding: .35rem 1.15rem; font-size: .55rem; font-weight: 700; }
+.phoneIsland { width: 5.2rem; height: 1rem; border-radius: 2rem; background: #111; }
+.phoneBrand { display: flex; align-items: center; gap: .25rem; padding: .25rem .85rem .45rem; font-size: .6rem; letter-spacing: -.02em; }
+.phoneBrand svg { width: 1.5rem; height: 1rem; color: var(--landing-blue); }
+.phoneHeading { display: flex; flex-direction: column; gap: .15rem; padding: .2rem .85rem .6rem; }
+.phoneHeading > span { font-size: .6rem; color: var(--landing-text); }
+.phoneHeading strong { font-size: .9rem; letter-spacing: -.035em; }
+.map { display: block; width: 100%; height: auto; }
+.phoneCard { position: relative; margin: -.9rem .55rem 0; padding: .8rem; display: flex; flex-direction: column; gap: .2rem; background: white; border: 1px solid #e3e9f1; border-radius: .9rem; box-shadow: 0 3px 12px rgb(7 28 54 / 6%); }
+.phoneEyebrow { font-size: .5rem; font-weight: 650; letter-spacing: .12em; color: var(--landing-text); }
+.phoneCard > strong { font-size: .9rem; }
+.phoneCard > span:not(.phoneAction, .phoneEyebrow) { font-size: .6rem; color: var(--landing-text); }
+.phoneStats { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-block: .6rem; border-top: 1px solid #e3e9f1; padding-top: .6rem; }
+.phoneStats > div { display: flex; flex-direction: column; }
+.phoneStats span { font-size: .6rem; color: var(--landing-text); }
+.phoneStats strong { font-size: 1rem; }
+.phoneAction { display: flex; justify-content: space-between; border-radius: .5rem; padding: .6rem .65rem; background: var(--landing-ink); color: white; font-size: .6rem; font-weight: 650; }
+.homeIndicator { position: absolute; bottom: .45rem; left: 35%; width: 30%; height: .2rem; background: #151c27; border-radius: 1rem; }
+.phoneFigure figcaption { position: relative; margin: 1.75rem -1rem 0; padding: .35rem .55rem; text-align: center; background: rgb(255 255 255 / 92%); color: #425570; font-size: .625rem; line-height: 1.5; border-radius: .35rem; }
+.howItWorks { padding: 4rem 2.5rem; background: #fff; max-width: 80rem; margin-inline: auto; text-align: center; }
+.howItWorks h2 { margin-top: .7rem; font-size: clamp(1.65rem, 2.4vw, 2.25rem); line-height: 1.2; font-weight: 730; letter-spacing: -.045em; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; max-width: 65rem; margin: 2.25rem auto 0 !important; text-align: start; }
+.steps li { min-width: 0; padding-inline: 1rem; }
+.steps li + li { border-inline-start: 1px solid var(--landing-line); }
+.stepNumber { display: block; margin-bottom: .6rem; color: var(--landing-blue); font-size: .8125rem; font-weight: 700; }
+.steps h3 { font-size: 1rem; font-weight: 700; letter-spacing: -.025em; }
+.steps p { margin-top: .5rem; font-size: .875rem; line-height: 1.65; color: var(--landing-text); }
+.launchInfo { display: flex; align-items: center; justify-content: space-between; gap: 2rem; margin: 1rem auto 0; max-width: 75rem; padding: 2rem; border: 1px solid var(--landing-line); border-radius: 1rem; background: #f5f8ff; }
+.launchInfo > div { max-width: 39rem; }
+.launchInfo h2 { margin-top: .6rem; font-size: 1.6rem; font-weight: 730; line-height: 1.2; letter-spacing: -.04em; }
+.launchInfo p:last-child { margin-top: .75rem; color: var(--landing-text); font-size: .9375rem; line-height: 1.65; }
+.contact { flex-shrink: 0; background: white; border: 1px solid var(--landing-line); }
+.contact:hover { background: #eaf1ff; }
+.previewNote { display: flex; justify-content: space-between; gap: 1rem; padding: 2rem 2.5rem; max-width: 80rem; margin-inline: auto; font-size: .75rem; color: #52627a; }
+@media (max-width: 70rem) {
+  .hero { padding-inline: 2rem; gap: .75rem; }
+  .header { padding-inline: 2rem; gap: 1rem; }
+  .navigation { gap: 1rem; }
+  .visualNote { display: none; }
+  .launchInfo { margin-inline: 2rem; }
+}
+@media (max-width: 48rem) {
+  .header { padding: 1rem 1.25rem .5rem; flex-wrap: wrap; gap: .4rem 1rem; }
+  .brandWordmark { font-size: 1.1rem; }
+  .brandMark { width: 2rem; }
+  .headerAction { margin-inline-start: auto; font-size: .75rem; padding-inline: .75rem; }
+  .navigation { order: 3; flex-basis: 100%; gap: 1.75rem; }
+  .navigation a { font-size: .8125rem; }
+  .hero { grid-template-columns: minmax(0, 1fr); gap: .5rem; padding: 1.5rem 1.5rem 1.75rem; }
+  .hero::before { background: linear-gradient(180deg, #f0f6ff 0%, #f0f6ff 41%, rgb(240 246 255 / 20%) 82%, #fff 100%), url('/images/citywalk-waterfront.webp') center bottom / auto 48% no-repeat; }
+  .heroCopy { padding-top: .5rem; }
+  .heroCopy h1 { font-size: clamp(2.55rem, 8vw, 3.9rem); }
+  .description { max-width: 34rem; font-size: 1rem; }
+  .actions { gap: .65rem; }
+  .primary, .secondary { font-size: .875rem; padding-inline: 1rem; }
+  .benefits { margin-top: 2rem !important; max-width: 34rem; }
+  .heroVisual { padding-block: 1.75rem .25rem; }
+  .phoneFigure { width: min(17rem, 80%); }
+  .phone { transform: rotate(3deg); }
+  .howItWorks { padding: 2.5rem 1.5rem; }
+  .steps { grid-template-columns: 1fr; gap: 1.5rem; max-width: 34rem; }
+  .steps li { padding: 0; }
+  .steps li + li { border-inline-start: 0; border-top: 1px solid var(--landing-line); padding-top: 1.5rem; }
+  .launchInfo { flex-direction: column; align-items: start; padding: 1.5rem; margin-inline: 1.5rem; gap: 1.25rem; }
+  .previewNote { padding: 1.5rem; flex-direction: column; gap: .3rem; }
+}
+@media (max-width: 24rem) {
+  .header { padding-inline: 1rem; gap: .4rem .5rem; }
+  .headerAction { font-size: .6875rem; }
+  .hero { padding-inline: 1.15rem; }
+  .heroCopy h1 { font-size: 2.5rem; }
+  .actions { flex-direction: column; align-items: stretch; }
+  .benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page :where(a) { transition: none; }
+}
