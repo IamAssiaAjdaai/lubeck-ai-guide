@@ -12,25 +12,21 @@ export type PremiumAccessState =
   | Readonly<{ status: "unavailable"; active: false }>;
 
 export function usePremiumAccess(): PremiumAccessState {
-  const { data: session, isPending } = nativeAuthClient.useSession();
-  const account = session?.user.id;
   const [state, setState] = useState<PremiumAccessState>({
     status: "loading",
     active: false,
   });
 
   const refresh = useCallback(async () => {
-    if (isPending) {
-      setState({ status: "loading", active: false });
-      return;
-    }
-    if (!account) {
-      setState({ status: "guest", active: false });
-      return;
-    }
-
     setState({ status: "loading", active: false });
     try {
+      const auth = await nativeAuthClient.getSession();
+      const account = auth.data?.user.id;
+      if (!account) {
+        setState({ status: "guest", active: false });
+        return;
+      }
+
       const active = await readPremiumAccess(account);
       setState(
         active
@@ -40,7 +36,7 @@ export function usePremiumAccess(): PremiumAccessState {
     } catch {
       setState({ status: "unavailable", active: false });
     }
-  }, [account, isPending]);
+  }, []);
 
   useEffect(() => {
     void refresh();
