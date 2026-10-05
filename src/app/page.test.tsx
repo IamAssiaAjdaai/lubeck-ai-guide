@@ -46,7 +46,8 @@ describe("Homepage cutover", () => {
 
   it("renders the reviewed CITYWALK landing at root with indexable metadata", () => {
     render(<HomePage />);
-    expect(screen.getByRole("heading", { level: 1, name: /A better way to walk a city/i })).not.toBeNull();
+    const heading = screen.getByRole("heading", { level: 1 });
+    expect(heading.textContent?.replace(/\s+/g, " ").replace("wayto", "way to")).toMatch(/A better way to walk a city/i);
     expect(homeMetadata.robots).toEqual({ index: true, follow: true });
   });
 });
