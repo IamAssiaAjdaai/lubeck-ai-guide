@@ -14,8 +14,8 @@ type MarketingLandingTrackerProps = Readonly<{
   landingVariant: string;
   campaignSlug?: string;
   attribution: MarketingAttribution;
-  ctaHref: string;
-  ctaLabel: string;
+  ctaHref?: string;
+  ctaLabel?: string;
 }>;
 
 export default function MarketingLandingTracker({
@@ -39,6 +39,8 @@ export default function MarketingLandingTracker({
     trackedView.current = true;
     captureMarketingEvent("landing_view", properties);
   }, [properties]);
+
+  if (!ctaHref || !ctaLabel) return null;
 
   return (
     <Link
