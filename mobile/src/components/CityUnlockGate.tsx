@@ -4,17 +4,20 @@ import { router, useFocusEffect } from "expo-router";
 import { t } from "@citywalk/i18n";
 import { getCityUnlockProduct } from "@citywalk/traveler-core";
 import { nativeAuthClient } from "../lib/auth/client";
-import { CityUnlockController, cityUnlockPreviewEnabled, type UnlockSnapshot } from "../lib/cityUnlock";
+import { CityUnlockController, cityUnlockPreviewEnabled, revenueCatCityPassEnabled, type UnlockSnapshot } from "../lib/cityUnlock";
 import { nativeBilling } from "../lib/nativeBillingRuntime";
+import { revenueCatCityPassBilling } from "../lib/revenueCatCityPass";
 import { nativeCityName } from "../lib/displayNames";
 import { readCityUnlock } from "../lib/cityUnlockAccess";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { ImageOverlayHero } from "./ImageOverlayHero";
 import { AppText, PrimaryButton, Screen, StatusMessage } from "./ui";
 
-/** Opt-in sandbox only. Existing traveler behavior stays unchanged outside this gate. */
+/** RevenueCat is opt-in until Store/dashboard acceptance is complete. Sandbox keeps the legacy direct verifier isolated. */
 export function CityUnlockGate({ citySlug, cityName, children }: { citySlug: string; cityName: string; children(authorize: () => Promise<boolean>): ReactNode }) {
-  return cityUnlockPreviewEnabled() && getCityUnlockProduct(citySlug)
+  const revenueCatEnabled = revenueCatCityPassEnabled() && citySlug === "lubeck";
+  const sandboxEnabled = cityUnlockPreviewEnabled() && Boolean(getCityUnlockProduct(citySlug));
+  return revenueCatEnabled || sandboxEnabled
     ? <PreviewCityUnlockGate key={citySlug} citySlug={citySlug} cityName={cityName}>{children}</PreviewCityUnlockGate>
     : children(async () => true);
 }
@@ -27,6 +30,7 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
   const copy = (key: Parameters<typeof t>[1], values: Record<string, string> = {}) => t(locale, key, { city, ...values });
   const { data: session, isPending } = nativeAuthClient.useSession();
   const account = session?.user.id;
+  const useRevenueCat = revenueCatCityPassEnabled();
   const [visible, setVisible] = useState(false);
   const [authenticating, setAuthenticating] = useState(false);
   const [checking, setChecking] = useState(false);
@@ -34,15 +38,19 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
   const state: UnlockSnapshot = result.account === account ? result.snapshot : { state: "store_product_loading" };
   const pending = useRef<((allowed: boolean) => void) | undefined>(undefined);
   const controller = useMemo(() => new CityUnlockController(citySlug, {
-    product: id => nativeBilling.product(id),
-    purchase: (id, owner) => nativeBilling.purchase(id, owner),
-    restore: (id, owner) => nativeBilling.restore(id, owner),
-    verify: (proof, owner) => nativeBilling.verify(proof, owner),
+    product: id => useRevenueCat ? revenueCatCityPassBilling.product(id) : nativeBilling.product(id),
+    purchase: (id, owner) => useRevenueCat ? revenueCatCityPassBilling.purchase(id, owner) : nativeBilling.purchase(id, owner),
+    restore: (id, owner) => useRevenueCat ? revenueCatCityPassBilling.restore(id, owner) : nativeBilling.restore(id, owner),
+    verify: (proof, owner) => useRevenueCat ? revenueCatCityPassBilling.verify() : nativeBilling.verify(proof, owner),
     account: () => account,
     access: user => readCityUnlock(citySlug, user),
-  }, snapshot => setResult({ account, snapshot })), [citySlug, account]);
+    ...(useRevenueCat ? { activate: (owner: string) => revenueCatCityPassBilling.activate(owner) } : {}),
+  }, snapshot => setResult({ account, snapshot })), [citySlug, account, useRevenueCat]);
   useEffect(() => () => { controller.dispose(); }, [controller]);
-  useEffect(() => nativeBilling.subscribe(outcome => { if (visible) void controller.storeChanged(outcome); }), [controller, visible]);
+  useEffect(() => {
+    const subscribe = useRevenueCat ? revenueCatCityPassBilling.subscribe.bind(revenueCatCityPassBilling) : nativeBilling.subscribe.bind(nativeBilling);
+    return subscribe(outcome => { if (visible) void controller.storeChanged(outcome); });
+  }, [controller, visible, useRevenueCat]);
   useEffect(() => () => { pending.current?.(false); pending.current = undefined; }, []);
   useEffect(() => { if (visible && !isPending) void controller.load(); }, [controller, visible, isPending]);
   useFocusEffect(useCallback(() => { setAuthenticating(false); }, []));
