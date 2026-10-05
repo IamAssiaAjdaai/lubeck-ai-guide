@@ -31,6 +31,8 @@ try {
     assert.equal(await page.getByText("Walking times are estimates, not a guaranteed arrival time.").count(), 1);
     assert.equal(await page.getByRole("heading", { name: "Discover more as you walk." }).count(), 1);
     assert.equal(await page.getByText(/availability varies by place, published content and selected language/i).count(), 1);
+    assert.equal(await page.getByRole("heading", { name: "Starting in Lübeck. Built for more cities." }).count(), 1);
+    assert.equal(await page.getByText(/store availability is announced separately/i).count(), 1);
 
     const overflow = await page.evaluate(() => [...document.querySelectorAll("main *, header *, footer *")]
       .filter(element => {
