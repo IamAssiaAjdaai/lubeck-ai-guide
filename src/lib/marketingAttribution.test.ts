@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  appendMarketingAttributionToPath,
   buildMarketingTrackingPath,
   marketingAttributionPostHogProperties,
   readMarketingAttribution,
@@ -50,5 +51,18 @@ describe("Marketing attribution", () => {
         utm_content: ["CW-LUB-001", "ignored"],
       }),
     ).toEqual({ source: "tiktok", contentId: "CW-LUB-001" });
+  });
+
+  it("forwards only known attribution while preserving destination query params", () => {
+    expect(
+      appendMarketingAttributionToPath("/en/lubeck?mode=custom", {
+        source: "instagram",
+        medium: "social",
+        campaign: "two-hours-in-lubeck",
+        contentId: "CW-LUB-TIME-001",
+      }),
+    ).toBe(
+      "/en/lubeck?mode=custom&utm_source=instagram&utm_medium=social&utm_campaign=two-hours-in-lubeck&utm_content=CW-LUB-TIME-001",
+    );
   });
 });
