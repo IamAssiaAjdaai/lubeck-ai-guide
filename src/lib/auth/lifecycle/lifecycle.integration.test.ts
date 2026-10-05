@@ -14,7 +14,7 @@ import { createCitywalkAuth } from "../factory.server";
 import { getDb, closeDb } from "@/db/client";
 import { user, account, session, verification, staffMemberships } from "@/db/authSchema";
 import { travelerProfiles, travelerGuestLinks, accountSavedWalks } from "@/db/travelerSchema";
-import { commerceCustomers } from "@/db/commerceSchema";
+import { commerceCustomers, commerceProducts, commerceSubscriptions } from "@/db/commerceSchema";
 import { contentWorkflowEventsTable } from "@/db/schema";
 import { POST as deleteAccount } from "@/app/api/account/delete/route";
 import { POST as validateToken } from "@/app/api/account/reset-token/route";
@@ -205,6 +205,27 @@ describe.runIf(process.env.LIFECYCLE_DB_INTEGRATION === "1")("isolated real Bett
     expect((await reset(token)).status).toBe(400);
     expect((await deleteAccount(req("/api/account/delete", { confirm: true, password }, owner.cookie, owner.id))).status).toBe(401);
     expect((await auth.api.signInEmail({ body: { email: other.email, password } })).user.id).toBe(other.id);
+  });
+  it("blocks deletion for a subscription-only account without detaching the subscription", async () => {
+    const owner = await createTraveler();
+    const [product] = await getDb().insert(commerceProducts).values({ slug: `subscription-delete-${randomUUID()}`, name: "Subscription delete guard", kind: "feature_bundle" }).returning({ id: commerceProducts.id });
+    const subscriptionId = `subscription-${randomUUID()}`;
+    await getDb().insert(commerceSubscriptions).values({
+      id: subscriptionId,
+      userId: owner.id,
+      productId: product.id,
+      provider: "revenuecat",
+      providerSubscriptionId: `provider-${randomUUID()}`,
+      providerProductId: "com.citywalk.premium.monthly",
+      store: "app_store",
+      environment: "sandbox",
+      status: "active",
+    });
+    const result = await deleteAccount(req("/api/account/delete", { confirm: true, password }, owner.cookie, owner.id));
+    expect(result.status).toBe(409); expect(await result.json()).toEqual({ code: "RETENTION_REVIEW_REQUIRED" });
+    expect(await getDb().select().from(user).where(eq(user.id, owner.id))).toHaveLength(1);
+    expect(await getDb().select().from(commerceSubscriptions).where(eq(commerceSubscriptions.id, subscriptionId))).toMatchObject([{ userId: owner.id }]);
+    expect(await auth.api.getSession({ headers: new Headers({ Cookie: owner.cookie }) })).not.toBeNull();
   });
   it.each(["commerce", "staff", "audit"])("blocks deletion with %s records and rolls back all account changes", async kind => {
     const owner = await createTraveler();
