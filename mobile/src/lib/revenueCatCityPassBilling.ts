@@ -15,7 +15,7 @@ const CITY_PASS_PROOF = "revenuecat:city_pass_72h";
 type NativePackage = Parameters<typeof Purchases.purchasePackage>[0];
 type CustomerInfo = Awaited<ReturnType<typeof Purchases.restorePurchases>>;
 
-type RevenueCatCityPassDependencies = Readonly<{
+type RevenueCatCityPassDependencies = {
   configured(): boolean;
   syncIdentity(account: string): Promise<boolean>;
   packages(): Promise<readonly NativePackage[]>;
@@ -24,7 +24,7 @@ type RevenueCatCityPassDependencies = Readonly<{
   account(): Promise<string | undefined>;
   access(account: string): Promise<boolean>;
   sleep(ms: number): Promise<void>;
-}>;
+};
 
 const defaultDependencies: RevenueCatCityPassDependencies = {
   configured() {
