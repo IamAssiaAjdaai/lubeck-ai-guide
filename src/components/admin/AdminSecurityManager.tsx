@@ -290,6 +290,26 @@ export function AdminSecurityManager({
             <p className="mt-1 text-sm text-emerald-900">
               Password sign-in now requires a TOTP code or one of your backup codes.
             </p>
+            {totpEnrollment?.backupCodes.length ? (
+              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <p className="font-bold text-amber-900">Save these backup codes now</p>
+                <p className="mt-1 text-sm text-amber-900">
+                  Each code works once. Store them somewhere private and offline.
+                </p>
+                <div className="mt-3 grid grid-cols-2 gap-2 font-mono text-xs">
+                  {totpEnrollment.backupCodes.map((code) => (
+                    <code className="rounded-lg bg-white px-3 py-2" key={code}>{code}</code>
+                  ))}
+                </div>
+                <button
+                  className="button-secondary mt-3 min-h-10 px-3"
+                  onClick={() => void copyBackupCodes()}
+                  type="button"
+                >
+                  Copy backup codes
+                </button>
+              </div>
+            ) : null}
             <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
               <input
                 aria-label="Current password to disable authenticator"
