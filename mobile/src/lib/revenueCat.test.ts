@@ -71,6 +71,13 @@ describe("RevenueCat mobile foundation", () => {
     expect(deps.configure).not.toHaveBeenCalled();
   });
 
+  it("returns no plans without touching Offerings when RevenueCat is unconfigured", async () => {
+    vi.stubEnv("EXPO_PUBLIC_REVENUECAT_IOS_API_KEY", "");
+    const deps = dependencies();
+    await expect(loadRevenueCatPlans(deps)).resolves.toEqual([]);
+    expect(deps.getCurrentOffering).not.toHaveBeenCalled();
+  });
+
   it("configures at most once for the active platform", () => {
     const deps = dependencies();
     expect(configureRevenueCat(deps)).toEqual({ configured: true, platform: "ios" });
