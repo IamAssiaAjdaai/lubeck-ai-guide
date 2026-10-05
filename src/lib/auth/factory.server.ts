@@ -1,11 +1,14 @@
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { expo } from "@better-auth/expo";
+import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { createAuthMiddleware } from "better-auth/api";
+import { twoFactor } from "better-auth/plugins";
 import { AUTH_MIN_PASSWORD_LENGTH, AUTH_MAX_PASSWORD_LENGTH } from "@citywalk/traveler-core";
 
 import * as authSchema from "@/db/authSchema";
 import { getDb } from "@/db/client";
+import { getAdminPasskeyRelyingParty, requireActiveStaffForPasskey } from "@/lib/auth/adminSecurity.server";
 import { getBetterAuthEnvironment } from "@/lib/auth/env";
 import { getCitywalkSocialAuthConfiguration } from "@/lib/auth/socialProviders.server";
 
@@ -35,7 +38,26 @@ export function createCitywalkAuth(
       ...NATIVE_AUTH_TRUSTED_ORIGINS,
       ...socialAuth.trustedOrigins,
     ],
-    plugins: [expo()],
+    plugins: [
+      expo(),
+      passkey({
+        ...getAdminPasskeyRelyingParty(environment.baseURL),
+        registration: {
+          afterVerification: async ({ user }) => {
+            await requireActiveStaffForPasskey(user.id);
+          },
+        },
+      }),
+      twoFactor({
+        issuer: "CITYWALK Control Center",
+        trustDeviceMaxAge: 60 * 60 * 24 * 30,
+        accountLockout: {
+          enabled: true,
+          maxFailedAttempts: 5,
+          durationSeconds: 15 * 60,
+        },
+      }),
+    ],
     ...(hasSocialProviders
       ? { socialProviders: socialAuth.socialProviders }
       : {}),

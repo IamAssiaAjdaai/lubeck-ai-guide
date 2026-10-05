@@ -3,10 +3,12 @@ import { describe, expect, it } from "vitest";
 
 import {
   account,
+  passkey,
   session,
   staffCityAccess,
   staffMemberships,
   staffRoleEnum,
+  twoFactor,
   user,
   verification,
 } from "@/db/authSchema";
@@ -18,6 +20,22 @@ describe("auth and staff database schema", () => {
         (table) => getTableConfig(table).name,
       ),
     ).toEqual(["user", "session", "account", "verification"]);
+  });
+
+  it("includes staff passkey and TOTP storage without merging it into catalog tables", () => {
+    expect(getTableConfig(passkey).name).toBe("passkey");
+    expect(getTableConfig(twoFactor).name).toBe("twoFactor");
+    expect(
+      getTableConfig(user).columns.some(
+        (column) => column.name === "two_factor_enabled",
+      ),
+    ).toBe(true);
+    expect(
+      getTableConfig(passkey).indexes.map((index) => index.config.name),
+    ).toEqual(["passkey_user_id_idx", "passkey_credential_id_idx"]);
+    expect(
+      getTableConfig(twoFactor).indexes.map((index) => index.config.name),
+    ).toEqual(["two_factor_secret_idx", "two_factor_user_id_idx"]);
   });
 
   it("defines only the supported CITYWALK staff roles", () => {

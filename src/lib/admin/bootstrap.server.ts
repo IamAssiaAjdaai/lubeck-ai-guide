@@ -53,7 +53,7 @@ export async function createSuperAdmin(
 ): Promise<SuperAdminBootstrapResult> {
   const db = getDb();
   const [existingUser] = await db
-    .select({ id: user.id })
+    .select({ id: user.id, emailVerified: user.emailVerified })
     .from(user)
     .where(eq(user.email, input.email))
     .limit(1);
@@ -74,6 +74,16 @@ export async function createSuperAdmin(
       membership.active &&
       membership.globalAccess
     ) {
+      // The bootstrap command is an operator-controlled provisioning path, not
+      // public signup. Reconcile older bootstrap-created admins that predate
+      // this rule so Better Auth's requireEmailVerification does not block
+      // their CMS sign-in with HTTP 403.
+      if (!existingUser.emailVerified) {
+        await db
+          .update(user)
+          .set({ emailVerified: true })
+          .where(eq(user.id, existingUser.id));
+      }
       return { status: "already_configured", userId: existingUser.id };
     }
 
@@ -98,6 +108,13 @@ export async function createSuperAdmin(
   }
 
   try {
+    // Admin bootstrap is trusted operator provisioning. Mark the identity as
+    // verified explicitly instead of requiring the public traveler email flow.
+    await db
+      .update(user)
+      .set({ emailVerified: true })
+      .where(eq(user.id, result.user.id));
+
     await db.insert(staffMemberships).values({
       userId: result.user.id,
       role: "super_admin",
@@ -107,7 +124,7 @@ export async function createSuperAdmin(
     });
   } catch (error) {
     // Avoid leaving a bootstrap-created traveler identity behind when the
-    // CITYWALK membership write cannot complete.
+    // CITYWALK membership or verification write cannot complete.
     await db.delete(user).where(eq(user.id, result.user.id));
     throw error;
   }
