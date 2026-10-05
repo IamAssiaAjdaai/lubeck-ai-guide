@@ -67,6 +67,31 @@ function StepIcon({ name }: { name: StepSymbolName }) {
   );
 }
 
+function FeatureIcon({ name }: { name: "story" | "audio" | "guide" }) {
+  if (name === "story") {
+    return (
+      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false">
+        <path d="M5 5.5h13.5a3 3 0 0 1 3 3V22H8a3 3 0 0 1-3-3V5.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+        <path d="M9 10h8M9 14h8M9 18h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (name === "audio") {
+    return (
+      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false">
+        <path d="M5 15v-3a9 9 0 0 1 18 0v3M5 14H3.5A1.5 1.5 0 0 0 2 15.5v5A1.5 1.5 0 0 0 3.5 22H7v-8H5Zm18 0h1.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H21v-8h2Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false">
+      <path d="M5 5.5h18v13H12l-5.5 4v-4H5v-13Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M10 10h8M10 14h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="m20.5 3 .6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6.6-1.4Z" fill="currentColor" />
+    </svg>
+  );
+}
+
 function LandingHeader() {
   return (
     <header className={styles.header}>
@@ -212,6 +237,63 @@ export function LandingPreview() {
             </div>
           </section>
 
+          <section id="stories-audio-guide" className={styles.discovery} aria-labelledby="discovery-title">
+            <div className={styles.discoveryIntro}>
+              <p className={styles.eyebrow}>STORIES ALONG THE WAY</p>
+              <h2 id="discovery-title">Discover more as you walk.</h2>
+              <p>
+                At a place, read why it matters, listen when audio is available in your selected language, or ask CITYWALK when the guide is available for that place.
+              </p>
+            </div>
+
+            <div className={styles.discoveryGrid}>
+              <article className={styles.featureCard}>
+                <div className={`${styles.featureMedia} ${styles.storyMedia}`} role="img" aria-label="Lübeck Holstentor" />
+                <div className={styles.featureBody}>
+                  <span className={styles.featureIcon}><FeatureIcon name="story" /></span>
+                  <div>
+                    <h3>Stories</h3>
+                    <p>Read the story and context behind the place you’re actually visiting.</p>
+                  </div>
+                </div>
+              </article>
+
+              <article className={styles.featureCard}>
+                <div className={`${styles.featureMedia} ${styles.audioMedia}`} role="img" aria-label="Lübeck St. Mary's Church" />
+                <div className={styles.featureBody}>
+                  <span className={`${styles.featureIcon} ${styles.audioFeatureIcon}`}><FeatureIcon name="audio" /></span>
+                  <div>
+                    <h3>Audio</h3>
+                    <p>Listen to available audio stories in the language selected in CITYWALK.</p>
+                  </div>
+                </div>
+              </article>
+
+              <article className={`${styles.featureCard} ${styles.guideCard}`}>
+                <div className={styles.guidePreview} aria-label="Illustrative Ask CITYWALK example">
+                  <span className={styles.guideLabel}>ASK CITYWALK</span>
+                  <div className={styles.guideQuestion}>“What should I notice here?”</div>
+                  <div className={styles.guideAnswer}>
+                    <CitywalkMark />
+                    <p>For eligible places, CITYWALK can answer place-specific questions and show the sources behind the answer.</p>
+                  </div>
+                  <span className={styles.guideSourceNote}>Illustrative guide example</span>
+                </div>
+                <div className={styles.featureBody}>
+                  <span className={`${styles.featureIcon} ${styles.guideFeatureIcon}`}><FeatureIcon name="guide" /></span>
+                  <div>
+                    <h3>Ask CITYWALK</h3>
+                    <p>Stay curious without leaving the place you’re exploring.</p>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <p className={styles.discoveryFootnote}>
+              Story, audio and guide availability varies by place, published content and selected language.
+            </p>
+          </section>
+
           <section id="launch-information" className={styles.launchInfo} aria-labelledby="launch-title">
             <div><p className={styles.eyebrow}>COMING TO IPHONE & ANDROID</p><h2 id="launch-title">Your next walk is waiting.</h2><p>We’re preparing CITYWALK for launch. Store links and launch notifications will be added when they’re ready.</p></div>
             <a className={styles.contact} href="mailto:support@getcitywalk.com">Contact CITYWALK <span aria-hidden="true">↗</span></a>
@@ -219,7 +301,7 @@ export function LandingPreview() {
         </main>
       </div>
       <footer className={styles.previewNote}>
-        <span>Design preview · How it works + Return-by checkpoint</span>
+        <span>Design preview · Stories, audio + Ask CITYWALK checkpoint</span>
         <span>Not a live download or email signup page.</span>
       </footer>
     </div>
