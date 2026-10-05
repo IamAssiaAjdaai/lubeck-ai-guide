@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   option: {
     flexGrow: 1,
     flexBasis: "44%",
-    minHeight: 52,
+    minHeight: 56,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexBasis: 0,
     minWidth: 0,
-    minHeight: 42,
+    minHeight: 44,
     paddingVertical: 9,
     paddingHorizontal: 10,
     borderRadius: radius.pill,
