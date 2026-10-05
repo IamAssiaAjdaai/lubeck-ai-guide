@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   mark: { width: 30, height: 42 },
-  name: { flexShrink: 1, color: citywalkBrand.colors.navy, fontSize: 18, fontWeight: "650", letterSpacing: 1.8 },
+  name: { flexShrink: 1, color: citywalkBrand.colors.navy, fontSize: 18, fontWeight: "600", letterSpacing: 1.8 },
   navigation: {
     flexShrink: 0,
     width: "100%",
