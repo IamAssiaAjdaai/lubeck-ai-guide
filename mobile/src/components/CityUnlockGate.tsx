@@ -6,12 +6,15 @@ import { getCityUnlockProduct } from "@citywalk/traveler-core";
 import { nativeAuthClient } from "../lib/auth/client";
 import { CityUnlockController, cityUnlockPreviewEnabled, revenueCatCityPassEnabled, type UnlockSnapshot } from "../lib/cityUnlock";
 import { nativeBilling } from "../lib/nativeBillingRuntime";
-import { revenueCatCityPassBilling } from "../lib/revenueCatCityPass";
 import { nativeCityName } from "../lib/displayNames";
 import { readCityUnlock } from "../lib/cityUnlockAccess";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { ImageOverlayHero } from "./ImageOverlayHero";
 import { AppText, PrimaryButton, Screen, StatusMessage } from "./ui";
+
+async function revenueCatBilling() {
+  return (await import("../lib/revenueCatCityPass")).revenueCatCityPassBilling;
+}
 
 /** RevenueCat is opt-in until Store/dashboard acceptance is complete. Sandbox keeps the legacy direct verifier isolated. */
 export function CityUnlockGate({ citySlug, cityName, children }: { citySlug: string; cityName: string; children(authorize: () => Promise<boolean>): ReactNode }) {
@@ -38,18 +41,18 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
   const state: UnlockSnapshot = result.account === account ? result.snapshot : { state: "store_product_loading" };
   const pending = useRef<((allowed: boolean) => void) | undefined>(undefined);
   const controller = useMemo(() => new CityUnlockController(citySlug, {
-    product: id => useRevenueCat ? revenueCatCityPassBilling.product(id) : nativeBilling.product(id),
-    purchase: (id, owner) => useRevenueCat ? revenueCatCityPassBilling.purchase(id, owner) : nativeBilling.purchase(id, owner),
-    restore: (id, owner) => useRevenueCat ? revenueCatCityPassBilling.restore(id, owner) : nativeBilling.restore(id, owner),
-    verify: (proof, owner) => useRevenueCat ? revenueCatCityPassBilling.verify() : nativeBilling.verify(proof, owner),
+    product: async id => useRevenueCat ? (await revenueCatBilling()).product(id) : nativeBilling.product(id),
+    purchase: async (id, owner) => useRevenueCat ? (await revenueCatBilling()).purchase(id, owner) : nativeBilling.purchase(id, owner),
+    restore: async (id, owner) => useRevenueCat ? (await revenueCatBilling()).restore(id, owner) : nativeBilling.restore(id, owner),
+    verify: async (proof, owner) => useRevenueCat ? (await revenueCatBilling()).verify() : nativeBilling.verify(proof, owner),
     account: () => account,
     access: user => readCityUnlock(citySlug, user),
-    ...(useRevenueCat ? { activate: (owner: string) => revenueCatCityPassBilling.activate(owner) } : {}),
+    ...(useRevenueCat ? { activate: async (owner: string) => (await revenueCatBilling()).activate(owner) } : {}),
   }, snapshot => setResult({ account, snapshot })), [citySlug, account, useRevenueCat]);
   useEffect(() => () => { controller.dispose(); }, [controller]);
   useEffect(() => {
-    const subscribe = useRevenueCat ? revenueCatCityPassBilling.subscribe.bind(revenueCatCityPassBilling) : nativeBilling.subscribe.bind(nativeBilling);
-    return subscribe(outcome => { if (visible) void controller.storeChanged(outcome); });
+    if (useRevenueCat) return () => undefined;
+    return nativeBilling.subscribe(outcome => { if (visible) void controller.storeChanged(outcome); });
   }, [controller, visible, useRevenueCat]);
   useEffect(() => () => { pending.current?.(false); pending.current = undefined; }, []);
   useEffect(() => { if (visible && !isPending) void controller.load(); }, [controller, visible, isPending]);
