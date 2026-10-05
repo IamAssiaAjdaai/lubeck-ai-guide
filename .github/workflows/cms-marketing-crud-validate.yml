@@ -1,5 +1,6 @@
 name: Validate CMS Marketing CRUD
 
+# Temporary branch-only validation gate. Remove after a green run.
 on:
   push:
     branches:
