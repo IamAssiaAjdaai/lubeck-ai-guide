@@ -6,6 +6,7 @@ const {
   redirect,
   revalidatePath,
   reviewAuthorizedMediaAsset,
+  listAuthorizedCities,
   listAuthorizedMediaAssets,
   cancelAuthorizedMediaUpload,
   retryAuthorizedUploadFinalize,
@@ -15,6 +16,7 @@ const {
   redirect: vi.fn(),
   revalidatePath: vi.fn(),
   reviewAuthorizedMediaAsset: vi.fn(),
+  listAuthorizedCities: vi.fn(),
   listAuthorizedMediaAssets: vi.fn(),
   cancelAuthorizedMediaUpload: vi.fn(),
   retryAuthorizedUploadFinalize: vi.fn(),
@@ -35,6 +37,9 @@ vi.mock("@/lib/admin/authorization.server", () => ({
       cityIds: [],
     },
   }),
+}));
+vi.mock("@/lib/admin/content/service.server", () => ({
+  listAuthorizedCities,
 }));
 vi.mock("@/lib/media/service.server", () => ({
   archiveAuthorizedMediaAsset: vi.fn(),
@@ -63,6 +68,13 @@ import MediaLibraryPage from "@/app/admin/(protected)/media/page";
 describe("admin media review workflow", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    listAuthorizedCities.mockResolvedValue([
+      {
+        id: 1,
+        name: "Lübeck",
+        localizations: [{ name: "Lübeck" }],
+      },
+    ]);
   });
 
   it.each(["approved", "rejected"] as const)(
