@@ -78,8 +78,30 @@ describe("landing Header / Hero checkpoint", () => {
     expect(figure?.textContent).toContain("17:30");
   });
 
+  it("describes stories, exact-language audio and place-aware guide availability without universal claims", () => {
+    render(<LandingPreviewPage />);
+    expect(screen.getByRole("heading", { name: "Discover more as you walk." })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Stories" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Audio" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Ask CITYWALK" })).toBeDefined();
+    expect(screen.getByText(/audio is available in your selected language/i)).toBeDefined();
+    expect(screen.getByText(/show the sources behind the answer/i)).toBeDefined();
+    expect(screen.getByText(/availability varies by place, published content and selected language/i)).toBeDefined();
+    expect(screen.queryByText(/audio at every place|ask anything everywhere|all languages/i)).toBeNull();
+  });
+
+  it("keeps the Stories / Audio / Ask CITYWALK cards illustrative and non-interactive", () => {
+    const { container } = render(<LandingPreviewPage />);
+    const section = container.querySelector("#stories-audio-guide");
+    expect(section).not.toBeNull();
+    expect(section?.querySelector("button, a, input, audio, video, iframe")).toBeNull();
+    expect(screen.getByLabelText("Illustrative Ask CITYWALK example")).toBeDefined();
+    expect(screen.getByText("Illustrative guide example")).toBeDefined();
+  });
+
   it("reuses existing local decorative assets without new external media requests", () => {
     expect(existsSync("public/images/citywalk-waterfront.webp")).toBe(true);
     expect(existsSync("public/landmarks/holstentor.jpg")).toBe(true);
+    expect(existsSync("public/landmarks/marienkirche.jpg")).toBe(true);
   });
 });
