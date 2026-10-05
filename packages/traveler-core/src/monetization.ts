@@ -3,6 +3,17 @@ export const CITYWALK_PREMIUM_ENTITLEMENT = Object.freeze({
   scopeKey: "premium",
 });
 
+export const CITYWALK_CITY_PASS_72H = Object.freeze({
+  lubeck: Object.freeze({
+    citySlug: "lubeck",
+    scopeType: "city" as const,
+    scopeKey: "lubeck",
+    packageIdentifier: "city_pass_72h",
+    productIdentifier: "com.citywalk.lubeck.pass72h",
+    durationHours: 72,
+  }),
+});
+
 export const CITYWALK_ACCESS_LEVELS = [
   "free",
   "city_pass",
