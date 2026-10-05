@@ -9,7 +9,9 @@ describe("CitywalkLogo", () => {
   it("renders the shared route mark with the CITYWALK wordmark", () => {
     const { container } = render(<CitywalkLogo />);
     expect(screen.getByText("CITYWALK")).not.toBeNull();
-    expect(container.querySelector('svg[viewBox="0 0 48 28"]')).not.toBeNull();
+    const mark = container.querySelector("svg");
+    expect(mark).not.toBeNull();
+    expect(mark?.getAttribute("viewBox")).toBe("0 0 48 28");
   });
 
   it("keeps mark-only usage accessible", () => {
