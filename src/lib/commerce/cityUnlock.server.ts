@@ -10,7 +10,23 @@ export async function hasCityUnlock(
 ): Promise<boolean> {
   const product = getCityUnlockProduct(input.citySlug);
   if (!input.userId || !product) return false;
-  // This phase grants sandbox ownership only; never authorize it in Production.
+
+  // RevenueCat / production City Pass authority. The provider is irrelevant here: only
+  // a verified, active PostgreSQL city entitlement can authorize the traveler.
+  if (await hasActiveEntitlement({
+    userId: input.userId,
+    scopeType: "city",
+    scopeKey: input.citySlug,
+    now: input.now,
+  }, dependencies)) return true;
+
+  // Legacy direct-Store sandbox compatibility. This old feature-scoped entitlement is
+  // deliberately tester-only and can never become production RevenueCat authority.
   try { requireTester(input.userId); } catch { return false; }
-  return hasActiveEntitlement({ userId: input.userId, scopeType: "feature", scopeKey: product.entitlement, now: input.now }, dependencies);
+  return hasActiveEntitlement({
+    userId: input.userId,
+    scopeType: "feature",
+    scopeKey: product.entitlement,
+    now: input.now,
+  }, dependencies);
 }
