@@ -520,7 +520,7 @@ async function assertPageIdentityAvailable(
   exceptId?: number,
 ) {
   const db = getDb();
-  const [samePath, sameSlug] = await Promise.all([
+  const [[samePath], [sameSlug]] = await Promise.all([
     db
       .select({ id: marketingPagesTable.id })
       .from(marketingPagesTable)
