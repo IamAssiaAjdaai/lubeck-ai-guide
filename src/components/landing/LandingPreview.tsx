@@ -1,5 +1,6 @@
 import { CitywalkLogo, CitywalkMark } from "@/components/brand/CitywalkLogo";
 import { cityLaunches } from "@/data/cityAvailability";
+import { LandingFaq, LandingFooter, LandingLaunchSection } from "./LandingClosing";
 import styles from "./landing.module.css";
 
 const benefits = [
@@ -103,6 +104,7 @@ function LandingHeader() {
         <a href="#the-app">The app</a>
         <a href="#how-it-works">How it works</a>
         <a href="#cities">Cities</a>
+        <a href="#faq">FAQ</a>
         <a href="mailto:support@getcitywalk.com">Support</a>
       </nav>
       <a className={`${styles.primary} ${styles.headerAction}`} href="#launch-information">Launch information</a>
@@ -337,16 +339,11 @@ export function LandingPreview() {
             </p>
           </section>
 
-          <section id="launch-information" className={styles.launchInfo} aria-labelledby="launch-title">
-            <div><p className={styles.eyebrow}>COMING TO IPHONE & ANDROID</p><h2 id="launch-title">Your next walk is waiting.</h2><p>We’re preparing CITYWALK for launch. Store links and launch notifications will be added when they’re ready.</p></div>
-            <a className={styles.contact} href="mailto:support@getcitywalk.com">Contact CITYWALK <span aria-hidden="true">↗</span></a>
-          </section>
+          <LandingLaunchSection />
+          <LandingFaq />
         </main>
       </div>
-      <footer className={styles.previewNote}>
-        <span>Design preview · Cities checkpoint</span>
-        <span>Not a live download or email signup page.</span>
-      </footer>
+      <LandingFooter />
     </div>
   );
 }
