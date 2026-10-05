@@ -1,4 +1,8 @@
-import { getCityUnlockProduct, type CityUnlockState } from "@citywalk/traveler-core";
+import {
+  CITYWALK_CITY_PASS_72H,
+  getCityUnlockProduct,
+  type CityUnlockState,
+} from "@citywalk/traveler-core";
 
 export type StoreProduct = Readonly<{ id: string; localizedPrice: string }>;
 export type PurchaseResult = Readonly<{ status: "purchased" | "already-owned"; proof?: string }> | Readonly<{ status: "pending" }> | Readonly<{ status: "cancelled" }>;
@@ -13,6 +17,13 @@ export type CityUnlockPorts = {
   activate?(account: string): Promise<boolean>;
 };
 export type UnlockSnapshot = Readonly<{ state: CityUnlockState; product?: StoreProduct }>;
+
+function cityStoreProduct(citySlug: string): Readonly<{ productId: string }> | undefined {
+  if (revenueCatCityPassEnabled() && citySlug === "lubeck") {
+    return { productId: CITYWALK_CITY_PASS_72H.lubeck.productIdentifier };
+  }
+  return getCityUnlockProduct(citySlug);
+}
 
 /** No persistence, receipts in logs, local unlock booleans or automatic account transfers. */
 export class CityUnlockController {
@@ -41,7 +52,7 @@ export class CityUnlockController {
     this.snapshot = { state: "store_product_loading" };
     this.changed(this.snapshot);
     try {
-      const product = getCityUnlockProduct(this.city);
+      const product = cityStoreProduct(this.city);
       if (!product) throw new Error("unsupported");
       if (await this.ports.access(account)) { if (current()) this.set("already_owned"); return; }
       if (!current()) return;
@@ -55,7 +66,7 @@ export class CityUnlockController {
   async run(action: "purchase" | "restore") {
     if (this.busy) return;
     if (["unlocked", "already_owned", "restore_success"].includes(this.snapshot.state)) return;
-    const product = getCityUnlockProduct(this.city), account = this.ports.account();
+    const product = cityStoreProduct(this.city), account = this.ports.account();
     if (action === "purchase" && account && this.pendingAccount === account) return;
     if (!account) { this.set("account_required"); return; }
     if (!product || (action === "purchase" && !this.snapshot.product)) { this.set("store_product_unavailable"); return; }
