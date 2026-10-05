@@ -54,7 +54,28 @@ export function AdminSecurityManager({
     }
   }
 
-  useEffect(() => { void refreshPasskeys(); }, []);
+  useEffect(() => {
+    let active = true;
+    adminAuthClient.passkey
+      .listUserPasskeys()
+      .then((result) => {
+        if (!active) return;
+        if (result.error) {
+          setError("Passkeys could not be loaded.");
+          return;
+        }
+        setPasskeys(result.data ?? []);
+      })
+      .catch(() => {
+        if (active) setError("Passkeys could not be loaded.");
+      })
+      .finally(() => {
+        if (active) setLoadingPasskeys(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function addPasskey() {
     setPasskeyBusy(true);
