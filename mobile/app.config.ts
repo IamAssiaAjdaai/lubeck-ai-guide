@@ -6,6 +6,7 @@ type MobileEnvironment = (typeof MOBILE_ENVIRONMENTS)[number];
 const DEVELOPMENT_HTTP_PLUGIN = "./plugins/with-development-http.js";
 export const CITYWALK_STORE_IDENTIFIER = "com.citywalk.app";
 export const CITYWALK_DEVELOPMENT_IDENTIFIER = `${CITYWALK_STORE_IDENTIFIER}.dev`;
+export const CITYWALK_APP_LINK_HOST = "getcitywalk.com";
 
 export function assertProductionBuildEnvironment(
   environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
@@ -68,6 +69,7 @@ export function createCitywalkExpoConfig(
   const applicationIdentifier = environment === "development"
     ? CITYWALK_DEVELOPMENT_IDENTIFIER
     : CITYWALK_STORE_IDENTIFIER;
+  const appLinksEnabled = environment !== "development";
   const completeConfig: ExpoConfig = {
     ...config,
     name: config.name,
@@ -75,10 +77,37 @@ export function createCitywalkExpoConfig(
     ios: {
       ...config.ios,
       bundleIdentifier: applicationIdentifier,
+      ...(appLinksEnabled
+        ? {
+            associatedDomains: Array.from(new Set([
+              ...(config.ios?.associatedDomains ?? []),
+              `applinks:${CITYWALK_APP_LINK_HOST}`,
+            ])),
+          }
+        : {}),
     },
     android: {
       ...config.android,
       package: applicationIdentifier,
+      ...(appLinksEnabled
+        ? {
+            intentFilters: [
+              ...(config.android?.intentFilters ?? []),
+              {
+                action: "VIEW",
+                autoVerify: true,
+                data: [
+                  {
+                    scheme: "https",
+                    host: CITYWALK_APP_LINK_HOST,
+                    pathPrefix: "/open/",
+                  },
+                ],
+                category: ["BROWSABLE", "DEFAULT"],
+              },
+            ],
+          }
+        : {}),
     },
   };
 
