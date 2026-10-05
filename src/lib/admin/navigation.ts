@@ -38,6 +38,13 @@ export const ADMIN_SECTIONS = [
     capability: "media:view",
   },
   {
+    id: "marketing",
+    label: "Marketing",
+    href: "/admin/marketing",
+    icon: "megaphone",
+    capability: "marketing:view",
+  },
+  {
     id: "review",
     label: "Review queue",
     href: "/admin/review",
