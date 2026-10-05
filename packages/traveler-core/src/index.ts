@@ -4,3 +4,5 @@ export * from "./tourBuilder";
 export * from "./tourPreferences";
 export * from "./savedWalk";
 export * from "./cityUnlock";
+
+export * from "./monetization";
