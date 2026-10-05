@@ -52,6 +52,13 @@ export const ADMIN_SECTIONS = [
     capability: "translations:view",
   },
   {
+    id: "security",
+    label: "Security",
+    href: "/admin/security",
+    icon: "key-round",
+    capability: "admin:view",
+  },
+  {
     id: "commerce",
     label: "Commerce",
     href: "/admin/commerce",
