@@ -1,6 +1,5 @@
 import {
   BadgeCheck,
-  BookOpen,
   Building2,
   CreditCard,
   Images,
@@ -9,7 +8,6 @@ import {
   MapPin,
   Route,
   ShieldCheck,
-  Users,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -29,10 +27,8 @@ const sectionIcons: Record<AdminSection["icon"], LucideIcon> = {
   "map-pin": MapPin,
   route: Route,
   images: Images,
-  "book-open": BookOpen,
   languages: Languages,
   "badge-check": BadgeCheck,
-  users: Users,
 };
 
 function formatRole(role: string): string {
@@ -41,6 +37,7 @@ function formatRole(role: string): string {
     .map((part) => `${part[0]?.toUpperCase() ?? ""}${part.slice(1)}`)
     .join(" ");
 }
+
 export function AdminShell({
   children,
   context,
@@ -60,7 +57,7 @@ export function AdminShell({
                 CITYWALK
               </span>
               <span className="block text-xs text-text-secondary">
-                Admin Console
+                Control Center
               </span>
             </span>
           </Link>
