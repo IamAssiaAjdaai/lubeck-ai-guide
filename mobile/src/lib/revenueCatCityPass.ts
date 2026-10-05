@@ -13,7 +13,7 @@ const cityPass = CITYWALK_CITY_PASS_72H.lubeck;
 
 type PurchasesPackage = Parameters<typeof Purchases.purchasePackage>[0];
 
-type RevenueCatCityPassDependencies = Readonly<{
+export type RevenueCatCityPassDependencies = Readonly<{
   configure: typeof configureRevenueCat;
   loadPlans: typeof loadRevenueCatPlans;
   syncIdentity: typeof syncRevenueCatIdentity;
