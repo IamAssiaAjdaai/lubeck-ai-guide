@@ -10,13 +10,6 @@ export const ADMIN_SECTIONS = [
     capability: "admin:view",
   },
   {
-    id: "commerce",
-    label: "Commerce",
-    href: "/admin/commerce",
-    icon: "credit-card",
-    capability: "commerce:view",
-  },
-  {
     id: "cities",
     label: "Cities",
     href: "/admin/cities",
@@ -45,11 +38,11 @@ export const ADMIN_SECTIONS = [
     capability: "media:view",
   },
   {
-    id: "sources",
-    label: "Sources",
-    href: "/admin/sources",
-    icon: "book-open",
-    capability: "sources:view",
+    id: "review",
+    label: "Review queue",
+    href: "/admin/review",
+    icon: "badge-check",
+    capability: "publishing:review",
   },
   {
     id: "operations",
@@ -59,18 +52,11 @@ export const ADMIN_SECTIONS = [
     capability: "translations:view",
   },
   {
-    id: "publishing",
-    label: "Publishing",
-    href: "/admin/publishing",
-    icon: "badge-check",
-    capability: "publishing:review",
-  },
-  {
-    id: "staff",
-    label: "Staff",
-    href: "/admin/staff",
-    icon: "users",
-    capability: "staff:manage",
+    id: "commerce",
+    label: "Commerce",
+    href: "/admin/commerce",
+    icon: "credit-card",
+    capability: "commerce:view",
   },
 ] as const satisfies readonly {
   id: string;
@@ -90,6 +76,7 @@ export function getVisibleAdminSections(
     hasActiveStaffCapability(staff, section.capability),
   );
 }
+
 export function getAdminSection(
   sectionId: string,
 ): AdminSection | undefined {
