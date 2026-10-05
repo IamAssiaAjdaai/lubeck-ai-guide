@@ -1,5 +1,5 @@
 import { getAuth } from "@/lib/auth/server";
-import { requireCityPass } from "@/lib/commerce/cityPassAccess.server";
+import { requirePaidCityAccess } from "@/lib/commerce/premiumAccess.server";
 import { getPremiumMediaDeliveryAsset } from "@/lib/commerce/premiumMedia.server";
 import {
   deliverPrivateMediaObject,
@@ -21,7 +21,7 @@ export async function GET(
   if (!asset) return mediaUnavailableResponse();
 
   try {
-    await requireCityPass({
+    await requirePaidCityAccess({
       userId: session.user.id,
       citySlug: asset.requiredEntitlement.scopeKey,
     });
