@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getCityUnlockProduct, editorialTourAccess } from "@citywalk/traveler-core";
-import { CityUnlockController, cityUnlockPreviewEnabled, type CityUnlockPorts, type UnlockSnapshot } from "../src/lib/cityUnlock";
+import { CITYWALK_CITY_PASS_72H, getCityUnlockProduct, editorialTourAccess } from "@citywalk/traveler-core";
+import { CityUnlockController, cityUnlockPreviewEnabled, revenueCatCityPassEnabled, type CityUnlockPorts, type UnlockSnapshot } from "../src/lib/cityUnlock";
 const product = getCityUnlockProduct("lubeck")!;
 function harness() {
   let account: string | undefined = "owner";
@@ -17,8 +17,9 @@ function harness() {
 }
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 describe("city unlock safety and lifecycle", () => {
-  it("keeps identity independent of changing Store prices and retains the free editorial sample", () => {
+  it("keeps the legacy sandbox identity isolated from the canonical RevenueCat City Pass", () => {
     expect(product).toEqual({ citySlug: "lubeck", entitlement: "city:luebeck:premium", productId: "com.citywalk.luebeck.premium", kind: "non-consumable" });
+    expect(CITYWALK_CITY_PASS_72H.lubeck).toMatchObject({ scopeType: "city", scopeKey: "lubeck", packageIdentifier: "city_pass_72h", productIdentifier: "com.citywalk.lubeck.pass72h", durationHours: 72 });
     expect(getCityUnlockProduct("hamburg")).toBeUndefined(); expect(getCityUnlockProduct("__proto__")).toBeUndefined();
     expect(editorialTourAccess("lubeck", "historic-center-walk")).toBe("free-sample");
   });
@@ -50,6 +51,42 @@ describe("city unlock safety and lifecycle", () => {
     expect(h.ports.verify).toHaveBeenCalledWith("synthetic-proof", "owner", product.productId);
     expect(h.latest().state).toBe(status === "purchased" ? "unlocked" : "already_owned");
     await h.controller.run("purchase"); expect(h.ports.purchase).toHaveBeenCalledTimes(1);
+  });
+  it("supports RevenueCat purchase evidence only after server webhook activation", async () => {
+    vi.stubEnv("EXPO_PUBLIC_CITYWALK_REVENUECAT_CITY_PASS", "1");
+    const h = harness();
+    const rcProduct = CITYWALK_CITY_PASS_72H.lubeck.productIdentifier;
+    vi.mocked(h.ports.product).mockResolvedValue({ id: rcProduct, localizedPrice: "4,99 €" });
+    vi.mocked(h.ports.purchase).mockResolvedValue({ status: "purchased" });
+    h.ports.activate = vi.fn(async () => true);
+    await h.controller.load();
+    expect(h.latest()).toEqual({ state: "ready", product: { id: rcProduct, localizedPrice: "4,99 €" } });
+    await h.controller.run("purchase");
+    expect(h.ports.verify).not.toHaveBeenCalled();
+    expect(h.ports.activate).toHaveBeenCalledWith("owner");
+    expect(h.states.map(s => s.state)).not.toContain("verification_pending");
+    expect(h.states.map(s => s.state)).toContain("entitlement_activating");
+    expect(h.latest().state).toBe("unlocked");
+  });
+  it("does not unlock RevenueCat when the verified server entitlement never appears", async () => {
+    vi.stubEnv("EXPO_PUBLIC_CITYWALK_REVENUECAT_CITY_PASS", "1");
+    const h = harness();
+    const rcProduct = CITYWALK_CITY_PASS_72H.lubeck.productIdentifier;
+    vi.mocked(h.ports.product).mockResolvedValue({ id: rcProduct, localizedPrice: "4,99 €" });
+    vi.mocked(h.ports.purchase).mockResolvedValue({ status: "purchased" });
+    h.ports.activate = vi.fn(async () => false);
+    await h.controller.load(); await h.controller.run("purchase");
+    expect(h.latest().state).toBe("verification_failed");
+    expect(h.states.some(s => s.state === "unlocked")).toBe(false);
+  });
+  it("restores RevenueCat store state without client-granting access", async () => {
+    vi.stubEnv("EXPO_PUBLIC_CITYWALK_REVENUECAT_CITY_PASS", "1");
+    const h = harness();
+    h.ports.restore = vi.fn(async () => ({ storeSynced: true as const }));
+    h.ports.activate = vi.fn(async () => false);
+    await h.controller.run("restore");
+    expect(h.ports.verify).not.toHaveBeenCalled();
+    expect(h.latest().state).toBe("nothing_to_restore");
   });
   it("does not unlock after a verifier failure or a missing/revoked server grant", async () => {
     const h = harness(); await h.controller.load();
@@ -91,6 +128,9 @@ it.each(["purchase", "restore"] as const)("shows explicit account conflict on %s
 });
 it("enables internal sandbox builds only with both explicit flags and Preview environment",()=>{
  vi.stubGlobal("__DEV__",false);vi.stubEnv("EXPO_PUBLIC_CITYWALK_UNLOCK_PREVIEW","1");vi.stubEnv("EXPO_PUBLIC_CITYWALK_BILLING","sandbox");vi.stubEnv("EXPO_PUBLIC_CITYWALK_ENV","preview");expect(cityUnlockPreviewEnabled()).toBe(true);vi.stubEnv("EXPO_PUBLIC_CITYWALK_ENV","production");expect(cityUnlockPreviewEnabled()).toBe(false);
+});
+it("keeps RevenueCat City Pass disabled until an explicit non-sandbox flag is present",()=>{
+ vi.stubEnv("EXPO_PUBLIC_CITYWALK_REVENUECAT_CITY_PASS","1");vi.stubEnv("EXPO_PUBLIC_CITYWALK_BILLING","sandbox");expect(revenueCatCityPassEnabled()).toBe(false);vi.stubEnv("EXPO_PUBLIC_CITYWALK_BILLING","");expect(revenueCatCityPassEnabled()).toBe(true);
 });
 it("late Store cancellation releases pending state for a deliberate retry",async()=>{
  const h=harness();vi.mocked(h.ports.purchase).mockResolvedValue({status:"pending"});await h.controller.load();await h.controller.run("purchase");expect(h.latest().state).toBe("purchase_pending");await h.controller.storeChanged("cancelled");expect(h.latest().state).toBe("purchase_cancelled");await h.controller.run("purchase");expect(h.ports.purchase).toHaveBeenCalledTimes(2);

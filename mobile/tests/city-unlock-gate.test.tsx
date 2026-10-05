@@ -4,10 +4,11 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { sharedLocales, t } from "@citywalk/i18n";
 
-const mocks = vi.hoisted(() => ({ account: undefined as string | undefined, locale: "en", access: vi.fn(), push: vi.fn() }));
+const mocks = vi.hoisted(() => ({ account: undefined as string | undefined, locale: "en", access: vi.fn(), push: vi.fn(), rcProduct: vi.fn() }));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { useSession: () => ({ data: mocks.account ? { user: { id: mocks.account } } : null, isPending: false }) } }));
 vi.mock("../src/lib/cityUnlockAccess", () => ({ readCityUnlock: mocks.access }));
-vi.mock("../src/lib/nativeBillingRuntime", () => ({nativeBilling:{product: async()=>undefined,subscribe:()=>()=>{}}}));
+vi.mock("../src/lib/nativeBillingRuntime", () => ({nativeBilling:{product: async()=>undefined,purchase:vi.fn(),restore:vi.fn(),verify:vi.fn(),subscribe:()=>()=>{}}}));
+vi.mock("../src/lib/revenueCatCityPass", () => ({ revenueCatCityPassBilling: { product: mocks.rcProduct, purchase: vi.fn(), restore: vi.fn(), verify: vi.fn(), activate: vi.fn(), subscribe: () => () => {} } }));
 vi.mock("expo-router", () => ({ router: { push: mocks.push }, useFocusEffect: (callback: () => void) => useEffect(callback, [callback]) }));
 vi.mock("../src/localization/LocaleProvider", () => ({ useNativeLocale: () => ({ locale: mocks.locale }) }));
 vi.mock("react-native", () => ({ View: ({ children }: React.PropsWithChildren) => <div>{children}</div>, Modal: ({ visible, children }: React.PropsWithChildren<{ visible: boolean }>) => visible ? <div role="dialog">{children}</div> : null }));
@@ -20,7 +21,7 @@ vi.mock("../src/components/ui", () => ({
 }));
 import { CityUnlockGate, PreviewCityUnlockGate } from "../src/components/CityUnlockGate";
 
-beforeEach(() => { vi.clearAllMocks(); mocks.account = undefined; mocks.locale = "en"; mocks.access.mockResolvedValue(false); });
+beforeEach(() => { vi.clearAllMocks(); mocks.account = undefined; mocks.locale = "en"; mocks.access.mockResolvedValue(false); mocks.rcProduct.mockResolvedValue(undefined); });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 function fixture() {
   const completed = vi.fn();
@@ -67,4 +68,16 @@ it("leaves accepted release behavior unchanged even if the preview flag is set",
   render(<CityUnlockGate citySlug="lubeck" cityName="Lübeck">{authorize => <button onClick={() => void authorize().then(completed)}>Start</button>}</CityUnlockGate>);
   await act(async () => { fireEvent.click(screen.getByText("Start")); });
   expect(completed).toHaveBeenCalledWith(true); expect(mocks.access).not.toHaveBeenCalled();
+});
+it("can opt into the RevenueCat City Pass gate without enabling legacy sandbox billing", async () => {
+  vi.stubEnv("EXPO_PUBLIC_CITYWALK_REVENUECAT_CITY_PASS", "1");
+  mocks.account = "owner";
+  mocks.rcProduct.mockResolvedValue({ id: "com.citywalk.lubeck.pass72h", localizedPrice: "4,99 €" });
+  const completed = vi.fn();
+  render(<CityUnlockGate citySlug="lubeck" cityName="Lübeck">{authorize => <button onClick={() => void authorize().then(completed)}>Start RC</button>}</CityUnlockGate>);
+  fireEvent.click(screen.getByText("Start RC"));
+  await screen.findByRole("dialog");
+  await waitFor(() => expect(mocks.rcProduct).toHaveBeenCalledWith("com.citywalk.lubeck.pass72h"));
+  expect(screen.getByRole("button", { name: /4,99/ })).toBeTruthy();
+  expect(completed).not.toHaveBeenCalled();
 });

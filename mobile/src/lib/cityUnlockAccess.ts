@@ -1,10 +1,10 @@
-import { getCityUnlockProduct } from "@citywalk/traveler-core";
+import { CITYWALK_CITY_PASS_72H } from "@citywalk/traveler-core";
 import { citywalkApi } from "./api/instance";
 import { nativeAuthClient } from "./auth/client";
 
 export async function readCityUnlock(citySlug: string, expectedAccount?: string): Promise<boolean> {
-  const product = getCityUnlockProduct(citySlug);
-  if (!product) return false;
+  const cityPass = citySlug === "lubeck" ? CITYWALK_CITY_PASS_72H.lubeck : undefined;
+  if (!cityPass) return false;
   const before = await nativeAuthClient.getSession();
   if (before.error || before.data?.user.id !== expectedAccount) throw new Error("account-changed");
   if (!expectedAccount) return false;
@@ -15,6 +15,12 @@ export async function readCityUnlock(citySlug: string, expectedAccount?: string)
   const value = await response.json();
   const after = await nativeAuthClient.getSession();
   if (after.error || after.data?.user.id !== expectedAccount) throw new Error("account-changed");
-  if (value.citySlug !== citySlug || value.entitlement !== product.entitlement || typeof value.active !== "boolean") throw new Error("access-unavailable");
+  if (
+    value.citySlug !== citySlug ||
+    value.scopeType !== cityPass.scopeType ||
+    value.scopeKey !== cityPass.scopeKey ||
+    !["free", "city_pass", "premium"].includes(value.tier) ||
+    typeof value.active !== "boolean"
+  ) throw new Error("access-unavailable");
   return value.active;
 }

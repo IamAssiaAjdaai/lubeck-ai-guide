@@ -83,6 +83,10 @@ the webhook never invents a paid product from untrusted payload data.
 Premium products grant `feature:premium`. The Lübeck City Pass product grants
 `city:lubeck` and its configured grant duration remains 72 hours.
 
+The older sandbox-only direct Store contract remains isolated as
+`com.citywalk.luebeck.premium` / `city:luebeck:premium` until the RevenueCat acceptance
+work is complete. It is not the production RevenueCat product contract.
+
 ## Lifecycle reconciliation
 
 Supported authoritative event behavior:
@@ -108,9 +112,37 @@ The mobile Offering normalizer preserves RevenueCat/store `priceString`, currenc
 numeric price. UI must display the localized store price. Product-planning values such as
 €7.99 / €39.99 / €4.99 are target launch prices, not server purchase evidence.
 
+## MON-04 City Pass flow
+
+MON-04 reuses the existing City Unlock paywall/controller rather than creating a second
+local access model.
+
+RevenueCat City Pass UI is still opt-in behind:
+
+`EXPO_PUBLIC_CITYWALK_REVENUECAT_CITY_PASS=1`
+
+The flag is ignored while `EXPO_PUBLIC_CITYWALK_BILLING=sandbox`, so the direct native
+sandbox verifier remains isolated for regression/acceptance work. No production profile
+sets the RevenueCat City Pass flag in this PR.
+
+When enabled:
+
+1. the paywall loads the `city_pass_72h` package and displays its localized Store price;
+2. a signed-in Better Auth user is synchronized to RevenueCat by immutable `user.id`;
+3. an explicit Purchase action calls RevenueCat `purchasePackage()`;
+4. an explicit Restore action calls RevenueCat `restorePurchases()`;
+5. neither action grants CITYWALK access from `CustomerInfo`;
+6. the UI waits for the verified RevenueCat webhook to reconcile PostgreSQL and polls the
+   authenticated CITYWALK access endpoint for a short bounded period;
+7. only a canonical server access response (`city_pass` or `premium`) unlocks the walk.
+
+Ordinary Store cancellation maps to a benign cancelled state. If the webhook-backed
+entitlement does not appear, the flow fails closed and the traveler can retry; there is
+no local paid-access boolean.
+
 ## Deployment state
 
-MON-02 merged the native SDK foundation. MON-03 adds webhook code and a database migration
-for provider-event ordering, but merging this code does **not** configure RevenueCat,
-create webhook secrets, run a production database migration, deploy production, or enable
-live purchases. Those remain explicit release actions.
+MON-01 through MON-03 are merged. MON-04 prepares the opt-in City Pass purchase/restore
+path, but merging this code does **not** configure RevenueCat dashboard products, add real
+SDK keys, set the feature flag in production, deploy production, run store acceptance or
+enable live purchases. Those remain explicit release actions.
