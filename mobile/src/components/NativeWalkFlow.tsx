@@ -333,7 +333,7 @@ export function NativeWalkFlow({
         if (!restored && !accountSaved) {
           const legacy = (await loadLocalTrips()).find(
             (w) => w.id === savedId && w.citySlug === citySlug,
-          )?.coordinates;
+          );
           const start = places.find(
             (p) => p.slug === legacy?.stopSlugs[0],
           )?.coordinates;
