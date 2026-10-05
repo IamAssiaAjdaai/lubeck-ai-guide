@@ -21,6 +21,11 @@ import {
   updateMarketingPage,
 } from "@/lib/admin/marketing/service.server";
 import { MarketingValidationError } from "@/lib/admin/marketing/validation";
+import {
+  changeMarketingPageWorkflowStatus,
+  changeMarketingSocialWorkflowStatus,
+  MarketingWorkflowError,
+} from "@/lib/admin/marketing/workflow.server";
 
 export async function createLubeckStarterCampaignAction() {
   await createLubeckStarterCampaign();
@@ -112,6 +117,44 @@ export async function updateMarketingContentAction(
   redirect(destination);
 }
 
+export async function changeMarketingPageWorkflowAction(
+  id: number,
+  formData: FormData,
+) {
+  let destination = `/admin/marketing/pages/${id}`;
+  try {
+    await changeMarketingPageWorkflowStatus(id, formData.get("status"));
+    revalidateMarketing();
+    revalidatePath("/admin/review");
+    revalidatePath(destination);
+    destination += "?saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(actionError(error))}`;
+  }
+  redirect(destination);
+}
+
+export async function changeMarketingSocialWorkflowAction(
+  id: number,
+  formData: FormData,
+) {
+  let destination = `/admin/marketing/social/${id}`;
+  try {
+    await changeMarketingSocialWorkflowStatus(
+      id,
+      formData.get("status"),
+      formData.get("publishedUrl"),
+    );
+    revalidateMarketing();
+    revalidatePath("/admin/review");
+    revalidatePath(destination);
+    destination += "?saved=1";
+  } catch (error) {
+    destination += `?error=${encodeURIComponent(actionError(error))}`;
+  }
+  redirect(destination);
+}
+
 function revalidateMarketing() {
   revalidatePath("/admin/marketing");
   revalidatePath("/admin/marketing/campaigns");
@@ -124,6 +167,7 @@ function actionError(error: unknown): string {
     error instanceof MarketingValidationError ||
     error instanceof MarketingConflictError ||
     error instanceof MarketingNotFoundError ||
+    error instanceof MarketingWorkflowError ||
     error instanceof AdminAuthorizationError
   ) {
     return error.message;
