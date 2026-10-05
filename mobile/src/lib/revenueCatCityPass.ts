@@ -1,36 +1,49 @@
 import { CITYWALK_CITY_PASS_72H } from "@citywalk/traveler-core";
-import Purchases from "react-native-purchases";
 
 import { readCityUnlock } from "./cityUnlockAccess";
-import {
-  configureRevenueCat,
-  loadRevenueCatPlans,
-  syncRevenueCatIdentity,
-} from "./revenueCat";
 import type { PurchaseResult, RestoreResult, StoreProduct } from "./cityUnlock";
+import type { RevenueCatPlan } from "./revenueCat";
 
 const cityPass = CITYWALK_CITY_PASS_72H.lubeck;
 
-type PurchasesPackage = Parameters<typeof Purchases.purchasePackage>[0];
+export type RevenueCatStorePackage = Readonly<{
+  identifier: string;
+  product: Readonly<{ identifier: string }>;
+}>;
 
 export type RevenueCatCityPassDependencies = Readonly<{
-  configure: typeof configureRevenueCat;
-  loadPlans: typeof loadRevenueCatPlans;
-  syncIdentity: typeof syncRevenueCatIdentity;
-  getOfferings: typeof Purchases.getOfferings;
-  purchasePackage: typeof Purchases.purchasePackage;
-  restorePurchases: typeof Purchases.restorePurchases;
+  ensureConfigured: (account?: string) => Promise<boolean>;
+  loadPlans: () => Promise<readonly RevenueCatPlan[]>;
+  getOfferings: () => Promise<Readonly<{ current?: Readonly<{ availablePackages: readonly RevenueCatStorePackage[] }> | null }>>;
+  purchasePackage: (pkg: RevenueCatStorePackage) => Promise<unknown>;
+  restorePurchases: () => Promise<unknown>;
   access: typeof readCityUnlock;
   wait: (milliseconds: number) => Promise<void>;
 }>;
 
 const defaultDependencies: RevenueCatCityPassDependencies = {
-  configure: configureRevenueCat,
-  loadPlans: loadRevenueCatPlans,
-  syncIdentity: syncRevenueCatIdentity,
-  getOfferings: () => Purchases.getOfferings(),
-  purchasePackage: (pkg) => Purchases.purchasePackage(pkg),
-  restorePurchases: () => Purchases.restorePurchases(),
+  async ensureConfigured(account) {
+    const revenueCat = await import("./revenueCat");
+    const status = account
+      ? await revenueCat.syncRevenueCatIdentity(account)
+      : revenueCat.configureRevenueCat();
+    return status.configured;
+  },
+  async loadPlans() {
+    return (await import("./revenueCat")).loadRevenueCatPlans();
+  },
+  async getOfferings() {
+    const Purchases = (await import("react-native-purchases")).default;
+    return Purchases.getOfferings();
+  },
+  async purchasePackage(pkg) {
+    const Purchases = (await import("react-native-purchases")).default;
+    return Purchases.purchasePackage(pkg as never);
+  },
+  async restorePurchases() {
+    const Purchases = (await import("react-native-purchases")).default;
+    return Purchases.restorePurchases();
+  },
   access: readCityUnlock,
   wait: (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
 };
@@ -50,6 +63,7 @@ export class RevenueCatCityPassBilling {
 
   async product(id: string): Promise<StoreProduct | undefined> {
     if (id !== cityPass.productIdentifier) return undefined;
+    if (!await this.dependencies.ensureConfigured()) return undefined;
     const plan = (await this.dependencies.loadPlans()).find(
       (candidate) => candidate.kind === "city_pass_72h" &&
         candidate.packageIdentifier === cityPass.packageIdentifier &&
@@ -60,10 +74,8 @@ export class RevenueCatCityPassBilling {
       : undefined;
   }
 
-  private async package(account: string): Promise<PurchasesPackage> {
-    const status = this.dependencies.configure();
-    if (!status.configured) throw new Error("REVENUECAT_UNAVAILABLE");
-    await this.dependencies.syncIdentity(account);
+  private async package(account: string): Promise<RevenueCatStorePackage> {
+    if (!await this.dependencies.ensureConfigured(account)) throw new Error("REVENUECAT_UNAVAILABLE");
     const offerings = await this.dependencies.getOfferings();
     const pkg = offerings.current?.availablePackages.find(
       (candidate) => candidate.identifier === cityPass.packageIdentifier &&
@@ -86,9 +98,7 @@ export class RevenueCatCityPassBilling {
 
   async restore(id: string, account: string): Promise<RestoreResult> {
     if (id !== cityPass.productIdentifier) throw new Error("CITY_PASS_PRODUCT_MISMATCH");
-    const status = this.dependencies.configure();
-    if (!status.configured) throw new Error("REVENUECAT_UNAVAILABLE");
-    await this.dependencies.syncIdentity(account);
+    if (!await this.dependencies.ensureConfigured(account)) throw new Error("REVENUECAT_UNAVAILABLE");
     await this.dependencies.restorePurchases();
     return { storeSynced: true };
   }
