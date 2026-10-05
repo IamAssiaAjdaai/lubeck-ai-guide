@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 import type { LiveWalkPresentation } from "../lib/liveWalkPresentation";
-import { colors, radius, shadows, spacing } from "../design/tokens";
+import { colors, radius, spacing } from "../design/tokens";
 import { usePremiumAccess } from "../hooks/usePremiumAccess";
 import { AppText, Card, PrimaryButton } from "./ui";
 import { NativeIcon } from "./NativeIcon";
@@ -28,15 +28,15 @@ export function NativeLiveWalkCard({
             ios="sparkles"
             android="auto_awesome"
             color={colors.primary}
-            size={20}
+            size={18}
           />
-          <AppText variant="label" style={styles.liveLabel}>
+          <AppText variant="caption" style={styles.liveLabel}>
             CITYWALK PREMIUM
           </AppText>
         </View>
-        <AppText variant="heading">Live Walk</AppText>
+        <AppText variant="label">Live Walk</AppText>
         <AppText variant="metadata" style={styles.secondary}>
-          Get live next-stop guidance, ETA and remaining time while you walk.
+          Live next-stop guidance, ETA, remaining time and adaptive trip controls.
         </AppText>
         {premium.status === "loading" ? (
           <AppText variant="metadata" style={styles.secondary}>
@@ -48,6 +48,7 @@ export function NativeLiveWalkCard({
           </AppText>
         ) : (
           <PrimaryButton
+            compact
             label="Unlock Live Walk"
             onPress={() => router.push("/premium")}
           />
@@ -58,33 +59,35 @@ export function NativeLiveWalkCard({
 
   const { props } = presentation;
   const showProgress = props.state !== "take_back" && props.totalStops > 0;
+
   return (
     <Card style={styles.card}>
-      <AppText variant="caption" style={styles.liveLabel}>
-        LIVE WALK
-      </AppText>
-
-      <View style={styles.stateRow}>
-        <NativeIcon
-          ios={
-            props.state === "arrived"
-              ? "checkmark.circle.fill"
-              : props.state === "take_back"
-                ? "arrow.uturn.backward.circle.fill"
-                : "location.fill"
-          }
-          android={
-            props.state === "arrived"
-              ? "check_circle"
-              : props.state === "take_back"
-                ? "undo"
-                : "place"
-          }
-          color={colors.primary}
-          size={22}
-        />
-        <AppText variant="metadata" style={styles.state}>
-          {props.stateLabel}
+      <View style={styles.topRow}>
+        <View style={styles.stateRow}>
+          <NativeIcon
+            ios={
+              props.state === "arrived"
+                ? "checkmark.circle.fill"
+                : props.state === "take_back"
+                  ? "arrow.uturn.backward.circle.fill"
+                  : "location.fill"
+            }
+            android={
+              props.state === "arrived"
+                ? "check_circle"
+                : props.state === "take_back"
+                  ? "undo"
+                  : "place"
+            }
+            color={colors.primary}
+            size={18}
+          />
+          <AppText variant="caption" style={styles.state}>
+            {props.stateLabel}
+          </AppText>
+        </View>
+        <AppText variant="caption" style={styles.liveLabel}>
+          LIVE WALK
         </AppText>
       </View>
 
@@ -94,14 +97,14 @@ export function NativeLiveWalkCard({
 
       {props.storyLabel ? (
         <View style={styles.distanceRow}>
-          <NativeIcon ios="book" android="menu_book" color={colors.textMuted} size={18} />
-          <AppText variant="label" style={styles.primaryMeta}>
+          <NativeIcon ios="book" android="menu_book" color={colors.textMuted} size={16} />
+          <AppText variant="metadata" style={styles.primaryMeta}>
             {props.storyLabel}
           </AppText>
         </View>
       ) : props.distanceEta ? (
         <View style={styles.distanceRow}>
-          <NativeIcon ios="figure.walk" android="directions_walk" color={colors.text} size={20} />
+          <NativeIcon ios="figure.walk" android="directions_walk" color={colors.text} size={18} />
           <AppText variant="label" style={styles.primaryMeta}>
             {props.distanceEta}
           </AppText>
@@ -109,15 +112,12 @@ export function NativeLiveWalkCard({
       ) : null}
 
       {showProgress ? (
-        <>
-          <ProgressDots
-            visited={props.visitedCount}
-            total={props.totalStops}
-          />
-          <AppText variant="metadata" style={styles.secondary}>
+        <View style={styles.progressBlock}>
+          <ProgressDots visited={props.visitedCount} total={props.totalStops} />
+          <AppText variant="caption" style={styles.secondary}>
             {props.progressLabel}
           </AppText>
-        </>
+        </View>
       ) : null}
 
       <View style={styles.divider} />
@@ -125,12 +125,12 @@ export function NativeLiveWalkCard({
       <View style={styles.timingRow}>
         <View style={styles.timingBlock}>
           <View style={styles.metaRow}>
-            <NativeIcon ios="clock" android="schedule" color={colors.textMuted} size={18} />
+            <NativeIcon ios="clock" android="schedule" color={colors.textMuted} size={16} />
             <AppText variant="label" style={styles.finishPrimary}>
               {props.remainingLabel}
             </AppText>
           </View>
-          <AppText variant="metadata" style={styles.secondary}>
+          <AppText variant="caption" style={styles.secondary}>
             {props.finishLabel}
           </AppText>
         </View>
@@ -141,10 +141,10 @@ export function NativeLiveWalkCard({
               <AppText variant="label" style={styles.schedule}>
                 {props.scheduleLabel ?? props.deadlineLabel}
               </AppText>
-              <NativeIcon ios="checkmark" android="check" color={colors.primary} size={16} />
+              <NativeIcon ios="checkmark" android="check" color={colors.primary} size={14} />
             </View>
             {props.scheduleLabel && props.deadlineLabel ? (
-              <AppText variant="metadata" style={styles.secondary}>
+              <AppText variant="caption" style={styles.secondary}>
                 {props.deadlineLabel}
               </AppText>
             ) : null}
@@ -154,6 +154,7 @@ export function NativeLiveWalkCard({
 
       {continueLabel && onContinue ? (
         <PrimaryButton
+          compact
           label={continueLabel}
           disabled={continueDisabled}
           onPress={onContinue}
@@ -170,6 +171,7 @@ function ProgressDots({
 }: Readonly<{ visited: number; total: number }>) {
   const count = Math.max(1, Math.min(total, 7));
   const current = Math.min(Math.max(visited, 0), count - 1);
+
   return (
     <View
       accessible
@@ -219,11 +221,13 @@ function ProgressDots({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderColor: colors.borderStrong,
-    borderRadius: 28,
-    gap: 10,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    gap: spacing.sm,
     padding: spacing.md,
-    ...shadows.card,
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
   premiumGate: {
     backgroundColor: colors.surface,
@@ -236,16 +240,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.xs,
   },
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.sm,
+  },
   liveLabel: {
     color: colors.primary,
     fontWeight: "800",
-    letterSpacing: 2.4,
+    letterSpacing: 1.6,
   },
   stateRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
-    marginTop: spacing.xs,
+    gap: spacing.xs,
   },
   state: {
     color: colors.textMuted,
@@ -253,24 +262,24 @@ const styles = StyleSheet.create({
   },
   destination: {
     color: colors.text,
-    fontSize: 28,
-    lineHeight: 34,
+    fontSize: 24,
+    lineHeight: 29,
     fontWeight: "800",
-    letterSpacing: -0.4,
+    letterSpacing: -0.3,
   },
   distanceRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
+    gap: spacing.xs,
   },
-  primaryMeta: { color: colors.text, fontSize: 17, lineHeight: 23 },
+  primaryMeta: { color: colors.text },
   secondary: { color: colors.textMuted },
+  progressBlock: { gap: 2 },
   progress: {
-    minHeight: 28,
+    minHeight: 22,
     flexDirection: "row",
     alignItems: "center",
-    marginTop: spacing.xs,
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
   },
   progressStep: {
     flexDirection: "row",
@@ -284,8 +293,8 @@ const styles = StyleSheet.create({
   },
   connectorComplete: { backgroundColor: colors.primary },
   dotOuter: {
-    width: 16,
-    height: 16,
+    width: 12,
+    height: 12,
     borderRadius: radius.pill,
     backgroundColor: colors.borderStrong,
     alignItems: "center",
@@ -293,34 +302,33 @@ const styles = StyleSheet.create({
   },
   dotComplete: { backgroundColor: colors.primary },
   dotActive: {
-    width: 26,
-    height: 26,
+    width: 20,
+    height: 20,
     backgroundColor: colors.primary,
   },
   dotInner: {
-    width: 14,
-    height: 14,
+    width: 10,
+    height: 10,
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: colors.border,
-    marginTop: spacing.xs,
   },
   timingRow: {
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "space-between",
-    gap: spacing.md,
+    gap: spacing.sm,
   },
-  timingBlock: { flex: 1, minWidth: 0, gap: 2 },
+  timingBlock: { flex: 1, minWidth: 0, gap: 1 },
   timingRight: { alignItems: "flex-end" },
-  metaRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  metaRow: { flexDirection: "row", alignItems: "center", gap: 5 },
   finishPrimary: { color: colors.text, fontWeight: "700" },
   schedule: { color: colors.primary, fontWeight: "700", textAlign: "right" },
   continueButton: {
-    marginTop: spacing.xs,
+    marginTop: 2,
     backgroundColor: colors.primary,
   },
 });
