@@ -1,4 +1,5 @@
 import { citywalkApi } from "../api/instance";
+import { clearDeletedAccountLocalData } from "./accountDeletionStorage";
 import { nativeAuthClient } from "./client";
 
 export async function deleteNativeAccount(userId: string, password: string) {
@@ -8,11 +9,14 @@ export async function deleteNativeAccount(userId: string, password: string) {
   });
   const result = await response.json();
   if (!response.ok || result.deleted !== true) return { error: { code: result.code ?? "UNAVAILABLE" } };
-  // Expo 1.7.2 clears SecureStore auth cookies/session cache before signOut sends
-  // its request, even when that request fails. No traveler storage is touched.
-  // The server has already revoked every session; never call that a failed delete.
-  try { await nativeAuthClient.signOut(); } catch { /* Retry local auth cleanup below. */ }
-  // Refresh is best effort; the Expo signOut hook has already cleared local auth.
+
+  // The server deletion is already committed. Local cleanup is therefore best
+  // effort and must never turn a successful hard delete into a false failure.
+  try { await clearDeletedAccountLocalData(userId); } catch { /* Device storage unavailable. */ }
+
+  // Expo clears SecureStore auth cookies/session cache before signOut sends its
+  // request, even when that request fails. The server has revoked every session.
+  try { await nativeAuthClient.signOut(); } catch { /* Local auth cleanup already attempted. */ }
   try { await nativeAuthClient.getSession(); } catch { /* Offline after server deletion. */ }
   return {};
 }
