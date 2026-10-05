@@ -172,6 +172,37 @@
   text-shadow: 0 2px 12px rgb(7 28 54 / 45%);
   transform: rotate(4deg);
 }
+.discovery {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: 5rem 2.5rem 5.5rem;
+  background: #fff;
+}
+.discoveryIntro { max-width: 44rem; }
+.discoveryIntro h2 { margin-top: .75rem; font-size: clamp(2rem, 3.4vw, 3.2rem); line-height: 1.05; font-weight: 780; letter-spacing: -.055em; }
+.discoveryIntro > p:last-child { margin-top: 1rem; max-width: 40rem; color: var(--landing-text); font-size: 1rem; line-height: 1.7; }
+.discoveryGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; margin-top: 2.3rem; }
+.featureCard { min-width: 0; overflow: hidden; border: 1px solid #e4eaf1; border-radius: 1rem; background: #fff; box-shadow: 0 10px 26px rgb(7 28 54 / 5%); }
+.featureMedia { min-height: 12.5rem; background-color: #eef3f8; background-position: center; background-size: cover; }
+.storyMedia { background-image: linear-gradient(180deg, transparent 58%, rgb(7 28 54 / 22%)), url('/landmarks/holstentor.jpg'); }
+.audioMedia { background-image: linear-gradient(180deg, transparent 58%, rgb(7 28 54 / 22%)), url('/landmarks/marienkirche.jpg'); }
+.featureBody { display: flex; gap: .85rem; align-items: flex-start; padding: 1.2rem; }
+.featureIcon { display: inline-flex; width: 2.4rem; height: 2.4rem; flex: 0 0 2.4rem; align-items: center; justify-content: center; border-radius: .8rem; background: #edf3ff; color: var(--landing-blue); }
+.featureIcon svg { width: 1.45rem; height: 1.45rem; }
+.audioFeatureIcon { background: #f2ecff; color: #7652d6; }
+.guideFeatureIcon { background: #e8f4ff; color: #155caf; }
+.featureBody h3 { font-size: 1.05rem; font-weight: 730; letter-spacing: -.025em; }
+.featureBody p { margin-top: .35rem; color: var(--landing-text); font-size: .82rem; line-height: 1.6; }
+.guideCard { display: flex; flex-direction: column; }
+.guidePreview { min-height: 12.5rem; display: flex; flex-direction: column; gap: .75rem; padding: 1.15rem; background: linear-gradient(180deg, #f6f9ff, #edf4ff); }
+.guideLabel { color: var(--landing-blue); font-size: .62rem; font-weight: 800; letter-spacing: .16em; }
+.guideQuestion { align-self: flex-end; max-width: 85%; padding: .7rem .85rem; border-radius: .9rem .9rem .25rem .9rem; background: #fff; color: #243750; font-size: .78rem; box-shadow: 0 4px 14px rgb(7 28 54 / 6%); }
+.guideAnswer { display: flex; gap: .6rem; align-items: flex-start; max-width: 94%; padding: .75rem .85rem; border-radius: .9rem .9rem .9rem .25rem; background: #fff; color: #243750; box-shadow: 0 4px 14px rgb(7 28 54 / 6%); }
+.guideAnswer svg { width: 1.35rem; height: auto; flex: 0 0 1.35rem; color: var(--landing-blue); margin-top: .1rem; }
+.guideAnswer p { font-size: .72rem; line-height: 1.55; }
+.guideSourceNote { margin-top: auto; color: #67768a; font-size: .62rem; }
+.discoveryFootnote { margin-top: 1rem !important; color: #67768a; font-size: .72rem; line-height: 1.5; }
+
 .launchInfo { display: flex; align-items: center; justify-content: space-between; gap: 2rem; margin: 1rem auto 0; max-width: 75rem; padding: 2rem; border: 1px solid var(--landing-line); border-radius: 1rem; background: #f5f8ff; }
 .launchInfo > div { max-width: 39rem; }
 .launchInfo h2 { margin-top: .6rem; font-size: 1.6rem; font-weight: 730; line-height: 1.2; letter-spacing: -.04em; }
@@ -216,6 +247,11 @@
   .returnPhoto { min-height: 19rem; order: 2; background-position: center 42%; }
   .returnPhoto p { top: 1.75rem; inset-inline-end: 1.5rem; }
   .returnExample { max-width: none; }
+  .discovery { padding: 3.5rem 1.5rem 4rem; }
+  .discoveryGrid { grid-template-columns: 1fr; gap: 1rem; margin-top: 1.75rem; }
+  .featureMedia, .guidePreview { min-height: 13.5rem; }
+  .featureCard { max-width: 34rem; width: 100%; margin-inline: auto; }
+  .discoveryFootnote { max-width: 34rem; margin-inline: auto; }
   .launchInfo { flex-direction: column; align-items: start; padding: 1.5rem; margin-inline: 1.5rem; gap: 1.25rem; }
   .previewNote { padding: 1.5rem; flex-direction: column; gap: .3rem; }
 }
