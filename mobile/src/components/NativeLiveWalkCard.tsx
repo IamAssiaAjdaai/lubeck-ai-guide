@@ -1,7 +1,9 @@
+import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 import type { LiveWalkPresentation } from "../lib/liveWalkPresentation";
 import { colors, radius, shadows, spacing } from "../design/tokens";
+import { usePremiumAccess } from "../hooks/usePremiumAccess";
 import { AppText, Card, PrimaryButton } from "./ui";
 import { NativeIcon } from "./NativeIcon";
 
@@ -16,6 +18,44 @@ export function NativeLiveWalkCard({
   onContinue?: () => void;
   continueDisabled?: boolean;
 }>) {
+  const premium = usePremiumAccess();
+
+  if (!premium.active) {
+    return (
+      <Card style={styles.premiumGate}>
+        <View style={styles.premiumHeader}>
+          <NativeIcon
+            ios="sparkles"
+            android="auto_awesome"
+            color={colors.primary}
+            size={20}
+          />
+          <AppText variant="label" style={styles.liveLabel}>
+            CITYWALK PREMIUM
+          </AppText>
+        </View>
+        <AppText variant="heading">Live Walk</AppText>
+        <AppText variant="metadata" style={styles.secondary}>
+          Get live next-stop guidance, ETA and remaining time while you walk.
+        </AppText>
+        {premium.status === "loading" ? (
+          <AppText variant="metadata" style={styles.secondary}>
+            Checking Premium access…
+          </AppText>
+        ) : premium.status === "unavailable" ? (
+          <AppText variant="metadata" style={styles.secondary}>
+            Premium access could not be checked right now. Your basic walk still works.
+          </AppText>
+        ) : (
+          <PrimaryButton
+            label="Unlock Live Walk"
+            onPress={() => router.push("/premium")}
+          />
+        )}
+      </Card>
+    );
+  }
+
   const { props } = presentation;
   const showProgress = props.state !== "take_back" && props.totalStops > 0;
   return (
@@ -184,6 +224,17 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: spacing.md,
     ...shadows.card,
+  },
+  premiumGate: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    gap: spacing.sm,
+    padding: spacing.md,
+  },
+  premiumHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
   },
   liveLabel: {
     color: colors.primary,
