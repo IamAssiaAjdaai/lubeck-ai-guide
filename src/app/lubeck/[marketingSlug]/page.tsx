@@ -5,11 +5,9 @@ import { connection } from "next/server";
 
 import { CitywalkLogo } from "@/components/brand/CitywalkLogo";
 import MarketingLandingTracker from "@/components/marketing/MarketingLandingTracker";
-import {
-  appendMarketingAttributionToPath,
-  readMarketingAttribution,
-} from "@/lib/marketingAttribution";
+import { readMarketingAttribution } from "@/lib/marketingAttribution";
 import { getPublishedMarketingPageByPath } from "@/lib/marketing/publicRepository.server";
+import { buildNativeAppHandoffPath } from "@/lib/nativeAppHandoff";
 
 type MarketingPageProps = Readonly<{
   params: Promise<{
@@ -58,10 +56,11 @@ export default async function MarketingPage({
   if (!page || page.city.slug !== "lubeck") notFound();
 
   const attribution = readMarketingAttribution((await searchParams) ?? {});
-  const plannerHref = appendMarketingAttributionToPath(
-    "/en/lubeck",
+  const appHandoffHref = buildNativeAppHandoffPath({
+    citySlug: page.city.slug,
+    marketingSlug: page.slug,
     attribution,
-  );
+  });
   const bodyParagraphs = page.body
     .split(/\n\s*\n/)
     .map((paragraph) => paragraph.trim())
@@ -102,13 +101,13 @@ export default async function MarketingPage({
                 landingVariant={page.slug}
                 campaignSlug={page.campaign?.slug}
                 attribution={attribution}
-                ctaHref={page.cta ? plannerHref : undefined}
+                ctaHref={page.cta ? appHandoffHref : undefined}
                 ctaLabel={page.cta}
               />
             </div>
 
             <p className="mt-5 text-sm text-text-muted">
-              Tell CITYWALK how much time you have. It builds the walk for you.
+              Tell CITYWALK how much time you have. It builds the walk for you in the app.
             </p>
           </div>
         </section>
