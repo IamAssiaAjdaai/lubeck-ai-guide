@@ -126,95 +126,154 @@ export function PlaceFields({
     <>
       <input name="publicationStatus" type="hidden" value={place?.publicationStatus ?? "draft"} />
       {place ? <input name="expectedUpdatedAt" type="hidden" value={place.updatedAt.toISOString()} /> : null}
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="City">
-          <select className={inputClass} defaultValue={place?.cityId} name="cityId" required>
-            {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
-          </select>
-        </Field>
-        <Field label="Slug">
-          <input className={inputClass} defaultValue={place?.slug} name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required />
-        </Field>
-        <Field label="Category">
-          <select className={inputClass} defaultValue={place?.category ?? "see"} name="category">
-            {PLACE_CATEGORIES.map((value) => <option key={value}>{value}</option>)}
-          </select>
-        </Field>
-        <Field label="Duration (minutes)">
-          <input className={inputClass} defaultValue={place?.durationMinutes ?? 30} max={1440} min={1} name="durationMinutes" required type="number" />
-        </Field>
-        <Field label="Latitude">
-          <input className={inputClass} defaultValue={place?.latitude} max={90} min={-90} name="latitude" required step="any" type="number" />
-        </Field>
-        <Field label="Longitude">
-          <input className={inputClass} defaultValue={place?.longitude} max={180} min={-180} name="longitude" required step="any" type="number" />
-        </Field>
-        <Field label="Environment">
-          <select className={inputClass} defaultValue={place?.environment ?? "outdoor"} name="environment">
-            {PLACE_ENVIRONMENTS.map((value) => <option key={value}>{value}</option>)}
-          </select>
-        </Field>
-        <Field label="Pricing">
-          <select className={inputClass} defaultValue={place?.pricing ?? "unknown"} name="pricing">
-            {PLACE_PRICING.map((value) => <option key={value}>{value}</option>)}
-          </select>
-        </Field>
-        <Field label="Operational status">
-          <select className={inputClass} defaultValue={place?.status ?? ""} name="status">
-            <option value="">Not specified</option>
-            {PLACE_STATUSES.map((value) => <option key={value}>{value}</option>)}
-          </select>
-        </Field>
-        <Field label="Status verified">
-          <input className={inputClass} defaultValue={place?.statusVerifiedAt ?? ""} name="statusVerifiedAt" type="date" />
-        </Field>
-        <Field label="Visit note verified">
-          <input className={inputClass} defaultValue={place?.visitNoteVerifiedAt ?? ""} name="visitNoteVerifiedAt" type="date" />
-        </Field>
-        <Field label="Visit note valid until">
-          <input className={inputClass} defaultValue={place?.visitNoteValidUntil ?? ""} name="visitNoteValidUntil" type="date" />
-        </Field>
-      </div>
-      <Field label="Image reference">
-        <input className={inputClass} defaultValue={place?.image ?? ""} name="image" />
-      </Field>
-      <Field label="Tags (comma-separated slugs)">
-        <input
-          className={inputClass}
-          defaultValue={(place?.tags.map(({ slug }) => slug) ?? []).join(", ")}
-          list="content-tag-options"
-          name="tagSlugs"
-        />
-        <datalist id="content-tag-options">
-          {tags.map((tag) => <option key={tag.id} value={tag.slug} />)}
-        </datalist>
-      </Field>
-      <LocalizationFields
-        editingLocale={editingLocale}
-        locale={localization?.locale}
-        name={localization?.name}
-        shortDescription={localization?.shortDescription}
+
+      <EditorSection
+        description="Where this place belongs and how CITYWALK plans around it."
+        title="Basics"
       >
-        <Field label="Description">
-          <textarea className={inputClass} defaultValue={localization?.description ?? ""} name="description" rows={5} />
-        </Field>
-        <Field label="Story">
-          <textarea className={inputClass} defaultValue={localization?.story ?? ""} name="story" rows={8} />
-        </Field>
-        <Field label="Visit notes">
-          <textarea className={inputClass} defaultValue={localization?.visitNotes ?? ""} name="visitNotes" rows={4} />
-        </Field>
-        <Field label="Facts (one Label | Value per line)">
-          <textarea
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field label="City">
+            <select className={inputClass} defaultValue={place?.cityId} name="cityId" required>
+              {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
+            </select>
+          </Field>
+          <Field label="URL slug">
+            <input className={inputClass} defaultValue={place?.slug} name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required />
+          </Field>
+          <Field label="Category">
+            <select className={inputClass} defaultValue={place?.category ?? "see"} name="category">
+              <option value="see">See &amp; discover</option>
+              <option value="eat">Eat &amp; drink</option>
+              <option value="fun">Fun &amp; activities</option>
+            </select>
+          </Field>
+          <Field label="Typical visit (minutes)">
+            <input className={inputClass} defaultValue={place?.durationMinutes ?? 30} max={1440} min={1} name="durationMinutes" required type="number" />
+          </Field>
+          <Field label="Latitude">
+            <input className={inputClass} defaultValue={place?.latitude} max={90} min={-90} name="latitude" required step="any" type="number" />
+          </Field>
+          <Field label="Longitude">
+            <input className={inputClass} defaultValue={place?.longitude} max={180} min={-180} name="longitude" required step="any" type="number" />
+          </Field>
+          <Field label="Environment">
+            <select className={inputClass} defaultValue={place?.environment ?? "outdoor"} name="environment">
+              {PLACE_ENVIRONMENTS.map((value) => <option key={value}>{value}</option>)}
+            </select>
+          </Field>
+          <Field label="Pricing">
+            <select className={inputClass} defaultValue={place?.pricing ?? "unknown"} name="pricing">
+              {PLACE_PRICING.map((value) => <option key={value}>{value}</option>)}
+            </select>
+          </Field>
+        </div>
+      </EditorSection>
+
+      <EditorSection
+        description="What a traveler sees, reads and hears in the selected language."
+        title="Traveler content"
+      >
+        <LocalizationFields
+          editingLocale={editingLocale}
+          locale={localization?.locale}
+          name={localization?.name}
+          shortDescription={localization?.shortDescription}
+        >
+          <Field label="Description">
+            <textarea className={inputClass} defaultValue={localization?.description ?? ""} name="description" rows={5} />
+          </Field>
+          <Field label="Story">
+            <textarea className={inputClass} defaultValue={localization?.story ?? ""} name="story" rows={8} />
+          </Field>
+          <Field label="Visit notes">
+            <textarea className={inputClass} defaultValue={localization?.visitNotes ?? ""} name="visitNotes" rows={4} />
+          </Field>
+          <Field label="Quick facts">
+            <textarea
+              className={inputClass}
+              defaultValue={(localization?.facts ?? []).map((fact) => `${fact.label} | ${fact.value}`).join("\n")}
+              name="facts"
+              placeholder={"Built | 1464\nStyle | Brick Gothic"}
+              rows={5}
+            />
+            <p className="text-xs font-normal text-text-secondary">
+              One fact per line. Use “Label | Value”.
+            </p>
+          </Field>
+        </LocalizationFields>
+        <AuthoredLocales rows={place?.localizations} />
+      </EditorSection>
+
+      <EditorSection
+        description="Help discovery, route filtering and future content reuse."
+        title="Discovery"
+      >
+        <Field label="Discovery tags">
+          <input
             className={inputClass}
-            defaultValue={(localization?.facts ?? []).map((fact) => `${fact.label} | ${fact.value}`).join("\n")}
-            name="facts"
-            rows={6}
+            defaultValue={(place?.tags.map(({ slug }) => slug) ?? []).join(", ")}
+            list="content-tag-options"
+            name="tagSlugs"
+            placeholder="hidden-gem, architecture, coffee"
           />
+          <datalist id="content-tag-options">
+            {tags.map((tag) => <option key={tag.id} value={tag.slug} />)}
+          </datalist>
+          <p className="text-xs font-normal text-text-secondary">
+            Existing tags are suggested automatically. Separate multiple tags with commas.
+          </p>
         </Field>
-      </LocalizationFields>
-      <AuthoredLocales rows={place?.localizations} />
+        <Field label="Legacy image fallback">
+          <input className={inputClass} defaultValue={place?.image ?? ""} name="image" placeholder="/images/..." />
+          <p className="text-xs font-normal text-text-secondary">
+            Prefer the Media section below for new approved images. Keep this only for legacy fallback content.
+          </p>
+        </Field>
+      </EditorSection>
+
+      <EditorSection
+        description="Keep time-sensitive traveler information explicit and reviewable."
+        title="Operational freshness"
+      >
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field label="Operational status">
+            <select className={inputClass} defaultValue={place?.status ?? ""} name="status">
+              <option value="">Not specified</option>
+              {PLACE_STATUSES.map((value) => <option key={value}>{value}</option>)}
+            </select>
+          </Field>
+          <Field label="Status verified">
+            <input className={inputClass} defaultValue={place?.statusVerifiedAt ?? ""} name="statusVerifiedAt" type="date" />
+          </Field>
+          <Field label="Visit note verified">
+            <input className={inputClass} defaultValue={place?.visitNoteVerifiedAt ?? ""} name="visitNoteVerifiedAt" type="date" />
+          </Field>
+          <Field label="Visit note valid until">
+            <input className={inputClass} defaultValue={place?.visitNoteValidUntil ?? ""} name="visitNoteValidUntil" type="date" />
+          </Field>
+        </div>
+      </EditorSection>
     </>
+  );
+}
+
+function EditorSection({
+  children,
+  description,
+  title,
+}: Readonly<{
+  children: ReactNode;
+  description: string;
+  title: string;
+}>) {
+  return (
+    <section className="rounded-2xl border border-border bg-slate-50/70 p-4 sm:p-5">
+      <div className="mb-5">
+        <h2 className="font-extrabold">{title}</h2>
+        <p className="mt-1 text-xs leading-5 text-text-secondary">{description}</p>
+      </div>
+      <div className="space-y-5">{children}</div>
+    </section>
   );
 }
 
