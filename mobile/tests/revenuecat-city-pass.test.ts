@@ -4,7 +4,7 @@ import { CITYWALK_CITY_PASS_72H } from "@citywalk/traveler-core";
 import {
   RevenueCatCityPassBilling,
   type RevenueCatCityPassDependencies,
-} from "../src/lib/revenueCatCityPass";
+} from "../src/lib/revenueCatCityPassCore";
 
 const pass = CITYWALK_CITY_PASS_72H.lubeck;
 const storePackage = {
