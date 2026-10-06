@@ -37,12 +37,16 @@ export default async function MarketingCampaignPage({
     throw error;
   }
   const options = await getMarketingEditorOptions();
+  const city = options.cities.find(({ id: cityId }) => cityId === campaign.cityId);
   const canEdit = options.canManage && campaign.status === "draft";
+  const marketingHref = city
+    ? `/admin/marketing?city=${encodeURIComponent(city.slug)}`
+    : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
-        ← Marketing
+      <Link className="text-sm font-semibold text-primary hover:underline" href={marketingHref}>
+        ← {city ? `${city.name} Marketing` : "Marketing"}
       </Link>
       <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
         <AdminPageHeader
@@ -58,7 +62,7 @@ export default async function MarketingCampaignPage({
           action={updateMarketingCampaignAction.bind(null, campaign.id)}
           submitLabel="Save campaign changes"
         >
-          <CampaignFields campaign={campaign} cities={options.cities} />
+          <CampaignFields campaign={campaign} cities={city ? [city] : options.cities} />
         </MarketingFormShell>
       ) : (
         <p className="surface-card mt-6 p-5 text-sm leading-6 text-text-secondary">
