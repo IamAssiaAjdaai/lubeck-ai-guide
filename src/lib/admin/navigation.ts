@@ -59,6 +59,13 @@ export const ADMIN_SECTIONS = [
     capability: "translations:view",
   },
   {
+    id: "marketing",
+    label: "Marketing",
+    href: "/admin/marketing",
+    icon: "megaphone",
+    capability: "marketing:view",
+  },
+  {
     id: "publishing",
     label: "Publishing",
     href: "/admin/publishing",

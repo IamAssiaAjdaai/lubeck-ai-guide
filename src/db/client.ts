@@ -8,6 +8,7 @@ import * as citywalkSchema from "@/db/schema";
 import * as commerceSchema from "@/db/commerceSchema";
 import * as travelerSchema from "@/db/travelerSchema";
 import * as rateLimitSchema from "@/db/rateLimitSchema";
+import * as marketingSchema from "@/db/marketingSchema";
 
 export const databaseSchema = {
   ...citywalkSchema,
@@ -15,6 +16,7 @@ export const databaseSchema = {
   ...travelerSchema,
   ...commerceSchema,
   ...rateLimitSchema,
+  ...marketingSchema,
 };
 
 function createPoolDatabase(databasePool: Pool) {
