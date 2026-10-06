@@ -1349,24 +1349,6 @@ export function NativeWalkFlow({
                 </>
               ) : null}
 
-              {premium.active && panel === "back" ? (
-                <View style={styles.section}>
-                  <PrimaryButton
-                    label={t.tripStart}
-                    onPress={() => back(journey.settings.start)}
-                  />
-                  <WalkPlacePicker
-                    label={t.destination}
-                    options={options}
-                    selected={[]}
-                    onSelect={(slug) => {
-                      const place = places.find((candidate) => candidate.slug === slug);
-                      if (place) back(place.coordinates);
-                    }}
-                  />
-                </View>
-              ) : null}
-
               {current ? (
                 <View style={styles.currentStopPanel}>
                   {!isLiveActive ? (
@@ -1516,85 +1498,8 @@ export function NativeWalkFlow({
                   onPress={() => setShowManageWalk((value) => !value)}
                 />
               )}
-              {showManageWalk ? (
-                isLiveActive ? (
-                  <View style={styles.liveMenu}>
-                    <PrimaryButton
-                      compact
-                      wrapLabel
-                      tone="secondary"
-                      label={t.add}
-                      disabled={journey.takeBack === true}
-                      onPress={() => {
-                        setShowManageWalk(false);
-                        setProposalKind("adaptation");
-                        setProposalMessage("");
-                        setPanel("add");
-                      }}
-                      leadingIcon={<NativeIcon ios="plus" android="add" />}
-                    />
-                    <PrimaryButton
-                      compact
-                      wrapLabel
-                      tone="secondary"
-                      label={t.shorten}
-                      disabled={!current || journey.takeBack === true}
-                      onPress={() => {
-                        setShowManageWalk(false);
-                        shorten();
-                      }}
-                      leadingIcon={
-                        <NativeIcon
-                          ios="arrow.triangle.branch"
-                          android="alt_route"
-                        />
-                      }
-                    />
-                    <PrimaryButton
-                      compact
-                      wrapLabel
-                      tone="secondary"
-                      label={t.takeBack}
-                      onPress={() => {
-                        setShowManageWalk(false);
-                        setPanel("back");
-                      }}
-                      leadingIcon={
-                        <NativeIcon ios="arrow.uturn.backward" android="undo" />
-                      }
-                    />
-                    <PrimaryButton
-                      compact
-                      wrapLabel
-                      tone="secondary"
-                      label={t.finish}
-                      busy={updating}
-                      onPress={() => {
-                        const next = {
-                          ...journey,
-                          finishedAt: Date.now(),
-                          historyDistance:
-                            journey.historyDistance +
-                            (!current && journey.finish
-                              ? (calculateDistanceMeters(
-                                  journey.position,
-                                  journey.finish,
-                                ) ?? 0)
-                              : 0),
-                        };
-                        void update(next).then(async (ok) => {
-                          if (!ok) return;
-                          await completeCitywalkLiveWalk();
-                          setLiveSession(undefined);
-                          setActiveMode("basic");
-                          setShowManageWalk(false);
-                          setStage("finished");
-                        });
-                      }}
-                    />
-                  </View>
-                ) : (
-                  <View style={styles.section}>
+              {showManageWalk && !isLiveActive ? (
+                <View style={styles.section}>
                     {saveFeedback}
                     <PrimaryButton
                       label={saveLabel}
@@ -1622,7 +1527,6 @@ export function NativeWalkFlow({
                       />
                     ) : null}
                   </View>
-                )
               ) : null}
 
               {!isLiveActive ? (
@@ -1772,6 +1676,91 @@ export function NativeWalkFlow({
           />
         </>
       ) : null}
+      <Modal
+        visible={isLiveActive && showManageWalk}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowManageWalk(false)}
+      >
+        <Screen includeTopSafeArea navigation={false} brand={false}>
+          <SectionTitle>{t.tripControls}</SectionTitle>
+          <View style={styles.liveMenu}>
+            <PrimaryButton
+              wrapLabel
+              tone="secondary"
+              label={t.add}
+              disabled={journey?.takeBack === true}
+              onPress={() => {
+                setShowManageWalk(false);
+                setProposalKind("adaptation");
+                setProposalMessage("");
+                setPanel("add");
+              }}
+              leadingIcon={<NativeIcon ios="plus" android="add" />}
+            />
+            <PrimaryButton
+              wrapLabel
+              tone="secondary"
+              label={t.shorten}
+              disabled={!current || journey?.takeBack === true}
+              onPress={() => {
+                setShowManageWalk(false);
+                shorten();
+              }}
+              leadingIcon={
+                <NativeIcon ios="arrow.triangle.branch" android="alt_route" />
+              }
+            />
+            <PrimaryButton
+              wrapLabel
+              tone="secondary"
+              label={t.takeBack}
+              onPress={() => {
+                setShowManageWalk(false);
+                setPanel("back");
+              }}
+              leadingIcon={
+                <NativeIcon ios="arrow.uturn.backward" android="undo" />
+              }
+            />
+            <PrimaryButton
+              wrapLabel
+              tone="secondary"
+              label={t.finish}
+              busy={updating}
+              onPress={() => {
+                if (!journey) return;
+                const next = {
+                  ...journey,
+                  finishedAt: Date.now(),
+                  historyDistance:
+                    journey.historyDistance +
+                    (!current && journey.finish
+                      ? (calculateDistanceMeters(
+                          journey.position,
+                          journey.finish,
+                        ) ?? 0)
+                      : 0),
+                };
+                void update(next).then(async (ok) => {
+                  if (!ok) return;
+                  await completeCitywalkLiveWalk();
+                  setLiveSession(undefined);
+                  setActiveMode("basic");
+                  setShowManageWalk(false);
+                  setStage("finished");
+                });
+              }}
+            />
+            <PrimaryButton
+              wrapLabel
+              tone="secondary"
+              label={translate(locale, "common.close")}
+              onPress={() => setShowManageWalk(false)}
+            />
+          </View>
+        </Screen>
+      </Modal>
       <SaveAccountGate visible={saveGate} onClose={() => setSaveGate(false)} />
       <Modal visible={!!rebuildConfirmation} animationType="slide" presentationStyle="pageSheet"
         onRequestClose={() => { if (!updateLock.current) setRebuildConfirmation(undefined); }}>
@@ -1785,7 +1774,7 @@ export function NativeWalkFlow({
         </Screen>
       </Modal>
       <Modal
-        visible={(premium.active && panel === "add") || !!proposed}
+        visible={(premium.active && (panel === "add" || panel === "back")) || !!proposed}
         animationType="slide"
         presentationStyle="pageSheet"
         onRequestClose={() => {
@@ -1807,6 +1796,26 @@ export function NativeWalkFlow({
               selected={[]} onSelect={add} />
             {!options.some(p => ![...journey.visited, ...journey.remaining].includes(p.value)) ?
               <StatusMessage>{t.noEligible}</StatusMessage> : null}
+          </> : panel === "back" && journey ? <>
+            <SectionTitle>{t.takeBack}</SectionTitle>
+            <PrimaryButton
+              label={t.tripStart}
+              onPress={() => back(journey.settings.start)}
+            />
+            <WalkPlacePicker
+              label={t.destination}
+              options={options}
+              selected={[]}
+              onSelect={(slug) => {
+                const place = places.find((candidate) => candidate.slug === slug);
+                if (place) back(place.coordinates);
+              }}
+            />
+            <PrimaryButton
+              tone="secondary"
+              label={translate(locale, "common.close")}
+              onPress={() => setPanel(undefined)}
+            />
           </> : <>
           <SectionTitle>{t.confirm}</SectionTitle>
           <AppText>{t.changeHelp}</AppText>
