@@ -3,6 +3,7 @@ import {
   Images,
   Languages,
   MapPin,
+  Megaphone,
   Route,
 } from "lucide-react";
 import Link from "next/link";
@@ -59,6 +60,12 @@ export default async function EditCityPage({ params, searchParams }: { params: P
       description: `${city.localizations.length} authored city locales`,
       icon: Languages,
     },
+    {
+      href: `/admin/marketing?city=${city.slug}`,
+      title: "Marketing",
+      description: "Campaigns, pages and social content",
+      icon: Megaphone,
+    },
   ] as const;
 
   return <section>
@@ -69,7 +76,7 @@ export default async function EditCityPage({ params, searchParams }: { params: P
       <span className="text-sm text-text-secondary">{city.slug} · {city.countryCode ?? "—"}</span>
     </div>
 
-    <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
       {workspaceLinks.map(({ description, href, icon: Icon, title }) => (
         <Link
           className="surface-card p-5 transition hover:border-primary/30 hover:shadow-md"
