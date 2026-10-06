@@ -35,6 +35,10 @@ export function resetEmailConfiguration() {
   return authEmailConfiguration();
 }
 
+export function deletionEmailConfiguration() {
+  return authEmailConfiguration();
+}
+
 function requestLocale(request?: Request) {
   const selected = request?.headers.get("x-citywalk-locale");
   return isSharedLocale(selected) ? selected : "en";
@@ -112,6 +116,34 @@ export async function deliverPasswordResetEmail(
     subject: t(locale, "lifecycle.emailSubject"),
     text: `${t(locale, "lifecycle.emailBody")}\n\n${link.toString()}\n\n${t(locale, "lifecycle.emailIgnore")}`,
     failureCode: "reset_email_delivery_failed",
+  });
+}
+
+export async function sendAccountDeletionVerificationEmail(
+  input: AuthEmailInput & Readonly<{ token: string }>,
+) {
+  // Match password recovery's anti-enumeration behavior: validate provider config
+  // before returning, but schedule provider delivery after the response.
+  authEmailConfiguration();
+  after(() => deliverAccountDeletionVerificationEmail(input));
+}
+
+export async function deliverAccountDeletionVerificationEmail(
+  input: AuthEmailInput & Readonly<{ token: string }>,
+) {
+  const { key, from, origin } = authEmailConfiguration();
+  const link = new URL("/account-deletion", origin);
+  // Fragments stay out of HTTP request logs. The browser removes the token from
+  // the visible URL before it can be submitted to the confirmation endpoint.
+  link.hash = new URLSearchParams({ token: input.token }).toString();
+
+  await sendResendEmail({
+    key,
+    from,
+    to: input.user.email,
+    subject: "Confirm your CITYWALK account deletion",
+    text: `A request was made to permanently delete your CITYWALK account.\n\nConfirm the request within 30 minutes:\n${link.toString()}\n\nIf you did not request this, you can ignore this email. Your account will not be deleted.`,
+    failureCode: "account_deletion_email_delivery_failed",
   });
 }
 
