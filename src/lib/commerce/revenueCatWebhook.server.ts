@@ -18,7 +18,7 @@ const ANONYMOUS_PREFIX = "$RCAnonymousID:";
 
 const PRODUCT_SLUG_BY_REVENUECAT_PRODUCT = Object.freeze({
   "com.citywalk.premium.monthly": "citywalk-premium",
-  "com.citywalk.premium.yearly": "citywalk-premium",
+  "com.citywalk.premium.annual": "citywalk-premium",
   "com.citywalk.lubeck.pass72h": "lubeck-digital-guide-pass-72h",
 });
 
@@ -317,7 +317,7 @@ export async function processRevenueCatWebhookEvent(
       );
 
     const isPremiumProduct = providerProductId === "com.citywalk.premium.monthly"
-      || providerProductId === "com.citywalk.premium.yearly";
+      || providerProductId === "com.citywalk.premium.annual";
     if (!policy.revokeImmediately && isPremiumProduct && !currentPeriodEndsAt) {
       return "ignored" as const;
     }
