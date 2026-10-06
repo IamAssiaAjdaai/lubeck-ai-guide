@@ -7,6 +7,7 @@ import {
   Languages,
   LayoutDashboard,
   MapPin,
+  Megaphone,
   Route,
   ShieldCheck,
   Users,
@@ -31,6 +32,7 @@ const sectionIcons: Record<AdminSection["icon"], LucideIcon> = {
   images: Images,
   "book-open": BookOpen,
   languages: Languages,
+  megaphone: Megaphone,
   "badge-check": BadgeCheck,
   users: Users,
 };
@@ -60,7 +62,7 @@ export function AdminShell({
                 CITYWALK
               </span>
               <span className="block text-xs text-text-secondary">
-                Admin Console
+                Control Center
               </span>
             </span>
           </Link>
