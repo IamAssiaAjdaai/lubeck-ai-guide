@@ -48,6 +48,7 @@ export function AdminShell({
   context,
 }: Readonly<{ children: ReactNode; context: AdminContext }>) {
   const sections = getVisibleAdminSections(context.staff);
+  const primarySections = sections.filter(({ id }) => ["dashboard", "cities", "commerce", "staff"].includes(id));
 
   return (
     <div className="min-h-screen bg-[#f6f7fb] text-text-primary">
@@ -61,9 +62,7 @@ export function AdminShell({
               <span className="block text-sm font-extrabold tracking-[0.12em]">
                 CITYWALK
               </span>
-              <span className="block text-xs text-text-secondary">
-                Control Center
-              </span>
+              <span className="block text-xs text-text-secondary">City CMS</span>
             </span>
           </Link>
           <AdminLogoutButton />
@@ -82,7 +81,7 @@ export function AdminShell({
             </span>
           </div>
           <nav aria-label="Admin sections" className="mt-3 grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-1">
-            {sections.map((section) => {
+            {primarySections.map((section) => {
               const Icon = sectionIcons[section.icon];
               return (
                 <Link
@@ -96,6 +95,7 @@ export function AdminShell({
               );
             })}
           </nav>
+          <p className="mt-4 border-t border-border px-3 pt-4 text-xs leading-5 text-text-secondary">Choose a city to manage places, walks, media, languages, marketing and publishing.</p>
         </aside>
         <main className="min-w-0">{children}</main>
       </div>
