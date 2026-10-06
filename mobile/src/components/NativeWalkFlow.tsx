@@ -219,7 +219,8 @@ export function NativeWalkFlow({
   const [buildError, setBuildError] = useState<"empty" | "error">();
   const [buildStage, setBuildStage] = useState<WalkBuildStage>("matching");
   const [rating, setRating] = useState<string[]>([]),
-    [fit, setFit] = useState<string[]>([]);
+    [fit, setFit] = useState<string[]>([]),
+    [feedbackTags, setFeedbackTags] = useState<string[]>([]);
   const [proposalMessage, setProposalMessage] = useState("");
   const [proposalKind, setProposalKind] = useState<"adaptation" | "take_back">(
     "adaptation",
@@ -676,7 +677,7 @@ export function NativeWalkFlow({
       setStartSlug(places[0]?.slug ?? ""); setEndSlug(places[0]?.slug ?? "");
       setGps(undefined); setStartMode("place"); setEndMode("loop");
       setShowMap(false); setBuildStage("matching");
-      setNow(Date.now()); setGeneratedAt(Date.now()); setRating([]); setFit([]);
+      setNow(Date.now()); setGeneratedAt(Date.now()); setRating([]); setFit([]); setFeedbackTags([]);
       setReviewSettled(undefined); setShowPrivateFeedback(undefined);
       setRebuildConfirmation(undefined); setStage("plan");
     } catch { setMessage(messages.tripSaveFailed); }
@@ -1692,28 +1693,64 @@ export function NativeWalkFlow({
               size={38}
             />
           </View>
+          <AppText variant="caption" style={styles.eyebrow}>
+            {translate(locale, "trips.tripComplete")}
+          </AppText>
           <SectionTitle>{t.finished.replace("{city}", nativeCityName(citySlug, cityName, locale))}</SectionTitle>
           <MetricSummary
             items={[
-              { label: t.placesVisited, value: String(journey.visited.length) },
-              { label: t.distance, value: distance(journey.historyDistance) },
               {
                 label: t.timeExplored,
                 value: duration(
                   ((journey.finishedAt ?? now) - journey.startedAt) / 60000,
                 ),
               },
+              { label: t.distance, value: distance(journey.historyDistance) },
+              { label: t.stops, value: String(journey.visited.length) },
             ]}
           />
-          <SectionTitle>{t.highlights}</SectionTitle>
-          {journey.visited.length ? (
-            itinerary(named(journey.visited))
-          ) : (
-            <AppText>{t.noVisited}</AppText>
-          )}
-          {saveFeedback}
-          <PrimaryButton wrapLabel label={saveLabel} disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
-                  busy={saving} onPress={() => void save()} />
+          <WalkChoices
+            label={translate(locale, "complete.ratingQuestion")}
+            variant="segment"
+            compact
+            options={[1, 2, 3, 4, 5].map((value) => ({
+              value: String(value),
+              label: `${value} ★`,
+            }))}
+            selected={rating}
+            onSelect={(value) => void feedback("rating", value)}
+          />
+          <WalkChoices
+            label={t.highlights}
+            multiple
+            compact
+            options={[
+              { value: "route", label: translate(locale, "planner.yourRoute") },
+              { value: "places", label: translate(locale, "place.places") },
+              { value: "audio", label: translate(locale, "place.audioGuide") },
+              { value: "hidden", label: translate(locale, "planner.hiddenGems") },
+            ]}
+            selected={feedbackTags}
+            onSelect={(value) =>
+              setFeedbackTags((currentTags) =>
+                currentTags.includes(value)
+                  ? currentTags.filter((tag) => tag !== value)
+                  : [...currentTags, value],
+              )
+            }
+          />
+          <WalkChoices
+            label={t.fit}
+            variant="segment"
+            compact
+            options={[
+              { value: "yes", label: t.yes },
+              { value: "no", label: t.no },
+            ]}
+            selected={fit}
+            onSelect={(value) => void feedback("fit", value)}
+          />
+          {feedbackSaving ? <PrimaryButton label={uxCopy(locale).saving} busy disabled /> : null}
           <PrimaryButton
             wrapLabel
             label={t.share}
@@ -1728,29 +1765,22 @@ export function NativeWalkFlow({
             }}
           />
           <PublicStoreReview journey={journey} onSettled={reviewDidSettle} />
-          {reviewSettled === journey.id && showPrivateFeedback !== journey.id ? <PrimaryButton wrapLabel tone="secondary"
+          {reviewSettled === journey.id && showPrivateFeedback !== journey.id ? <PrimaryButton compact wrapLabel tone="secondary"
             label={translate(locale, "complete.feedback")} onPress={() => setShowPrivateFeedback(journey.id)} /> : null}
-          {showPrivateFeedback === journey.id ? <>
-          <WalkChoices
-            label={translate(locale, "complete.ratingQuestion")}
-            options={[1, 2, 3, 4, 5].map((value) => ({
-              value: String(value),
-              label: `${value} ★`,
-            }))}
-            selected={rating}
-            onSelect={(value) => void feedback("rating", value)}
+          {journey.visited.length ? (
+            itinerary(named(journey.visited), true, false, true)
+          ) : (
+            <AppText>{t.noVisited}</AppText>
+          )}
+          {saveFeedback}
+          <PrimaryButton
+            wrapLabel
+            label={saveLabel}
+            disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
+            busy={saving}
+            tone="secondary"
+            onPress={() => void save()}
           />
-          <WalkChoices
-            label={t.fit}
-            options={[
-              { value: "yes", label: t.yes },
-              { value: "no", label: t.no },
-            ]}
-            selected={fit}
-            onSelect={(value) => void feedback("fit", value)}
-          />
-          {feedbackSaving ? <PrimaryButton label={uxCopy(locale).saving} busy disabled /> : null}
-          </> : null}
           <PrimaryButton
             wrapLabel
             tone="secondary"
