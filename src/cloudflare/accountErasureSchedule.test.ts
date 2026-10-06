@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isAccountErasureScheduleConfigured } from "./accountErasureSchedule";
+import { isAccountErasureScheduleConfigured } from "./accountErasureScheduleConfig";
 
 const configured = {
   BETTER_AUTH_SECRET: "better-auth-secret",
