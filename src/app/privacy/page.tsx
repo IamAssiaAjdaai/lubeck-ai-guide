@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AnalyticsConsentPreferences } from "@/components/AnalyticsConsentControl";
 import { LegalPage } from "@/components/legal/LegalPage";
 import {
   CITYWALK_SUPPORT_EMAIL,
@@ -117,8 +118,9 @@ export default function PrivacyPage() {
           When the public PostHog project token and host are configured, CITYWALK&apos;s web code can initialize PostHog and record product events such as city or place views, published Marketing landing views and CTA clicks, together with the pseudonymous visitor/session identifiers and relevant city/campaign attribution. The current integration also enables client exception capture. The reviewed event contracts do not intentionally attach raw latitude/longitude, GPS trails, account email addresses or authentication tokens.
         </p>
         <p>
-          PostHog capture checks the local PostHog opt-out state. Provider-side event retention and any consent control required before non-essential analytics is activated in production depend on the final production configuration and must be aligned before launch. CITYWALK does not use the reviewed PostHog integration as advertising tracking.
+          Optional browser analytics is fail-closed: CITYWALK does not initialize PostHog, create its pseudonymous analytics visitor/session identifiers or capture these browser events until you explicitly allow analytics. You can decline or later withdraw that choice below. Provider-side event retention still depends on the final PostHog project configuration. CITYWALK does not use the reviewed PostHog integration as advertising tracking.
         </p>
+        <AnalyticsConsentPreferences />
       </section>
 
       <section>
