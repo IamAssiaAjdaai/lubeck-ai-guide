@@ -71,7 +71,9 @@ try {
   const confirmResponse = await confirmResponsePromise;
   await assertStatus(confirmResponse, 400, "delete-confirm");
 
-  const alert = page.getByRole("alert");
+  const alert = page.getByRole("alert").filter({
+    hasText: /invalid, expired, or already used/i,
+  });
   await alert.waitFor();
   assert.match(
     await alert.textContent(),
