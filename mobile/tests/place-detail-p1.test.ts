@@ -16,7 +16,9 @@ describe("Place Detail P1 presentation", () => {
     expect(placeSource).toContain('testID="audio-unavailable-notice"');
     expect(placeSource).toContain("styles.audioNotice");
     expect(placeSource).toContain('variant="metadata" style={styles.muted}');
-    expect(placeSource).toContain("style={[styles.askAction, nativeRowStyle(direction)]}");
+    expect(placeSource).toContain("style={StyleSheet.flatten([");
+    expect(placeSource).toContain("styles.askAction");
+    expect(placeSource).toContain("nativeRowStyle(direction)");
     expect(placeSource).toContain("styles.askIcon");
     expect(placeSource).not.toContain('tone="ai"');
   });
