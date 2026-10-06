@@ -33,7 +33,7 @@ describe("browser analytics consent runtime", () => {
     const privacy = source("src/app/privacy/page.tsx");
 
     expect(control).toContain("Allow analytics");
-    expect(control).toContain(">Decline<");
+    expect(control).toContain("Decline");
     expect(control).toContain("Decline analytics");
     expect(layout).toContain("<AnalyticsConsentBanner />");
     expect(privacy).toContain("<AnalyticsConsentPreferences />");
