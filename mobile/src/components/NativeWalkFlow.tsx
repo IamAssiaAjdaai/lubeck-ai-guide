@@ -106,6 +106,8 @@ import { NativeIcon } from "./NativeIcon";
 import { colors } from "../design/tokens";
 import { walkStyles as styles } from "../design/walkStyles";
 
+type ActiveWalkMode = "basic" | "live";
+
 export function NativeWalkFlow({
   citySlug,
   cityName,
@@ -156,6 +158,7 @@ export function NativeWalkFlow({
   const [liveSession, setLiveSession] = useState<LiveWalkSession>();
   const [foregroundPoint, setForegroundPoint] = useState<Point>();
   const [liveBusy, setLiveBusy] = useState(false);
+  const [activeMode, setActiveMode] = useState<ActiveWalkMode>("basic");
   const [showManageWalk, setShowManageWalk] = useState(false);
   const [showLiveInspect, setShowLiveInspect] = useState(false);
   const [liveInspect, setLiveInspect] = useState("");
@@ -177,6 +180,16 @@ export function NativeWalkFlow({
       unsubscribe();
     };
   }, []);
+  useEffect(() => {
+    if (
+      stage === "active" &&
+      journey &&
+      premium.active &&
+      liveSession?.journeyId === journey.id
+    ) {
+      setActiveMode("live");
+    }
+  }, [stage, journey?.id, premium.active, liveSession?.journeyId]);
   const [step, setStep] = useState(1),
     [minutes, setMinutes] = useState(120),
     [returnBy, setReturnBy] = useState("");
@@ -295,11 +308,16 @@ export function NativeWalkFlow({
       ])
     : "";
   useEffect(() => {
-    if (stage !== "active" || !journey) return;
+    if (
+      stage !== "active" ||
+      !journey ||
+      activeMode !== "live" ||
+      !premium.active
+    ) return;
     void syncLiveCompanion(journey);
     // Sync only execution identity/route changes; raw GPS publishes separately.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stage, liveSyncKey]);
+  }, [stage, activeMode, premium.active, liveSyncKey]);
   const dynamicTags = [
     ...new Set(eligible.flatMap((p) => p.tags ?? [])),
   ].filter(
@@ -571,7 +589,7 @@ export function NativeWalkFlow({
       });
       setJourney(result.journey);
       setNow(Date.now());
-      if (phase === "active") {
+      if (phase === "active" && activeMode === "live" && premium.active) {
         await syncLiveCompanion(result.journey, liveRouteUpdated);
       }
       return true;
@@ -595,17 +613,41 @@ export function NativeWalkFlow({
     }
     finally { saveLock.current = false; setSaving(false); }
   }
-  async function start() {
+  async function start(mode: ActiveWalkMode = "basic") {
     if (!journey || updateLock.current) return;
+    if (mode === "live" && !premium.active) {
+      unlockPremium();
+      return;
+    }
     updateLock.current = true; setUpdating(true);
     try {
       if (walkStartStatus(journey, places, contentStatus === "available") !== "ready") return;
       if (authorizeStart && !await authorizeStart()) return;
       const next = await startCurrentWalk(citySlug, journey.id, places, contentStatus === "available");
-      await syncLiveCompanion(next.journey);
+      setActiveMode(mode);
       setJourney(next.journey);
       setNow(Date.now());
       setStage("active");
+      if (mode === "live") {
+        try {
+          const session = await syncLiveCompanion(next.journey);
+          setLiveSession(session);
+          const result = await enableCitywalkLiveWalk();
+          setLiveSession(await loadLiveWalkSession());
+          if (result === "enabled") {
+            await refreshCitywalkLiveActivity(next.journey.position);
+            setMessage(translate(locale, "liveWalk.enabled"));
+          } else if (result === "denied") {
+            setMessage(translate(locale, "liveWalk.locationNeeded"));
+          } else {
+            setMessage(translate(locale, "liveWalk.unavailable"));
+          }
+        } catch {
+          setMessage(translate(locale, "liveWalk.unavailable"));
+        }
+      } else {
+        setForegroundPoint(undefined);
+      }
     } catch (error) {
       const code = error instanceof Error ? error.message : "";
       setMessage(code === "walk-start-empty" ? t.emptyHelp
@@ -628,7 +670,7 @@ export function NativeWalkFlow({
       await completeCitywalkLiveWalk();
       await clearCurrentWalk(citySlug, rebuildConfirmation.current);
       setJourney(undefined); setProposed(undefined); setPanel(undefined);
-      setLiveSession(undefined); setForegroundPoint(undefined);
+      setLiveSession(undefined); setForegroundPoint(undefined); setActiveMode("basic");
       setShowManageWalk(false); setShowLiveInspect(false);
       setProposalMessage(""); setMessage(""); setBuildError(undefined);
       setStep(1); setMinutes(120); setReturnBy("");
@@ -712,14 +754,19 @@ export function NativeWalkFlow({
   }
   async function toggleLiveWalk() {
     if (!journey || liveBusy) return;
+    if (!premium.active) {
+      unlockPremium();
+      return;
+    }
     setLiveBusy(true);
     setMessage("");
     try {
-      if (liveSession?.enabled) {
+      if (liveSession?.enabled && liveSession.journeyId === journey.id) {
         await disableCitywalkLiveWalk();
         setLiveSession(await loadLiveWalkSession());
         return;
       }
+      setActiveMode("live");
       await syncLiveCompanion(journey);
       const result = await enableCitywalkLiveWalk();
       setLiveSession(await loadLiveWalkSession());
@@ -777,6 +824,8 @@ export function NativeWalkFlow({
     (stage === "preview" ? generatedAt : now) + (route?.minutes ?? 0) * 60000;
   const deadline = journey?.settings.deadline;
   const livePresentation =
+    activeMode === "live" &&
+    premium.active &&
     journey &&
     liveSession?.journeyId === journey.id
       ? buildLiveWalkPresentation(
@@ -1127,9 +1176,9 @@ export function NativeWalkFlow({
               routeFinish={journey.finish}
               currentSlug={current?.slug}
               compact={stage === "active"}
-              followUserLocation={stage === "active"}
+              followUserLocation={stage === "active" && activeMode === "live" && premium.active}
               onLocation={(point) => {
-                if (stage === "active") {
+                if (stage === "active" && activeMode === "live" && premium.active) {
                   setForegroundPoint(point);
                   setJourney((currentJourney) =>
                     currentJourney?.id === journey.id
@@ -1148,17 +1197,32 @@ export function NativeWalkFlow({
                 startStatus !== "ready" ? <StatusMessage>{startStatus === "empty" ? t.emptyHelp : t.planContentUnavailable}</StatusMessage> : null}
               <PrimaryButton
                 wrapLabel
-                label={t.startWalk}
+                label={translate(locale, "liveWalk.turnOn")}
                 disabled={startStatus !== "ready"}
                 busy={updating}
                 leadingIcon={
                   <NativeIcon
-                    ios="location.fill"
-                    android="near_me"
+                    ios={premium.active ? "location.fill" : "lock.fill"}
+                    android={premium.active ? "near_me" : "lock"}
                     color={colors.surface}
                   />
                 }
-                onPress={() => void start()}
+                onPress={() => premium.active ? void start("live") : unlockPremium()}
+              />
+              <PrimaryButton
+                wrapLabel
+                label={t.startWalk}
+                tone="secondary"
+                disabled={startStatus !== "ready"}
+                busy={updating}
+                leadingIcon={
+                  <NativeIcon
+                    ios="map"
+                    android="map"
+                    color={colors.primary}
+                  />
+                }
+                onPress={() => void start("basic")}
               />
               {saveFeedback}
               <View style={styles.actionRow}>
@@ -1190,7 +1254,21 @@ export function NativeWalkFlow({
                   }}
                 />
               ) : null}
-              {Platform.OS === "ios" && premium.active && !liveSession?.enabled ? (
+              {activeMode === "basic" ? (
+                <PrimaryButton
+                  label={translate(locale, "liveWalk.turnOn")}
+                  tone="secondary"
+                  busy={liveBusy}
+                  onPress={() => premium.active ? void toggleLiveWalk() : unlockPremium()}
+                  leadingIcon={
+                    <NativeIcon
+                      ios={premium.active ? "sparkles" : "lock.fill"}
+                      android={premium.active ? "auto_awesome" : "lock"}
+                      color={colors.primary}
+                    />
+                  }
+                />
+              ) : Platform.OS === "ios" && premium.active && !liveSession?.enabled ? (
                 <>
                   <AppText variant="metadata" style={styles.muted}>
                     {translate(locale, "liveWalk.permissionHelp")}
@@ -1427,7 +1505,7 @@ export function NativeWalkFlow({
                     busy={updating}
                     onPress={() => void requestRebuild()}
                   />
-                  {premium.active && liveSession?.enabled ? (
+                  {premium.active && activeMode === "live" && liveSession?.enabled ? (
                     <PrimaryButton
                       label={translate(locale, "liveWalk.turnOff")}
                       tone="secondary"
@@ -1458,12 +1536,13 @@ export function NativeWalkFlow({
                     if (!ok) return;
                     await completeCitywalkLiveWalk();
                     setLiveSession(undefined);
+                    setActiveMode("basic");
                     setStage("finished");
                   });
                 }}
               />
 
-              {(typeof __DEV__ !== "undefined" ? __DEV__ : process.env.NODE_ENV !== "production") ? (
+              {(typeof __DEV__ !== "undefined" ? __DEV__ : process.env.NODE_ENV !== "production") && activeMode === "live" ? (
                 <>
                   <PrimaryButton
                     label={translate(locale, "liveWalk.inspect")}
@@ -1587,7 +1666,7 @@ export function NativeWalkFlow({
         </Screen>
       </Modal>
       <Modal
-        visible={premium.active && (panel === "add" || !!proposed)}
+        visible={(premium.active && panel === "add") || !!proposed}
         animationType="slide"
         presentationStyle="pageSheet"
         onRequestClose={() => {
