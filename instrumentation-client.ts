@@ -20,7 +20,15 @@ if (
   posthog.init(projectToken, {
     api_host: apiHost,
     defaults: "2026-01-30",
+    autocapture: false,
+    capture_pageview: false,
+    capture_pageleave: false,
     capture_exceptions: true,
+    disable_session_recording: true,
+    persistence: "localStorage",
+    request_batching: false,
+    respect_dnt: true,
+    before_send: (event) => getAnalyticsConsent() === "granted" ? event : null,
     debug: process.env.NODE_ENV === "development",
   });
 
