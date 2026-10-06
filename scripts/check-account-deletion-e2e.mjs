@@ -10,6 +10,17 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(playwrightModule);
 const baseUrl = process.env.CITYWALK_ACCOUNT_E2E_BASE_URL ?? "http://127.0.0.1:3101";
 
+async function assertStatus(response, expected, label) {
+  if (response.status() === expected) return;
+  let body = "<unavailable>";
+  try {
+    body = await response.text();
+  } catch {
+    // The status remains the primary failure signal if the body is unavailable.
+  }
+  assert.equal(response.status(), expected, `${label} returned ${response.status()}: ${body}`);
+}
+
 const browser = await chromium.launch({ headless: true });
 try {
   const page = await browser.newPage();
@@ -25,11 +36,7 @@ try {
   );
   await page.getByRole("button", { name: "Send deletion confirmation" }).click();
   const requestResponse = await requestResponsePromise;
-  assert.equal(
-    requestResponse.status(),
-    200,
-    `delete-request returned ${requestResponse.status()}: ${await requestResponse.text()}`,
-  );
+  await assertStatus(requestResponse, 200, "delete-request");
 
   const requestStatus = page.getByRole("status");
   await requestStatus.waitFor();
@@ -54,11 +61,7 @@ try {
   );
   await page.getByRole("button", { name: "Delete my account permanently" }).click();
   const confirmResponse = await confirmResponsePromise;
-  assert.equal(
-    confirmResponse.status(),
-    400,
-    `delete-confirm returned ${confirmResponse.status()}: ${await confirmResponse.text()}`,
-  );
+  await assertStatus(confirmResponse, 400, "delete-confirm");
 
   const alert = page.getByRole("alert");
   await alert.waitFor();
