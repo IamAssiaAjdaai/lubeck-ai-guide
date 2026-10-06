@@ -54,10 +54,14 @@ export function MarketingFormShell({
 export function CampaignFields({
   campaign,
   cities,
+  initialCityId,
 }: Readonly<{
   campaign?: MarketingCampaignRow;
   cities: readonly MarketingCityOption[];
+  initialCityId?: number;
 }>) {
+  const fixedCity = findCity(cities, campaign?.cityId ?? initialCityId);
+
   return (
     <>
       <EditorSection
@@ -65,16 +69,7 @@ export function CampaignFields({
         title="Campaign brief"
       >
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="City">
-            <select className={inputClass} defaultValue={campaign?.cityId} name="cityId" required>
-              <option disabled value="">Choose a city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
-          </Field>
+          <CityField cities={cities} fixedCity={fixedCity} />
           <Field label="Slug">
             <input
               className={inputClass}
@@ -123,27 +118,24 @@ export function CampaignFields({
 export function MarketingPageFields({
   campaigns,
   cities,
+  initialCityId,
   page,
 }: Readonly<{
   campaigns: readonly MarketingCampaignOption[];
   cities: readonly MarketingCityOption[];
+  initialCityId?: number;
   page?: MarketingPageRow;
 }>) {
+  const fixedCity = findCity(cities, page?.cityId ?? initialCityId);
+
   return (
     <>
       <EditorSection
-        description="Choose the city and optional campaign this landing page or article belongs to."
+        description="Choose the campaign this landing page or article belongs to. The city is inherited from its workspace."
         title="Page identity"
       >
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="City">
-            <select className={inputClass} defaultValue={page?.cityId} name="cityId" required>
-              <option disabled value="">Choose a city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>{city.name}</option>
-              ))}
-            </select>
-          </Field>
+          <CityField cities={cities} fixedCity={fixedCity} />
           <Field label="Campaign">
             <select className={inputClass} defaultValue={page?.campaignId ?? ""} name="campaignId">
               <option value="">No campaign</option>
@@ -212,14 +204,18 @@ export function MarketingPageFields({
 export function SocialContentFields({
   campaigns,
   cities,
+  initialCityId,
   item,
   pages,
 }: Readonly<{
   campaigns: readonly MarketingCampaignOption[];
   cities: readonly MarketingCityOption[];
+  initialCityId?: number;
   item?: MarketingContentRow;
   pages: readonly MarketingPageOption[];
 }>) {
+  const fixedCity = item ? undefined : findCity(cities, initialCityId);
+
   return (
     <>
       <EditorSection
@@ -227,14 +223,7 @@ export function SocialContentFields({
         title="Attribution"
       >
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="City">
-            <select className={inputClass} defaultValue={item?.cityId} name="cityId" required>
-              <option disabled value="">Choose a city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>{city.name}</option>
-              ))}
-            </select>
-          </Field>
+          <CityField cities={cities} fixedCity={fixedCity} selectedCityId={item?.cityId} />
           <Field label="Campaign">
             <select className={inputClass} defaultValue={item?.campaignId ?? ""} name="campaignId">
               <option value="">No campaign</option>
@@ -312,6 +301,40 @@ export function SocialContentFields({
   );
 }
 
+function CityField({
+  cities,
+  fixedCity,
+  selectedCityId,
+}: Readonly<{
+  cities: readonly MarketingCityOption[];
+  fixedCity?: MarketingCityOption;
+  selectedCityId?: number;
+}>) {
+  if (fixedCity) {
+    return (
+      <Field label="City">
+        <input name="cityId" type="hidden" value={fixedCity.id} />
+        <div className="flex min-h-11 items-center rounded-xl border border-border bg-slate-100 px-3 py-2 text-sm font-semibold text-text-primary">
+          {fixedCity.name}
+        </div>
+      </Field>
+    );
+  }
+
+  return (
+    <Field label="City">
+      <select className={inputClass} defaultValue={selectedCityId} name="cityId" required>
+        <option disabled value="">Choose a city</option>
+        {cities.map((city) => (
+          <option key={city.id} value={city.id}>
+            {city.name}
+          </option>
+        ))}
+      </select>
+    </Field>
+  );
+}
+
 function EditorSection({
   children,
   description,
@@ -339,6 +362,14 @@ function Field({ children, label }: Readonly<{ children: ReactNode; label: strin
       {children}
     </label>
   );
+}
+
+function findCity(
+  cities: readonly MarketingCityOption[],
+  cityId: number | undefined,
+) {
+  if (!cityId) return undefined;
+  return cities.find((city) => city.id === cityId);
 }
 
 function cityName(cities: readonly MarketingCityOption[], cityId: number) {
