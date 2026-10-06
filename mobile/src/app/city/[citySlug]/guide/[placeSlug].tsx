@@ -34,7 +34,6 @@ import {
 } from "../../../../lib/guideConversation";
 import { guideConversationStore } from "../../../../lib/guideConversationStorage";
 import { canSubmitGuideQuestion, classifyGuideFailure, isGuideAllowanceExhausted, type GuideFailure } from "../../../../lib/guideFailure";
-import { guideUpgradePath } from "../../../../lib/guideUpgrade";
 import { parsePlaceRouteIdentity } from "../../../../lib/routing";
 import { triggerCitywalkHaptic } from "../../../../lib/haptics";
 import { getScreenSafeAreaEdges, SCREEN_TOP_SPACING } from "../../../../lib/screenLayout";
@@ -189,7 +188,7 @@ export default function GuideScreen() {
   }
 
   const limitReached = isGuideAllowanceExhausted(allowance) || failure === "daily_allowance";
-  const upgradePath = allowance?.tier === "free" ? guideUpgradePath(citySlug, locale) : undefined;
+  const showPremiumUpgrade = limitReached && allowance?.tier === "free";
   const sendDisabled = !canSend;
   const hasTravelerMessage = conversation.some((message) => message.role === "user");
   const suggestions = [
@@ -289,10 +288,10 @@ export default function GuideScreen() {
                       ? messages.guideFreeLimitBody.replace("{count}", String(allowance.limit))
                       : messages.guideRateLimited}
                 </AppText>
-                {upgradePath ? (
+                {showPremiumUpgrade ? (
                   <Pressable
                     accessibilityRole="link"
-                    onPress={() => void Linking.openURL(citywalkApi.resolveUrl(upgradePath))}
+                    onPress={() => router.navigate("/premium")}
                     style={({ pressed }) => [styles.upgradeButton, pressed && styles.sendButtonPressed]}
                   >
                     <AppText variant="label" style={styles.upgradeText}>{messages.guideUnlockPass}</AppText>
