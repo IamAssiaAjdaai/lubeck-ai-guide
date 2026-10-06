@@ -50,6 +50,7 @@ export default async function NewMarketingPage({
       <AdminNotice error={query.error} />
       {options.canManage ? (
         <MarketingFormShell action={createMarketingPageAction} submitLabel="Save page draft">
+          {city ? <input defaultValue={city.slug} name="citySlug" type="hidden" /> : null}
           <MarketingPageFields
             campaigns={campaigns}
             cities={city ? [city] : options.cities}
