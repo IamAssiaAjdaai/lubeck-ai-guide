@@ -5,13 +5,13 @@ export type NativeTab = "home" | "explore" | "trips" | "saved" | "profile";
 export function activeNativeTab(path: string, params: { section?: string; view?: string }): NativeTab {
   if (path === "/") return params.section === "cities" ? "explore" : "home";
   if (path === "/saved") return params.view === "trips" ? "trips" : "saved";
-  if (path.startsWith("/account")) return "profile";
+  if (path === "/profile" || path.startsWith("/account")) return "profile";
   return path.endsWith("/walk") || path.includes("/tour/") ? "trips" : "explore";
 }
 export function tabRootKey(path: string, params: { section?: string; view?: string }): string | undefined {
   if (path === "/" || path === "/saved") return `${path}:${activeNativeTab(path, params)}`;
   if (
-    path === "/account" ||
+    path === "/profile" ||
     /^\/city\/[^/]+$/.test(path) ||
     /^\/city\/[^/]+\/explore$/.test(path)
   ) return path;
@@ -45,6 +45,7 @@ export function useRootTabScroll(scrollToTop: (animated?: boolean) => void) {
   const coordinator = useTabScrollCoordinator();
   // usePathname is global: background stack screens must retain their own identity.
   const path = route.name === "index" ? "/" : route.name === "saved" ? "/saved"
+    : route.name === "profile" ? "/profile"
     : route.name === "account/index" ? "/account"
     : route.name === "city/[citySlug]/index" && params.citySlug ? `/city/${params.citySlug}`
     : route.name === "city/[citySlug]/explore" && params.citySlug ? `/city/${params.citySlug}/explore` : "";
