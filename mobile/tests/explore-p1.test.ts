@@ -12,6 +12,10 @@ describe("Explore P1 presentation", () => {
     expect(tabNavigationSource).toContain('route.name === "city/[citySlug]/explore"');
   });
 
+  it("keeps Explore a root surface without nested brand/back chrome", () => {
+    expect(exploreSource).toContain("<Screen brand={false}");
+  });
+
   it("keeps Explore dense and search-first", () => {
     expect(exploreSource).toContain("<TextInput");
     expect(exploreSource).toContain('variant="chips"');
