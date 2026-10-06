@@ -162,6 +162,8 @@ export function NativeWalkFlow({
   const [showManageWalk, setShowManageWalk] = useState(false);
   const [showLiveInspect, setShowLiveInspect] = useState(false);
   const [liveInspect, setLiveInspect] = useState("");
+  const [journey, setJourney] = useState<WalkJourney>(),
+    [proposed, setProposed] = useState<WalkRoute<PublicPlaceCard>>();
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -210,8 +212,6 @@ export function NativeWalkFlow({
       "loop",
     ),
     [endSlug, setEndSlug] = useState(places[0]?.slug ?? "");
-  const [journey, setJourney] = useState<WalkJourney>(),
-    [proposed, setProposed] = useState<WalkRoute<PublicPlaceCard>>();
   const [panel, setPanel] = useState<"add" | "back">(),
     [message, setMessage] = useState("");
   const [now, setNow] = useState(() => Date.now()),
