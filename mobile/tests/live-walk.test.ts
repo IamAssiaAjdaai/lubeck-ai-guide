@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import liveWalkCardSource from "../src/components/NativeLiveWalkCard.tsx?raw";
 import nativeWalkFlowSource from "../src/components/NativeWalkFlow.tsx?raw";
+import liveActivitySource from "../src/widgets/CitywalkLiveActivity.tsx?raw";
 
 import {
   LIVE_WALK_ARRIVAL_SAMPLES,
@@ -30,6 +31,15 @@ describe("Live Walk execution semantics", () => {
     expect(liveWalkCardSource).toContain("backgroundColor: colors.surface");
     expect(liveWalkCardSource).toContain("borderColor: colors.border");
     expect(liveWalkCardSource).not.toContain("#081624");
+  });
+
+  it("keeps Live Activity timing glanceable around the projected finish", () => {
+    expect(liveActivitySource).toContain(
+      'const timingLabel = props.remainingLabel + " · " + props.finishLabel;',
+    );
+    expect(liveActivitySource).not.toContain(
+      'props.deadlineLabel ?? props.finishLabel',
+    );
   });
 
   it("formats domain meters explicitly and never lets Intl convert them to miles", () => {
