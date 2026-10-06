@@ -46,6 +46,7 @@ export default async function NewMarketingCampaignPage({
       <AdminNotice error={query.error} />
       {options.canManage ? (
         <MarketingFormShell action={createMarketingCampaignAction} submitLabel="Save campaign draft">
+          {city ? <input defaultValue={city.slug} name="citySlug" type="hidden" /> : null}
           <CampaignFields
             cities={city ? [city] : options.cities}
             initialCityId={city?.id}
