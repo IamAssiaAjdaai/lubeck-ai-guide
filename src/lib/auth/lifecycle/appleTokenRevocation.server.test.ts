@@ -23,6 +23,14 @@ describe("Apple account deletion token revocation", () => {
     });
   });
 
+  it("preserves the access-token fallback hint inside the encrypted envelope", () => {
+    const sealed = sealAppleRevocationToken({ token: "apple-access-token", tokenTypeHint: "access_token" }, secret);
+    expect(openAppleRevocationToken(sealed, secret)).toEqual({
+      token: "apple-access-token",
+      tokenTypeHint: "access_token",
+    });
+  });
+
   it("rejects tampered encrypted payloads", () => {
     const sealed = sealAppleRevocationToken({ token: "token", tokenTypeHint: "access_token" }, secret);
     const tampered = `${sealed.slice(0, -1)}${sealed.endsWith("A") ? "B" : "A"}`;
