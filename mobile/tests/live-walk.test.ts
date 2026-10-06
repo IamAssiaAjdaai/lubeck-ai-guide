@@ -13,11 +13,16 @@ import {
 } from "../src/lib/liveWalk";
 
 describe("Live Walk execution semantics", () => {
-  it("uses the fresh foreground point for in-app next-stop distance", () => {
+  it("uses the fresh foreground point only for the Premium Live Walk experience", () => {
     expect(nativeWalkFlowSource).toContain(
       "foregroundPoint ?? liveSession.lastPublished?.point ?? journey.position",
     );
-    expect(nativeWalkFlowSource).toContain('followUserLocation={stage === "active"}');
+    expect(nativeWalkFlowSource).toContain(
+      'followUserLocation={stage === "active" && activeMode === "live" && premium.active}',
+    );
+    expect(nativeWalkFlowSource).toContain(
+      'if (stage === "active" && activeMode === "live" && premium.active)',
+    );
     expect(nativeWalkFlowSource).toContain("setForegroundPoint(point)");
   });
 
