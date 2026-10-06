@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { CitywalkLogo } from "@/components/brand/CitywalkLogo";
 import MarketingLandingTracker from "@/components/marketing/MarketingLandingTracker";
-import { appendMarketingAttributionToPath, readMarketingAttribution } from "@/lib/marketingAttribution";
+import { readMarketingAttribution } from "@/lib/marketingAttribution";
 import { getPublishedMarketingPageByPath } from "@/lib/marketing/publicRepository.server";
 import { buildNativeAppHandoffPath } from "@/lib/nativeAppHandoff";
 
