@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useFocusEffect } from "expo-router";
 
 import { nativeAuthClient } from "../lib/auth/client";
@@ -18,9 +18,6 @@ export function usePremiumAccess(): PremiumAccessState {
   });
 
   const refresh = useCallback(async () => {
-    // Keep the refresh asynchronous even when invoked from a React effect so the
-    // state transition does not synchronously cascade another render.
-    await Promise.resolve();
     setState({ status: "loading", active: false });
     try {
       const auth = await nativeAuthClient.getSession();
@@ -40,10 +37,6 @@ export function usePremiumAccess(): PremiumAccessState {
       setState({ status: "unavailable", active: false });
     }
   }, []);
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
 
   useFocusEffect(
     useCallback(() => {
