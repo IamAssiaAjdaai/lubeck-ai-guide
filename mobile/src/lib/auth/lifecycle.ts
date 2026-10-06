@@ -2,10 +2,10 @@ import { citywalkApi } from "../api/instance";
 import { purgeDeletedAccountLocalData } from "./accountLocalData";
 import { nativeAuthClient } from "./client";
 
-export async function deleteNativeAccount(userId: string, password: string) {
+export async function deleteNativeAccount(userId: string, password?: string) {
   const response = await citywalkApi.fetchAuthenticated("/api/account/delete", {
     method: "POST", headers: { "Content-Type": "application/json", "X-Citywalk-Account": userId },
-    body: JSON.stringify({ password, confirm: true }),
+    body: JSON.stringify({ ...(password ? { password } : {}), confirm: true }),
   });
   const result = await response.json();
   if (!response.ok || result.deleted !== true) return { error: { code: result.code ?? "UNAVAILABLE" } };
