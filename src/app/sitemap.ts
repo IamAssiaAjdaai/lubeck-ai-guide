@@ -12,6 +12,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
+      url: citywalkPublicUrl("/support"),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
       url: citywalkPublicUrl("/account-deletion"),
       changeFrequency: "monthly",
       priority: 0.5,
