@@ -8,7 +8,7 @@ if (!playwrightModule) {
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(playwrightModule);
-const baseUrl = process.env.CITYWALK_ACCOUNT_E2E_BASE_URL ?? "https://127.0.0.1:3443";
+const baseUrl = process.env.CITYWALK_ACCOUNT_E2E_BASE_URL ?? "http://127.0.0.1:3101";
 
 async function assertStatus(response, expected, label) {
   if (response.status() === expected) return;
@@ -28,8 +28,7 @@ async function assertStatus(response, expected, label) {
 
 const browser = await chromium.launch({ headless: true });
 try {
-  const context = await browser.newContext({ ignoreHTTPSErrors: true });
-  const page = await context.newPage();
+  const page = await browser.newPage();
   await page.goto(`${baseUrl}/account-deletion`, { waitUntil: "networkidle" });
 
   await page.getByRole("heading", { name: "Delete your CITYWALK account" }).waitFor();
