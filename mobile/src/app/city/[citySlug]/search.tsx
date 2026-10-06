@@ -109,7 +109,7 @@ export default function SearchScreen() {
         MAX_RECENT_SEARCHES,
       ),
     );
-    void recordRecentSearch(city.slug, place.slug);
+    void recordRecentSearch(city.slug, place.slug).catch(() => undefined);
     router.push({
       pathname: "/city/[citySlug]/place/[placeSlug]",
       params: { citySlug: city.slug, placeSlug: place.slug },
@@ -148,7 +148,7 @@ export default function SearchScreen() {
               accessibilityRole="button"
               onPress={() => {
                 setRecentSlugs([]);
-                void clearRecentSearches(city.slug);
+                void clearRecentSearches(city.slug).catch(() => undefined);
               }}
               style={styles.clearAction}
             >
@@ -224,10 +224,10 @@ function SearchPlaceRow({
   );
   const icon =
     place.category === "eat"
-      ? { ios: "fork.knife", android: "restaurant" }
+      ? ({ ios: "fork.knife", android: "restaurant" } as const)
       : place.category === "fun"
-        ? { ios: "sparkles", android: "auto_awesome" }
-        : { ios: "mappin", android: "place" };
+        ? ({ ios: "sparkles", android: "auto_awesome" } as const)
+        : ({ ios: "mappin", android: "place" } as const);
 
   return (
     <PressableSurface
