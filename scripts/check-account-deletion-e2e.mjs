@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
+import { pathToFileURL } from "node:url";
 
 const playwrightModule = process.env.CITYWALK_PLAYWRIGHT_MODULE;
 if (!playwrightModule) {
   throw new Error("CITYWALK_PLAYWRIGHT_MODULE is required");
 }
 
-const { chromium } = await import(playwrightModule);
+const playwrightEntrypoint = pathToFileURL(`${playwrightModule}/index.js`).href;
+const { chromium } = await import(playwrightEntrypoint);
 const baseUrl = process.env.CITYWALK_ACCOUNT_E2E_BASE_URL ?? "http://127.0.0.1:3101";
 
 const browser = await chromium.launch({ headless: true });
