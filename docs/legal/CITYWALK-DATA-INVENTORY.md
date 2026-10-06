@@ -103,7 +103,7 @@ The reviewed route does **not** insert the question, prompt or model answer into
 The repository now contains an active **optional** PostHog integration:
 
 - `instrumentation-client.ts` calls `posthog.init(...)` when both public PostHog environment values are configured;
-- it enables `capture_exceptions: true`;
+- it enables `capture_exceptions: true` while automatic interaction capture, automatic pageview/pageleave capture and session recording are disabled;
 - `VisitorJourneyTracker` captures city/place journey events;
 - published Marketing pages capture landing and CTA events;
 - verified entitlement grants can emit an aggregate server-side PostHog event;
