@@ -54,15 +54,18 @@ describe("landing launch / FAQ / footer checkpoint", () => {
     expect(container.querySelector('a[href*="instagram.com"], a[href*="youtube.com"]')).toBeNull();
   });
 
-  it("keeps unfinished legal pages pending while linking the live deletion resource", () => {
+  it("links the legal pages and live deletion resource", () => {
     render(<LandingFooter />);
-    expect(screen.getByText("Legal pages · in preparation")).toBeDefined();
-    for (const label of ["Privacy", "Terms", "Imprint"]) {
-      expect(screen.getByText(label)).toBeDefined();
-      expect(screen.queryByRole("link", { name: label })).toBeNull();
+    expect(screen.getByText("Legal")).toBeDefined();
+    for (const [label, href] of [
+      ["Privacy", "/privacy"],
+      ["Terms", "/terms"],
+      ["Imprint", "/imprint"],
+    ] as const) {
+      expect(screen.getByRole("link", { name: label }).getAttribute("href")).toBe(href);
     }
     expect(screen.getByRole("link", { name: "Account deletion" }).getAttribute("href")).toBe("/account-deletion");
-    expect(screen.getByText(/Account deletion is available separately/)).toBeDefined();
+    expect(screen.getByText(/Privacy, Terms, Imprint and the public account-deletion resource are available directly/)).toBeDefined();
   });
 
   it("integrates one footer outside main and gives every link a real destination", () => {
@@ -76,7 +79,7 @@ describe("landing launch / FAQ / footer checkpoint", () => {
     for (const anchor of container.querySelectorAll("a")) {
       const href = anchor.getAttribute("href") ?? "";
       if (href.startsWith("#")) expect(ids).toContain(href.slice(1));
-      else expect(["mailto:support@getcitywalk.com", "/account-deletion"]).toContain(href);
+      else expect(["mailto:support@getcitywalk.com", "/privacy", "/terms", "/imprint", "/account-deletion"]).toContain(href);
     }
   });
 });
