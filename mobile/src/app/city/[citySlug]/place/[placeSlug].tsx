@@ -366,14 +366,13 @@ function PlaceContent() {
               assetLocale={audio.locale}
             />
           ) : (
-            <View
-              testID="audio-unavailable-notice"
-              style={[styles.audioNotice, nativeTextBlock(direction)]}
-            >
+            <View style={[styles.audioNotice, nativeTextBlock(direction)]}>
               <AppText variant="label">{messages.audioGuide}</AppText>
-              <AppText variant="metadata" style={styles.muted}>
-                {translate(locale, "place.audioMissingDescription")}
-              </AppText>
+              <View testID="audio-unavailable-notice">
+                <AppText variant="metadata" style={styles.muted}>
+                  {translate(locale, "place.audioMissingDescription")}
+                </AppText>
+              </View>
             </View>
           )}
         </View>
