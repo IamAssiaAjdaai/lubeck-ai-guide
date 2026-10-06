@@ -79,7 +79,7 @@ describe("landing launch / FAQ / footer checkpoint", () => {
     for (const anchor of container.querySelectorAll("a")) {
       const href = anchor.getAttribute("href") ?? "";
       if (href.startsWith("#")) expect(ids).toContain(href.slice(1));
-      else expect(["mailto:support@getcitywalk.com", "/privacy", "/terms", "/imprint", "/account-deletion"]).toContain(href);
+      else expect(["mailto:support@getcitywalk.com", "/support", "/privacy", "/terms", "/imprint", "/account-deletion"]).toContain(href);
     }
   });
 });
