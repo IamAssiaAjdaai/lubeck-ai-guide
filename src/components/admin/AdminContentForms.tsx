@@ -138,7 +138,7 @@ export function PlaceFields({
             </select>
           </Field>
         )}
-        <Field label="Slug">
+        <Field label="Web address name">
           <input className={inputClass} defaultValue={place?.slug} name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required />
         </Field>
         <Field label="Category">
@@ -146,45 +146,45 @@ export function PlaceFields({
             {PLACE_CATEGORIES.map((value) => <option key={value}>{value}</option>)}
           </select>
         </Field>
-        <Field label="Duration (minutes)">
+        <Field label="Typical visit (minutes)">
           <input className={inputClass} defaultValue={place?.durationMinutes ?? 30} max={1440} min={1} name="durationMinutes" required type="number" />
         </Field>
-        <Field label="Latitude">
+        <Field label="Map latitude">
           <input className={inputClass} defaultValue={place?.latitude} max={90} min={-90} name="latitude" required step="any" type="number" />
         </Field>
-        <Field label="Longitude">
+        <Field label="Map longitude">
           <input className={inputClass} defaultValue={place?.longitude} max={180} min={-180} name="longitude" required step="any" type="number" />
         </Field>
-        <Field label="Environment">
+        <Field label="Setting">
           <select className={inputClass} defaultValue={place?.environment ?? "outdoor"} name="environment">
             {PLACE_ENVIRONMENTS.map((value) => <option key={value}>{value}</option>)}
           </select>
         </Field>
-        <Field label="Pricing">
+        <Field label="Price level">
           <select className={inputClass} defaultValue={place?.pricing ?? "unknown"} name="pricing">
             {PLACE_PRICING.map((value) => <option key={value}>{value}</option>)}
           </select>
         </Field>
-        <Field label="Operational status">
+        <Field label="Is it currently open/available?">
           <select className={inputClass} defaultValue={place?.status ?? ""} name="status">
             <option value="">Not specified</option>
             {PLACE_STATUSES.map((value) => <option key={value}>{value}</option>)}
           </select>
         </Field>
-        <Field label="Status verified">
+        <Field label="Availability checked on">
           <input className={inputClass} defaultValue={place?.statusVerifiedAt ?? ""} name="statusVerifiedAt" type="date" />
         </Field>
-        <Field label="Visit note verified">
+        <Field label="Visit information checked on">
           <input className={inputClass} defaultValue={place?.visitNoteVerifiedAt ?? ""} name="visitNoteVerifiedAt" type="date" />
         </Field>
-        <Field label="Visit note valid until">
+        <Field label="Visit information valid until">
           <input className={inputClass} defaultValue={place?.visitNoteValidUntil ?? ""} name="visitNoteValidUntil" type="date" />
         </Field>
       </div>
-      <Field label="Image reference">
+      <Field label="Legacy image reference (optional)">
         <input className={inputClass} defaultValue={place?.image ?? ""} name="image" />
       </Field>
-      <Field label="Tags (comma-separated slugs)">
+      <Field label="Tags">
         <input
           className={inputClass}
           defaultValue={(place?.tags.map(({ slug }) => slug) ?? []).join(", ")}
@@ -210,7 +210,7 @@ export function PlaceFields({
         <Field label="Visit notes">
           <textarea className={inputClass} defaultValue={localization?.visitNotes ?? ""} name="visitNotes" rows={4} />
         </Field>
-        <Field label="Facts (one Label | Value per line)">
+        <Field label="Quick facts (one Label | Value per line)">
           <textarea
             className={inputClass}
             defaultValue={(localization?.facts ?? []).map((fact) => `${fact.label} | ${fact.value}`).join("\n")}
