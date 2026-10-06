@@ -63,6 +63,7 @@ vi.mock("../src/lib/motion", () => ({ useReducedMotion: () => state.reduced }));
 vi.mock("../src/lib/haptics", () => ({ triggerCitywalkHaptic: vi.fn() }));
 vi.mock("../src/lib/location.expo", () => ({ expoForegroundLocationAdapter: {} }));
 vi.mock("../src/lib/location", () => ({ requestForegroundLocation: vi.fn() }));
+vi.mock("../src/hooks/usePremiumAccess", () => ({ usePremiumAccess: () => ({ status: "premium", active: true }) }));
 vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { resolveUrl: (url: string) => url } }));
 vi.mock("../src/hooks/usePublicContent", () => ({
   usePublicPlace: (_city: string, slug: string) => state.placeLoading ? { status: "loading" } : ({ status: "available", data: {

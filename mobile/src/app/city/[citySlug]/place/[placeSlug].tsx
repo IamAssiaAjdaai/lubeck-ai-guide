@@ -36,6 +36,7 @@ import {
   usePublicPlace,
 } from "../../../../hooks/usePublicContent";
 import { citywalkApi } from "../../../../lib/api/instance";
+import { usePremiumAccess } from "../../../../hooks/usePremiumAccess";
 import {
   selectExactLocaleAudio,
   selectImageUrl,
@@ -108,6 +109,7 @@ function PlaceContent() {
   const trip = parseMobileTripContext(params);
   const { direction, locale, messages } = useNativeLocale();
   const t = walkCopy(locale);
+  const premium = usePremiumAccess();
   const [saved, setSaved] = useState(false),
     [saveMessage, setSaveMessage] = useState("");
   useFocusEffect(
@@ -352,7 +354,7 @@ function PlaceContent() {
             focusSection();
           }}
         >
-          {audio ? (
+          {audio && premium.active ? (
             <NativeAudioPlayer
               key={`${identity.citySlug}:${place.slug}:${locale}`}
               source={citywalkApi.resolveUrl(audio.url)}
@@ -365,6 +367,47 @@ function PlaceContent() {
               durationSeconds={audio.durationSeconds}
               assetLocale={audio.locale}
             />
+          ) : audio ? (
+            <View
+              testID="premium-audio-locked"
+              style={[styles.audioPremium, nativeTextBlock(direction)]}
+            >
+              <View style={[styles.audioPremiumHeading, nativeRowStyle(direction)]}>
+                <View style={styles.audioPremiumIcon}>
+                  <NativeIcon
+                    ios="headphones"
+                    android="headphones"
+                    color={colors.primary}
+                    size={20}
+                  />
+                </View>
+                <View style={styles.audioPremiumCopy}>
+                  <AppText variant="label">
+                    {translate(locale, "cityPass.premiumLabel")}
+                  </AppText>
+                  <AppText variant="metadata" style={styles.muted}>
+                    {premium.status === "loading"
+                      ? translate(locale, "loading.account")
+                      : translate(locale, "profile.passFreeDescription")}
+                  </AppText>
+                </View>
+                <NativeIcon
+                  ios="lock.fill"
+                  android="lock"
+                  color={colors.textMuted}
+                  size={16}
+                />
+              </View>
+              {premium.status !== "loading" ? (
+                <Link href="/premium" asChild>
+                  <PrimaryButton
+                    compact
+                    label={translate(locale, "profile.explorePass")}
+                    tone="secondary"
+                  />
+                </Link>
+              ) : null}
+            </View>
           ) : (
             <View style={[styles.audioNotice, nativeTextBlock(direction)]}>
               <AppText variant="label">{messages.audioGuide}</AppText>
@@ -661,6 +704,26 @@ function PlaceContent() {
 }
 
 const styles = StyleSheet.create({
+  audioPremium: {
+    backgroundColor: colors.primarySoft,
+    borderRadius: radius.md,
+    gap: spacing.sm,
+    padding: spacing.md,
+  },
+  audioPremiumHeading: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  audioPremiumIcon: {
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderRadius: radius.pill,
+    height: 40,
+    justifyContent: "center",
+    width: 40,
+  },
+  audioPremiumCopy: { flex: 1, gap: 2, minWidth: 0 },
   audioNotice: {
     borderBottomColor: colors.border,
     borderBottomWidth: StyleSheet.hairlineWidth,

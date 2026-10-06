@@ -54,6 +54,7 @@ vi.mock("../src/components/CitywalkLoading", () => ({ CitywalkLoading: () => nul
 vi.mock("../src/lib/haptics", () => ({ triggerCitywalkHaptic: vi.fn() }));
 vi.mock("../src/lib/location.expo", () => ({ expoForegroundLocationAdapter: {} }));
 vi.mock("../src/lib/location", () => ({ requestForegroundLocation: vi.fn() }));
+vi.mock("../src/hooks/usePremiumAccess", () => ({ usePremiumAccess: () => ({ status: "premium", active: true }) }));
 vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { resolveUrl: (value: string) => value } }));
 vi.mock("../src/localization/LocaleProvider", () => ({ useNativeLocale: () => ({ locale: state.locale, direction: state.locale === "ar" ? "rtl" : "ltr", messages: getNativeMessages(state.locale) }) }));
 vi.mock("../src/hooks/usePublicContent", () => ({
