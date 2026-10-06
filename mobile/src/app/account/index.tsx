@@ -387,7 +387,7 @@ export default function AccountScreen() {
   return <Screen>
     <Stack.Screen options={{ title: label("profile.nativeAccountTitle") }} />
     <View style={[styles.introduction, nativeRowStyle(direction)]}>
-      <View style={styles.accountIcon}><NativeIcon ios="person.crop.circle.fill" android="account_circle" color={colors.primary} size={30} /></View>
+      <View style={styles.accountIcon}><NativeIcon ios="person.crop.circle" android="account_circle" color={colors.primary} size={30} /></View>
       <View style={[styles.introductionText, nativeTextBlock(direction)]}>
         <AppText variant="screenTitle">{session ? label("navigation.profile") : label("profile.nativeAccountTitle")}</AppText>
         {!session ? <AppText style={styles.muted}>{label("profile.guestFirst")}</AppText> : null}
