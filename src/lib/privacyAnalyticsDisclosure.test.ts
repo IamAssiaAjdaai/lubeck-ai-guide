@@ -1,18 +1,11 @@
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const privacySource = readFileSync(
-  new URL("../app/privacy/page.tsx", import.meta.url),
-  "utf8",
-);
-const instrumentationSource = readFileSync(
-  new URL("../../../instrumentation-client.ts", import.meta.url),
-  "utf8",
-);
-const visitorSessionSource = readFileSync(
-  new URL("../lib/visitorSession.ts", import.meta.url),
-  "utf8",
-);
+const source = (path: string) => readFileSync(resolve(process.cwd(), path), "utf8");
+const privacySource = source("src/app/privacy/page.tsx");
+const instrumentationSource = source("instrumentation-client.ts");
+const visitorSessionSource = source("src/lib/visitorSession.ts");
 
 describe("privacy analytics disclosure", () => {
   it("stays aligned with the optional PostHog runtime", () => {
