@@ -1,22 +1,13 @@
 import "server-only";
 import { LifecycleError } from "./rateLimit.server";
+import { externalRequestOrigin } from "./requestOrigin";
+
 export const lifecycleJson = (value: unknown, status = 200) => Response.json(value, { status, headers: { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } });
+
 export async function lifecycleBody(request: Request): Promise<Record<string, unknown>> {
   const origin = request.headers.get("origin");
-  const expectedOrigin = new URL(request.url).origin;
-  const secFetchSite = request.headers.get("sec-fetch-site");
-  if ((origin && origin !== expectedOrigin) || secFetchSite === "cross-site") {
-    if (process.env.CI === "true" && process.env.CITYWALK_ACCOUNT_E2E_ALLOW_HTTP_ORIGIN === "1") {
-      console.warn("[account-e2e] lifecycle origin rejected", {
-        requestUrl: request.url,
-        origin,
-        expectedOrigin,
-        host: request.headers.get("host"),
-        forwardedHost: request.headers.get("x-forwarded-host"),
-        forwardedProto: request.headers.get("x-forwarded-proto"),
-        secFetchSite,
-      });
-    }
+  const expectedOrigin = externalRequestOrigin(request);
+  if ((origin && origin !== expectedOrigin) || request.headers.get("sec-fetch-site") === "cross-site") {
     throw new LifecycleError("INVALID_REQUEST", 403);
   }
   if (!request.headers.get("content-type")?.startsWith("application/json")) throw new LifecycleError("INVALID_REQUEST", 415);
@@ -35,6 +26,7 @@ export async function lifecycleBody(request: Request): Promise<Record<string, un
   } catch { /* No raw request/error logging. */ }
   throw new LifecycleError("INVALID_REQUEST", 400);
 }
+
 export function lifecycleFailure(error: unknown) {
   return lifecycleJson({ code: error instanceof LifecycleError ? error.code : "UNAVAILABLE" }, error instanceof LifecycleError ? error.status : 503);
 }
