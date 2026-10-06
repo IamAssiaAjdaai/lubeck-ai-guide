@@ -12,6 +12,7 @@ type WorkflowAction = (formData: FormData) => Promise<void>;
 export function MarketingWorkflowPanel({
   action,
   actions,
+  cityId,
   currentStatus,
   description,
   publishedUrl,
@@ -19,6 +20,7 @@ export function MarketingWorkflowPanel({
 }: Readonly<{
   action: WorkflowAction;
   actions: readonly MarketingWorkflowAction[];
+  cityId?: number;
   currentStatus: string;
   description: string;
   publishedUrl?: string | null;
@@ -46,6 +48,7 @@ export function MarketingWorkflowPanel({
           {actions.map((transition) => (
             <WorkflowForm
               action={action}
+              cityId={cityId}
               key={`${currentStatus}-${transition.to}`}
               label={transition.label}
               publishedUrl={publishedUrl}
@@ -61,12 +64,14 @@ export function MarketingWorkflowPanel({
 
 function WorkflowForm({
   action,
+  cityId,
   label,
   publishedUrl,
   requiresPublishedUrl,
   to,
 }: Readonly<{
   action: WorkflowAction;
+  cityId?: number;
   label: string;
   publishedUrl?: string | null;
   requiresPublishedUrl: boolean;
@@ -76,6 +81,7 @@ function WorkflowForm({
     return (
       <form action={action} className="w-full rounded-xl border border-border bg-slate-50 p-4">
         <input name="status" type="hidden" value={to} />
+        {cityId ? <input name="cityId" type="hidden" value={cityId} /> : null}
         <label className="block text-sm font-semibold">
           <span>Published URL</span>
           <input
@@ -97,6 +103,7 @@ function WorkflowForm({
   return (
     <form action={action}>
       <input name="status" type="hidden" value={to} />
+      {cityId ? <input name="cityId" type="hidden" value={cityId} /> : null}
       <button className={buttonClass(to)} type="submit">
         {label}
       </button>

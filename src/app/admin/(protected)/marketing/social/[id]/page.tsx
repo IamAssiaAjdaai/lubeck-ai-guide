@@ -38,7 +38,7 @@ export default async function MarketingSocialEditor({
   searchParams,
 }: Readonly<{
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; cityId?: string }>;
 }>) {
   const [{ id: rawId }, query] = await Promise.all([params, searchParams]);
   const id = Number(rawId);
@@ -57,6 +57,16 @@ export default async function MarketingSocialEditor({
     getMarketingWorkflowAccess(item.cityId),
     getMarketingSocialTrackingPreview(item.id),
   ]);
+  const cityContext = resolveRecordCityContext(query.cityId, item.cityId);
+  const cities = cityContext
+    ? options.cities.filter((city) => city.id === cityContext)
+    : options.cities;
+  const campaigns = cityContext
+    ? options.campaigns.filter((campaign) => campaign.cityId === cityContext)
+    : options.campaigns;
+  const pages = cityContext
+    ? options.pages.filter((page) => page.cityId === cityContext)
+    : options.pages;
   const canEdit =
     options.canManage && (item.status === "idea" || item.status === "draft");
   const currentStatus = isMarketingSocialState(item.status) ? item.status : "draft";
@@ -65,10 +75,13 @@ export default async function MarketingSocialEditor({
       transition.from === currentStatus &&
       canUseWorkflowCapability(transition.capability, workflowAccess),
   ).map(({ to, label }) => ({ to, label }));
+  const backHref = cityContext
+    ? `/admin/marketing?cityId=${cityContext}`
+    : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
+      <Link className="text-sm font-semibold text-primary hover:underline" href={backHref}>
         ← Marketing
       </Link>
       <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
@@ -85,12 +98,7 @@ export default async function MarketingSocialEditor({
           action={updateMarketingContentAction.bind(null, item.id)}
           submitLabel="Save social changes"
         >
-          <SocialContentFields
-            campaigns={options.campaigns}
-            cities={options.cities}
-            item={item}
-            pages={options.pages}
-          />
+          <SocialContentFields campaigns={campaigns} cities={cities} item={item} pages={pages} />
         </MarketingFormShell>
       ) : (
         <p className="surface-card mt-6 p-5 text-sm leading-6 text-text-secondary">
@@ -103,6 +111,7 @@ export default async function MarketingSocialEditor({
       <MarketingWorkflowPanel
         action={changeMarketingSocialWorkflowAction.bind(null, item.id)}
         actions={workflowActions}
+        cityId={cityContext}
         currentStatus={currentStatus}
         description="Editors submit drafts. Reviewers approve them. Publishing permission moves approved content to ready; after you post it on the real platform, record that public URL to mark it published."
         publishedUrl={item.publishedUrl}
@@ -110,6 +119,12 @@ export default async function MarketingSocialEditor({
       />
     </section>
   );
+}
+
+function resolveRecordCityContext(rawCityId: string | undefined, recordCityId: number) {
+  if (!rawCityId) return undefined;
+  const cityId = Number(rawCityId);
+  return Number.isInteger(cityId) && cityId === recordCityId ? cityId : undefined;
 }
 
 function canUseWorkflowCapability(

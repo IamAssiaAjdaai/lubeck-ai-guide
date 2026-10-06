@@ -32,7 +32,7 @@ export default async function MarketingPageEditor({
   searchParams,
 }: Readonly<{
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; cityId?: string }>;
 }>) {
   const [{ id: rawId }, query] = await Promise.all([params, searchParams]);
   const id = Number(rawId);
@@ -50,6 +50,13 @@ export default async function MarketingPageEditor({
     getMarketingEditorOptions(),
     getMarketingWorkflowAccess(page.cityId),
   ]);
+  const cityContext = resolveRecordCityContext(query.cityId, page.cityId);
+  const cities = cityContext
+    ? options.cities.filter((city) => city.id === cityContext)
+    : options.cities;
+  const campaigns = cityContext
+    ? options.campaigns.filter((campaign) => campaign.cityId === cityContext)
+    : options.campaigns;
   const canEdit = options.canManage && page.publicationStatus === "draft";
   const currentStatus = isMarketingPageState(page.publicationStatus)
     ? page.publicationStatus
@@ -59,10 +66,13 @@ export default async function MarketingPageEditor({
       transition.from === currentStatus &&
       canUseWorkflowCapability(transition.capability, workflowAccess),
   ).map(({ to, label }) => ({ to, label }));
+  const backHref = cityContext
+    ? `/admin/marketing?cityId=${cityContext}`
+    : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
+      <Link className="text-sm font-semibold text-primary hover:underline" href={backHref}>
         ← Marketing
       </Link>
       <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
@@ -79,11 +89,7 @@ export default async function MarketingPageEditor({
           action={updateMarketingPageAction.bind(null, page.id)}
           submitLabel="Save page changes"
         >
-          <MarketingPageFields
-            campaigns={options.campaigns}
-            cities={options.cities}
-            page={page}
-          />
+          <MarketingPageFields campaigns={campaigns} cities={cities} page={page} />
         </MarketingFormShell>
       ) : (
         <p className="surface-card mt-6 p-5 text-sm leading-6 text-text-secondary">
@@ -94,12 +100,19 @@ export default async function MarketingPageEditor({
       <MarketingWorkflowPanel
         action={changeMarketingPageWorkflowAction.bind(null, page.id)}
         actions={workflowActions}
+        cityId={cityContext}
         currentStatus={currentStatus}
         description="Editors can submit drafts. Reviewers can approve or return them. Publishing permission is required before this page can become published. Public rendering is added separately."
         title="Marketing page workflow"
       />
     </section>
   );
+}
+
+function resolveRecordCityContext(rawCityId: string | undefined, recordCityId: number) {
+  if (!rawCityId) return undefined;
+  const cityId = Number(rawCityId);
+  return Number.isInteger(cityId) && cityId === recordCityId ? cityId : undefined;
 }
 
 function canUseWorkflowCapability(
