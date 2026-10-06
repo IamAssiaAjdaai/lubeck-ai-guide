@@ -54,14 +54,15 @@ describe("landing launch / FAQ / footer checkpoint", () => {
     expect(container.querySelector('a[href*="instagram.com"], a[href*="youtube.com"]')).toBeNull();
   });
 
-  it("shows legal work as pending text, not broken links or a deletion service", () => {
+  it("keeps unfinished legal pages pending while linking the live deletion resource", () => {
     render(<LandingFooter />);
     expect(screen.getByText("Legal pages · in preparation")).toBeDefined();
-    for (const label of ["Privacy", "Terms", "Imprint", "Account deletion"]) {
+    for (const label of ["Privacy", "Terms", "Imprint"]) {
       expect(screen.getByText(label)).toBeDefined();
       expect(screen.queryByRole("link", { name: label })).toBeNull();
     }
-    expect(screen.getByText(/not published policies or an account-deletion service/)).toBeDefined();
+    expect(screen.getByRole("link", { name: "Account deletion" }).getAttribute("href")).toBe("/account-deletion");
+    expect(screen.getByText(/Account deletion is available separately/)).toBeDefined();
   });
 
   it("integrates one footer outside main and gives every link a real destination", () => {
@@ -75,7 +76,7 @@ describe("landing launch / FAQ / footer checkpoint", () => {
     for (const anchor of container.querySelectorAll("a")) {
       const href = anchor.getAttribute("href") ?? "";
       if (href.startsWith("#")) expect(ids).toContain(href.slice(1));
-      else expect(href).toBe("mailto:support@getcitywalk.com");
+      else expect(["mailto:support@getcitywalk.com", "/account-deletion"]).toContain(href);
     }
   });
 });
