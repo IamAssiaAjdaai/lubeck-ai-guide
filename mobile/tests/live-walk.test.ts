@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import liveWalkCardSource from "../src/components/NativeLiveWalkCard.tsx?raw";
 import nativeWalkFlowSource from "../src/components/NativeWalkFlow.tsx?raw";
 import liveActivitySource from "../src/widgets/CitywalkLiveActivity.tsx?raw";
+import backgroundWalkSource from "../src/lib/backgroundWalk.ts?raw";
 
 import {
   LIVE_WALK_ARRIVAL_SAMPLES,
@@ -25,6 +26,23 @@ describe("Live Walk execution semantics", () => {
       'if (stage === "active" && activeMode === "live" && premium.active)',
     );
     expect(nativeWalkFlowSource).toContain("setForegroundPoint(point)");
+  });
+
+  it("revalidates Premium before every Live Walk activity update", () => {
+    expect(backgroundWalkSource).toContain(
+      'type PremiumLiveWalkAccessStatus = "active" | "inactive" | "unavailable";',
+    );
+    expect(backgroundWalkSource).toContain(
+      'if (status === "inactive") {\n    await disableCitywalkLiveWalk();',
+    );
+    expect(
+      backgroundWalkSource.match(/authorizePremiumLiveWalkUpdate\(\)/g)?.length,
+    ).toBeGreaterThanOrEqual(4);
+    expect(
+      backgroundWalkSource.match(
+        /if \(!await authorizePremiumLiveWalkUpdate\(\)\) return/g,
+      )?.length,
+    ).toBeGreaterThanOrEqual(3);
   });
 
   it("keeps the in-app Live Walk card on the light CITYWALK surface", () => {
