@@ -50,6 +50,9 @@ try {
     /If a CITYWALK account exists for that address/i,
   );
 
+  // A real verification link opens as a fresh document. Leaving the page first
+  // ensures the client mount reads the token fragment exactly as production does.
+  await page.goto("about:blank");
   await page.goto(`${baseUrl}/account-deletion#token=invalid-e2e-token`, {
     waitUntil: "networkidle",
   });
