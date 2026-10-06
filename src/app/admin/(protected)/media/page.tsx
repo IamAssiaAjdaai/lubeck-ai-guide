@@ -2,7 +2,7 @@ import { FileAudio, FileImage, FileText, FileVideo, Plus } from "lucide-react";
 
 import { requireStaff } from "@/lib/admin/authorization.server";
 import { AdminNotice } from "@/components/admin/AdminContentForms";
-import { AdminPageHeader, EmptyContent, StatusBadge } from "@/components/admin/AdminContentUi";
+import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import { MediaRowActions } from "@/components/admin/MediaRowActions";
 import Link from "next/link";
 import { hasCityCapability } from "@/lib/admin/permissions";
@@ -79,12 +79,6 @@ export default async function MediaLibraryPage({ searchParams }: Readonly<{
 function icon(kind: MediaKind) {
   const Icon = kind === "image" ? FileImage : kind === "audio" ? FileAudio : kind === "video" ? FileVideo : FileText;
   return <Icon aria-hidden="true" className="shrink-0 text-primary" size={20} />;
-}
-
-function formatBytes(bytes: number | null): string {
-  if (!bytes) return "Pending verification";
-  if (bytes < 1024 * 1024) return `${Math.ceil(bytes / 1024)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 const inputClass = "min-h-11 rounded-xl border border-border bg-white px-3 text-sm";
