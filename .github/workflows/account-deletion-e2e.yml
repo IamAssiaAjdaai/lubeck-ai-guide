@@ -85,7 +85,8 @@ jobs:
             --data '{"email":"citywalk-account-preflight@example.invalid"}' \
             http://127.0.0.1:3101/api/account/delete-request > "$RUNNER_TEMP/citywalk-account-e2e-preflight.json"
           grep -q '"accepted":true' "$RUNNER_TEMP/citywalk-account-e2e-preflight.json"
-          CITYWALK_PLAYWRIGHT_MODULE="$RUNNER_TEMP/citywalk-account-e2e/node_modules/playwright" node scripts/check-account-deletion-e2e.mjs
+          CITYWALK_PLAYWRIGHT_MODULE="$RUNNER_TEMP/citywalk-account-e2e/node_modules/playwright" \
+            timeout 45s node scripts/check-account-deletion-e2e.mjs
 
       - name: Show server log on failure
         if: ${{ failure() }}
