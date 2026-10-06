@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { AdminNotice } from "@/components/admin/AdminContentForms";
 import {
@@ -16,30 +17,47 @@ export const metadata = {
 export default async function NewMarketingSocialPage({
   searchParams,
 }: Readonly<{
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; city?: string }>;
 }>) {
-  const [{ error }, options] = await Promise.all([
+  const [query, options] = await Promise.all([
     searchParams,
     getMarketingEditorOptions(),
   ]);
+  const city = query.city
+    ? options.cities.find(({ slug }) => slug === query.city)
+    : undefined;
+  if (query.city && !city) notFound();
+
+  const campaigns = city
+    ? options.campaigns.filter((campaign) => campaign.cityId === city.id)
+    : options.campaigns;
+  const pages = city
+    ? options.pages.filter((page) => page.cityId === city.id)
+    : options.pages;
+  const marketingHref = city
+    ? `/admin/marketing?city=${encodeURIComponent(city.slug)}`
+    : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
-        ← Marketing
+      <Link className="text-sm font-semibold text-primary hover:underline" href={marketingHref}>
+        ← {city ? `${city.name} Marketing` : "Marketing"}
       </Link>
       <AdminPageHeader
-        description="Create a human-reviewed social draft with a stable content code for attribution."
+        description={city
+          ? `Create a human-reviewed social draft for ${city.name}. Campaign and page choices stay inside the same city.`
+          : "Create a human-reviewed social draft with a stable content code for attribution."}
         eyebrow="Marketing · Social"
         title="New social draft"
       />
-      <AdminNotice error={error} />
+      <AdminNotice error={query.error} />
       {options.canManage ? (
         <MarketingFormShell action={createMarketingContentAction} submitLabel="Save social draft">
           <SocialContentFields
-            campaigns={options.campaigns}
-            cities={options.cities}
-            pages={options.pages}
+            campaigns={campaigns}
+            cities={city ? [city] : options.cities}
+            initialCityId={city?.id}
+            pages={pages}
           />
         </MarketingFormShell>
       ) : (
