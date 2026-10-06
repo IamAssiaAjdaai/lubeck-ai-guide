@@ -95,12 +95,16 @@ describe("anonymous native V2 persistence", () => {
     await expect(saveNativeWalk(journey, places, true, store)).rejects.toThrow();
     expect(writes).toBe(0);
   });
-  it("persists feedback separately from active routes", async () => {
+  it("persists rating and completion tags separately from active routes", async () => {
     const store = memory();
     await persistActiveWalk(journey, store);
-    await saveWalkFeedback(journey.id, "fit", "yes", store);
+    await saveWalkFeedback(journey.id, "rating", "5", store);
+    await saveWalkFeedback(journey.id, "tags", JSON.stringify(["route", "audio"]), store);
     expect(await loadActiveWalk("city", store)).toEqual(journey);
-    expect([...store.values.values()]).toContain("yes");
+    expect(store.values.get("citywalk:native:v2:feedback:one:rating")).toBe("5");
+    expect(store.values.get("citywalk:native:v2:feedback:one:tags")).toBe(
+      JSON.stringify(["route", "audio"]),
+    );
   });
   it("retains legacy saved trips while V2 saves and removals occur", async () => {
     const store = memory();

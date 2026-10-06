@@ -1692,43 +1692,24 @@ export function NativeWalkFlow({
               size={38}
             />
           </View>
+          <AppText variant="caption" style={styles.eyebrow}>
+            {translate(locale, "trips.tripComplete")}
+          </AppText>
           <SectionTitle>{t.finished.replace("{city}", nativeCityName(citySlug, cityName, locale))}</SectionTitle>
           <MetricSummary
             items={[
-              { label: t.placesVisited, value: String(journey.visited.length) },
-              { label: t.distance, value: distance(journey.historyDistance) },
               {
                 label: t.timeExplored,
                 value: duration(
                   ((journey.finishedAt ?? now) - journey.startedAt) / 60000,
                 ),
               },
+              { label: t.distance, value: distance(journey.historyDistance) },
+              { label: t.stops, value: String(journey.visited.length) },
             ]}
           />
-          <SectionTitle>{t.highlights}</SectionTitle>
-          {journey.visited.length ? (
-            itinerary(named(journey.visited))
-          ) : (
-            <AppText>{t.noVisited}</AppText>
-          )}
-          {saveFeedback}
-          <PrimaryButton wrapLabel label={saveLabel} disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
-                  busy={saving} onPress={() => void save()} />
-          <PrimaryButton
-            wrapLabel
-            label={t.share}
-            onPress={() => {
-              void Share.share({
-                message: `${t.finished.replace("{city}", nativeCityName(citySlug, cityName, locale))}\n${named(
-                  journey.visited,
-                )
-                  .map((p) => nativePlaceName(citySlug, p.slug, p.content.name, locale))
-                  .join(" · ")}`,
-              }).catch(() => setMessage(t.shareFailed));
-            }}
-          />
           <PublicStoreReview journey={journey} onSettled={reviewDidSettle} />
-          {reviewSettled === journey.id && showPrivateFeedback !== journey.id ? <PrimaryButton wrapLabel tone="secondary"
+          {reviewSettled === journey.id && showPrivateFeedback !== journey.id ? <PrimaryButton compact wrapLabel tone="secondary"
             label={translate(locale, "complete.feedback")} onPress={() => setShowPrivateFeedback(journey.id)} /> : null}
           {showPrivateFeedback === journey.id ? <>
           <WalkChoices
@@ -1751,6 +1732,33 @@ export function NativeWalkFlow({
           />
           {feedbackSaving ? <PrimaryButton label={uxCopy(locale).saving} busy disabled /> : null}
           </> : null}
+          <PrimaryButton
+            wrapLabel
+            label={t.share}
+            onPress={() => {
+              void Share.share({
+                message: `${t.finished.replace("{city}", nativeCityName(citySlug, cityName, locale))}\n${named(
+                  journey.visited,
+                )
+                  .map((p) => nativePlaceName(citySlug, p.slug, p.content.name, locale))
+                  .join(" · ")}`,
+              }).catch(() => setMessage(t.shareFailed));
+            }}
+          />
+          {journey.visited.length ? (
+            itinerary(named(journey.visited), true, false, true)
+          ) : (
+            <AppText>{t.noVisited}</AppText>
+          )}
+          {saveFeedback}
+          <PrimaryButton
+            wrapLabel
+            label={saveLabel}
+            disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
+            busy={saving}
+            tone="secondary"
+            onPress={() => void save()}
+          />
           <PrimaryButton
             wrapLabel
             tone="secondary"
