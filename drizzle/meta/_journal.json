@@ -22,6 +22,7 @@
     {"idx":17,"version":"7","when":1790982960000,"tag":"0017_better_auth_account_identity","breakpoints":true},
     {"idx":18,"version":"7","when":1791129600000,"tag":"0018_neon_rate_limits","breakpoints":true},
     {"idx":19,"version":"7","when":1791200000000,"tag":"0019_subscription_entitlements","breakpoints":true},
-    {"idx":20,"version":"7","when":1791210000000,"tag":"0020_revenuecat_event_ordering","breakpoints":true}
+    {"idx":20,"version":"7","when":1791210000000,"tag":"0020_revenuecat_event_ordering","breakpoints":true},
+    {"idx":21,"version":"7","when":1791282600000,"tag":"0021_account_erasure_outbox","breakpoints":true}
   ]
 }
