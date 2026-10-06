@@ -5,11 +5,11 @@ import {
   createRequestDatabase,
   runWithRequestDatabase,
 } from "@/db/client";
+import { runScheduledAccountErasures } from "./accountErasureSchedule";
 import {
   isAccountErasureScheduleConfigured,
-  runScheduledAccountErasures,
   type AccountErasureScheduleEnvironment,
-} from "./accountErasureSchedule";
+} from "./accountErasureScheduleConfig";
 
 type VinextFetch = typeof handler.fetch;
 type VinextEnvironment = Parameters<VinextFetch>[1];
@@ -52,10 +52,13 @@ export default {
   },
 
   async scheduled(
-    _controller: ScheduledControllerLike,
+    controller: ScheduledControllerLike,
     env: CitywalkWorkerEnvironment,
-    _ctx: VinextContext,
+    ctx: VinextContext,
   ): Promise<void> {
+    void controller;
+    void ctx;
+
     // Code-only foundation: cloudflare.config.ts intentionally has no scheduled
     // trigger. This handler remains dormant until a production cron is approved.
     if (!isAccountErasureScheduleConfigured(env)) {
