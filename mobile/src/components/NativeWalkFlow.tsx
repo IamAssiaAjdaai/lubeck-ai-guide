@@ -219,8 +219,7 @@ export function NativeWalkFlow({
   const [buildError, setBuildError] = useState<"empty" | "error">();
   const [buildStage, setBuildStage] = useState<WalkBuildStage>("matching");
   const [rating, setRating] = useState<string[]>([]),
-    [fit, setFit] = useState<string[]>([]),
-    [feedbackTags, setFeedbackTags] = useState<string[]>([]);
+    [fit, setFit] = useState<string[]>([]);
   const [proposalMessage, setProposalMessage] = useState("");
   const [proposalKind, setProposalKind] = useState<"adaptation" | "take_back">(
     "adaptation",
@@ -677,7 +676,7 @@ export function NativeWalkFlow({
       setStartSlug(places[0]?.slug ?? ""); setEndSlug(places[0]?.slug ?? "");
       setGps(undefined); setStartMode("place"); setEndMode("loop");
       setShowMap(false); setBuildStage("matching");
-      setNow(Date.now()); setGeneratedAt(Date.now()); setRating([]); setFit([]); setFeedbackTags([]);
+      setNow(Date.now()); setGeneratedAt(Date.now()); setRating([]); setFit([]);
       setReviewSettled(undefined); setShowPrivateFeedback(undefined);
       setRebuildConfirmation(undefined); setStage("plan");
     } catch { setMessage(messages.tripSaveFailed); }
@@ -1709,10 +1708,12 @@ export function NativeWalkFlow({
               { label: t.stops, value: String(journey.visited.length) },
             ]}
           />
+          <PublicStoreReview journey={journey} onSettled={reviewDidSettle} />
+          {reviewSettled === journey.id && showPrivateFeedback !== journey.id ? <PrimaryButton compact wrapLabel tone="secondary"
+            label={translate(locale, "complete.feedback")} onPress={() => setShowPrivateFeedback(journey.id)} /> : null}
+          {showPrivateFeedback === journey.id ? <>
           <WalkChoices
             label={translate(locale, "complete.ratingQuestion")}
-            variant="segment"
-            compact
             options={[1, 2, 3, 4, 5].map((value) => ({
               value: String(value),
               label: `${value} ★`,
@@ -1721,28 +1722,7 @@ export function NativeWalkFlow({
             onSelect={(value) => void feedback("rating", value)}
           />
           <WalkChoices
-            label={t.highlights}
-            multiple
-            compact
-            options={[
-              { value: "route", label: translate(locale, "planner.yourRoute") },
-              { value: "places", label: translate(locale, "place.places") },
-              { value: "audio", label: translate(locale, "place.audioGuide") },
-              { value: "hidden", label: translate(locale, "planner.hiddenGems") },
-            ]}
-            selected={feedbackTags}
-            onSelect={(value) =>
-              setFeedbackTags((currentTags) =>
-                currentTags.includes(value)
-                  ? currentTags.filter((tag) => tag !== value)
-                  : [...currentTags, value],
-              )
-            }
-          />
-          <WalkChoices
             label={t.fit}
-            variant="segment"
-            compact
             options={[
               { value: "yes", label: t.yes },
               { value: "no", label: t.no },
@@ -1751,6 +1731,7 @@ export function NativeWalkFlow({
             onSelect={(value) => void feedback("fit", value)}
           />
           {feedbackSaving ? <PrimaryButton label={uxCopy(locale).saving} busy disabled /> : null}
+          </> : null}
           <PrimaryButton
             wrapLabel
             label={t.share}
@@ -1764,9 +1745,6 @@ export function NativeWalkFlow({
               }).catch(() => setMessage(t.shareFailed));
             }}
           />
-          <PublicStoreReview journey={journey} onSettled={reviewDidSettle} />
-          {reviewSettled === journey.id && showPrivateFeedback !== journey.id ? <PrimaryButton compact wrapLabel tone="secondary"
-            label={translate(locale, "complete.feedback")} onPress={() => setShowPrivateFeedback(journey.id)} /> : null}
           {journey.visited.length ? (
             itinerary(named(journey.visited), true, false, true)
           ) : (
