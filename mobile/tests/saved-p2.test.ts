@@ -17,15 +17,18 @@ describe("Saved P2 presentation", () => {
     expect(walks).toBeGreaterThan(places);
     expect(savedSource).toContain("style={styles.savedGroup}");
     expect(savedSource).toContain("minHeight: 72");
+    expect(savedSource).not.toContain("minHeight: 100");
   });
 
   it("keeps place rows lightweight and offers an Explore recovery action", () => {
     expect(savedSource).not.toContain("WalkMembershipControl");
     expect(savedSource).toContain('pathname: "/city/[citySlug]/explore"');
     expect(savedSource).toContain('translate(locale, "cityHub.places")');
+    expect(savedSource).toContain("style={[styles.savedEmptyRow, { direction }]}");
   });
 
   it("preserves account/local switching and existing remove behavior", () => {
+    expect(savedSource).toContain("style={[styles.sourceRow, { direction }]}");
     expect(savedSource).toContain("setLocalView((value) => !value)");
     expect(savedSource).toContain("removeAccountWalk(account.userId, walk.id)");
     expect(savedSource).toContain("removeNativeWalk(walk.citySlug, walk.id)");
