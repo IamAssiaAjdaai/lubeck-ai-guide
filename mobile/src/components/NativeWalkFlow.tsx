@@ -158,12 +158,19 @@ export function NativeWalkFlow({
   const [liveSession, setLiveSession] = useState<LiveWalkSession>();
   const [foregroundPoint, setForegroundPoint] = useState<Point>();
   const [liveBusy, setLiveBusy] = useState(false);
-  const [activeMode, setActiveMode] = useState<ActiveWalkMode>("basic");
+  const [requestedActiveMode, setActiveMode] = useState<ActiveWalkMode>("basic");
   const [showManageWalk, setShowManageWalk] = useState(false);
   const [showLiveInspect, setShowLiveInspect] = useState(false);
   const [liveInspect, setLiveInspect] = useState("");
   const [journey, setJourney] = useState<WalkJourney>(),
     [proposed, setProposed] = useState<WalkRoute<PublicPlaceCard>>();
+  const activeMode: ActiveWalkMode =
+    stage === "active" &&
+    journey &&
+    premium.active &&
+    liveSession?.journeyId === journey.id
+      ? "live"
+      : requestedActiveMode;
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -182,16 +189,6 @@ export function NativeWalkFlow({
       unsubscribe();
     };
   }, []);
-  useEffect(() => {
-    if (
-      stage === "active" &&
-      journey &&
-      premium.active &&
-      liveSession?.journeyId === journey.id
-    ) {
-      setActiveMode("live");
-    }
-  }, [stage, journey?.id, premium.active, liveSession?.journeyId]);
   const [step, setStep] = useState(1),
     [minutes, setMinutes] = useState(120),
     [returnBy, setReturnBy] = useState("");
