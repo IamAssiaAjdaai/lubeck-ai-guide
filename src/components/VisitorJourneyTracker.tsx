@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import posthog from "posthog-js";
 
+import { getAnalyticsConsent } from "@/lib/analyticsConsent";
 import { getVisitorJourneyEvent } from "@/lib/visitorJourney";
 import {
   getBrowserVisitorSessionIdentity,
@@ -15,13 +16,12 @@ export default function VisitorJourneyTracker() {
 
   useEffect(() => {
     if (pathname === "/account/reset-password") return;
-    const identity = getBrowserVisitorSessionIdentity();
     const event = getVisitorJourneyEvent(pathname);
-    if (!event) return;
+    if (!event || getAnalyticsConsent() !== "granted") return;
 
     try {
       if (posthog.has_opted_out_capturing()) return;
-
+      const identity = getBrowserVisitorSessionIdentity();
       posthog.register(getVisitorAnalyticsProperties(identity));
       posthog.capture(event.eventName, event.properties);
     } catch (error) {
