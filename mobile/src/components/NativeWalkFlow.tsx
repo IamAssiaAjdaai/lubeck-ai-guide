@@ -1,4 +1,5 @@
 import { useAccountWalks } from "../hooks/useAccountWalks";
+import { usePremiumAccess } from "../hooks/usePremiumAccess";
 import { accountWalkState, saveAccountWalk, loadAccountWalkForOpen } from "../lib/accountWalks";
 import { SaveAccountGate } from "./SaveAccountGate";
 import { PublicStoreReview } from "./PublicStoreReview";
@@ -105,6 +106,8 @@ import { NativeIcon } from "./NativeIcon";
 import { colors } from "../design/tokens";
 import { walkStyles as styles } from "../design/walkStyles";
 
+type ActiveWalkMode = "basic" | "live";
+
 export function NativeWalkFlow({
   citySlug,
   cityName,
@@ -131,6 +134,7 @@ export function NativeWalkFlow({
     "hydrate" | "plan" | "building" | "preview" | "active" | "finished"
   >("hydrate");
   const account = useAccountWalks();
+  const premium = usePremiumAccess();
   const savedMessage = translate(locale, "saved.accountDone");
   const [saveGate, setSaveGate] = useState(false);
 
@@ -154,9 +158,20 @@ export function NativeWalkFlow({
   const [liveSession, setLiveSession] = useState<LiveWalkSession>();
   const [foregroundPoint, setForegroundPoint] = useState<Point>();
   const [liveBusy, setLiveBusy] = useState(false);
+  const [requestedActiveMode, setActiveMode] = useState<ActiveWalkMode>("basic");
   const [showManageWalk, setShowManageWalk] = useState(false);
+  const [showLiveItinerary, setShowLiveItinerary] = useState(false);
   const [showLiveInspect, setShowLiveInspect] = useState(false);
   const [liveInspect, setLiveInspect] = useState("");
+  const [journey, setJourney] = useState<WalkJourney>(),
+    [proposed, setProposed] = useState<WalkRoute<PublicPlaceCard>>();
+  const activeMode: ActiveWalkMode =
+    stage === "active" &&
+    journey &&
+    premium.active &&
+    liveSession?.journeyId === journey.id
+      ? "live"
+      : requestedActiveMode;
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -195,8 +210,6 @@ export function NativeWalkFlow({
       "loop",
     ),
     [endSlug, setEndSlug] = useState(places[0]?.slug ?? "");
-  const [journey, setJourney] = useState<WalkJourney>(),
-    [proposed, setProposed] = useState<WalkRoute<PublicPlaceCard>>();
   const [panel, setPanel] = useState<"add" | "back">(),
     [message, setMessage] = useState("");
   const [now, setNow] = useState(() => Date.now()),
@@ -293,11 +306,16 @@ export function NativeWalkFlow({
       ])
     : "";
   useEffect(() => {
-    if (stage !== "active" || !journey) return;
+    if (
+      stage !== "active" ||
+      !journey ||
+      activeMode !== "live" ||
+      !premium.active
+    ) return;
     void syncLiveCompanion(journey);
     // Sync only execution identity/route changes; raw GPS publishes separately.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stage, liveSyncKey]);
+  }, [stage, activeMode, premium.active, liveSyncKey]);
   const dynamicTags = [
     ...new Set(eligible.flatMap((p) => p.tags ?? [])),
   ].filter(
@@ -569,7 +587,7 @@ export function NativeWalkFlow({
       });
       setJourney(result.journey);
       setNow(Date.now());
-      if (phase === "active") {
+      if (phase === "active" && activeMode === "live" && premium.active) {
         await syncLiveCompanion(result.journey, liveRouteUpdated);
       }
       return true;
@@ -593,17 +611,41 @@ export function NativeWalkFlow({
     }
     finally { saveLock.current = false; setSaving(false); }
   }
-  async function start() {
+  async function start(mode: ActiveWalkMode = "basic") {
     if (!journey || updateLock.current) return;
+    if (mode === "live" && !premium.active) {
+      unlockPremium();
+      return;
+    }
     updateLock.current = true; setUpdating(true);
     try {
       if (walkStartStatus(journey, places, contentStatus === "available") !== "ready") return;
       if (authorizeStart && !await authorizeStart()) return;
       const next = await startCurrentWalk(citySlug, journey.id, places, contentStatus === "available");
-      await syncLiveCompanion(next.journey);
+      setActiveMode(mode);
       setJourney(next.journey);
       setNow(Date.now());
       setStage("active");
+      if (mode === "live") {
+        try {
+          const session = await syncLiveCompanion(next.journey);
+          setLiveSession(session);
+          const result = await enableCitywalkLiveWalk();
+          setLiveSession(await loadLiveWalkSession());
+          if (result === "enabled") {
+            await refreshCitywalkLiveActivity(next.journey.position);
+            setMessage(translate(locale, "liveWalk.enabled"));
+          } else if (result === "denied") {
+            setMessage(translate(locale, "liveWalk.locationNeeded"));
+          } else {
+            setMessage(translate(locale, "liveWalk.unavailable"));
+          }
+        } catch {
+          setMessage(translate(locale, "liveWalk.unavailable"));
+        }
+      } else {
+        setForegroundPoint(undefined);
+      }
     } catch (error) {
       const code = error instanceof Error ? error.message : "";
       setMessage(code === "walk-start-empty" ? t.emptyHelp
@@ -626,8 +668,8 @@ export function NativeWalkFlow({
       await completeCitywalkLiveWalk();
       await clearCurrentWalk(citySlug, rebuildConfirmation.current);
       setJourney(undefined); setProposed(undefined); setPanel(undefined);
-      setLiveSession(undefined); setForegroundPoint(undefined);
-      setShowManageWalk(false); setShowLiveInspect(false);
+      setLiveSession(undefined); setForegroundPoint(undefined); setActiveMode("basic");
+      setShowManageWalk(false); setShowLiveItinerary(false); setShowLiveInspect(false);
       setProposalMessage(""); setMessage(""); setBuildError(undefined);
       setStep(1); setMinutes(120); setReturnBy("");
       setInterests(["history", "architecture"]); setCategories([]); setWalking("balanced");
@@ -640,7 +682,14 @@ export function NativeWalkFlow({
     } catch { setMessage(messages.tripSaveFailed); }
     finally { updateLock.current = false; setUpdating(false); }
   }
+  function unlockPremium() {
+    router.push("/premium");
+  }
   function shorten() {
+    if (!premium.active) {
+      unlockPremium();
+      return;
+    }
     if (!journey) return;
     try {
       setProposalKind("adaptation");
@@ -658,6 +707,10 @@ export function NativeWalkFlow({
     }
   }
   function add(slug: string) {
+    if (!premium.active) {
+      unlockPremium();
+      return;
+    }
     if (!journey) return;
     const place = places.find((p) => p.slug === slug);
     if (!place) return;
@@ -678,6 +731,10 @@ export function NativeWalkFlow({
     } else setProposalMessage(t.noEligible);
   }
   function back(point: Point) {
+    if (!premium.active) {
+      unlockPremium();
+      return;
+    }
     if (journey) {
       setProposalKind("take_back");
       setProposed(measureWalk([], journey.position, point));
@@ -695,14 +752,19 @@ export function NativeWalkFlow({
   }
   async function toggleLiveWalk() {
     if (!journey || liveBusy) return;
+    if (!premium.active) {
+      unlockPremium();
+      return;
+    }
     setLiveBusy(true);
     setMessage("");
     try {
-      if (liveSession?.enabled) {
+      if (liveSession?.enabled && liveSession.journeyId === journey.id) {
         await disableCitywalkLiveWalk();
         setLiveSession(await loadLiveWalkSession());
         return;
       }
+      setActiveMode("live");
       await syncLiveCompanion(journey);
       const result = await enableCitywalkLiveWalk();
       setLiveSession(await loadLiveWalkSession());
@@ -759,7 +821,10 @@ export function NativeWalkFlow({
   const eta =
     (stage === "preview" ? generatedAt : now) + (route?.minutes ?? 0) * 60000;
   const deadline = journey?.settings.deadline;
+  const isLiveActive = stage === "active" && activeMode === "live" && premium.active;
   const livePresentation =
+    activeMode === "live" &&
+    premium.active &&
     journey &&
     liveSession?.journeyId === journey.id
       ? buildLiveWalkPresentation(
@@ -1032,7 +1097,7 @@ export function NativeWalkFlow({
         <>
           {stage === "preview" ? (
             <V2Hero compact title={t.preview} subtitle={nativeCityName(citySlug, cityName, locale)} />
-          ) : (
+          ) : !isLiveActive ? (
             <View style={styles.activeHeading}>
               {current ? (
                 <AppText variant="caption" style={styles.eyebrow}>
@@ -1057,7 +1122,7 @@ export function NativeWalkFlow({
                 </AppText>
               ) : null}
             </View>
-          )}
+          ) : null}
           {stage === "preview" ? summary(route) : null}
           {stage === "preview" ? <View
             style={[
@@ -1110,9 +1175,10 @@ export function NativeWalkFlow({
               routeFinish={journey.finish}
               currentSlug={current?.slug}
               compact={stage === "active"}
-              followUserLocation={stage === "active"}
+              liveFocus={isLiveActive}
+              followUserLocation={stage === "active" && activeMode === "live" && premium.active}
               onLocation={(point) => {
-                if (stage === "active") {
+                if (stage === "active" && activeMode === "live" && premium.active) {
                   setForegroundPoint(point);
                   setJourney((currentJourney) =>
                     currentJourney?.id === journey.id
@@ -1131,17 +1197,32 @@ export function NativeWalkFlow({
                 startStatus !== "ready" ? <StatusMessage>{startStatus === "empty" ? t.emptyHelp : t.planContentUnavailable}</StatusMessage> : null}
               <PrimaryButton
                 wrapLabel
-                label={t.startWalk}
+                label={translate(locale, "liveWalk.turnOn")}
                 disabled={startStatus !== "ready"}
                 busy={updating}
                 leadingIcon={
                   <NativeIcon
-                    ios="location.fill"
-                    android="near_me"
+                    ios={premium.active ? "location.fill" : "lock.fill"}
+                    android={premium.active ? "near_me" : "lock"}
                     color={colors.surface}
                   />
                 }
-                onPress={() => void start()}
+                onPress={() => premium.active ? void start("live") : unlockPremium()}
+              />
+              <PrimaryButton
+                wrapLabel
+                label={t.startWalk}
+                tone="secondary"
+                disabled={startStatus !== "ready"}
+                busy={updating}
+                leadingIcon={
+                  <NativeIcon
+                    ios="map"
+                    android="map"
+                    color={colors.primary}
+                  />
+                }
+                onPress={() => void start("basic")}
               />
               {saveFeedback}
               <View style={styles.actionRow}>
@@ -1164,16 +1245,23 @@ export function NativeWalkFlow({
           ) : (
             <>
               {livePresentation ? (
-                <NativeLiveWalkCard
-                  presentation={livePresentation}
-                  continueLabel={translate(locale, "liveWalk.continueWalk")}
-                  continueDisabled={!liveNavigationTarget}
-                  onContinue={() => {
-                    if (liveNavigationTarget) void navigate(liveNavigationTarget);
-                  }}
-                />
+                <NativeLiveWalkCard presentation={livePresentation} />
               ) : null}
-              {Platform.OS === "ios" && !liveSession?.enabled ? (
+              {activeMode === "basic" ? (
+                <PrimaryButton
+                  label={translate(locale, "liveWalk.turnOn")}
+                  tone="secondary"
+                  busy={liveBusy}
+                  onPress={() => premium.active ? void toggleLiveWalk() : unlockPremium()}
+                  leadingIcon={
+                    <NativeIcon
+                      ios={premium.active ? "sparkles" : "lock.fill"}
+                      android={premium.active ? "auto_awesome" : "lock"}
+                      color={colors.primary}
+                    />
+                  }
+                />
+              ) : Platform.OS === "ios" && premium.active && !liveSession?.enabled ? (
                 <>
                   <AppText variant="metadata" style={styles.muted}>
                     {translate(locale, "liveWalk.permissionHelp")}
@@ -1195,53 +1283,73 @@ export function NativeWalkFlow({
                 />
               ) : null}
 
-              <AppText variant="label" style={styles.routeLabel}>
-                {t.tripControls}
-              </AppText>
-              <View style={styles.controls}>
-                <PrimaryButton
-                  compact
-                  style={styles.control}
-                  wrapLabel
-                  tone="secondary"
-                  label={t.add}
-                  disabled={journey.takeBack === true}
-                  onPress={() => {
-                    setProposalKind("adaptation");
-                    setProposalMessage("");
-                    setPanel("add");
-                  }}
-                  leadingIcon={<NativeIcon ios="plus" android="add" />}
-                />
-                <PrimaryButton
-                  compact
-                  style={styles.control}
-                  wrapLabel
-                  tone="secondary"
-                  label={t.shorten}
-                  disabled={!current || journey.takeBack === true}
-                  onPress={shorten}
-                  leadingIcon={
-                    <NativeIcon
-                      ios="arrow.triangle.branch"
-                      android="alt_route"
-                    />
-                  }
-                />
-                <PrimaryButton
-                  compact
-                  style={styles.control}
-                  wrapLabel
-                  tone="secondary"
-                  label={t.takeBack}
-                  onPress={() => setPanel("back")}
-                  leadingIcon={
-                    <NativeIcon ios="arrow.uturn.backward" android="undo" />
-                  }
-                />
-              </View>
+              {!isLiveActive ? (
+                <>
+                  <AppText variant="label" style={styles.routeLabel}>
+                    {t.tripControls}
+                  </AppText>
+                  {premium.active ? (
+                    <View style={styles.controls}>
+                      <PrimaryButton
+                        compact
+                        style={styles.control}
+                        wrapLabel
+                        tone="secondary"
+                        label={t.add}
+                        disabled={journey.takeBack === true}
+                        onPress={() => {
+                          setProposalKind("adaptation");
+                          setProposalMessage("");
+                          setPanel("add");
+                        }}
+                        leadingIcon={<NativeIcon ios="plus" android="add" />}
+                      />
+                      <PrimaryButton
+                        compact
+                        style={styles.control}
+                        wrapLabel
+                        tone="secondary"
+                        label={t.shorten}
+                        disabled={!current || journey.takeBack === true}
+                        onPress={shorten}
+                        leadingIcon={
+                          <NativeIcon
+                            ios="arrow.triangle.branch"
+                            android="alt_route"
+                          />
+                        }
+                      />
+                      <PrimaryButton
+                        compact
+                        style={styles.control}
+                        wrapLabel
+                        tone="secondary"
+                        label={t.takeBack}
+                        onPress={() => setPanel("back")}
+                        leadingIcon={
+                          <NativeIcon ios="arrow.uturn.backward" android="undo" />
+                        }
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.section}>
+                      <AppText variant="metadata" style={styles.muted}>
+                        Add stops, shorten your route and get back on time with CITYWALK Premium.
+                      </AppText>
+                      <PrimaryButton
+                        compact
+                        wrapLabel
+                        tone="secondary"
+                        label="Unlock smart controls"
+                        onPress={unlockPremium}
+                        leadingIcon={<NativeIcon ios="sparkles" android="auto_awesome" />}
+                      />
+                    </View>
+                  )}
+                </>
+              ) : null}
 
-              {panel === "back" ? (
+              {premium.active && panel === "back" ? (
                 <View style={styles.section}>
                   <PrimaryButton
                     label={t.tripStart}
@@ -1261,19 +1369,21 @@ export function NativeWalkFlow({
 
               {current ? (
                 <View style={styles.currentStopPanel}>
-                  <View style={styles.currentStopHeader}>
-                    <AppText variant="caption" style={styles.eyebrow}>
-                      {t.stop
-                        .replace("{number}", String(journey.visited.length + 1))
-                        .replace(
-                          "{total}",
-                          String(journey.visited.length + journey.remaining.length),
-                        )}
-                    </AppText>
-                    <AppText variant="label" numberOfLines={1}>
-                      {nativePlaceName(citySlug, current.slug, current.content.name, locale)}
-                    </AppText>
-                  </View>
+                  {!isLiveActive ? (
+                    <View style={styles.currentStopHeader}>
+                      <AppText variant="caption" style={styles.eyebrow}>
+                        {t.stop
+                          .replace("{number}", String(journey.visited.length + 1))
+                          .replace(
+                            "{total}",
+                            String(journey.visited.length + journey.remaining.length),
+                          )}
+                      </AppText>
+                      <AppText variant="label" numberOfLines={1}>
+                        {nativePlaceName(citySlug, current.slug, current.content.name, locale)}
+                      </AppText>
+                    </View>
+                  ) : null}
                   <View style={styles.currentActions}>
                     {[
                       {
@@ -1367,70 +1477,183 @@ export function NativeWalkFlow({
                 </View>
               ) : null}
 
-              {route.places.length ? itinerary(route.places, true, true, true) : null}
-
-              <PrimaryButton
-                label={translate(locale, "liveWalk.manageWalk")}
-                tone="secondary"
-                onPress={() => setShowManageWalk((value) => !value)}
-              />
-              {showManageWalk ? (
-                <View style={styles.section}>
-                  {saveFeedback}
-                  <PrimaryButton
-                    label={saveLabel}
-                    disabled={
-                      saveStatus !== "ready" ||
-                      account.loading ||
-                      savedState === "saved"
-                    }
-                    busy={saving}
-                    tone="secondary"
-                    onPress={() => void save()}
-                  />
-                  <PrimaryButton
-                    label={t.rebuild}
-                    tone="secondary"
-                    busy={updating}
-                    onPress={() => void requestRebuild()}
-                  />
-                  {liveSession?.enabled ? (
-                    <PrimaryButton
-                      label={translate(locale, "liveWalk.turnOff")}
-                      tone="secondary"
-                      busy={liveBusy}
-                      onPress={() => void toggleLiveWalk()}
-                    />
-                  ) : null}
-                </View>
+              {route.places.length ? (
+                isLiveActive ? (
+                  <View style={styles.liveItinerary}>
+                    <PressableSurface
+                      accessibilityRole="button"
+                      accessibilityLabel={t.itinerary}
+                      accessibilityState={{ expanded: showLiveItinerary }}
+                      style={styles.liveItineraryToggle}
+                      onPress={() => setShowLiveItinerary((value) => !value)}
+                    >
+                      <AppText variant="label" style={styles.liveItineraryLabel}>
+                        {t.itinerary} · {route.places.length} {t.stops}
+                      </AppText>
+                      <AppText style={styles.liveItineraryIndicator}>
+                        {showLiveItinerary ? "−" : "+"}
+                      </AppText>
+                    </PressableSurface>
+                    {showLiveItinerary ? itinerary(route.places, true, true, true) : null}
+                  </View>
+                ) : itinerary(route.places, true, true, true)
               ) : null}
 
-              <PrimaryButton
-                label={t.finish}
-                busy={updating}
-                onPress={() => {
-                  const next = {
-                    ...journey,
-                    finishedAt: Date.now(),
-                    historyDistance:
-                      journey.historyDistance +
-                      (!current && journey.finish
-                        ? (calculateDistanceMeters(
-                            journey.position,
-                            journey.finish,
-                          ) ?? 0)
-                        : 0),
-                  };
-                  void update(next).then(async (ok) => {
-                    if (!ok) return;
-                    await completeCitywalkLiveWalk();
-                    setLiveSession(undefined);
-                    setStage("finished");
-                  });
-                }}
-              />
+              {isLiveActive ? (
+                <PressableSurface
+                  accessibilityRole="button"
+                  accessibilityLabel={t.tripControls}
+                  accessibilityState={{ expanded: showManageWalk }}
+                  style={styles.liveOverflowButton}
+                  onPress={() => setShowManageWalk((value) => !value)}
+                >
+                  <AppText style={styles.liveOverflowText}>•••</AppText>
+                </PressableSurface>
+              ) : (
+                <PrimaryButton
+                  label={translate(locale, "liveWalk.manageWalk")}
+                  tone="secondary"
+                  onPress={() => setShowManageWalk((value) => !value)}
+                />
+              )}
+              {showManageWalk ? (
+                isLiveActive ? (
+                  <View style={styles.liveMenu}>
+                    <PrimaryButton
+                      compact
+                      wrapLabel
+                      tone="secondary"
+                      label={t.add}
+                      disabled={journey.takeBack === true}
+                      onPress={() => {
+                        setShowManageWalk(false);
+                        setProposalKind("adaptation");
+                        setProposalMessage("");
+                        setPanel("add");
+                      }}
+                      leadingIcon={<NativeIcon ios="plus" android="add" />}
+                    />
+                    <PrimaryButton
+                      compact
+                      wrapLabel
+                      tone="secondary"
+                      label={t.shorten}
+                      disabled={!current || journey.takeBack === true}
+                      onPress={() => {
+                        setShowManageWalk(false);
+                        shorten();
+                      }}
+                      leadingIcon={
+                        <NativeIcon
+                          ios="arrow.triangle.branch"
+                          android="alt_route"
+                        />
+                      }
+                    />
+                    <PrimaryButton
+                      compact
+                      wrapLabel
+                      tone="secondary"
+                      label={t.takeBack}
+                      onPress={() => {
+                        setShowManageWalk(false);
+                        setPanel("back");
+                      }}
+                      leadingIcon={
+                        <NativeIcon ios="arrow.uturn.backward" android="undo" />
+                      }
+                    />
+                    <PrimaryButton
+                      compact
+                      wrapLabel
+                      tone="secondary"
+                      label={t.finish}
+                      busy={updating}
+                      onPress={() => {
+                        const next = {
+                          ...journey,
+                          finishedAt: Date.now(),
+                          historyDistance:
+                            journey.historyDistance +
+                            (!current && journey.finish
+                              ? (calculateDistanceMeters(
+                                  journey.position,
+                                  journey.finish,
+                                ) ?? 0)
+                              : 0),
+                        };
+                        void update(next).then(async (ok) => {
+                          if (!ok) return;
+                          await completeCitywalkLiveWalk();
+                          setLiveSession(undefined);
+                          setActiveMode("basic");
+                          setShowManageWalk(false);
+                          setStage("finished");
+                        });
+                      }}
+                    />
+                  </View>
+                ) : (
+                  <View style={styles.section}>
+                    {saveFeedback}
+                    <PrimaryButton
+                      label={saveLabel}
+                      disabled={
+                        saveStatus !== "ready" ||
+                        account.loading ||
+                        savedState === "saved"
+                      }
+                      busy={saving}
+                      tone="secondary"
+                      onPress={() => void save()}
+                    />
+                    <PrimaryButton
+                      label={t.rebuild}
+                      tone="secondary"
+                      busy={updating}
+                      onPress={() => void requestRebuild()}
+                    />
+                    {premium.active && activeMode === "live" && liveSession?.enabled ? (
+                      <PrimaryButton
+                        label={translate(locale, "liveWalk.turnOff")}
+                        tone="secondary"
+                        busy={liveBusy}
+                        onPress={() => void toggleLiveWalk()}
+                      />
+                    ) : null}
+                  </View>
+                )
+              ) : null}
 
-              {(typeof __DEV__ !== "undefined" ? __DEV__ : process.env.NODE_ENV !== "production") ? (
+              {!isLiveActive ? (
+                <PrimaryButton
+                  label={t.finish}
+                  busy={updating}
+                  onPress={() => {
+                    const next = {
+                      ...journey,
+                      finishedAt: Date.now(),
+                      historyDistance:
+                        journey.historyDistance +
+                        (!current && journey.finish
+                          ? (calculateDistanceMeters(
+                              journey.position,
+                              journey.finish,
+                            ) ?? 0)
+                          : 0),
+                    };
+                    void update(next).then(async (ok) => {
+                      if (!ok) return;
+                      await completeCitywalkLiveWalk();
+                      setLiveSession(undefined);
+                      setActiveMode("basic");
+                      setStage("finished");
+                    });
+                  }}
+                />
+              ) : null}
+
+              {(typeof __DEV__ !== "undefined" ? __DEV__ : process.env.NODE_ENV !== "production") && activeMode === "live" ? (
                 <>
                   <PrimaryButton
                     label={translate(locale, "liveWalk.inspect")}
@@ -1554,7 +1777,7 @@ export function NativeWalkFlow({
         </Screen>
       </Modal>
       <Modal
-        visible={panel === "add" || !!proposed}
+        visible={(premium.active && panel === "add") || !!proposed}
         animationType="slide"
         presentationStyle="pageSheet"
         onRequestClose={() => {

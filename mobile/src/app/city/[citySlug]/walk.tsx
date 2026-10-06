@@ -5,7 +5,6 @@ import { nativeCityName } from "../../../lib/displayNames";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { CitywalkLoading } from "../../../components/CitywalkLoading";
 import { NativeWalkFlow } from "../../../components/NativeWalkFlow";
-import { CityUnlockGate } from "../../../components/CityUnlockGate";
 import { Screen } from "../../../components/ui";
 import { usePublicCity } from "../../../hooks/usePublicContent";
 import { useNativeLocale } from "../../../localization/LocaleProvider";
@@ -44,17 +43,16 @@ export default function WalkScreen() {
     <>
       <Stack.Screen options={{ title: nativeCityName(data.city.slug, data.city.content.name, locale) }} />
       {state.status === "error" ? <ContentRecovery retry={state.retry} citySlug={identity.citySlug} /> : null}
-      <CityUnlockGate citySlug={identity.citySlug} cityName={data.city.content.name}>{authorizeStart => <NativeWalkFlow
-        authorizeStart={authorizeStart}
+      <NativeWalkFlow
         key={`${identity.citySlug}:${params.saved ?? "active"}:${params.add ?? ""}`}
         citySlug={identity.citySlug}
         cityName={data.city.content.name}
         places={data.places}
         contentStatus={state.status}
         savedId={params.saved}
-      accountSaved={params.source === "account"}
+        accountSaved={params.source === "account"}
         addSlug={params.add}
-      />}</CityUnlockGate>
+      />
     </>
   );
 }

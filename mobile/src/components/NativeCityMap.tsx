@@ -23,7 +23,7 @@ import { NativeIcon } from "./NativeIcon";
 
 const MAP_STYLE_URL = resolveMapStyleUrl();
 
-export function NativeCityMap({ citySlug, places, routeStart, routeFinish, currentSlug, onLocation, followUserLocation = false, compact = false }: Readonly<{
+export function NativeCityMap({ citySlug, places, routeStart, routeFinish, currentSlug, onLocation, followUserLocation = false, compact = false, liveFocus = false }: Readonly<{
   citySlug?: string;
   places: readonly PublicPlaceCard[];
   routeStart?: { lat: number; lng: number };
@@ -32,6 +32,7 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
   onLocation?: (point: { lat: number; lng: number }) => void;
   followUserLocation?: boolean;
   compact?: boolean;
+  liveFocus?: boolean;
 }>) {
   const { messages, locale } = useNativeLocale();
   const cameraRef = useRef<CameraRef>(null);
@@ -127,7 +128,7 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
   return (
     <View style={styles.shell}>
       {mapFailed ? (
-        <View accessibilityRole="alert" style={[styles.fallback, compact && styles.compactMap]}>
+        <View accessibilityRole="alert" style={[styles.fallback, compact && styles.compactMap, liveFocus && styles.liveMap]}>
           <AppText variant="caption" style={styles.statusText}>{walkCopy(locale).mapUnavailable}</AppText>
           <AppText>{walkCopy(locale).mapFallbackHelp}</AppText>
           <PrimaryButton label={walkCopy(locale).retry} onPress={() => { setLoaded(false); setMapFailed(false); setAttempt(v => v + 1); }} />
@@ -137,7 +138,7 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
           key={attempt}
           mapStyle={MAP_STYLE_URL}
           onDidFinishRenderingMapFully={() => setLoaded(true)}
-          style={[styles.map, compact && styles.compactMap]}
+          style={[styles.map, compact && styles.compactMap, liveFocus && styles.liveMap]}
           compass
           attribution
           onDidFailLoadingMap={() => setMapFailed(true)}
@@ -165,7 +166,7 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
           ) : null}
         </Map>
       )}
-      {!loaded && !mapFailed ? <View pointerEvents="none" accessibilityRole="progressbar" accessibilityLabel={uxCopy(locale).map} style={[StyleSheet.absoluteFill, { backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center", gap: spacing.sm }]}>
+      {!loaded && !mapFailed ? <View pointerEvents="none" accessibilityRole="progressbar" accessibilityLabel={uxCopy(locale).map} style={[StyleSheet.absoluteFill, styles.loadingOverlay, compact && styles.compactLoadingOverlay, liveFocus && styles.liveLoadingOverlay]}>
         <NativeIcon ios="map" android="map" color={colors.primary} size={30} />
         <ActivityIndicator color={colors.primary} />
         <AppText>{uxCopy(locale).map}</AppText>
@@ -183,9 +184,11 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
         ]}
       >
         <NativeIcon ios="location.fill" android="my_location" color={colors.primary} size={18} />
-        <Text style={styles.locationButtonText} numberOfLines={1} adjustsFontSizeToFit>
-          {locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}
-        </Text>
+        {!compact ? (
+          <Text style={styles.locationButtonText} numberOfLines={1} adjustsFontSizeToFit>
+            {locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}
+          </Text>
+        ) : null}
       </Pressable>
       {locationStatus === "services_disabled" ? (
         <Pressable
@@ -223,14 +226,26 @@ function getLocationStatusMessage(
 }
 
 const styles = StyleSheet.create({
-  shell: { gap: spacing.sm },
+  shell: { gap: spacing.sm, position: "relative" },
   map: { height: 320, borderRadius: radius.lg, overflow: "hidden" },
-  compactMap: { height: 200 },
+  compactMap: { height: 380, borderRadius: radius.md },
+  liveMap: { height: 460, borderRadius: radius.md },
   fallback: { height: 320, borderRadius: radius.lg, backgroundColor: "#EEF2FF", alignItems: "center", justifyContent: "center", padding: spacing.lg },
   placeMarker: { width: 22, height: 22, borderRadius: radius.pill, backgroundColor: colors.mapMarker, borderWidth: 3, borderColor: colors.surface },
   userMarker: { width: 24, height: 24, borderRadius: radius.pill, backgroundColor: colors.userMarker, borderWidth: 4, borderColor: colors.surface },
+  loadingOverlay: { backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center", gap: spacing.sm, borderRadius: radius.lg, overflow: "hidden" },
+  compactLoadingOverlay: { bottom: undefined, height: 380, borderRadius: radius.md },
+  liveLoadingOverlay: { bottom: undefined, height: 460, borderRadius: radius.md },
   locationButton: { minHeight: 48, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, alignItems: "center", flexDirection: "row", gap: spacing.sm, justifyContent: "center", paddingHorizontal: spacing.md },
-  compactLocationButton: { minHeight: 44, alignSelf: "flex-start", maxWidth: "100%" },
+  compactLocationButton: {
+    position: "absolute",
+    top: spacing.sm,
+    end: spacing.sm,
+    width: 40,
+    minHeight: 40,
+    paddingHorizontal: 0,
+    borderRadius: radius.pill,
+  },
   locationButtonPressed: { backgroundColor: "#F3F4F6" },
   locationButtonText: { ...typography.label, color: colors.text },
   settingsButton: { minHeight: 44, alignItems: "center", justifyContent: "center" },

@@ -12,9 +12,7 @@ import { useResponsiveTextLayout } from "../design/responsiveText";
 import { NativeIcon } from "./NativeIcon";
 import {
   colors,
-  layout,
   radius,
-  shadows,
   spacing,
   typography,
 } from "../design/tokens";
@@ -85,6 +83,7 @@ export function WalkChoices<T extends string | number>({
         accessibilityLabel={label}
         style={[
           styles.options,
+          variant === "time" && styles.timeOptions,
           variant === "segment" && styles.segment,
           variant === "radio" && styles.radioList,
           compact && [styles.compactOptions, { direction, flexWrap: wrapSegments ? "wrap" : "nowrap" }],
@@ -94,12 +93,9 @@ export function WalkChoices<T extends string | number>({
           const checked = selected.includes(option.value),
             icon =
               variant === "time"
-                ? ({
-                    ios: option.value === 240 ? "building.columns" : "clock",
-                    android:
-                      option.value === 240 ? "account_balance" : "schedule",
-                  } as const)
+                ? undefined
                 : icons[String(option.value)];
+          const isCompactChip = compact && variant === "chips";
           return (
             <PressableSurface
               key={option.value}
@@ -109,46 +105,75 @@ export function WalkChoices<T extends string | number>({
               onPress={() => onSelect(option.value)}
               style={[
                 styles.option,
-                variant === "chips" && width >= 380 && styles.wideChip,
+                variant === "chips" && width >= 380 && !compact && styles.wideChip,
                 variant === "time" && styles.time,
                 variant === "segment" && styles.segmentOption,
                 variant === "radio" && styles.radio,
                 checked && styles.selected,
                 variant === "segment" && checked && styles.activeSegment,
                 compact && [styles.compactOption, wrapSegments && { flexBasis: "45%" }],
+                isCompactChip && styles.compactChip,
               ]}
             >
-              {icon ? (
-                <View style={variant === "time" ? styles.timeIcon : undefined}>
-                  <NativeIcon
-                    {...icon}
-                    size={variant === "time" ? 32 : 22}
-                    color={
-                      variant === "segment" && checked
-                        ? colors.surface
-                        : colors.primary
-                    }
-                  />
-                </View>
-              ) : null}
-              <View style={compact ? { minWidth: 0, flexShrink: 1, width: "100%" } : variant === "time" ? undefined : styles.optionText}>
-                {compact ? <Text style={[styles.compactLabel, { writingDirection: direction }, variant === "segment" && checked && { color: colors.surface }]}>{option.label}</Text> : <AppText
-                  variant={variant === "time" ? "heading" : "metadata"}
-                  style={
+              {icon && !isCompactChip ? (
+                <NativeIcon
+                  {...icon}
+                  size={20}
+                  color={
                     variant === "segment" && checked
-                      ? { color: colors.surface, textAlign: "center" }
-                      : undefined
+                      ? colors.surface
+                      : colors.primary
                   }
-                >
-                  {option.label}
-                </AppText>}
-                {option.description ? (
+                />
+              ) : null}
+              <View
+                style={
+                  compact
+                    ? { minWidth: 0, flexShrink: 1, flexGrow: 1 }
+                    : variant === "time"
+                      ? styles.timeCopy
+                      : styles.optionText
+                }
+              >
+                {compact ? (
+                  <Text
+                    style={[
+                      styles.compactLabel,
+                      { writingDirection: direction },
+                      checked && variant === "chips" && styles.compactLabelSelected,
+                      variant === "segment" && checked && { color: colors.surface },
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                ) : (
+                  <AppText
+                    variant={variant === "time" ? "label" : "metadata"}
+                    style={
+                      variant === "segment" && checked
+                        ? { color: colors.surface, textAlign: "center" }
+                        : variant === "time"
+                          ? styles.timeLabel
+                          : undefined
+                    }
+                  >
+                    {option.label}
+                  </AppText>
+                )}
+                {option.description && variant !== "time" ? (
                   <AppText variant="metadata" style={styles.muted}>
                     {option.description}
                   </AppText>
                 ) : null}
               </View>
-              {variant !== "segment" ? (
+              {isCompactChip && checked ? (
+                <NativeIcon
+                  ios="checkmark"
+                  android="check"
+                  size={15}
+                  color={colors.primary}
+                />
+              ) : variant !== "segment" && variant !== "time" && !isCompactChip ? (
                 <NativeIcon
                   ios={checked ? "checkmark.circle.fill" : "circle"}
                   android={checked ? "check_circle" : "radio_button_unchecked"}
@@ -279,7 +304,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    padding: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
@@ -291,21 +317,19 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     backgroundColor: colors.primarySoft,
   },
+  timeOptions: {
+    gap: spacing.sm,
+  },
   time: {
-    minHeight: layout.timeCardHeight,
-    flexDirection: "column",
-    alignItems: "flex-start",
+    flexBasis: "47%",
+    minHeight: 52,
     justifyContent: "center",
-    ...shadows.card,
+    paddingVertical: 12,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.sm,
   },
-  timeIcon: {
-    width: 54,
-    height: 54,
-    borderRadius: radius.pill,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primarySoft,
-  },
+  timeCopy: { flex: 1, alignItems: "center" },
+  timeLabel: { textAlign: "center", width: "100%" },
   segment: {
     flexWrap: "nowrap",
     backgroundColor: colors.surfaceMuted,
@@ -323,8 +347,25 @@ const styles = StyleSheet.create({
   },
   activeSegment: { backgroundColor: colors.primary },
   compactOptions: { alignSelf: "stretch", width: "100%", borderRadius: radius.sm },
-  compactOption: { flex: 1, flexGrow: 1, flexBasis: 0, minWidth: 0, minHeight: 44, paddingVertical: spacing.sm, paddingHorizontal: spacing.xs, borderRadius: 10, flexDirection: "row" },
+  compactOption: {
+    flex: 1,
+    flexGrow: 1,
+    flexBasis: 0,
+    minWidth: 0,
+    minHeight: 44,
+    paddingVertical: 9,
+    paddingHorizontal: 10,
+    borderRadius: radius.pill,
+    flexDirection: "row",
+  },
+  compactChip: {
+    flexBasis: "auto",
+    flexGrow: 0,
+    minHeight: 40,
+    backgroundColor: colors.surface,
+  },
   compactLabel: { ...typography.metadata, color: colors.text, textAlign: "center" },
+  compactLabelSelected: { color: colors.primary, fontWeight: "600" },
   radioList: { flexDirection: "column" },
   radio: { flexBasis: "auto", width: "100%" },
   input: {
