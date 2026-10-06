@@ -10,8 +10,9 @@ vi.mock("next/server", () => ({ after: (task: () => Promise<void>) => tasks.push
 
 import { POST as confirmDeletion } from "@/app/api/account/delete-confirm/route";
 import { POST as requestDeletion } from "@/app/api/account/delete-request/route";
-import { externalAccountErasureJobs, staffMemberships, user, verification } from "@/db/authSchema";
+import { account, externalAccountErasureJobs, staffMemberships, user, verification } from "@/db/authSchema";
 import { closeDb, getDb } from "@/db/client";
+import { openAppleRevocationToken } from "./appleTokenRevocation.server";
 import { WEB_DELETE_VERIFICATION_PREFIX } from "./deleteAccount.server";
 
 const origin = "https://preview.example.test";
@@ -88,9 +89,17 @@ describe.runIf(process.env.LIFECYCLE_DB_INTEGRATION === "1")("external web accou
     expect(fetchMock).toHaveBeenCalledOnce();
   });
 
-  it("stores only a token hash, hard-deletes the verified account once, and preserves another account", async () => {
+  it("stores only token hashes, queues encrypted Apple revocation, hard-deletes once, and preserves another account", async () => {
     const owner = await createTraveler();
     const other = await createTraveler();
+    const appleRefreshToken = "synthetic-apple-refresh-token-never-store-raw";
+    await getDb().insert(account).values({
+      id: randomUUID(),
+      accountId: "apple-subject",
+      providerId: "apple",
+      userId: owner.id,
+      refreshToken: appleRefreshToken,
+    });
     const token = await deletionToken(owner.email);
     const identifier = `${WEB_DELETE_VERIFICATION_PREFIX}${createHash("sha256").update(token).digest("hex")}`;
 
@@ -105,11 +114,34 @@ describe.runIf(process.env.LIFECYCLE_DB_INTEGRATION === "1")("external web accou
     expect(await getDb().select().from(user).where(eq(user.id, owner.id))).toHaveLength(0);
     expect(await getDb().select().from(user).where(eq(user.id, other.id))).toHaveLength(1);
     expect(await getDb().select().from(verification).where(eq(verification.value, owner.id))).toHaveLength(0);
-    expect(await getDb().select().from(externalAccountErasureJobs).where(eq(externalAccountErasureJobs.externalCustomerId, owner.id))).toMatchObject([
-      { provider: "revenuecat", attempts: 0, completedAt: null },
-    ]);
+
+    const jobs = await getDb().select().from(externalAccountErasureJobs);
+    const revenueCat = jobs.find(job => job.provider === "revenuecat" && job.externalCustomerId === owner.id);
+    const apple = jobs.find(job => job.provider === "apple");
+    expect(revenueCat).toMatchObject({ attempts: 0, completedAt: null });
+    expect(apple).toBeTruthy();
+    expect(apple!.externalCustomerId).not.toContain(appleRefreshToken);
+    expect(openAppleRevocationToken(apple!.externalCustomerId)).toEqual({
+      token: appleRefreshToken,
+      tokenTypeHint: "refresh_token",
+    });
 
     expect((await confirmDeletion(request("/api/account/delete-confirm", { token, confirm: true }))).status).toBe(400);
+  });
+
+  it("does not block deletion when an Apple account has no usable provider token", async () => {
+    const owner = await createTraveler();
+    await getDb().insert(account).values({
+      id: randomUUID(),
+      accountId: "apple-subject-no-token",
+      providerId: "apple",
+      userId: owner.id,
+    });
+    const token = await deletionToken(owner.email);
+    expect((await confirmDeletion(request("/api/account/delete-confirm", { token, confirm: true }))).status).toBe(200);
+    expect(await getDb().select().from(user).where(eq(user.id, owner.id))).toHaveLength(0);
+    const appleJobs = (await getDb().select().from(externalAccountErasureJobs)).filter(job => job.provider === "apple");
+    expect(appleJobs.some(job => job.externalCustomerId.includes("apple-subject-no-token"))).toBe(false);
   });
 
   it("rejects expired confirmation links without deleting the account", async () => {

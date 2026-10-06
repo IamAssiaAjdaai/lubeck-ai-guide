@@ -4,6 +4,7 @@ import { PgTable } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import { user, account, session, verification, staffMemberships, externalAccountErasureJobs } from "@/db/authSchema";
 import * as editorial from "@/db/schema";
+import { sealAppleRevocationToken } from "./appleTokenRevocation.server";
 import { hasFreshSocialDeleteSession } from "./deleteReauth";
 import { LifecycleError } from "./rateLimit.server";
 
@@ -34,6 +35,21 @@ async function assertRetentionEligible(tx: Transaction, userId: string) {
 }
 
 async function hardDeleteTravelerAccount(tx: Transaction, userId: string) {
+  // Capture an Apple refresh/access token before the Better Auth account row cascades.
+  // The outbox stores only an authenticated-encryption envelope, never the raw token.
+  const [apple] = await tx.select({
+    refreshToken: account.refreshToken,
+    accessToken: account.accessToken,
+  }).from(account).where(and(eq(account.userId, userId), eq(account.providerId, "apple"))).limit(1).for("update");
+  const appleToken = apple?.refreshToken || apple?.accessToken;
+  if (appleToken) {
+    const tokenTypeHint = apple.refreshToken ? "refresh_token" as const : "access_token" as const;
+    await tx.insert(externalAccountErasureJobs).values({
+      provider: "apple",
+      externalCustomerId: sealAppleRevocationToken({ token: appleToken, tokenTypeHint }),
+    }).onConflictDoNothing();
+  }
+
   // RevenueCat identifies authenticated customers by the immutable Better Auth user id.
   // Persist the remote-erasure intent in the same transaction as the hard delete so a
   // later worker can retry without keeping the user row or making network calls here.

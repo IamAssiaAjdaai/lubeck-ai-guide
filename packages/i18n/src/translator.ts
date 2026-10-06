@@ -1,15 +1,41 @@
-import { hasOwn, isI18nDevelopment } from "./runtime";
-import en from "./locales/en.json";
-import de from "./locales/de.json";
+import accountDeletionCompliance from "./account-deletion-compliance.json";
 import ar from "./locales/ar.json";
 import da from "./locales/da.json";
-import sv from "./locales/sv.json";
-import nl from "./locales/nl.json";
+import de from "./locales/de.json";
+import en from "./locales/en.json";
 import es from "./locales/es.json";
-
+import nl from "./locales/nl.json";
+import sv from "./locales/sv.json";
 import { fallbackLocale, type SharedLocale } from "./locale-config";
+import { hasOwn, isI18nDevelopment } from "./runtime";
 import type { Dictionary, KeyMap, MessageTree, TranslatedMap, TranslationKey, TranslationValues } from "./types";
-export const dictionaries = { en, de, da, sv, nl, es, ar } satisfies Record<SharedLocale, Dictionary>;
+
+const baseDictionaries = { en, de, da, sv, nl, es, ar } satisfies Record<SharedLocale, Dictionary>;
+
+function withAccountDeletionCompliance(locale: SharedLocale, dictionary: Dictionary): Dictionary {
+  return {
+    ...dictionary,
+    lifecycle: {
+      ...dictionary.lifecycle,
+      ...accountDeletionCompliance[locale],
+    },
+  };
+}
+
+export const dictionaries = {
+  en: withAccountDeletionCompliance("en", en),
+  de: withAccountDeletionCompliance("de", de),
+  da: withAccountDeletionCompliance("da", da),
+  sv: withAccountDeletionCompliance("sv", sv),
+  nl: withAccountDeletionCompliance("nl", nl),
+  es: withAccountDeletionCompliance("es", es),
+  ar: withAccountDeletionCompliance("ar", ar),
+} satisfies Record<SharedLocale, Dictionary>;
+
+// Compile-time guarantee that every launch dictionary still participates in the
+// same typed catalog even though deletion compliance copy is maintained together.
+void baseDictionaries;
+
 export function formatMessage(message: string, values: TranslationValues): string {
   return message.replace(/\{([^{}]+)\}/g, (token, key: string) => hasOwn(values, key) ? String(values[key]) : token);
 }
@@ -43,7 +69,7 @@ export function createTranslator(options: TranslatorOptions = {}) {
   };
 }
 export const t = createTranslator();
-// Compatibility views hold keys only. Strings live exclusively in the JSON catalogs.
+// Compatibility views hold keys only. Strings live exclusively in JSON catalogs.
 const viewCache = new WeakMap<KeyMap, Map<string, unknown>>();
 export function translateKeys<const T extends KeyMap>(locale: string, keys: T): TranslatedMap<T> {
   let cache = viewCache.get(keys);

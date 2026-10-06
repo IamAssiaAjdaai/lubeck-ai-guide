@@ -1,0 +1,44 @@
+{
+  "en": {
+    "deleteWarning": "Permanently delete your CITYWALK account and account-linked traveler data. CITYWALK also clears traveler data stored by the app on this device; language preferences and public content caches may remain. Deleting your account does not cancel or refund an App Store or Google Play subscription. If you use Sign in with Apple, CITYWALK will request Apple authorization revocation when possible; otherwise remove CITYWALK in Apple Account settings under Sign-In & Security → Sign in with Apple.",
+    "localDataRemains": "After deletion, device preferences such as language and public content caches may remain. Account-linked and CITYWALK traveler data is removed.",
+    "deleteConfirm": "I understand that my CITYWALK account and account-linked traveler data will be permanently deleted, and that subscriptions are managed separately by the App Store or Google Play.",
+    "deleted": "Your CITYWALK account and account-linked traveler data were deleted. Device preferences such as language and public content caches may remain."
+  },
+  "de": {
+    "deleteWarning": "Dein CITYWALK-Konto und die mit dem Konto verknüpften Reisedaten werden dauerhaft gelöscht. CITYWALK löscht außerdem die in der App auf diesem Gerät gespeicherten Reisedaten; Spracheinstellungen und öffentliche Inhalts-Caches können erhalten bleiben. Durch das Löschen des Kontos wird ein Abonnement im App Store oder bei Google Play weder gekündigt noch erstattet. Wenn du „Mit Apple anmelden“ verwendest, versucht CITYWALK, die Apple-Autorisierung zu widerrufen; falls das nicht automatisch möglich ist, entferne CITYWALK in den Apple-Account-Einstellungen unter „Anmeldung und Sicherheit“ → „Mit Apple anmelden“.",
+    "localDataRemains": "Nach der Löschung können Geräteeinstellungen wie Sprache und öffentliche Inhalts-Caches erhalten bleiben. Konto- und CITYWALK-Reisedaten werden entfernt.",
+    "deleteConfirm": "Ich verstehe, dass mein CITYWALK-Konto und die damit verknüpften Reisedaten dauerhaft gelöscht werden und dass Abonnements separat über den App Store oder Google Play verwaltet werden.",
+    "deleted": "Dein CITYWALK-Konto und die damit verknüpften Reisedaten wurden gelöscht. Geräteeinstellungen wie Sprache und öffentliche Inhalts-Caches können erhalten bleiben."
+  },
+  "es": {
+    "deleteWarning": "Elimina permanentemente tu cuenta de CITYWALK y los datos de viaje vinculados a ella. CITYWALK también borra los datos de viaje guardados por la app en este dispositivo; las preferencias de idioma y las cachés de contenido público pueden permanecer. Eliminar la cuenta no cancela ni reembolsa una suscripción de App Store o Google Play. Si usas Iniciar sesión con Apple, CITYWALK solicitará revocar la autorización de Apple cuando sea posible; si no puede hacerse automáticamente, elimina CITYWALK en los ajustes de tu cuenta de Apple, en Inicio de sesión y seguridad → Iniciar sesión con Apple.",
+    "localDataRemains": "Tras la eliminación pueden permanecer preferencias del dispositivo, como el idioma, y cachés de contenido público. Los datos de la cuenta y los datos de viaje de CITYWALK se eliminan.",
+    "deleteConfirm": "Entiendo que mi cuenta de CITYWALK y los datos de viaje vinculados se eliminarán permanentemente y que las suscripciones se gestionan por separado en App Store o Google Play.",
+    "deleted": "Tu cuenta de CITYWALK y los datos de viaje vinculados se eliminaron. Pueden permanecer preferencias del dispositivo, como el idioma, y cachés de contenido público."
+  },
+  "nl": {
+    "deleteWarning": "Verwijder je CITYWALK-account en de eraan gekoppelde reizigersgegevens definitief. CITYWALK wist ook reizigersgegevens die door de app op dit apparaat zijn opgeslagen; taalvoorkeuren en caches met openbare content kunnen blijven staan. Het verwijderen van je account annuleert of vergoedt geen abonnement via de App Store of Google Play. Als je Log in met Apple gebruikt, vraagt CITYWALK waar mogelijk om de Apple-autorisatie in te trekken; lukt dat niet automatisch, verwijder CITYWALK dan in je Apple-accountinstellingen via Inloggen en beveiliging → Log in met Apple.",
+    "localDataRemains": "Na verwijdering kunnen apparaatvoorkeuren zoals taal en caches met openbare content blijven staan. Accountgebonden en CITYWALK-reizigersgegevens worden verwijderd.",
+    "deleteConfirm": "Ik begrijp dat mijn CITYWALK-account en gekoppelde reizigersgegevens definitief worden verwijderd en dat abonnementen afzonderlijk via de App Store of Google Play worden beheerd.",
+    "deleted": "Je CITYWALK-account en gekoppelde reizigersgegevens zijn verwijderd. Apparaatvoorkeuren zoals taal en caches met openbare content kunnen blijven staan."
+  },
+  "da": {
+    "deleteWarning": "Slet din CITYWALK-konto og de tilknyttede rejsedata permanent. CITYWALK rydder også rejsedata, som appen har gemt på denne enhed; sprogindstillinger og cache med offentligt indhold kan blive liggende. Sletning af kontoen opsiger eller refunderer ikke et abonnement i App Store eller Google Play. Hvis du bruger Log ind med Apple, anmoder CITYWALK om at tilbagekalde Apple-godkendelsen, når det er muligt; hvis det ikke kan ske automatisk, skal du fjerne CITYWALK i dine Apple-kontoindstillinger under Login og sikkerhed → Log ind med Apple.",
+    "localDataRemains": "Efter sletning kan enhedsindstillinger som sprog og cache med offentligt indhold blive liggende. Konto- og CITYWALK-rejsedata fjernes.",
+    "deleteConfirm": "Jeg forstår, at min CITYWALK-konto og tilknyttede rejsedata slettes permanent, og at abonnementer administreres separat i App Store eller Google Play.",
+    "deleted": "Din CITYWALK-konto og tilknyttede rejsedata er slettet. Enhedsindstillinger som sprog og cache med offentligt indhold kan blive liggende."
+  },
+  "sv": {
+    "deleteWarning": "Radera ditt CITYWALK-konto och kontokopplade resedata permanent. CITYWALK rensar också resedata som appen har lagrat på den här enheten; språkinställningar och cache för offentligt innehåll kan finnas kvar. Att radera kontot avslutar eller återbetalar inte en prenumeration i App Store eller Google Play. Om du använder Logga in med Apple begär CITYWALK att Apple-auktoriseringen återkallas när det är möjligt; om det inte kan göras automatiskt tar du bort CITYWALK i inställningarna för ditt Apple-konto under Inloggning och säkerhet → Logga in med Apple.",
+    "localDataRemains": "Efter radering kan enhetsinställningar som språk och cache för offentligt innehåll finnas kvar. Konto- och CITYWALK-resedata tas bort.",
+    "deleteConfirm": "Jag förstår att mitt CITYWALK-konto och kopplade resedata raderas permanent och att prenumerationer hanteras separat i App Store eller Google Play.",
+    "deleted": "Ditt CITYWALK-konto och kopplade resedata har raderats. Enhetsinställningar som språk och cache för offentligt innehåll kan finnas kvar."
+  },
+  "ar": {
+    "deleteWarning": "سيتم حذف حساب CITYWALK وبيانات الرحلات المرتبطة بالحساب نهائيًا. كما تمسح CITYWALK بيانات الرحلات التي خزّنها التطبيق على هذا الجهاز؛ وقد تبقى تفضيلات الجهاز مثل اللغة وذاكرة التخزين المؤقت للمحتوى العام. حذف الحساب لا يلغي اشتراك App Store أو Google Play ولا يصدر استردادًا للأموال. إذا كنت تستخدم تسجيل الدخول باستخدام Apple، فستطلب CITYWALK إلغاء تفويض Apple عندما يكون ذلك ممكنًا؛ وإذا تعذر ذلك تلقائيًا، فأزل CITYWALK من إعدادات حساب Apple ضمن تسجيل الدخول والأمان ← تسجيل الدخول باستخدام Apple.",
+    "localDataRemains": "بعد الحذف قد تبقى تفضيلات الجهاز مثل اللغة وذاكرة التخزين المؤقت للمحتوى العام. تتم إزالة بيانات الحساب وبيانات الرحلات الخاصة بـCITYWALK.",
+    "deleteConfirm": "أفهم أن حساب CITYWALK وبيانات الرحلات المرتبطة به سيُحذفان نهائيًا، وأن الاشتراكات تُدار بشكل منفصل عبر App Store أو Google Play.",
+    "deleted": "تم حذف حساب CITYWALK وبيانات الرحلات المرتبطة به. قد تبقى تفضيلات الجهاز مثل اللغة وذاكرة التخزين المؤقت للمحتوى العام."
+  }
+}
