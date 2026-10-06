@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { deleteNativeAccount } from "./lifecycle";
 
 const mocks = vi.hoisted(() => ({
   fetchAuthenticated: vi.fn(),
@@ -16,8 +17,6 @@ vi.mock("./accountLocalData", () => ({
 vi.mock("./client", () => ({
   nativeAuthClient: { signOut: mocks.signOut, getSession: mocks.getSession },
 }));
-
-import { deleteNativeAccount } from "./lifecycle";
 
 function deletedResponse() {
   return new Response(JSON.stringify({ deleted: true }), {
