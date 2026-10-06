@@ -7,7 +7,7 @@ vi.mock("expo-router", () => ({
   usePathname: () => state.path,
   useLocalSearchParams: () => state.params,
   useRouter: () => ({ navigate: state.navigate, dismissTo: state.dismissTo }),
-  useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : state.path === "/account" ? "account/index" : state.path === "/city/lubeck" ? "city/[citySlug]/index" : state.path === "/city/lubeck/explore" ? "city/[citySlug]/explore" : "city/[citySlug]/place/[placeSlug]" }),
+  useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : state.path === "/account" ? "account/index" : state.path === "/city/lubeck" ? "city/[citySlug]/index" : "city/[citySlug]/place/[placeSlug]" }),
   useNavigation: () => ({ isFocused: () => true, addListener: (_event: string, callback: () => void) => { state.transitionEnd = callback; return () => { state.transitionEnd = undefined; }; } }),
 }));
 vi.mock("react-native", () => ({
@@ -27,7 +27,7 @@ function Root({ scroll }: { scroll: () => void }) { useRootTabScroll(scroll); re
 afterEach(() => { cleanup(); vi.clearAllMocks(); state.locale = "en"; });
 describe("native active-tab reselection", () => {
   it.each([
-    ["/", {}, "home"], ["/city/lubeck/explore", { citySlug: "lubeck" }, "explore"],
+    ["/", {}, "home"], ["/city/lubeck", { citySlug: "lubeck" }, "explore"],
     ["/saved", { view: "trips" }, "trips"], ["/saved", {}, "saved"], ["/account", {}, "profile"],
   ] as const)("scrolls %s (%s) to top without replacing navigation history", (path, params, tab) => {
     state.path = path; state.params = params;
@@ -46,14 +46,14 @@ describe("native active-tab reselection", () => {
     expect(state.navigate).toHaveBeenCalledWith("/saved");
     expect(scroll).not.toHaveBeenCalled();
   });
-  it("dismisses nested Explore to the dedicated Explore root and scrolls when the root focuses", () => {
+  it("dismisses nested Explore to the city root and scrolls when the root focuses", () => {
     state.path = "/city/lubeck/place/holstentor"; state.params = { citySlug: "lubeck" };
     const scroll = vi.fn();
     const { rerender } = render(<NativeTabScrollProvider><Root scroll={scroll} /></NativeTabScrollProvider>);
     fireEvent.click(screen.getByRole("tab", { name: "Explore" }));
-    expect(state.dismissTo).toHaveBeenCalledWith({ pathname: "/city/[citySlug]/explore", params: { citySlug: "lubeck" } });
+    expect(state.dismissTo).toHaveBeenCalledWith({ pathname: "/city/[citySlug]", params: { citySlug: "lubeck" } });
     expect(scroll).not.toHaveBeenCalled();
-    state.path = "/city/lubeck/explore";
+    state.path = "/city/lubeck";
     rerender(<NativeTabScrollProvider><Root scroll={scroll} /></NativeTabScrollProvider>);
     expect(scroll).not.toHaveBeenCalled();
     state.transitionEnd?.();

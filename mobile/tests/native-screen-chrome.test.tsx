@@ -11,7 +11,7 @@ vi.mock("expo-router", () => ({
   Stack: { Screen: () => null },
   useFocusEffect: (callback: React.EffectCallback) => React.useEffect(callback, [callback]),
   usePathname: () => state.path, useLocalSearchParams: () => state.params,
-  useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : state.path === "/city/lubeck/explore" ? "city/[citySlug]/explore" : "city/[citySlug]/index" }),
+  useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : "city/[citySlug]/index" }),
   useNavigation: () => ({ isFocused: () => true, addListener: () => () => {} }),
   useRouter: () => ({ navigate: vi.fn(), dismissTo: vi.fn(), canGoBack: () => true, back: state.back }),
 }));
@@ -64,8 +64,8 @@ describe("actual native screen/chrome wiring (native view refs mocked)", () => {
     expect(state.scroll).toHaveBeenCalledExactlyOnceWith({ y: 0, animated: true });
     expect(state.log).toHaveBeenCalledExactlyOnceWith(`[TAB_PRESS] ${tab} active=true action=scroll-top`);
   });
-  it("one Explore press reaches the dedicated Explore FlatList ref", () => {
-    state.path = "/city/lubeck/explore"; state.params = { citySlug: "lubeck" };
+  it("one Explore press reaches the FlatList ref", () => {
+    state.path = "/city/lubeck"; state.params = { citySlug: "lubeck" };
     render(<VirtualizedScreen data={[]} renderItem={() => null} />);
     fireEvent.click(screen.getByRole("tab", { name: "Explore" }));
     expect(state.offset).toHaveBeenCalledExactlyOnceWith({ offset: 0, animated: true });
