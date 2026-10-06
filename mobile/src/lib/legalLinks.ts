@@ -5,7 +5,7 @@ export const CITYWALK_LEGAL_DESTINATIONS = Object.freeze({
   terms: "https://getcitywalk.com/terms",
   imprint: "https://getcitywalk.com/imprint",
   accountDeletion: "https://getcitywalk.com/account-deletion",
-  support: "mailto:support@getcitywalk.com",
+  support: "https://getcitywalk.com/support",
 } as const);
 
 export type CitywalkLegalDestination = keyof typeof CITYWALK_LEGAL_DESTINATIONS;
