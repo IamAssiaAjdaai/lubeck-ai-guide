@@ -43,7 +43,7 @@ const diagnosticApi = createCitywalkApiClient({ origin: getConfiguredApiOrigin()
 
 export default function AccountScreen() {
   const { locale, direction, messages } = useNativeLocale();
-  const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string; error?: string }>();
+  const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string; error?: string; reauth?: string }>();
   const { data: session, isPending } = nativeAuthClient.useSession();
   const socialAuth = getNativeSocialAuthAvailability();
   const accountWalks = useAccountWalks();
@@ -57,7 +57,7 @@ export default function AccountScreen() {
   const [deleteConfirmed, setDeleteConfirmed] = useState(false);
   const [lifecycleFailure, setLifecycleFailure] = useState<TranslationKey>();
   const [notice, setNotice] = useState<TranslationKey>();
-  const [entry, setEntry] = useState<Entry | undefined>(() => params.entry === "sign-in" || params.entry === "sign-up" ? params.entry : undefined);
+  const [entry, setEntry] = useState<Entry | undefined>(() => params.entry === "sign-in" || params.entry === "sign-up" || params.entry === "delete" ? params.entry : undefined);
   const submitLock = useRef(false);
   const mounted = useRef(true);
   const request = useRef(0);
@@ -75,6 +75,7 @@ export default function AccountScreen() {
   const [styleDraft, setStyleDraft] = useState<TravelerStyle>(DEFAULT_TRAVELER_STYLE);
   const [credential, setCredential] = useState<{ userId: string; status: "yes" | "no" | "error"; providers: string[] }>();
   const userId = session?.user.id;
+  const socialDeleteReauthenticated = params.reauth === "1";
   useEffect(() => {
     let active = true;
     void loadTravelerStyle(userId).then((style) => {
@@ -146,15 +147,17 @@ export default function AccountScreen() {
   useEffect(() => {
     if (!params.error) return;
     const oauthError = params.error;
+    const returnToDelete = params.entry === "delete";
     let active = true;
     void Promise.resolve().then(() => {
       if (!active) return;
       setNotice(undefined);
       setFailure(classifyNativeAuthError({ code: oauthError }));
-      router.replace("/account");
+      if (returnToDelete) setEntry("delete");
+      router.replace(returnToDelete ? "/account?entry=delete" : "/account");
     });
     return () => { active = false; };
-  }, [params.error]);
+  }, [params.error, params.entry]);
   function clearPasswords() { setPassword(""); setNewPassword(""); setConfirmation(""); }
   const open = useCallback((next?: Entry) => {
     request.current++;
@@ -165,7 +168,14 @@ export default function AccountScreen() {
     if (next === "preferences") setStyleDraft(travelerStyle);
     if (next === "sign-up") setName("");
   }, [session?.user.name, travelerStyle]);
-  function back() { open(entry === "reset" ? "sign-in" : undefined); }
+  function back() {
+    if (entry === "delete" && params.entry === "delete") {
+      open();
+      router.replace("/account");
+      return;
+    }
+    open(entry === "reset" ? "sign-in" : undefined);
+  }
   useEffect(() => {
     const listener = BackHandler.addEventListener("hardwareBackPress", () => {
       if (!entry) return false;
@@ -230,6 +240,22 @@ export default function AccountScreen() {
         setEntry(undefined);
         setProviderReload(value => value + 1);
         if (params.returnToWalk === "1" && router.canGoBack()) router.back();
+      },
+    );
+  }
+  function reauthenticateForDelete(provider: SocialProvider) {
+    if (submitLock.current || !session) return;
+    void perform(
+      `social-${provider}`,
+      () => nativeAuthClient.signIn.social({
+        provider,
+        callbackURL: "citywalk://account?entry=delete&reauth=1",
+        errorCallbackURL: "citywalk://account?entry=delete",
+      }),
+      () => {
+        setEntry("delete");
+        setDeleteConfirmed(false);
+        setProviderReload(value => value + 1);
       },
     );
   }
@@ -309,9 +335,10 @@ export default function AccountScreen() {
     }, () => setNotice("profile.verificationResent"));
   }
   function deleteAccount() {
-    if (!session || !deleteConfirmed || !hasCredential) return;
-    if (!password) { setFailure("current_password_required"); return; }
-    void perform("delete", () => deleteNativeAccount(session.user.id, password), () => { setEntry(undefined); setNotice("lifecycle.deleted"); });
+    if (!session || !deleteConfirmed) return;
+    if (hasCredential && !password) { setFailure("current_password_required"); return; }
+    if (!hasCredential && !socialDeleteReauthenticated) { setLifecycleFailure("lifecycle.reauthRequired"); return; }
+    void perform("delete", () => deleteNativeAccount(session.user.id, hasCredential ? password : undefined), () => { setEntry(undefined); });
   }
   const localWalkKeys = new Set(localActivity.walkKeys);
   const walkKeys = new Set([
@@ -611,14 +638,42 @@ export default function AccountScreen() {
     {session && entry === "delete" ? <Card>
       <AppText variant="heading">{label("profile.deleteAccount")}</AppText>
       <AppText>{label("lifecycle.deleteWarning")}</AppText>
-      <AppText>{label("lifecycle.localDataRemains")}</AppText>
+      {credential?.userId !== userId ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
+      {credential?.userId === userId && credential?.status === "error" ? <>
+        <StatusMessage>{messages.authNetworkError}</StatusMessage>
+        <PrimaryButton label={messages.retry} tone="secondary" onPress={() => { setCredential(undefined); setProviderReload(value => value + 1); }} />
+      </> : null}
       {hasCredential ? <>
         <PasswordField label={label("profile.currentPassword")} value={password} onChange={setPassword} disabled={Boolean(busy)} />
         <PressableSurface accessibilityRole="checkbox" accessibilityState={{ checked: deleteConfirmed, disabled: Boolean(busy) }} disabled={Boolean(busy)} onPress={() => setDeleteConfirmed(value => !value)} style={styles.deleteAction}>
           <AppText variant="label">{deleteConfirmed ? "✓ " : "□ "}{label("lifecycle.deleteConfirm")}</AppText>
         </PressableSurface>
         <PrimaryButton label={label("lifecycle.deletePermanently")} busy={busy === "delete"} disabled={!deleteConfirmed || !password} onPress={deleteAccount} />
-      </> : <StatusMessage>{label("lifecycle.reauthRequired")}</StatusMessage>}
+      </> : credential?.userId === userId && credential?.status === "no" ? <>
+        {!socialDeleteReauthenticated ? <>
+          {hasApple ? <PrimaryButton
+            label={label("profile.continueWithApple")}
+            leadingIcon={socialIcon("apple")}
+            busy={busy === "social-apple"}
+            disabled={Boolean(busy)}
+            onPress={() => reauthenticateForDelete("apple")}
+          /> : null}
+          {hasGoogle ? <PrimaryButton
+            label={label("profile.continueWithGoogle")}
+            leadingIcon={socialIcon("google")}
+            busy={busy === "social-google"}
+            disabled={Boolean(busy)}
+            tone="secondary"
+            onPress={() => reauthenticateForDelete("google")}
+          /> : null}
+          {!hasApple && !hasGoogle ? <StatusMessage>{label("lifecycle.reauthRequired")}</StatusMessage> : null}
+        </> : <>
+          <PressableSurface accessibilityRole="checkbox" accessibilityState={{ checked: deleteConfirmed, disabled: Boolean(busy) }} disabled={Boolean(busy)} onPress={() => setDeleteConfirmed(value => !value)} style={styles.deleteAction}>
+            <AppText variant="label">{deleteConfirmed ? "✓ " : "□ "}{label("lifecycle.deleteConfirm")}</AppText>
+          </PressableSurface>
+          <PrimaryButton label={label("lifecycle.deletePermanently")} busy={busy === "delete"} disabled={!deleteConfirmed} onPress={deleteAccount} />
+        </>}
+      </> : null}
     </Card> : null}
     {failure ? <StatusMessage tone="error">{failure === "invalid_credentials" && entry === "change-password" ? label("profile.currentPasswordIncorrect") : authFailureMessage(failure, locale, messages)}</StatusMessage> : null}
     {failure === "email_not_verified" && !session && entry === "sign-in" ? <PrimaryButton
