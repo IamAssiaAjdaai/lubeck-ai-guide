@@ -99,7 +99,7 @@ export function NativeLiveWalkCard({
                   : "place"
             }
             color={colors.primary}
-            size={18}
+            size={16}
           />
           <AppText variant="caption" style={styles.state}>
             {props.stateLabel}
@@ -116,14 +116,14 @@ export function NativeLiveWalkCard({
 
       {props.storyLabel ? (
         <View style={styles.distanceRow}>
-          <NativeIcon ios="book" android="menu_book" color={colors.textMuted} size={16} />
+          <NativeIcon ios="book" android="menu_book" color={colors.textMuted} size={15} />
           <AppText variant="metadata" style={styles.primaryMeta}>
             {props.storyLabel}
           </AppText>
         </View>
       ) : props.distanceEta ? (
         <View style={styles.distanceRow}>
-          <NativeIcon ios="figure.walk" android="directions_walk" color={colors.text} size={18} />
+          <NativeIcon ios="figure.walk" android="directions_walk" color={colors.text} size={17} />
           <AppText variant="label" style={styles.primaryMeta}>
             {props.distanceEta}
           </AppText>
@@ -144,7 +144,7 @@ export function NativeLiveWalkCard({
       <View style={styles.timingRow}>
         <View style={styles.timingBlock}>
           <View style={styles.metaRow}>
-            <NativeIcon ios="clock" android="schedule" color={colors.textMuted} size={16} />
+            <NativeIcon ios="clock" android="schedule" color={colors.textMuted} size={15} />
             <AppText variant="label" style={styles.finishPrimary}>
               {props.remainingLabel}
             </AppText>
@@ -160,7 +160,7 @@ export function NativeLiveWalkCard({
               <AppText variant="label" style={styles.schedule}>
                 {props.scheduleLabel ?? props.deadlineLabel}
               </AppText>
-              <NativeIcon ios="checkmark" android="check" color={colors.primary} size={14} />
+              <NativeIcon ios="checkmark" android="check" color={colors.primary} size={13} />
             </View>
             {props.scheduleLabel && props.deadlineLabel ? (
               <AppText variant="caption" style={styles.secondary}>
@@ -251,10 +251,10 @@ function ProgressDots({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderColor: colors.borderStrong,
+    borderColor: colors.border,
     borderRadius: radius.md,
-    gap: spacing.sm,
-    padding: spacing.md,
+    gap: spacing.xs,
+    padding: spacing.sm,
     shadowOpacity: 0,
     shadowRadius: 0,
     elevation: 0,
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   liveLabel: {
     color: colors.primary,
     fontWeight: "800",
-    letterSpacing: 1.6,
+    letterSpacing: 1.2,
   },
   stateRow: {
     flexDirection: "row",
@@ -312,10 +312,10 @@ const styles = StyleSheet.create({
   },
   destination: {
     color: colors.text,
-    fontSize: 24,
-    lineHeight: 29,
+    fontSize: 22,
+    lineHeight: 26,
     fontWeight: "800",
-    letterSpacing: -0.3,
+    letterSpacing: -0.25,
   },
   distanceRow: {
     flexDirection: "row",
@@ -324,9 +324,9 @@ const styles = StyleSheet.create({
   },
   primaryMeta: { color: colors.text },
   secondary: { color: colors.textMuted },
-  progressBlock: { gap: 2 },
+  progressBlock: { gap: 1 },
   progress: {
-    minHeight: 22,
+    minHeight: 18,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 2,
@@ -343,8 +343,8 @@ const styles = StyleSheet.create({
   },
   connectorComplete: { backgroundColor: colors.primary },
   dotOuter: {
-    width: 12,
-    height: 12,
+    width: 10,
+    height: 10,
     borderRadius: radius.pill,
     backgroundColor: colors.borderStrong,
     alignItems: "center",
@@ -352,13 +352,13 @@ const styles = StyleSheet.create({
   },
   dotComplete: { backgroundColor: colors.primary },
   dotActive: {
-    width: 20,
-    height: 20,
+    width: 16,
+    height: 16,
     backgroundColor: colors.primary,
   },
   dotInner: {
-    width: 10,
-    height: 10,
+    width: 8,
+    height: 8,
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
   },
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   },
   timingBlock: { flex: 1, minWidth: 0, gap: 1 },
   timingRight: { alignItems: "flex-end" },
-  metaRow: { flexDirection: "row", alignItems: "center", gap: 5 },
+  metaRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   finishPrimary: { color: colors.text, fontWeight: "700" },
   schedule: { color: colors.primary, fontWeight: "700", textAlign: "right" },
   continueButton: {
