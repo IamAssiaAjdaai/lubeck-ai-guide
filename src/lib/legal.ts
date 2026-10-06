@@ -1,5 +1,5 @@
 export const CITYWALK_SUPPORT_EMAIL = "support@getcitywalk.com" as const;
-export const LEGAL_LAST_UPDATED = "6 October 2026" as const;
+export const LEGAL_LAST_UPDATED = "7 October 2026" as const;
 
 export type LegalEntityType = "individual" | "company";
 
