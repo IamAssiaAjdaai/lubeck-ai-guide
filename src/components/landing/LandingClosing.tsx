@@ -131,6 +131,7 @@ export function LandingFooter() {
         </nav>
         <div className={styles.support}>
           <p className={styles.footerHeading}>Need a hand?</p>
+          <Link href="/support">Support &amp; contact</Link>
           <a href="mailto:support@getcitywalk.com">support@getcitywalk.com</a>
         </div>
       </div>
