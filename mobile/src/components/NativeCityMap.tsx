@@ -165,7 +165,7 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
           ) : null}
         </Map>
       )}
-      {!loaded && !mapFailed ? <View pointerEvents="none" accessibilityRole="progressbar" accessibilityLabel={uxCopy(locale).map} style={[StyleSheet.absoluteFill, { backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center", gap: spacing.sm }]}>
+      {!loaded && !mapFailed ? <View pointerEvents="none" accessibilityRole="progressbar" accessibilityLabel={uxCopy(locale).map} style={[StyleSheet.absoluteFill, styles.loadingOverlay, compact && styles.compactLoadingOverlay]}>
         <NativeIcon ios="map" android="map" color={colors.primary} size={30} />
         <ActivityIndicator color={colors.primary} />
         <AppText>{uxCopy(locale).map}</AppText>
@@ -183,9 +183,11 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
         ]}
       >
         <NativeIcon ios="location.fill" android="my_location" color={colors.primary} size={18} />
-        <Text style={styles.locationButtonText} numberOfLines={1} adjustsFontSizeToFit>
-          {locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}
-        </Text>
+        {!compact ? (
+          <Text style={styles.locationButtonText} numberOfLines={1} adjustsFontSizeToFit>
+            {locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}
+          </Text>
+        ) : null}
       </Pressable>
       {locationStatus === "services_disabled" ? (
         <Pressable
@@ -223,14 +225,24 @@ function getLocationStatusMessage(
 }
 
 const styles = StyleSheet.create({
-  shell: { gap: spacing.sm },
+  shell: { gap: spacing.sm, position: "relative" },
   map: { height: 320, borderRadius: radius.lg, overflow: "hidden" },
-  compactMap: { height: 300 },
+  compactMap: { height: 380, borderRadius: radius.md },
   fallback: { height: 320, borderRadius: radius.lg, backgroundColor: "#EEF2FF", alignItems: "center", justifyContent: "center", padding: spacing.lg },
   placeMarker: { width: 22, height: 22, borderRadius: radius.pill, backgroundColor: colors.mapMarker, borderWidth: 3, borderColor: colors.surface },
   userMarker: { width: 24, height: 24, borderRadius: radius.pill, backgroundColor: colors.userMarker, borderWidth: 4, borderColor: colors.surface },
+  loadingOverlay: { backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center", gap: spacing.sm, borderRadius: radius.lg, overflow: "hidden" },
+  compactLoadingOverlay: { bottom: undefined, height: 380, borderRadius: radius.md },
   locationButton: { minHeight: 48, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, alignItems: "center", flexDirection: "row", gap: spacing.sm, justifyContent: "center", paddingHorizontal: spacing.md },
-  compactLocationButton: { minHeight: 40, alignSelf: "flex-start", maxWidth: "100%" },
+  compactLocationButton: {
+    position: "absolute",
+    top: spacing.sm,
+    end: spacing.sm,
+    width: 40,
+    minHeight: 40,
+    paddingHorizontal: 0,
+    borderRadius: radius.pill,
+  },
   locationButtonPressed: { backgroundColor: "#F3F4F6" },
   locationButtonText: { ...typography.label, color: colors.text },
   settingsButton: { minHeight: 44, alignItems: "center", justifyContent: "center" },
