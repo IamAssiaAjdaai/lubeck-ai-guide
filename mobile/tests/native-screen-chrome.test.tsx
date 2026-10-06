@@ -11,7 +11,7 @@ vi.mock("expo-router", () => ({
   Stack: { Screen: () => null },
   useFocusEffect: (callback: React.EffectCallback) => React.useEffect(callback, [callback]),
   usePathname: () => state.path, useLocalSearchParams: () => state.params,
-  useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : state.path === "/city/lubeck/explore" ? "city/[citySlug]/explore" : "city/[citySlug]/index" }),
+  useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : state.path === "/profile" ? "profile" : state.path === "/account" ? "account/index" : state.path === "/city/lubeck/explore" ? "city/[citySlug]/explore" : "city/[citySlug]/index" }),
   useNavigation: () => ({ isFocused: () => true, addListener: () => () => {} }),
   useRouter: () => ({ navigate: vi.fn(), dismissTo: vi.fn(), canGoBack: () => true, back: state.back }),
 }));
@@ -57,7 +57,7 @@ import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 beforeEach(() => { vi.stubGlobal("require", () => 1); vi.stubGlobal("__DEV__", true); vi.stubEnv("EXPO_PUBLIC_CITYWALK_QA_LOGS", "1"); vi.spyOn(console, "info").mockImplementation(state.log); });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.clearAllMocks(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); state.locale = "en"; });
 describe("actual native screen/chrome wiring (native view refs mocked)", () => {
-  it.each([["/", {}, "home"], ["/saved", {}, "saved"], ["/saved", { view: "trips" }, "trips"], ["/account", {}, "profile"]] as const)("one tap reaches the %s ScrollView ref", (path, params, tab) => {
+  it.each([["/", {}, "home"], ["/saved", {}, "saved"], ["/saved", { view: "trips" }, "trips"], ["/profile", {}, "profile"]] as const)("one tap reaches the %s ScrollView ref", (path, params, tab) => {
     state.path = path; state.params = params;
     render(<Screen><span>Content</span></Screen>);
     fireEvent.click(screen.getByRole("tab", { name: walkCopy("en")[tab] }));
@@ -71,8 +71,8 @@ describe("actual native screen/chrome wiring (native view refs mocked)", () => {
     expect(state.offset).toHaveBeenCalledExactlyOnceWith({ offset: 0, animated: true });
     expect(state.log).toHaveBeenCalledOnce();
   });
-  it.each(["/city/lubeck", "/city/lubeck/place/holstentor", "/city/lubeck/walk"])("keeps Back in one compact header outside content at %s", path => {
-    state.path = path; state.params = { citySlug: "lubeck" };
+  it.each(["/city/lubeck", "/city/lubeck/place/holstentor", "/city/lubeck/walk", "/account"])("keeps Back in one compact header outside content at %s", path => {
+    state.path = path; state.params = path === "/account" ? {} : { citySlug: "lubeck" };
     render(<Screen>Place or walk content</Screen>);
     const header = screen.getByTestId("native-header");
     expect(header.parentElement).toBe(screen.getByTestId("safe-area"));
@@ -83,7 +83,7 @@ describe("actual native screen/chrome wiring (native view refs mocked)", () => {
     fireEvent.click(back); expect(state.back).toHaveBeenCalledOnce();
     expect(header.dataset.style).toContain('\"minHeight\":48');
   });
-  it.each(["/", "/saved", "/account"])("omits Back on root %s", path => {
+  it.each(["/", "/saved", "/profile"])("omits Back on root %s", path => {
     state.path = path; state.params = {};
     render(<Screen>Content</Screen>);
     expect(screen.queryByRole("button", { name: "Back" })).toBeNull();
@@ -133,7 +133,7 @@ it("right-aligns Arabic headings and fallback prose despite legacy left/center s
   expect(JSON.parse(title.dataset.style!).at(-1)).toEqual({ writingDirection: "rtl", textAlign: "right" });
 });
 
-it.each(["ar", "de"] as const)("keeps one header language control on the actual %s Profile screen", async locale => {
+it.each(["ar", "de"] as const)("keeps one header language control on the actual %s Account screen", async locale => {
   state.path = "/account"; state.params = {}; state.locale = locale;
   render(<AccountScreen />);
   expect(screen.getAllByRole("button", { name: "Language" })).toHaveLength(1);
