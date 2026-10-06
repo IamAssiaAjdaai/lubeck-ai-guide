@@ -1,0 +1,97 @@
+name: Validate account deletion E2E
+
+on:
+  pull_request:
+    paths:
+      - "src/app/account-deletion/**"
+      - "src/app/api/account/delete-request/**"
+      - "src/app/api/account/delete-confirm/**"
+      - "src/components/account/AccountDeletionRequestPanel.tsx"
+      - "src/lib/auth/lifecycle/**"
+      - "src/cloudflare/accountErasureSchedule*"
+      - "src/cloudflare/entrypoint.ts"
+      - "scripts/check-account-deletion-e2e.mjs"
+      - ".github/workflows/account-deletion-e2e.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  account-deletion-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: citywalk_account_e2e
+          POSTGRES_USER: citywalk
+          POSTGRES_PASSWORD: citywalk
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U citywalk -d citywalk_account_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      CITYWALK_CONTENT_SOURCE: code
+      DATABASE_URL: postgresql://citywalk:citywalk@127.0.0.1:5432/citywalk_account_e2e
+      BETTER_AUTH_URL: http://127.0.0.1:3101
+      CITYWALK_ACCOUNT_E2E_BASE_URL: http://127.0.0.1:3101
+      CITYWALK_ACCOUNT_E2E_ALLOW_HTTP_ORIGIN: "1"
+      RESEND_API_KEY: re_account_e2e_not_used
+      CITYWALK_EMAIL_FROM: no-reply@citywalk-account-e2e.invalid
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set disposable test secret
+        shell: bash
+        run: echo "BETTER_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify lifecycle request-origin guard
+        run: ./node_modules/.bin/vitest run src/lib/auth/lifecycle/requestOrigin.test.ts
+
+      - name: Apply database migrations
+        run: npm run db:migrate
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Install isolated Chromium tooling
+        run: |
+          npm install --prefix "$RUNNER_TEMP/citywalk-account-e2e" --no-audit --no-fund --package-lock=false playwright@1.56.1
+          "$RUNNER_TEMP/citywalk-account-e2e/node_modules/.bin/playwright" install chromium
+
+      - name: Exercise public account-deletion flow
+        shell: bash
+        run: |
+          ./node_modules/.bin/next start --hostname 127.0.0.1 --port 3101 > "$RUNNER_TEMP/citywalk-account-e2e-next.log" 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3101/account-deletion > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail-with-body --silent --show-error --max-time 10 \
+            -H 'Content-Type: application/json' \
+            --data '{"email":"citywalk-account-preflight@example.invalid"}' \
+            http://127.0.0.1:3101/api/account/delete-request > "$RUNNER_TEMP/citywalk-account-e2e-preflight.json"
+          grep -q '"accepted":true' "$RUNNER_TEMP/citywalk-account-e2e-preflight.json"
+          CITYWALK_PLAYWRIGHT_MODULE="$RUNNER_TEMP/citywalk-account-e2e/node_modules/playwright" \
+            timeout 45s node scripts/check-account-deletion-e2e.mjs
+
+      - name: Show server log on failure
+        if: ${{ failure() }}
+        run: cat "$RUNNER_TEMP/citywalk-account-e2e-next.log" || true

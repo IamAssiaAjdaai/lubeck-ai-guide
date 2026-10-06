@@ -12,6 +12,24 @@ type VerificationEmailInput = AuthEmailInput & Readonly<{
   url: string;
 }>;
 
+function allowsInsecureAccountE2eOrigin(origin: string) {
+  if (
+    process.env.CI !== "true" ||
+    process.env.CITYWALK_ACCOUNT_E2E_ALLOW_HTTP_ORIGIN !== "1"
+  ) {
+    return false;
+  }
+  try {
+    const url = new URL(origin);
+    return (
+      url.protocol === "http:" &&
+      (url.hostname === "127.0.0.1" || url.hostname === "localhost")
+    );
+  } catch {
+    return false;
+  }
+}
+
 function authEmailConfiguration() {
   const key = process.env.RESEND_API_KEY?.trim();
   const from = process.env.CITYWALK_EMAIL_FROM?.trim();
@@ -24,7 +42,8 @@ function authEmailConfiguration() {
   if (
     new URL(origin).protocol !== "https:" &&
     process.env.NODE_ENV !== "development" &&
-    process.env.NODE_ENV !== "test"
+    process.env.NODE_ENV !== "test" &&
+    !allowsInsecureAccountE2eOrigin(origin)
   ) {
     throw new LifecycleError("UNAVAILABLE");
   }
