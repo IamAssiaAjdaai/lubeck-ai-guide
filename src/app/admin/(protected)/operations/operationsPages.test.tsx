@@ -47,7 +47,7 @@ describe("content operations pages", () => {
 
   it("renders translation matrix cells as links to the existing locale editor", async () => {
     render(await TranslationOperationsPage({ searchParams: Promise.resolve({ cityId: "1", view: "matrix" }) }));
-    expect(screen.getByRole("heading", { name: /Translation coverage/ })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Languages" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Published" })).toHaveAttribute("href", "/admin/places/2?locale=de");
   });
 

@@ -45,9 +45,9 @@ export default async function TranslationOperationsPage({ searchParams }: Readon
   return (
     <section>
       <AdminPageHeader
-        description="Derived from each exact working locale and the current published revision. Open a cell to edit it in the existing Place editor."
-        eyebrow="Operations"
-        title={`Translation coverage${city ? ` — ${city.localizations[0]?.name ?? city.name}` : ""}`}
+        description={city ? `See what is translated for ${city.localizations[0]?.name ?? city.name}, what is missing, and open any place to finish its traveler copy.` : "See what is translated, what is missing, and what needs attention."}
+        eyebrow={city ? `${city.localizations[0]?.name ?? city.name} · City workspace` : "Languages"}
+        title="Languages"
       />
       {data.cities.length ? <OperationsFilters cities={data.cities.map((item) => ({ id: item.id, name: item.localizations[0]?.name ?? item.name }))} cityId={cityId} field={field} languagesMode={languagesMode} showField view={view} /> : null}
       {!city ? <EmptyContent>No city is available in your staff scope.</EmptyContent> : view === "matrix" ? (
@@ -68,7 +68,7 @@ export default async function TranslationOperationsPage({ searchParams }: Readon
               return <div className="surface-card p-4" key={locale}><p className="text-xs font-bold uppercase text-text-secondary"><LocaleLabel locale={locale} /></p><p className="mt-2 text-2xl font-extrabold">{percent}%</p></div>;
             })}
           </div>
-          <section className="mt-8"><h2 className="text-xl font-extrabold">Needs attention</h2>{cells.some(({ needsAttention }) => needsAttention) ? <ul className="mt-4 grid gap-3">{cells.filter(({ needsAttention }) => needsAttention).map((cell) => <li className="surface-card flex flex-wrap items-center justify-between gap-3 p-4" key={`${cell.place.id}-${cell.locale}`}><div><strong>{cell.place.localizations.find(({ locale }) => locale === "en")?.name ?? cell.place.slug}</strong><p className="mt-1 text-sm text-text-secondary"><LocaleLabel locale={cell.locale} /> · {stateLabel(cell.state)}{!cell.completeness.requiredComplete ? " · required fields incomplete" : ""}</p></div><Link className="button-secondary min-h-11 px-4" href={translationEditorHref(cell.place.id, cell.locale)}>Open translation</Link></li>)}</ul> : <EmptyContent>All selected translations are up to date.</EmptyContent>}</section>
+          <section className="mt-8"><p className="eyebrow">Next step</p><h2 className="mt-1 text-xl font-extrabold">Needs attention</h2>{cells.some(({ needsAttention }) => needsAttention) ? <ul className="mt-4 grid gap-3">{cells.filter(({ needsAttention }) => needsAttention).map((cell) => <li className="surface-card flex flex-wrap items-center justify-between gap-3 p-4" key={`${cell.place.id}-${cell.locale}`}><div><strong>{cell.place.localizations.find(({ locale }) => locale === "en")?.name ?? cell.place.slug}</strong><p className="mt-1 text-sm text-text-secondary"><LocaleLabel locale={cell.locale} /> · {stateLabel(cell.state)}{!cell.completeness.requiredComplete ? " · required fields incomplete" : ""}</p></div><Link className="button-secondary min-h-11 px-4" href={translationEditorHref(cell.place.id, cell.locale)}>Continue writing</Link></li>)}</ul> : <EmptyContent>All selected translations are up to date.</EmptyContent>}</section>
         </>
       )}
     </section>

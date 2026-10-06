@@ -13,7 +13,7 @@ export function TourStopEditor({
   places: readonly StopPlace[];
 }>) {
   const [stopIds, setStopIds] = useState([...initialStopIds]);
-  const [candidate, setCandidate] = useState(places[0]?.id ?? 0);
+  const [candidate, setCandidate] = useState(0);
   const placeById = useMemo(
     () => new Map(places.map((place) => [place.id, place])),
     [places],
@@ -31,7 +31,7 @@ export function TourStopEditor({
 
   return (
     <fieldset className="rounded-xl border border-border p-4">
-      <legend className="px-2 text-sm font-bold">Ordered stops</legend>
+      <legend className="px-2 text-sm font-bold">2–3 · Choose stops & arrange the route</legend>
       <input name="stopPlaceIds" type="hidden" value={stopIds.join("\n")} />
       <div className="flex flex-col gap-2 sm:flex-row">
         <select
@@ -39,7 +39,7 @@ export function TourStopEditor({
           onChange={(event) => setCandidate(Number(event.target.value))}
           value={candidate}
         >
-          {places.map((place) => <option key={place.id} value={place.id}>{place.name}</option>)}
+          <option value={0}>Choose a place…</option>\n          {places.map((place) => <option key={place.id} value={place.id}>{place.name}</option>)}
         </select>
         <button
           className="button-secondary min-h-11 px-4"
@@ -49,7 +49,7 @@ export function TourStopEditor({
           <Plus aria-hidden="true" size={17} /> Add stop
         </button>
       </div>
-      <ol className="mt-4 space-y-2">
+      {stopIds.length === 0 ? <p className="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-text-secondary">No stops yet. Choose the first place travelers should visit.</p> : null}\n      <ol className="mt-4 space-y-2">
         {stopIds.map((id, index) => (
           <li className="flex items-center gap-2 rounded-xl bg-slate-50 p-2" key={id}>
             <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white text-xs font-bold">{index + 1}</span>

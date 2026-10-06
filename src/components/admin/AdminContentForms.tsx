@@ -115,11 +115,13 @@ export function PlaceFields({
   editingLocale,
   place,
   tags,
+  initialCityId,
 }: Readonly<{
   cities: readonly (CityRow & { localizations: CityLocalizationRow[] })[];
   editingLocale?: Locale;
   place?: AdminPlaceFormRecord;
   tags: readonly ContentTagRow[];
+  initialCityId?: number;
 }>) {
   const localization = selectedLocalization(place?.localizations, editingLocale);
   return (
@@ -127,12 +129,16 @@ export function PlaceFields({
       <input name="publicationStatus" type="hidden" value={place?.publicationStatus ?? "draft"} />
       {place ? <input name="expectedUpdatedAt" type="hidden" value={place.updatedAt.toISOString()} /> : null}
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="City">
-          <select className={inputClass} defaultValue={place?.cityId} name="cityId" required>
-            {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
-          </select>
-        </Field>
-        <Field label="Slug">
+        {initialCityId ? (
+          <input name="cityId" type="hidden" value={initialCityId} />
+        ) : (
+          <Field label="City">
+            <select className={inputClass} defaultValue={place?.cityId} name="cityId" required>
+              {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
+            </select>
+          </Field>
+        )}
+        <Field label="Web address name">
           <input className={inputClass} defaultValue={place?.slug} name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required />
         </Field>
         <Field label="Category">
@@ -140,45 +146,45 @@ export function PlaceFields({
             {PLACE_CATEGORIES.map((value) => <option key={value}>{value}</option>)}
           </select>
         </Field>
-        <Field label="Duration (minutes)">
+        <Field label="Typical visit (minutes)">
           <input className={inputClass} defaultValue={place?.durationMinutes ?? 30} max={1440} min={1} name="durationMinutes" required type="number" />
         </Field>
-        <Field label="Latitude">
+        <Field label="Map latitude">
           <input className={inputClass} defaultValue={place?.latitude} max={90} min={-90} name="latitude" required step="any" type="number" />
         </Field>
-        <Field label="Longitude">
+        <Field label="Map longitude">
           <input className={inputClass} defaultValue={place?.longitude} max={180} min={-180} name="longitude" required step="any" type="number" />
         </Field>
-        <Field label="Environment">
+        <Field label="Setting">
           <select className={inputClass} defaultValue={place?.environment ?? "outdoor"} name="environment">
             {PLACE_ENVIRONMENTS.map((value) => <option key={value}>{value}</option>)}
           </select>
         </Field>
-        <Field label="Pricing">
+        <Field label="Price level">
           <select className={inputClass} defaultValue={place?.pricing ?? "unknown"} name="pricing">
             {PLACE_PRICING.map((value) => <option key={value}>{value}</option>)}
           </select>
         </Field>
-        <Field label="Operational status">
+        <Field label="Is it currently open/available?">
           <select className={inputClass} defaultValue={place?.status ?? ""} name="status">
             <option value="">Not specified</option>
             {PLACE_STATUSES.map((value) => <option key={value}>{value}</option>)}
           </select>
         </Field>
-        <Field label="Status verified">
+        <Field label="Availability checked on">
           <input className={inputClass} defaultValue={place?.statusVerifiedAt ?? ""} name="statusVerifiedAt" type="date" />
         </Field>
-        <Field label="Visit note verified">
+        <Field label="Visit information checked on">
           <input className={inputClass} defaultValue={place?.visitNoteVerifiedAt ?? ""} name="visitNoteVerifiedAt" type="date" />
         </Field>
-        <Field label="Visit note valid until">
+        <Field label="Visit information valid until">
           <input className={inputClass} defaultValue={place?.visitNoteValidUntil ?? ""} name="visitNoteValidUntil" type="date" />
         </Field>
       </div>
-      <Field label="Image reference">
+      <Field label="Legacy image reference (optional)">
         <input className={inputClass} defaultValue={place?.image ?? ""} name="image" />
       </Field>
-      <Field label="Tags (comma-separated slugs)">
+      <Field label="Tags">
         <input
           className={inputClass}
           defaultValue={(place?.tags.map(({ slug }) => slug) ?? []).join(", ")}
@@ -204,7 +210,7 @@ export function PlaceFields({
         <Field label="Visit notes">
           <textarea className={inputClass} defaultValue={localization?.visitNotes ?? ""} name="visitNotes" rows={4} />
         </Field>
-        <Field label="Facts (one Label | Value per line)">
+        <Field label="Quick facts (one Label | Value per line)">
           <textarea
             className={inputClass}
             defaultValue={(localization?.facts ?? []).map((fact) => `${fact.label} | ${fact.value}`).join("\n")}
@@ -223,10 +229,12 @@ export function TourFields({
   editingLocale,
   places,
   tour,
+  initialCityId,
 }: Readonly<{
   cities: readonly (CityRow & { localizations: CityLocalizationRow[] })[];
   editingLocale?: Locale;
   places: readonly AdminPlaceFormRecord[];
+  initialCityId?: number;
   tour?: TourRow & {
     localizations: TourLocalizationRow[];
     stops: TourStopRow[];
@@ -238,11 +246,15 @@ export function TourFields({
       <input name="publicationStatus" type="hidden" value={tour?.publicationStatus ?? "draft"} />
       {tour ? <input name="expectedUpdatedAt" type="hidden" value={tour.updatedAt.toISOString()} /> : null}
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="City">
-          <select className={inputClass} defaultValue={tour?.cityId} name="cityId" required>
-            {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
-          </select>
-        </Field>
+        {initialCityId ? (
+          <input name="cityId" type="hidden" value={initialCityId} />
+        ) : (
+          <Field label="City">
+            <select className={inputClass} defaultValue={tour?.cityId} name="cityId" required>
+              {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
+            </select>
+          </Field>
+        )}
         <Field label="Slug">
           <input className={inputClass} defaultValue={tour?.slug} name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required />
         </Field>
