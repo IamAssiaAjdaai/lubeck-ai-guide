@@ -52,7 +52,8 @@ describe("native conversational guide experience", () => {
     expect(guideSource).toContain('failure === "daily_allowance"');
     expect(guideSource).toContain("styles.limitCard");
     expect(guideSource).toContain("messages.guideUnlockPass");
-    expect(guideSource).toContain("guideUpgradePath(citySlug, locale)");
+    expect(guideSource).toContain('router.navigate("/premium")');
+    expect(guideSource).not.toContain("guideUpgradePath(citySlug, locale)");
     expect(guideSource).toContain("messages.guideAbuseLimited");
     expect(guideSource).toContain("messages.guideError");
     expect(guideSource).toContain("const canSubmit = canSubmitGuideQuestion");
