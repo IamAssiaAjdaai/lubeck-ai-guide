@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import {
+  PRODUCT_SLUG_BY_REVENUECAT_PRODUCT,
   RevenueCatWebhookError,
   revenueCatEventPolicy,
   verifyRevenueCatWebhook,
@@ -112,6 +113,14 @@ describe("RevenueCat webhook verification", () => {
       authorizationSecret: AUTHORIZATION,
       signingSecret: SIGNING_SECRET,
     })).toThrowError(new RevenueCatWebhookError("INVALID_PAYLOAD"));
+  });
+});
+
+describe("RevenueCat product mapping", () => {
+  it("uses the annual product ID and rejects the stale yearly ID", () => {
+    expect(PRODUCT_SLUG_BY_REVENUECAT_PRODUCT["com.citywalk.premium.annual"])
+      .toBe("citywalk-premium");
+    expect("com.citywalk.premium.yearly" in PRODUCT_SLUG_BY_REVENUECAT_PRODUCT).toBe(false);
   });
 });
 
