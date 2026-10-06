@@ -47,20 +47,32 @@ function activityKitSupported(): boolean {
   return Number.isFinite(version) && version >= 16.1;
 }
 
-async function hasPremiumLiveWalkAccess(): Promise<boolean> {
+type PremiumLiveWalkAccessStatus = "active" | "inactive" | "unavailable";
+
+async function premiumLiveWalkAccessStatus(): Promise<PremiumLiveWalkAccessStatus> {
   try {
     const session = await nativeAuthClient.getSession();
+    if (session.error) return "unavailable";
     const account = session.data?.user.id;
-    if (session.error || !account) return false;
-    return await readPremiumAccess(account);
+    if (!account) return "inactive";
+    return await readPremiumAccess(account) ? "active" : "inactive";
   } catch {
-    return false;
+    return "unavailable";
   }
+}
+
+async function authorizePremiumLiveWalkUpdate(): Promise<boolean> {
+  const status = await premiumLiveWalkAccessStatus();
+  if (status === "active") return true;
+  if (status === "inactive") {
+    await disableCitywalkLiveWalk();
+  }
+  return false;
 }
 
 export async function enableCitywalkLiveWalk(): Promise<LiveWalkEnableResult> {
   if (!activityKitSupported()) return "unavailable";
-  if (!await hasPremiumLiveWalkAccess()) return "unavailable";
+  if (await premiumLiveWalkAccessStatus() !== "active") return "unavailable";
 
   const session = await loadLiveWalkSession();
   if (!session || !(session.takeBack ? session.finish : session.stops[0])) {
@@ -160,6 +172,7 @@ export async function publishForegroundLiveWalkLocation(
 
   const session = await loadLiveWalkSession();
   if (!session?.enabled) return;
+  if (!await authorizePremiumLiveWalkUpdate()) return;
   await publishPoint(session, point, timestamp, input.force ?? false);
 }
 
@@ -168,6 +181,7 @@ export async function refreshCitywalkLiveActivity(
 ): Promise<boolean> {
   const session = await loadLiveWalkSession();
   if (!session?.enabled) return false;
+  if (!await authorizePremiumLiveWalkUpdate()) return false;
   const point = session.lastPublished?.point ?? fallbackPoint;
   if (!point) return false;
   const presentation = buildLiveWalkPresentation(session, point);
@@ -219,6 +233,7 @@ async function publishLocationObject(
 
   const session = await loadLiveWalkSession();
   if (!session?.enabled) return;
+  if (!await authorizePremiumLiveWalkUpdate()) return;
   await publishPoint(
     session,
     { lat: location.coords.latitude, lng: location.coords.longitude },
