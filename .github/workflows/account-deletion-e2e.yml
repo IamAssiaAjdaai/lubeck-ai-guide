@@ -41,6 +41,7 @@ jobs:
       DATABASE_URL: postgresql://citywalk:citywalk@127.0.0.1:5432/citywalk_account_e2e
       BETTER_AUTH_URL: http://127.0.0.1:3101
       CITYWALK_ACCOUNT_E2E_BASE_URL: http://127.0.0.1:3101
+      CITYWALK_ACCOUNT_E2E_ALLOW_HTTP_ORIGIN: "1"
       RESEND_API_KEY: re_account_e2e_not_used
       CITYWALK_EMAIL_FROM: no-reply@citywalk-account-e2e.invalid
 
@@ -63,7 +64,7 @@ jobs:
         run: npm run db:migrate
 
       - name: Build web app
-        run: NODE_ENV=test npm run build
+        run: npm run build
 
       - name: Install isolated Chromium tooling
         run: |
@@ -73,7 +74,7 @@ jobs:
       - name: Exercise public account-deletion flow
         shell: bash
         run: |
-          NODE_ENV=test ./node_modules/.bin/next start --hostname 127.0.0.1 --port 3101 > "$RUNNER_TEMP/citywalk-account-e2e-next.log" 2>&1 &
+          ./node_modules/.bin/next start --hostname 127.0.0.1 --port 3101 > "$RUNNER_TEMP/citywalk-account-e2e-next.log" 2>&1 &
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           for i in {1..30}; do
