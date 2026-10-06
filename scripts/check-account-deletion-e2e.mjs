@@ -16,10 +16,12 @@ try {
   await page.goto(`${baseUrl}/account-deletion`, { waitUntil: "networkidle" });
 
   await page.getByRole("heading", { name: "Delete your CITYWALK account" }).waitFor();
+  await page.waitForTimeout(750);
   await page.getByLabel("Account email").fill("citywalk-account-e2e@example.invalid");
 
   const requestResponsePromise = page.waitForResponse(
     response => response.url().endsWith("/api/account/delete-request") && response.request().method() === "POST",
+    { timeout: 10000 },
   );
   await page.getByRole("button", { name: "Send deletion confirmation" }).click();
   const requestResponse = await requestResponsePromise;
@@ -41,12 +43,14 @@ try {
   });
   await page.getByRole("heading", { name: "Confirm permanent deletion" }).waitFor();
   await page.waitForFunction(() => window.location.hash === "");
+  await page.waitForTimeout(250);
 
   await page
     .getByLabel("I understand that this permanently deletes my CITYWALK account.")
     .check();
   const confirmResponsePromise = page.waitForResponse(
     response => response.url().endsWith("/api/account/delete-confirm") && response.request().method() === "POST",
+    { timeout: 10000 },
   );
   await page.getByRole("button", { name: "Delete my account permanently" }).click();
   const confirmResponse = await confirmResponsePromise;
