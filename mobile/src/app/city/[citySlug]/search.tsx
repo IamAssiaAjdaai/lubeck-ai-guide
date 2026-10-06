@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   iconShell: {
     width: 38,
     height: 38,
-    borderRadius: radius.full,
+    borderRadius: radius.pill,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primarySoft,
