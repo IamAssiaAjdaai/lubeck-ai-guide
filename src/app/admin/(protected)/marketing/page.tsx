@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { FileText, Megaphone, Newspaper, Plus, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import {
   AdminPageHeader,
@@ -42,29 +43,84 @@ export const metadata = {
   title: "Marketing | CITYWALK Control Center",
 };
 
-export default async function MarketingPage() {
-  const workspace = await getMarketingWorkspace();
-  const hasLubeckStarter = workspace.campaigns.some(
+export default async function MarketingPage({
+  searchParams,
+}: Readonly<{
+  searchParams: Promise<{ cityId?: string }>;
+}>) {
+  const [query, allWorkspace] = await Promise.all([
+    searchParams,
+    getMarketingWorkspace(),
+  ]);
+  const selectedCity = resolveCity(allWorkspace.cities, query.cityId);
+  const workspace = selectedCity
+    ? scopeWorkspace(allWorkspace, selectedCity.id)
+    : allWorkspace;
+  const cityId = selectedCity?.id;
+  const newCampaignHref = cityHref("/admin/marketing/campaigns/new", cityId);
+  const newPageHref = cityHref("/admin/marketing/pages/new", cityId);
+  const newSocialHref = cityHref("/admin/marketing/social/new", cityId);
+  const hasLubeckStarter = allWorkspace.campaigns.some(
     ({ slug }) => slug === "two-hours-in-lubeck",
   );
   const canCreateLubeckStarter =
     workspace.canManage &&
     !hasLubeckStarter &&
     workspace.cities.some(({ slug }) => slug === "lubeck");
+  const showLubeckStarter = !selectedCity || selectedCity.slug === "lubeck";
 
   return (
     <section>
+      {selectedCity ? (
+        <div className="mb-4 flex flex-wrap items-center gap-4 text-sm font-semibold">
+          <Link className="text-primary hover:underline" href={`/admin/cities/${selectedCity.id}`}>
+            ← {selectedCity.name} workspace
+          </Link>
+          <Link className="text-text-secondary hover:text-primary" href="/admin/marketing">
+            All cities
+          </Link>
+        </div>
+      ) : null}
+
       <AdminPageHeader
-        description="Plan campaigns, landing/blog pages and social content from verified CITYWALK city content. Drafting stays human-controlled; nothing auto-publishes."
-        eyebrow="Growth workspace"
-        title="Marketing"
+        description={
+          selectedCity
+            ? `Campaigns, landing/blog pages and social content for ${selectedCity.name}. New drafts inherit this city automatically.`
+            : "Plan campaigns, landing/blog pages and social content from verified CITYWALK city content. Drafting stays human-controlled; nothing auto-publishes."
+        }
+        eyebrow={selectedCity ? "City marketing" : "Growth workspace · All cities"}
+        title={selectedCity ? `${selectedCity.name} Marketing` : "Marketing"}
       />
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        <Link
+          className={`rounded-full border px-3 py-1.5 text-xs font-bold ${
+            selectedCity ? "border-border text-text-secondary" : "border-primary bg-blue-50 text-primary"
+          }`}
+          href="/admin/marketing"
+        >
+          All cities
+        </Link>
+        {allWorkspace.cities.map((city) => (
+          <Link
+            className={`rounded-full border px-3 py-1.5 text-xs font-bold ${
+              selectedCity?.id === city.id
+                ? "border-primary bg-blue-50 text-primary"
+                : "border-border text-text-secondary"
+            }`}
+            href={`/admin/marketing?cityId=${city.id}`}
+            key={city.id}
+          >
+            {city.name}
+          </Link>
+        ))}
+      </div>
 
       {workspace.canManage ? (
         <div className="mt-5 flex flex-wrap gap-3">
-          <NewDraftLink href="/admin/marketing/campaigns/new" label="New campaign" />
-          <NewDraftLink href="/admin/marketing/pages/new" label="New page" />
-          <NewDraftLink href="/admin/marketing/social/new" label="New social draft" />
+          <NewDraftLink href={newCampaignHref} label="New campaign" />
+          <NewDraftLink href={newPageHref} label="New page" />
+          <NewDraftLink href={newSocialHref} label="New social draft" />
         </div>
       ) : null}
 
@@ -85,7 +141,7 @@ export default async function MarketingPage() {
           value={workspace.counts.content}
         />
         <MetricCard
-          detail="City-scoped source of truth"
+          detail={selectedCity ? "Current city context" : "City-scoped source of truth"}
           label="Available cities"
           value={workspace.cities.length}
         />
@@ -123,7 +179,7 @@ export default async function MarketingPage() {
 
       {!workspace.canManage ? (
         <p className="mt-6 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-800">
-          You have read-only Marketing access. Editors and admins manage drafts; review/publish controls arrive in the next workflow checkpoint.
+          You have read-only Marketing access. Editors and admins manage drafts; review and publishing stay permission-controlled.
         </p>
       ) : null}
 
@@ -137,30 +193,45 @@ export default async function MarketingPage() {
         </span>
       </div>
       {workspace.campaigns.length === 0 ? (
-        <div className="surface-card mt-6 p-6 sm:p-8">
-          <p className="eyebrow">First CITYWALK campaign</p>
-          <h3 className="mt-2 text-xl font-extrabold">2 Hours in Lübeck</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
-            Creates one draft campaign, the <strong>/lubeck/2-hours</strong> landing page and the first short-form content draft <strong>CW-LUB-TIME-001</strong>. Nothing is published automatically.
-          </p>
-          <div className="mt-5 flex flex-wrap gap-3">
-            {canCreateLubeckStarter ? (
-              <form action={createLubeckStarterCampaignAction}>
-                <button className="button-primary min-h-11 px-5" type="submit">
-                  Create starter campaign
-                </button>
-              </form>
-            ) : null}
-            {workspace.canManage ? (
-              <NewDraftLink href="/admin/marketing/campaigns/new" label="Create another campaign" />
+        showLubeckStarter ? (
+          <div className="surface-card mt-6 p-6 sm:p-8">
+            <p className="eyebrow">First CITYWALK campaign</p>
+            <h3 className="mt-2 text-xl font-extrabold">2 Hours in Lübeck</h3>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
+              Creates one draft campaign, the <strong>/lubeck/2-hours</strong> landing page and the first short-form content draft <strong>CW-LUB-TIME-001</strong>. Nothing is published automatically.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              {canCreateLubeckStarter ? (
+                <form action={createLubeckStarterCampaignAction}>
+                  <button className="button-primary min-h-11 px-5" type="submit">
+                    Create starter campaign
+                  </button>
+                </form>
+              ) : null}
+              {workspace.canManage ? (
+                <NewDraftLink href={newCampaignHref} label="Create another campaign" />
+              ) : null}
+            </div>
+            {!canCreateLubeckStarter && !workspace.canManage ? (
+              <p className="mt-4 text-sm font-semibold text-text-secondary">
+                Marketing edit access is required to create campaigns.
+              </p>
             ) : null}
           </div>
-          {!canCreateLubeckStarter && !workspace.canManage ? (
-            <p className="mt-4 text-sm font-semibold text-text-secondary">
-              Marketing edit access is required to create campaigns.
+        ) : (
+          <div className="surface-card mt-6 p-6 sm:p-8">
+            <p className="eyebrow">{selectedCity?.name}</p>
+            <h3 className="mt-2 text-xl font-extrabold">No campaigns yet</h3>
+            <p className="mt-2 text-sm leading-6 text-text-secondary">
+              Start the first campaign for this city. Pages and social drafts can then stay inside the same city context.
             </p>
-          ) : null}
-        </div>
+            {workspace.canManage ? (
+              <div className="mt-5">
+                <NewDraftLink href={newCampaignHref} label="New campaign" />
+              </div>
+            ) : null}
+          </div>
+        )
       ) : (
         <ContentTable>
           <TableHead>
@@ -173,7 +244,7 @@ export default async function MarketingPage() {
             {workspace.campaigns.slice(0, 8).map((campaign) => (
               <tr key={campaign.id}>
                 <Cell>
-                  <Link className="font-bold text-primary hover:underline" href={`/admin/marketing/campaigns/${campaign.id}`}>
+                  <Link className="font-bold text-primary hover:underline" href={cityHref(`/admin/marketing/campaigns/${campaign.id}`, cityId)}>
                     {campaign.name}
                   </Link>
                   <span className="mt-1 block text-xs text-text-secondary">
@@ -202,13 +273,13 @@ export default async function MarketingPage() {
               </div>
             </div>
             {workspace.canManage ? (
-              <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing/pages/new">
+              <Link className="text-sm font-semibold text-primary hover:underline" href={newPageHref}>
                 New page
               </Link>
             ) : null}
           </div>
           {workspace.pages.length === 0 ? (
-            <EmptyContent>No marketing pages yet.</EmptyContent>
+            <EmptyContent>No marketing pages yet{selectedCity ? ` for ${selectedCity.name}` : ""}.</EmptyContent>
           ) : (
             <ContentTable>
               <TableHead>
@@ -220,7 +291,7 @@ export default async function MarketingPage() {
                 {workspace.pages.slice(0, 6).map((page) => (
                   <tr key={page.id}>
                     <Cell>
-                      <Link className="font-bold text-primary hover:underline" href={`/admin/marketing/pages/${page.id}`}>
+                      <Link className="font-bold text-primary hover:underline" href={cityHref(`/admin/marketing/pages/${page.id}`, cityId)}>
                         {page.title}
                       </Link>
                       <span className="mt-1 block text-xs text-text-secondary">
@@ -248,13 +319,13 @@ export default async function MarketingPage() {
               </div>
             </div>
             {workspace.canManage ? (
-              <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing/social/new">
+              <Link className="text-sm font-semibold text-primary hover:underline" href={newSocialHref}>
                 New draft
               </Link>
             ) : null}
           </div>
           {workspace.content.length === 0 ? (
-            <EmptyContent>No social content drafts yet.</EmptyContent>
+            <EmptyContent>No social content drafts yet{selectedCity ? ` for ${selectedCity.name}` : ""}.</EmptyContent>
           ) : (
             <ContentTable>
               <TableHead>
@@ -266,7 +337,7 @@ export default async function MarketingPage() {
                 {workspace.content.slice(0, 6).map((item) => (
                   <tr key={item.id}>
                     <Cell>
-                      <Link className="font-bold text-primary hover:underline" href={`/admin/marketing/social/${item.id}`}>
+                      <Link className="font-bold text-primary hover:underline" href={cityHref(`/admin/marketing/social/${item.id}`, cityId)}>
                         {item.contentCode}
                       </Link>
                       <span className="mt-1 block max-w-xs text-xs text-text-secondary">
@@ -288,4 +359,43 @@ export default async function MarketingPage() {
       </div>
     </section>
   );
+}
+
+function resolveCity<T extends { id: number }>(cities: readonly T[], rawCityId?: string): T | undefined {
+  if (!rawCityId) return undefined;
+  const cityId = Number(rawCityId);
+  if (!Number.isInteger(cityId)) notFound();
+  const city = cities.find((item) => item.id === cityId);
+  if (!city) notFound();
+  return city;
+}
+
+function scopeWorkspace(
+  workspace: Awaited<ReturnType<typeof getMarketingWorkspace>>,
+  cityId: number,
+): Awaited<ReturnType<typeof getMarketingWorkspace>> {
+  const campaigns = workspace.campaigns.filter((campaign) => campaign.cityId === cityId);
+  const pages = workspace.pages.filter((page) => page.cityId === cityId);
+  const content = workspace.content.filter((item) => item.cityId === cityId);
+
+  return {
+    ...workspace,
+    cities: workspace.cities.filter((city) => city.id === cityId),
+    campaigns,
+    pages,
+    content,
+    counts: {
+      campaigns: campaigns.length,
+      activeCampaigns: campaigns.filter(({ status }) => status === "active").length,
+      pages: pages.length,
+      publishedPages: pages.filter(({ publicationStatus }) => publicationStatus === "published").length,
+      content: content.length,
+      readyContent: content.filter(({ status }) => status === "ready").length,
+    },
+  };
+}
+
+function cityHref(path: string, cityId?: number): string {
+  if (!cityId) return path;
+  return `${path}${path.includes("?") ? "&" : "?"}cityId=${cityId}`;
 }

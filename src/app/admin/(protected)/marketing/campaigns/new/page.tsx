@@ -16,27 +16,30 @@ export const metadata = {
 export default async function NewMarketingCampaignPage({
   searchParams,
 }: Readonly<{
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; cityId?: string }>;
 }>) {
-  const [{ error }, options] = await Promise.all([
+  const [query, options] = await Promise.all([
     searchParams,
     getMarketingEditorOptions(),
   ]);
+  const city = resolveCity(options.cities, query.cityId);
+  const cities = city ? [city] : options.cities;
+  const backHref = city ? `/admin/marketing?cityId=${city.id}` : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
-        ← Marketing
+      <Link className="text-sm font-semibold text-primary hover:underline" href={backHref}>
+        ← {city ? `${city.name} Marketing` : "Marketing"}
       </Link>
       <AdminPageHeader
-        description="Create a city-scoped campaign brief. New campaigns always start as drafts."
+        description={city ? `Create a campaign for ${city.name}. The city is inherited from the workspace.` : "Create a city-scoped campaign brief. New campaigns always start as drafts."}
         eyebrow="Marketing · Campaigns"
         title="New campaign"
       />
-      <AdminNotice error={error} />
+      <AdminNotice error={query.error} />
       {options.canManage ? (
         <MarketingFormShell action={createMarketingCampaignAction} submitLabel="Save campaign draft">
-          <CampaignFields cities={options.cities} />
+          <CampaignFields cities={cities} />
         </MarketingFormShell>
       ) : (
         <p className="surface-card mt-6 p-5 text-sm text-text-secondary">
@@ -45,4 +48,11 @@ export default async function NewMarketingCampaignPage({
       )}
     </section>
   );
+}
+
+function resolveCity<T extends { id: number }>(cities: readonly T[], rawCityId?: string) {
+  if (!rawCityId) return undefined;
+  const cityId = Number(rawCityId);
+  if (!Number.isInteger(cityId)) return undefined;
+  return cities.find((city) => city.id === cityId);
 }

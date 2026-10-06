@@ -16,31 +16,36 @@ export const metadata = {
 export default async function NewMarketingSocialPage({
   searchParams,
 }: Readonly<{
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; cityId?: string }>;
 }>) {
-  const [{ error }, options] = await Promise.all([
+  const [query, options] = await Promise.all([
     searchParams,
     getMarketingEditorOptions(),
   ]);
+  const city = resolveCity(options.cities, query.cityId);
+  const cities = city ? [city] : options.cities;
+  const campaigns = city
+    ? options.campaigns.filter((campaign) => campaign.cityId === city.id)
+    : options.campaigns;
+  const pages = city
+    ? options.pages.filter((page) => page.cityId === city.id)
+    : options.pages;
+  const backHref = city ? `/admin/marketing?cityId=${city.id}` : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
-        ← Marketing
+      <Link className="text-sm font-semibold text-primary hover:underline" href={backHref}>
+        ← {city ? `${city.name} Marketing` : "Marketing"}
       </Link>
       <AdminPageHeader
-        description="Create a human-reviewed social draft with a stable content code for attribution."
+        description={city ? `Create a human-reviewed social draft for ${city.name}. The city is inherited from the workspace.` : "Create a human-reviewed social draft with a stable content code for attribution."}
         eyebrow="Marketing · Social"
         title="New social draft"
       />
-      <AdminNotice error={error} />
+      <AdminNotice error={query.error} />
       {options.canManage ? (
         <MarketingFormShell action={createMarketingContentAction} submitLabel="Save social draft">
-          <SocialContentFields
-            campaigns={options.campaigns}
-            cities={options.cities}
-            pages={options.pages}
-          />
+          <SocialContentFields campaigns={campaigns} cities={cities} pages={pages} />
         </MarketingFormShell>
       ) : (
         <p className="surface-card mt-6 p-5 text-sm text-text-secondary">
@@ -49,4 +54,11 @@ export default async function NewMarketingSocialPage({
       )}
     </section>
   );
+}
+
+function resolveCity<T extends { id: number }>(cities: readonly T[], rawCityId?: string) {
+  if (!rawCityId) return undefined;
+  const cityId = Number(rawCityId);
+  if (!Number.isInteger(cityId)) return undefined;
+  return cities.find((city) => city.id === cityId);
 }

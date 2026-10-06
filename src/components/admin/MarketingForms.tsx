@@ -65,16 +65,7 @@ export function CampaignFields({
         title="Campaign brief"
       >
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="City">
-            <select className={inputClass} defaultValue={campaign?.cityId} name="cityId" required>
-              <option disabled value="">Choose a city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
-          </Field>
+          <CityField cities={cities} defaultCityId={campaign?.cityId} />
           <Field label="Slug">
             <input
               className={inputClass}
@@ -136,14 +127,7 @@ export function MarketingPageFields({
         title="Page identity"
       >
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="City">
-            <select className={inputClass} defaultValue={page?.cityId} name="cityId" required>
-              <option disabled value="">Choose a city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>{city.name}</option>
-              ))}
-            </select>
-          </Field>
+          <CityField cities={cities} defaultCityId={page?.cityId} />
           <Field label="Campaign">
             <select className={inputClass} defaultValue={page?.campaignId ?? ""} name="campaignId">
               <option value="">No campaign</option>
@@ -227,14 +211,7 @@ export function SocialContentFields({
         title="Attribution"
       >
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="City">
-            <select className={inputClass} defaultValue={item?.cityId} name="cityId" required>
-              <option disabled value="">Choose a city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>{city.name}</option>
-              ))}
-            </select>
-          </Field>
+          <CityField cities={cities} defaultCityId={item?.cityId} />
           <Field label="Campaign">
             <select className={inputClass} defaultValue={item?.campaignId ?? ""} name="campaignId">
               <option value="">No campaign</option>
@@ -309,6 +286,40 @@ export function SocialContentFields({
         </Field>
       </EditorSection>
     </>
+  );
+}
+
+function CityField({
+  cities,
+  defaultCityId,
+}: Readonly<{
+  cities: readonly MarketingCityOption[];
+  defaultCityId?: number;
+}>) {
+  const inheritedCity = cities.length === 1 ? cities[0] : undefined;
+
+  if (inheritedCity) {
+    return (
+      <div className="rounded-xl border border-border bg-white px-3 py-2.5 text-sm">
+        <input name="cityId" type="hidden" value={inheritedCity.id} />
+        <p className="text-xs font-semibold text-text-secondary">City</p>
+        <p className="mt-1 font-bold">{inheritedCity.name}</p>
+        <p className="mt-1 text-xs text-text-secondary">Inherited from City Workspace</p>
+      </div>
+    );
+  }
+
+  return (
+    <Field label="City">
+      <select className={inputClass} defaultValue={defaultCityId} name="cityId" required>
+        <option disabled value="">Choose a city</option>
+        {cities.map((city) => (
+          <option key={city.id} value={city.id}>
+            {city.name}
+          </option>
+        ))}
+      </select>
+    </Field>
   );
 }
 

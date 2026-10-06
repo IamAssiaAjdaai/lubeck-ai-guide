@@ -16,27 +16,33 @@ export const metadata = {
 export default async function NewMarketingPage({
   searchParams,
 }: Readonly<{
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; cityId?: string }>;
 }>) {
-  const [{ error }, options] = await Promise.all([
+  const [query, options] = await Promise.all([
     searchParams,
     getMarketingEditorOptions(),
   ]);
+  const city = resolveCity(options.cities, query.cityId);
+  const cities = city ? [city] : options.cities;
+  const campaigns = city
+    ? options.campaigns.filter((campaign) => campaign.cityId === city.id)
+    : options.campaigns;
+  const backHref = city ? `/admin/marketing?cityId=${city.id}` : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
-        ← Marketing
+      <Link className="text-sm font-semibold text-primary hover:underline" href={backHref}>
+        ← {city ? `${city.name} Marketing` : "Marketing"}
       </Link>
       <AdminPageHeader
-        description="Create a landing page or blog draft and reserve its future public path."
+        description={city ? `Create a landing page or blog draft for ${city.name}. The city is inherited from the workspace.` : "Create a landing page or blog draft and reserve its future public path."}
         eyebrow="Marketing · Pages"
         title="New page"
       />
-      <AdminNotice error={error} />
+      <AdminNotice error={query.error} />
       {options.canManage ? (
         <MarketingFormShell action={createMarketingPageAction} submitLabel="Save page draft">
-          <MarketingPageFields campaigns={options.campaigns} cities={options.cities} />
+          <MarketingPageFields campaigns={campaigns} cities={cities} />
         </MarketingFormShell>
       ) : (
         <p className="surface-card mt-6 p-5 text-sm text-text-secondary">
@@ -45,4 +51,11 @@ export default async function NewMarketingPage({
       )}
     </section>
   );
+}
+
+function resolveCity<T extends { id: number }>(cities: readonly T[], rawCityId?: string) {
+  if (!rawCityId) return undefined;
+  const cityId = Number(rawCityId);
+  if (!Number.isInteger(cityId)) return undefined;
+  return cities.find((city) => city.id === cityId);
 }
