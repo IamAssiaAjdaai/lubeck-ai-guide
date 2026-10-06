@@ -23,7 +23,7 @@ describe("Live Walk execution semantics", () => {
 
   it("keeps the in-app Live Walk card on the light CITYWALK surface", () => {
     expect(liveWalkCardSource).toContain("backgroundColor: colors.surface");
-    expect(liveWalkCardSource).toContain("borderColor: colors.borderStrong");
+    expect(liveWalkCardSource).toContain("borderColor: colors.border");
     expect(liveWalkCardSource).not.toContain("#081624");
   });
 
