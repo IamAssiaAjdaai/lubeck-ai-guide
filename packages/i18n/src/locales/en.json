@@ -687,5 +687,20 @@
     "unavailable": "Live Walk is unavailable on this device.",
     "enabled": "Live Walk is on",
     "inspect": "Inspect Live Walk"
+  },
+  "legal": {
+    "profileRow": "Legal & support",
+    "title": "Legal & support",
+    "description": "Privacy, terms, account deletion and support",
+    "privacy": "Privacy",
+    "privacyDetail": "How CITYWALK handles your data",
+    "terms": "Terms of use",
+    "termsDetail": "Rules for using CITYWALK",
+    "imprint": "Imprint",
+    "imprintDetail": "Provider and contact information",
+    "accountDeletion": "Account deletion",
+    "accountDeletionDetail": "Request deletion from the public web resource",
+    "support": "Contact support",
+    "supportDetail": "support@getcitywalk.com"
   }
 }
