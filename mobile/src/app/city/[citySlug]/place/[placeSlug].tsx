@@ -521,7 +521,10 @@ function PlaceContent() {
             <PressableSurface
               accessibilityLabel={messages.askCitywalk}
               accessibilityRole="link"
-              style={[styles.askAction, nativeRowStyle(direction)]}
+              style={StyleSheet.flatten([
+                styles.askAction,
+                nativeRowStyle(direction),
+              ])}
             >
               <View style={styles.askIcon}>
                 <NativeIcon
