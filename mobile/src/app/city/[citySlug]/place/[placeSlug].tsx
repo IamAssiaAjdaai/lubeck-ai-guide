@@ -1,5 +1,9 @@
 import { t as translate } from "@citywalk/i18n";
-import { nativeTextBlock, nativeContentTextStyle } from "../../../../design/rtlPresentation";
+import {
+  nativeContentTextStyle,
+  nativeRowStyle,
+  nativeTextBlock,
+} from "../../../../design/rtlPresentation";
 import { ContentRecovery } from "../../../../components/ContentRecovery";
 import { WalkMembershipControl } from "../../../../components/WalkMembershipControl";
 import { nativePlaceName } from "../../../../lib/displayNames";
@@ -79,14 +83,27 @@ function PlaceContent() {
     const focus = params.focus;
     if (focus !== "audio" && focus !== "story") return;
     const offset = sections.current[focus];
-    if (offset === undefined || contentOffset.current === undefined || !scroll.current || focusedSection.current === focus) return;
-    scroll.current?.scrollTo({ y: contentOffset.current + offset, animated: true });
+    if (
+      offset === undefined ||
+      contentOffset.current === undefined ||
+      !scroll.current ||
+      focusedSection.current === focus
+    )
+      return;
+    scroll.current?.scrollTo({
+      y: contentOffset.current + offset,
+      animated: true,
+    });
     focusedSection.current = focus;
   }, [params.focus]);
-  useFocusEffect(useCallback(() => {
-    focusSection();
-    return () => { focusedSection.current = undefined; };
-  }, [focusSection]));
+  useFocusEffect(
+    useCallback(() => {
+      focusSection();
+      return () => {
+        focusedSection.current = undefined;
+      };
+    }, [focusSection]),
+  );
   const identity = parsePlaceRouteIdentity(params.citySlug, params.placeSlug);
   const trip = parseMobileTripContext(params);
   const { direction, locale, messages } = useNativeLocale();
@@ -146,7 +163,14 @@ function PlaceContent() {
       </Screen>
     );
   if (placeState.status === "error")
-    return <Screen><ContentRecovery retry={placeState.retry} citySlug={identity.citySlug} /></Screen>;
+    return (
+      <Screen>
+        <ContentRecovery
+          retry={placeState.retry}
+          citySlug={identity.citySlug}
+        />
+      </Screen>
+    );
 
   const place = placeState.data.place;
   if (
@@ -163,7 +187,10 @@ function PlaceContent() {
     Platform.OS === "ios"
       ? `https://maps.apple.com/?daddr=${place.coordinates.lat},${place.coordinates.lng}&dirflg=w`
       : `https://www.google.com/maps/dir/?api=1&destination=${place.coordinates.lat},${place.coordinates.lng}&travelmode=walking`;
-  const contentTextStyle = nativeContentTextStyle(locale, place.resolvedLocale);
+  const contentTextStyle = nativeContentTextStyle(
+    locale,
+    place.resolvedLocale,
+  );
   const imageMedia = selectPrimaryImageMedia(place.media);
   const image = selectImageUrl(
     imageMedia,
@@ -186,7 +213,16 @@ function PlaceContent() {
 
   return (
     <Screen scrollViewRef={scroll} navigation={false}>
-      <Stack.Screen options={{ title: nativePlaceName(identity.citySlug, place.slug, place.content.name, locale) }} />
+      <Stack.Screen
+        options={{
+          title: nativePlaceName(
+            identity.citySlug,
+            place.slug,
+            place.content.name,
+            locale,
+          ),
+        }}
+      />
       {saveMessage ? <StatusMessage>{saveMessage}</StatusMessage> : null}
       {trip ? (
         <TripProgress
@@ -197,10 +233,14 @@ function PlaceContent() {
           total={trip.stopSlugs.length}
         />
       ) : null}
-      <MotionView duration={motion.screen} style={styles.content} onLayout={(event) => {
-        contentOffset.current = event.nativeEvent.layout.y;
-        focusSection();
-      }}>
+      <MotionView
+        duration={motion.screen}
+        style={styles.content}
+        onLayout={(event) => {
+          contentOffset.current = event.nativeEvent.layout.y;
+          focusSection();
+        }}
+      >
         {image ? (
           <View>
             <Image
@@ -213,7 +253,12 @@ function PlaceContent() {
               cachePolicy="memory-disk"
               contentFit="cover"
               style={styles.hero}
-              accessibilityLabel={nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)}
+              accessibilityLabel={nativePlaceName(
+                identity.citySlug,
+                place.slug,
+                place.content.name,
+                locale,
+              )}
               transition={motion.component}
             />
             <MediaAttribution attribution={imageMedia?.attribution} />
@@ -224,12 +269,54 @@ function PlaceContent() {
             {discoveryCopy(locale)[place.category]} · {place.durationMinutes}{" "}
             {messages.visitMinutes}
           </AppText>
-          <AppText variant="screenTitle">
-            {nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)}
-          </AppText>
-          {direction === "rtl" && place.didFallback ? <AppText variant="caption">{messages.fallbackContent}</AppText> : null}
+          <View style={[styles.titleRow, nativeRowStyle(direction)]}>
+            <AppText variant="screenTitle" style={styles.placeTitle}>
+              {nativePlaceName(
+                identity.citySlug,
+                place.slug,
+                place.content.name,
+                locale,
+              )}
+            </AppText>
+            <PressableSurface
+              accessibilityLabel={translate(
+                locale,
+                saved ? "common.saved" : "common.save",
+              )}
+              accessibilityRole="button"
+              accessibilityState={{
+                selected: saved,
+                busy: savingPlace,
+                disabled: savingPlace,
+              }}
+              disabled={savingPlace}
+              style={styles.saveAction}
+              onPress={() => {
+                if (savingPlace) return;
+                setSavingPlace(true);
+                void toggleSavedPlace({
+                  citySlug: identity.citySlug,
+                  slug: place.slug,
+                  name: place.content.name,
+                })
+                  .then(setSaved)
+                  .catch(() => setSaveMessage(messages.tripSaveFailed))
+                  .finally(() => setSavingPlace(false));
+              }}
+            >
+              <NativeIcon
+                ios={saved ? "heart.fill" : "heart"}
+                android={saved ? "favorite" : "favorite_border"}
+                color={colors.primary}
+                size={21}
+              />
+            </PressableSurface>
+          </View>
+          {direction === "rtl" && place.didFallback ? (
+            <AppText variant="caption">{messages.fallbackContent}</AppText>
+          ) : null}
         </View>
-        <View style={styles.quickActions}>
+        <View style={[styles.quickActions, nativeRowStyle(direction)]}>
           <View style={styles.quickAction}>
             <WalkMembershipControl
               citySlug={identity.citySlug}
@@ -240,43 +327,15 @@ function PlaceContent() {
           </View>
           <PrimaryButton
             compact
-            label={translate(locale, saved ? "common.saved" : "common.save")}
-            busy={savingPlace}
-            accessibilityState={{ selected: saved }}
-            tone="secondary"
-            style={styles.quickActionButton}
-            leadingIcon={
-              <NativeIcon
-                ios={saved ? "heart.fill" : "heart"}
-                android={saved ? "favorite" : "favorite_border"}
-                color={colors.primary}
-                size={20}
-              />
-            }
-            onPress={() => {
-              if (savingPlace) return;
-              setSavingPlace(true);
-              void toggleSavedPlace({
-                citySlug: identity.citySlug,
-                slug: place.slug,
-                name: place.content.name,
-              })
-                .then(setSaved)
-                .catch(() => setSaveMessage(messages.tripSaveFailed))
-                .finally(() => setSavingPlace(false));
-            }}
-          />
-          <PrimaryButton
-            compact
             label={translate(locale, "place.directions")}
             tone="secondary"
-            style={styles.quickActionButton}
+            style={styles.directionAction}
             leadingIcon={
               <NativeIcon
                 ios="location"
                 android="directions"
                 color={colors.primary}
-                size={20}
+                size={19}
               />
             }
             onPress={() => {
@@ -297,13 +356,24 @@ function PlaceContent() {
             <NativeAudioPlayer
               key={`${identity.citySlug}:${place.slug}:${locale}`}
               source={citywalkApi.resolveUrl(audio.url)}
-              title={`${nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)} ${messages.audioGuide}`}
+              title={`${nativePlaceName(
+                identity.citySlug,
+                place.slug,
+                place.content.name,
+                locale,
+              )} ${messages.audioGuide}`}
               durationSeconds={audio.durationSeconds}
               assetLocale={audio.locale}
             />
           ) : (
-            <View testID="audio-unavailable-notice" style={[styles.audioNotice, nativeTextBlock(direction)]}>
-              <AppText>{translate(locale, "place.audioMissingDescription")}</AppText>
+            <View
+              testID="audio-unavailable-notice"
+              style={[styles.audioNotice, nativeTextBlock(direction)]}
+            >
+              <AppText variant="label">{messages.audioGuide}</AppText>
+              <AppText variant="metadata" style={styles.muted}>
+                {translate(locale, "place.audioMissingDescription")}
+              </AppText>
             </View>
           )}
         </View>
@@ -326,16 +396,18 @@ function PlaceContent() {
                 {messages.visitorNote}
               </AppText>
             </View>
-            <AppText style={contentTextStyle}>
-              {place.content.visitNote}
-            </AppText>
+            <AppText style={contentTextStyle}>{place.content.visitNote}</AppText>
           </View>
         ) : null}
         {hasStory ? (
-          <View testID="place-story-section" style={styles.section} onLayout={(event) => {
-            sections.current.story = event.nativeEvent.layout.y;
-            focusSection();
-          }}>
+          <View
+            testID="place-story-section"
+            style={styles.section}
+            onLayout={(event) => {
+              sections.current.story = event.nativeEvent.layout.y;
+              focusSection();
+            }}
+          >
             <SectionTitle>{messages.story}</SectionTitle>
             <AppText style={contentTextStyle}>{place.content.story}</AppText>
           </View>
@@ -396,7 +468,9 @@ function PlaceContent() {
               </AppText>
               <NativeIcon
                 ios={sourcesExpanded ? "chevron.up" : "chevron.down"}
-                android={sourcesExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down"}
+                android={
+                  sourcesExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down"
+                }
                 color={colors.textMuted}
                 size={17}
               />
@@ -444,19 +518,31 @@ function PlaceContent() {
             }}
             asChild
           >
-            <PrimaryButton
-              label={messages.askCitywalk}
-              leadingIcon={
+            <PressableSurface
+              accessibilityLabel={messages.askCitywalk}
+              accessibilityRole="link"
+              style={[styles.askAction, nativeRowStyle(direction)]}
+            >
+              <View style={styles.askIcon}>
                 <NativeIcon
                   ios="sparkles"
                   android="auto_awesome"
-                  color="#FFFFFF"
-                  size={19}
+                  color={colors.primary}
+                  size={18}
                 />
-              }
-              haptic="medium"
-              tone="ai"
-            />
+              </View>
+              <AppText variant="label" style={styles.askLabel}>
+                {messages.askCitywalk}
+              </AppText>
+              <NativeIcon
+                ios={direction === "rtl" ? "chevron.left" : "chevron.right"}
+                android={
+                  direction === "rtl" ? "chevron_left" : "chevron_right"
+                }
+                color={colors.textMuted}
+                size={17}
+              />
+            </PressableSurface>
           </Link>
         ) : null}
         {trip && !tripCompleted ? (
@@ -479,7 +565,9 @@ function PlaceContent() {
                     label={messages.previousStop}
                     leadingIcon={
                       <NativeIcon
-                        ios={direction === "rtl" ? "arrow.right" : "arrow.left"}
+                        ios={
+                          direction === "rtl" ? "arrow.right" : "arrow.left"
+                        }
                         android={
                           direction === "rtl" ? "arrow_forward" : "arrow_back"
                         }
@@ -507,7 +595,9 @@ function PlaceContent() {
                     style={styles.tripAction}
                     trailingIcon={
                       <NativeIcon
-                        ios={direction === "rtl" ? "arrow.left" : "arrow.right"}
+                        ios={
+                          direction === "rtl" ? "arrow.left" : "arrow.right"
+                        }
                         android={
                           direction === "rtl" ? "arrow_back" : "arrow_forward"
                         }
@@ -569,7 +659,14 @@ function PlaceContent() {
 }
 
 const styles = StyleSheet.create({
-  audioNotice: { backgroundColor: colors.primarySoft, borderRadius: radius.sm, padding: spacing.md },
+  audioNotice: {
+    borderBottomColor: colors.border,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    gap: 2,
+    paddingVertical: spacing.sm,
+  },
   content: { gap: spacing.md },
   hero: {
     width: "100%",
@@ -578,11 +675,32 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primarySoft,
   },
   introduction: { gap: spacing.sm },
-  quickActions: { flexDirection: "row", alignItems: "stretch", gap: spacing.sm },
-  quickAction: { flex: 1, minWidth: 0 },
-  quickActionButton: { flex: 1, minWidth: 0, minHeight: 64, paddingHorizontal: spacing.xs },
+  titleRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  placeTitle: { flex: 1, minWidth: 0 },
+  saveAction: {
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    height: 44,
+    justifyContent: "center",
+    width: 44,
+  },
+  quickActions: {
+    alignItems: "center",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.sm,
+  },
+  quickAction: { flexBasis: 160, flexGrow: 1, minWidth: 0 },
+  directionAction: { flexBasis: 132, flexGrow: 1, minHeight: 44 },
   description: { color: colors.textMuted },
-  eyebrow: { color: colors.primary, marginBottom: spacing.sm },
+  eyebrow: { color: colors.primary, marginBottom: spacing.xs },
   muted: { color: colors.textMuted },
   section: { gap: spacing.sm },
   verifiedCard: {
@@ -593,7 +711,11 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     padding: spacing.md,
   },
-  verifiedHeader: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
+  verifiedHeader: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
   verifiedBadge: {
     alignItems: "center",
     backgroundColor: colors.tealSoft,
@@ -623,13 +745,37 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
   },
   sourceCopy: { flex: 1, gap: spacing.xs, minWidth: 0 },
+  askAction: {
+    alignItems: "center",
+    borderBottomColor: colors.border,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    flexDirection: "row",
+    gap: spacing.sm,
+    minHeight: 54,
+    paddingVertical: spacing.sm,
+  },
+  askIcon: {
+    alignItems: "center",
+    backgroundColor: colors.primarySoft,
+    borderRadius: radius.pill,
+    height: 36,
+    justifyContent: "center",
+    width: 36,
+  },
+  askLabel: { color: colors.primary, flex: 1, minWidth: 0 },
   note: {
     backgroundColor: colors.primarySoft,
     borderRadius: radius.md,
     gap: spacing.sm,
     padding: spacing.md,
   },
-  noteHeading: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
+  noteHeading: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
   noteTitle: { color: colors.primary },
   factsList: { gap: 0 },
   fact: {
