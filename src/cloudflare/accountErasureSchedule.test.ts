@@ -28,4 +28,13 @@ describe("account erasure schedule configuration", () => {
       ).toBe(false);
     },
   );
+
+  it("treats whitespace-only secrets as unconfigured", () => {
+    expect(
+      isAccountErasureScheduleConfigured({
+        ...configured,
+        COMMERCE_REVENUECAT_SECRET_API_KEY: "   ",
+      }),
+    ).toBe(false);
+  });
 });
