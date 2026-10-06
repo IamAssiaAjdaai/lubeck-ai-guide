@@ -12,7 +12,7 @@ describe("native legal and support access", () => {
       "https://getcitywalk.com/terms",
       "https://getcitywalk.com/imprint",
       "https://getcitywalk.com/account-deletion",
-      "mailto:support@getcitywalk.com",
+      "https://getcitywalk.com/support",
     ]) {
       expect(legalLinksSource).toContain(url);
     }
