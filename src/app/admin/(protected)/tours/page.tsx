@@ -10,7 +10,7 @@ export default async function ToursPage({ searchParams }: { searchParams: Promis
   const authorizedTours = await listAuthorizedTours();
   const tours = authorizedTours.filter((tour) => !query.city || tour.city?.slug === query.city);
   const selectedCity = query.city ? authorizedTours.find((tour) => tour.city?.slug === query.city)?.city : undefined;
-  const cityName = selectedCity?.name ?? query.city;
+  const cityName = selectedCity?.slug ?? query.city;
   const newHref = query.city ? `/admin/tours/new?city=${query.city}` : "/admin/tours/new";
 
   return <section>
@@ -36,7 +36,7 @@ export default async function ToursPage({ searchParams }: { searchParams: Promis
           <Link className="surface-card group p-5 transition hover:border-primary/30 hover:shadow-md" href={`/admin/tours/${tour.id}`} key={tour.id}>
             <div className="flex items-start justify-between gap-3"><span className="rounded-xl bg-primary/10 p-2 text-primary"><Route size={18} /></span><StatusBadge status={tour.publicationStatus} /></div>
             <h2 className="mt-4 text-lg font-extrabold">{tour.localizations[0]?.title ?? tour.slug}</h2>
-            <p className="mt-1 text-sm text-text-secondary">{tour.stops.length} stops{tour.estimatedDurationMinutes ? ` · ${tour.estimatedDurationMinutes} min` : ""}{!query.city && tour.city ? ` · ${tour.city.name}` : ""}</p>
+            <p className="mt-1 text-sm text-text-secondary">{tour.stops.length} stops{tour.estimatedDurationMinutes ? ` · ${tour.estimatedDurationMinutes} min` : ""}{!query.city && tour.city ? ` · ${tour.city.slug}` : ""}</p>
             <p className="mt-4 flex items-center gap-2 text-sm font-bold text-primary">Continue editing <ArrowRight className="transition group-hover:translate-x-1" size={16} /></p>
           </Link>
         ))}
