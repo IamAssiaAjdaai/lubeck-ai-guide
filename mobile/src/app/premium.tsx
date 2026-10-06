@@ -22,9 +22,9 @@ export default function PremiumScreen() {
             CITYWALK PREMIUM
           </AppText>
         </View>
-        <AppText variant="screenTitle">Stay guided while you move.</AppText>
+        <AppText variant="screenTitle">Start Live Walk</AppText>
         <AppText variant="metadata" style={styles.secondary}>
-          Turn your planned route into a live city guide that adapts around your time and walk.
+          Stay guided while you move.
         </AppText>
       </View>
 
@@ -41,14 +41,17 @@ export default function PremiumScreen() {
           <AppText variant="metadata" style={styles.secondary}>
             Premium subscriptions are not enabled in this build yet. Your basic CITYWALK route still works.
           </AppText>
-          <PrimaryButton label="Back to my route" tone="secondary" onPress={() => router.back()} />
+          <PrimaryButton label="Continue with basic route" tone="secondary" onPress={() => router.back()} />
         </>
       ) : isPending ? (
         <AppText variant="metadata" style={styles.secondary}>
           Checking your CITYWALK account…
         </AppText>
       ) : session?.user.id ? (
-        <RevenueCatPremiumCard account={session.user.id} />
+        <>
+          <RevenueCatPremiumCard account={session.user.id} />
+          <PrimaryButton label="Continue with basic route" tone="secondary" onPress={() => router.back()} />
+        </>
       ) : (
         <>
           <AppText variant="metadata" style={styles.secondary}>
