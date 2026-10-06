@@ -4,8 +4,8 @@ export const walkStyles = StyleSheet.create({
   section: { gap: spacing.xs },
   previewSummary: {
     gap: 2,
-    paddingVertical: 0,
-    marginBottom: spacing.xs,
+    paddingVertical: spacing.xs,
+    marginBottom: 0,
   },
   tertiaryAction: { minHeight: 36, alignSelf: "flex-start", justifyContent: "center", paddingVertical: spacing.xs },
   tertiaryText: { color: colors.primary },
@@ -28,7 +28,8 @@ export const walkStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    paddingVertical: spacing.sm,
+    minHeight: 44,
+    paddingVertical: spacing.xs,
     paddingHorizontal: 0,
     backgroundColor: "transparent",
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -42,7 +43,11 @@ export const walkStyles = StyleSheet.create({
     borderRadius: radius.sm,
     paddingHorizontal: spacing.sm,
   },
-  actionRow: { flexDirection: "row", gap: spacing.xs },
+  actionRow: {
+    flexDirection: "row",
+    gap: spacing.xs,
+    marginTop: spacing.xs,
+  },
   navigationBar: {
     flexDirection: "row",
     alignItems: "center",
