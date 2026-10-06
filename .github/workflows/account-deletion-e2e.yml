@@ -63,7 +63,7 @@ jobs:
         run: npm run db:migrate
 
       - name: Build web app
-        run: npm run build
+        run: NODE_ENV=test npm run build
 
       - name: Install isolated Chromium tooling
         run: |
