@@ -6,7 +6,7 @@ import { addCitySourceAction, approveAndPublishAction, changePublicationAction, 
 import { AdminFormShell, AdminNotice, CityFields, ContentSourcesPanel, LocaleNavigator, PublicationActions } from "@/components/admin/AdminContentForms";
 import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import { MediaAttachmentPanel } from "@/components/admin/MediaAttachmentPanel";
-import { getAuthorizedCity } from "@/lib/admin/content/service.server";
+import { getAuthorizedCity, listAuthorizedPlaces, listAuthorizedTours } from "@/lib/admin/content/service.server";
 import { isLocale } from "@/lib/i18n";
 import { listAuthorizedEntityMedia, listAuthorizedMediaAssets } from "@/lib/media/service.server";
 import { requireStaff } from "@/lib/admin/authorization.server";
@@ -23,13 +23,17 @@ export default async function EditCityPage({
   const id = Number(rawId);
   if (!Number.isInteger(id)) notFound();
 
-  const [city, mediaAssets, mediaAttachments, admin] = await Promise.all([
+  const [city, places, tours, mediaAssets, mediaAttachments, admin] = await Promise.all([
     getAuthorizedCity(id),
+    listAuthorizedPlaces(),
+    listAuthorizedTours(),
     listAuthorizedMediaAssets(),
     listAuthorizedEntityMedia("city", id),
     requireStaff(),
   ]);
   const editingLocale = isLocale(query.locale) ? query.locale : "en";
+  const placeCount = places.filter((place) => place.cityId === city.id).length;
+  const walkCount = tours.filter((tour) => tour.cityId === city.id).length;
   const cityName = city.localizations[0]?.name ?? city.name;
   const workspaceLinks = [
     {
@@ -117,8 +121,8 @@ export default async function EditCityPage({
       <div className="mt-10 border-t border-border pt-8">
         <div className="mb-4 flex items-center gap-3"><CheckCircle2 aria-hidden="true" className="text-primary" size={20} /><div><p className="eyebrow">Review & publish</p><h2 className="mt-1 text-xl font-extrabold">Ready for travelers?</h2></div></div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">PLACES</p><p className="mt-1 font-extrabold">{city.placeCount ?? 0}</p><p className="mt-1 text-xs text-text-secondary">{(city.placeCount ?? 0) > 0 ? "Content added" : "Add at least one place"}</p></div>
-          <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">WALKS</p><p className="mt-1 font-extrabold">{city.tourCount ?? 0}</p><p className="mt-1 text-xs text-text-secondary">{(city.tourCount ?? 0) > 0 ? "Walks created" : "Create a walk when ready"}</p></div>
+          <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">PLACES</p><p className="mt-1 font-extrabold">{placeCount}</p><p className="mt-1 text-xs text-text-secondary">{placeCount > 0 ? "Content added" : "Add at least one place"}</p></div>
+          <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">WALKS</p><p className="mt-1 font-extrabold">{walkCount}</p><p className="mt-1 text-xs text-text-secondary">{walkCount > 0 ? "Walks created" : "Create a walk when ready"}</p></div>
           <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">LANGUAGES</p><p className="mt-1 font-extrabold">{city.localizations.length}</p><p className="mt-1 text-xs text-text-secondary">{city.localizations.length > 0 ? "Traveler copy added" : "Add traveler copy"}</p></div>
           <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">MEDIA</p><p className="mt-1 font-extrabold">{mediaAssets.filter((asset) => asset.cityId === city.id).length}</p><p className="mt-1 text-xs text-text-secondary">Photos, audio & video</p></div>
         </div>
