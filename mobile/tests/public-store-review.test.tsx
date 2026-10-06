@@ -147,4 +147,13 @@ describe("public review Finish presentation", () => {
     );
     expect(screen.getByText(t("en", "walk.thanks"))).toBeTruthy();
   });
+
+  it("does not gate private feedback on the public store-review settlement callback", async () => {
+    const settled = vi.fn();
+    render(<PublicStoreReview journey={journey} onSettled={settled} />);
+
+    await waitFor(() => expect(state.completion).toHaveBeenCalled());
+    expect(screen.getByText(t("en", "complete.ratingQuestion"))).toBeTruthy();
+    expect(settled).not.toHaveBeenCalled();
+  });
 });
