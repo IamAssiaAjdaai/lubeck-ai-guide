@@ -33,7 +33,7 @@ export async function createLubeckStarterCampaignAction() {
 }
 
 export async function createMarketingCampaignAction(formData: FormData) {
-  let destination = "/admin/marketing/campaigns/new";
+  let destination = createDestination("/admin/marketing/campaigns/new", formData);
   try {
     const campaign = await createMarketingCampaign(
       marketingCampaignInputFromFormData(formData),
@@ -41,7 +41,7 @@ export async function createMarketingCampaignAction(formData: FormData) {
     revalidateMarketing();
     destination = `/admin/marketing/campaigns/${campaign.id}?saved=1`;
   } catch (error) {
-    destination += `?error=${encodeURIComponent(actionError(error))}`;
+    destination = appendQuery(destination, "error", actionError(error));
   }
   redirect(destination);
 }
@@ -62,13 +62,13 @@ export async function updateMarketingCampaignAction(
 }
 
 export async function createMarketingPageAction(formData: FormData) {
-  let destination = "/admin/marketing/pages/new";
+  let destination = createDestination("/admin/marketing/pages/new", formData);
   try {
     const page = await createMarketingPage(marketingPageInputFromFormData(formData));
     revalidateMarketing();
     destination = `/admin/marketing/pages/${page.id}?saved=1`;
   } catch (error) {
-    destination += `?error=${encodeURIComponent(actionError(error))}`;
+    destination = appendQuery(destination, "error", actionError(error));
   }
   redirect(destination);
 }
@@ -86,7 +86,7 @@ export async function updateMarketingPageAction(id: number, formData: FormData) 
 }
 
 export async function createMarketingContentAction(formData: FormData) {
-  let destination = "/admin/marketing/social/new";
+  let destination = createDestination("/admin/marketing/social/new", formData);
   try {
     const item = await createMarketingContentItem(
       marketingContentInputFromFormData(formData),
@@ -94,7 +94,7 @@ export async function createMarketingContentAction(formData: FormData) {
     revalidateMarketing();
     destination = `/admin/marketing/social/${item.id}?saved=1`;
   } catch (error) {
-    destination += `?error=${encodeURIComponent(actionError(error))}`;
+    destination = appendQuery(destination, "error", actionError(error));
   }
   redirect(destination);
 }
@@ -153,6 +153,21 @@ export async function changeMarketingSocialWorkflowAction(
     destination += `?error=${encodeURIComponent(actionError(error))}`;
   }
   redirect(destination);
+}
+
+function createDestination(path: string, formData: FormData) {
+  const citySlug = formData.get("citySlug");
+  if (typeof citySlug !== "string" || !isCitySlug(citySlug)) return path;
+  return appendQuery(path, "city", citySlug);
+}
+
+function appendQuery(path: string, key: string, value: string) {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+}
+
+function isCitySlug(value: string) {
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
 
 function revalidateMarketing() {
