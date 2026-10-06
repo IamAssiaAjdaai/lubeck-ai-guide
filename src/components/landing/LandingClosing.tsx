@@ -100,8 +100,6 @@ export function LandingFaq() {
   );
 }
 
-const pendingPages = ["Privacy", "Terms", "Imprint"] as const;
-
 export function LandingFooter() {
   return (
     <footer className={styles.footer}>
@@ -137,11 +135,13 @@ export function LandingFooter() {
         </div>
       </div>
       <div className={styles.legalPending}>
-        <p className={styles.footerHeading}>Legal pages · in preparation</p>
-        <ul aria-label="Legal pages in preparation">
-          {pendingPages.map((label) => <li key={label}>{label}</li>)}
+        <p className={styles.footerHeading}>Legal</p>
+        <ul aria-label="Legal pages">
+          <li><Link href="/privacy">Privacy</Link></li>
+          <li><Link href="/terms">Terms</Link></li>
+          <li><Link href="/imprint">Imprint</Link></li>
         </ul>
-        <p>Privacy, Terms and Imprint links will be added after review. Account deletion is available separately from the footer navigation.</p>
+        <p>Privacy, Terms, Imprint and the public account-deletion resource are available directly from CITYWALK.</p>
       </div>
       <div className={styles.footerBottom}>
         <span>© 2026 CITYWALK</span>
