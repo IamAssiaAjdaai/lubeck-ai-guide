@@ -12,12 +12,17 @@ export function AccountDeletionRequestPanel() {
   const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.hash.slice(1));
-    const value = params.get("token");
-    if (value) {
-      setToken(value);
-      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
-    }
+    // Read the fragment only after hydration. Scheduling the browser sync keeps the
+    // effect focused on the external URL state and avoids a synchronous state cascade.
+    const frame = window.requestAnimationFrame(() => {
+      const params = new URLSearchParams(window.location.hash.slice(1));
+      const value = params.get("token");
+      if (value) {
+        setToken(value);
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   async function requestDeletion(event: FormEvent<HTMLFormElement>) {
