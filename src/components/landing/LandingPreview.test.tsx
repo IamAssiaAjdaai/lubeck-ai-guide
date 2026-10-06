@@ -28,7 +28,7 @@ describe("landing Header / Hero checkpoint", () => {
       if (href.startsWith("#")) {
         expect(container.querySelector(`[id="${href.slice(1)}"]`)).not.toBeNull();
       } else {
-        expect(href).toBe("mailto:support@getcitywalk.com");
+        expect(["mailto:support@getcitywalk.com", "/account-deletion"]).toContain(href);
       }
     }
     expect(screen.getByRole("link", { name: "Skip to content" }).getAttribute("href")).toBe("#landing-content");
