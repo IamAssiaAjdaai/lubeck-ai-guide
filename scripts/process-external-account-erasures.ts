@@ -10,16 +10,21 @@ async function main(): Promise<void> {
   const [
     { closeDb },
     { processExternalAccountErasureJobs },
+    { createAppleTokenRevocationEraser },
     { createRevenueCatCustomerEraser },
   ] = await Promise.all([
     import("@/db/client"),
     import("@/lib/auth/lifecycle/externalAccountErasureWorker.server"),
+    import("@/lib/auth/lifecycle/appleTokenRevocation.server"),
     import("@/lib/commerce/revenueCatCustomerErasure.server"),
   ]);
 
   try {
     const result = await processExternalAccountErasureJobs({
-      erasers: [createRevenueCatCustomerEraser()],
+      erasers: [
+        createRevenueCatCustomerEraser(),
+        createAppleTokenRevocationEraser(),
+      ],
     });
     console.log(JSON.stringify(result));
   } finally {
