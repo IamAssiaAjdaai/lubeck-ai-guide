@@ -52,6 +52,7 @@ async function main(): Promise<void> {
         "node_modules/vitest/vitest.mjs",
         "run",
         "src/lib/auth/lifecycle/lifecycle.integration.test.ts",
+        "src/lib/auth/lifecycle/externalAccountErasureWorker.integration.test.ts",
       ],
       env,
     );
