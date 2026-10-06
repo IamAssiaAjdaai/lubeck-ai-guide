@@ -53,6 +53,7 @@ export default async function NewMarketingSocialPage({
       <AdminNotice error={query.error} />
       {options.canManage ? (
         <MarketingFormShell action={createMarketingContentAction} submitLabel="Save social draft">
+          {city ? <input defaultValue={city.slug} name="citySlug" type="hidden" /> : null}
           <SocialContentFields
             campaigns={campaigns}
             cities={city ? [city] : options.cities}
