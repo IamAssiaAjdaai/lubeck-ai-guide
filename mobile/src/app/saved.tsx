@@ -125,7 +125,7 @@ export default function SavedScreen() {
   const tripDuration = (walk: WalkJourney) =>
     t.minutes.replace(
       "{minutes}",
-      String(Math.max(0, Math.round(((walk.finishedAt ?? Date.now()) - walk.startedAt) / 60000))),
+      String(Math.max(0, Math.round((walk.finishedAt! - walk.startedAt) / 60000))),
     );
   const tripDistance = (meters: number) => `${(meters / 1000).toFixed(1)} km`;
 
