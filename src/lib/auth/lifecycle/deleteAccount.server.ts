@@ -1,10 +1,11 @@
 import "server-only";
-import { and, eq, gt, getTableColumns, is, or, sql } from "drizzle-orm";
+import { and, eq, getTableColumns, gt, inArray, is, or, sql } from "drizzle-orm";
 import { PgTable } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import { user, account, session, verification, staffMemberships } from "@/db/authSchema";
 import * as editorial from "@/db/schema";
 import { commerceCustomers, commerceOrders, commerceSubscriptions, commerceEntitlements } from "@/db/commerceSchema";
+import { hasFreshSocialDeleteSession } from "./deleteReauth";
 import { LifecycleError } from "./rateLimit.server";
 
 // Editorial actor references are plain text, not FKs. Cover former staff too.
@@ -14,7 +15,7 @@ const retainedTables = (Object.values(editorial) as unknown[]).filter((value): v
   .filter(entry => entry.columns.length);
 
 export async function deleteTravelerAccount(input: {
-  userId: string; sessionId: string; password: string;
+  userId: string; sessionId: string; password?: string;
   verify: (input: { hash: string; password: string }) => Promise<boolean>;
 }) {
   await getDb().transaction(async tx => {
@@ -23,10 +24,17 @@ export async function deleteTravelerAccount(input: {
     // table lock during the eligibility check/delete to prevent an audit-write race.
     for (const { table } of retainedTables) await tx.execute(sql`LOCK TABLE ${table} IN SHARE MODE`);
     const [owner] = await tx.select().from(user).where(eq(user.id, input.userId)).for("update");
-    const [active] = await tx.select({ id: session.id }).from(session).where(and(eq(session.id, input.sessionId), eq(session.userId, input.userId), gt(session.expiresAt, new Date()))).for("update");
+    const [active] = await tx.select({ id: session.id, createdAt: session.createdAt }).from(session).where(and(eq(session.id, input.sessionId), eq(session.userId, input.userId), gt(session.expiresAt, new Date()))).for("update");
     if (!owner || !active) throw new LifecycleError("REAUTH_REQUIRED", 401);
+
     const [credential] = await tx.select().from(account).where(and(eq(account.userId, input.userId), eq(account.providerId, "credential"))).for("update");
-    if (!credential?.password || !await input.verify({ hash: credential.password, password: input.password })) throw new LifecycleError("REAUTH_REQUIRED", 401);
+    if (credential) {
+      if (!credential.password || !input.password || !await input.verify({ hash: credential.password, password: input.password })) throw new LifecycleError("REAUTH_REQUIRED", 401);
+    } else {
+      const [social] = await tx.select({ id: account.id }).from(account).where(and(eq(account.userId, input.userId), inArray(account.providerId, ["google", "apple"]))).limit(1).for("update");
+      if (!hasFreshSocialDeleteSession({ sessionCreatedAt: active.createdAt, hasSocialProvider: Boolean(social) })) throw new LifecycleError("REAUTH_REQUIRED", 401);
+    }
+
     // Existing FKs serialize inserts behind the parent user lock. Never apply the
     // commerce CASCADE/SET NULL rules without an approved financial retention policy.
     for (const table of [commerceCustomers, commerceOrders, commerceSubscriptions, commerceEntitlements]) {

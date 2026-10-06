@@ -11,11 +11,17 @@ export async function POST(request: Request) {
     const current = await auth.api.getSession({ headers: request.headers });
     if (!current || request.headers.get("X-Citywalk-Account") !== current.user.id) throw new LifecycleError("REAUTH_REQUIRED", 401);
     await limitLifecycle("delete", current.user.id);
-    if (body.confirm !== true || typeof body.password !== "string" || !body.password || body.password.length > AUTH_MAX_PASSWORD_LENGTH) throw new LifecycleError("INVALID_REQUEST", 400);
+    if (body.confirm !== true) throw new LifecycleError("INVALID_REQUEST", 400);
+    if (body.password !== undefined && (typeof body.password !== "string" || body.password.length > AUTH_MAX_PASSWORD_LENGTH)) throw new LifecycleError("INVALID_REQUEST", 400);
     const context = await auth.$context;
-    await deleteTravelerAccount({ userId: current.user.id, sessionId: current.session.id, password: body.password, verify: context.password.verify });
-    // Return only after commit. The native client then uses the existing Expo
-    // signOut hook to clear authentication cookies/cache, never AsyncStorage data.
+    await deleteTravelerAccount({
+      userId: current.user.id,
+      sessionId: current.session.id,
+      password: typeof body.password === "string" && body.password ? body.password : undefined,
+      verify: context.password.verify,
+    });
+    // Return only after commit. The native client then clears traveler-local data
+    // and uses the existing Expo signOut hook to clear authentication state.
     return lifecycleJson({ deleted: true });
   } catch (error) { return lifecycleFailure(error); }
 }
