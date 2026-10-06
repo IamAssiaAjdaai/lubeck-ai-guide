@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { CitywalkLogo, CitywalkMark } from "@/components/brand/CitywalkLogo";
 import styles from "./closing.module.css";
 
@@ -127,7 +129,7 @@ export function LandingFooter() {
           <a href="#how-it-works">How it works</a>
           <a href="#cities">Cities</a>
           <a href="#faq">FAQ</a>
-          <a href="/account-deletion">Account deletion</a>
+          <Link href="/account-deletion">Account deletion</Link>
         </nav>
         <div className={styles.support}>
           <p className={styles.footerHeading}>Need a hand?</p>
