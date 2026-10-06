@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { CitywalkLogo, CitywalkMark } from "@/components/brand/CitywalkLogo";
 import styles from "./closing.module.css";
 
@@ -98,7 +100,7 @@ export function LandingFaq() {
   );
 }
 
-const pendingPages = ["Privacy", "Terms", "Imprint", "Account deletion"] as const;
+const pendingPages = ["Privacy", "Terms", "Imprint"] as const;
 
 export function LandingFooter() {
   return (
@@ -127,6 +129,7 @@ export function LandingFooter() {
           <a href="#how-it-works">How it works</a>
           <a href="#cities">Cities</a>
           <a href="#faq">FAQ</a>
+          <Link href="/account-deletion">Account deletion</Link>
         </nav>
         <div className={styles.support}>
           <p className={styles.footerHeading}>Need a hand?</p>
@@ -138,7 +141,7 @@ export function LandingFooter() {
         <ul aria-label="Legal pages in preparation">
           {pendingPages.map((label) => <li key={label}>{label}</li>)}
         </ul>
-        <p>Links will be added after review. These labels are not published policies or an account-deletion service.</p>
+        <p>Privacy, Terms and Imprint links will be added after review. Account deletion is available separately from the footer navigation.</p>
       </div>
       <div className={styles.footerBottom}>
         <span>© 2026 CITYWALK</span>
