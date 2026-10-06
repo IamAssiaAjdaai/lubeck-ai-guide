@@ -16,8 +16,8 @@ describe("Explore P1 presentation", () => {
     expect(exploreSource).toContain("<Screen brand={false}");
   });
 
-  it("keeps Explore dense and search-first", () => {
-    expect(exploreSource).toContain("<TextInput");
+  it("keeps Explore dense and routes search into the dedicated Search flow", () => {
+    expect(exploreSource).toContain('pathname: "/city/[citySlug]/search"');
     expect(exploreSource).toContain('variant="chips"');
     expect(exploreSource).toContain('variant="segment"');
     expect(exploreSource).toContain("<NativeCityMap");
