@@ -68,7 +68,7 @@ jobs:
       - name: Install isolated Chromium tooling
         run: |
           npm install --prefix "$RUNNER_TEMP/citywalk-account-e2e" --no-audit --no-fund --package-lock=false playwright@1.56.1
-          "$RUNNER_TEMP/citywalk-account-e2e/node_modules/.bin/playwright" install --with-deps chromium
+          "$RUNNER_TEMP/citywalk-account-e2e/node_modules/.bin/playwright" install chromium
 
       - name: Exercise public account-deletion flow
         shell: bash
