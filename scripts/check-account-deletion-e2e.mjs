@@ -17,7 +17,17 @@ try {
 
   await page.getByRole("heading", { name: "Delete your CITYWALK account" }).waitFor();
   await page.getByLabel("Account email").fill("citywalk-account-e2e@example.invalid");
+
+  const requestResponsePromise = page.waitForResponse(
+    response => response.url().endsWith("/api/account/delete-request") && response.request().method() === "POST",
+  );
   await page.getByRole("button", { name: "Send deletion confirmation" }).click();
+  const requestResponse = await requestResponsePromise;
+  assert.equal(
+    requestResponse.status(),
+    200,
+    `delete-request returned ${requestResponse.status()}: ${await requestResponse.text()}`,
+  );
 
   const requestStatus = page.getByRole("status");
   await requestStatus.waitFor();
@@ -35,7 +45,16 @@ try {
   await page
     .getByLabel("I understand that this permanently deletes my CITYWALK account.")
     .check();
+  const confirmResponsePromise = page.waitForResponse(
+    response => response.url().endsWith("/api/account/delete-confirm") && response.request().method() === "POST",
+  );
   await page.getByRole("button", { name: "Delete my account permanently" }).click();
+  const confirmResponse = await confirmResponsePromise;
+  assert.equal(
+    confirmResponse.status(),
+    400,
+    `delete-confirm returned ${confirmResponse.status()}: ${await confirmResponse.text()}`,
+  );
 
   const alert = page.getByRole("alert");
   await alert.waitFor();
