@@ -34,25 +34,44 @@ export function NativeLiveWalkCard({
             CITYWALK PREMIUM
           </AppText>
         </View>
-        <AppText variant="label">Live Walk</AppText>
+
+        <AppText style={styles.gateTitle}>Start Live Walk</AppText>
         <AppText variant="metadata" style={styles.secondary}>
-          Live next-stop guidance, ETA, remaining time and adaptive trip controls.
+          Stay guided while you move.
         </AppText>
+
+        <View style={styles.benefitList}>
+          <PremiumBenefit text="Next stop and progress while you walk" />
+          <PremiumBenefit text="Live ETA and remaining time" />
+          <PremiumBenefit text="Shorten or adapt your route" />
+          <PremiumBenefit text="Get back on time" />
+          <PremiumBenefit text="Premium audio and AI guidance" />
+        </View>
+
         {premium.status === "loading" ? (
           <AppText variant="metadata" style={styles.secondary}>
             Checking Premium access…
           </AppText>
         ) : premium.status === "unavailable" ? (
           <AppText variant="metadata" style={styles.secondary}>
-            Premium access could not be checked right now. Your basic walk still works.
+            Premium access could not be checked right now. Your basic route still works.
           </AppText>
         ) : (
           <PrimaryButton
-            compact
-            label="Unlock Live Walk"
+            label="Unlock CITYWALK Premium"
             onPress={() => router.push("/premium")}
           />
         )}
+
+        {onContinue ? (
+          <PrimaryButton
+            compact
+            label="Continue with basic route"
+            tone="secondary"
+            disabled={continueDisabled}
+            onPress={onContinue}
+          />
+        ) : null}
       </Card>
     );
   }
@@ -165,6 +184,17 @@ export function NativeLiveWalkCard({
   );
 }
 
+function PremiumBenefit({ text }: Readonly<{ text: string }>) {
+  return (
+    <View style={styles.benefitRow}>
+      <NativeIcon ios="checkmark" android="check" color={colors.success} size={16} />
+      <AppText variant="metadata" style={styles.benefitText}>
+        {text}
+      </AppText>
+    </View>
+  );
+}
+
 function ProgressDots({
   visited,
   total,
@@ -239,6 +269,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
+  },
+  gateTitle: {
+    color: colors.text,
+    fontSize: 22,
+    lineHeight: 27,
+    fontWeight: "800",
+    letterSpacing: -0.2,
+  },
+  benefitList: {
+    gap: spacing.xs,
+    marginVertical: spacing.xs,
+  },
+  benefitRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  benefitText: {
+    color: colors.text,
+    flex: 1,
   },
   topRow: {
     flexDirection: "row",
