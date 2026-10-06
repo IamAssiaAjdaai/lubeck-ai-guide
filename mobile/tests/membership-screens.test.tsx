@@ -30,10 +30,11 @@ vi.mock("../src/components/ui", () => ({
   SectionTitle: ({ children }: React.PropsWithChildren) => <h2>{children}</h2>,
   StatusMessage: ({ children }: React.PropsWithChildren) => <div role="alert">{children}</div>,
   EmptyState: ({ title }: { title: string }) => <span>{title}</span>,
-  PressableSurface: ({ children, accessibilityLabel, accessibilityRole, accessibilityState, onPress }: React.PropsWithChildren<{ accessibilityLabel?: string; accessibilityRole?: string; accessibilityState?: { expanded?: boolean }; onPress?: () => void }>) =>
+  PressableSurface: ({ children, accessibilityLabel, accessibilityRole, accessibilityState, onPress }: React.PropsWithChildren<{ accessibilityLabel?: string; accessibilityRole?: string; accessibilityState?: { expanded?: boolean; selected?: boolean }; onPress?: () => void }>) =>
     <button
       aria-expanded={accessibilityState?.expanded}
       aria-label={accessibilityLabel}
+      aria-pressed={accessibilityState?.selected}
       onClick={onPress}
       role={accessibilityRole}
     >
