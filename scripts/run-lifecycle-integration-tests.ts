@@ -18,6 +18,7 @@ if (!["127.0.0.1", "localhost", "::1"].includes(baseUrl.hostname)) {
 
 const databaseName = `cw_lifecycle_${Date.now()}${process.pid}`;
 const lifecycleUrl = new URL(baseUrl);
+lifecycleUrl.hostname = "127.0.0.1";
 lifecycleUrl.pathname = `/${databaseName}`;
 
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
