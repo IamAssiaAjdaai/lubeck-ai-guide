@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocalSearchParams } from "expo-router";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import type { PublicPlaceCard } from "../../../lib/api/contracts";
@@ -20,11 +20,11 @@ import {
   StatusMessage,
 } from "../../../components/ui";
 import { discoveryCopy } from "../../../design/discoveryCopy";
+import { searchCopy } from "../../../design/searchCopy";
 import {
   nativeContentTextStyle,
   nativeRowStyle,
   nativeTextBlock,
-  nativeTextStyle,
 } from "../../../design/rtlPresentation";
 import { colors, motion, radius, spacing } from "../../../design/tokens";
 import { prefetchPublicPlace, usePublicCity } from "../../../hooks/usePublicContent";
@@ -41,7 +41,7 @@ export default function ExploreScreen() {
   const { direction, locale, messages } = useNativeLocale();
   const t = walkCopy(locale);
   const labels = discoveryCopy(locale);
-  const [query, setQuery] = useState("");
+  const searchLabels = searchCopy(locale);
   const [category, setCategory] = useState<"all" | "see" | "eat" | "fun">("all");
   const [view, setView] = useState<"list" | "map">("list");
   const cityState = usePublicCity(identity?.citySlug ?? "invalid", locale);
@@ -69,19 +69,9 @@ export default function ExploreScreen() {
   }
 
   const { city, places } = cityState.data;
-  const normalizedQuery = query.trim().toLocaleLowerCase(locale);
-  const visiblePlaces = places.filter((place) => {
-    if (category !== "all" && place.category !== category) return false;
-    if (!normalizedQuery) return true;
-    const haystack = [
-      nativePlaceName(city.slug, place.slug, place.content.name, locale),
-      place.content.shortDescription ?? "",
-      labels[place.category],
-    ]
-      .join(" ")
-      .toLocaleLowerCase(locale);
-    return haystack.includes(normalizedQuery);
-  });
+  const visiblePlaces = places.filter(
+    (place) => category === "all" || place.category === category,
+  );
 
   return (
     <Screen brand={false} scrollDiagnostics="explore">
@@ -94,24 +84,35 @@ export default function ExploreScreen() {
         </AppText>
       </View>
 
-      <View style={[styles.search, nativeRowStyle(direction)]}>
-        <NativeIcon
-          ios="magnifyingglass"
-          android="search"
-          color={colors.textMuted}
-          size={19}
-        />
-        <TextInput
-          accessibilityLabel={`${t.explore}: ${messages.places}`}
-          placeholder={`${messages.places}…`}
-          placeholderTextColor={colors.textSubtle}
-          value={query}
-          onChangeText={setQuery}
-          autoCorrect={false}
-          returnKeyType="search"
-          style={[styles.searchInput, nativeTextStyle(direction)]}
-        />
-      </View>
+      <Link
+        href={{
+          pathname: "/city/[citySlug]/search",
+          params: { citySlug: city.slug },
+        }}
+        asChild
+      >
+        <PressableSurface
+          accessibilityLabel={searchLabels.placeholder}
+          accessibilityRole="link"
+          style={[styles.search, nativeRowStyle(direction)]}
+        >
+          <NativeIcon
+            ios="magnifyingglass"
+            android="search"
+            color={colors.textMuted}
+            size={19}
+          />
+          <AppText numberOfLines={1} style={styles.searchLabel}>
+            {searchLabels.placeholder}
+          </AppText>
+          <NativeIcon
+            ios={direction === "rtl" ? "chevron.left" : "chevron.right"}
+            android={direction === "rtl" ? "chevron_left" : "chevron_right"}
+            color={colors.textSubtle}
+            size={16}
+          />
+        </PressableSurface>
+      </Link>
 
       <WalkChoices
         label=""
@@ -295,11 +296,9 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
   },
-  searchInput: {
+  searchLabel: {
     flex: 1,
-    minHeight: 48,
-    color: colors.text,
-    fontSize: 16,
+    color: colors.textSubtle,
   },
   viewSwitch: { alignSelf: "flex-start", minWidth: 190 },
   results: { gap: 0 },
