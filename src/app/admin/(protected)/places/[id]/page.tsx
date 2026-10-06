@@ -68,4 +68,5 @@ export default async function EditPlacePage({ params, searchParams }: { params: 
     </section>
 
     {place.workflowEvents.length ? <details className="surface-card mt-6 p-5"><summary className="cursor-pointer font-bold">Activity history</summary><ol className="mt-3 space-y-2 text-sm text-text-secondary">{place.workflowEvents.map((event) => <li key={event.id}>{event.action}: {event.fromStatus} → {event.toStatus} · {event.createdAt.toLocaleString("en")}</li>)}</ol></details> : null}
-  </section>;}
+  </section>;
+}
