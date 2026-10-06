@@ -60,12 +60,14 @@ export default async function EditCityPage({ params, searchParams }: { params: P
       description: `${city.localizations.length} authored city locales`,
       icon: Languages,
     },
-    {
-      href: `/admin/marketing?city=${city.slug}`,
-      title: "Marketing",
-      description: "Campaigns, pages and social content",
-      icon: Megaphone,
-    },
+    ...(hasCityCapability(admin.staff, city.id, "marketing:view")
+      ? [{
+          href: `/admin/marketing?city=${city.slug}`,
+          title: "Marketing",
+          description: "Campaigns, pages and social content",
+          icon: Megaphone,
+        }]
+      : []),
   ] as const;
 
   return <section>
