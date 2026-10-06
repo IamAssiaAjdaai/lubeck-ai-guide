@@ -325,14 +325,15 @@ describe("account management with real capability boundaries", () => {
     press("common.back"); await act(async () => finish({}));
     expect(screen.queryByText(copy("profile.passwordChanged"))).toBeNull();
   });
-  it("requires password and explicit confirmation, then returns to guest without touching local data", async () => {
+  it("requires password and explicit confirmation, then delegates deletion to the lifecycle", async () => {
     signedIn(); const before = new Map(mocks.data); const view = render(<AccountScreen />); press("profile.deleteAccount");
     await screen.findByLabelText(copy("profile.currentPassword"));
     expect((screen.getByRole("button", { name: copy("lifecycle.deletePermanently") }) as HTMLButtonElement).disabled).toBe(true);
     enter("profile.currentPassword", "original-test-password");
     fireEvent.click(screen.getByText(new RegExp(copy("lifecycle.deleteConfirm"))));
-    press("lifecycle.deletePermanently"); await screen.findByText(copy("lifecycle.deleted"));
-    expect(mocks.deleteAccount).toHaveBeenCalledWith("private-user-id", "original-test-password");
+    press("lifecycle.deletePermanently");
+    await waitFor(() => expect(mocks.deleteAccount).toHaveBeenCalledWith("private-user-id", "original-test-password"));
+    expect(screen.queryByText(copy("lifecycle.deleted"))).toBeNull();
     mocks.session = null; view.rerender(<AccountScreen />); expect(screen.getByText(copy("profile.guestFirst"))).toBeTruthy(); unchanged(before);
   });
   it("does not fake success on a failed deletion and allows retry", async () => {
@@ -341,7 +342,28 @@ describe("account management with real capability boundaries", () => {
     enter("profile.currentPassword", "original-test-password"); fireEvent.click(screen.getByText(new RegExp(copy("lifecycle.deleteConfirm"))));
     press("lifecycle.deletePermanently"); await screen.findByText(copy("lifecycle.retentionBlocked"));
     expect(screen.queryByText(copy("lifecycle.deleted"))).toBeNull(); expect(mocks.signOut).not.toHaveBeenCalled();
-    press("lifecycle.deletePermanently"); await screen.findByText(copy("lifecycle.deleted")); unchanged(before);
+    press("lifecycle.deletePermanently");
+    await waitFor(() => expect(mocks.deleteAccount).toHaveBeenCalledTimes(2));
+    expect(screen.queryByText(copy("lifecycle.retentionBlocked"))).toBeNull();
+    expect(screen.queryByText(copy("lifecycle.deleted"))).toBeNull(); unchanged(before);
+  });
+  it("requires linked Google re-auth before social-only deletion", async () => {
+    vi.stubEnv("EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH", "1");
+    signedIn(); mocks.listAccounts.mockResolvedValue({ data: [{ providerId: "google" }] });
+    const before = new Map(mocks.data); const view = render(<AccountScreen />); press("profile.deleteAccount");
+    const google = await screen.findByRole("button", { name: copy("profile.continueWithGoogle") });
+    expect(screen.queryByRole("button", { name: copy("lifecycle.deletePermanently") })).toBeNull();
+    fireEvent.click(google);
+    await waitFor(() => expect(mocks.socialSignIn).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "citywalk://account?entry=delete&reauth=1",
+      errorCallbackURL: "citywalk://account?entry=delete",
+    }));
+    mocks.params = { entry: "delete", reauth: "1" }; view.rerender(<AccountScreen />);
+    fireEvent.click(await screen.findByText(new RegExp(copy("lifecycle.deleteConfirm"))));
+    press("lifecycle.deletePermanently");
+    await waitFor(() => expect(mocks.deleteAccount).toHaveBeenCalledWith("private-user-id", undefined));
+    unchanged(before);
   });
 });
 
