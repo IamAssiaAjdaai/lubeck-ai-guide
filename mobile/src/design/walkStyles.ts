@@ -1,8 +1,12 @@
 import { StyleSheet } from "react-native";
 import { colors, radius, shadows, spacing } from "./tokens";
 export const walkStyles = StyleSheet.create({
-  section: { gap: spacing.sm },
-  previewSummary: { gap: spacing.xs, paddingVertical: spacing.xs },
+  section: { gap: spacing.xs },
+  previewSummary: {
+    gap: 2,
+    paddingVertical: 0,
+    marginBottom: spacing.xs,
+  },
   tertiaryAction: { minHeight: 36, alignSelf: "flex-start", justifyContent: "center", paddingVertical: spacing.xs },
   tertiaryText: { color: colors.primary },
   flex: { flex: 1, minWidth: 0 },
@@ -23,13 +27,22 @@ export const walkStyles = StyleSheet.create({
   returnCard: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.md,
-    padding: spacing.sm,
-    backgroundColor: colors.successSoft,
-    borderRadius: radius.md,
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: 0,
+    backgroundColor: "transparent",
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    borderRadius: 0,
   },
-  lateCard: { backgroundColor: colors.warningSoft },
-  actionRow: { flexDirection: "row", gap: spacing.sm },
+  lateCard: {
+    backgroundColor: colors.warningSoft,
+    borderColor: colors.warning,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.sm,
+  },
+  actionRow: { flexDirection: "row", gap: spacing.xs },
   navigationBar: {
     flexDirection: "row",
     alignItems: "center",
