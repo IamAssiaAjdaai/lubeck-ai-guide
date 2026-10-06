@@ -387,7 +387,7 @@ export default function AccountScreen() {
   return <Screen>
     <Stack.Screen options={{ title: label("profile.nativeAccountTitle") }} />
     <View style={[styles.introduction, nativeRowStyle(direction)]}>
-      <View style={styles.accountIcon}><NativeIcon ios="person.crop.circle" android="account_circle" color={colors.primary} size={30} /></View>
+      <View style={styles.accountIcon}><NativeIcon ios="person.crop.circle.fill" android="account_circle" color={colors.primary} size={30} /></View>
       <View style={[styles.introductionText, nativeTextBlock(direction)]}>
         <AppText variant="screenTitle">{session ? label("navigation.profile") : label("profile.nativeAccountTitle")}</AppText>
         {!session ? <AppText style={styles.muted}>{label("profile.guestFirst")}</AppText> : null}
@@ -639,7 +639,7 @@ export default function AccountScreen() {
       <AppText variant="heading">{label("profile.deleteAccount")}</AppText>
       <AppText>{label("lifecycle.deleteWarning")}</AppText>
       {credential?.userId !== userId ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
-      {credential?.userId === userId && credential.status === "error" ? <>
+      {credential?.userId === userId && credential?.status === "error" ? <>
         <StatusMessage>{messages.authNetworkError}</StatusMessage>
         <PrimaryButton label={messages.retry} tone="secondary" onPress={() => { setCredential(undefined); setProviderReload(value => value + 1); }} />
       </> : null}
@@ -649,7 +649,7 @@ export default function AccountScreen() {
           <AppText variant="label">{deleteConfirmed ? "✓ " : "□ "}{label("lifecycle.deleteConfirm")}</AppText>
         </PressableSurface>
         <PrimaryButton label={label("lifecycle.deletePermanently")} busy={busy === "delete"} disabled={!deleteConfirmed || !password} onPress={deleteAccount} />
-      </> : credential?.userId === userId && credential.status === "no" ? <>
+      </> : credential?.userId === userId && credential?.status === "no" ? <>
         {!socialDeleteReauthenticated ? <>
           {hasApple ? <PrimaryButton
             label={label("profile.continueWithApple")}
