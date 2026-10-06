@@ -116,6 +116,13 @@ export default async function EditCityPage({
 
       <div className="mt-10 border-t border-border pt-8">
         <div className="mb-4 flex items-center gap-3"><CheckCircle2 aria-hidden="true" className="text-primary" size={20} /><div><p className="eyebrow">Review & publish</p><h2 className="mt-1 text-xl font-extrabold">Ready for travelers?</h2></div></div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">PLACES</p><p className="mt-1 font-extrabold">{city.placeCount ?? 0}</p><p className="mt-1 text-xs text-text-secondary">{(city.placeCount ?? 0) > 0 ? "Content added" : "Add at least one place"}</p></div>
+          <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">WALKS</p><p className="mt-1 font-extrabold">{city.tourCount ?? 0}</p><p className="mt-1 text-xs text-text-secondary">{(city.tourCount ?? 0) > 0 ? "Walks created" : "Create a walk when ready"}</p></div>
+          <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">LANGUAGES</p><p className="mt-1 font-extrabold">{city.localizations.length}</p><p className="mt-1 text-xs text-text-secondary">{city.localizations.length > 0 ? "Traveler copy added" : "Add traveler copy"}</p></div>
+          <div className="rounded-xl border border-border p-4"><p className="text-xs font-bold text-text-secondary">MEDIA</p><p className="mt-1 font-extrabold">{mediaAssets.filter((asset) => asset.cityId === city.id).length}</p><p className="mt-1 text-xs text-text-secondary">Photos, audio & video</p></div>
+        </div>
+        <p className="mt-4 text-sm leading-6 text-text-secondary">When the city content looks right, use the publishing action below. CITYWALK keeps review and publish permissions enforced in the background.</p>
       </div>
       <ContentSourcesPanel action={addCitySourceAction.bind(null, id)} canManage={hasCityCapability(admin.staff, city.id, "sources:manage")} sourceLinks={city.sourceLinks} subject="city" />
       <MediaAttachmentPanel assets={mediaAssets.filter((asset) => asset.cityId === city.id)} attachments={mediaAttachments} entityId={id} entityType="city" readOnly={!hasActiveStaffCapability(admin.staff, "media:manage")} />
