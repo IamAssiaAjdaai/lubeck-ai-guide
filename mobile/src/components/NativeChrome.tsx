@@ -17,7 +17,7 @@ export function NativeBrand({ onBack }: { onBack?: () => void }) {
   const router = useRouter(),
     path = usePathname();
   const { locale, direction } = useNativeLocale();
-  const nested = path !== "/" && path !== "/saved" && path !== "/account";
+  const nested = path !== "/" && path !== "/saved" && path !== "/profile";
   return (
     <View accessibilityRole="header" testID="native-header" style={[styles.brand, nested && styles.compactBrand, { direction }]}>
       {nested ? (
@@ -82,7 +82,7 @@ export function NativeBottomNavigation({ onScrollToTop }: { onScrollToTop: () =>
       label: t.profile,
       ios: "person.crop.circle",
       android: "person_outline",
-      href: "/account",
+      href: "/profile",
     },
   ] as const;
   return (
@@ -102,7 +102,7 @@ export function NativeBottomNavigation({ onScrollToTop }: { onScrollToTop: () =>
             }
             const root = item.key === "explore" && citySlug
               ? `/city/${citySlug}/explore`
-              : item.key === "profile" ? "/account"
+              : item.key === "profile" ? "/profile"
               : item.key === "home" || item.key === "explore" ? `/:${item.key}`
               : `/saved:${item.key}`;
             if (tabRootKey(path, { section, view }) === root) {
