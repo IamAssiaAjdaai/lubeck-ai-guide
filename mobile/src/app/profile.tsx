@@ -9,6 +9,7 @@ import { AppText, PrimaryButton, PressableSurface, Screen } from "../components/
 import { CitywalkLoading } from "../components/CitywalkLoading";
 import { colors, radius, spacing } from "../design/tokens";
 import { useAccountWalks } from "../hooks/useAccountWalks";
+import { usePremiumAccess, type PremiumAccessState } from "../hooks/usePremiumAccess";
 import { nativeAuthClient } from "../lib/auth/client";
 import { loadLocalTrips } from "../lib/tripStorage";
 import {
@@ -26,13 +27,37 @@ type LocalActivity = Readonly<{
   loading: boolean;
 }>;
 
+type EntitlementPresentation = Readonly<{
+  detail: string;
+  color: string;
+}>;
+
+function entitlementPresentation(
+  state: PremiumAccessState,
+  label: (key: TranslationKey) => string,
+): EntitlementPresentation {
+  switch (state.status) {
+    case "premium":
+      return { detail: label("profile.passActive"), color: colors.success };
+    case "free":
+    case "guest":
+      return { detail: label("profile.freePlan"), color: colors.primary };
+    case "unavailable":
+      return { detail: label("profile.passUnavailable"), color: colors.textMuted };
+    case "loading":
+      return { detail: label("loading.account"), color: colors.textMuted };
+  }
+}
+
 export default function ProfileScreen() {
   const { locale, direction, messages } = useNativeLocale();
   const { data: session, isPending } = nativeAuthClient.useSession();
   const accountWalks = useAccountWalks();
+  const premium = usePremiumAccess();
   const userId = session?.user.id;
   const copy = walkCopy(locale);
   const label = (key: TranslationKey) => t(locale, key);
+  const premiumPresentation = entitlementPresentation(premium, label);
   const [travelerStyle, setTravelerStyle] = useState<TravelerStyle>(DEFAULT_TRAVELER_STYLE);
   const [localActivity, setLocalActivity] = useState<LocalActivity>({
     walkKeys: [],
@@ -173,9 +198,11 @@ export default function ProfileScreen() {
             />
             <ProfileRow
               direction={direction}
-              ios="sparkles"
-              android="auto_awesome"
+              ios={premium.active ? "sparkles" : "lock"}
+              android={premium.active ? "auto_awesome" : "lock"}
+              iconColor={premiumPresentation.color}
               title="CITYWALK Premium"
+              detail={premiumPresentation.detail}
               onPress={() => router.navigate("/premium")}
             />
             <ProfileRow
@@ -209,6 +236,7 @@ function ProfileRow({
   android,
   title,
   detail,
+  iconColor = colors.primary,
   onPress,
   last = false,
 }: Readonly<{
@@ -217,6 +245,7 @@ function ProfileRow({
   android: Parameters<typeof NativeIcon>[0]["android"];
   title: string;
   detail?: string;
+  iconColor?: string;
   onPress: () => void;
   last?: boolean;
 }>) {
@@ -228,7 +257,7 @@ function ProfileRow({
       style={[styles.menuRow, !last && styles.menuDivider]}
     >
       <View style={styles.rowIcon}>
-        <NativeIcon ios={ios} android={android} color={colors.primary} size={21} />
+        <NativeIcon ios={ios} android={android} color={iconColor} size={21} />
       </View>
       <View style={styles.rowText}>
         <AppText variant="label">{title}</AppText>
