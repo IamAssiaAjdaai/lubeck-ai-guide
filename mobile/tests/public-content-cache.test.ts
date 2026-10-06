@@ -11,6 +11,8 @@ vi.mock("@react-native-async-storage/async-storage", () => ({
 import {
   PUBLIC_CONTENT_CACHE_VERSION,
   PUBLIC_CONTENT_FRESH_MS,
+  PUBLIC_CONTENT_MAX_STALE_MS,
+  PUBLIC_CONTENT_OFFLINE_FALLBACK_MS,
   PublicContentCache,
   publicContentCacheKey,
 } from "../src/lib/publicContentCache";
@@ -69,6 +71,77 @@ describe("native public content cache", () => {
     await vi.waitFor(() => expect(cache.peek<{ city: string }>(key)).toEqual({ city: "fresh" }));
     expect(fetcher).toHaveBeenCalledWith('"old"', expect.any(AbortSignal));
     now += 1;
+  });
+
+  it("falls back to recently viewed public content when refresh fails offline", async () => {
+    const now = PUBLIC_CONTENT_MAX_STALE_MS + 60_000;
+    const key = publicContentCacheKey("place", "en", "lubeck", "holstentor");
+    const storage = createStorage({
+      [`citywalk:public-content:v${PUBLIC_CONTENT_CACHE_VERSION}:${key}`]: JSON.stringify({
+        version: PUBLIC_CONTENT_CACHE_VERSION,
+        data: { city: "cached-offline" },
+        etag: '"offline-v1"',
+        storedAt: 0,
+      }),
+    });
+    const measurements = vi.fn();
+    const cache = new PublicContentCache(storage, () => now, measurements);
+    const fetcher = vi.fn(async () => {
+      throw new Error("network unavailable");
+    });
+
+    await expect(cache.load(key, parseCity, fetcher)).resolves.toEqual({
+      city: "cached-offline",
+    });
+    expect(fetcher).toHaveBeenCalledWith('"offline-v1"', expect.any(AbortSignal));
+    expect(measurements).toHaveBeenCalledWith(
+      expect.objectContaining({ key, source: "offline" }),
+    );
+    expect(cache.peek(key)).toBeUndefined();
+  });
+
+  it("prefers fresh network content over the offline fallback when connectivity returns", async () => {
+    const now = PUBLIC_CONTENT_MAX_STALE_MS + 60_000;
+    const key = publicContentCacheKey("city", "en", "lubeck");
+    const storage = createStorage({
+      [`citywalk:public-content:v${PUBLIC_CONTENT_CACHE_VERSION}:${key}`]: JSON.stringify({
+        version: PUBLIC_CONTENT_CACHE_VERSION,
+        data: { city: "stale" },
+        etag: '"stale-v1"',
+        storedAt: 0,
+      }),
+    });
+    const cache = new PublicContentCache(storage, () => now, vi.fn());
+
+    await expect(
+      cache.load(key, parseCity, async () => ({
+        status: 200,
+        data: { city: "fresh-network" },
+        etag: '"fresh-v2"',
+      })),
+    ).resolves.toEqual({ city: "fresh-network" });
+    expect(cache.peek(key)).toEqual({ city: "fresh-network" });
+  });
+
+  it("does not use public content beyond the bounded offline fallback window", async () => {
+    const now = PUBLIC_CONTENT_OFFLINE_FALLBACK_MS + 1;
+    const key = publicContentCacheKey("city", "en", "lubeck");
+    const storageKey = `citywalk:public-content:v${PUBLIC_CONTENT_CACHE_VERSION}:${key}`;
+    const storage = createStorage({
+      [storageKey]: JSON.stringify({
+        version: PUBLIC_CONTENT_CACHE_VERSION,
+        data: { city: "too-old" },
+        storedAt: 0,
+      }),
+    });
+    const cache = new PublicContentCache(storage, () => now, vi.fn());
+
+    await expect(
+      cache.load(key, parseCity, async () => {
+        throw new Error("network unavailable");
+      }),
+    ).rejects.toThrow("network unavailable");
+    expect(storage.removeItem).toHaveBeenCalledWith(storageKey);
   });
 
   it("renews cached freshness when the API returns 304", async () => {

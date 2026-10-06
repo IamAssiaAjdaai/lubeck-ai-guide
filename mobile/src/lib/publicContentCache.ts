@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const PUBLIC_CONTENT_CACHE_VERSION = 1;
 export const PUBLIC_CONTENT_FRESH_MS = 5 * 60 * 1000;
 export const PUBLIC_CONTENT_MAX_STALE_MS = 24 * 60 * 60 * 1000;
+export const PUBLIC_CONTENT_OFFLINE_FALLBACK_MS = 7 * 24 * 60 * 60 * 1000;
 
 export type PublicContentFetch<T> =
   | Readonly<{ status: 200; data: T; etag?: string }>
@@ -25,7 +26,7 @@ type Storage = Pick<typeof AsyncStorage, "getItem" | "setItem" | "removeItem">;
 
 export type PublicContentMeasurement = Readonly<{
   key: string;
-  source: "memory" | "persisted" | "network";
+  source: "memory" | "persisted" | "offline" | "network";
   durationMs: number;
 }>;
 
@@ -77,11 +78,19 @@ export class PublicContentCache {
     }
 
     const persisted = await this.readPersisted(key, parse);
-    if (persisted) {
+    if (persisted && this.isUsable(persisted)) {
       this.memory.set(key, persisted);
       if (!this.isFresh(persisted)) void this.refresh(key, parse, fetcher, persisted).catch(() => undefined);
       this.measure(key, "persisted", startedAt);
       return persisted.data;
+    }
+    if (persisted) {
+      try {
+        return await this.refresh(key, parse, fetcher, persisted);
+      } catch {
+        this.measure(key, "offline", startedAt);
+        return persisted.data;
+      }
     }
     return this.refresh(key, parse, fetcher);
   }
@@ -126,7 +135,7 @@ export class PublicContentCache {
       if (
         stored.version !== PUBLIC_CONTENT_CACHE_VERSION ||
         !Number.isFinite(stored.storedAt) ||
-        this.now() - stored.storedAt > PUBLIC_CONTENT_MAX_STALE_MS
+        this.now() - stored.storedAt > PUBLIC_CONTENT_OFFLINE_FALLBACK_MS
       ) {
         await this.storage.removeItem(storageKey(key));
         return undefined;
