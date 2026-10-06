@@ -687,5 +687,20 @@
     "unavailable": "Live Walk ist auf diesem Gerät nicht verfügbar.",
     "enabled": "Live Walk ist aktiv",
     "inspect": "Live Walk prüfen"
+  },
+  "legal": {
+    "profileRow": "Rechtliches & Support",
+    "title": "Rechtliches & Support",
+    "description": "Datenschutz, Nutzungsbedingungen, Kontolöschung und Support",
+    "privacy": "Datenschutz",
+    "privacyDetail": "Wie CITYWALK deine Daten verarbeitet",
+    "terms": "Nutzungsbedingungen",
+    "termsDetail": "Regeln für die Nutzung von CITYWALK",
+    "imprint": "Impressum",
+    "imprintDetail": "Anbieter- und Kontaktinformationen",
+    "accountDeletion": "Kontolöschung",
+    "accountDeletionDetail": "Öffentliche Seite zum Löschen deines Kontos",
+    "support": "Support kontaktieren",
+    "supportDetail": "support@getcitywalk.com"
   }
 }
