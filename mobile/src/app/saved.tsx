@@ -288,9 +288,6 @@ export default function SavedScreen() {
                         <AppText variant="label">
                           {nativePlaceName(place.citySlug, place.slug, place.name, locale)}
                         </AppText>
-                        <AppText variant="metadata" style={styles.muted}>
-                          {nativeCityName(place.citySlug, cityLaunches[place.citySlug]?.name ?? place.citySlug, locale)}
-                        </AppText>
                       </PressableSurface>
                     </Link>
                     <PressableSurface
