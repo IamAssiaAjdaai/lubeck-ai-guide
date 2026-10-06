@@ -58,7 +58,7 @@ export function NativeBottomNavigation({ onScrollToTop }: { onScrollToTop: () =>
       android: "explore",
       href: citySlug
         ? {
-            pathname: "/city/[citySlug]",
+            pathname: "/city/[citySlug]/explore",
             params: { citySlug },
           }
         : "/?section=cities",
@@ -101,7 +101,7 @@ export function NativeBottomNavigation({ onScrollToTop }: { onScrollToTop: () =>
               return;
             }
             const root = item.key === "explore" && citySlug
-              ? `/city/${citySlug}`
+              ? `/city/${citySlug}/explore`
               : item.key === "profile" ? "/account"
               : item.key === "home" || item.key === "explore" ? `/:${item.key}`
               : `/saved:${item.key}`;
