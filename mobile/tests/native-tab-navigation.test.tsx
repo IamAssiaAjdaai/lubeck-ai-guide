@@ -7,7 +7,7 @@ vi.mock("expo-router", () => ({
   usePathname: () => state.path,
   useLocalSearchParams: () => state.params,
   useRouter: () => ({ navigate: state.navigate, dismissTo: state.dismissTo }),
-  useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : state.path === "/account" ? "account/index" : state.path === "/city/lubeck" ? "city/[citySlug]/index" : state.path === "/city/lubeck/explore" ? "city/[citySlug]/explore" : "city/[citySlug]/place/[placeSlug]" }),
+  useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : state.path === "/profile" ? "profile" : state.path === "/account" ? "account/index" : state.path === "/city/lubeck" ? "city/[citySlug]/index" : state.path === "/city/lubeck/explore" ? "city/[citySlug]/explore" : "city/[citySlug]/place/[placeSlug]" }),
   useNavigation: () => ({ isFocused: () => true, addListener: (_event: string, callback: () => void) => { state.transitionEnd = callback; return () => { state.transitionEnd = undefined; }; } }),
 }));
 vi.mock("react-native", () => ({
@@ -28,7 +28,7 @@ afterEach(() => { cleanup(); vi.clearAllMocks(); state.locale = "en"; });
 describe("native active-tab reselection", () => {
   it.each([
     ["/", {}, "home"], ["/city/lubeck/explore", { citySlug: "lubeck" }, "explore"],
-    ["/saved", { view: "trips" }, "trips"], ["/saved", {}, "saved"], ["/account", {}, "profile"],
+    ["/saved", { view: "trips" }, "trips"], ["/saved", {}, "saved"], ["/profile", {}, "profile"],
   ] as const)("scrolls %s (%s) to top without replacing navigation history", (path, params, tab) => {
     state.path = path; state.params = params;
     const scroll = vi.fn();
@@ -58,6 +58,18 @@ describe("native active-tab reselection", () => {
     expect(scroll).not.toHaveBeenCalled();
     state.transitionEnd?.();
     expect(scroll).toHaveBeenCalledOnce();
+    state.transitionEnd?.();
+    expect(scroll).toHaveBeenCalledOnce();
+  });
+  it("returns nested account settings to Profile root before scrolling", () => {
+    state.path = "/account"; state.params = {};
+    const scroll = vi.fn();
+    const { rerender } = render(<NativeTabScrollProvider><Root scroll={scroll} /></NativeTabScrollProvider>);
+    fireEvent.click(screen.getByRole("tab", { name: "Profile" }));
+    expect(state.dismissTo).toHaveBeenCalledWith("/profile");
+    expect(scroll).not.toHaveBeenCalled();
+    state.path = "/profile";
+    rerender(<NativeTabScrollProvider><Root scroll={scroll} /></NativeTabScrollProvider>);
     state.transitionEnd?.();
     expect(scroll).toHaveBeenCalledOnce();
   });
