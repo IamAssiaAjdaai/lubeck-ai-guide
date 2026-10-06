@@ -12,13 +12,18 @@ const baseUrl = process.env.CITYWALK_ACCOUNT_E2E_BASE_URL ?? "http://127.0.0.1:3
 
 async function assertStatus(response, expected, label) {
   if (response.status() === expected) return;
-  let body = "<unavailable>";
-  try {
-    body = await response.text();
-  } catch {
-    // The status remains the primary failure signal if the body is unavailable.
-  }
-  assert.equal(response.status(), expected, `${label} returned ${response.status()}: ${body}`);
+  const headers = await response.request().allHeaders();
+  const safeRequest = {
+    url: response.request().url(),
+    origin: headers.origin ?? null,
+    secFetchSite: headers["sec-fetch-site"] ?? null,
+    contentType: headers["content-type"] ?? null,
+  };
+  assert.equal(
+    response.status(),
+    expected,
+    `${label} returned ${response.status()}; request=${JSON.stringify(safeRequest)}`,
+  );
 }
 
 const browser = await chromium.launch({ headless: true });
