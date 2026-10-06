@@ -14,7 +14,7 @@ export default async function PlacesPage({ searchParams }: { searchParams: Promi
     (!query.status || place.publicationStatus === query.status) &&
     (!query.city || place.city?.slug === query.city));
   const selectedCity = query.city ? authorizedPlaces.find((place) => place.city?.slug === query.city)?.city : undefined;
-  const cityName = selectedCity?.name ?? query.city;
+  const cityName = selectedCity?.slug ?? query.city;
   const newHref = query.city ? `/admin/places/new?city=${query.city}` : "/admin/places/new";
 
   return <section>
@@ -49,7 +49,7 @@ export default async function PlacesPage({ searchParams }: { searchParams: Promi
           <Link className="surface-card group p-5 transition hover:border-primary/30 hover:shadow-md" href={`/admin/places/${place.id}`} key={place.id}>
             <div className="flex items-start justify-between gap-3"><span className="rounded-xl bg-primary/10 p-2 text-primary"><MapPin size={18} /></span><StatusBadge status={place.publicationStatus} /></div>
             <h2 className="mt-4 text-lg font-extrabold">{place.localizations[0]?.name ?? place.slug}</h2>
-            <p className="mt-1 text-sm capitalize text-text-secondary">{place.category}{!query.city && place.city ? ` · ${place.city.name}` : ""}</p>
+            <p className="mt-1 text-sm capitalize text-text-secondary">{place.category}{!query.city && place.city ? ` · ${place.city.slug}` : ""}</p>
             <p className="mt-4 flex items-center gap-2 text-sm font-bold text-primary">Continue editing <ArrowRight className="transition group-hover:translate-x-1" size={16} /></p>
           </Link>
         ))}
