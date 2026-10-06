@@ -57,6 +57,11 @@ export default async function MarketingSocialEditor({
     getMarketingWorkflowAccess(item.cityId),
     getMarketingSocialTrackingPreview(item.id),
   ]);
+  const city = options.cities.find(({ id: cityId }) => cityId === item.cityId);
+  const campaigns = options.campaigns.filter(
+    (campaign) => campaign.cityId === item.cityId,
+  );
+  const pages = options.pages.filter((page) => page.cityId === item.cityId);
   const canEdit =
     options.canManage && (item.status === "idea" || item.status === "draft");
   const currentStatus = isMarketingSocialState(item.status) ? item.status : "draft";
@@ -65,11 +70,14 @@ export default async function MarketingSocialEditor({
       transition.from === currentStatus &&
       canUseWorkflowCapability(transition.capability, workflowAccess),
   ).map(({ to, label }) => ({ to, label }));
+  const marketingHref = city
+    ? `/admin/marketing?city=${encodeURIComponent(city.slug)}`
+    : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
-        ← Marketing
+      <Link className="text-sm font-semibold text-primary hover:underline" href={marketingHref}>
+        ← {city ? `${city.name} Marketing` : "Marketing"}
       </Link>
       <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
         <AdminPageHeader
@@ -86,10 +94,10 @@ export default async function MarketingSocialEditor({
           submitLabel="Save social changes"
         >
           <SocialContentFields
-            campaigns={options.campaigns}
-            cities={options.cities}
+            campaigns={campaigns}
+            cities={city ? [city] : options.cities}
             item={item}
-            pages={options.pages}
+            pages={pages}
           />
         </MarketingFormShell>
       ) : (
