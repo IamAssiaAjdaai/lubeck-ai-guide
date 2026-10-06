@@ -5,6 +5,7 @@ import {
   pgEnum,
   pgTable,
   primaryKey,
+  serial,
   text,
   timestamp,
   uniqueIndex,
@@ -86,6 +87,33 @@ export const verification = pgTable(
     ...createTimestamps(),
   },
   (table) => [index("verification_identifier_idx").on(table.identifier)],
+);
+
+export const externalAccountErasureJobs = pgTable(
+  "external_account_erasure_jobs",
+  {
+    id: serial("id").primaryKey(),
+    provider: text("provider").notNull(),
+    externalCustomerId: text("external_customer_id").notNull(),
+    attempts: integer("attempts").default(0).notNull(),
+    nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    leaseExpiresAt: timestamp("lease_expires_at", { withTimezone: true }),
+    lastError: text("last_error"),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    ...createTimestamps(),
+  },
+  (table) => [
+    uniqueIndex("external_account_erasure_jobs_provider_customer_unique").on(
+      table.provider,
+      table.externalCustomerId,
+    ),
+    index("external_account_erasure_jobs_pending_idx").on(
+      table.completedAt,
+      table.nextAttemptAt,
+    ),
+  ],
 );
 
 export const staffRoleEnum = pgEnum("staff_role", [

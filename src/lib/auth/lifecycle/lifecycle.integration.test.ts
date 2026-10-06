@@ -12,7 +12,7 @@ vi.mock("next/server", () => ({ after: (task: () => Promise<void>) => mocks.task
 vi.mock("./rateLimit.server", async importOriginal => ({ ...await importOriginal<typeof import("./rateLimit.server")>(), limitLifecycle: mocks.limit }));
 import { createCitywalkAuth } from "../factory.server";
 import { getDb, closeDb } from "@/db/client";
-import { user, account, session, verification, staffMemberships } from "@/db/authSchema";
+import { user, account, session, verification, staffMemberships, externalAccountErasureJobs } from "@/db/authSchema";
 import { travelerProfiles, travelerGuestLinks, accountSavedWalks } from "@/db/travelerSchema";
 import { commerceCustomers, commerceProducts, commerceSubscriptions } from "@/db/commerceSchema";
 import { contentWorkflowEventsTable } from "@/db/schema";
@@ -200,15 +200,16 @@ describe.runIf(process.env.LIFECYCLE_DB_INTEGRATION === "1")("isolated real Bett
     for (const table of [account, session, travelerProfiles, travelerGuestLinks, accountSavedWalks]) expect(await getDb().select().from(table).where(eq(table.userId, owner.id))).toHaveLength(0);
     expect(await getDb().select().from(verification).where(eq(verification.value, owner.id))).toHaveLength(0);
     expect(await getDb().select().from(accountSavedWalks).where(eq(accountSavedWalks.userId, other.id))).toHaveLength(1);
+    expect(await getDb().select().from(externalAccountErasureJobs).where(eq(externalAccountErasureJobs.externalCustomerId, owner.id))).toMatchObject([{ provider: "revenuecat", attempts: 0, completedAt: null }]);
     expect(await auth.api.getSession({ headers: new Headers({ Cookie: owner.cookie }) })).toBeNull();
     await expect(auth.api.signInEmail({ body: { email: owner.email, password } })).rejects.toMatchObject({ status: "UNAUTHORIZED" });
     expect((await reset(token)).status).toBe(400);
     expect((await deleteAccount(req("/api/account/delete", { confirm: true, password }, owner.cookie, owner.id))).status).toBe(401);
     expect((await auth.api.signInEmail({ body: { email: other.email, password } })).user.id).toBe(other.id);
   });
-  it("blocks deletion for a subscription-only account without detaching the subscription", async () => {
+  it("deletes a subscription-only account while retaining the detached subscription", async () => {
     const owner = await createTraveler();
-    const [product] = await getDb().insert(commerceProducts).values({ slug: `subscription-delete-${randomUUID()}`, name: "Subscription delete guard", kind: "feature_bundle" }).returning({ id: commerceProducts.id });
+    const [product] = await getDb().insert(commerceProducts).values({ slug: `subscription-delete-${randomUUID()}`, name: "Subscription delete retention", kind: "feature_bundle" }).returning({ id: commerceProducts.id });
     const subscriptionId = `subscription-${randomUUID()}`;
     await getDb().insert(commerceSubscriptions).values({
       id: subscriptionId,
@@ -222,19 +223,29 @@ describe.runIf(process.env.LIFECYCLE_DB_INTEGRATION === "1")("isolated real Bett
       status: "active",
     });
     const result = await deleteAccount(req("/api/account/delete", { confirm: true, password }, owner.cookie, owner.id));
-    expect(result.status).toBe(409); expect(await result.json()).toEqual({ code: "RETENTION_REVIEW_REQUIRED" });
-    expect(await getDb().select().from(user).where(eq(user.id, owner.id))).toHaveLength(1);
-    expect(await getDb().select().from(commerceSubscriptions).where(eq(commerceSubscriptions.id, subscriptionId))).toMatchObject([{ userId: owner.id }]);
-    expect(await auth.api.getSession({ headers: new Headers({ Cookie: owner.cookie }) })).not.toBeNull();
+    expect(result.status).toBe(200); expect(await result.json()).toEqual({ deleted: true });
+    expect(await getDb().select().from(user).where(eq(user.id, owner.id))).toHaveLength(0);
+    expect(await getDb().select().from(commerceSubscriptions).where(eq(commerceSubscriptions.id, subscriptionId))).toMatchObject([{ userId: null }]);
+    expect(await getDb().select().from(externalAccountErasureJobs).where(eq(externalAccountErasureJobs.externalCustomerId, owner.id))).toMatchObject([{ provider: "revenuecat", attempts: 0, completedAt: null }]);
   });
-  it.each(["commerce", "staff", "audit"])("blocks deletion with %s records and rolls back all account changes", async kind => {
+  it("deletes commerce customer mappings while preserving a durable external erasure job", async () => {
     const owner = await createTraveler();
-    if (kind === "commerce") await getDb().insert(commerceCustomers).values({ userId: owner.id, provider: "stripe", providerCustomerId: randomUUID() });
+    const providerCustomerId = randomUUID();
+    await getDb().insert(commerceCustomers).values({ userId: owner.id, provider: "revenuecat", providerCustomerId });
+    const result = await deleteAccount(req("/api/account/delete", { confirm: true, password }, owner.cookie, owner.id));
+    expect(result.status).toBe(200); expect(await result.json()).toEqual({ deleted: true });
+    expect(await getDb().select().from(user).where(eq(user.id, owner.id))).toHaveLength(0);
+    expect(await getDb().select().from(commerceCustomers).where(eq(commerceCustomers.providerCustomerId, providerCustomerId))).toHaveLength(0);
+    expect(await getDb().select().from(externalAccountErasureJobs).where(eq(externalAccountErasureJobs.externalCustomerId, owner.id))).toMatchObject([{ provider: "revenuecat", attempts: 0, completedAt: null }]);
+  });
+  it.each(["staff", "audit"])("blocks deletion with %s records and rolls back all account changes", async kind => {
+    const owner = await createTraveler();
     if (kind === "staff") await getDb().insert(staffMemberships).values({ userId: owner.id, role: "content_editor", active: false });
     if (kind === "audit") await getDb().insert(contentWorkflowEventsTable).values({ actorUserId: owner.id, entityType: "place", entityId: 1, action: "test", fromStatus: "draft", toStatus: "draft" });
     const result = await deleteAccount(req("/api/account/delete", { confirm: true, password }, owner.cookie, owner.id));
     expect(result.status).toBe(409); expect(await result.json()).toEqual({ code: "RETENTION_REVIEW_REQUIRED" });
     expect(await getDb().select().from(user).where(eq(user.id, owner.id))).toHaveLength(1);
+    expect(await getDb().select().from(externalAccountErasureJobs).where(eq(externalAccountErasureJobs.externalCustomerId, owner.id))).toHaveLength(0);
     expect(await auth.api.getSession({ headers: new Headers({ Cookie: owner.cookie }) })).not.toBeNull();
   });
 });

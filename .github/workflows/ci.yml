@@ -127,6 +127,9 @@ jobs:
       - name: Verify PostgreSQL rate limits
         run: npm run rate-limit:test:integration
 
+      - name: Run account lifecycle integration tests
+        run: npm run lifecycle:test:integration
+
       - name: Seed database
         run: npm run db:seed
 

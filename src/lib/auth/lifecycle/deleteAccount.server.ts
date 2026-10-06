@@ -2,9 +2,8 @@ import "server-only";
 import { and, eq, getTableColumns, gt, inArray, is, or, sql } from "drizzle-orm";
 import { PgTable } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
-import { user, account, session, verification, staffMemberships } from "@/db/authSchema";
+import { user, account, session, verification, staffMemberships, externalAccountErasureJobs } from "@/db/authSchema";
 import * as editorial from "@/db/schema";
-import { commerceCustomers, commerceOrders, commerceSubscriptions, commerceEntitlements } from "@/db/commerceSchema";
 import { hasFreshSocialDeleteSession } from "./deleteReauth";
 import { LifecycleError } from "./rateLimit.server";
 
@@ -35,20 +34,25 @@ export async function deleteTravelerAccount(input: {
       if (!hasFreshSocialDeleteSession({ sessionCreatedAt: active.createdAt, hasSocialProvider: Boolean(social) })) throw new LifecycleError("REAUTH_REQUIRED", 401);
     }
 
-    // Existing FKs serialize inserts behind the parent user lock. Never apply the
-    // commerce CASCADE/SET NULL rules without an approved financial retention policy.
-    for (const table of [commerceCustomers, commerceOrders, commerceSubscriptions, commerceEntitlements]) {
-      if ((await tx.select({ id: table.id }).from(table).where(eq(table.userId, input.userId)).limit(1)).length) throw new LifecycleError("RETENTION_REVIEW_REQUIRED", 409);
-    }
     if ((await tx.select({ id: staffMemberships.id }).from(staffMemberships).where(or(eq(staffMemberships.userId, input.userId), eq(staffMemberships.createdByUserId, input.userId))).limit(1)).length) throw new LifecycleError("RETENTION_REVIEW_REQUIRED", 409);
     for (const { table, columns } of retainedTables) {
       if ((await tx.select({ found: sql`1` }).from(table).where(or(...columns.map(column => eq(column, input.userId)))).limit(1)).length) throw new LifecycleError("RETENTION_REVIEW_REQUIRED", 409);
     }
+
+    // RevenueCat identifies authenticated customers by the immutable Better Auth user id.
+    // Persist the remote-erasure intent in the same transaction as the hard delete so a
+    // later worker can retry without keeping the user row or making network calls here.
+    await tx.insert(externalAccountErasureJobs).values({
+      provider: "revenuecat",
+      externalCustomerId: input.userId,
+    }).onConflictDoNothing();
+
     // The enabled lifecycle creates only reset-password verification rows. Other
     // verification plugins are disabled. These rows have no user FK.
     await tx.delete(verification).where(and(eq(verification.value, input.userId), sql`${verification.identifier} LIKE 'reset-password:%'`));
-    // Existing FKs cascade credential accounts, sessions, account_saved_walks,
-    // traveler_profiles and traveler_guest_links atomically with this user delete.
+    // Commerce retention is encoded in the committed FKs: customer mappings and
+    // entitlements cascade away, while orders/subscriptions survive with user_id NULL.
+    // Auth/traveler-owned rows cascade atomically with this user delete.
     await tx.delete(user).where(eq(user.id, input.userId));
   });
 }
