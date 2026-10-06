@@ -2,7 +2,7 @@ import { ArrowRight, Plus, Route } from "lucide-react";
 import Link from "next/link";
 
 import { AdminNotice } from "@/components/admin/AdminContentForms";
-import { AdminPageHeader, EmptyContent, StatusBadge } from "@/components/admin/AdminContentUi";
+import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import { listAuthorizedTours } from "@/lib/admin/content/service.server";
 
 export default async function ToursPage({ searchParams }: { searchParams: Promise<{ error?: string; city?: string }> }) {
