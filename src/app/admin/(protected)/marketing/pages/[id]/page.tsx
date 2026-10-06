@@ -50,6 +50,10 @@ export default async function MarketingPageEditor({
     getMarketingEditorOptions(),
     getMarketingWorkflowAccess(page.cityId),
   ]);
+  const city = options.cities.find(({ id: cityId }) => cityId === page.cityId);
+  const campaigns = options.campaigns.filter(
+    (campaign) => campaign.cityId === page.cityId,
+  );
   const canEdit = options.canManage && page.publicationStatus === "draft";
   const currentStatus = isMarketingPageState(page.publicationStatus)
     ? page.publicationStatus
@@ -59,11 +63,14 @@ export default async function MarketingPageEditor({
       transition.from === currentStatus &&
       canUseWorkflowCapability(transition.capability, workflowAccess),
   ).map(({ to, label }) => ({ to, label }));
+  const marketingHref = city
+    ? `/admin/marketing?city=${encodeURIComponent(city.slug)}`
+    : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
-        ← Marketing
+      <Link className="text-sm font-semibold text-primary hover:underline" href={marketingHref}>
+        ← {city ? `${city.name} Marketing` : "Marketing"}
       </Link>
       <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
         <AdminPageHeader
@@ -80,8 +87,8 @@ export default async function MarketingPageEditor({
           submitLabel="Save page changes"
         >
           <MarketingPageFields
-            campaigns={options.campaigns}
-            cities={options.cities}
+            campaigns={campaigns}
+            cities={city ? [city] : options.cities}
             page={page}
           />
         </MarketingFormShell>
