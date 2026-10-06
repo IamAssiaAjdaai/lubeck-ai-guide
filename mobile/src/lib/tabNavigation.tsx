@@ -10,7 +10,11 @@ export function activeNativeTab(path: string, params: { section?: string; view?:
 }
 export function tabRootKey(path: string, params: { section?: string; view?: string }): string | undefined {
   if (path === "/" || path === "/saved") return `${path}:${activeNativeTab(path, params)}`;
-  if (path === "/account" || /^\/city\/[^/]+$/.test(path)) return path;
+  if (
+    path === "/account" ||
+    /^\/city\/[^/]+$/.test(path) ||
+    /^\/city\/[^/]+\/explore$/.test(path)
+  ) return path;
   return undefined;
 }
 
@@ -42,7 +46,8 @@ export function useRootTabScroll(scrollToTop: (animated?: boolean) => void) {
   // usePathname is global: background stack screens must retain their own identity.
   const path = route.name === "index" ? "/" : route.name === "saved" ? "/saved"
     : route.name === "account/index" ? "/account"
-    : route.name === "city/[citySlug]/index" && params.citySlug ? `/city/${params.citySlug}` : "";
+    : route.name === "city/[citySlug]/index" && params.citySlug ? `/city/${params.citySlug}`
+    : route.name === "city/[citySlug]/explore" && params.citySlug ? `/city/${params.citySlug}/explore` : "";
   const key = tabRootKey(path, params);
   const finish = useCallback(() => {
     if (key && navigation.isFocused()) coordinator?.completeRootReturn(key, () => scrollToTop(false));
