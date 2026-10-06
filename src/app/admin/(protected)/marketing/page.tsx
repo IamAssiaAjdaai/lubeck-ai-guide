@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { FileText, Megaphone, Newspaper, Plus, Sparkles } from "lucide-react";
 
 import {
@@ -42,52 +43,93 @@ export const metadata = {
   title: "Marketing | CITYWALK Control Center",
 };
 
-export default async function MarketingPage() {
-  const workspace = await getMarketingWorkspace();
-  const hasLubeckStarter = workspace.campaigns.some(
+export default async function MarketingPage({
+  searchParams,
+}: Readonly<{
+  searchParams: Promise<{ city?: string }>;
+}>) {
+  const [query, workspace] = await Promise.all([
+    searchParams,
+    getMarketingWorkspace(),
+  ]);
+  const city = query.city
+    ? workspace.cities.find(({ slug }) => slug === query.city)
+    : undefined;
+  if (query.city && !city) notFound();
+
+  const campaigns = city
+    ? workspace.campaigns.filter((campaign) => campaign.cityId === city.id)
+    : workspace.campaigns;
+  const pages = city
+    ? workspace.pages.filter((page) => page.cityId === city.id)
+    : workspace.pages;
+  const content = city
+    ? workspace.content.filter((item) => item.cityId === city.id)
+    : workspace.content;
+  const counts = {
+    campaigns: campaigns.length,
+    activeCampaigns: campaigns.filter(({ status }) => status === "active").length,
+    pages: pages.length,
+    publishedPages: pages.filter(({ publicationStatus }) => publicationStatus === "published").length,
+    content: content.length,
+    readyContent: content.filter(({ status }) => status === "ready").length,
+  };
+  const citySuffix = city ? `?city=${encodeURIComponent(city.slug)}` : "";
+  const hasLubeckStarter = campaigns.some(
     ({ slug }) => slug === "two-hours-in-lubeck",
   );
   const canCreateLubeckStarter =
     workspace.canManage &&
     !hasLubeckStarter &&
+    (!city || city.slug === "lubeck") &&
     workspace.cities.some(({ slug }) => slug === "lubeck");
 
   return (
     <section>
+      {city ? (
+        <Link
+          className="text-sm font-semibold text-primary hover:underline"
+          href={`/admin/cities/${city.id}`}
+        >
+          ← {city.name}
+        </Link>
+      ) : null}
       <AdminPageHeader
-        description="Plan campaigns, landing/blog pages and social content from verified CITYWALK city content. Drafting stays human-controlled; nothing auto-publishes."
-        eyebrow="Growth workspace"
-        title="Marketing"
+        description={city
+          ? `Campaigns, landing/blog pages and social content for ${city.name}. The city context stays attached while you work.`
+          : "Plan campaigns, landing/blog pages and social content from verified CITYWALK city content. Drafting stays human-controlled; nothing auto-publishes."}
+        eyebrow={city ? "City workspace · Growth" : "Growth workspace"}
+        title={city ? `${city.name} Marketing` : "Marketing"}
       />
 
       {workspace.canManage ? (
         <div className="mt-5 flex flex-wrap gap-3">
-          <NewDraftLink href="/admin/marketing/campaigns/new" label="New campaign" />
-          <NewDraftLink href="/admin/marketing/pages/new" label="New page" />
-          <NewDraftLink href="/admin/marketing/social/new" label="New social draft" />
+          <NewDraftLink href={`/admin/marketing/campaigns/new${citySuffix}`} label="New campaign" />
+          <NewDraftLink href={`/admin/marketing/pages/new${citySuffix}`} label="New page" />
+          <NewDraftLink href={`/admin/marketing/social/new${citySuffix}`} label="New social draft" />
         </div>
       ) : null}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          detail={`${workspace.counts.activeCampaigns} active`}
+          detail={`${counts.activeCampaigns} active`}
           label="Campaigns"
-          value={workspace.counts.campaigns}
+          value={counts.campaigns}
         />
         <MetricCard
-          detail={`${workspace.counts.publishedPages} published`}
+          detail={`${counts.publishedPages} published`}
           label="Landing + blog"
-          value={workspace.counts.pages}
+          value={counts.pages}
         />
         <MetricCard
-          detail={`${workspace.counts.readyContent} ready to publish`}
+          detail={`${counts.readyContent} ready to publish`}
           label="Social content"
-          value={workspace.counts.content}
+          value={counts.content}
         />
         <MetricCard
-          detail="City-scoped source of truth"
-          label="Available cities"
-          value={workspace.cities.length}
+          detail={city ? city.name : "City-scoped source of truth"}
+          label={city ? "City scope" : "Available cities"}
+          value={city ? 1 : workspace.cities.length}
         />
       </div>
 
@@ -133,10 +175,10 @@ export default async function MarketingPage() {
           <h2 className="mt-2 text-2xl font-extrabold">Campaign workspace</h2>
         </div>
         <span className="text-xs font-semibold text-text-secondary">
-          {workspace.counts.campaigns} total
+          {counts.campaigns} total
         </span>
       </div>
-      {workspace.campaigns.length === 0 ? (
+      {campaigns.length === 0 ? (
         <div className="surface-card mt-6 p-6 sm:p-8">
           <p className="eyebrow">First CITYWALK campaign</p>
           <h3 className="mt-2 text-xl font-extrabold">2 Hours in Lübeck</h3>
@@ -152,7 +194,7 @@ export default async function MarketingPage() {
               </form>
             ) : null}
             {workspace.canManage ? (
-              <NewDraftLink href="/admin/marketing/campaigns/new" label="Create another campaign" />
+              <NewDraftLink href={`/admin/marketing/campaigns/new${citySuffix}`} label="Create another campaign" />
             ) : null}
           </div>
           {!canCreateLubeckStarter && !workspace.canManage ? (
@@ -165,12 +207,12 @@ export default async function MarketingPage() {
         <ContentTable>
           <TableHead>
             <HeaderCell>Campaign</HeaderCell>
-            <HeaderCell>City</HeaderCell>
+            {!city ? <HeaderCell>City</HeaderCell> : null}
             <HeaderCell>Objective</HeaderCell>
             <HeaderCell>Status</HeaderCell>
           </TableHead>
           <tbody>
-            {workspace.campaigns.slice(0, 8).map((campaign) => (
+            {campaigns.slice(0, 8).map((campaign) => (
               <tr key={campaign.id}>
                 <Cell>
                   <Link className="font-bold text-primary hover:underline" href={`/admin/marketing/campaigns/${campaign.id}`}>
@@ -180,7 +222,7 @@ export default async function MarketingPage() {
                     {campaign.slug}
                   </span>
                 </Cell>
-                <Cell>{campaign.cityName}</Cell>
+                {!city ? <Cell>{campaign.cityName}</Cell> : null}
                 <Cell>{campaign.objective}</Cell>
                 <Cell>
                   <StatusBadge status={campaign.status} />
@@ -202,12 +244,12 @@ export default async function MarketingPage() {
               </div>
             </div>
             {workspace.canManage ? (
-              <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing/pages/new">
+              <Link className="text-sm font-semibold text-primary hover:underline" href={`/admin/marketing/pages/new${citySuffix}`}>
                 New page
               </Link>
             ) : null}
           </div>
-          {workspace.pages.length === 0 ? (
+          {pages.length === 0 ? (
             <EmptyContent>No marketing pages yet.</EmptyContent>
           ) : (
             <ContentTable>
@@ -217,7 +259,7 @@ export default async function MarketingPage() {
                 <HeaderCell>Status</HeaderCell>
               </TableHead>
               <tbody>
-                {workspace.pages.slice(0, 6).map((page) => (
+                {pages.slice(0, 6).map((page) => (
                   <tr key={page.id}>
                     <Cell>
                       <Link className="font-bold text-primary hover:underline" href={`/admin/marketing/pages/${page.id}`}>
@@ -248,12 +290,12 @@ export default async function MarketingPage() {
               </div>
             </div>
             {workspace.canManage ? (
-              <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing/social/new">
+              <Link className="text-sm font-semibold text-primary hover:underline" href={`/admin/marketing/social/new${citySuffix}`}>
                 New draft
               </Link>
             ) : null}
           </div>
-          {workspace.content.length === 0 ? (
+          {content.length === 0 ? (
             <EmptyContent>No social content drafts yet.</EmptyContent>
           ) : (
             <ContentTable>
@@ -263,7 +305,7 @@ export default async function MarketingPage() {
                 <HeaderCell>Status</HeaderCell>
               </TableHead>
               <tbody>
-                {workspace.content.slice(0, 6).map((item) => (
+                {content.slice(0, 6).map((item) => (
                   <tr key={item.id}>
                     <Cell>
                       <Link className="font-bold text-primary hover:underline" href={`/admin/marketing/social/${item.id}`}>
