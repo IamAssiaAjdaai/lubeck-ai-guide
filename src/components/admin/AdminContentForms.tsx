@@ -115,11 +115,13 @@ export function PlaceFields({
   editingLocale,
   place,
   tags,
+  initialCityId,
 }: Readonly<{
   cities: readonly (CityRow & { localizations: CityLocalizationRow[] })[];
   editingLocale?: Locale;
   place?: AdminPlaceFormRecord;
   tags: readonly ContentTagRow[];
+  initialCityId?: number;
 }>) {
   const localization = selectedLocalization(place?.localizations, editingLocale);
   return (
@@ -127,11 +129,15 @@ export function PlaceFields({
       <input name="publicationStatus" type="hidden" value={place?.publicationStatus ?? "draft"} />
       {place ? <input name="expectedUpdatedAt" type="hidden" value={place.updatedAt.toISOString()} /> : null}
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="City">
-          <select className={inputClass} defaultValue={place?.cityId} name="cityId" required>
-            {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
-          </select>
-        </Field>
+        {initialCityId ? (
+          <input name="cityId" type="hidden" value={initialCityId} />
+        ) : (
+          <Field label="City">
+            <select className={inputClass} defaultValue={place?.cityId} name="cityId" required>
+              {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
+            </select>
+          </Field>
+        )}
         <Field label="Slug">
           <input className={inputClass} defaultValue={place?.slug} name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required />
         </Field>
@@ -223,10 +229,12 @@ export function TourFields({
   editingLocale,
   places,
   tour,
+  initialCityId,
 }: Readonly<{
   cities: readonly (CityRow & { localizations: CityLocalizationRow[] })[];
   editingLocale?: Locale;
   places: readonly AdminPlaceFormRecord[];
+  initialCityId?: number;
   tour?: TourRow & {
     localizations: TourLocalizationRow[];
     stops: TourStopRow[];
@@ -238,11 +246,15 @@ export function TourFields({
       <input name="publicationStatus" type="hidden" value={tour?.publicationStatus ?? "draft"} />
       {tour ? <input name="expectedUpdatedAt" type="hidden" value={tour.updatedAt.toISOString()} /> : null}
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="City">
-          <select className={inputClass} defaultValue={tour?.cityId} name="cityId" required>
-            {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
-          </select>
-        </Field>
+        {initialCityId ? (
+          <input name="cityId" type="hidden" value={initialCityId} />
+        ) : (
+          <Field label="City">
+            <select className={inputClass} defaultValue={tour?.cityId} name="cityId" required>
+              {cities.map((city) => <option key={city.id} value={city.id}>{cityDisplayName(city)}</option>)}
+            </select>
+          </Field>
+        )}
         <Field label="Slug">
           <input className={inputClass} defaultValue={tour?.slug} name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required />
         </Field>
