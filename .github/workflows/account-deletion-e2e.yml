@@ -10,7 +10,6 @@ on:
       - "src/lib/auth/lifecycle/**"
       - "src/cloudflare/accountErasureSchedule*"
       - "src/cloudflare/entrypoint.ts"
-      - "scripts/account-deletion-e2e-proxy.mjs"
       - "scripts/check-account-deletion-e2e.mjs"
       - ".github/workflows/account-deletion-e2e.yml"
 
@@ -40,8 +39,8 @@ jobs:
     env:
       CITYWALK_CONTENT_SOURCE: code
       DATABASE_URL: postgresql://citywalk:citywalk@127.0.0.1:5432/citywalk_account_e2e
-      BETTER_AUTH_URL: https://127.0.0.1:3443
-      CITYWALK_ACCOUNT_E2E_BASE_URL: https://127.0.0.1:3443
+      BETTER_AUTH_URL: http://127.0.0.1:3101
+      CITYWALK_ACCOUNT_E2E_BASE_URL: http://127.0.0.1:3101
       RESEND_API_KEY: re_account_e2e_not_used
       CITYWALK_EMAIL_FROM: no-reply@citywalk-account-e2e.invalid
 
@@ -74,39 +73,21 @@ jobs:
       - name: Exercise public account-deletion flow
         shell: bash
         run: |
-          ./node_modules/.bin/next start --hostname 127.0.0.1 --port 3101 > "$RUNNER_TEMP/citywalk-account-e2e-next.log" 2>&1 &
+          NODE_ENV=test ./node_modules/.bin/next start --hostname 127.0.0.1 --port 3101 > "$RUNNER_TEMP/citywalk-account-e2e-next.log" 2>&1 &
           SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           for i in {1..30}; do
             if curl --fail --silent http://127.0.0.1:3101/account-deletion > /dev/null; then break; fi
             sleep 1
           done
-
-          openssl req -x509 -newkey rsa:2048 -nodes \
-            -keyout "$RUNNER_TEMP/citywalk-account-e2e-key.pem" \
-            -out "$RUNNER_TEMP/citywalk-account-e2e-cert.pem" \
-            -days 1 -subj '/CN=127.0.0.1' \
-            -addext 'subjectAltName=IP:127.0.0.1' > /dev/null 2>&1
-          CITYWALK_ACCOUNT_E2E_TLS_CERT="$RUNNER_TEMP/citywalk-account-e2e-cert.pem" \
-          CITYWALK_ACCOUNT_E2E_TLS_KEY="$RUNNER_TEMP/citywalk-account-e2e-key.pem" \
-          CITYWALK_ACCOUNT_E2E_PROXY_TARGET="http://127.0.0.1:3101" \
-            node scripts/account-deletion-e2e-proxy.mjs > "$RUNNER_TEMP/citywalk-account-e2e-proxy.log" 2>&1 &
-          PROXY_PID=$!
-          trap 'kill "$PROXY_PID" "$SERVER_PID" 2>/dev/null || true' EXIT
-          for i in {1..30}; do
-            if curl -k --fail --silent https://127.0.0.1:3443/account-deletion > /dev/null; then break; fi
-            sleep 1
-          done
-
-          curl -k --fail-with-body --silent --show-error --max-time 10 \
+          curl --fail-with-body --silent --show-error --max-time 10 \
             -H 'Content-Type: application/json' \
             --data '{"email":"citywalk-account-preflight@example.invalid"}' \
-            https://127.0.0.1:3443/api/account/delete-request > "$RUNNER_TEMP/citywalk-account-e2e-preflight.json"
+            http://127.0.0.1:3101/api/account/delete-request > "$RUNNER_TEMP/citywalk-account-e2e-preflight.json"
           grep -q '"accepted":true' "$RUNNER_TEMP/citywalk-account-e2e-preflight.json"
           CITYWALK_PLAYWRIGHT_MODULE="$RUNNER_TEMP/citywalk-account-e2e/node_modules/playwright" \
             timeout 45s node scripts/check-account-deletion-e2e.mjs
 
       - name: Show server log on failure
         if: ${{ failure() }}
-        run: |
-          cat "$RUNNER_TEMP/citywalk-account-e2e-next.log" || true
-          cat "$RUNNER_TEMP/citywalk-account-e2e-proxy.log" || true
+        run: cat "$RUNNER_TEMP/citywalk-account-e2e-next.log" || true
