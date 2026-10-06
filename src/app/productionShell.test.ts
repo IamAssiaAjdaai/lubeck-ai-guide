@@ -33,12 +33,17 @@ describe("production landing shell", () => {
     });
   });
 
-  it("only advertises the reviewed public marketing homepage in the sitemap", () => {
+  it("advertises the public deletion resource while withholding unconfigured legal pages", () => {
     expect(sitemap()).toEqual([
       {
         url: CITYWALK_PUBLIC_ORIGIN,
         changeFrequency: "weekly",
         priority: 1,
+      },
+      {
+        url: citywalkPublicUrl("/account-deletion"),
+        changeFrequency: "monthly",
+        priority: 0.5,
       },
     ]);
   });
