@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { AdminNotice } from "@/components/admin/AdminContentForms";
 import {
@@ -16,27 +17,44 @@ export const metadata = {
 export default async function NewMarketingPage({
   searchParams,
 }: Readonly<{
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; city?: string }>;
 }>) {
-  const [{ error }, options] = await Promise.all([
+  const [query, options] = await Promise.all([
     searchParams,
     getMarketingEditorOptions(),
   ]);
+  const city = query.city
+    ? options.cities.find(({ slug }) => slug === query.city)
+    : undefined;
+  if (query.city && !city) notFound();
+
+  const campaigns = city
+    ? options.campaigns.filter((campaign) => campaign.cityId === city.id)
+    : options.campaigns;
+  const marketingHref = city
+    ? `/admin/marketing?city=${encodeURIComponent(city.slug)}`
+    : "/admin/marketing";
 
   return (
     <section>
-      <Link className="text-sm font-semibold text-primary hover:underline" href="/admin/marketing">
-        ← Marketing
+      <Link className="text-sm font-semibold text-primary hover:underline" href={marketingHref}>
+        ← {city ? `${city.name} Marketing` : "Marketing"}
       </Link>
       <AdminPageHeader
-        description="Create a landing page or blog draft and reserve its future public path."
+        description={city
+          ? `Create a landing page or blog draft for ${city.name}. The city is inherited from the workspace.`
+          : "Create a landing page or blog draft and reserve its future public path."}
         eyebrow="Marketing · Pages"
         title="New page"
       />
-      <AdminNotice error={error} />
+      <AdminNotice error={query.error} />
       {options.canManage ? (
         <MarketingFormShell action={createMarketingPageAction} submitLabel="Save page draft">
-          <MarketingPageFields campaigns={options.campaigns} cities={options.cities} />
+          <MarketingPageFields
+            campaigns={campaigns}
+            cities={city ? [city] : options.cities}
+            initialCityId={city?.id}
+          />
         </MarketingFormShell>
       ) : (
         <p className="surface-card mt-6 p-5 text-sm text-text-secondary">
