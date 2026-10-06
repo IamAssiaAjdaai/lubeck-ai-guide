@@ -72,7 +72,7 @@ RevenueCat mobile packages:
 Store product identifiers:
 
 - `com.citywalk.premium.monthly` → PostgreSQL product slug `citywalk-premium`
-- `com.citywalk.premium.yearly` → PostgreSQL product slug `citywalk-premium`
+- `com.citywalk.premium.annual` → PostgreSQL product slug `citywalk-premium`
 - `com.citywalk.lubeck.pass72h` → PostgreSQL product slug
   `lubeck-digital-guide-pass-72h`
 
@@ -151,7 +151,7 @@ screen loads only canonical `$rc_monthly` and `$rc_annual` packages and requires
 exact store product identifiers:
 
 - `com.citywalk.premium.monthly`
-- `com.citywalk.premium.yearly`
+- `com.citywalk.premium.annual`
 
 The screen displays RevenueCat/store localized prices. The €7.99 monthly and €39.99 yearly
 figures are launch targets only; they are never used as client purchase evidence.
