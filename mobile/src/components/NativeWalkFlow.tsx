@@ -105,6 +105,7 @@ import {
 import { NativeIcon } from "./NativeIcon";
 import { colors } from "../design/tokens";
 import { walkStyles as styles } from "../design/walkStyles";
+import { captureNativeMarketingFunnelEvent } from "../lib/marketingPerformance";
 
 type ActiveWalkMode = "basic" | "live";
 
@@ -626,6 +627,7 @@ export function NativeWalkFlow({
       setJourney(next.journey);
       setNow(Date.now());
       setStage("active");
+      void captureNativeMarketingFunnelEvent("walk_started", citySlug);
       if (mode === "live") {
         try {
           const session = await syncLiveCompanion(next.journey);
@@ -1552,6 +1554,7 @@ export function NativeWalkFlow({
                       setLiveSession(undefined);
                       setActiveMode("basic");
                       setStage("finished");
+                      void captureNativeMarketingFunnelEvent("walk_completed", citySlug);
                     });
                   }}
                 />
@@ -1749,6 +1752,7 @@ export function NativeWalkFlow({
                   setActiveMode("basic");
                   setShowManageWalk(false);
                   setStage("finished");
+                      void captureNativeMarketingFunnelEvent("walk_completed", citySlug);
                 });
               }}
             />
