@@ -25,6 +25,7 @@ describe("traveler Profile P2", () => {
     expect(profileSource).toContain('router.navigate("/saved")');
     expect(profileSource).toContain('router.navigate("/premium")');
     expect(profileSource).toContain('router.navigate("/account")');
+    expect(profileSource).toContain('router.navigate("/legal")');
     expect(profileSource).not.toContain("deleteNativeAccount");
     expect(profileSource).not.toContain("changePassword");
   });
