@@ -687,5 +687,20 @@
     "unavailable": "Live Walk is niet beschikbaar op dit apparaat.",
     "enabled": "Live Walk staat aan",
     "inspect": "Live Walk inspecteren"
+  },
+  "legal": {
+    "profileRow": "Juridisch & support",
+    "title": "Juridisch & support",
+    "description": "Privacy, voorwaarden, accountverwijdering en support",
+    "privacy": "Privacy",
+    "privacyDetail": "Hoe CITYWALK je gegevens verwerkt",
+    "terms": "Gebruiksvoorwaarden",
+    "termsDetail": "Regels voor het gebruik van CITYWALK",
+    "imprint": "Juridische informatie",
+    "imprintDetail": "Aanbieder- en contactinformatie",
+    "accountDeletion": "Account verwijderen",
+    "accountDeletionDetail": "Vraag verwijdering aan via de openbare webpagina",
+    "support": "Contact met support",
+    "supportDetail": "support@getcitywalk.com"
   }
 }

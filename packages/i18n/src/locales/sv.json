@@ -687,5 +687,20 @@
     "unavailable": "Live Walk är inte tillgänglig på den här enheten.",
     "enabled": "Live Walk är på",
     "inspect": "Inspektera Live Walk"
+  },
+  "legal": {
+    "profileRow": "Juridik & support",
+    "title": "Juridik & support",
+    "description": "Integritet, villkor, kontoborttagning och support",
+    "privacy": "Integritetspolicy",
+    "privacyDetail": "Så hanterar CITYWALK dina uppgifter",
+    "terms": "Användarvillkor",
+    "termsDetail": "Regler för användning av CITYWALK",
+    "imprint": "Juridisk information",
+    "imprintDetail": "Leverantörs- och kontaktinformation",
+    "accountDeletion": "Radera konto",
+    "accountDeletionDetail": "Begär radering via den offentliga webbsidan",
+    "support": "Kontakta support",
+    "supportDetail": "support@getcitywalk.com"
   }
 }

@@ -37,6 +37,7 @@ export default function RootLayout() {
             <Stack.Screen name="city/[citySlug]/tour/[tourSlug]" options={{ title: "CITYWALK" }} />
             <Stack.Screen name="city/[citySlug]/guide/[placeSlug]" options={{ title: "CITYWALK" }} />
             <Stack.Screen name="account/index" options={{ title: "CITYWALK" }} />
+            <Stack.Screen name="legal" options={{ title: "CITYWALK" }} />
           </Stack>
           </NativeTabScrollProvider>
         </NativeLocaleProvider>

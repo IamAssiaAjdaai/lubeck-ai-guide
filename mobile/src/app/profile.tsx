@@ -217,6 +217,20 @@ export default function ProfileScreen() {
           </View>
         </>
       ) : null}
+
+      {!isPending ? (
+        <View style={styles.menu} testID="profile-legal-menu">
+          <ProfileRow
+            direction={direction}
+            ios="doc.text"
+            android="description"
+            title={label("legal.profileRow")}
+            detail={label("legal.description")}
+            onPress={() => router.navigate("/legal")}
+            last
+          />
+        </View>
+      ) : null}
     </Screen>
   );
 }

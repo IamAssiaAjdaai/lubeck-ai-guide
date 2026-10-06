@@ -687,5 +687,20 @@
     "unavailable": "المشي المباشر غير متاح على هذا الجهاز.",
     "enabled": "المشي المباشر يعمل",
     "inspect": "فحص المشي المباشر"
+  },
+  "legal": {
+    "profileRow": "المعلومات القانونية والدعم",
+    "title": "المعلومات القانونية والدعم",
+    "description": "الخصوصية وشروط الاستخدام وحذف الحساب والدعم",
+    "privacy": "الخصوصية",
+    "privacyDetail": "كيفية معالجة CITYWALK لبياناتك",
+    "terms": "شروط الاستخدام",
+    "termsDetail": "القواعد التي تنظم استخدام CITYWALK",
+    "imprint": "الإشعار القانوني",
+    "imprintDetail": "معلومات مقدم الخدمة وبيانات الاتصال",
+    "accountDeletion": "حذف الحساب",
+    "accountDeletionDetail": "اطلب حذف حسابك عبر صفحة الويب العامة",
+    "support": "التواصل مع الدعم",
+    "supportDetail": "support@getcitywalk.com"
   }
 }
