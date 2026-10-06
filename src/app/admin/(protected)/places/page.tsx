@@ -2,7 +2,7 @@ import { ArrowRight, MapPin, Plus } from "lucide-react";
 import Link from "next/link";
 
 import { AdminNotice } from "@/components/admin/AdminContentForms";
-import { AdminPageHeader, EmptyContent, StatusBadge } from "@/components/admin/AdminContentUi";
+import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import { listAuthorizedPlaces } from "@/lib/admin/content/service.server";
 
 export default async function PlacesPage({ searchParams }: { searchParams: Promise<{ error?: string; q?: string; category?: string; status?: string; city?: string }> }) {
