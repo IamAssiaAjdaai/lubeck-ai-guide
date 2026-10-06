@@ -87,7 +87,6 @@ export default function SearchScreen() {
       nativePlaceName(city.slug, place.slug, place.content.name, locale),
       place.content.shortDescription ?? "",
       labels[place.category],
-      ...(place.content.facts?.flatMap((fact) => [fact.label ?? "", fact.value]) ?? []),
     ]
       .join(" ")
       .toLocaleLowerCase(locale);
