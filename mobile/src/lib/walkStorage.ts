@@ -156,7 +156,7 @@ export async function changeCurrentWalk(
   store?: WalkStore,
 ): Promise<CurrentWalk> {
   return mutate(async () => {
-    const target = store ?? await defaultStore();
+    const target = store ?? (await defaultStore());
     const next = change(await loadCurrentWalk(city, target));
     if (next.journey.citySlug !== city) throw new Error("Wrong walk city");
     const normalized = { ...next, journey: uniqueJourney(next.journey) };
@@ -257,7 +257,7 @@ export async function toggleSavedPlace(place: SavedPlace, store?: WalkStore) {
 }
 export async function saveWalkFeedback(
   id: string,
-  key: "rating" | "fit",
+  key: "rating" | "fit" | "tags",
   value: string,
   store?: WalkStore,
 ) {
