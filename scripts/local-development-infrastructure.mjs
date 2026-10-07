@@ -107,10 +107,25 @@ export async function ensureLocalInfrastructure(
   ]);
   if (!compose.ok) {
     throw new LocalInfrastructureError(
-      "PostgreSQL could not be started. Run `docker compose up -d --wait` to inspect the error.",
+      "Local PostgreSQL and media storage could not be started. Run `docker compose up -d --wait` to inspect the error.",
     );
   }
-  dependencies.log("✓ PostgreSQL healthy");
+  dependencies.log("✓ PostgreSQL and media storage healthy");
+
+  const mediaBucket = await dependencies.runCommand("docker", [
+    "compose",
+    "--profile",
+    "tools",
+    "run",
+    "--rm",
+    "minio-init",
+  ]);
+  if (!mediaBucket.ok) {
+    throw new LocalInfrastructureError(
+      "Local media bucket could not be prepared. Run `docker compose --profile tools run --rm minio-init` to inspect the error.",
+    );
+  }
+  dependencies.log("✓ Local media bucket ready");
 
   const migration = await dependencies.runCommand(
     dependencies.migrationCommand.executable,
