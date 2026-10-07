@@ -24,23 +24,22 @@ describe("native crash observability", () => {
     expect(createNativeObservabilityConfig("production", undefined)).toEqual({
       dispatchingEnabled: false,
       dispatchInDebug: false,
-      errorHandlingEnabled: false,
       sampleRate: 0,
       environment: "production",
     });
   });
 
-  it("enables dispatch only for the exact explicit activation flag", () => {
+  it("keeps dispatch disabled even if an activation flag is present", () => {
     expect(createNativeObservabilityConfig("preview", "1")).toMatchObject({
-      dispatchingEnabled: true,
+      dispatchingEnabled: false,
       dispatchInDebug: false,
-      errorHandlingEnabled: false,
-      sampleRate: 1,
+      sampleRate: 0,
       environment: "preview",
     });
-    expect(createNativeObservabilityConfig("preview", "true")).toMatchObject({
+    expect(createNativeObservabilityConfig("production", "1")).toMatchObject({
       dispatchingEnabled: false,
       sampleRate: 0,
+      environment: "production",
     });
   });
 
@@ -50,7 +49,6 @@ describe("native crash observability", () => {
         "dispatchInDebug",
         "dispatchingEnabled",
         "environment",
-        "errorHandlingEnabled",
         "sampleRate",
       ]);
   });
@@ -71,7 +69,8 @@ describe("native crash observability", () => {
 
       expect(mocks.configure).toHaveBeenCalledOnce();
       expect(mocks.configure).toHaveBeenCalledWith(config);
-      expect(config.errorHandlingEnabled).toBe(false);
+      expect(config.dispatchingEnabled).toBe(false);
+      expect(config.sampleRate).toBe(0);
       expect(JSON.stringify(config)).not.toMatch(
         /email|token|gps|location|prompt|account|session/i,
       );
