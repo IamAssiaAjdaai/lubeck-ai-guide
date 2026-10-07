@@ -7,7 +7,6 @@
     "dev": "next dev",
     "dev:infra": "node scripts/ensure-local-infrastructure.mjs",
     "build": "next build",
-    "vercel-build": "npm run db:migrate && next build",
     "prestart": "npm run dev:infra",
     "start": "next start",
     "lint": "eslint",
