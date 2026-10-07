@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   CITYWALK_DEVELOPMENT_IDENTIFIER,
   CITYWALK_STORE_IDENTIFIER,
+  assertNativeObservabilityBuildEnvironment,
   assertProductionBuildEnvironment,
   assertRevenueCatBuildEnvironment,
   createCitywalkExpoConfig,
@@ -187,6 +188,29 @@ describe("CITYWALK native app configuration", () => {
       "https://api.citywalk.example",
     )).not.toThrow();
     expect(() => assertProductionBuildEnvironment("preview", undefined)).not.toThrow();
+  });
+
+  it("keeps native observability dispatch disabled in every committed EAS profile", () => {
+    expect(JSON.stringify(easJson.build))
+      .not.toContain("EXPO_PUBLIC_CITYWALK_OBSERVABILITY");
+  });
+
+  it("hard-disables native observability dispatch on Expo SDK 57", () => {
+    expect(() =>
+      assertNativeObservabilityBuildEnvironment("preview", "true"),
+    ).toThrow("must be unset, 0, or 1");
+    expect(() =>
+      assertNativeObservabilityBuildEnvironment("preview", "1"),
+    ).toThrow("not approved for Expo SDK 57");
+    expect(() =>
+      assertNativeObservabilityBuildEnvironment("production", "1"),
+    ).toThrow("not approved for Expo SDK 57");
+    expect(() =>
+      assertNativeObservabilityBuildEnvironment("production", undefined),
+    ).not.toThrow();
+    expect(() =>
+      assertNativeObservabilityBuildEnvironment("development", "0"),
+    ).not.toThrow();
   });
 
   it("rejects RevenueCat secret keys from every mobile build", () => {
