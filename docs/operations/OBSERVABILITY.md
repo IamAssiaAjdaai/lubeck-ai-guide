@@ -76,9 +76,9 @@ Before launch, #110 still requires:
 1. production server/runtime error monitoring with environment/release context;
 2. actionable alerts for elevated 5xx, auth, DB, commerce webhook, media and AI failures;
 3. native iOS/Android crash/error visibility;
-4. production PostgreSQL backup policy and a restore drill against a safe non-production target;
-5. migration recovery and rollback procedures;
-6. incident runbooks for deployment, DB, commerce, storage, AI and native-release failures;
-7. tested sensitive-data scrubbing for monitoring payloads.
+4. activate production PostgreSQL managed backups and record a successful restore drill against a safe non-production target (portable tooling/policy now exists);
+5. execute and evidence migration recovery/rollback drills (procedures now documented);
+6. validate incident runbooks during release rehearsal (runbooks now documented);
+7. keep sensitive-data scrubbing tests green as monitoring expands.
 
 No production monitoring provider, alert destination, backup job or deployment is activated by this foundation.
