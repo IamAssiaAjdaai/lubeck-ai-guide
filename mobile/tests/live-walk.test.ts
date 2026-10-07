@@ -45,6 +45,30 @@ describe("Live Walk execution semantics", () => {
     ).toBeGreaterThanOrEqual(3);
   });
 
+  it("localizes the in-walk Premium gate with the shared launch catalogs", () => {
+    expect(liveWalkCardSource).toContain('useNativeLocale()');
+    for (const key of [
+      "premium.eyebrow",
+      "premium.startLiveWalk",
+      "premium.stayGuided",
+      "premium.benefitLockScreen",
+      "premium.benefitEta",
+      "premium.benefitAdapt",
+      "premium.benefitBackOnTime",
+      "premium.benefitAudioAi",
+      "premium.checkingAccount",
+      "profile.passUnavailableDescription",
+      "premium.unlock",
+      "premium.continueBasicRoute",
+      "liveWalk.liveWalk",
+    ]) {
+      expect(liveWalkCardSource).toContain(key);
+    }
+    expect(liveWalkCardSource).not.toContain(">Start Live Walk<");
+    expect(liveWalkCardSource).not.toContain('label="Unlock CITYWALK Premium"');
+    expect(liveWalkCardSource).not.toContain('label="Continue with basic route"');
+  });
+
   it("keeps the in-app Live Walk card on the light CITYWALK surface", () => {
     expect(liveWalkCardSource).toContain("backgroundColor: colors.surface");
     expect(liveWalkCardSource).toContain("borderColor: colors.border");
