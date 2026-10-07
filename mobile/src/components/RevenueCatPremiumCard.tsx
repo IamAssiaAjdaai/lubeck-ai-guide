@@ -1,3 +1,4 @@
+import { t, type TranslationKey } from "@citywalk/i18n";
 import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -8,6 +9,7 @@ import {
   type PremiumPlan,
   type PremiumPlanKind,
 } from "../lib/revenueCatPremiumCore";
+import { useNativeLocale } from "../localization/LocaleProvider";
 import { NativeIcon } from "./NativeIcon";
 import {
   AppText,
@@ -24,24 +26,28 @@ type State =
   | Readonly<{ status: "loading" }>
   | Readonly<{ status: "unavailable" }>
   | Readonly<{ status: "active" }>
-  | Readonly<{ status: "ready"; plans: readonly PremiumPlan[]; message?: string }>;
+  | Readonly<{ status: "ready"; plans: readonly PremiumPlan[]; message?: TranslationKey }>;
 
 function preferredPlan(plans: readonly PremiumPlan[]): PremiumPlan | undefined {
   return plans.find((plan) => plan.kind === "annual") ?? plans[0];
 }
 
-function savingsLabel(plans: readonly PremiumPlan[], plan: PremiumPlan): string | undefined {
+function savingsPercent(
+  plans: readonly PremiumPlan[],
+  plan: PremiumPlan,
+): number | undefined {
   if (plan.kind !== "annual" || typeof plan.price !== "number") return;
   const monthly = plans.find(
     (candidate) => candidate.kind === "monthly" && typeof candidate.price === "number",
   );
   if (!monthly?.price || monthly.price <= 0) return;
   const percent = Math.round((1 - plan.price / (monthly.price * 12)) * 100);
-  return percent > 0 ? `Save ${percent}%` : undefined;
+  return percent > 0 ? percent : undefined;
 }
 
 export function RevenueCatPremiumCard({ account }: { account: string }) {
   const enabled = premiumEnabled();
+  const { locale } = useNativeLocale();
   const [state, setState] = useState<State>({ status: "loading" });
   const [busy, setBusy] = useState<PremiumPlanKind | "restore">();
   const [selected, setSelected] = useState<PremiumPlanKind>();
@@ -91,15 +97,12 @@ export function RevenueCatPremiumCard({ account }: { account: string }) {
       const result = await (await premiumBilling()).purchase(selectedPlan.kind, account);
       if (result.status === "active") setState({ status: "active" });
       else if (result.status === "cancelled") {
-        setState({ ...state, message: "Purchase cancelled." });
+        setState({ ...state, message: "premium.purchaseCancelled" });
       } else {
-        setState({
-          ...state,
-          message: "Purchase received. Premium is not active on the server yet.",
-        });
+        setState({ ...state, message: "premium.purchaseReceivedPending" });
       }
     } catch {
-      setState({ ...state, message: "Premium purchase is temporarily unavailable." });
+      setState({ ...state, message: "premium.purchaseUnavailable" });
     } finally {
       setBusy(undefined);
     }
@@ -111,21 +114,20 @@ export function RevenueCatPremiumCard({ account }: { account: string }) {
     try {
       const result = await (await premiumBilling()).restore(account);
       if (result.status === "active") setState({ status: "active" });
-      else {
-        setState({
-          ...state,
-          message: "No verified Premium subscription is active for this account yet.",
-        });
-      }
+      else setState({ ...state, message: "premium.noVerifiedSubscription" });
     } catch {
-      setState({ ...state, message: "Restore is temporarily unavailable." });
+      setState({ ...state, message: "premium.restoreUnavailable" });
     } finally {
       setBusy(undefined);
     }
   }
 
   if (state.status === "loading") {
-    return <AppText variant="metadata" style={styles.secondary}>Loading subscription options…</AppText>;
+    return (
+      <AppText variant="metadata" style={styles.secondary}>
+        {t(locale, "premium.loadingOptions")}
+      </AppText>
+    );
   }
 
   if (state.status === "active") {
@@ -133,9 +135,9 @@ export function RevenueCatPremiumCard({ account }: { account: string }) {
       <View style={styles.active} testID="premium-active-state">
         <NativeIcon ios="checkmark.circle.fill" android="check_circle" color={colors.success} />
         <View style={styles.flex}>
-          <AppText variant="label">Premium active</AppText>
+          <AppText variant="label">{t(locale, "premium.active")}</AppText>
           <AppText variant="metadata" style={styles.secondary}>
-            Premium access is verified by CITYWALK.
+            {t(locale, "premium.verified")}
           </AppText>
         </View>
       </View>
@@ -143,41 +145,50 @@ export function RevenueCatPremiumCard({ account }: { account: string }) {
   }
 
   if (state.status === "unavailable") {
-    return <StatusMessage>Premium subscription options are currently unavailable.</StatusMessage>;
+    return <StatusMessage>{t(locale, "premium.optionsUnavailable")}</StatusMessage>;
   }
 
   return (
     <View style={styles.section} testID="premium-plan-selector">
       <AppText variant="metadata" style={styles.secondary}>
-        Premium across available CITYWALK cities · up to 20 verified AI Guide answers per day.
+        {t(locale, "premium.crossCityDescription")}
       </AppText>
 
       <View accessibilityRole="radiogroup" style={styles.plans}>
         {state.plans.map((plan) => {
           const checked = selectedPlan?.kind === plan.kind;
-          const savings = savingsLabel(state.plans, plan);
+          const percent = savingsPercent(state.plans, plan);
+          const planLabel = t(
+            locale,
+            plan.kind === "monthly" ? "premium.monthly" : "premium.yearly",
+          );
+          const priceLabel = t(
+            locale,
+            plan.kind === "monthly" ? "premium.priceMonthly" : "premium.priceYearly",
+            { price: plan.localizedPrice },
+          );
           return (
             <PressableSurface
               key={plan.kind}
               accessibilityRole="radio"
-              accessibilityLabel={`${plan.kind === "monthly" ? "Monthly" : "Yearly"} · ${plan.localizedPrice}`}
+              accessibilityLabel={planLabel + " · " + plan.localizedPrice}
               accessibilityState={{ checked }}
               style={[styles.plan, checked && styles.planSelected]}
               onPress={() => setSelected(plan.kind)}
             >
               <View style={styles.flex}>
                 <View style={styles.planTitleRow}>
-                  <AppText variant="label">
-                    {plan.kind === "monthly" ? "Monthly" : "Yearly"}
-                  </AppText>
+                  <AppText variant="label">{planLabel}</AppText>
                   {plan.kind === "annual" ? (
                     <AppText variant="caption" style={styles.valueBadge}>
-                      {savings ?? "Best value"}
+                      {percent === undefined
+                        ? t(locale, "premium.bestValue")
+                        : t(locale, "premium.savePercent", { percent })}
                     </AppText>
                   ) : null}
                 </View>
                 <AppText variant="metadata" style={styles.secondary}>
-                  {plan.localizedPrice}{plan.kind === "monthly" ? " / month" : " / year"}
+                  {priceLabel}
                 </AppText>
               </View>
               <NativeIcon
@@ -193,7 +204,11 @@ export function RevenueCatPremiumCard({ account }: { account: string }) {
 
       <PrimaryButton
         wrapLabel
-        label={`Unlock CITYWALK Premium${selectedPlan ? ` · ${selectedPlan.localizedPrice}` : ""}`}
+        label={
+          selectedPlan
+            ? t(locale, "premium.unlockWithPrice", { price: selectedPlan.localizedPrice })
+            : t(locale, "premium.unlock")
+        }
         busy={Boolean(selectedPlan && busy === selectedPlan.kind)}
         disabled={Boolean(busy) || !selectedPlan}
         onPress={() => void purchase()}
@@ -201,17 +216,19 @@ export function RevenueCatPremiumCard({ account }: { account: string }) {
 
       <PressableSurface
         accessibilityRole="button"
-        accessibilityLabel="Restore purchases"
+        accessibilityLabel={t(locale, "premium.restorePurchases")}
         disabled={Boolean(busy)}
         style={styles.restore}
         onPress={() => void restore()}
       >
         <AppText variant="label" style={styles.restoreText}>
-          {busy === "restore" ? "Restoring purchases…" : "Restore purchases"}
+          {busy === "restore"
+            ? t(locale, "premium.restoringPurchases")
+            : t(locale, "premium.restorePurchases")}
         </AppText>
       </PressableSurface>
 
-      {state.message ? <StatusMessage>{state.message}</StatusMessage> : null}
+      {state.message ? <StatusMessage>{t(locale, state.message)}</StatusMessage> : null}
     </View>
   );
 }

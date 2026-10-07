@@ -1,3 +1,4 @@
+import { t } from "@citywalk/i18n";
 import { router, Stack } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
@@ -12,13 +13,15 @@ import {
 import { colors, spacing } from "../design/tokens";
 import { nativeAuthClient } from "../lib/auth/client";
 import { premiumEnabled } from "../lib/revenueCatPremiumCore";
+import { useNativeLocale } from "../localization/LocaleProvider";
 
 export default function PremiumScreen() {
   const { data: session, isPending } = nativeAuthClient.useSession();
+  const { locale } = useNativeLocale();
 
   return (
     <Screen>
-      <Stack.Screen options={{ title: "CITYWALK Premium" }} />
+      <Stack.Screen options={{ title: t(locale, "premium.title") }} />
 
       <View style={styles.hero}>
         <View style={styles.eyebrow}>
@@ -29,33 +32,33 @@ export default function PremiumScreen() {
             size={18}
           />
           <AppText variant="caption" style={styles.eyebrowText}>
-            CITYWALK PREMIUM
+            {t(locale, "premium.eyebrow")}
           </AppText>
         </View>
-        <AppText variant="screenTitle">Start Live Walk</AppText>
+        <AppText variant="screenTitle">{t(locale, "premium.startLiveWalk")}</AppText>
         <AppText variant="metadata" style={styles.secondary}>
-          Stay guided while you move.
+          {t(locale, "premium.stayGuided")}
         </AppText>
       </View>
 
       <View style={styles.benefits} testID="premium-benefits">
-        <Benefit text="Next stop on your Lock Screen" />
-        <Benefit text="Live ETA and remaining time" />
-        <Benefit text="Shorten or adapt your route" />
-        <Benefit text="Get back on time" />
-        <Benefit text="Premium audio & AI guide" />
+        <Benefit text={t(locale, "premium.benefitLockScreen")} />
+        <Benefit text={t(locale, "premium.benefitEta")} />
+        <Benefit text={t(locale, "premium.benefitAdapt")} />
+        <Benefit text={t(locale, "premium.benefitBackOnTime")} />
+        <Benefit text={t(locale, "premium.benefitAudioAi")} />
       </View>
 
       {!premiumEnabled() ? (
         <>
           <AppText variant="metadata" style={styles.secondary}>
-            Premium subscriptions are not enabled in this build yet. Your basic CITYWALK route still works.
+            {t(locale, "premium.subscriptionsDisabled")}
           </AppText>
           <ContinueBasicRoute />
         </>
       ) : isPending ? (
         <AppText variant="metadata" style={styles.secondary}>
-          Checking your CITYWALK account…
+          {t(locale, "premium.checkingAccount")}
         </AppText>
       ) : session?.user.id ? (
         <>
@@ -65,10 +68,10 @@ export default function PremiumScreen() {
       ) : (
         <>
           <AppText variant="metadata" style={styles.secondary}>
-            Sign in before purchasing or restoring Premium.
+            {t(locale, "premium.signInBeforePurchase")}
           </AppText>
           <PrimaryButton
-            label="Sign in"
+            label={t(locale, "profile.signIn")}
             onPress={() =>
               router.push({ pathname: "/account", params: { entry: "sign-in" } })
             }
@@ -81,15 +84,17 @@ export default function PremiumScreen() {
 }
 
 function ContinueBasicRoute() {
+  const { locale } = useNativeLocale();
+  const label = t(locale, "premium.continueBasicRoute");
   return (
     <PressableSurface
       accessibilityRole="button"
-      accessibilityLabel="Continue with basic route"
+      accessibilityLabel={label}
       style={styles.continueBasic}
       onPress={() => router.back()}
     >
       <AppText variant="label" style={styles.continueBasicText}>
-        Continue with basic route
+        {label}
       </AppText>
     </PressableSurface>
   );

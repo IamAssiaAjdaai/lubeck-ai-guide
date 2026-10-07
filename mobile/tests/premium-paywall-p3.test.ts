@@ -4,25 +4,33 @@ import premiumScreenSource from "../src/app/premium.tsx?raw";
 import premiumCardSource from "../src/components/RevenueCatPremiumCard.tsx?raw";
 
 describe("Premium paywall P3", () => {
-  it("keeps Live Walk as the primary Premium conversion moment", () => {
-    expect(premiumScreenSource).toContain("Start Live Walk");
-    expect(premiumScreenSource).toContain("Next stop on your Lock Screen");
-    expect(premiumScreenSource).toContain("Live ETA and remaining time");
-    expect(premiumScreenSource).toContain("Shorten or adapt your route");
-    expect(premiumScreenSource).toContain("Get back on time");
-    expect(premiumScreenSource).toContain("Premium audio & AI guide");
+  it("localizes the Live Walk conversion moment instead of hardcoding English copy", () => {
+    expect(premiumScreenSource).toContain('useNativeLocale()');
+    for (const key of [
+      "premium.startLiveWalk",
+      "premium.stayGuided",
+      "premium.benefitLockScreen",
+      "premium.benefitEta",
+      "premium.benefitAdapt",
+      "premium.benefitBackOnTime",
+      "premium.benefitAudioAi",
+    ]) {
+      expect(premiumScreenSource).toContain(key);
+    }
+    expect(premiumScreenSource).not.toContain(">Start Live Walk<");
+    expect(premiumScreenSource).not.toContain('text="Next stop on your Lock Screen"');
   });
 
-  it("keeps the basic route available as a tertiary escape instead of a competing CTA", () => {
+  it("keeps the basic route available as a localized tertiary escape", () => {
     expect(premiumScreenSource).toContain("function ContinueBasicRoute()");
-    expect(premiumScreenSource).toContain('accessibilityLabel="Continue with basic route"');
-    expect(premiumScreenSource).toContain('style={styles.continueBasic}');
+    expect(premiumScreenSource).toContain('"premium.continueBasicRoute"');
+    expect(premiumScreenSource).toContain("style={styles.continueBasic}");
     expect(premiumScreenSource).not.toContain(
       '<PrimaryButton label="Continue with basic route"',
     );
   });
 
-  it("uses one selected plan and one explicit purchase action", () => {
+  it("uses one selected plan and one explicit localized purchase action", () => {
     expect(premiumCardSource).toContain(
       'plans.find((plan) => plan.kind === "annual") ?? plans[0]',
     );
@@ -32,14 +40,29 @@ describe("Premium paywall P3", () => {
     expect(premiumCardSource).toContain(
       "purchase(selectedPlan.kind, account)",
     );
-    expect(premiumCardSource).toContain("Unlock CITYWALK Premium");
+    expect(premiumCardSource).toContain('"premium.unlockWithPrice"');
+    expect(premiumCardSource).toContain('"premium.unlock"');
     expect(premiumCardSource).not.toContain("<Card>");
   });
 
-  it("keeps Store-localized pricing and restore behavior intact", () => {
+  it("keeps Store-localized pricing and localized restore behavior intact", () => {
     expect(premiumCardSource).toContain("plan.localizedPrice");
     expect(premiumCardSource).toContain("billing.plans()");
     expect(premiumCardSource).toContain("restore(account)");
-    expect(premiumCardSource).toContain("Restore purchases");
+    expect(premiumCardSource).toContain('"premium.restorePurchases"');
+    expect(premiumCardSource).toContain('"premium.restoringPurchases"');
+  });
+
+  it("stores purchase outcomes as translation keys so locale changes re-render messages", () => {
+    for (const key of [
+      "premium.purchaseCancelled",
+      "premium.purchaseReceivedPending",
+      "premium.purchaseUnavailable",
+      "premium.noVerifiedSubscription",
+      "premium.restoreUnavailable",
+    ]) {
+      expect(premiumCardSource).toContain(key);
+    }
+    expect(premiumCardSource).toContain("t(locale, state.message)");
   });
 });
