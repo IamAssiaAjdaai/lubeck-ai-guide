@@ -1,3 +1,4 @@
+import "../lib/nativeObservability.bootstrap";
 import "../lib/backgroundWalk";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";

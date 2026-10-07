@@ -43,6 +43,24 @@ export function assertProductionBuildEnvironment(
   }
 }
 
+export function assertNativeObservabilityBuildEnvironment(
+  environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
+  enabledFlag = process.env.EXPO_PUBLIC_CITYWALK_OBSERVABILITY,
+): void {
+  const flag = enabledFlag?.trim();
+  if (!flag || flag === "0") return;
+  if (flag !== "1") {
+    throw new Error(
+      "EXPO_PUBLIC_CITYWALK_OBSERVABILITY must be unset, 0, or 1.",
+    );
+  }
+  if (environment === "development") {
+    throw new Error(
+      "Native observability dispatch must not be enabled in development builds.",
+    );
+  }
+}
+
 export function assertRevenueCatBuildEnvironment(
   environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
   iosKey = process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
@@ -129,5 +147,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development";
   assertProductionBuildEnvironment(environment);
   assertRevenueCatBuildEnvironment(environment);
+  assertNativeObservabilityBuildEnvironment(environment);
   return createCitywalkExpoConfig(config, environment);
 };

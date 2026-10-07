@@ -76,13 +76,31 @@ The code does not activate an external alert destination. Production operations 
 
 Alert rules must key on the fixed event/code fields rather than parsing free-form exception text.
 
+## Native iOS/Android crash reporting foundation
+
+CITYWALK includes `expo-observe` on Expo SDK 57 so installed iOS and Android builds can record native crashes. Native crash reporting is supported by `expo-observe` 57.0.21 and later.
+
+The integration is intentionally fail-closed:
+
+- `EXPO_PUBLIC_CITYWALK_OBSERVABILITY=1` is required before any Observe data is dispatched;
+- no committed EAS build profile currently sets that flag;
+- development builds are rejected if the flag is set;
+- debug dispatch is disabled;
+- CITYWALK does not call `Observe.reportError`, mount `ObserveErrorBoundary`, or attach custom error attributes in this foundation; handled/render error reporting stays out until a separate privacy review;
+- CITYWALK does not attach account IDs, emails, GPS, prompts, tokens, payment payloads or private object keys to Observe;
+- environment labels are restricted to development / preview / production.
+
+With dispatch disabled, this change does not activate production telemetry. A later launch step must explicitly enable the flag for an approved Preview/production build, verify a deliberate native crash/error appears in EAS Observe, confirm environment/release grouping, and define a crash-regression alert/check.
+
+The EAS installation/client identifier is pseudonymous and must continue to be treated as monitoring data rather than an account identifier.
+
 ## Remaining OBS-01 work
 
 Before launch, #110 still requires:
 
 1. production server/runtime error monitoring with environment/release context;
 2. activate/test actionable alerts for elevated 5xx, auth, DB, commerce webhook, media and AI failures (auth failure events now exist);
-3. native iOS/Android crash/error visibility;
+3. explicitly activate and verify native iOS/Android crash visibility in an approved build (provider foundation is installed but dispatch remains off);
 4. activate production PostgreSQL managed backups and record a successful restore drill against a safe non-production target (portable tooling/policy now exists);
 5. execute and evidence migration recovery/rollback drills (procedures now documented);
 6. validate incident runbooks during release rehearsal (runbooks now documented);
