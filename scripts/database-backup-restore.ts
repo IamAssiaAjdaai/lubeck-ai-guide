@@ -16,6 +16,13 @@ export type RestoreSafetyInput = Readonly<{
   confirmed: boolean;
 }>;
 
+function safeNodeEnvironment(
+  value: string | undefined,
+): "development" | "production" | "test" {
+  if (value === "production" || value === "test") return value;
+  return "development";
+}
+
 function parseDatabaseUrl(databaseUrl: string): URL {
   let parsed: URL;
   try {
@@ -42,6 +49,7 @@ export function toLibpqEnvironment(
   const databaseName = decodeURIComponent(parsed.pathname.replace(/^\//, ""));
   const result: NodeJS.ProcessEnv = {
     ...baseEnvironment,
+    NODE_ENV: safeNodeEnvironment(baseEnvironment.NODE_ENV),
     PGHOST: parsed.hostname,
     PGPORT: parsed.port || "5432",
     PGDATABASE: databaseName,
@@ -145,6 +153,9 @@ export function buildRestoreListInvocation(
   return {
     command: "pg_restore",
     args: ["--list", dumpPath],
-    env: { ...baseEnvironment },
+    env: {
+      ...baseEnvironment,
+      NODE_ENV: safeNodeEnvironment(baseEnvironment.NODE_ENV),
+    },
   };
 }
