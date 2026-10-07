@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import posthog from "posthog-js";
+import { getAnalyticsConsent } from "@/lib/analyticsConsent";
 import { marketingAttributionPostHogProperties, type MarketingAttribution } from "@/lib/marketingAttribution";
 
 type Props=Readonly<{city:string;landingVariant:string;campaignSlug?:string;attribution:MarketingAttribution;ctaHref?:string;ctaLabel?:string}>;
@@ -11,4 +12,4 @@ export default function MarketingLandingTracker({city,landingVariant,campaignSlu
  if(!ctaHref||!ctaLabel)return null;
  return <Link href={ctaHref} className="button-primary inline-flex min-h-12 items-center justify-center px-6" onClick={()=>capture("build_walk_clicked",properties)}>{ctaLabel}</Link>;
 }
-function capture(eventName:"landing_view"|"build_walk_clicked",properties:Readonly<Record<string,string>>){try{if(posthog.has_opted_out_capturing())return;posthog.capture(eventName,properties);}catch(error){if(process.env.NODE_ENV==="development")console.warn("Marketing analytics could not be captured:",error);}}
+function capture(eventName:"landing_view"|"build_walk_clicked",properties:Readonly<Record<string,string>>){try{if(getAnalyticsConsent()!=="granted"||posthog.has_opted_out_capturing())return;posthog.capture(eventName,properties);}catch(error){if(process.env.NODE_ENV==="development")console.warn("Marketing analytics could not be captured:",error);}}

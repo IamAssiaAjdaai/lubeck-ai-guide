@@ -224,3 +224,18 @@ export function getVisitorAnalyticsProperties(
     citywalk_session_id: identity.sessionId,
   } as const;
 }
+
+export function clearBrowserVisitorSessionIdentity(): void {
+  const persistentStorage = getBrowserStorage("localStorage", fallbackPersistentStorage);
+  const sessionStorage = getBrowserStorage("sessionStorage", fallbackSessionStorage);
+  try {
+    persistentStorage.removeItem(ANONYMOUS_VISITOR_STORAGE_KEY);
+  } catch {
+    // Analytics storage cleanup is best-effort when browser storage is blocked.
+  }
+  try {
+    sessionStorage.removeItem(VISITOR_SESSION_STORAGE_KEY);
+  } catch {
+    // Analytics storage cleanup is best-effort when browser storage is blocked.
+  }
+}

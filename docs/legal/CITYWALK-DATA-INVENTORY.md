@@ -2,7 +2,7 @@
 
 **Status:** implementation-derived launch document  
 **Audit date:** 2026-10-07  
-**Repository baseline:** `develop` at `4934afe4c316a78afee18e7e9d87d58d3e296a81`  
+**Repository baseline:** `develop` at `5cd28df47d790d3af607c95c24160997872b138d`  
 **Parent launch ticket:** #109
 
 This document describes data flows that are visible in the CITYWALK codebase. It is the source input for the public privacy notice, data-rights operations, App Store App Privacy answers, and Google Play Data Safety answers.
@@ -51,9 +51,9 @@ Everything else below either follows a user/account lifecycle or still needs an 
 | AI Guide input | Question, limited recent conversation history, city/place context, verified knowledge and privacy-minimized walk/tour context | CITYWALK server request, then Groq model API | Answer a requested AI Guide question | CITYWALK does not write prompt/answer content to PostgreSQL in the reviewed route. Groq provider retention is **OPEN** and must be confirmed from the production provider configuration/terms. |
 | AI Guide local history | Completed user/assistant messages and source metadata | Native AsyncStorage, per city/place | Conversation continuity | Maximum 20 completed turns; no time TTL. Purged by native account-deletion local cleanup. |
 | AI/security rate limits | HMAC/SHA-derived identifier hashes for IP/user/visitor identities + timestamp/scope | PostgreSQL `rate_limit_events` | Abuse prevention and daily AI allowance | 48h maximum in CITYWALK database code. Raw identity is not stored in this table. |
-| PostHog analytics identity | Pseudonymous CITYWALK visitor/session UUIDs | Browser storage and PostHog when configured | Product/journey analytics | Browser UUID TTLs are 180d/24h. PostHog event retention is not defined in this repo and is **OPEN**. |
-| PostHog events | Examples: `city_opened`, `place_viewed`, Marketing `landing_view` / `build_walk_clicked`, aggregate `entitlement_granted`; client exception capture is enabled in PostHog initialization | PostHog when `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` and host are configured | Product analytics and funnel measurement | Provider/project retention is **OPEN**. Raw GPS, account email and auth tokens are not intentionally added to the reviewed event contracts. |
-| Marketing attribution | UTM source/medium/campaign/content, landing variant, city | URL/query; PostHog event properties when configured; native AsyncStorage after app handoff | Acquisition attribution | Native attribution currently has no TTL or automatic deletion. **OPEN:** define expiry/clear policy before launch analytics is finalized. |
+| PostHog analytics identity | Pseudonymous CITYWALK visitor/session UUIDs | Browser storage and PostHog when configured **and explicitly allowed** | Product/journey analytics | Browser UUID TTLs are 180d/24h after consent. Declining/withdrawing consent clears the CITYWALK analytics UUIDs. PostHog event retention is not defined in this repo and is **OPEN**. |
+| PostHog events | Examples: `city_opened`, `place_viewed`, Marketing `landing_view` / `build_walk_clicked`, native-attributed `walk_started` / `walk_completed`, aggregate `entitlement_granted`; client exception capture is enabled in PostHog initialization | Browser PostHog SDK and server-side PostHog capture when `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` and host are configured | Product analytics and funnel measurement | Provider/project retention is **OPEN**. The native funnel uses a fixed aggregate `distinct_id` (`citywalk-marketing-funnel`) and sends city + campaign attribution only; raw GPS, account email, CITYWALK user ID and auth tokens are not intentionally added to the reviewed event contracts. |
+| Marketing attribution | UTM source/medium/campaign/content, landing variant, city | URL/query; PostHog event properties when configured; native AsyncStorage after app handoff; first-party `/api/analytics/marketing-funnel` forwarding for matching-city native walk events | Acquisition attribution and attributed walk-funnel measurement | Native attribution currently has no TTL or automatic deletion. The first-party funnel endpoint does not persist the payload in CITYWALK PostgreSQL; it forwards validated fields to PostHog when configured. **OPEN:** define expiry/clear policy before launch analytics is finalized. |
 | Commerce customer mapping | User ID ↔ Stripe/native provider customer ID | PostgreSQL `commerce_customers` | Reconcile purchases | Cascades on user deletion. |
 | Orders | Product, provider IDs, checkout/payment IDs, status, amount/currency and payment/refund timestamps | PostgreSQL `commerce_orders` | Purchase evidence/reconciliation | Survives account deletion with `user_id = NULL`. No app-level retention period is defined. **OPEN:** accounting/legal retention policy before real-money activation. |
 | Subscriptions | Provider subscription/product IDs, store/environment, original transaction ID, status, period end and renewal state | PostgreSQL `commerce_subscriptions` | Subscription lifecycle reconciliation | Survives account deletion with `user_id = NULL`. No app-level retention period is defined. |
@@ -80,7 +80,8 @@ The reviewed code supports precise foreground coordinates for walking features, 
 - native Live Walk can persist a recent point locally on the device;
 - CITYWALK analytics helpers report location **status**, not raw coordinates;
 - the AI Guide intentionally withholds precise start/finish coordinates and deadline timestamps from the language-model prompt;
-- no reviewed PostHog event contract intentionally includes raw latitude/longitude or a GPS trail.
+- no reviewed PostHog event contract intentionally includes raw latitude/longitude or a GPS trail;
+- the native Marketing funnel contains event name, city and campaign attribution only, not location coordinates.
 
 Any future raw-route upload, server location history, geofencing analytics or background location collection requires a new inventory review and store-declaration update.
 
@@ -98,21 +99,23 @@ The reviewed route does **not** insert the question, prompt or model answer into
 
 **OPEN before store/legal finalization:** confirm the production Groq account's data-retention/training settings and record the applicable processor/transfer terms.
 
-## 5. Analytics state and consent blocker
+## 5. Analytics state and consent
 
 The repository now contains an active **optional** PostHog integration:
 
 - `instrumentation-client.ts` calls `posthog.init(...)` when both public PostHog environment values are configured;
-- it enables `capture_exceptions: true`;
+- it enables `capture_exceptions: true` while automatic interaction capture, automatic pageview/pageleave capture and session recording are disabled;
 - `VisitorJourneyTracker` captures city/place journey events;
 - published Marketing pages capture landing and CTA events;
+- Marketing-attributed native walks can send `walk_started` / `walk_completed` to the first-party `/api/analytics/marketing-funnel` endpoint;
+- that endpoint forwards validated city/campaign attribution to PostHog with the fixed aggregate `distinct_id` `citywalk-marketing-funnel` and does not write the payload to CITYWALK PostgreSQL;
 - verified entitlement grants can emit an aggregate server-side PostHog event;
 - the browser registers CITYWALK pseudonymous visitor/session IDs;
-- capture checks PostHog's local opt-out state.
+- first-party CITYWALK consent gates browser SDK initialization, analytics UUID creation and browser client capture; PostHog's own opt-out state remains a secondary SDK safeguard.
 
 This means the older statement that "the current public web code does not activate PostHog analytics" is no longer an accurate description of the code after the multi-city Marketing renderer landed.
 
-**OPEN launch blocker:** no affirmative first-party analytics-consent gate was identified in the reviewed repository. Do not assume the SDK's local opt-out check is equivalent to consent. Production PostHog activation must be aligned with the applicable consent/TDDDG decision before launch.
+**Implemented browser gate:** browser PostHog analytics is fail-closed until the user explicitly chooses “Allow analytics”. Declining or withdrawing the choice prevents further browser client capture and clears CITYWALK's analytics visitor/session IDs. The consent decision itself is stored locally so CITYWALK can remember the user's choice. **OPEN launch blocker:** the reviewed native server-side Marketing funnel request does not carry that browser consent/opt-out state, so production activation must align the native funnel with the applicable analytics-consent decision before launch. Also confirm the production PostHog project's provider-side retention and final operational configuration.
 
 ## 6. Account deletion mapping
 
@@ -146,7 +149,7 @@ A public web deletion cannot erase data that exists only in an offline/disconnec
 
 Before production launch, explicitly configure/document:
 
-1. PostHog project event retention and the analytics consent model.
+1. PostHog project event retention and final production project configuration, including consent behavior for both browser capture and the native server-side Marketing funnel.
 2. Native Marketing attribution expiry/clear behavior.
 3. Production server/Cloudflare log retention.
 4. PostgreSQL backup retention and deletion propagation.
@@ -172,7 +175,7 @@ These decisions must be reflected back into this inventory and the public privac
 | Machine-readable/user-download data export | **Not implemented** |
 | Internal operator procedure for access/export requests | **OPEN** |
 | Rectification | Display-name/password/profile controls exist; email-change flow remains limited |
-| Analytics consent management | **OPEN launch blocker if PostHog is enabled** |
+| Analytics consent management | First-party allow/decline/withdraw controls implemented; browser analytics is fail-closed before consent |
 
 ## 9. Store-declaration source-of-truth rule
 
@@ -180,7 +183,7 @@ App Store App Privacy and Google Play Data Safety answers must be produced from 
 
 Do not infer that an optional SDK is collecting data merely because it is installed, and do not declare it absent if production configuration activates it. Before preparing final store answers, confirm:
 
-- whether PostHog production env values are set and what consent gate is active;
+- whether PostHog production env values are set, provider retention is configured, and consent gating covers both browser analytics and the native first-party Marketing funnel in the exact release;
 - whether Apple/Google social sign-in is enabled;
 - whether RevenueCat products/purchases are enabled;
 - which location permissions are present in the exact release build;
