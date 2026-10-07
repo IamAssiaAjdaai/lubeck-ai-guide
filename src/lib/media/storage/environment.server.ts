@@ -10,22 +10,46 @@ export type S3MediaEnvironment = Readonly<{
   secretAccessKey: string;
 }>;
 
+const LOCAL_MEDIA_DEFAULTS = {
+  CITYWALK_MEDIA_STORAGE: "s3",
+  CITYWALK_MEDIA_S3_ENDPOINT: "http://localhost:9000",
+  CITYWALK_MEDIA_S3_REGION: "us-east-1",
+  CITYWALK_MEDIA_S3_BUCKET: "citywalk-local",
+  CITYWALK_MEDIA_S3_ACCESS_KEY_ID: "citywalk-local",
+  CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY: "citywalk-local-secret",
+} as const;
+
 export function getS3MediaEnvironment(
   environment: Readonly<Record<string, string | undefined>> = process.env,
 ): S3MediaEnvironment {
-  const provider = environment.CITYWALK_MEDIA_STORAGE?.trim();
+  const resolved = withLocalDevelopmentDefaults(environment);
+  const provider = resolved.CITYWALK_MEDIA_STORAGE?.trim();
   if (provider !== "s3") {
     throw new MediaIntegrityError("Media storage is not configured.");
   }
   const config = {
-    endpoint: required(environment, "CITYWALK_MEDIA_S3_ENDPOINT"),
-    region: required(environment, "CITYWALK_MEDIA_S3_REGION"),
-    bucket: required(environment, "CITYWALK_MEDIA_S3_BUCKET"),
-    accessKeyId: required(environment, "CITYWALK_MEDIA_S3_ACCESS_KEY_ID"),
-    secretAccessKey: required(environment, "CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY"),
+    endpoint: required(resolved, "CITYWALK_MEDIA_S3_ENDPOINT"),
+    region: required(resolved, "CITYWALK_MEDIA_S3_REGION"),
+    bucket: required(resolved, "CITYWALK_MEDIA_S3_BUCKET"),
+    accessKeyId: required(resolved, "CITYWALK_MEDIA_S3_ACCESS_KEY_ID"),
+    secretAccessKey: required(resolved, "CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY"),
   };
   validateUrl(config.endpoint, "CITYWALK_MEDIA_S3_ENDPOINT", true);
   return config;
+}
+
+function withLocalDevelopmentDefaults(
+  environment: Readonly<Record<string, string | undefined>>,
+): Readonly<Record<string, string | undefined>> {
+  if (environment.NODE_ENV !== "development") return environment;
+  return Object.fromEntries(
+    Object.entries({ ...LOCAL_MEDIA_DEFAULTS, ...environment }).map(([key, value]) => [
+      key,
+      typeof value === "string" && value.trim() === ""
+        ? LOCAL_MEDIA_DEFAULTS[key as keyof typeof LOCAL_MEDIA_DEFAULTS] ?? value
+        : value,
+    ]),
+  );
 }
 
 function required(
@@ -52,4 +76,3 @@ function validateUrl(value: string, name: string, allowLocalHttp: boolean): void
     throw new MediaIntegrityError(`${name} must not contain credentials.`);
   }
 }
-
