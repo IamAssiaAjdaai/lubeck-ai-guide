@@ -7,20 +7,17 @@ type NativeObserveConfig = Parameters<typeof Observe.configure>[0];
 
 export function createNativeObservabilityConfig(
   environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
-  enabledFlag = process.env.EXPO_PUBLIC_CITYWALK_OBSERVABILITY,
+  _enabledFlag = process.env.EXPO_PUBLIC_CITYWALK_OBSERVABILITY,
 ): NativeObserveConfig {
   const normalizedEnvironment = MOBILE_ENVIRONMENTS.includes(
     environment as MobileEnvironment,
   )
     ? (environment as MobileEnvironment)
     : "development";
-  const enabled = enabledFlag?.trim() === "1";
-
   return {
-    dispatchingEnabled: enabled,
+    dispatchingEnabled: false,
     dispatchInDebug: false,
-    errorHandlingEnabled: false,
-    sampleRate: enabled ? 1 : 0,
+    sampleRate: 0,
     environment: normalizedEnvironment,
   };
 }
