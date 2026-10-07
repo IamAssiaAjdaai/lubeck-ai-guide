@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import posthog from "posthog-js";
 
 import {
@@ -32,13 +32,19 @@ function applyDecision(decision: Exclude<AnalyticsConsent, "unset">) {
   window.location.reload();
 }
 
+const subscribeConsentSnapshot = () => () => {};
+
 function useDecision() {
-  const [decision, setDecision] = useState<AnalyticsConsent>("unset");
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    setDecision(getAnalyticsConsent());
-    setReady(true);
-  }, []);
+  const ready = useSyncExternalStore(
+    subscribeConsentSnapshot,
+    () => true,
+    () => false,
+  );
+  const decision = useSyncExternalStore(
+    subscribeConsentSnapshot,
+    getAnalyticsConsent,
+    () => "unset",
+  );
   return { decision, ready };
 }
 
