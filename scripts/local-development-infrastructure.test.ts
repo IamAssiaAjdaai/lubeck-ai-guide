@@ -18,7 +18,7 @@ describe("local development infrastructure bootstrap", () => {
     expect(harness.runCommand.mock.calls).toEqual([
       ["docker", ["info"]],
       ["docker", ["compose", "up", "-d", "--wait"]],
-      ["docker", ["compose", "--profile", "tools", "run", "--rm", "minio-init"]],
+      ["node", ["scripts/ensure-local-media-bucket.mjs"]],
       ["npm.cmd", ["run", "db:migrate"]],
     ]);
     expect(harness.launchDetached).not.toHaveBeenCalled();
@@ -155,17 +155,13 @@ describe("local development infrastructure bootstrap", () => {
     ).rejects.toThrow(/Database migrations failed/);
   });
 
-  it("pins local media images to the Quay community registry", async () => {
+  it("pins local media storage to the multi-arch LocalStack image", async () => {
     const compose = await readFile(resolve(process.cwd(), "docker-compose.yml"), "utf8");
 
-    expect(compose).toContain(
-      "quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z",
-    );
-    expect(compose).toContain(
-      "quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z",
-    );
-    expect(compose).not.toContain("image: minio/minio:");
-    expect(compose).not.toContain("image: minio/mc:");
+    expect(compose).toContain("localstack/localstack:2026.08.3");
+    expect(compose).toContain("SERVICES: s3");
+    expect(compose).toContain('\"4566:4566\"');
+    expect(compose).not.toContain("minio");
   });
 
   it("wires only local dev and start commands to the bootstrap", async () => {
