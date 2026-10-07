@@ -32,6 +32,9 @@
 google-credentials*.json
 gcp-credentials*.json
 
+# local CITYWALK runtime data
+/.citywalk/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
