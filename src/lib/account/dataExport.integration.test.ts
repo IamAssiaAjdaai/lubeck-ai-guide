@@ -199,6 +199,6 @@ describe.runIf(process.env.LIFECYCLE_DB_INTEGRATION === "1")("account data expor
   });
 
   it("rejects an unknown account id", async () => {
-    await expect(buildAccountDataExport(randomUUID())).rejects.toMatchObject<AccountDataExportError>({ status: 404 });
+    await expect(buildAccountDataExport(randomUUID())).rejects.toMatchObject({ status: 404 } satisfies Partial<AccountDataExportError>);
   });
 });
