@@ -195,21 +195,21 @@ describe("CITYWALK native app configuration", () => {
       .not.toContain("EXPO_PUBLIC_CITYWALK_OBSERVABILITY");
   });
 
-  it("requires an explicit non-development activation flag for native observability", () => {
-    expect(() =>
-      assertNativeObservabilityBuildEnvironment("development", "1"),
-    ).toThrow("must not be enabled in development");
+  it("hard-disables native observability dispatch on Expo SDK 57", () => {
     expect(() =>
       assertNativeObservabilityBuildEnvironment("preview", "true"),
     ).toThrow("must be unset, 0, or 1");
     expect(() =>
       assertNativeObservabilityBuildEnvironment("preview", "1"),
-    ).not.toThrow();
+    ).toThrow("not approved for Expo SDK 57");
     expect(() =>
       assertNativeObservabilityBuildEnvironment("production", "1"),
-    ).not.toThrow();
+    ).toThrow("not approved for Expo SDK 57");
     expect(() =>
       assertNativeObservabilityBuildEnvironment("production", undefined),
+    ).not.toThrow();
+    expect(() =>
+      assertNativeObservabilityBuildEnvironment("development", "0"),
     ).not.toThrow();
   });
 
