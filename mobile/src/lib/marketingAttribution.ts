@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getNativeAnalyticsConsent } from "./analyticsConsent";
 
 const STORAGE_KEY = "citywalk:marketing-attribution:v1";
 
@@ -23,7 +24,15 @@ export function readNativeMarketingAttribution(input: Readonly<Record<string, st
 }
 
 export async function persistNativeMarketingAttribution(value: NativeMarketingAttribution): Promise<void> {
+  if (await getNativeAnalyticsConsent() !== "granted") {
+    await clearNativeMarketingAttribution();
+    return;
+  }
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+}
+
+export async function clearNativeMarketingAttribution(): Promise<void> {
+  await AsyncStorage.removeItem(STORAGE_KEY);
 }
 
 export async function loadNativeMarketingAttribution(): Promise<NativeMarketingAttribution | undefined> {
