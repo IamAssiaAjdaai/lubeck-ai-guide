@@ -1,5 +1,7 @@
 import path from "node:path";
 
+type EnvironmentInput = Readonly<Record<string, string | undefined>>;
+
 export type CommandInvocation = Readonly<{
   command: string;
   args: readonly string[];
@@ -34,7 +36,7 @@ function parseDatabaseUrl(databaseUrl: string): URL {
 
 export function toLibpqEnvironment(
   databaseUrl: string,
-  baseEnvironment: NodeJS.ProcessEnv = process.env,
+  baseEnvironment: EnvironmentInput = process.env,
 ): NodeJS.ProcessEnv {
   const parsed = parseDatabaseUrl(databaseUrl);
   const databaseName = decodeURIComponent(parsed.pathname.replace(/^\//, ""));
@@ -76,7 +78,7 @@ export function resolveBackupPath(
 export function buildBackupInvocation(
   databaseUrl: string,
   outputPath: string,
-  baseEnvironment: NodeJS.ProcessEnv = process.env,
+  baseEnvironment: EnvironmentInput = process.env,
 ): CommandInvocation {
   return {
     command: "pg_dump",
@@ -117,7 +119,7 @@ export function assertSafeRestoreTarget(input: RestoreSafetyInput): void {
 export function buildRestoreInvocation(
   restoreDatabaseUrl: string,
   dumpPath: string,
-  baseEnvironment: NodeJS.ProcessEnv = process.env,
+  baseEnvironment: EnvironmentInput = process.env,
 ): CommandInvocation {
   const databaseName = databaseNameFromUrl(restoreDatabaseUrl);
   return {
@@ -138,7 +140,7 @@ export function buildRestoreInvocation(
 
 export function buildRestoreListInvocation(
   dumpPath: string,
-  baseEnvironment: NodeJS.ProcessEnv = process.env,
+  baseEnvironment: EnvironmentInput = process.env,
 ): CommandInvocation {
   return {
     command: "pg_restore",
