@@ -1,9 +1,11 @@
+import { t } from "@citywalk/i18n";
 import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 import type { LiveWalkPresentation } from "../lib/liveWalkPresentation";
 import { colors, radius, spacing } from "../design/tokens";
 import { usePremiumAccess } from "../hooks/usePremiumAccess";
+import { useNativeLocale } from "../localization/LocaleProvider";
 import { AppText, Card, PrimaryButton } from "./ui";
 import { NativeIcon } from "./NativeIcon";
 
@@ -19,6 +21,7 @@ export function NativeLiveWalkCard({
   continueDisabled?: boolean;
 }>) {
   const premium = usePremiumAccess();
+  const { locale } = useNativeLocale();
 
   if (!premium.active) {
     return (
@@ -31,34 +34,34 @@ export function NativeLiveWalkCard({
             size={18}
           />
           <AppText variant="caption" style={styles.liveLabel}>
-            CITYWALK PREMIUM
+            {t(locale, "premium.eyebrow")}
           </AppText>
         </View>
 
-        <AppText style={styles.gateTitle}>Start Live Walk</AppText>
+        <AppText style={styles.gateTitle}>{t(locale, "premium.startLiveWalk")}</AppText>
         <AppText variant="metadata" style={styles.secondary}>
-          Stay guided while you move.
+          {t(locale, "premium.stayGuided")}
         </AppText>
 
         <View style={styles.benefitList}>
-          <PremiumBenefit text="Next stop and progress while you walk" />
-          <PremiumBenefit text="Live ETA and remaining time" />
-          <PremiumBenefit text="Shorten or adapt your route" />
-          <PremiumBenefit text="Get back on time" />
-          <PremiumBenefit text="Premium audio and AI guidance" />
+          <PremiumBenefit text={t(locale, "premium.benefitLockScreen")} />
+          <PremiumBenefit text={t(locale, "premium.benefitEta")} />
+          <PremiumBenefit text={t(locale, "premium.benefitAdapt")} />
+          <PremiumBenefit text={t(locale, "premium.benefitBackOnTime")} />
+          <PremiumBenefit text={t(locale, "premium.benefitAudioAi")} />
         </View>
 
         {premium.status === "loading" ? (
           <AppText variant="metadata" style={styles.secondary}>
-            Checking Premium access…
+            {t(locale, "premium.checkingAccount")}
           </AppText>
         ) : premium.status === "unavailable" ? (
           <AppText variant="metadata" style={styles.secondary}>
-            Premium access could not be checked right now. Your basic route still works.
+            {t(locale, "profile.passUnavailableDescription")}
           </AppText>
         ) : (
           <PrimaryButton
-            label="Unlock CITYWALK Premium"
+            label={t(locale, "premium.unlock")}
             onPress={() => router.push("/premium")}
           />
         )}
@@ -66,7 +69,7 @@ export function NativeLiveWalkCard({
         {onContinue ? (
           <PrimaryButton
             compact
-            label="Continue with basic route"
+            label={t(locale, "premium.continueBasicRoute")}
             tone="secondary"
             disabled={continueDisabled}
             onPress={onContinue}
@@ -106,7 +109,7 @@ export function NativeLiveWalkCard({
           </AppText>
         </View>
         <AppText variant="caption" style={styles.liveLabel}>
-          LIVE WALK
+          {t(locale, "liveWalk.liveWalk")}
         </AppText>
       </View>
 
