@@ -52,18 +52,14 @@ export function getCommerceBaseUrl(
   environment: Readonly<Record<string, string | undefined>> = process.env,
 ): string {
   const explicit = environment.BETTER_AUTH_URL?.trim();
-  if (explicit) {
-    const parsed = new URL(explicit);
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      throw new Error("BETTER_AUTH_URL must use http or https.");
-    }
-    return parsed.origin;
+  if (!explicit) {
+    throw new Error("BETTER_AUTH_URL is required for checkout return URLs.");
   }
 
-  const vercelUrl = environment.VERCEL_URL?.trim();
-  if (!vercelUrl || !/^[a-z0-9.-]+$/i.test(vercelUrl)) {
-    throw new Error("BETTER_AUTH_URL or VERCEL_URL is required for checkout return URLs.");
+  const parsed = new URL(explicit);
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new Error("BETTER_AUTH_URL must use http or https.");
   }
 
-  return `https://${vercelUrl}`;
+  return parsed.origin;
 }
