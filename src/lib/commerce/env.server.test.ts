@@ -30,8 +30,11 @@ describe("commerce environment", () => {
     expect(
       getCommerceBaseUrl({ BETTER_AUTH_URL: "https://citywalk.example/path" }),
     ).toBe("https://citywalk.example");
-    expect(getCommerceBaseUrl({ VERCEL_URL: "preview.example.vercel.app" })).toBe(
-      "https://preview.example.vercel.app",
-    );
+  });
+
+  it("requires an explicit app origin and does not use legacy Vercel variables", () => {
+    expect(() =>
+      getCommerceBaseUrl({ VERCEL_URL: "preview.example.vercel.app" }),
+    ).toThrow(/BETTER_AUTH_URL/);
   });
 });
