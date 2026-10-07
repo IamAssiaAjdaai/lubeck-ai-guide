@@ -18,15 +18,13 @@ describe("local development infrastructure bootstrap", () => {
     expect(harness.runCommand.mock.calls).toEqual([
       ["docker", ["info"]],
       ["docker", ["compose", "up", "-d", "--wait"]],
-      ["node", ["scripts/ensure-local-media-bucket.mjs"]],
       ["npm.cmd", ["run", "db:migrate"]],
     ]);
     expect(harness.launchDetached).not.toHaveBeenCalled();
     expect(harness.logs).toEqual([
       "CITYWALK local setup",
       "✓ Docker Engine ready",
-      "✓ PostgreSQL and media storage healthy",
-      "✓ Local media bucket ready",
+      "✓ PostgreSQL healthy",
       "✓ Database migrations applied",
       "Starting Next.js…",
     ]);
@@ -125,28 +123,18 @@ describe("local development infrastructure bootstrap", () => {
     expect(harness.wait).toHaveBeenCalledTimes(2);
   });
 
-  it("stops when Compose, media bootstrap, or migration execution fails", async () => {
+  it("stops when Compose or migration execution fails", async () => {
     const composeFailure = createHarness();
     composeFailure.runCommand
       .mockResolvedValueOnce({ ok: true })
       .mockResolvedValueOnce({ ok: false });
     await expect(
       ensureLocalInfrastructure(composeFailure.dependencies),
-    ).rejects.toThrow(/PostgreSQL and media storage could not be started/);
+    ).rejects.toThrow(/PostgreSQL could not be started/);
     expect(composeFailure.runCommand).toHaveBeenCalledTimes(2);
-
-    const mediaFailure = createHarness();
-    mediaFailure.runCommand
-      .mockResolvedValueOnce({ ok: true })
-      .mockResolvedValueOnce({ ok: true })
-      .mockResolvedValueOnce({ ok: false });
-    await expect(
-      ensureLocalInfrastructure(mediaFailure.dependencies),
-    ).rejects.toThrow(/media bucket could not be prepared/);
 
     const migrationFailure = createHarness();
     migrationFailure.runCommand
-      .mockResolvedValueOnce({ ok: true })
       .mockResolvedValueOnce({ ok: true })
       .mockResolvedValueOnce({ ok: true })
       .mockResolvedValueOnce({ ok: false });
