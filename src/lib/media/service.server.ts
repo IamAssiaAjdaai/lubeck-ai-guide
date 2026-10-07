@@ -406,6 +406,32 @@ export async function listAuthorizedEntityMedia(
   return listEntityMedia(entityType, entityId);
 }
 
+export async function getAuthorizedPlacePreviewMedia(placeId: number) {
+  const attachments = await listAuthorizedEntityMedia("place", placeId);
+  const candidates = attachments
+    .filter(({ asset }) =>
+      asset.kind === "image" &&
+      asset.approvalStatus === "approved" &&
+      asset.sourceType === "upload" &&
+      Boolean(asset.objectKey),
+    )
+    .sort((left, right) => {
+      const purposeRank = (purpose: string) =>
+        purpose === "hero" ? 0 : purpose === "card" ? 1 : purpose === "gallery" ? 2 : 3;
+      return (
+        purposeRank(left.attachment.purpose) -
+          purposeRank(right.attachment.purpose) ||
+        left.attachment.position - right.attachment.position
+      );
+    });
+  const selected = candidates[0];
+  if (!selected?.asset.objectKey) return undefined;
+  return {
+    alt: selected.asset.originalFilename,
+    url: await getMediaObjectStore().getAdminPreviewUrl(selected.asset.objectKey),
+  };
+}
+
 export async function makeAuthorizedPlaceAudioLive(
   placeId: number,
   locale: unknown,
