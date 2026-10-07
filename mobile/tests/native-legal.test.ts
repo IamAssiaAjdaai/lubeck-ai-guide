@@ -23,6 +23,8 @@ describe("native legal and support access", () => {
     expect(legalScreenSource).toContain("<Screen navigation={false}>");
     expect(legalScreenSource).toContain('testID="native-legal-menu"');
     expect(legalScreenSource).toContain("openCitywalkLegalDestination");
+    expect(legalScreenSource).toContain('testID="native-analytics-consent"');
+    expect(legalScreenSource).toContain("setNativeAnalyticsConsent");
     expect(layoutSource).toContain('<Stack.Screen name="legal"');
   });
 

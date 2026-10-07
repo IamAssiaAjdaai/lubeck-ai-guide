@@ -35,7 +35,10 @@ describe("privacy analytics disclosure", () => {
     expect(privacySource).toContain("Marketing-attributed native walk");
     expect(privacySource).toContain("fixed aggregate identifier");
     expect(inventorySource).toContain("citywalk-marketing-funnel");
-    expect(inventorySource).toContain("does not carry that browser consent/opt-out state");
+    expect(inventorySource).toContain("Implemented native gate");
+    expect(inventorySource).toContain("does not persist Marketing attribution");
+    expect(privacySource).toContain("Native Marketing analytics is also fail-closed");
+    expect(privacySource).toContain("Legal & Support screen");
   });
 
   it("keeps sensitive location and account identifiers outside the analytics claim", () => {

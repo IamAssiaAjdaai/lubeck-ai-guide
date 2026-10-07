@@ -705,6 +705,14 @@
     "accountDeletion": "Eliminar cuenta",
     "accountDeletionDetail": "Solicita la eliminación desde la página web pública",
     "support": "Contactar con soporte",
-    "supportDetail": "support@getcitywalk.com"
+    "supportDetail": "support@getcitywalk.com",
+    "analyticsTitle": "Analítica",
+    "analyticsDescription": "La analítica de marketing opcional ayuda a CITYWALK a medir si una campaña conduce a un paseo. La atribución nativa de campaña no se guarda y los eventos nativos del embudo no se envían salvo que permitas la analítica.",
+    "analyticsStatusLabel": "Elección actual",
+    "analyticsStatus_unset": "Aún no decidido",
+    "analyticsStatus_granted": "Permitido",
+    "analyticsStatus_denied": "Rechazado",
+    "analyticsAllow": "Permitir analítica",
+    "analyticsDecline": "Rechazar analítica"
   }
 }
