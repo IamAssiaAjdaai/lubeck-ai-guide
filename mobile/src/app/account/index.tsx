@@ -26,6 +26,7 @@ import { loadLocalTrips } from "../../lib/tripStorage";
 import { loadSavedPlaces, loadSavedWalks } from "../../lib/walkStorage";
 import { createCitywalkApiClient } from "../../lib/api/client";
 import { getConfiguredApiOrigin } from "../../lib/api/environment";
+import { accountDiagnosticsEnabled } from "../../lib/accountDiagnostics";
 import {
   DEFAULT_TRAVELER_STYLE,
   TRAVELER_STYLE_DURATIONS,
@@ -47,6 +48,7 @@ export default function AccountScreen() {
   const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string; error?: string; reauth?: string }>();
   const { data: session, isPending } = nativeAuthClient.useSession();
   const socialAuth = getNativeSocialAuthAvailability();
+  const showDiagnostics = accountDiagnosticsEnabled();
   const accountWalks = useAccountWalks();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -524,21 +526,23 @@ export default function AccountScreen() {
         </PressableSurface>
       </Card>
 
-      <Card>
-        <AppText variant="heading">Build diagnostics</AppText>
-        <AppText variant="metadata" style={styles.muted}>Environment · {buildEnvironment}</AppText>
-        <AppText variant="metadata" style={styles.muted}>Version · {appVersion} ({buildVersion})</AppText>
-        <AppText variant="metadata" style={styles.muted}>API · {diagnosticApi.origin}</AppText>
-        <PrimaryButton
-          tone="secondary"
-          label={apiDiagnostic === "running" ? "Checking API…" : "Run API check"}
-          disabled={apiDiagnostic === "running"}
-          onPress={() => void runApiDiagnostic()}
-        />
-        {apiDiagnostic !== "idle" && apiDiagnostic !== "running" ? (
-          <AppText variant="metadata" style={styles.muted}>{apiDiagnostic}</AppText>
-        ) : null}
-      </Card>
+      {showDiagnostics ? (
+        <Card>
+          <AppText variant="heading">Build diagnostics</AppText>
+          <AppText variant="metadata" style={styles.muted}>Environment · {buildEnvironment}</AppText>
+          <AppText variant="metadata" style={styles.muted}>Version · {appVersion} ({buildVersion})</AppText>
+          <AppText variant="metadata" style={styles.muted}>API · {diagnosticApi.origin}</AppText>
+          <PrimaryButton
+            tone="secondary"
+            label={apiDiagnostic === "running" ? "Checking API…" : "Run API check"}
+            disabled={apiDiagnostic === "running"}
+            onPress={() => void runApiDiagnostic()}
+          />
+          {apiDiagnostic !== "idle" && apiDiagnostic !== "running" ? (
+            <AppText variant="metadata" style={styles.muted}>{apiDiagnostic}</AppText>
+          ) : null}
+        </Card>
+      ) : null}
     </> : null}
     {!session && !entry ? <Card>
       {socialAuth.apple ? <PrimaryButton
