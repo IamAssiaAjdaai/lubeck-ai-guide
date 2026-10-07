@@ -1,3 +1,5 @@
+import { pathToFileURL } from "node:url";
+
 import {
   CreateBucketCommand,
   PutBucketCorsCommand,
@@ -51,7 +53,7 @@ function isBucketAlreadyPresent(error) {
   return ["BucketAlreadyOwnedByYou", "BucketAlreadyExists"].includes(error.name);
 }
 
-if (import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
     await ensureLocalMediaBucket();
   } catch (error) {
