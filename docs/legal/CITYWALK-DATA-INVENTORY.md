@@ -2,7 +2,7 @@
 
 **Status:** implementation-derived launch document  
 **Audit date:** 2026-10-07  
-**Repository baseline:** `develop` at `5cd28df47d790d3af607c95c24160997872b138d`  
+**Repository baseline:** `develop` at `6bd9ce2f343edab681edc13332a5c975d8dcadac`  
 **Parent launch ticket:** #109
 
 This document describes data flows that are visible in the CITYWALK codebase. It is the source input for the public privacy notice, data-rights operations, App Store App Privacy answers, and Google Play Data Safety answers.
@@ -39,6 +39,7 @@ Everything else below either follows a user/account lifecycle or still needs an 
 | Anonymous native identity | Random visitor UUID | Native AsyncStorage; sent as AI allowance identity | Guest AI allowance and continuity | 180d. Cleared by the native account-deletion local purge on the device where deletion completes. |
 | Account profile | User ID, display name, email, email-verification state, optional image | PostgreSQL Better Auth tables | Account creation, login and profile | User row is hard-deleted when self-service deletion succeeds, subject to retention-review blockers. |
 | Authentication/session data | Session token, expiry, IP address, user agent | PostgreSQL Better Auth `session` table | Authentication and account security | Session expiry is 7d. Sessions cascade on user deletion. |
+| Native auth client state | Better Auth Expo auth cookie/session cache | Native Expo SecureStore via `@better-auth/expo` | Keep the native app authenticated between requests | Better Auth Expo manages the device-side auth cache. After a successful server account deletion, CITYWALK runs device-local traveler cleanup and then best-effort `nativeAuthClient.signOut()`; the lifecycle code relies on the Expo integration to clear its SecureStore auth cookies/session cache. No separate CITYWALK device TTL is encoded; the server session policy remains 7d. |
 | Credential/social account data | Provider account ID, provider ID, password hash, OAuth access/refresh/ID tokens and token expiry/scope fields | PostgreSQL Better Auth `account` table | Credential auth, Google/Apple sign-in and account linking | Cascades on user deletion. Apple token revocation is queued before the account row is deleted when a usable token exists. |
 | Verification/lifecycle proofs | Email verification, reset-password and web-deletion verification records/tokens | PostgreSQL `verification` table | Email verification, password reset, secure web deletion | Email verify 1h; reset 30m; web deletion 30m. Account-owned reset/deletion verification rows are removed during account deletion. |
 | Traveler server profile | Preferred locale | PostgreSQL `traveler_profiles` | Account preferences | Cascades on user deletion. |
@@ -71,6 +72,10 @@ Everything else below either follows a user/account lifecycle or still needs an 
 | Database backups | Copies of PostgreSQL data | Production database/backup infrastructure | Disaster recovery | **OPEN:** no backup retention schedule is encoded in the repo. |
 | Walk feedback | Rating/fit/tags currently saved locally on native device | Native AsyncStorage | Product feedback shown/stored on device | No server feedback database in the reviewed implementation. Purged by native account-deletion prefix cleanup. |
 | Marketing/social CMS content | Campaign/page/social drafts and publication state, staff actor IDs | PostgreSQL Marketing CMS | Acquisition content workflow | Primarily business/editorial data. Staff actor identifiers follow the staff/audit retention-review boundary. |
+
+### Current processor exclusions
+
+- **Upstash is not a current runtime processor on this baseline.** CITYWALK rate limiting is PostgreSQL-backed, and the current root dependencies, `.env.example`, and `cloudflare.config.ts` contain no Upstash dependency or binding. Reintroducing Upstash would require a new inventory review.
 
 ## 3. Location privacy boundary
 
@@ -141,7 +146,8 @@ Current native post-delete cleanup removes:
 - local trips;
 - Live Walk state;
 - user-scoped traveler style;
-- the native anonymous visitor identity.
+- the native anonymous visitor identity;
+- Better Auth Expo auth cookie/session cache through best-effort native sign-out after the server deletion has committed.
 
 Not automatically cleared by the reviewed native deletion purge:
 
@@ -181,7 +187,9 @@ These decisions must be reflected back into this inventory and the public privac
 | Rectification | Display-name/password/profile controls exist; email-change flow remains limited |
 | Analytics consent management | First-party controls implemented for browser and native analytics; both paths are fail-closed before consent, and native decline clears stored Marketing attribution |
 
-The self-service export intentionally excludes password hashes, OAuth access/refresh/ID tokens, session tokens and internal security/audit records. It also cannot include traveler state that exists only on a user's device and was never uploaded to CITYWALK. Users can use the Support/privacy contact path for broader access questions or records that require operator review.\n\n## 9. Store-declaration source-of-truth rule
+The self-service export intentionally excludes password hashes, OAuth access/refresh/ID tokens, session tokens and internal security/audit records. It also cannot include traveler state that exists only on a user's device and was never uploaded to CITYWALK. Users can use the Support/privacy contact path for broader access questions or records that require operator review.
+
+## 9. Store-declaration source-of-truth rule
 
 App Store App Privacy and Google Play Data Safety answers must be produced from this inventory **after** the production configuration is fixed.
 
