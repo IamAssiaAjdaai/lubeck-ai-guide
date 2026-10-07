@@ -705,6 +705,14 @@
     "accountDeletion": "Account deletion",
     "accountDeletionDetail": "Request deletion from the public web resource",
     "support": "Contact support",
-    "supportDetail": "support@getcitywalk.com"
+    "supportDetail": "support@getcitywalk.com",
+    "analyticsTitle": "Analytics",
+    "analyticsDescription": "Optional Marketing analytics helps CITYWALK measure whether a campaign leads to a walk. Native campaign attribution is not stored and native funnel events are not sent unless you allow analytics.",
+    "analyticsStatusLabel": "Current choice",
+    "analyticsStatus_unset": "Not decided",
+    "analyticsStatus_granted": "Allowed",
+    "analyticsStatus_denied": "Declined",
+    "analyticsAllow": "Allow analytics",
+    "analyticsDecline": "Decline analytics"
   }
 }
