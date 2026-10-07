@@ -12,9 +12,20 @@ describe("CitywalkLogo", () => {
     const mark = container.querySelector("svg");
     expect(mark).not.toBeNull();
     expect(mark?.getAttribute("viewBox")).toBe("334 220 590 822");
-    expect(container.querySelector("#citywalk-pin")).not.toBeNull();
-    expect(container.querySelector("#citywalk-route")).not.toBeNull();
+    expect(container.querySelector('[id^="citywalk-pin-"]')).not.toBeNull();
+    expect(container.querySelector('[id^="citywalk-route-"]')).not.toBeNull();
     expect(container.querySelector("circle")).toBeNull();
+  });
+
+  it("keeps gradient ids unique when the logo appears more than once", () => {
+    const { container } = render(
+      <>
+        <CitywalkLogo />
+        <CitywalkLogo markOnly />
+      </>,
+    );
+    const ids = [...container.querySelectorAll("[id]")].map((element) => element.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it("keeps mark-only usage accessible", () => {
