@@ -88,11 +88,11 @@ function getObjectKey(request: Request): string {
 }
 
 function getLocalDevelopmentStore() {
+  if (process.env.NODE_ENV !== "development") {
+    throw new MediaNotFoundError();
+  }
   const store = getMediaObjectStore();
-  if (
-    process.env.NODE_ENV !== "development" ||
-    store.providerId !== "local-filesystem"
-  ) {
+  if (store.providerId !== "local-filesystem") {
     throw new MediaNotFoundError();
   }
   return store;
