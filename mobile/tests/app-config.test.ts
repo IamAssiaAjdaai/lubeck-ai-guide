@@ -121,7 +121,7 @@ describe("CITYWALK native app configuration", () => {
     expect(appJson.expo.plugins).toContain("expo-font");
   });
 
-  it("configures store beta as store-distributed builds against the restored develop Preview API", () => {
+  it("configures store beta as store-distributed builds without a committed preview API origin", () => {
     const storeBeta = easJson.build["store-beta"];
 
     expect(storeBeta).toMatchObject({
@@ -131,15 +131,14 @@ describe("CITYWALK native app configuration", () => {
       android: { buildType: "app-bundle" },
       env: {
         EXPO_PUBLIC_CITYWALK_ENV: "preview",
-        EXPO_PUBLIC_CITYWALK_API_ORIGIN:
-          "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app",
         EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH: "1",
         EXPO_PUBLIC_CITYWALK_APPLE_AUTH: "1",
       },
     });
+    expect(storeBeta.env).not.toHaveProperty("EXPO_PUBLIC_CITYWALK_API_ORIGIN");
   });
 
-  it("configures internal preview builds against the restored develop Preview API with social auth enabled", () => {
+  it("configures internal preview builds without a committed preview API origin", () => {
     expect(easJson.build.preview).toMatchObject({
       developmentClient: false,
       autoIncrement: true,
@@ -149,12 +148,13 @@ describe("CITYWALK native app configuration", () => {
       environment: "preview",
       env: {
         EXPO_PUBLIC_CITYWALK_ENV: "preview",
-        EXPO_PUBLIC_CITYWALK_API_ORIGIN:
-          "https://lubeck-ai-guide-git-develop-iamassiaajdaais-projects.vercel.app",
         EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH: "1",
         EXPO_PUBLIC_CITYWALK_APPLE_AUTH: "1",
       },
     });
+    expect(easJson.build.preview.env).not.toHaveProperty(
+      "EXPO_PUBLIC_CITYWALK_API_ORIGIN",
+    );
   });
 
   it("selects the EAS Production environment with the verified production API origin", () => {

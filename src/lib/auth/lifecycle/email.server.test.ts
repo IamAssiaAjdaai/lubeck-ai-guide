@@ -40,9 +40,7 @@ describe("reset email provider boundary", () => {
   });
   it.each(["delivered@resend.dev", "synthetic@example.test"])("supports the documented test sender without overriding recipient %s", async email => {
     vi.stubEnv("CITYWALK_EMAIL_FROM", "onboarding@resend.dev");
-    vi.stubEnv("BETTER_AUTH_URL", "");
-    vi.stubEnv("VERCEL_URL", "citywalk-lifecycle-test.vercel.app");
-    vi.stubEnv("VERCEL_BRANCH_URL", "citywalk-lifecycle-branch.vercel.app");
+    vi.stubEnv("BETTER_AUTH_URL", "https://preview.example.test");
     const fetcher = vi.fn().mockResolvedValue(Response.json({ id: "synthetic-message-id" }));
     vi.stubGlobal("fetch", fetcher);
     await deliverPasswordResetEmail({ ...source, user: { email } });
@@ -54,7 +52,7 @@ describe("reset email provider boundary", () => {
     expect(body.from).toBe("onboarding@resend.dev");
     expect(body.to).toEqual([email]);
     const link = new URL(body.text.split("\n\n")[1]);
-    expect(link.origin).toBe("https://citywalk-lifecycle-test.vercel.app");
+    expect(link.origin).toBe("https://preview.example.test");
     expect(link.pathname).toBe("/account/reset-password");
     expect(link.searchParams.get("locale")).toBe("en");
     expect(link.searchParams.has("token")).toBe(false);

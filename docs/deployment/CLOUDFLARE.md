@@ -1,6 +1,6 @@
 # Cloudflare Workers deployment
 
-CITYWALK keeps the existing Next.js development path and adds a parallel Cloudflare Workers build through vinext.
+CITYWALK deploys the public web/API runtime to Cloudflare Workers through vinext while keeping the normal Next.js development path available locally.
 
 ## Local verification
 
@@ -32,7 +32,7 @@ npm run build
 
 ## Production release prerequisites
 
-Do not deploy until the Cloudflare production environment has the same required server-only configuration as the current production environment.
+Do not deploy until the Cloudflare production environment has the required server-only configuration.
 
 At minimum, configure the values CITYWALK actually uses, including:
 
@@ -48,21 +48,15 @@ At minimum, configure the values CITYWALK actually uses, including:
 
 Never commit these values.
 
-### Important portability rule
+### Canonical origin rule
 
-Outside Vercel, always set `BETTER_AUTH_URL` explicitly. Auth and checkout code otherwise have Vercel-specific URL fallbacks.
+Every deployed server runtime must set `BETTER_AUTH_URL` explicitly. Auth and checkout do not derive their public origin from hosting-provider variables.
 
-For production, CITYWALK should use one canonical HTTPS web/API origin. Configure that same origin as `BETTER_AUTH_URL` on the Worker and as `EXPO_PUBLIC_CITYWALK_API_ORIGIN` in the EAS Production environment. Do not use a Vercel Preview hostname or a temporary `workers.dev` hostname as the final mobile production origin. A temporary Worker hostname is only for pre-cutover runtime smoke tests.
+For production, CITYWALK uses one canonical HTTPS web/API origin. Configure that same origin as `BETTER_AUTH_URL` on the Worker and as `EXPO_PUBLIC_CITYWALK_API_ORIGIN` for mobile production builds.
 
-The current Vercel fallback remains for existing Preview acceptance only. Cloudflare production must not depend on `VERCEL_URL` or `VERCEL_BRANCH_URL`.
+Preview and store-beta mobile builds must receive `EXPO_PUBLIC_CITYWALK_API_ORIGIN` from the EAS Preview environment. It must be an explicitly approved public HTTPS Cloudflare preview/temporary Worker origin backed by isolated preview data. Do not commit a temporary preview hostname into `mobile/eas.json`, and never point preview builds at production data by default.
 
 ## Database migrations
-
-The old Vercel production build uses:
-
-```bash
-npm run db:migrate && next build
-```
 
 The vinext build intentionally does **not** migrate the database. Run migrations as an explicit release step before deploying a production version that requires them:
 
@@ -75,9 +69,9 @@ This keeps build retries from silently mutating production data.
 
 ## Deployment
 
-Deployment is manual by design. Automatic Git-triggered Vercel deployments remain disabled.
+Deployment is manual by design. Git pushes do not constitute a production release.
 
-After the Cloudflare account, project, production secrets, custom domain, and runtime smoke tests are ready:
+After the Cloudflare account, Worker, production secrets, custom domain, and runtime smoke tests are ready:
 
 ```bash
 npm run build:vinext

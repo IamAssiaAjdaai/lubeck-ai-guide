@@ -37,8 +37,7 @@ function authEmailConfiguration() {
   if (!key || !from || !/^[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+$/.test(from)) {
     throw new LifecycleError("UNAVAILABLE");
   }
-  const base = getBetterAuthEnvironment().baseURL;
-  const origin = typeof base === "string" ? base : base.fallback;
+  const origin = getBetterAuthEnvironment().baseURL;
   if (
     new URL(origin).protocol !== "https:" &&
     process.env.NODE_ENV !== "development" &&

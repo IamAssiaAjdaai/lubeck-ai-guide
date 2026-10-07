@@ -155,9 +155,7 @@ describe("local development infrastructure bootstrap", () => {
     expect(packageJson.scripts.dev).toBe("next dev");
     expect(packageJson.scripts.prestart).toBe("npm run dev:infra");
     expect(packageJson.scripts.start).toBe("next start");
-    expect(packageJson.scripts["vercel-build"]).toBe(
-      "npm run db:migrate && next build",
-    );
+    expect(packageJson.scripts["vercel-build"]).toBeUndefined();
   });
 });
 

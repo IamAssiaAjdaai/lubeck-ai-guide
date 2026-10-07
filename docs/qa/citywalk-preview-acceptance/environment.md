@@ -1,13 +1,14 @@
 # Preview configuration contract
 
-Set values in Vercel's **Preview** scope, then redeploy. Never copy production DB/storage/Stripe credentials into acceptance environments. No secret values are included here. This workspace builds with its existing isolated local PostgreSQL and unique local auth secret, not pulled Preview secrets.
+CITYWALK preview acceptance uses an isolated Cloudflare preview / temporary Worker runtime. Configure preview values in the corresponding Cloudflare environment before an approved preview deployment. Never copy production DB/storage/Stripe credentials into acceptance environments.
+
+Mobile `preview` and `store-beta` EAS profiles use the EAS Preview environment. That environment must provide `EXPO_PUBLIC_CITYWALK_API_ORIGIN` as an explicitly approved public HTTPS Cloudflare preview origin; the repository does not hardcode a temporary deployment hostname.
 
 | Variable / setting | Classification | Requirement |
 | --- | --- | --- |
-| `DATABASE_URL` | Build + runtime required | PostgreSQL for committed migrations, public/auth/CMS/commerce reads, and shared rate limiting. Preview must be isolated. |
-| `BETTER_AUTH_SECRET` | Runtime required; available during build's route initialization | Unique 32+ character secret, server-only. Also keys pseudonymous rate-limit identifiers before database persistence. |
-| `BETTER_AUTH_URL` | Runtime required outside Vercel; optional on Vercel | Local absolute origin; in Preview omit to use validated deployment and branch hosts. An explicit value overrides dynamic hosts. Also determines checkout return origin. |
-| `VERCEL_URL`, `VERCEL_BRANCH_URL` | Platform runtime configuration | Auto-provided exact hosts; do not hardcode a deployment URL or weaken trusted origins. Email/password auth has no external OAuth callback. |
+| `DATABASE_URL` | Runtime required | Isolated PostgreSQL for committed migrations, public/auth/CMS/commerce reads, and shared rate limiting. |
+| `BETTER_AUTH_SECRET` | Runtime required | Unique 32+ character server-only secret. Also keys pseudonymous rate-limit identifiers before database persistence. |
+| `BETTER_AUTH_URL` | Runtime required | Explicit absolute origin for auth and checkout return URLs. No hosting-provider URL fallback is supported. |
 | `CITYWALK_CONTENT_SOURCE` | Runtime selector, defaults to database in production | `database` for acceptance. `auto` is development-only; explicit `code` is not acceptable as a silent outage fallback. |
 | `NEXT_PUBLIC_CITY_MAP_STYLE_URL` | Optional build-time public setting | Defaults to `https://tiles.openfreemap.org/styles/liberty`; no key required. Changing it requires a rebuild. Never put secrets in the URL. |
 | `GROQ_API_KEY` | Feature-specific runtime secret | Existing assistant calls Groq with `openai/gpt-oss-20b`; no OpenAI key/model environment override is used by this route. |
@@ -19,4 +20,4 @@ Set values in Vercel's **Preview** scope, then redeploy. Never copy production D
 | `CITYWALK_MEDIA_MIGRATION_SOURCE_S3_*`, `CITYWALK_MEDIA_MIGRATION_DESTINATION_S3_*` | Operational CLI only | Explicit storage migration profiles, never automatic deployment imports. |
 | `CITYWALK_ADMIN_EMAIL`, `CITYWALK_ADMIN_NAME`, `CITYWALK_ADMIN_PASSWORD` | Operational CLI only | Explicit staff bootstrap, not traveler auth or build configuration. |
 
-Deployment: Next.js; Node 22.x; `npm ci`; `npm run vercel-build` (committed Drizzle migrations followed by production build). No automatic content seed/import. No schema change in this acceptance branch. Auth and paid-media authorization remain server-side; no session or secret data added to public DTOs.
+Deployment target: Cloudflare Workers through vinext; Node compatibility enabled. Validate with `npm ci`, `npm run build:vinext`, and `npm run deploy:vinext:dry-run`. Production/preview database migrations remain explicit release actions and are not coupled to the Worker build. Auth and paid-media authorization remain server-side; no session or secret data is added to public DTOs.
