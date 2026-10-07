@@ -2,7 +2,16 @@
 import React from "react";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-const cache = vi.hoisted(() => ({ peek: vi.fn(), load: vi.fn(), cancelIfUnused: vi.fn(), subscribe: vi.fn(() => vi.fn()) }));
+const cache = vi.hoisted(() => ({
+  peek: vi.fn(),
+  load: vi.fn(),
+  cancelIfUnused: vi.fn(),
+  listener: undefined as (() => void) | undefined,
+  subscribe: vi.fn((_key: string, listener: () => void) => {
+    cache.listener = listener;
+    return vi.fn();
+  }),
+}));
 vi.mock("../src/lib/publicContentCache", () => ({ publicContentCache: cache, publicContentCacheKey: (...parts: string[]) => parts.join(":") }));
 vi.mock("../src/lib/api/instance", () => ({ citywalkApi: {} }));
 import { usePublicCity, usePublicPlace } from "../src/hooks/usePublicContent";
@@ -10,7 +19,11 @@ function Content() {
   const state = usePublicCity("lubeck", "en");
   return <><span>{state.status}</span>{state.status === "error" ? <button onClick={state.retry}>Retry</button> : null}</>;
 }
-beforeEach(() => { vi.clearAllMocks(); cache.peek.mockReturnValue(undefined); });
+beforeEach(() => {
+  vi.clearAllMocks();
+  cache.listener = undefined;
+  cache.peek.mockReturnValue(undefined);
+});
 afterEach(cleanup);
 describe("content loading and explicit recovery", () => {
   it("leaves the error state through a real retry instead of a permanent skeleton", async () => {
@@ -22,6 +35,18 @@ describe("content loading and explicit recovery", () => {
     await screen.findByText("available");
     expect(cache.load).toHaveBeenCalledTimes(2);
   });
+  it("leaves warm cached content when revalidation authoritatively invalidates it", async () => {
+    cache.peek.mockReturnValueOnce({ city: {} }).mockReturnValue(undefined);
+    cache.load.mockImplementation(() => new Promise(() => undefined));
+    render(<Content />);
+
+    expect(screen.getByText("available")).toBeTruthy();
+    await act(async () => cache.listener?.());
+
+    expect(screen.getByText("error")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Retry" })).toBeTruthy();
+  });
+
   it("renders warm content immediately while background refresh fails", async () => {
     cache.peek.mockReturnValue({ city: {} }); cache.load.mockRejectedValueOnce(new Error("offline"));
     render(<Content />);

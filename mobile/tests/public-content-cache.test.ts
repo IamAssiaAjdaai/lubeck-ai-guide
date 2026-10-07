@@ -14,6 +14,7 @@ import {
   PUBLIC_CONTENT_MAX_STALE_MS,
   PUBLIC_CONTENT_OFFLINE_FALLBACK_MS,
   PublicContentCache,
+  PublicContentRemovedError,
   publicContentCacheKey,
 } from "../src/lib/publicContentCache";
 
@@ -98,6 +99,60 @@ describe("native public content cache", () => {
       expect.objectContaining({ key, source: "offline" }),
     );
     expect(cache.peek(key)).toBeUndefined();
+  });
+
+  it.each([404, 410] as const)("does not serve stale fallback after authoritative HTTP %s removal", async (status) => {
+    const now = PUBLIC_CONTENT_MAX_STALE_MS + 60_000;
+    const key = publicContentCacheKey("place", "en", "lubeck", "removed-place");
+    const storageKey = `citywalk:public-content:v${PUBLIC_CONTENT_CACHE_VERSION}:${key}`;
+    const storage = createStorage({
+      [storageKey]: JSON.stringify({
+        version: PUBLIC_CONTENT_CACHE_VERSION,
+        data: { city: "removed-but-cached" },
+        etag: '"removed-v1"',
+        storedAt: 0,
+      }),
+    });
+    const measurements = vi.fn();
+    const cache = new PublicContentCache(storage, () => now, measurements);
+
+    const error = await cache.load(
+      key,
+      parseCity,
+      async () => ({ status }),
+    ).catch((caught: unknown) => caught);
+
+    expect(error).toBeInstanceOf(PublicContentRemovedError);
+    expect(error).toMatchObject({ status });
+    expect(storage.removeItem).toHaveBeenCalledWith(storageKey);
+    expect(measurements).not.toHaveBeenCalledWith(
+      expect.objectContaining({ source: "offline" }),
+    );
+  });
+
+  it("evicts warm cached content when background revalidation confirms removal", async () => {
+    const now = PUBLIC_CONTENT_FRESH_MS + 100;
+    const key = publicContentCacheKey("city", "en", "lubeck");
+    const storageKey = `citywalk:public-content:v${PUBLIC_CONTENT_CACHE_VERSION}:${key}`;
+    const storage = createStorage({
+      [storageKey]: JSON.stringify({
+        version: PUBLIC_CONTENT_CACHE_VERSION,
+        data: { city: "cached" },
+        etag: '"cached-v1"',
+        storedAt: 0,
+      }),
+    });
+    const cache = new PublicContentCache(storage, () => now, vi.fn());
+    const listener = vi.fn();
+    cache.subscribe(key, listener);
+
+    await expect(
+      cache.load(key, parseCity, async () => ({ status: 404 })),
+    ).resolves.toEqual({ city: "cached" });
+
+    await vi.waitFor(() => expect(storage.removeItem).toHaveBeenCalledWith(storageKey));
+    expect(cache.peek(key)).toBeUndefined();
+    expect(listener).toHaveBeenCalled();
   });
 
   it("prefers fresh network content over the offline fallback when connectivity returns", async () => {
