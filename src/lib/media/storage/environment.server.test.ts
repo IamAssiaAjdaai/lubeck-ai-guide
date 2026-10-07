@@ -20,11 +20,11 @@ describe("S3 media environment", () => {
 
   it("uses zero-config local object storage only in development", () => {
     expect(getS3MediaEnvironment({ NODE_ENV: "development" })).toEqual({
-      endpoint: "http://localhost:9000",
+      endpoint: "http://localhost:4566",
       region: "us-east-1",
       bucket: "citywalk-local",
-      accessKeyId: "citywalk-local",
-      secretAccessKey: "citywalk-local-secret",
+      accessKeyId: "test",
+      secretAccessKey: "test",
     });
     expect(getS3MediaEnvironment({
       NODE_ENV: "development",
@@ -35,11 +35,11 @@ describe("S3 media environment", () => {
       CITYWALK_MEDIA_S3_ACCESS_KEY_ID: "",
       CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY: "",
     })).toEqual({
-      endpoint: "http://localhost:9000",
+      endpoint: "http://localhost:4566",
       region: "us-east-1",
       bucket: "citywalk-local",
-      accessKeyId: "citywalk-local",
-      secretAccessKey: "citywalk-local-secret",
+      accessKeyId: "test",
+      secretAccessKey: "test",
     });
   });
 
