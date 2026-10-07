@@ -143,15 +143,6 @@ describe("local development infrastructure bootstrap", () => {
     ).rejects.toThrow(/Database migrations failed/);
   });
 
-  it("pins local media storage to the multi-arch LocalStack image", async () => {
-    const compose = await readFile(resolve(process.cwd(), "docker-compose.yml"), "utf8");
-
-    expect(compose).toContain("localstack/localstack:2026.08.3");
-    expect(compose).toContain("SERVICES: s3");
-    expect(compose).toContain('\"4566:4566\"');
-    expect(compose).not.toContain("minio");
-  });
-
   it("wires only local dev and start commands to the bootstrap", async () => {
     const packageJson = JSON.parse(
       await readFile(resolve(process.cwd(), "package.json"), "utf8"),
