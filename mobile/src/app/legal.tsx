@@ -1,10 +1,17 @@
 import { t, type TranslationKey } from "@citywalk/i18n";
 import { Stack } from "expo-router";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { NativeIcon } from "../components/NativeIcon";
-import { AppText, PressableSurface, Screen } from "../components/ui";
+import { AppText, PressableSurface, PrimaryButton, Screen } from "../components/ui";
 import { colors, spacing } from "../design/tokens";
+import {
+  getNativeAnalyticsConsent,
+  setNativeAnalyticsConsent,
+  type NativeAnalyticsConsent,
+} from "../lib/analyticsConsent";
+import { clearNativeMarketingAttribution } from "../lib/marketingAttribution";
 import {
   CITYWALK_LEGAL_DESTINATIONS,
   openCitywalkLegalDestination,
@@ -29,6 +36,23 @@ const rows = [
 export default function LegalScreen() {
   const { locale, direction } = useNativeLocale();
   const label = (key: TranslationKey) => t(locale, key);
+  const [analyticsConsent, setAnalyticsConsentState] = useState<NativeAnalyticsConsent>("unset");
+
+  useEffect(() => {
+    let active = true;
+    void getNativeAnalyticsConsent().then((decision) => {
+      if (active) setAnalyticsConsentState(decision);
+    });
+    return () => { active = false; };
+  }, []);
+
+  async function chooseAnalyticsConsent(decision: Exclude<NativeAnalyticsConsent, "unset">) {
+    await setNativeAnalyticsConsent(decision);
+    if (decision === "denied") await clearNativeMarketingAttribution();
+    setAnalyticsConsentState(decision);
+  }
+
+  const analyticsStatusKey = `legal.analyticsStatus_${analyticsConsent}` as TranslationKey;
 
   return (
     <Screen navigation={false}>
@@ -64,6 +88,29 @@ export default function LegalScreen() {
           </PressableSurface>
         ))}
       </View>
+
+      <View style={styles.analytics} testID="native-analytics-consent">
+        <AppText variant="heading">{label("legal.analyticsTitle")}</AppText>
+        <AppText variant="metadata" style={styles.secondary}>
+          {label("legal.analyticsDescription")}
+        </AppText>
+        <AppText variant="metadata" style={styles.secondary}>
+          {label("legal.analyticsStatusLabel")}: {label(analyticsStatusKey)}
+        </AppText>
+        <View style={styles.analyticsActions}>
+          <PrimaryButton
+            label={label("legal.analyticsAllow")}
+            onPress={() => { void chooseAnalyticsConsent("granted"); }}
+            disabled={analyticsConsent === "granted"}
+          />
+          <PrimaryButton
+            label={label("legal.analyticsDecline")}
+            tone="secondary"
+            onPress={() => { void chooseAnalyticsConsent("denied"); }}
+            disabled={analyticsConsent === "denied"}
+          />
+        </View>
+      </View>
     </Screen>
   );
 }
@@ -86,4 +133,6 @@ const styles = StyleSheet.create({
   divider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
   icon: { width: 32, alignItems: "center", justifyContent: "center" },
   text: { flex: 1, minWidth: 0, gap: 2 },
+  analytics: { gap: spacing.sm, paddingTop: spacing.md },
+  analyticsActions: { gap: spacing.sm },
 });
