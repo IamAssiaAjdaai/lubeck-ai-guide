@@ -1,5 +1,6 @@
 import posthog from "posthog-js";
 
+import { getAnalyticsConsent } from "./src/lib/analyticsConsent";
 import {
   getBrowserVisitorSessionIdentity,
   getVisitorAnalyticsProperties,
@@ -8,21 +9,34 @@ import {
 const projectToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const apiHost = process.env.NEXT_PUBLIC_POSTHOG_HOST;
 
-// Analytics is optional; missing configuration must never block hydration.
-if (projectToken && apiHost && window.location.pathname !== "/account/reset-password") {
+// Non-essential browser analytics is fail-closed until CITYWALK has an explicit
+// first-party grant. Missing configuration or storage access must never block hydration.
+if (
+  getAnalyticsConsent() === "granted" &&
+  projectToken &&
+  apiHost &&
+  window.location.pathname !== "/account/reset-password"
+) {
   posthog.init(projectToken, {
     api_host: apiHost,
     defaults: "2026-01-30",
+    autocapture: false,
+    capture_pageview: false,
+    capture_pageleave: false,
     capture_exceptions: true,
+    disable_session_recording: true,
+    persistence: "localStorage",
+    request_batching: false,
+    respect_dnt: true,
+    before_send: (event) => getAnalyticsConsent() === "granted" ? event : null,
     debug: process.env.NODE_ENV === "development",
   });
 
   try {
-    if (!posthog.has_opted_out_capturing()) {
-      posthog.register(
-        getVisitorAnalyticsProperties(getBrowserVisitorSessionIdentity()),
-      );
-    }
+    if (posthog.has_opted_out_capturing()) posthog.opt_in_capturing();
+    posthog.register(
+      getVisitorAnalyticsProperties(getBrowserVisitorSessionIdentity()),
+    );
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
       console.warn("Anonymous visitor analytics could not be initialized:", error);

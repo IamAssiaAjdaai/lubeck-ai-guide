@@ -2,7 +2,7 @@
 
 **Status:** implementation-derived launch document  
 **Audit date:** 2026-10-07  
-**Repository baseline:** `develop` at `4934afe4c316a78afee18e7e9d87d58d3e296a81`  
+**Repository baseline:** `develop` at `ccfbae57ce14c093f31ce7ae58d67cfd6e911ccc`  
 **Parent launch ticket:** #109
 
 This document describes data flows that are visible in the CITYWALK codebase. It is the source input for the public privacy notice, data-rights operations, App Store App Privacy answers, and Google Play Data Safety answers.
@@ -51,7 +51,7 @@ Everything else below either follows a user/account lifecycle or still needs an 
 | AI Guide input | Question, limited recent conversation history, city/place context, verified knowledge and privacy-minimized walk/tour context | CITYWALK server request, then Groq model API | Answer a requested AI Guide question | CITYWALK does not write prompt/answer content to PostgreSQL in the reviewed route. Groq provider retention is **OPEN** and must be confirmed from the production provider configuration/terms. |
 | AI Guide local history | Completed user/assistant messages and source metadata | Native AsyncStorage, per city/place | Conversation continuity | Maximum 20 completed turns; no time TTL. Purged by native account-deletion local cleanup. |
 | AI/security rate limits | HMAC/SHA-derived identifier hashes for IP/user/visitor identities + timestamp/scope | PostgreSQL `rate_limit_events` | Abuse prevention and daily AI allowance | 48h maximum in CITYWALK database code. Raw identity is not stored in this table. |
-| PostHog analytics identity | Pseudonymous CITYWALK visitor/session UUIDs | Browser storage and PostHog when configured | Product/journey analytics | Browser UUID TTLs are 180d/24h. PostHog event retention is not defined in this repo and is **OPEN**. |
+| PostHog analytics identity | Pseudonymous CITYWALK visitor/session UUIDs | Browser storage and PostHog when configured **and explicitly allowed** | Product/journey analytics | Browser UUID TTLs are 180d/24h after consent. Declining/withdrawing consent clears the CITYWALK analytics UUIDs. PostHog event retention is not defined in this repo and is **OPEN**. |
 | PostHog events | Examples: `city_opened`, `place_viewed`, Marketing `landing_view` / `build_walk_clicked`, aggregate `entitlement_granted`; client exception capture is enabled in PostHog initialization | PostHog when `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` and host are configured | Product analytics and funnel measurement | Provider/project retention is **OPEN**. Raw GPS, account email and auth tokens are not intentionally added to the reviewed event contracts. |
 | Marketing attribution | UTM source/medium/campaign/content, landing variant, city | URL/query; PostHog event properties when configured; native AsyncStorage after app handoff | Acquisition attribution | Native attribution currently has no TTL or automatic deletion. **OPEN:** define expiry/clear policy before launch analytics is finalized. |
 | Commerce customer mapping | User ID ↔ Stripe/native provider customer ID | PostgreSQL `commerce_customers` | Reconcile purchases | Cascades on user deletion. |
@@ -98,21 +98,21 @@ The reviewed route does **not** insert the question, prompt or model answer into
 
 **OPEN before store/legal finalization:** confirm the production Groq account's data-retention/training settings and record the applicable processor/transfer terms.
 
-## 5. Analytics state and consent blocker
+## 5. Analytics state and consent
 
 The repository now contains an active **optional** PostHog integration:
 
 - `instrumentation-client.ts` calls `posthog.init(...)` when both public PostHog environment values are configured;
-- it enables `capture_exceptions: true`;
+- it enables `capture_exceptions: true` while automatic interaction capture, automatic pageview/pageleave capture and session recording are disabled;
 - `VisitorJourneyTracker` captures city/place journey events;
 - published Marketing pages capture landing and CTA events;
 - verified entitlement grants can emit an aggregate server-side PostHog event;
 - the browser registers CITYWALK pseudonymous visitor/session IDs;
-- capture checks PostHog's local opt-out state.
+- first-party CITYWALK consent gates SDK initialization, analytics UUID creation and client capture; PostHog's own opt-out state remains a secondary SDK safeguard.
 
 This means the older statement that "the current public web code does not activate PostHog analytics" is no longer an accurate description of the code after the multi-city Marketing renderer landed.
 
-**OPEN launch blocker:** no affirmative first-party analytics-consent gate was identified in the reviewed repository. Do not assume the SDK's local opt-out check is equivalent to consent. Production PostHog activation must be aligned with the applicable consent/TDDDG decision before launch.
+**Implemented gate:** browser PostHog analytics is fail-closed until the user explicitly chooses “Allow analytics”. Declining or withdrawing the choice prevents further client capture and clears CITYWALK's analytics visitor/session IDs. The consent decision itself is stored locally so CITYWALK can remember the user's choice. **OPEN:** confirm the production PostHog project's provider-side retention and final operational configuration before launch.
 
 ## 6. Account deletion mapping
 
@@ -146,7 +146,7 @@ A public web deletion cannot erase data that exists only in an offline/disconnec
 
 Before production launch, explicitly configure/document:
 
-1. PostHog project event retention and the analytics consent model.
+1. PostHog project event retention and final production project configuration.
 2. Native Marketing attribution expiry/clear behavior.
 3. Production server/Cloudflare log retention.
 4. PostgreSQL backup retention and deletion propagation.
@@ -172,7 +172,7 @@ These decisions must be reflected back into this inventory and the public privac
 | Machine-readable/user-download data export | **Not implemented** |
 | Internal operator procedure for access/export requests | **OPEN** |
 | Rectification | Display-name/password/profile controls exist; email-change flow remains limited |
-| Analytics consent management | **OPEN launch blocker if PostHog is enabled** |
+| Analytics consent management | First-party allow/decline/withdraw controls implemented; browser analytics is fail-closed before consent |
 
 ## 9. Store-declaration source-of-truth rule
 
@@ -180,7 +180,7 @@ App Store App Privacy and Google Play Data Safety answers must be produced from 
 
 Do not infer that an optional SDK is collecting data merely because it is installed, and do not declare it absent if production configuration activates it. Before preparing final store answers, confirm:
 
-- whether PostHog production env values are set and what consent gate is active;
+- whether PostHog production env values are set, provider retention is configured, and the consent gate remains active in the exact release;
 - whether Apple/Google social sign-in is enabled;
 - whether RevenueCat products/purchases are enabled;
 - which location permissions are present in the exact release build;

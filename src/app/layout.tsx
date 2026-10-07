@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import TravelerAccountShortcut from "@/components/account/TravelerAccountShortcut";
+import { AnalyticsConsentBanner } from "@/components/AnalyticsConsentControl";
 import VisitorJourneyTracker from "@/components/VisitorJourneyTracker";
 import { CITYWALK_PUBLIC_ORIGIN } from "@/lib/site";
 
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <AnalyticsConsentBanner />
         <VisitorJourneyTracker />
         <TravelerAccountShortcut />
         {children}

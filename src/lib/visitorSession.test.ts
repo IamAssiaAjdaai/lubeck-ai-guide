@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   ANONYMOUS_VISITOR_RETENTION_MS,
   ANONYMOUS_VISITOR_STORAGE_KEY,
+  clearBrowserVisitorSessionIdentity,
   resolveVisitorSessionIdentity,
   VISITOR_SESSION_RETENTION_MS,
   VISITOR_SESSION_STORAGE_KEY,
@@ -136,4 +137,21 @@ describe("anonymous visitor sessions", () => {
       sessionId: IDS[1],
     });
   });
+  it("clears the browser analytics identity when consent is withdrawn", () => {
+    resolveVisitorSessionIdentity({
+      persistentStorage: localStorage,
+      sessionStorage,
+      now: 1_000,
+      createId: createIdFactory(),
+    });
+
+    expect(localStorage.getItem(ANONYMOUS_VISITOR_STORAGE_KEY)).not.toBeNull();
+    expect(sessionStorage.getItem(VISITOR_SESSION_STORAGE_KEY)).not.toBeNull();
+
+    clearBrowserVisitorSessionIdentity();
+
+    expect(localStorage.getItem(ANONYMOUS_VISITOR_STORAGE_KEY)).toBeNull();
+    expect(sessionStorage.getItem(VISITOR_SESSION_STORAGE_KEY)).toBeNull();
+  });
+
 });
