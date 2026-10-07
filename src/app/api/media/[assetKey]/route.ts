@@ -6,6 +6,7 @@ import {
   mediaUnavailableResponse,
 } from "@/lib/media/mediaDelivery.server";
 import { isPublicImageVariant } from "@/lib/media/imageVariants";
+import { emitOperationalFailure } from "@/lib/operations/operationalEvent";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,20 +15,30 @@ export async function GET(
   request: Request,
   { params }: Readonly<{ params: Promise<{ assetKey: string }> }>,
 ): Promise<Response> {
-  const { assetKey } = await params;
-  const asset = await getPublicMediaDeliveryAsset(assetKey);
-  if (!asset) return mediaUnavailableResponse();
-  const variant = new URL(request.url).searchParams.get("variant");
-  if (variant !== null) {
-    if (asset.kind !== "image" || !isPublicImageVariant(variant)) {
-      return mediaUnavailableResponse();
+  try {
+    const { assetKey } = await params;
+    const asset = await getPublicMediaDeliveryAsset(assetKey);
+    if (!asset) return mediaUnavailableResponse();
+    const variant = new URL(request.url).searchParams.get("variant");
+    if (variant !== null) {
+      if (asset.kind !== "image" || !isPublicImageVariant(variant)) {
+        return mediaUnavailableResponse();
+      }
+      return deliverPublicImageVariant(asset, variant);
     }
-    return deliverPublicImageVariant(asset, variant);
+    return deliverPrivateMediaObject(
+      request,
+      asset,
+      "Public media",
+      PUBLIC_MEDIA_CACHE_CONTROL,
+    );
+  } catch {
+    emitOperationalFailure({
+      category: "media",
+      code: "MEDIA_DELIVERY_FAILED",
+      severity: "error",
+      retryable: true,
+    });
+    return mediaUnavailableResponse();
   }
-  return deliverPrivateMediaObject(
-    request,
-    asset,
-    "Public media",
-    PUBLIC_MEDIA_CACHE_CONTROL,
-  );
 }

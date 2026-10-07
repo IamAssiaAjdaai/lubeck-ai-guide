@@ -5,6 +5,7 @@ import {
   createRequestDatabase,
   runWithRequestDatabase,
 } from "@/db/client";
+import { emitOperationalFailure } from "@/lib/operations/operationalEvent";
 import { runScheduledAccountErasures } from "./accountErasureSchedule";
 import {
   isAccountErasureScheduleConfigured,
@@ -40,7 +41,16 @@ export default {
     try {
       await client.connect();
     } catch {
-      console.error("CITYWALK_DB_CONNECT_FAILED");
+      emitOperationalFailure(
+        {
+          category: "database",
+          code: "DATABASE_CONNECT_FAILED",
+          severity: "critical",
+          retryable: true,
+          httpStatus: 503,
+        },
+        { environment: env as unknown as Readonly<Record<string, unknown>> },
+      );
       return new Response("Service temporarily unavailable.", { status: 503 });
     }
 
@@ -86,7 +96,15 @@ export default {
         `CITYWALK_ACCOUNT_ERASURE_SCHEDULE_PROCESSED claimed=${result.claimed} completed=${result.completed} failed=${result.failed} lostLeases=${result.lostLeases}`,
       );
     } catch {
-      console.error("CITYWALK_ACCOUNT_ERASURE_SCHEDULE_FAILED");
+      emitOperationalFailure(
+        {
+          category: "account_lifecycle",
+          code: "ACCOUNT_ERASURE_SCHEDULE_FAILED",
+          severity: "critical",
+          retryable: true,
+        },
+        { environment: env as unknown as Readonly<Record<string, unknown>> },
+      );
       throw new Error("CITYWALK_ACCOUNT_ERASURE_SCHEDULE_FAILED");
     } finally {
       await client.end().catch(() => undefined);
