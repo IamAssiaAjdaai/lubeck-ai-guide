@@ -112,17 +112,12 @@ export async function ensureLocalInfrastructure(
   }
   dependencies.log("✓ PostgreSQL and media storage healthy");
 
-  const mediaBucket = await dependencies.runCommand("docker", [
-    "compose",
-    "--profile",
-    "tools",
-    "run",
-    "--rm",
-    "minio-init",
+  const mediaBucket = await dependencies.runCommand("node", [
+    "scripts/ensure-local-media-bucket.mjs",
   ]);
   if (!mediaBucket.ok) {
     throw new LocalInfrastructureError(
-      "Local media bucket could not be prepared. Run `docker compose --profile tools run --rm minio-init` to inspect the error.",
+      "Local media bucket could not be prepared. Run `node scripts/ensure-local-media-bucket.mjs` to inspect the error.",
     );
   }
   dependencies.log("✓ Local media bucket ready");
