@@ -1,5 +1,4 @@
 import type { ConfigContext, ExpoConfig } from "expo/config";
-import { resolveApiOrigin } from "./src/lib/api/environment";
 
 const MOBILE_ENVIRONMENTS = ["development", "preview", "production"] as const;
 type MobileEnvironment = (typeof MOBILE_ENVIRONMENTS)[number];
@@ -14,7 +13,34 @@ export function assertPreviewBuildEnvironment(
   configuredOrigin = process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN,
 ): void {
   if (environment !== "preview") return;
-  resolveApiOrigin({ environment, configuredOrigin });
+  const origin = configuredOrigin?.trim();
+  if (!origin) {
+    throw new Error(
+      "A CITYWALK API origin is required for preview builds.",
+    );
+  }
+
+  let url: URL;
+  try {
+    url = new URL(origin);
+  } catch {
+    throw new Error("Preview CITYWALK API origin must be an absolute HTTPS URL.");
+  }
+
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.pathname !== "/" ||
+    url.search ||
+    url.hash
+  ) {
+    throw new Error("Preview CITYWALK API origin must use HTTPS and contain only scheme and host.");
+  }
+
+  if (isLocalBuildHostname(url.hostname)) {
+    throw new Error("Preview CITYWALK API origin cannot target a local host.");
+  }
 }
 
 export function assertProductionBuildEnvironment(
@@ -148,6 +174,31 @@ export function createCitywalkExpoConfig(
     },
     plugins: [...(completeConfig.plugins ?? []), DEVELOPMENT_HTTP_PLUGIN],
   };
+}
+
+function isLocalBuildHostname(hostname: string): boolean {
+  const normalized = hostname
+    .toLowerCase()
+    .replace(/\.$/, "")
+    .replace(/^\[|\]$/g, "");
+  const isIpv6 = normalized.includes(":");
+  return (
+    normalized === "localhost" ||
+    normalized.endsWith(".localhost") ||
+    normalized.endsWith(".local") ||
+    normalized === "0.0.0.0" ||
+    normalized.startsWith("127.") ||
+    (isIpv6 && (
+      normalized === "::1" ||
+      normalized.startsWith("fc") ||
+      normalized.startsWith("fd") ||
+      /^fe[89ab]/.test(normalized)
+    )) ||
+    normalized.startsWith("10.") ||
+    normalized.startsWith("169.254.") ||
+    normalized.startsWith("192.168.") ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(normalized)
+  );
 }
 
 export default ({ config }: ConfigContext): ExpoConfig => {
