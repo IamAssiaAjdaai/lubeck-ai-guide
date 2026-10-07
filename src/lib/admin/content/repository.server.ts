@@ -328,7 +328,7 @@ export async function getCmsPlace(id: number) {
       .where(eq(placeContentTagsTable.placeId, id))
       .orderBy(asc(contentTagsTable.slug))
       .then((rows) => rows.map(({ content_tags }) => content_tags)),
-    getDb()
+    db
       .select({
         source: contentSourcesTable,
         required: placeSourcesTable.required,
@@ -341,7 +341,7 @@ export async function getCmsPlace(id: number) {
       .where(eq(placeSourcesTable.placeId, id))
       .orderBy(asc(contentSourcesTable.publisher), asc(contentSourcesTable.title)),
     listCmsWorkflowEvents("place", id),
-    getDb()
+    db
       .select()
       .from(placeRevisionsTable)
       .where(
