@@ -705,6 +705,14 @@
     "accountDeletion": "Radera konto",
     "accountDeletionDetail": "Begär radering via den offentliga webbsidan",
     "support": "Kontakta support",
-    "supportDetail": "support@getcitywalk.com"
+    "supportDetail": "support@getcitywalk.com",
+    "analyticsTitle": "Analys",
+    "analyticsDescription": "Valfri marknadsanalys hjälper CITYWALK att mäta om en kampanj leder till en promenad. Native kampanjattribution lagras inte och native funnel-händelser skickas inte om du inte tillåter analys.",
+    "analyticsStatusLabel": "Nuvarande val",
+    "analyticsStatus_unset": "Inte valt ännu",
+    "analyticsStatus_granted": "Tillåtet",
+    "analyticsStatus_denied": "Avböjt",
+    "analyticsAllow": "Tillåt analys",
+    "analyticsDecline": "Avböj analys"
   }
 }
