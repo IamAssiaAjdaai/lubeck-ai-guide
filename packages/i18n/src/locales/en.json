@@ -490,7 +490,11 @@
     "emailNotVerified": "Please verify your email before signing in.",
     "verificationSent": "Check your inbox or spam folder and verify your email before signing in.",
     "resendVerification": "Resend verification email",
-    "verificationResent": "If this account still needs verification, check your inbox or spam folder for a new verification email."
+    "verificationResent": "If this account still needs verification, check your inbox or spam folder for a new verification email.",
+    "exportData": "Export my data",
+    "dataExportHelp": "Creates a JSON export of server-held account data. Device-only data and security secrets are not included.",
+    "dataExportReady": "Your CITYWALK data export is ready to share or save.",
+    "dataExportUnavailable": "Your data export is temporarily unavailable. Try again later."
   },
   "explore": {
     "all": "All",
