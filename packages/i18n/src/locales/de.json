@@ -705,6 +705,14 @@
     "accountDeletion": "Kontolöschung",
     "accountDeletionDetail": "Öffentliche Seite zum Löschen deines Kontos",
     "support": "Support kontaktieren",
-    "supportDetail": "support@getcitywalk.com"
+    "supportDetail": "support@getcitywalk.com",
+    "analyticsTitle": "Analytics",
+    "analyticsDescription": "Optionale Marketing-Analysen helfen CITYWALK zu messen, ob eine Kampagne zu einem Spaziergang führt. Native Kampagnenzuordnung wird nicht gespeichert und native Funnel-Ereignisse werden nicht gesendet, solange du Analytics nicht erlaubst.",
+    "analyticsStatusLabel": "Aktuelle Auswahl",
+    "analyticsStatus_unset": "Noch nicht entschieden",
+    "analyticsStatus_granted": "Erlaubt",
+    "analyticsStatus_denied": "Abgelehnt",
+    "analyticsAllow": "Analytics erlauben",
+    "analyticsDecline": "Analytics ablehnen"
   }
 }
