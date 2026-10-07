@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { AdminAuthorizationError, requireAdminCapability } from "@/lib/admin/authorization.server";
+
 export const dynamic = "force-dynamic";
 
 const PHOTON_ORIGIN = "https://photon.komoot.io";
@@ -22,6 +24,15 @@ type PhotonFeature = Readonly<{
 }>;
 
 export async function GET(request: NextRequest) {
+  try {
+    await requireAdminCapability("places:manage");
+  } catch (error) {
+    if (error instanceof AdminAuthorizationError) {
+      return NextResponse.json({ suggestions: [] }, { status: error.status });
+    }
+    throw error;
+  }
+
   const q = request.nextUrl.searchParams.get("q")?.trim() ?? "";
   const city = request.nextUrl.searchParams.get("city")?.trim() ?? "";
   const country = request.nextUrl.searchParams.get("country")?.trim().toUpperCase() ?? "";
