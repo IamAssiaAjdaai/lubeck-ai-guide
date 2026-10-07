@@ -5,7 +5,7 @@ import { cityLaunches } from "@citywalk/traveler-core/cityAvailability";
 import Constants from "expo-constants";
 import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BackHandler, StyleSheet, TextInput, View } from "react-native";
+import { BackHandler, Share, StyleSheet, TextInput, View } from "react-native";
 
 import { NativeIcon } from "../../components/NativeIcon";
 import { PasswordField } from "../../components/PasswordField";
@@ -13,6 +13,7 @@ import { AppText, Card, PrimaryButton, PressableSurface, Screen, StatusMessage }
 import { CitywalkLoading } from "../../components/CitywalkLoading";
 import { colors, radius, spacing, typography } from "../../design/tokens";
 import { deleteNativeAccount } from "../../lib/auth/lifecycle";
+import { fetchNativeAccountDataExport } from "../../lib/accountDataExport";
 import { nativeAuthClient } from "../../lib/auth/client";
 import { getNativeSocialAuthAvailability } from "../../lib/auth/configuration";
 import { classifyNativeAuthError, type NativeAuthErrorCode, validateDisplayName, validateNativeAuthInput, validateNewPassword } from "../../lib/auth/errors";
@@ -37,7 +38,7 @@ import {
 
 type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "preferences" | "change-password" | "delete";
 type SocialProvider = "google" | "apple";
-type Action = "sign-in" | "sign-up" | "edit" | "preferences" | "change-password" | "sign-out" | "reset" | "resend-verification" | "delete" | "social-google" | "social-apple" | "link-google" | "link-apple";
+type Action = "sign-in" | "sign-up" | "edit" | "preferences" | "change-password" | "sign-out" | "reset" | "resend-verification" | "delete" | "export" | "social-google" | "social-apple" | "link-google" | "link-apple";
 
 const diagnosticApi = createCitywalkApiClient({ origin: getConfiguredApiOrigin() });
 
@@ -197,7 +198,8 @@ export default function AccountScreen() {
       if (!mounted.current || token !== request.current) return;
       if (result.error) {
         const code = typeof result.error === "object" && result.error !== null && "code" in result.error ? result.error.code : undefined;
-        if (action === "reset" || action === "delete") setLifecycleFailure(code === "RETENTION_REVIEW_REQUIRED" ? "lifecycle.retentionBlocked" : code === "RATE_LIMITED" ? "lifecycle.rateLimited" : code === "REAUTH_REQUIRED" ? "lifecycle.reauthRequired" : "lifecycle.unavailable");
+        if (action === "export") setLifecycleFailure("profile.dataExportUnavailable");
+        else if (action === "reset" || action === "delete") setLifecycleFailure(code === "RETENTION_REVIEW_REQUIRED" ? "lifecycle.retentionBlocked" : code === "RATE_LIMITED" ? "lifecycle.rateLimited" : code === "REAUTH_REQUIRED" ? "lifecycle.reauthRequired" : "lifecycle.unavailable");
         else setFailure(classifyNativeAuthError(result.error));
         void triggerCitywalkHaptic("error"); return;
       }
@@ -334,6 +336,19 @@ export default function AccountScreen() {
       return result.error ? { error: result.error } : result.data?.status === true ? {} : { error: { code: "UNAVAILABLE" } };
     }, () => setNotice("profile.verificationResent"));
   }
+  function exportAccountData() {
+    if (!session) return;
+    void perform("export", async () => {
+      try {
+        const data = await fetchNativeAccountDataExport(session.user.id);
+        await Share.share({ message: data, title: label("profile.exportData") });
+        return {};
+      } catch {
+        return { error: { code: "UNAVAILABLE" } };
+      }
+    }, () => setNotice("profile.dataExportReady"));
+  }
+
   function deleteAccount() {
     if (!session || !deleteConfirmed) return;
     if (hasCredential && !password) { setFailure("current_password_required"); return; }
@@ -495,6 +510,14 @@ export default function AccountScreen() {
           <AppText variant="metadata" style={[styles.muted, styles.accountEmail]} numberOfLines={1}>{session.user.email}</AppText>
         </View>
         {hasCredential ? <PrimaryButton label={label("profile.changePassword")} tone="secondary" onPress={() => open("change-password")} /> : null}
+        <AppText variant="metadata" style={styles.muted}>{label("profile.dataExportHelp")}</AppText>
+        <PrimaryButton
+          label={label("profile.exportData")}
+          tone="secondary"
+          busy={busy === "export"}
+          disabled={Boolean(busy)}
+          onPress={exportAccountData}
+        />
         <PrimaryButton label={messages.signOut} busy={busy === "sign-out"} onPress={() => void perform("sign-out", () => nativeAuthClient.signOut(), () => setEntry(undefined))} tone="secondary" />
         <PressableSurface accessibilityRole="button" onPress={() => open("delete")} style={styles.deleteAction}>
           <AppText variant="label" style={styles.destructive}>{label("profile.deleteAccount")}</AppText>
