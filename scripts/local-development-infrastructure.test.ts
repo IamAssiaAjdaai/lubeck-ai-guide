@@ -155,6 +155,19 @@ describe("local development infrastructure bootstrap", () => {
     ).rejects.toThrow(/Database migrations failed/);
   });
 
+  it("pins local media images to the Quay community registry", async () => {
+    const compose = await readFile(resolve(process.cwd(), "docker-compose.yml"), "utf8");
+
+    expect(compose).toContain(
+      "quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z",
+    );
+    expect(compose).toContain(
+      "quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z",
+    );
+    expect(compose).not.toContain("image: minio/minio:");
+    expect(compose).not.toContain("image: minio/mc:");
+  });
+
   it("wires only local dev and start commands to the bootstrap", async () => {
     const packageJson = JSON.parse(
       await readFile(resolve(process.cwd(), "package.json"), "utf8"),
