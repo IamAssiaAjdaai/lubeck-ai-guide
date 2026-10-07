@@ -113,7 +113,7 @@ export function NativeLiveWalkCard({
         </AppText>
       </View>
 
-      <AppText numberOfLines={2} style={styles.destination}>
+      <AppText style={styles.destination}>
         {props.destination}
       </AppText>
 
