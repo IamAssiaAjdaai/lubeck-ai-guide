@@ -29,10 +29,7 @@ export function PlaceLocationLookup({
   }, [cityName, countryCode, trimmedQuery]);
 
   useEffect(() => {
-    if (!searchUrl) {
-      setSuggestions([]);
-      return;
-    }
+    if (!searchUrl) return;
 
     const controller = new AbortController();
     const timeout = window.setTimeout(async () => {
@@ -76,7 +73,10 @@ export function PlaceLocationLookup({
         <input
           autoComplete="off"
           className="min-h-11 w-full rounded-xl border border-border bg-white px-3 py-2 text-sm font-normal outline-none focus:border-primary focus:ring-2 focus:ring-blue-100"
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            if (event.target.value.trim().length < 3) setSuggestions([]);
+          }}
           placeholder={`Search in ${cityName}, e.g. Elbphilharmonie`}
           type="search"
           value={query}
