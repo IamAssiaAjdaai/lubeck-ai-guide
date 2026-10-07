@@ -76,6 +76,20 @@ The restore tool:
 
 A real restore drill is complete only when the operator records the date, backup timestamp, target environment, verification result and any remediation in #110 or the launch checklist.
 
+## Automated isolated restore drill
+
+The repository includes `.github/workflows/database-restore-drill.yml`. It runs against an ephemeral PostgreSQL 16 service only and exercises the real recovery commands end to end:
+
+1. migrate and seed a source test database;
+2. verify the source database;
+3. run `npm run db:backup` to create a real custom-format dump and checksum metadata;
+4. create a separate `citywalk_restore` database;
+5. run `npm run db:restore -- --confirm-non-production` against that separate target;
+6. rely on the restore command's built-in `db:verify` check;
+7. verify that the dump and checksum sidecar are non-empty.
+
+The workflow has no production credentials and never targets a production database. A successful workflow run is valid evidence that the portable backup/restore path works against a safe non-production target. It does not replace managed production backups or provider-level PITR testing.
+
 ## Production recovery
 
 Do not run the repository restore command directly against production. Production recovery must be coordinated and should prefer the managed PostgreSQL provider's point-in-time/snapshot recovery path.
