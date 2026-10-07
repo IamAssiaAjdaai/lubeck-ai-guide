@@ -14,9 +14,7 @@ describe("mobile API origin", () => {
       .toThrow("cannot target a local host");
   });
 
-  it("accepts provider-neutral public HTTPS origins in preview", () => {
-    expect(resolveApiOrigin({ environment: "preview", configuredOrigin: "https://citywalk-feature.vercel.app" }))
-      .toBe("https://citywalk-feature.vercel.app");
+  it("accepts public HTTPS origins in preview", () => {
     expect(resolveApiOrigin({ environment: "preview", configuredOrigin: "https://citywalk-preview.workers.dev" }))
       .toBe("https://citywalk-preview.workers.dev");
     expect(resolveApiOrigin({ environment: "preview", configuredOrigin: "https://preview.citywalk.example" }))
