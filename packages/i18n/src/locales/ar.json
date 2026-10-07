@@ -705,6 +705,14 @@
     "accountDeletion": "حذف الحساب",
     "accountDeletionDetail": "اطلب حذف حسابك عبر صفحة الويب العامة",
     "support": "التواصل مع الدعم",
-    "supportDetail": "support@getcitywalk.com"
+    "supportDetail": "support@getcitywalk.com",
+    "analyticsTitle": "التحليلات",
+    "analyticsDescription": "تساعد تحليلات التسويق الاختيارية CITYWALK على قياس ما إذا كانت الحملة تؤدي إلى بدء جولة مشي. لا يتم حفظ إحالة الحملة داخل التطبيق ولا إرسال أحداث المسار التحليلي ما لم تسمحي بالتحليلات.",
+    "analyticsStatusLabel": "الاختيار الحالي",
+    "analyticsStatus_unset": "لم يتم الاختيار بعد",
+    "analyticsStatus_granted": "مسموح",
+    "analyticsStatus_denied": "مرفوض",
+    "analyticsAllow": "السماح بالتحليلات",
+    "analyticsDecline": "رفض التحليلات"
   }
 }
