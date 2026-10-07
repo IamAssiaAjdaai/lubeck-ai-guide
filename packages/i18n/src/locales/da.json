@@ -705,6 +705,14 @@
     "accountDeletion": "Slet konto",
     "accountDeletionDetail": "Anmod om sletning via den offentlige webside",
     "support": "Kontakt support",
-    "supportDetail": "support@getcitywalk.com"
+    "supportDetail": "support@getcitywalk.com",
+    "analyticsTitle": "Analyse",
+    "analyticsDescription": "Valgfri marketinganalyse hjælper CITYWALK med at måle, om en kampagne fører til en gåtur. Native kampagnetilskrivning gemmes ikke, og native funnel-hændelser sendes ikke, medmindre du tillader analyse.",
+    "analyticsStatusLabel": "Nuværende valg",
+    "analyticsStatus_unset": "Ikke valgt endnu",
+    "analyticsStatus_granted": "Tilladt",
+    "analyticsStatus_denied": "Afvist",
+    "analyticsAllow": "Tillad analyse",
+    "analyticsDecline": "Afvis analyse"
   }
 }
