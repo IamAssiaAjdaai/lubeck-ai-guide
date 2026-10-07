@@ -17,7 +17,7 @@ describe("local development infrastructure bootstrap", () => {
 
     expect(harness.runCommand.mock.calls).toEqual([
       ["docker", ["info"]],
-      ["docker", ["compose", "up", "-d", "--wait"]],
+      ["docker", ["compose", "up", "-d", "--wait", "--remove-orphans"]],
       ["npm.cmd", ["run", "db:migrate"]],
     ]);
     expect(harness.launchDetached).not.toHaveBeenCalled();
