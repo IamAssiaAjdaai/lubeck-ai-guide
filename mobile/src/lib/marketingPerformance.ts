@@ -1,4 +1,5 @@
 import { getConfiguredApiOrigin } from "./api/environment";
+import { getNativeAnalyticsConsent } from "./analyticsConsent";
 import { loadNativeMarketingAttribution } from "./marketingAttribution";
 
 export type NativeMarketingFunnelEvent = "walk_started" | "walk_completed";
@@ -9,6 +10,7 @@ export async function captureNativeMarketingFunnelEvent(
   send: typeof fetch = fetch,
 ): Promise<void> {
   try {
+    if (await getNativeAnalyticsConsent() !== "granted") return;
     const attribution = await loadNativeMarketingAttribution();
     if (!attribution || attribution.citySlug !== citySlug) return;
     await send(new URL("/api/analytics/marketing-funnel", getConfiguredApiOrigin()), {
