@@ -12,11 +12,11 @@ export type S3MediaEnvironment = Readonly<{
 
 const LOCAL_MEDIA_DEFAULTS = {
   CITYWALK_MEDIA_STORAGE: "s3",
-  CITYWALK_MEDIA_S3_ENDPOINT: "http://localhost:9000",
+  CITYWALK_MEDIA_S3_ENDPOINT: "http://localhost:4566",
   CITYWALK_MEDIA_S3_REGION: "us-east-1",
   CITYWALK_MEDIA_S3_BUCKET: "citywalk-local",
-  CITYWALK_MEDIA_S3_ACCESS_KEY_ID: "citywalk-local",
-  CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY: "citywalk-local-secret",
+  CITYWALK_MEDIA_S3_ACCESS_KEY_ID: "test",
+  CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY: "test",
 } as const;
 
 export function getS3MediaEnvironment(
