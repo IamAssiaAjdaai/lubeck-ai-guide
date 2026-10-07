@@ -15,26 +15,5 @@ services:
       timeout: 5s
       retries: 10
 
-  localstack:
-    image: localstack/localstack:2026.08.3
-    environment:
-      SERVICES: s3
-      AWS_DEFAULT_REGION: us-east-1
-      PERSISTENCE: "1"
-    ports:
-      - "4566:4566"
-    volumes:
-      - citywalk_localstack_data:/var/lib/localstack
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -fsS http://localhost:4566/_localstack/health >/dev/null",
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
 volumes:
   citywalk_postgres_data:
-  citywalk_localstack_data:
