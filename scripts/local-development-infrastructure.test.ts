@@ -132,7 +132,7 @@ describe("local development infrastructure bootstrap", () => {
       .mockResolvedValueOnce({ ok: false });
     await expect(
       ensureLocalInfrastructure(composeFailure.dependencies),
-    ).rejects.toThrow(/PostgreSQL could not be started/);
+    ).rejects.toThrow(/PostgreSQL and media storage could not be started/);
     expect(composeFailure.runCommand).toHaveBeenCalledTimes(2);
 
     const mediaFailure = createHarness();
