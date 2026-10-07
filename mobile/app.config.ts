@@ -8,6 +8,41 @@ export const CITYWALK_STORE_IDENTIFIER = "com.citywalk.app";
 export const CITYWALK_DEVELOPMENT_IDENTIFIER = `${CITYWALK_STORE_IDENTIFIER}.dev`;
 export const CITYWALK_APP_LINK_HOST = "getcitywalk.com";
 
+export function assertPreviewBuildEnvironment(
+  environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
+  configuredOrigin = process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN,
+): void {
+  if (environment !== "preview") return;
+  const origin = configuredOrigin?.trim();
+  if (!origin) {
+    throw new Error(
+      "A CITYWALK API origin is required for preview builds.",
+    );
+  }
+
+  let url: URL;
+  try {
+    url = new URL(origin);
+  } catch {
+    throw new Error("Preview CITYWALK API origin must be an absolute HTTPS URL.");
+  }
+
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.pathname !== "/" ||
+    url.search ||
+    url.hash
+  ) {
+    throw new Error("Preview CITYWALK API origin must use HTTPS and contain only scheme and host.");
+  }
+
+  if (isLocalBuildHostname(url.hostname)) {
+    throw new Error("Preview CITYWALK API origin cannot target a local host.");
+  }
+}
+
 export function assertProductionBuildEnvironment(
   environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
   configuredOrigin = process.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN,
@@ -141,8 +176,34 @@ export function createCitywalkExpoConfig(
   };
 }
 
+function isLocalBuildHostname(hostname: string): boolean {
+  const normalized = hostname
+    .toLowerCase()
+    .replace(/\.$/, "")
+    .replace(/^\[|\]$/g, "");
+  const isIpv6 = normalized.includes(":");
+  return (
+    normalized === "localhost" ||
+    normalized.endsWith(".localhost") ||
+    normalized.endsWith(".local") ||
+    normalized === "0.0.0.0" ||
+    normalized.startsWith("127.") ||
+    (isIpv6 && (
+      normalized === "::1" ||
+      normalized.startsWith("fc") ||
+      normalized.startsWith("fd") ||
+      /^fe[89ab]/.test(normalized)
+    )) ||
+    normalized.startsWith("10.") ||
+    normalized.startsWith("169.254.") ||
+    normalized.startsWith("192.168.") ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(normalized)
+  );
+}
+
 export default ({ config }: ConfigContext): ExpoConfig => {
   const environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development";
+  assertPreviewBuildEnvironment(environment);
   assertProductionBuildEnvironment(environment);
   assertRevenueCatBuildEnvironment(environment);
   assertNativeObservabilityBuildEnvironment(environment);
