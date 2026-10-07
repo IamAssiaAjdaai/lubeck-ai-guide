@@ -35,6 +35,7 @@ services:
 
   minio-init:
     image: minio/mc:latest
+    profiles: ["tools"]
     depends_on:
       minio:
         condition: service_healthy
