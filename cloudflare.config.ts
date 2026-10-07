@@ -12,6 +12,7 @@ export default defineConfig({
       CITYWALK_CONTENT_SOURCE: bindings.text("database"),
       CITYWALK_MEDIA_STORAGE: bindings.text("s3"),
       CITYWALK_DATABASE_RUNTIME: bindings.text("hyperdrive"),
+      CITYWALK_RUNTIME_ENV: bindings.text("production"),
       HYPERDRIVE: bindings.hyperdrive({
         id: "390958927c2946be8571ec5282b35ce6",
       }),
