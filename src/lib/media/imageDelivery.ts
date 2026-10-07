@@ -7,6 +7,7 @@
 export function isApplicationMediaPath(source: string): boolean {
   return (
     source.startsWith("/api/media/") ||
-    source.startsWith("/api/commerce/media/")
+    source.startsWith("/api/commerce/media/") ||
+    source.startsWith("/api/admin/media/local-object")
   );
 }
