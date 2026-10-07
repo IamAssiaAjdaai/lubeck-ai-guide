@@ -16,6 +16,7 @@ import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { useReducedMotion } from "../lib/motion";
 import { colors, layout, motion, radius, shadows, spacing } from "../design/tokens";
+import { useResponsiveTextLayout } from "../design/responsiveText";
 import { AppText, PressableSurface, PrimaryButton } from "./ui";
 import { NativeContentImage } from "./NativeContentImage";
 import { NativeIcon } from "./NativeIcon";
@@ -81,12 +82,17 @@ export function MetricSummary({
 }: {
   items: readonly { label: string; value: string; icon?: ReactNode }[];
 }) {
+  const { expanded } = useResponsiveTextLayout(3);
   return (
-    <View style={styles.metrics}>
+    <View style={[styles.metrics, expanded && styles.metricsExpanded]}>
       {items.map((item, i) => (
         <View
           key={item.label}
-          style={[styles.metric, i > 0 && styles.metricDivider]}
+          style={[
+            styles.metric,
+            expanded && styles.metricExpanded,
+            i > 0 && (expanded ? styles.metricDividerExpanded : styles.metricDivider),
+          ]}
         >
           <View style={styles.metricValue}>
             {item.icon}
@@ -117,6 +123,7 @@ export function V2Itinerary({
 }) {
   const { locale, direction } = useNativeLocale(),
     t = walkCopy(locale);
+  const { expanded } = useResponsiveTextLayout();
   return (
     <View style={[styles.itinerary, compact && styles.compactItinerary]}>
       {places.map((place, index) => {
@@ -149,7 +156,7 @@ export function V2Itinerary({
             <View style={styles.rowCopy}>
               <AppText
                 variant="label"
-                numberOfLines={compact ? 1 : undefined}
+                numberOfLines={compact && !expanded ? 1 : undefined}
                 style={{
                   writingDirection: direction,
                   textAlign: direction === "rtl" ? "right" : "left",
@@ -157,7 +164,11 @@ export function V2Itinerary({
               >
                 {nativePlaceName(citySlug, place.slug, place.content.name, locale)}
               </AppText>
-              <AppText variant="caption" numberOfLines={1} style={styles.muted}>
+              <AppText
+                variant="caption"
+                numberOfLines={compact && !expanded ? 1 : undefined}
+                style={styles.muted}
+              >
                 {t.minutes.replace("{minutes}", String(place.durationMinutes))}{" "}
                 ·{" "}
                 {place.category === "see" ||
@@ -396,8 +407,15 @@ const styles = StyleSheet.create({
   },
   dotActive: { backgroundColor: colors.primary },
   metrics: { flexDirection: "row", marginVertical: spacing.md },
+  metricsExpanded: { flexDirection: "column", gap: spacing.sm },
   metric: { flex: 1, gap: spacing.xs, paddingHorizontal: spacing.sm },
+  metricExpanded: { paddingHorizontal: 0, paddingVertical: spacing.xs },
   metricDivider: { borderStartWidth: 1, borderColor: colors.border },
+  metricDividerExpanded: {
+    borderTopWidth: 1,
+    borderColor: colors.border,
+    paddingTop: spacing.sm,
+  },
   metricValue: { flexDirection: "row", gap: spacing.xs, alignItems: "center" },
   metricText: { flexShrink: 1 },
   itineraryActionRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
