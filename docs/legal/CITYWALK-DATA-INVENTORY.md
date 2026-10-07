@@ -191,6 +191,8 @@ The self-service export intentionally excludes password hashes, OAuth access/ref
 
 ## 9. Store-declaration source-of-truth rule
 
+A controlled pre-submission mapping lives at `docs/legal/CITYWALK-STORE-PRIVACY-DRAFT.md`. It is deliberately marked **DRAFT — DO NOT SUBMIT YET** and must be regenerated/reviewed when the exact release artifact or production provider configuration changes.
+
 App Store App Privacy and Google Play Data Safety answers must be produced from this inventory **after** the production configuration is fixed.
 
 Do not infer that an optional SDK is collecting data merely because it is installed, and do not declare it absent if production configuration activates it. Before preparing final store answers, confirm:
