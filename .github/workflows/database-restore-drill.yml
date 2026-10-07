@@ -1,0 +1,110 @@
+name: Database restore drill
+
+on:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - ".github/workflows/database-restore-drill.yml"
+      - "scripts/database-backup.ts"
+      - "scripts/database-backup-restore.ts"
+      - "scripts/database-restore.ts"
+      - "scripts/verify-database.ts"
+      - "src/db/**"
+      - "drizzle/**"
+      - "package.json"
+      - "package-lock.json"
+  workflow_dispatch:
+
+jobs:
+  restore-drill:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: citywalk_source
+          POSTGRES_USER: citywalk
+          POSTGRES_PASSWORD: citywalk
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U citywalk -d citywalk_source"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://citywalk:citywalk@localhost:5432/citywalk_source
+      RESTORE_DATABASE_URL: postgresql://citywalk:citywalk@localhost:5432/citywalk_restore
+      CITYWALK_RESTORE_TARGET: non-production
+      CITYWALK_RUNTIME_ENV: test
+      CITYWALK_BACKUP_DIR: backups/restore-drill
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install PostgreSQL 16 client
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-16
+          echo "/usr/lib/postgresql/16/bin" >> "$GITHUB_PATH"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Migrate source database
+        run: npm run db:migrate
+
+      - name: Seed source database
+        run: npm run db:seed
+
+      - name: Verify source database
+        run: npm run db:verify
+
+      - name: Create isolated restore target
+        shell: bash
+        env:
+          PGPASSWORD: citywalk
+        run: createdb --host=localhost --port=5432 --username=citywalk citywalk_restore
+
+      - name: Create real backup
+        run: npm run db:backup
+
+      - name: Locate backup artifact
+        id: backup
+        shell: bash
+        run: |
+          dump_path="$(find "$CITYWALK_BACKUP_DIR" -maxdepth 1 -type f -name '*.dump' -print -quit)"
+          if [ -z "$dump_path" ]; then
+            echo "No backup dump was created." >&2
+            exit 1
+          fi
+          if [ ! -s "$dump_path" ] || [ ! -s "$dump_path.json" ]; then
+            echo "Backup dump or checksum metadata is empty." >&2
+            exit 1
+          fi
+          echo "dump_path=$dump_path" >> "$GITHUB_OUTPUT"
+
+      - name: Restore into isolated target and verify
+        run: npm run db:restore -- --file="${{ steps.backup.outputs.dump_path }}" --confirm-non-production
+
+      - name: Confirm source and restore target remain separate
+        shell: bash
+        env:
+          PGPASSWORD: citywalk
+        run: |
+          source_db="$(psql "$DATABASE_URL" -Atc 'select current_database()')"
+          restore_db="$(psql "$RESTORE_DATABASE_URL" -Atc 'select current_database()')"
+          test "$source_db" = "citywalk_source"
+          test "$restore_db" = "citywalk_restore"
+          test "$source_db" != "$restore_db"
+          echo "Restore drill verified: $source_db -> $restore_db"
