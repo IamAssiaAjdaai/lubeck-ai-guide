@@ -104,23 +104,14 @@ export async function ensureLocalInfrastructure(
     "up",
     "-d",
     "--wait",
+    "--remove-orphans",
   ]);
   if (!compose.ok) {
     throw new LocalInfrastructureError(
-      "Local PostgreSQL and media storage could not be started. Run `docker compose up -d --wait` to inspect the error.",
+      "PostgreSQL could not be started. Run `docker compose up -d --wait` to inspect the error.",
     );
   }
-  dependencies.log("✓ PostgreSQL and media storage healthy");
-
-  const mediaBucket = await dependencies.runCommand("node", [
-    "scripts/ensure-local-media-bucket.mjs",
-  ]);
-  if (!mediaBucket.ok) {
-    throw new LocalInfrastructureError(
-      "Local media bucket could not be prepared. Run `node scripts/ensure-local-media-bucket.mjs` to inspect the error.",
-    );
-  }
-  dependencies.log("✓ Local media bucket ready");
+  dependencies.log("✓ PostgreSQL healthy");
 
   const migration = await dependencies.runCommand(
     dependencies.migrationCommand.executable,
