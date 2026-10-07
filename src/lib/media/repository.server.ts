@@ -125,6 +125,15 @@ export async function getMediaAsset(id: number) {
   return asset;
 }
 
+export async function getMediaAssetByObjectKey(objectKey: string) {
+  const [asset] = await getDb()
+    .select()
+    .from(mediaAssetsTable)
+    .where(eq(mediaAssetsTable.objectKey, objectKey))
+    .limit(1);
+  return asset;
+}
+
 export async function listMediaAssets() {
   const db = getDb();
   const [assets, cityUsages, placeUsages, tourUsages] = await Promise.all([
