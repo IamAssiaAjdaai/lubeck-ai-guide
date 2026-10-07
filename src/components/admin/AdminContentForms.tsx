@@ -132,7 +132,7 @@ export function PlaceFields({
       {place ? <input name="expectedUpdatedAt" type="hidden" value={place.updatedAt.toISOString()} /> : null}
       <div className="grid gap-5 sm:grid-cols-2">
         {selectedCity && !place ? (
-          <PlaceLocationLookup cityName={cityDisplayName(selectedCity)} countryCode={selectedCity.countryCode} />
+          <PlaceLocationLookup cityName={cityDisplayName(selectedCity)} countryCode={selectedCity.countryCode ?? ""} />
         ) : null}
         {initialCityId ? (
           <input name="cityId" type="hidden" value={initialCityId} />
