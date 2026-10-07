@@ -23,6 +23,7 @@ import { aiGuideRateLimit } from "@/lib/rateLimit";
 import { enforceGuideDailyAllowance } from "@/lib/guideAllowance.server";
 import { resolveTourContext } from "@/lib/tourContext.server";
 import { getVerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
+import { emitOperationalFailure } from "@/lib/operations/operationalEvent";
 
 type GuideMessage = Readonly<{
   role: "user" | "assistant";
@@ -136,6 +137,13 @@ export async function POST(request: Request) {
 
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
+      emitOperationalFailure({
+        category: "ai",
+        code: "AI_PROVIDER_NOT_CONFIGURED",
+        severity: "error",
+        retryable: false,
+        httpStatus: 500,
+      });
       return NextResponse.json(
         { error: "AI service is not configured." },
         { status: 500 },
@@ -274,7 +282,6 @@ export async function POST(request: Request) {
       allowance: toPublicGuideAllowance(allowance),
     });
   } catch (error: unknown) {
-    console.error("AI Guide error:", error);
     const status =
       typeof error === "object" &&
       error !== null &&
@@ -282,6 +289,15 @@ export async function POST(request: Request) {
       typeof (error as { status?: unknown }).status === "number"
         ? (error as { status: number }).status
         : 500;
+    if (status >= 500) {
+      emitOperationalFailure({
+        category: "ai",
+        code: "AI_GUIDE_REQUEST_FAILED",
+        severity: "error",
+        retryable: true,
+        httpStatus: status,
+      });
+    }
     const message = status < 500 && error instanceof Error
       ? error.message
       : "AI Guide is temporarily unavailable.";
