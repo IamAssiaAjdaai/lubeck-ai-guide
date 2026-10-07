@@ -6,13 +6,26 @@ import { CitywalkLogo } from "./CitywalkLogo";
 describe("CitywalkLogo", () => {
   afterEach(cleanup);
 
-  it("renders the official pin-and-path mark with the CITYWALK wordmark", () => {
+  it("renders the approved pin-and-route mark with the CITYWALK wordmark", () => {
     const { container } = render(<CitywalkLogo />);
     expect(screen.getByText("CITYWALK")).not.toBeNull();
     const mark = container.querySelector("svg");
     expect(mark).not.toBeNull();
-    expect(mark?.getAttribute("viewBox")).toBe("0 0 64 64");
-    expect(mark?.querySelectorAll("path").length).toBeGreaterThanOrEqual(2);
+    expect(mark?.getAttribute("viewBox")).toBe("334 220 590 822");
+    expect(container.querySelector('[id^="citywalk-pin-"]')).not.toBeNull();
+    expect(container.querySelector('[id^="citywalk-route-"]')).not.toBeNull();
+    expect(container.querySelector("circle")).toBeNull();
+  });
+
+  it("keeps gradient ids unique when the logo appears more than once", () => {
+    const { container } = render(
+      <>
+        <CitywalkLogo />
+        <CitywalkLogo markOnly />
+      </>,
+    );
+    const ids = [...container.querySelectorAll("[id]")].map((element) => element.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it("keeps mark-only usage accessible", () => {
