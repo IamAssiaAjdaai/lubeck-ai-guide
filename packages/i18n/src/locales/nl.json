@@ -490,7 +490,11 @@
     "emailNotVerified": "Verifieer je e-mailadres voordat je inlogt.",
     "verificationSent": "Controleer je inbox of spammap en verifieer je e-mailadres voordat je inlogt.",
     "resendVerification": "Verificatiemail opnieuw versturen",
-    "verificationResent": "Als dit account nog moet worden geverifieerd, controleer dan je inbox of spammap voor een nieuwe verificatiemail."
+    "verificationResent": "Als dit account nog moet worden geverifieerd, controleer dan je inbox of spammap voor een nieuwe verificatiemail.",
+    "exportData": "Mijn gegevens exporteren",
+    "dataExportHelp": "Maakt een JSON-export van accountgegevens die op de server staan. Alleen-op-apparaatgegevens en beveiligingsgeheimen zijn niet inbegrepen.",
+    "dataExportReady": "Je CITYWALK-gegevensexport is klaar om te delen of op te slaan.",
+    "dataExportUnavailable": "Je gegevensexport is tijdelijk niet beschikbaar. Probeer het later opnieuw."
   },
   "explore": {
     "all": "Alles",

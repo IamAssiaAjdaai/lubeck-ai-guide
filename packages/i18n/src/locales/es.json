@@ -490,7 +490,11 @@
     "emailNotVerified": "Verifica tu correo electrónico antes de iniciar sesión.",
     "verificationSent": "Revisa tu bandeja de entrada o spam y verifica tu correo antes de iniciar sesión.",
     "resendVerification": "Reenviar correo de verificación",
-    "verificationResent": "Si esta cuenta aún necesita verificación, revisa tu bandeja de entrada o spam para encontrar un nuevo correo de verificación."
+    "verificationResent": "Si esta cuenta aún necesita verificación, revisa tu bandeja de entrada o spam para encontrar un nuevo correo de verificación.",
+    "exportData": "Exportar mis datos",
+    "dataExportHelp": "Crea una exportación JSON de los datos de tu cuenta almacenados en el servidor. No incluye datos que solo estén en el dispositivo ni secretos de seguridad.",
+    "dataExportReady": "Tu exportación de datos de CITYWALK está lista para compartir o guardar.",
+    "dataExportUnavailable": "Tu exportación de datos no está disponible temporalmente. Inténtalo de nuevo más tarde."
   },
   "explore": {
     "all": "Todos",

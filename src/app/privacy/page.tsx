@@ -156,7 +156,10 @@ export default function PrivacyPage() {
           <li>withdraw consent for the future where processing is based on consent.</li>
         </ul>
         <p>
-          You also have the right to lodge a complaint with a competent data-protection supervisory authority. To exercise a privacy right or ask a question, email <a href={`mailto:${CITYWALK_SUPPORT_EMAIL}`}>{CITYWALK_SUPPORT_EMAIL}</a>.
+          If you are signed in on the CITYWALK app, the account controls provide a machine-readable JSON export of server-held account data. The export intentionally excludes password hashes, OAuth and session tokens, internal security/audit records and traveler state that exists only on your device and was never uploaded.
+        </p>
+        <p>
+          You also have the right to lodge a complaint with a competent data-protection supervisory authority. To request access beyond the self-service export, exercise another privacy right or ask a question, email <a href={`mailto:${CITYWALK_SUPPORT_EMAIL}`}>{CITYWALK_SUPPORT_EMAIL}</a>.
         </p>
       </section>
 

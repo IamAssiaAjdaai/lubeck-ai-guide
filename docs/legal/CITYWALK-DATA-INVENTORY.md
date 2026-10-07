@@ -172,12 +172,12 @@ These decisions must be reflected back into this inventory and the public privac
 | RevenueCat erasure retry | Implemented in durable outbox |
 | Apple sign-in token revocation | Implemented in durable outbox |
 | Access/privacy request contact | Public Support + privacy email path exists |
-| Machine-readable/user-download data export | **Not implemented** |
-| Internal operator procedure for access/export requests | **OPEN** |
+| Machine-readable/user-download data export | Implemented for signed-in native accounts as a JSON export of server-held account/profile/auth-provider/session metadata, guest links, saved walks and account-linked commerce records. Security secrets and device-only state are excluded. |
+| Internal operator procedure for access/export requests | **OPEN** for requests that exceed the self-service export, including device-only state the server never received and retained staff/editorial audit references that require review. |
 | Rectification | Display-name/password/profile controls exist; email-change flow remains limited |
 | Analytics consent management | First-party allow/decline/withdraw controls implemented; browser analytics is fail-closed before consent |
 
-## 9. Store-declaration source-of-truth rule
+The self-service export intentionally excludes password hashes, OAuth access/refresh/ID tokens, session tokens and internal security/audit records. It also cannot include traveler state that exists only on a user's device and was never uploaded to CITYWALK. Users can use the Support/privacy contact path for broader access questions or records that require operator review.\n\n## 9. Store-declaration source-of-truth rule
 
 App Store App Privacy and Google Play Data Safety answers must be produced from this inventory **after** the production configuration is fixed.
 

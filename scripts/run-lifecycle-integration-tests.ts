@@ -54,6 +54,7 @@ async function main(): Promise<void> {
         "src/lib/auth/lifecycle/lifecycle.integration.test.ts",
         "src/lib/auth/lifecycle/externalAccountErasureWorker.integration.test.ts",
         "src/lib/auth/lifecycle/webDeletionRequest.integration.test.ts",
+        "src/lib/account/dataExport.integration.test.ts",
       ],
       env,
     );
