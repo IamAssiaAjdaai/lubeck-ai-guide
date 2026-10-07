@@ -47,8 +47,9 @@ describe("LocalFilesystemMediaObjectStore", () => {
       contentLength: 3,
       contentRange: "bytes 2-4/5",
     });
+    if (!ranged) throw new Error("Expected stored media range.");
     const rangedBytes = new Uint8Array(
-      await new Response(ranged?.body).arrayBuffer(),
+      await new Response(ranged.body).arrayBuffer(),
     );
     expect(rangedBytes).toEqual(Uint8Array.from([0xff, 0x01, 0x02]));
 
