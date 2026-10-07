@@ -301,11 +301,34 @@ export async function listCmsPlaces() {
 }
 
 export async function getCmsPlace(id: number) {
-  const places = await listCmsPlaces();
-  const place = places.find((candidate) => candidate.id === id);
+  const db = getDb();
+  const [place] = await db
+    .select()
+    .from(placesTable)
+    .where(eq(placesTable.id, id))
+    .limit(1);
   if (!place) return undefined;
-  const [sourceLinks, workflowEvents, publishedRevision] = await Promise.all([
-    getDb()
+
+  const [city, localizations, tags, sourceLinks, workflowEvents, publishedRevision] = await Promise.all([
+    db
+      .select()
+      .from(citiesTable)
+      .where(eq(citiesTable.id, place.cityId))
+      .limit(1)
+      .then((rows) => rows[0]),
+    db
+      .select()
+      .from(placeLocalizationsTable)
+      .where(eq(placeLocalizationsTable.placeId, id))
+      .orderBy(asc(placeLocalizationsTable.locale)),
+    db
+      .select()
+      .from(contentTagsTable)
+      .innerJoin(placeContentTagsTable, eq(contentTagsTable.id, placeContentTagsTable.tagId))
+      .where(eq(placeContentTagsTable.placeId, id))
+      .orderBy(asc(contentTagsTable.slug))
+      .then((rows) => rows.map(({ content_tags }) => content_tags)),
+    db
       .select({
         source: contentSourcesTable,
         required: placeSourcesTable.required,
@@ -318,7 +341,7 @@ export async function getCmsPlace(id: number) {
       .where(eq(placeSourcesTable.placeId, id))
       .orderBy(asc(contentSourcesTable.publisher), asc(contentSourcesTable.title)),
     listCmsWorkflowEvents("place", id),
-    getDb()
+    db
       .select()
       .from(placeRevisionsTable)
       .where(
@@ -330,7 +353,15 @@ export async function getCmsPlace(id: number) {
       .limit(1)
       .then((rows) => rows[0]),
   ]);
-  return { ...place, sourceLinks, workflowEvents, publishedRevision };
+  return {
+    ...place,
+    city,
+    localizations,
+    tags,
+    sourceLinks,
+    workflowEvents,
+    publishedRevision,
+  };
 }
 
 export async function listCmsWorkflowEvents(
@@ -501,8 +532,33 @@ export async function listCmsTours() {
 }
 
 export async function getCmsTour(id: number) {
-  const tours = await listCmsTours();
-  return tours.find((tour) => tour.id === id);
+  const db = getDb();
+  const [tour] = await db
+    .select()
+    .from(toursTable)
+    .where(eq(toursTable.id, id))
+    .limit(1);
+  if (!tour) return undefined;
+
+  const [city, localizations, stops] = await Promise.all([
+    db
+      .select()
+      .from(citiesTable)
+      .where(eq(citiesTable.id, tour.cityId))
+      .limit(1)
+      .then((rows) => rows[0]),
+    db
+      .select()
+      .from(tourLocalizationsTable)
+      .where(eq(tourLocalizationsTable.tourId, id))
+      .orderBy(asc(tourLocalizationsTable.locale)),
+    db
+      .select()
+      .from(tourStopsTable)
+      .where(eq(tourStopsTable.tourId, id))
+      .orderBy(asc(tourStopsTable.position)),
+  ]);
+  return { ...tour, city, localizations, stops };
 }
 
 export async function createCmsTour(input: TourInput, actorId: string) {
