@@ -55,6 +55,12 @@ Current codes:
 - `REVENUECAT_WEBHOOK_PROCESSING_FAILED` — unexpected verified-webhook processing failure.
 - `MEDIA_DELIVERY_FAILED` — unexpected public media lookup/delivery failure.
 - `ACCOUNT_ERASURE_SCHEDULE_FAILED` — scheduled external account-erasure processing failed.
+- `AUTH_SIGN_IN_FAILED` — an email/social sign-in request was rejected without logging credentials or account identity.
+- `AUTH_RATE_LIMITED` — an auth endpoint returned HTTP 429.
+- `AUTH_PROVIDER_CALLBACK_FAILED` — a social-provider callback was rejected.
+- `AUTH_RECOVERY_FAILED` — password-reset/recovery was rejected.
+- `AUTH_REQUEST_REJECTED` — another public auth request was rejected.
+- `AUTH_SERVER_FAILED` — Better Auth returned/threw an unexpected server-side failure.
 
 These events are suitable for Cloudflare log queries and later forwarding to an approved error-monitoring provider without changing the application call sites.
 
@@ -65,6 +71,7 @@ The code does not activate an external alert destination. Production operations 
 - **critical immediately:** any `DATABASE_CONNECT_FAILED`, `REVENUECAT_WEBHOOK_PROCESSING_FAILED`, or `ACCOUNT_ERASURE_SCHEDULE_FAILED` in production;
 - **configuration immediately:** any production `AI_PROVIDER_NOT_CONFIGURED` or `REVENUECAT_NOT_CONFIGURED`;
 - **rate/spike:** repeated `AI_GUIDE_REQUEST_FAILED` or `MEDIA_DELIVERY_FAILED` over the agreed operational window;
+- **auth spike:** elevated `AUTH_SIGN_IN_FAILED`, `AUTH_RATE_LIMITED`, `AUTH_PROVIDER_CALLBACK_FAILED`, `AUTH_RECOVERY_FAILED`, or `AUTH_REQUEST_REJECTED`; any repeated `AUTH_SERVER_FAILED` should be treated as a service incident;
 - correlate alerts by `environment` and `release` so Preview noise cannot page production responders.
 
 Alert rules must key on the fixed event/code fields rather than parsing free-form exception text.
@@ -74,7 +81,7 @@ Alert rules must key on the fixed event/code fields rather than parsing free-for
 Before launch, #110 still requires:
 
 1. production server/runtime error monitoring with environment/release context;
-2. actionable alerts for elevated 5xx, auth, DB, commerce webhook, media and AI failures;
+2. activate/test actionable alerts for elevated 5xx, auth, DB, commerce webhook, media and AI failures (auth failure events now exist);
 3. native iOS/Android crash/error visibility;
 4. activate production PostgreSQL managed backups and record a successful restore drill against a safe non-production target (portable tooling/policy now exists);
 5. execute and evidence migration recovery/rollback drills (procedures now documented);
