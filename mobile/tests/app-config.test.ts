@@ -5,6 +5,7 @@ import {
   CITYWALK_DEVELOPMENT_IDENTIFIER,
   CITYWALK_STORE_IDENTIFIER,
   assertNativeObservabilityBuildEnvironment,
+  assertPreviewBuildEnvironment,
   assertProductionBuildEnvironment,
   assertRevenueCatBuildEnvironment,
   createCitywalkExpoConfig,
@@ -172,6 +173,26 @@ describe("CITYWALK native app configuration", () => {
         "production",
         easJson.build.production.env.EXPO_PUBLIC_CITYWALK_API_ORIGIN,
       ),
+    ).not.toThrow();
+  });
+
+  it("fails a preview build before bundling when its API origin is missing or unsafe", () => {
+    expect(() => assertPreviewBuildEnvironment("preview", undefined))
+      .toThrow("required for preview builds");
+    expect(() =>
+      assertPreviewBuildEnvironment("preview", "http://preview.citywalk.example"),
+    ).toThrow("must use HTTPS");
+    expect(() =>
+      assertPreviewBuildEnvironment("preview", "https://192.168.1.20"),
+    ).toThrow("cannot target a local host");
+    expect(() =>
+      assertPreviewBuildEnvironment(
+        "preview",
+        "https://citywalk-preview.workers.dev",
+      ),
+    ).not.toThrow();
+    expect(() =>
+      assertPreviewBuildEnvironment("production", undefined),
     ).not.toThrow();
   });
 
