@@ -44,7 +44,7 @@ export function assertProductionBuildEnvironment(
 }
 
 export function assertNativeObservabilityBuildEnvironment(
-  environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
+  _environment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development",
   enabledFlag = process.env.EXPO_PUBLIC_CITYWALK_OBSERVABILITY,
 ): void {
   const flag = enabledFlag?.trim();
@@ -54,11 +54,9 @@ export function assertNativeObservabilityBuildEnvironment(
       "EXPO_PUBLIC_CITYWALK_OBSERVABILITY must be unset, 0, or 1.",
     );
   }
-  if (environment === "development") {
-    throw new Error(
-      "Native observability dispatch must not be enabled in development builds.",
-    );
-  }
+  throw new Error(
+    "Native observability dispatch is not approved for Expo SDK 57 builds.",
+  );
 }
 
 export function assertRevenueCatBuildEnvironment(
