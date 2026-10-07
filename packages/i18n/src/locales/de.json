@@ -490,7 +490,11 @@
     "emailNotVerified": "Bitte bestätige deine E-Mail-Adresse, bevor du dich anmeldest.",
     "verificationSent": "Prüfe deinen Posteingang oder Spam-Ordner und bestätige deine E-Mail-Adresse, bevor du dich anmeldest.",
     "resendVerification": "Bestätigungs-E-Mail erneut senden",
-    "verificationResent": "Falls dieses Konto noch bestätigt werden muss, findest du eine neue Bestätigungs-E-Mail in deinem Posteingang oder Spam-Ordner."
+    "verificationResent": "Falls dieses Konto noch bestätigt werden muss, findest du eine neue Bestätigungs-E-Mail in deinem Posteingang oder Spam-Ordner.",
+    "exportData": "Meine Daten exportieren",
+    "dataExportHelp": "Erstellt einen JSON-Export deiner serverseitig gespeicherten Kontodaten. Reine Gerätedaten und Sicherheitsgeheimnisse sind nicht enthalten.",
+    "dataExportReady": "Dein CITYWALK-Datenexport ist bereit zum Teilen oder Speichern.",
+    "dataExportUnavailable": "Dein Datenexport ist vorübergehend nicht verfügbar. Versuche es später erneut."
   },
   "explore": {
     "all": "Alle",
