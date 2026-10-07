@@ -104,6 +104,7 @@ export async function ensureLocalInfrastructure(
     "up",
     "-d",
     "--wait",
+    "--remove-orphans",
   ]);
   if (!compose.ok) {
     throw new LocalInfrastructureError(
