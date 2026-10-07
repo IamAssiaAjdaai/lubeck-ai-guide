@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("react-native", () => ({ useWindowDimensions: () => ({ width: 390, fontScale: 1 }) }));
 import { textLayout } from "../src/design/responsiveText";
 import { layout, spacing } from "../src/design/tokens";
+import v2PresentationSource from "../src/components/V2Presentation.tsx?raw";
 describe("text-driven layout budgets (not native text measurements)", () => {
   it.each([320, 390, 430])("retains four normal quick actions at width %s and reduces columns for accessibility", width => {
     expect(textLayout(width, 1).quickColumns).toBe(4);
@@ -25,5 +26,19 @@ describe("text-driven layout budgets (not native text measurements)", () => {
       expect(accessible.expanded).toBe(textLayout(width, scale).expanded);
       expect(accessible.categoryColumns).toBe(textLayout(width, scale).categoryColumns);
     }
+  });
+
+  it("adapts preview metrics and compact itinerary copy for accessibility text sizes", () => {
+    expect(v2PresentationSource).toContain("const { expanded } = useResponsiveTextLayout(3);");
+    expect(v2PresentationSource).toContain("expanded && styles.metricsExpanded");
+    expect(v2PresentationSource).toContain(
+      "expanded ? styles.metricDividerExpanded : styles.metricDivider",
+    );
+    expect(v2PresentationSource).toContain(
+      "numberOfLines={compact && !expanded ? 1 : undefined}",
+    );
+    expect(v2PresentationSource.match(
+      /numberOfLines=\{compact && !expanded \? 1 : undefined\}/g,
+    )?.length).toBeGreaterThanOrEqual(2);
   });
 });
