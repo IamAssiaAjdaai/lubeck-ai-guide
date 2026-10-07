@@ -69,6 +69,15 @@ describe("Live Walk execution semantics", () => {
     expect(liveWalkCardSource).not.toContain('label="Continue with basic route"');
   });
 
+  it("does not truncate the Live Walk destination for large Dynamic Type", () => {
+    expect(liveWalkCardSource).toContain(
+      '<AppText style={styles.destination}>',
+    );
+    expect(liveWalkCardSource).not.toContain(
+      '<AppText numberOfLines={2} style={styles.destination}>',
+    );
+  });
+
   it("keeps the in-app Live Walk card on the light CITYWALK surface", () => {
     expect(liveWalkCardSource).toContain("backgroundColor: colors.surface");
     expect(liveWalkCardSource).toContain("borderColor: colors.border");
