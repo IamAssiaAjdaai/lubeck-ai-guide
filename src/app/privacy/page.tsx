@@ -99,6 +99,7 @@ export default function PrivacyPage() {
           <li>hosting, content delivery, security and infrastructure providers, including Cloudflare where CITYWALK is deployed there;</li>
           <li>Groq for Ask CITYWALK model processing;</li>
           <li>Resend for transactional account email;</li>
+          <li>PostHog for optional product and Marketing analytics when configured;</li>
           <li>Stripe for web checkout where offered;</li>
           <li>RevenueCat plus Apple and/or Google for native purchase and entitlement handling where applicable; and</li>
           <li>Google and Apple if you choose their supported social sign-in method.</li>
@@ -114,10 +115,13 @@ export default function PrivacyPage() {
           CITYWALK uses device/browser storage where it is needed for requested product functions such as authentication/session state, traveler preferences, saved or active-walk state and similar app continuity. For pseudonymous web analytics, CITYWALK creates a random visitor identifier in local storage for up to 180 days and a random browser-session identifier for up to 24 hours. These identifiers are not derived from your email address, IP address, browser fingerprint or GPS coordinates.
         </p>
         <p>
-          When the public PostHog project token and host are configured, CITYWALK&apos;s web code can initialize PostHog and record product events such as city or place views, published Marketing landing views and CTA clicks, together with the pseudonymous visitor/session identifiers and relevant city/campaign attribution. The current integration also enables client exception capture. The reviewed event contracts do not intentionally attach raw latitude/longitude, GPS trails, account email addresses or authentication tokens.
+          A Marketing handoff into the native app can store campaign attribution such as source, medium, campaign, content, landing variant and city in app storage. The reviewed native attribution store does not currently define an automatic expiry.
         </p>
         <p>
-          PostHog capture checks the local PostHog opt-out state. Provider-side event retention and any consent control required before non-essential analytics is activated in production depend on the final production configuration and must be aligned before launch. CITYWALK does not use the reviewed PostHog integration as advertising tracking.
+          When the public PostHog project token and host are configured, CITYWALK can record product and Marketing analytics. The web integration can record events such as city or place views, published Marketing landing views and CTA clicks together with pseudonymous visitor/session identifiers and relevant city/campaign attribution, and it enables client exception capture. A Marketing-attributed native walk can also send <code>walk_started</code> and <code>walk_completed</code> with city/campaign attribution to a first-party CITYWALK analytics endpoint, which can forward those validated fields to PostHog using a fixed aggregate identifier. The reviewed event contracts do not intentionally attach raw latitude/longitude, GPS trails, account email addresses, CITYWALK user IDs or authentication tokens.
+        </p>
+        <p>
+          Browser PostHog capture checks the local PostHog opt-out state. The reviewed native server-side Marketing funnel does not carry that browser opt-out state, so production analytics activation and any consent controls required before non-essential analytics are used must be aligned across both paths before launch. Provider-side event retention depends on the final production configuration. CITYWALK does not use the reviewed PostHog integration as advertising tracking.
         </p>
       </section>
 
