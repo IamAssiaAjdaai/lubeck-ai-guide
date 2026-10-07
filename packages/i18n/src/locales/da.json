@@ -490,7 +490,11 @@
     "emailNotVerified": "Bekræft din e-mailadresse, før du logger ind.",
     "verificationSent": "Tjek din indbakke eller spammappe, og bekræft din e-mailadresse, før du logger ind.",
     "resendVerification": "Send bekræftelsesmail igen",
-    "verificationResent": "Hvis denne konto stadig skal bekræftes, så tjek din indbakke eller spammappe for en ny bekræftelsesmail."
+    "verificationResent": "Hvis denne konto stadig skal bekræftes, så tjek din indbakke eller spammappe for en ny bekræftelsesmail.",
+    "exportData": "Eksportér mine data",
+    "dataExportHelp": "Opretter en JSON-eksport af kontodata, der er gemt på serveren. Data kun på enheden og sikkerhedshemmeligheder medtages ikke.",
+    "dataExportReady": "Din CITYWALK-dataeksport er klar til at blive delt eller gemt.",
+    "dataExportUnavailable": "Din dataeksport er midlertidigt utilgængelig. Prøv igen senere."
   },
   "explore": {
     "all": "Alle",
