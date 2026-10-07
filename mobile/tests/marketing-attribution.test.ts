@@ -8,12 +8,16 @@ vi.mock("@react-native-async-storage/async-storage", () => ({
     setItem: vi.fn(async (key: string, value: string) => {
       storage.set(key, value);
     }),
+    removeItem: vi.fn(async (key: string) => {
+      storage.delete(key);
+    }),
     clear: vi.fn(async () => {
       storage.clear();
     }),
   },
 }));
 
+import { setNativeAnalyticsConsent } from "../src/lib/analyticsConsent";
 import {
   loadNativeMarketingAttribution,
   persistNativeMarketingAttribution,
@@ -52,7 +56,16 @@ describe("native marketing attribution", () => {
       campaign: "two-hours-in-lubeck",
     } as const;
 
+    await setNativeAnalyticsConsent("granted");
     await persistNativeMarketingAttribution(value);
     await expect(loadNativeMarketingAttribution()).resolves.toEqual(value);
+  });
+
+  it("does not keep Marketing attribution when analytics is not allowed", async () => {
+    await setNativeAnalyticsConsent("granted");
+    await persistNativeMarketingAttribution({ citySlug: "lubeck", source: "instagram" });
+    await setNativeAnalyticsConsent("denied");
+    await persistNativeMarketingAttribution({ citySlug: "lubeck", source: "newsletter" });
+    await expect(loadNativeMarketingAttribution()).resolves.toBeUndefined();
   });
 });
