@@ -117,8 +117,12 @@ function useCachedPublicContent<T>(
   useEffect(() => {
     let active = true;
     const updateFromCache = () => {
+      if (!active) return;
       const data = publicContentCache.peek<T>(key);
-      if (active && data) setState({ requestKey: key, result: { status: "available", data } });
+      setState({
+        requestKey: key,
+        result: data ? { status: "available", data } : { status: "error" },
+      });
     };
     const unsubscribe = publicContentCache.subscribe(key, updateFromCache);
     void publicContentCache.load(key, parse, fetcher)

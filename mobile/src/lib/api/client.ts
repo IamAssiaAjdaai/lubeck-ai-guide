@@ -82,6 +82,9 @@ export function createCitywalkApiClient(input: Readonly<{
     if (response.status === 304) {
       return { status: 304, ...(responseEtag ? { etag: responseEtag } : {}) };
     }
+    if (response.status === 404 || response.status === 410) {
+      return { status: response.status };
+    }
     if (!response.ok) throw new Error(`CITYWALK API request failed (${response.status}).`);
     return {
       status: 200,

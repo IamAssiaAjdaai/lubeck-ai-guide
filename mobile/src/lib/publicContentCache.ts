@@ -7,7 +7,15 @@ export const PUBLIC_CONTENT_OFFLINE_FALLBACK_MS = 7 * 24 * 60 * 60 * 1000;
 
 export type PublicContentFetch<T> =
   | Readonly<{ status: 200; data: T; etag?: string }>
-  | Readonly<{ status: 304; etag?: string }>;
+  | Readonly<{ status: 304; etag?: string }>
+  | Readonly<{ status: 404 | 410 }>;
+
+export class PublicContentRemovedError extends Error {
+  constructor(readonly status: 404 | 410) {
+    super(`CITYWALK public content is no longer available (${status}).`);
+    this.name = "PublicContentRemovedError";
+  }
+}
 
 type CacheEntry<T> = Readonly<{
   data: T;
@@ -87,7 +95,8 @@ export class PublicContentCache {
     if (persisted) {
       try {
         return await this.refresh(key, parse, fetcher, persisted);
-      } catch {
+      } catch (error) {
+        if (error instanceof PublicContentRemovedError) throw error;
         this.measure(key, "offline", startedAt);
         return persisted.data;
       }
@@ -164,6 +173,11 @@ export class PublicContentCache {
     const startedAt = this.now();
     const request = (async () => {
       const response = await fetcher(previous?.etag, controller.signal);
+      if (response.status === 404 || response.status === 410) {
+        await this.evict(key);
+        this.listeners.get(key)?.forEach((listener) => listener());
+        throw new PublicContentRemovedError(response.status);
+      }
       const entry: CacheEntry<T> = response.status === 304 && previous
         ? { ...previous, ...(response.etag ? { etag: response.etag } : {}), storedAt: this.now() }
         : response.status === 200
@@ -181,6 +195,15 @@ export class PublicContentCache {
     })().finally(() => this.inflight.delete(key));
     this.inflight.set(key, { promise: request, controller });
     return request;
+  }
+
+  private async evict(key: string): Promise<void> {
+    this.memory.delete(key);
+    try {
+      await this.storage.removeItem(storageKey(key));
+    } catch {
+      // Memory eviction is authoritative even if persistent cleanup fails.
+    }
   }
 
   private async persist<T>(key: string, entry: CacheEntry<T>): Promise<void> {

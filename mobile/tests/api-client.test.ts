@@ -61,6 +61,14 @@ describe("CITYWALK native API client", () => {
     ));
   });
 
+  it.each([404, 410] as const)("preserves authoritative public-content removal status %s", async (status) => {
+    const fetchImpl = vi.fn(async () => new Response(null, { status }));
+    const client = createCitywalkApiClient({ origin: "https://citywalk.example", fetchImpl });
+
+    await expect(client.loadPlace("lubeck", "removed-place", "en"))
+      .resolves.toEqual({ status });
+  });
+
   it("loads guide eligibility from the server-owned boundary", async () => {
     const fetchImpl = vi.fn(async () =>
       new Response(JSON.stringify({ eligible: true })));
