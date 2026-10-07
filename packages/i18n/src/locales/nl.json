@@ -705,6 +705,14 @@
     "accountDeletion": "Account verwijderen",
     "accountDeletionDetail": "Vraag verwijdering aan via de openbare webpagina",
     "support": "Contact met support",
-    "supportDetail": "support@getcitywalk.com"
+    "supportDetail": "support@getcitywalk.com",
+    "analyticsTitle": "Analyse",
+    "analyticsDescription": "Optionele marketinganalyse helpt CITYWALK meten of een campagne tot een wandeling leidt. Native campagne-attributie wordt niet opgeslagen en native funnel-events worden niet verzonden tenzij je analyse toestaat.",
+    "analyticsStatusLabel": "Huidige keuze",
+    "analyticsStatus_unset": "Nog niet gekozen",
+    "analyticsStatus_granted": "Toegestaan",
+    "analyticsStatus_denied": "Geweigerd",
+    "analyticsAllow": "Analyse toestaan",
+    "analyticsDecline": "Analyse weigeren"
   }
 }
