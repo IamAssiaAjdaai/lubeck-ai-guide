@@ -104,7 +104,7 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
           disabled={!state.product || busy || state.state === "purchase_pending"} busy={busy}
           onPress={() => void controller.run("purchase")} />}
         {useRevenueCat && premiumEnabled() ? (
-          <PrimaryButton label="Choose CITYWALK Premium" tone="secondary" disabled={busy} onPress={openPremium} />
+          <PrimaryButton label={t(locale, "premium.unlock")} tone="secondary" disabled={busy} onPress={openPremium} />
         ) : null}
         <PrimaryButton label={copy("unlock.restore")} tone="secondary" disabled={busy} onPress={() => void controller.run("restore")} />
         <PrimaryButton label={copy("unlock.retry")} tone="secondary" disabled={busy} onPress={() => void controller.load()} />

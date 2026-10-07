@@ -1336,13 +1336,14 @@ export function NativeWalkFlow({
                   ) : (
                     <View style={styles.section}>
                       <AppText variant="metadata" style={styles.muted}>
-                        Add stops, shorten your route and get back on time with CITYWALK Premium.
+                        {translate(locale, "premium.benefitAdapt")} ·{" "}
+                        {translate(locale, "premium.benefitBackOnTime")}
                       </AppText>
                       <PrimaryButton
                         compact
                         wrapLabel
                         tone="secondary"
-                        label="Unlock smart controls"
+                        label={translate(locale, "premium.unlock")}
                         onPress={unlockPremium}
                         leadingIcon={<NativeIcon ios="sparkles" android="auto_awesome" />}
                       />
