@@ -20,6 +20,7 @@ import type {
 import { locales, type Locale } from "@/lib/i18n";
 import { TourStopEditor } from "@/components/admin/TourStopEditor";
 import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
+import { PlaceLocationLookup } from "@/components/admin/PlaceLocationLookup";
 import type { ContentSourceRow } from "@/db/schema";
 import type { PublicationStatus } from "@/lib/admin/content/validation";
 import {
@@ -124,11 +125,15 @@ export function PlaceFields({
   initialCityId?: number;
 }>) {
   const localization = selectedLocalization(place?.localizations, editingLocale);
+  const selectedCity = initialCityId ? cities.find((city) => city.id === initialCityId) : undefined;
   return (
     <>
       <input name="publicationStatus" type="hidden" value={place?.publicationStatus ?? "draft"} />
       {place ? <input name="expectedUpdatedAt" type="hidden" value={place.updatedAt.toISOString()} /> : null}
       <div className="grid gap-5 sm:grid-cols-2">
+        {selectedCity && !place ? (
+          <PlaceLocationLookup cityName={cityDisplayName(selectedCity)} countryCode={selectedCity.countryCode ?? ""} />
+        ) : null}
         {initialCityId ? (
           <input name="cityId" type="hidden" value={initialCityId} />
         ) : (
