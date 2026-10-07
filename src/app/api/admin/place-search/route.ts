@@ -60,7 +60,13 @@ export async function GET(request: NextRequest) {
       .filter((value): value is NonNullable<ReturnType<typeof toSuggestion>> => Boolean(value))
       .filter((value) => !value.countryCode || value.countryCode === country.toLowerCase())
       .slice(0, 5)
-      .map(({ countryCode: _countryCode, ...value }) => value);
+      .map((value) => ({
+        id: value.id,
+        name: value.name,
+        label: value.label,
+        latitude: value.latitude,
+        longitude: value.longitude,
+      }));
 
     return NextResponse.json({ suggestions });
   } catch {
