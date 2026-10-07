@@ -8,6 +8,7 @@ import {
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { colors, layout, spacing, typography } from "../design/tokens";
+import { citywalkBrand } from "../design/brand";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { LocaleSelector } from "./LocaleSelector";
 import { NativeIcon } from "./NativeIcon";
@@ -28,10 +29,10 @@ export function NativeBrand({ onBack }: { onBack?: () => void }) {
             android={direction === "rtl" ? "chevron_right" : "chevron_left"} color={colors.primary} />
         </Pressable>
       ) : null}
-      <Pressable accessibilityRole="link" accessibilityLabel="CITYWALK" onPress={() => router.navigate("/")}
+      <Pressable accessibilityRole="link" accessibilityLabel={citywalkBrand.name} onPress={() => router.navigate("/")}
         style={[styles.wordmark, { direction: "ltr" }]}>
         <Image source={require("../../assets/images/citywalk-mark.svg")} style={nested ? styles.compactMark : styles.mark} contentFit="contain" />
-        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.name, nested && styles.compactName]}>CITYWALK</Text>
+        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.name, nested && styles.compactName]}>{citywalkBrand.name}</Text>
       </Pressable>
       <LocaleSelector showLabel={!nested} />
     </View>
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   compactBrand: { minHeight: 48, gap: spacing.xs },
-  compactMark: { width: 24, height: 26 },
+  compactMark: { width: 22, height: 30 },
   compactName: { fontSize: 15, letterSpacing: 1.2 },
   wordmark: {
     flex: 1,
@@ -163,8 +164,8 @@ const styles = StyleSheet.create({
     gap: 10,
     flexShrink: 1,
   },
-  mark: { width: 36, height: 38 },
-  name: { flexShrink: 1, color: "#183F67", fontSize: 18, fontWeight: "600", letterSpacing: 1.8 },
+  mark: { width: 30, height: 42 },
+  name: { flexShrink: 1, color: citywalkBrand.colors.navy, fontSize: 18, fontWeight: "600", letterSpacing: 1.8 },
   navigation: {
     flexShrink: 0,
     width: "100%",
