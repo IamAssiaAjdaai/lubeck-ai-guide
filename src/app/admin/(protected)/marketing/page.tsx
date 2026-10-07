@@ -12,6 +12,7 @@ import {
   TableHead,
 } from "@/components/admin/AdminContentUi";
 import { getMarketingWorkspace } from "@/lib/admin/marketing/service.server";
+import { getMarketingPerformance } from "@/lib/admin/marketing/performance.server";
 import { createLubeckStarterCampaignAction } from "./actions";
 
 function MetricCard({
@@ -57,6 +58,7 @@ export default async function MarketingPage({
     ? scopeWorkspace(allWorkspace, selectedCity.id)
     : allWorkspace;
   const cityId = selectedCity?.id;
+  const performance = await getMarketingPerformance(selectedCity?.slug);
   const newCampaignHref = cityHref("/admin/marketing/campaigns/new", cityId);
   const newPageHref = cityHref("/admin/marketing/pages/new", cityId);
   const newSocialHref = cityHref("/admin/marketing/social/new", cityId);
@@ -146,6 +148,31 @@ export default async function MarketingPage({
           value={workspace.cities.length}
         />
       </div>
+
+      <section className="mt-8">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow">Performance · Last 30 days</p>
+            <h2 className="mt-2 text-2xl font-extrabold">From discovery to completed walks</h2>
+          </div>
+          <span className="text-xs font-semibold text-text-secondary">{selectedCity ? selectedCity.name : "All cities"}</span>
+        </div>
+        {performance.status === "ready" ? (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <MetricCard label="Landing views" value={performance.landingViews} detail="People who opened a campaign page" />
+            <MetricCard label="Build Walk clicks" value={performance.buildWalkClicks} detail={conversion(performance.buildWalkClicks, performance.landingViews, "of landing views")} />
+            <MetricCard label="Walks started" value={performance.walksStarted} detail={conversion(performance.walksStarted, performance.buildWalkClicks, "of Build Walk clicks")} />
+            <MetricCard label="Completed walks" value={performance.walksCompleted} detail={conversion(performance.walksCompleted, performance.walksStarted, "of started walks")} />
+          </div>
+        ) : (
+          <div className="surface-card mt-4 p-5">
+            <p className="font-bold">Analytics not configured</p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
+              CITYWALK is already capturing the Marketing funnel. Add server-only PostHog read access to show real 30-day performance here. No placeholder or estimated numbers are displayed.
+            </p>
+          </div>
+        )}
+      </section>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         <article className="surface-card p-5">
@@ -398,4 +425,9 @@ function scopeWorkspace(
 function cityHref(path: string, cityId?: number): string {
   if (!cityId) return path;
   return `${path}${path.includes("?") ? "&" : "?"}cityId=${cityId}`;
+}
+
+function conversion(value: number, base: number, label: string) {
+  if (base <= 0) return `No conversion yet · ${label}`;
+  return `${Math.round((value / base) * 100)}% · ${label}`;
 }
