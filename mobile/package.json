@@ -65,7 +65,8 @@
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit",
     "config:validate": "expo config --type public",
-    "i18n:check": "node ../packages/i18n/scripts/check.mjs"
+    "i18n:check": "node ../packages/i18n/scripts/check.mjs",
+    "local:check": "node scripts/check-local-build-readiness.mjs"
   },
   "private": true
 }
