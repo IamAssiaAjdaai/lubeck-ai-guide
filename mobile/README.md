@@ -26,7 +26,20 @@ Install and configure:
 - Android Studio + Android SDK / emulator
 - a physical iPhone / Android device when doing real-device QA
 
-From the repository root:
+From the repository root, run the read-only readiness check first:
+
+```bash
+npm run mobile:local-check
+```
+
+It checks Node/npm, Xcode, CocoaPods, Java/keytool, the Android SDK, and adb. It does not install software or change system settings. If you want machine-readable output for troubleshooting:
+
+```bash
+cd mobile
+npm run local:check -- --json
+```
+
+Then install project dependencies and validate Expo:
 
 ```bash
 npm ci
