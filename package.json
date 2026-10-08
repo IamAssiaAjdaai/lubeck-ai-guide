@@ -51,7 +51,11 @@
     "deploy:vinext:dry-run": "vinext-cloudflare deploy --dry-run",
     "rate-limit:test:integration": "node --conditions=react-server --import tsx scripts/run-rate-limit-integration-tests.ts",
     "db:backup": "tsx scripts/database-backup.ts",
-    "db:restore": "tsx scripts/database-restore.ts"
+    "db:restore": "tsx scripts/database-restore.ts",
+    "mobile:prebuild": "npm --prefix mobile run prebuild",
+    "mobile:ios": "npm --prefix mobile run ios",
+    "mobile:android": "npm --prefix mobile run android",
+    "mobile:doctor": "npm --prefix mobile run doctor"
   },
   "dependencies": {
     "@apple/app-store-server-library": "3.1.0",
