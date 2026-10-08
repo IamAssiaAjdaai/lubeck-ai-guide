@@ -55,7 +55,8 @@
     "mobile:prebuild": "npm --prefix mobile run prebuild",
     "mobile:ios": "npm --prefix mobile run ios",
     "mobile:android": "npm --prefix mobile run android",
-    "mobile:doctor": "npm --prefix mobile run doctor"
+    "mobile:doctor": "npm --prefix mobile run doctor",
+    "mobile:local-check": "npm --prefix mobile run local:check"
   },
   "dependencies": {
     "@apple/app-store-server-library": "3.1.0",
