@@ -1,17 +1,18 @@
 import "server-only";
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
   marketingCampaignsTable,
+  marketingContentMediaTable,
   marketingContentTable,
   marketingPagesTable,
   type MarketingCampaignRow,
   type MarketingContentRow,
   type MarketingPageRow,
 } from "@/db/marketingSchema";
-import { citiesTable } from "@/db/schema";
+import { citiesTable, mediaAssetsTable } from "@/db/schema";
 import {
   AdminAuthorizationError,
   requireAdminCapability,
@@ -235,6 +236,150 @@ export async function getMarketingContentItem(id: number): Promise<MarketingCont
   if (!item) throw new MarketingNotFoundError("Social content draft was not found.");
   assertCityCapability(context.staff, item.cityId, "marketing:view");
   return item;
+}
+
+
+export async function getMarketingContentMedia(contentId: number) {
+  const context = await requireAdminCapability("marketing:view");
+  const item = await loadContentItem(contentId);
+  assertCityCapability(context.staff, item.cityId, "marketing:view");
+
+  const db = getDb();
+  const [available, attached] = await Promise.all([
+    db
+      .select({
+        id: mediaAssetsTable.id,
+        assetKey: mediaAssetsTable.assetKey,
+        originalFilename: mediaAssetsTable.originalFilename,
+        kind: mediaAssetsTable.kind,
+      })
+      .from(mediaAssetsTable)
+      .where(
+        and(
+          eq(mediaAssetsTable.cityId, item.cityId),
+          eq(mediaAssetsTable.approvalStatus, "approved"),
+          eq(mediaAssetsTable.accessLevel, "public"),
+          isNull(mediaAssetsTable.archivedAt),
+          inArray(mediaAssetsTable.kind, ["image", "video"]),
+        ),
+      )
+      .orderBy(asc(mediaAssetsTable.originalFilename)),
+    db
+      .select({
+        id: marketingContentMediaTable.id,
+        mediaAssetId: mediaAssetsTable.id,
+        originalFilename: mediaAssetsTable.originalFilename,
+        kind: mediaAssetsTable.kind,
+        position: marketingContentMediaTable.position,
+      })
+      .from(marketingContentMediaTable)
+      .innerJoin(
+        mediaAssetsTable,
+        eq(marketingContentMediaTable.mediaAssetId, mediaAssetsTable.id),
+      )
+      .where(eq(marketingContentMediaTable.contentId, contentId))
+      .orderBy(asc(marketingContentMediaTable.position)),
+  ]);
+
+  return { available, attached };
+}
+
+export async function attachMarketingContentMedia(
+  contentId: number,
+  mediaAssetId: number,
+) {
+  const context = await requireAdminCapability("marketing:manage");
+  const item = await loadContentItem(contentId);
+  assertCityCapability(context.staff, item.cityId, "marketing:manage");
+  assertDraftContent(item);
+
+  if (!Number.isInteger(mediaAssetId) || mediaAssetId <= 0) {
+    throw new MarketingConflictError("Select a valid media asset.");
+  }
+
+  const db = getDb();
+  const [asset] = await db
+    .select({ id: mediaAssetsTable.id })
+    .from(mediaAssetsTable)
+    .where(
+      and(
+        eq(mediaAssetsTable.id, mediaAssetId),
+        eq(mediaAssetsTable.cityId, item.cityId),
+        eq(mediaAssetsTable.approvalStatus, "approved"),
+        eq(mediaAssetsTable.accessLevel, "public"),
+        isNull(mediaAssetsTable.archivedAt),
+        inArray(mediaAssetsTable.kind, ["image", "video"]),
+      ),
+    )
+    .limit(1);
+
+  if (!asset) {
+    throw new MarketingConflictError(
+      "Media must be an approved public image or video from the same city.",
+    );
+  }
+
+  const [existing] = await db
+    .select({ id: marketingContentMediaTable.id })
+    .from(marketingContentMediaTable)
+    .where(
+      and(
+        eq(marketingContentMediaTable.contentId, contentId),
+        eq(marketingContentMediaTable.mediaAssetId, mediaAssetId),
+      ),
+    )
+    .limit(1);
+
+  if (existing) return existing;
+
+  const positions = await db
+    .select({ position: marketingContentMediaTable.position })
+    .from(marketingContentMediaTable)
+    .where(eq(marketingContentMediaTable.contentId, contentId));
+
+  const nextPosition =
+    positions.length === 0
+      ? 0
+      : Math.max(...positions.map(({ position }) => position)) + 1;
+
+  const [created] = await db
+    .insert(marketingContentMediaTable)
+    .values({ contentId, mediaAssetId, position: nextPosition })
+    .returning();
+
+  if (!created) {
+    throw new MarketingConflictError("Media attachment failed.");
+  }
+
+  return created;
+}
+
+export async function detachMarketingContentMedia(
+  contentId: number,
+  attachmentId: number,
+) {
+  const context = await requireAdminCapability("marketing:manage");
+  const item = await loadContentItem(contentId);
+  assertCityCapability(context.staff, item.cityId, "marketing:manage");
+  assertDraftContent(item);
+
+  const [deleted] = await getDb()
+    .delete(marketingContentMediaTable)
+    .where(
+      and(
+        eq(marketingContentMediaTable.id, attachmentId),
+        eq(marketingContentMediaTable.contentId, contentId),
+      ),
+    )
+    .returning();
+
+  if (!deleted) {
+    throw new MarketingNotFoundError(
+      "Marketing media attachment was not found.",
+    );
+  }
+
+  return deleted;
 }
 
 export async function createMarketingCampaign(input: MarketingCampaignInput) {

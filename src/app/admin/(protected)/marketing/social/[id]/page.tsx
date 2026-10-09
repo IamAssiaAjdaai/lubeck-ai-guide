@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AdminNotice } from "@/components/admin/AdminContentForms";
+import { MarketingMediaPanel } from "@/components/admin/MarketingMediaPanel";
 import {
   MarketingFormShell,
   SocialContentFields,
@@ -17,6 +18,7 @@ import {
 } from "@/app/admin/(protected)/marketing/actions";
 import {
   getMarketingContentItem,
+  getMarketingContentMedia,
   getMarketingEditorOptions,
   MarketingNotFoundError,
 } from "@/lib/admin/marketing/service.server";
@@ -52,10 +54,11 @@ export default async function MarketingSocialEditor({
     throw error;
   }
 
-  const [options, workflowAccess, trackingPath] = await Promise.all([
+  const [options, workflowAccess, trackingPath, media] = await Promise.all([
     getMarketingEditorOptions(),
     getMarketingWorkflowAccess(item.cityId),
     getMarketingSocialTrackingPreview(item.id),
+    getMarketingContentMedia(item.id),
   ]);
   const cityContext = resolveRecordCityContext(query.cityId, item.cityId);
   const cities = cityContext
@@ -105,6 +108,14 @@ export default async function MarketingSocialEditor({
           The creative copy is read-only outside idea/draft status. Use the workflow below to review, prepare or archive it.
         </p>
       )}
+
+      <MarketingMediaPanel
+        attached={media.attached}
+        available={media.available}
+        canEdit={canEdit}
+        cityId={item.cityId}
+        contentId={item.id}
+      />
 
       <MarketingTrackingPanel trackingPath={trackingPath} />
 
