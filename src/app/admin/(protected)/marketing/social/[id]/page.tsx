@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { AdminNotice } from "@/components/admin/AdminContentForms";
 import { MarketingMediaPanel } from "@/components/admin/MarketingMediaPanel";
+import { MarketingQaPanel } from "@/components/admin/MarketingQaPanel";
+import { runMarketingQaAction } from "@/app/admin/(protected)/marketing/qa-actions";
 import {
   MarketingFormShell,
   SocialContentFields,
@@ -118,6 +120,11 @@ export default async function MarketingSocialEditor({
       />
 
       <MarketingTrackingPanel trackingPath={trackingPath} />
+
+      {(workflowAccess.canManage || workflowAccess.canReview) &&
+      (currentStatus === "idea" || currentStatus === "draft" || currentStatus === "in_review") ? (
+        <MarketingQaPanel action={runMarketingQaAction.bind(null, "social", item.id)} />
+      ) : null}
 
       <MarketingWorkflowPanel
         action={changeMarketingSocialWorkflowAction.bind(null, item.id)}
