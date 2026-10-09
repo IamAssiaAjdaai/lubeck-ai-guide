@@ -47,6 +47,23 @@ import { getNativeDirection } from "../../../lib/localization";
 import { parseCityRouteIdentity } from "../../../lib/routing";
 import { useNativeLocale } from "../../../localization/LocaleProvider";
 
+type CityHubEditorialText = {
+  story: string;
+  badge: string;
+  intro: string;
+  guide: string;
+};
+const cityHubEditorial: Record<string, CityHubEditorialText> = {
+  en: { story: "Historic streets. Hidden stories. Discover the Hanseatic charm.", badge: "GERMANY · HANSEATIC CITY", intro: "Ready to explore? Make this city yours.", guide: "City guide" },
+  de: { story: "Historische Gassen. Verborgene Geschichten. Entdecke die Hansestadt.", badge: "DEUTSCHLAND · HANSESTADT", intro: "Bereit zum Entdecken? Erkunde die Stadt auf deine Art.", guide: "Stadtführer" },
+  fr: { story: "Ruelles historiques et histoires secrètes. Découvrez la ville hanséatique.", badge: "ALLEMAGNE · VILLE HANSÉATIQUE", intro: "Prêt à explorer ? Découvrez la ville à votre façon.", guide: "Guide de ville" },
+  es: { story: "Calles históricas y relatos ocultos. Descubre el encanto hanseático.", badge: "ALEMANIA · CIUDAD HANSEÁTICA", intro: "¿Listo para explorar? Descubre la ciudad a tu manera.", guide: "Guía local" },
+  nl: { story: "Historische straten, verborgen verhalen. Ontdek de Hanzestad.", badge: "DUITSLAND · HANZESTAD", intro: "Klaar om te ontdekken? Maak de stad van jou.", guide: "Stadsgids" },
+  da: { story: "Historiske gader og skjulte historier. Oplev hansestadens charme.", badge: "TYSKLAND · HANSEBY", intro: "Klar til at udforske? Oplev byen på din måde.", guide: "Byguide" },
+  sv: { story: "Historiska gator och dolda berättelser. Upptäck hansestadens charm.", badge: "TYSKLAND · HANSASTAD", intro: "Redo att utforska? Upptäck staden på ditt sätt.", guide: "Stadsguide" },
+  ar: { story: "شوارع تاريخية وحكايات خفية. اكتشف سحر المدينة الهانزية.", badge: "ألمانيا · مدينة هانزية", intro: "مستعد للاستكشاف؟ اكتشف المدينة بطريقتك.", guide: "دليل المدينة" },
+};
+
 export default function CityScreen() {
   const textLayout = useResponsiveTextLayout(3);
   const params = useLocalSearchParams<{
@@ -56,6 +73,7 @@ export default function CityScreen() {
   const identity = parseCityRouteIdentity(params.citySlug);
   const { direction: appDirection, locale, messages } = useNativeLocale();
   const t = walkCopy(locale);
+  const editorial = cityHubEditorial[locale] ?? cityHubEditorial.en;
   const list = useRef<FlatList<PublicPlaceCard>>(null);
   const placesOffset = useRef(0);
   const [measuredPlacesOffset, setMeasuredPlacesOffset] = useState<number>();
@@ -118,7 +136,27 @@ export default function CityScreen() {
               headerOffset.current = event.nativeEvent.layout.y;
             }}
           >
-            <ImageOverlayHero title={nativeCityName(city.slug, city.content.name, locale)} subtitle={t.hubSubtitle} />
+            <ImageOverlayHero
+              title={nativeCityName(city.slug, city.content.name, locale)}
+              subtitle={city.slug === "lubeck" ? editorial.story : t.hubSubtitle}
+              editorial
+              citySlug={city.slug}
+              badge={city.slug === "lubeck" ? editorial.badge : undefined}
+            />
+            {city.slug === "lubeck" ? (
+              <MediaAttribution attribution={{
+                text: "Edelmauswaldgeist · CC BY-SA 4.0",
+                href: "https://commons.wikimedia.org/wiki/File:L%C3%BCbeck_Trave.jpg",
+                license: "CC BY-SA 4.0",
+              }} />
+            ) : null}
+            <View testID="city-hub-intro" style={[styles.introRow, nativeRowStyle(appDirection)]}>
+              <AppText variant="metadata" style={styles.introText}>{editorial.intro}</AppText>
+              <View style={styles.guideLabel}>
+                <NativeIcon ios="sparkle" android="auto_awesome" size={15} color="#07849A" />
+                <AppText variant="metadata" style={styles.guideText}>{editorial.guide}</AppText>
+              </View>
+            </View>
             <Link
               href={{
                 pathname: "/city/[citySlug]/walk",
@@ -127,7 +165,9 @@ export default function CityScreen() {
               asChild
             >
               <PrimaryButton
+                style={styles.buildMyWalk}
                 label={t.build}
+                trailingIcon={<NativeIcon ios={appDirection === "rtl" ? "arrow.left" : "arrow.right"} android={appDirection === "rtl" ? "arrow_back" : "arrow_forward"} size={19} color="#FFFFFF" />}
                 leadingIcon={
                   <NativeIcon
                     ios="location.fill"
@@ -481,11 +521,19 @@ function PlaceCard({
 }
 
 const styles = StyleSheet.create({
+  headerContent: { gap: spacing.md },
+  introRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm },
+  introText: { color: "#5A7081", fontSize: 12, lineHeight: 18, flexShrink: 1 },
+  guideLabel: { flexDirection: "row", alignItems: "center", gap: 5, flexShrink: 0 },
+  guideText: { color: "#587486", fontSize: 11, fontWeight: "700" },
+  buildMyWalk: { backgroundColor: "#00889A", borderRadius: 16, minHeight: 56 },
   quickActions: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   quickAction: {
     flex: 1,
     minWidth: 0,
-    minHeight: 64,
+    minHeight: 69,
+    borderRadius: 15,
+    borderColor: "#DFE8E9",
     paddingHorizontal: spacing.xs,
   },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
@@ -496,7 +544,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
   },
-  headerContent: { gap: spacing.md },
   cityHero: {
     width: "100%",
     height: 235,
@@ -539,8 +586,8 @@ const styles = StyleSheet.create({
   description: { color: colors.textMuted },
   tourCard: {
     backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
+    borderColor: "#DFE8E9",
+    borderRadius: 18,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
   },
@@ -551,7 +598,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     backgroundColor: colors.primarySoft,
   },
-  tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: spacing.sm },
+  tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: spacing.md },
   cardActions: { paddingHorizontal: 12, paddingBottom: 12 },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
