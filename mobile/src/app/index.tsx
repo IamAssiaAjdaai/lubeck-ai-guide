@@ -59,7 +59,7 @@ function HomeCityCard({
   exploreLabel,
 }: {
   city: HomeCity;
-  locale: string;
+  locale: ReturnType<typeof useNativeLocale>["locale"];
   size: "featured" | "small";
   availableLabel: string;
   comingSoonLabel: string;
@@ -358,9 +358,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     justifyContent: "space-between",
   },
-  heroImage: { ...StyleSheet.absoluteFillObject },
+  heroImage: { ...StyleSheet.absoluteFill },
   heroScrim: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(10, 27, 38, 0.30)",
   },
   heroHeader: {
@@ -411,8 +411,8 @@ const styles = StyleSheet.create({
   destinationCard: { backgroundColor: "#D5E2E9", overflow: "hidden", borderRadius: radius.lg },
   featuredCard: { height: 256, justifyContent: "flex-end" },
   smallCard: { height: 180, justifyContent: "flex-end" },
-  destinationImage: { ...StyleSheet.absoluteFillObject },
-  imageTint: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0, 25, 37, 0.28)" },
+  destinationImage: { ...StyleSheet.absoluteFill },
+  imageTint: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0, 25, 37, 0.28)" },
   statusPill: {
     position: "absolute", top: 12, left: 12, maxWidth: "90%",
     backgroundColor: "rgba(255, 255, 255, 0.91)", borderRadius: radius.pill,
