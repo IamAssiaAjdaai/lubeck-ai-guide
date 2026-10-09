@@ -156,9 +156,10 @@ describe("native Home V2 (native bridges mocked)", () => {
     expect(screen.getAllByTestId("citywalk-brand-mark").length).toBeGreaterThan(0);
     expect(homeSource).toContain('homeAppMark from "../../assets/images/citywalk-mark.svg"');
     expect(homeSource).not.toContain('home-city-mark.svg');
-    expect(homeSource).toContain("HOME_PANORAMA_URI");
-    expect(homeSource).toContain("fallbackSource={homeWaterfront}");
-    expect(homeSource).toContain("HOME_PANORAMA_CREDIT_URL");
+    expect(homeSource).toContain('homeMulticityApproved from "../../assets/images/home-multicity-approved.webp"');
+    expect(homeSource).toContain("source={homeMulticityApproved}");
+    expect(homeSource).not.toContain("HOME_PANORAMA_URI");
+    expect(homeSource).not.toContain("HOME_PANORAMA_CREDIT_URL");
   });
   it("filters real city cards and exposes an empty search state", () => {
     render(<HomeScreen />);
@@ -226,12 +227,14 @@ it("keeps incoming cities compact and removes the flat photo-darkening stripe", 
 });
 
 
-it("keeps the official app mark and credited scenic hero while preserving city card artwork", () => {
+it("shows the approved multi-city photo and the official app mark without third-party credits", () => {
   expect(homeSource).toContain('source={homeAppMark}');
   expect(homeSource).toContain('homeAppMark from "../../assets/images/citywalk-mark.svg"');
-  expect(homeSource).toContain('source={{ uri: HOME_PANORAMA_URI }}');
-  expect(homeSource).toContain('fallbackSource={homeWaterfront}');
-  expect(homeSource).toContain('onError={() => setHeroPhotoFailed(true)}');
-  expect(homeSource).toContain("Edelmauswaldgeist · CC BY-SA 4.0");
+  expect(homeSource).toContain('homeMulticityApproved from "../../assets/images/home-multicity-approved.webp"');
+  expect(homeSource).toContain('source={homeMulticityApproved}');
+  expect(homeSource).toContain('contentFit="cover"');
+  expect(homeSource).not.toContain("Edelmauswaldgeist");
+  expect(homeSource).not.toContain("HOME_PANORAMA_URI");
+  expect(homeSource).not.toContain("HOME_PANORAMA_CREDIT_URL");
   expect(homeSource).toContain('case "lubeck": return homeHolstentor;');
 });
