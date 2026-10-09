@@ -1,7 +1,7 @@
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { useRef, useState } from "react";
 import { Link } from "expo-router";
-import { ActivityIndicator, Pressable, View, type ViewStyle } from "react-native";
+import { ActivityIndicator, View, type ViewStyle } from "react-native";
 import { useCurrentWalk, refreshCurrentWalk } from "../hooks/useCurrentWalk";
 import { prefetchPublicCity } from "../hooks/usePublicContent";
 import { publicContentCache, publicContentCacheKey } from "../lib/publicContentCache";
@@ -10,7 +10,7 @@ import { addPlaceToCurrentWalk, isInWalk, removePlaceFromCurrentWalk } from "../
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { uxCopy } from "../design/uxCopy";
 import { colors, radius, spacing } from "../design/tokens";
-import { AppText, PrimaryButton, StatusMessage } from "./ui";
+import { AppText, PressableSurface, PrimaryButton, StatusMessage } from "./ui";
 import { NativeIcon } from "./NativeIcon";
 
 export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false, readOnly = false, dense = false, compact = false, inline = false, discoveryCard = false, iconOnly = false, onFeedback }: { citySlug: string; placeSlug: string; onlyMember?: boolean; readOnly?: boolean; dense?: boolean; compact?: boolean; inline?: boolean; discoveryCard?: boolean; iconOnly?: boolean; onFeedback?: (message: string, showCustomize: boolean) => void }) {
@@ -22,7 +22,7 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
   const included = isInWalk(state.current, placeSlug);
   // Discovery cards opt into a content-sized action; Detail and other callers keep their layout.
   const actionStyle: ViewStyle | undefined = dense || inline ? {
-    minHeight: compact ? 44 : 44,
+    minHeight: compact && !discoveryCard ? 64 : 44,
     paddingVertical: discoveryCard ? 5 : spacing.sm,
     paddingHorizontal: discoveryCard ? 10 : 12,
     borderRadius: discoveryCard ? 12 : radius.sm,
@@ -55,7 +55,7 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
   if (onlyMember && !included && !busy && !error) return null;
   if (iconOnly) return (
     <View style={{ alignItems: "flex-end", gap: 4 }}>
-      <Pressable
+      <PressableSurface
         accessibilityRole="button"
         accessibilityLabel={state.status === "loading" ? t.checking : state.status === "error" ? messages.retry : busy ? t.checking : included ? t.remove : t.add}
         accessibilityState={{ disabled: Boolean(busy || state.status === "loading"), selected: included }}
@@ -69,7 +69,7 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
       >
         {busy || state.status === "loading" ? <ActivityIndicator color={colors.primary} size="small" /> :
           <NativeIcon ios={included ? "checkmark" : state.status === "error" ? "arrow.clockwise" : "plus"} android={included ? "check" : state.status === "error" ? "refresh" : "add"} color={colors.primary} size={22} />}
-      </Pressable>
+      </PressableSurface>
       {!onFeedback && error ? <AppText accessibilityLiveRegion="polite" numberOfLines={2} variant="caption" style={{ color: colors.textMuted, width: 150, textAlign: "right" }}>{error}</AppText> : null}
       {!onFeedback && error === t.budget ? <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild><PrimaryButton compact tone="secondary" label={walkCopy(locale).customize} style={{ minHeight: 38, paddingHorizontal: 8 }} /></Link> : null}
     </View>
