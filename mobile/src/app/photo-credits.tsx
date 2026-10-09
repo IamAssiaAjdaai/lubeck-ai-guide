@@ -5,6 +5,7 @@ import { Linking, StyleSheet, View } from "react-native";
 import { MediaAttribution } from "../components/MediaAttribution";
 import { AppText, PressableSurface, Screen } from "../components/ui";
 import { colors, spacing } from "../design/tokens";
+import { useNativeLocale } from "../localization/LocaleProvider";
 
 const photoCopy: Record<string, { title: string; description: string }> = {
   en: { title: "Photo credits", description: "Image creators and license details for CITYWALK destination previews." },
@@ -17,7 +18,6 @@ const photoCopy: Record<string, { title: string; description: string }> = {
   ar: { title: "حقوق الصور", description: "أسماء المصورين وروابط التراخيص لصور المدن في CITYWALK." },
 };
 
-import { useNativeLocale } from "../localization/LocaleProvider";
 
 export default function PhotoCreditsScreen() {
   const { locale } = useNativeLocale();
