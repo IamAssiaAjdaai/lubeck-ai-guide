@@ -80,6 +80,7 @@ export default function CityScreen() {
   const headerOffset = useRef(0);
   const [category, setCategory] = useState("all");
   const [mapVisible, setMapVisible] = useState(false);
+  const [aboutExpanded, setAboutExpanded] = useState(false);
   const labels = discoveryCopy(locale);
   const [near, setNear] = useState<{ lat: number; lng: number }>();
   const [locationMessage, setLocationMessage] = useState("");
@@ -248,7 +249,29 @@ export default function CityScreen() {
             ) : null}
 
             {city.content.description ? (
-              <AppText style={styles.muted}>{city.content.description}</AppText>
+              <View style={styles.aboutCard} testID="city-about-card">
+                <PressableSurface
+                  accessibilityRole="button"
+                  accessibilityLabel={locale === "de" ? "Über Lübeck" : locale === "fr" ? "À propos de Lübeck" : locale === "es" ? "Sobre Lübeck" : locale === "nl" ? "Over Lübeck" : locale === "ar" ? "عن لوبيك" : "About Lübeck"}
+                  accessibilityState={{ expanded: aboutExpanded }}
+                  onPress={() => setAboutExpanded((current) => !current)}
+                  style={StyleSheet.flatten([styles.aboutTrigger, nativeRowStyle(appDirection)])}
+                >
+                  <NativeIcon ios="info.circle" android="info_outline" size={21} color={colors.primary} />
+                  <View style={styles.aboutTitleArea}>
+                    <AppText variant="label" style={styles.aboutTitle}>
+                      {locale === "de" ? "Über Lübeck" : locale === "fr" ? "À propos de Lübeck" : locale === "es" ? "Sobre Lübeck" : locale === "nl" ? "Over Lübeck" : locale === "ar" ? "عن لوبيك" : "About Lübeck"}
+                    </AppText>
+                    <AppText numberOfLines={1} variant="caption" style={styles.muted}>
+                      {locale === "de" ? "UNESCO-Altstadt · Hansegeschichte" : locale === "ar" ? "المدينة القديمة · التاريخ الهانزي" : "UNESCO Old Town · Hanseatic history"}
+                    </AppText>
+                  </View>
+                  <NativeIcon ios={aboutExpanded ? "chevron.up" : "chevron.down"} android={aboutExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={19} color={colors.textMuted} />
+                </PressableSurface>
+                {aboutExpanded ? (
+                  <AppText style={styles.aboutBody}>{city.content.description}</AppText>
+                ) : null}
+              </View>
             ) : null}
             <View
               style={styles.section}
@@ -545,6 +568,11 @@ const styles = StyleSheet.create({
   },
   cityIntroduction: { gap: spacing.sm },
   section: { gap: spacing.md },
+  aboutCard: { backgroundColor: colors.surface, borderRadius: 16, borderColor: colors.border, borderWidth: StyleSheet.hairlineWidth, overflow: "hidden" },
+  aboutTrigger: { minHeight: 64, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
+  aboutTitleArea: { flex: 1, minWidth: 0, gap: 2 },
+  aboutTitle: { color: colors.primary },
+  aboutBody: { color: colors.textMuted, lineHeight: 23, paddingHorizontal: spacing.md, paddingBottom: spacing.md },
   placeControls: { gap: spacing.sm },
   placeImage: {
     width: "37%",
