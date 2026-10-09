@@ -4,6 +4,8 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   location: vi.fn(),
+  retry: vi.fn(),
+  citiesStatus: "available" as "available" | "error",
   scroll: vi.fn(),
   section: undefined as string | undefined,
   locale: "en",
@@ -57,8 +59,8 @@ vi.mock("../src/components/ui", () => ({
   AppText: ({ children, accessibilityRole }: React.PropsWithChildren<{ accessibilityRole?: string }>) =>
     accessibilityRole === "header" ? <h1>{children}</h1> : <span>{children}</span>,
   SectionTitle: ({ children }: React.PropsWithChildren) => <h2>{children}</h2>,
-  PressableSurface: ({ children }: React.PropsWithChildren) => (
-    <div>{children}</div>
+  PressableSurface: ({ children, accessibilityRole, onPress }: React.PropsWithChildren<{ accessibilityRole?: "link" | "button"; onPress?: () => void }>) => (
+    <div role={accessibilityRole} onClick={onPress}>{children}</div>
   ),
   PrimaryButton: ({
     label,
@@ -80,9 +82,9 @@ vi.mock("../src/components/NativeContentImage", () => ({
     source,
     accessibilityLabel,
   }: {
-    source: { uri: string };
-    accessibilityLabel: string;
-  }) => <img src={source?.uri} alt={accessibilityLabel} />,
+    source?: { uri?: string };
+    accessibilityLabel?: string;
+  }) => <img src={source?.uri ?? "bundled-photo"} alt={accessibilityLabel ?? ""} />,
 }));
 vi.mock("../src/components/NativeIcon", () => ({ NativeIcon: () => null }));
 vi.mock("../src/components/CitywalkLoading", () => ({
@@ -93,8 +95,9 @@ vi.mock("../src/components/MediaAttribution", () => ({
 }));
 vi.mock("../src/hooks/usePublicContent", () => ({
   usePublicCities: () => ({
-    status: "available",
+    status: state.citiesStatus,
     data: { cities: state.cities },
+    retry: state.retry,
   }),
   prefetchPublicCity: vi.fn(),
 }));
@@ -121,6 +124,7 @@ afterEach(() => {
   vi.clearAllMocks();
   state.locale = "en";
   state.section = undefined;
+  state.citiesStatus = "available";
 });
 describe("native Home V2 (native bridges mocked)", () => {
   it("returns city-selection Explore to the top on the first tab transition", () => {
@@ -137,7 +141,7 @@ describe("native Home V2 (native bridges mocked)", () => {
     ).toBeTruthy();
     expect(
       screen.getByRole("img", { name: "Lübeck" }).getAttribute("src"),
-    ).toBe("https://preview.example/landmarks/holstentor.jpg");
+    ).toBe("bundled-photo");
     expect(
       screen.getByRole("img", { name: "Hamburg" }).getAttribute("src"),
     ).toContain("city-hamburg.webp");
@@ -145,6 +149,7 @@ describe("native Home V2 (native bridges mocked)", () => {
     expect(document.querySelectorAll('a[href="/profile"]')).toHaveLength(1);
     expect(screen.getByText("Featured cities")).toBeTruthy();
     expect(screen.getByText("More cities coming soon")).toBeTruthy();
+    expect(screen.getByTestId("citywalk-brand-mark")).toBeTruthy();
   });
   it("filters real city cards and exposes an empty search state", () => {
     render(<HomeScreen />);
@@ -191,4 +196,15 @@ it("finds the same city using either its Arabic display name or original name", 
     expect(screen.queryByRole("img", { name: "هامبورغ" })).toBeNull();
     expect(document.querySelector('a[href="/city/lubeck"]')).toBeTruthy();
   }
+});
+
+
+it("keeps known city photography visible with a safe retry when CMS is unreachable", () => {
+  state.citiesStatus = "error";
+  render(<HomeScreen />);
+  expect(screen.getByRole("img", { name: "Lübeck" })).toBeTruthy();
+  expect(screen.getByRole("img", { name: "Hamburg" })).toBeTruthy();
+  expect(document.querySelector('a[href="/city/lubeck"]')).toBeNull();
+  expect(screen.getAllByText("Unavailable").length).toBeGreaterThan(0);
+  expect(screen.getByText("Featured cities")).toBeTruthy();
 });
