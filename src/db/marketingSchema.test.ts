@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   marketingCampaignsTable,
   marketingCampaignStatusEnum,
+  marketingContentMediaTable,
   marketingContentStatusEnum,
   marketingContentTable,
   marketingPageKindEnum,
@@ -65,5 +66,26 @@ describe("marketing database schema", () => {
     ).toBe(true);
     expect(pageConfig.foreignKeys).toHaveLength(2);
     expect(contentConfig.foreignKeys).toHaveLength(3);
+  });
+
+  it("links ordered media assets to marketing content", () => {
+    const config = getTableConfig(marketingContentMediaTable);
+
+    expect(config.name).toBe("marketing_content_media");
+    expect(config.foreignKeys).toHaveLength(2);
+    expect(
+      config.indexes.some(
+        (index) =>
+          index.config.name === "marketing_content_media_position_unique" &&
+          index.config.unique,
+      ),
+    ).toBe(true);
+    expect(
+      config.indexes.some(
+        (index) =>
+          index.config.name === "marketing_content_media_asset_unique" &&
+          index.config.unique,
+      ),
+    ).toBe(true);
   });
 });
