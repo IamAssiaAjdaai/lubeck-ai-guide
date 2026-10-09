@@ -1,7 +1,7 @@
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { useRef, useState } from "react";
 import { Link } from "expo-router";
-import { ActivityIndicator, View, type ViewStyle } from "react-native";
+import { View, type ViewStyle } from "react-native";
 import { useCurrentWalk, refreshCurrentWalk } from "../hooks/useCurrentWalk";
 import { prefetchPublicCity } from "../hooks/usePublicContent";
 import { publicContentCache, publicContentCacheKey } from "../lib/publicContentCache";
@@ -67,7 +67,7 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
         hitSlop={8}
         style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: included ? "#0C8792" : "#D6E5ED", backgroundColor: included ? "#E8F6F4" : colors.surface, alignItems: "center", justifyContent: "center" }}
       >
-        {busy || state.status === "loading" ? <ActivityIndicator color={colors.primary} size="small" /> :
+        {busy || state.status === "loading" ? <NativeIcon ios="hourglass" android="hourglass_empty" color={colors.primary} size={20} /> :
           <NativeIcon ios={included ? "checkmark" : state.status === "error" ? "arrow.clockwise" : "plus"} android={included ? "check" : state.status === "error" ? "refresh" : "add"} color={colors.primary} size={22} />}
       </PressableSurface>
       {!onFeedback && error ? <AppText accessibilityLiveRegion="polite" numberOfLines={2} variant="caption" style={{ color: colors.textMuted, width: 150, textAlign: "right" }}>{error}</AppText> : null}
