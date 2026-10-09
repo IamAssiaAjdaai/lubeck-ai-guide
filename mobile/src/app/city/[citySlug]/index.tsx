@@ -399,7 +399,7 @@ function TourCard({
                 ))}
             </View>
             <AppText
-              numberOfLines={expanded ? undefined : 2}
+              numberOfLines={expanded ? undefined : 1}
               variant="caption"
               style={styles.stopName}
             >
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     backgroundColor: colors.primarySoft,
   },
-  tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: spacing.md },
+  tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: 12 },
   cardActions: { paddingHorizontal: 12, paddingBottom: 10, alignSelf: "flex-end" },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
