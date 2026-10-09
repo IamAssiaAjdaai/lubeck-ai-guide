@@ -4,6 +4,7 @@ import homeHamburg from "../../assets/images/home-hamburg.webp";
 import homeDuesseldorf from "../../assets/images/home-duesseldorf.webp";
 import homeSkylineMark from "../../assets/images/home-city-mark.svg";
 import homeCardGradient from "../../assets/images/home-card-gradient.svg";
+import homeHeroSkyGradient from "../../assets/images/home-hero-sky-gradient.svg";
 import { Image } from "expo-image";
 import { LocaleSelector } from "../components/LocaleSelector";
 import { nativeCityName } from "../lib/displayNames";
@@ -64,6 +65,18 @@ function bundledCityImage(slug: string) {
   }
 }
 
+// Compact, localized decks keep photo captions readable on smaller devices.
+const featuredDeck: Record<string, Record<string, string>> = {
+  en: { lubeck: "HANSEATIC · HISTORIC · COASTAL", hamburg: "HARBOR · CULTURE · MODERN" },
+  de: { lubeck: "HANSESTADT · GESCHICHTE · MEER", hamburg: "HAFEN · KULTUR · MODERN" },
+  fr: { lubeck: "HANSÉATIQUE · HISTOIRE · MER", hamburg: "PORT · CULTURE · MODERNE" },
+  es: { lubeck: "HANSEÁTICA · HISTORIA · MAR", hamburg: "PUERTO · CULTURA · MODERNA" },
+  nl: { lubeck: "HANZE · HISTORIE · KUST", hamburg: "HAVEN · CULTUUR · MODERN" },
+  da: { lubeck: "HANSEBY · HISTORIE · KYST", hamburg: "HAVN · KULTUR · MODERNE" },
+  sv: { lubeck: "HANSA · HISTORIA · KUST", hamburg: "HAMN · KULTUR · MODERNT" },
+  ar: { lubeck: "تاريخ · ثقافة · بحر", hamburg: "ميناء · ثقافة · حداثة" },
+};
+
 function HomeCityCard({
   city,
   locale,
@@ -83,6 +96,7 @@ function HomeCityCard({
 }) {
   const isFeatured = size === "featured";
   const cityName = nativeCityName(city.slug, city.name, locale);
+  const shortDeck = featuredDeck[locale]?.[city.slug] ?? city.shortDescription;
   const localImage = bundledCityImage(city.slug);
   const fallback = cityLaunches[city.slug]?.heroImage;
   const card = (
@@ -116,9 +130,9 @@ function HomeCityCard({
         >
           {cityName}
         </AppText>
-        {isFeatured && city.shortDescription ? (
+        {isFeatured && shortDeck ? (
           <AppText variant="caption" numberOfLines={2} style={styles.destinationDescription}>
-            {city.shortDescription}
+            {shortDeck}
           </AppText>
         ) : !isFeatured ? (
           <AppText variant="metadata" style={styles.destinationDescription}>{city.unavailable ? unavailableLabel : comingSoonLabel}</AppText>
@@ -244,6 +258,9 @@ export default function HomeScreen() {
           style={styles.heroImage}
         />
         <View pointerEvents="none" style={styles.heroScrim} />
+        <View pointerEvents="none" style={styles.heroSky}>
+          <Image source={homeHeroSkyGradient} style={styles.heroSkyImage} contentFit="fill" accessible={false} />
+        </View>
         <View style={[styles.heroHeader, { direction }]}>
           <View style={styles.brandLockup}>
             <Image
@@ -380,7 +397,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   homeHero: {
-    minHeight: 408,
+    minHeight: 423,
     marginHorizontal: -spacing.lg,
     marginTop: -14,
     marginBottom: spacing.sm,
@@ -396,8 +413,10 @@ const styles = StyleSheet.create({
   heroImage: { ...StyleSheet.absoluteFill },
   heroScrim: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: "rgba(10, 27, 38, 0.28)",
+    backgroundColor: "rgba(5, 22, 32, 0.35)",
   },
+  heroSky: { position: "absolute", top: 0, left: 0, right: 0, height: 140 },
+  heroSkyImage: { width: "100%", height: "100%" },
   heroHeader: {
     minHeight: 60, flexDirection: "row", justifyContent: "space-between",
     alignItems: "center", gap: 6,
@@ -412,20 +431,20 @@ const styles = StyleSheet.create({
     width: 44, height: 44, borderRadius: 22, backgroundColor: "rgba(255,255,255,0.91)",
     justifyContent: "center", alignItems: "center",
   },
-  heroCopy: { gap: 7, marginTop: 24, paddingBottom: spacing.sm },
+  heroCopy: { gap: 7, marginTop: 26, paddingBottom: spacing.sm },
   heroEyebrow: { color: "#F7FAFC", fontWeight: "700", letterSpacing: 2.8, fontSize: 12 },
   heroTitle: {
     color: "#FFFFFF",
     fontFamily: "Georgia",
-    fontWeight: "700",
-    fontSize: 33,
-    lineHeight: 39,
-    letterSpacing: -0.9,
+    fontWeight: "500",
+    fontSize: 30,
+    lineHeight: 37,
+    letterSpacing: -0.5,
     textShadowColor: "rgba(0,0,0,0.26)",
     textShadowRadius: 10,
     textShadowOffset: { width: 0, height: 2 },
   },
-  heroSubtitle: { color: "#FFFFFF", fontSize: 16, lineHeight: 22 },
+  heroSubtitle: { color: "#FFFFFF", fontSize: 16, lineHeight: 22, textShadowColor: "rgba(0,0,0,0.35)", textShadowRadius: 4 },
   heroActions: { gap: 10 },
   search: {
     minHeight: 56,
@@ -459,14 +478,14 @@ const styles = StyleSheet.create({
   pillDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#238D5A" },
   pillDotMuted: { backgroundColor: "#66778B" },
   pillText: { color: "#154861", fontSize: 12, lineHeight: 16, flexShrink: 1 },
-  featuredCopy: { padding: 12, gap: 4 },
+  featuredCopy: { paddingHorizontal: 13, paddingTop: 14, paddingBottom: 17, gap: 7 },
   featuredCopyWithArrow: { paddingRight: 43 },
   smallCopy: { padding: 12, gap: 4 },
   destinationName: { color: "#FFFFFF", fontWeight: "700", textShadowColor: "rgba(0,0,0,0.4)", textShadowRadius: 4 },
-  featuredName: { fontFamily: "Georgia", fontSize: 24, lineHeight: 27 },
-  destinationDescription: { color: "#F0F4F5", fontSize: 11, lineHeight: 16 },
+  featuredName: { fontFamily: "Georgia", fontSize: 24, lineHeight: 29 },
+  destinationDescription: { color: "#F8FAFB", fontSize: 10, lineHeight: 15, letterSpacing: 0.1 },
   cardArrow: {
-    position: "absolute", bottom: 18, right: 12, width: 32, height: 32,
+    position: "absolute", bottom: 28, right: 10, width: 30, height: 30,
     alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.20)", borderRadius: 16,
   },
   smallGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
