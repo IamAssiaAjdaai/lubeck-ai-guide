@@ -10,6 +10,8 @@ const result = spawnSync(
     "node_modules/vitest/vitest.mjs",
     "run",
     "src/lib/admin/content/cms.integration.test.ts",
+    "src/lib/admin/marketing/qaEvidence.integration.test.ts",
+    "--no-file-parallelism",
   ],
   {
     env: { ...process.env, CMS_DB_INTEGRATION: "1" },
