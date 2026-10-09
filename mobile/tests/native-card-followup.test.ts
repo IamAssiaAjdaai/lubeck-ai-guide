@@ -14,7 +14,8 @@ describe("physical-device card and keyboard follow-up", () => {
     expect(homeSource).toContain('triggerCitywalkHaptic("medium")');
     expect(homeSource).toContain("<MediaAttribution attribution={city.attribution} />");
     expect(homeSource).not.toContain("cityAffordance");
-    expect(homeSource).toContain("numberOfLines={2}");
+    expect(homeSource).toContain("numberOfLines={1}");
+    expect(homeSource).toContain("accessibilityLabel={cityName}");
   });
 
   it("keeps virtualized full-card place navigation, haptics and prefetch without chevrons", () => {
