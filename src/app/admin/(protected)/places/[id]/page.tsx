@@ -6,6 +6,8 @@ import { addPlaceSourceAction, approveAndPublishAction, changePublicationAction,
 import { AdminFormShell, AdminNotice, LocaleNavigator, PlaceFields, PlaceSourcesPanel, PublicationActions } from "@/components/admin/AdminContentForms";
 import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import { MediaAttachmentPanel } from "@/components/admin/MediaAttachmentPanel";
+import { MarketingQaPanel } from "@/components/admin/MarketingQaPanel";
+import { runCmsContentQaAction } from "@/app/admin/(protected)/content-qa-actions";
 import { getAuthorizedPlace, listAuthorizedCities, listAuthorizedTags } from "@/lib/admin/content/service.server";
 import { isLocale } from "@/lib/i18n";
 import { listAuthorizedEntityMedia, listAuthorizedMediaAssets } from "@/lib/media/service.server";
@@ -20,6 +22,9 @@ export default async function EditPlacePage({ params, searchParams }: { params: 
   const editingLocale = isLocale(query.locale) ? query.locale : "en";
   const city = cities.find((candidate) => candidate.id === place.cityId);
   const cityName = city?.localizations[0]?.name ?? city?.name ?? "City";
+  const canRunQa = ["draft", "in_review"].includes(place.publicationStatus) &&
+    (hasCityCapability(admin.staff, place.cityId, "places:manage") ||
+      hasCityCapability(admin.staff, place.cityId, "publishing:review"));
   return <section>
     <Link className="text-sm font-bold text-primary" href={`/admin/places?city=${city?.slug ?? ""}`}>← Back to {cityName} places</Link>
     <AdminPageHeader description="Build the traveler experience step by step. Save your content, add media and references, then review it before publishing." eyebrow={`${cityName} · Place`} title={place.localizations[0]?.name ?? place.slug} />
@@ -59,6 +64,15 @@ export default async function EditPlacePage({ params, searchParams }: { params: 
       <div className="mb-4"><p className="eyebrow">4 · References</p><h2 className="mt-1 text-xl font-extrabold">Verify the information</h2><p className="mt-2 text-sm text-text-secondary">Add reliable sources so reviewers can check important facts.</p></div>
       <PlaceSourcesPanel action={addPlaceSourceAction.bind(null, id)} canManage={hasCityCapability(admin.staff, place.cityId, "sources:manage")} sourceLinks={place.sourceLinks} />
     </section>
+
+    {canRunQa ? (
+      <div className="mt-10">
+        <MarketingQaPanel
+          action={runCmsContentQaAction.bind(null, "place", id, editingLocale)}
+          showPlaceSelection={false}
+        />
+      </div>
+    ) : null}
 
     <section id="publish" className="surface-card mt-10 scroll-mt-6 p-5 sm:p-7">
       <p className="eyebrow">5 · Review & publish</p>
