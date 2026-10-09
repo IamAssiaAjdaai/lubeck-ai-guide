@@ -9,6 +9,7 @@ import {
 import { MarketingWorkflowPanel } from "@/components/admin/MarketingWorkflowPanel";
 import { MarketingQaPanel } from "@/components/admin/MarketingQaPanel";
 import { runMarketingQaAction } from "@/app/admin/(protected)/marketing/qa-actions";
+import { listMarketingVerifiedPlaces } from "@/lib/admin/marketing/qaEvidence.server";
 import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import {
   changeMarketingPageWorkflowAction,
@@ -68,6 +69,11 @@ export default async function MarketingPageEditor({
       transition.from === currentStatus &&
       canUseWorkflowCapability(transition.capability, workflowAccess),
   ).map(({ to, label }) => ({ to, label }));
+  const canRunQa = (workflowAccess.canManage || workflowAccess.canReview) &&
+    (currentStatus === "draft" || currentStatus === "in_review");
+  const verifiedPlaces = canRunQa
+    ? await listMarketingVerifiedPlaces(page.cityId)
+    : [];
   const backHref = cityContext
     ? `/admin/marketing?cityId=${cityContext}`
     : "/admin/marketing";
@@ -99,9 +105,11 @@ export default async function MarketingPageEditor({
         </p>
       )}
 
-      {(workflowAccess.canManage || workflowAccess.canReview) &&
-      (currentStatus === "draft" || currentStatus === "in_review") ? (
-        <MarketingQaPanel action={runMarketingQaAction.bind(null, "page", page.id)} />
+      {canRunQa ? (
+        <MarketingQaPanel
+          action={runMarketingQaAction.bind(null, "page", page.id)}
+          verifiedPlaces={verifiedPlaces}
+        />
       ) : null}
 
       <MarketingWorkflowPanel
