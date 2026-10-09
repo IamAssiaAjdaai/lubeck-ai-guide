@@ -528,7 +528,7 @@ function PlaceCard({
           </View>
         </PressableSurface>
       </Link>
-      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense inline /></View>
+      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense inline discoveryCard /></View>
       {imageMedia?.attribution ? <View style={styles.cardAttribution}>
         <MediaAttribution attribution={imageMedia.attribution} />
       </View> : null}
@@ -582,8 +582,8 @@ const styles = StyleSheet.create({
   },
   placeThumbnail: {
     backgroundColor: "#EAF2F8",
-    width: 108,
-    height: 108,
+    width: 88,
+    height: 88,
     flexShrink: 0,
     borderRadius: 14,
   },
@@ -597,11 +597,11 @@ const styles = StyleSheet.create({
   },
   placeLink: {
     alignItems: "flex-start", flexDirection: "row",
-    minHeight: 120, padding: 12, gap: 12,
+    minHeight: 98, padding: 10, gap: 10,
   },
   placeContent: {
     flex: 1,
-    gap: spacing.xs,
+    gap: 3,
     minWidth: 0,
     paddingVertical: 2,
   },
@@ -623,7 +623,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primarySoft,
   },
   tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: 12 },
-  cardActions: { paddingHorizontal: 12, paddingBottom: 10, alignSelf: "flex-end" },
+  cardActions: { paddingHorizontal: 10, paddingBottom: 8, alignSelf: "flex-end", maxWidth: "100%" },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
   stopName: { color: colors.textMuted, marginTop: spacing.xs },
