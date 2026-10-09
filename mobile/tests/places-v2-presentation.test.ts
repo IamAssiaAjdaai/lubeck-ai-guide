@@ -17,6 +17,14 @@ describe("Places V2 compact cards", () => {
     expect(citySource).toContain("WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense inline");
     expect(citySource).toContain("imageMedia?.attribution");
   });
+  it("collapses long city context into an accessible opt-in info row", () => {
+    expect(citySource).toContain('testID="city-about-card"');
+    expect(citySource).toContain('accessibilityState={{ expanded: aboutExpanded }}');
+    expect(citySource).toContain('setAboutExpanded((current) => !current)');
+    expect(citySource).toContain('{aboutExpanded ? (');
+    expect(citySource).toContain('{city.content.description}');
+    expect(citySource).toContain('nativeCityName(city.slug, city.content.name, locale)');
+  });
   it("keeps map/category filtering and compact tour previews", () => {
     expect(citySource).toContain("setCategory");
     expect(citySource).toContain("setMapVisible");
