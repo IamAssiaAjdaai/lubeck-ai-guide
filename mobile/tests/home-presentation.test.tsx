@@ -54,7 +54,8 @@ vi.mock("../src/components/ui", () => ({
     React.useImperativeHandle(scrollViewRef, () => ({ scrollTo: state.scroll }));
     return <main>{children}</main>;
   },
-  AppText: ({ children }: React.PropsWithChildren) => <span>{children}</span>,
+  AppText: ({ children, accessibilityRole }: React.PropsWithChildren<{ accessibilityRole?: string }>) =>
+    accessibilityRole === "header" ? <h1>{children}</h1> : <span>{children}</span>,
   SectionTitle: ({ children }: React.PropsWithChildren) => <h2>{children}</h2>,
   PressableSurface: ({ children }: React.PropsWithChildren) => (
     <div>{children}</div>
@@ -68,13 +69,8 @@ vi.mock("../src/components/ui", () => ({
   }) => <button onClick={onPress}>{label}</button>,
   EmptyState: ({ title }: { title: string }) => <p role="status">{title}</p>,
 }));
-vi.mock("../src/components/ImageOverlayHero", () => ({
-  ImageOverlayHero: ({ title, subtitle }: { title: string; subtitle: string }) => (
-    <header>
-      <h1>{title}</h1>
-      <p>{subtitle}</p>
-    </header>
-  ),
+vi.mock("../src/components/NativeChrome", () => ({
+  NativeBrand: () => <div data-testid="editorial-native-brand">CITYWALK</div>,
 }));
 vi.mock("../src/components/NativeContentImage", () => ({
   NativeContentImage: ({
@@ -143,18 +139,22 @@ describe("native Home V2 (native bridges mocked)", () => {
       screen.getByRole("img", { name: "Hamburg" }).getAttribute("src"),
     ).toContain("city-hamburg.webp");
     expect(screen.getAllByRole("link")).toHaveLength(1);
+    expect(screen.getByText("Featured cities")).toBeTruthy();
+    expect(screen.getByText("More cities coming soon")).toBeTruthy();
   });
   it("filters real city cards and exposes an empty search state", () => {
     render(<HomeScreen />);
     fireEvent.change(screen.getByRole("textbox", { name: "Search city" }), {
       target: { value: "Hamburg" },
     });
-    expect(screen.getAllByRole("img")).toHaveLength(1);
+    expect(screen.getByRole("img", { name: "Hamburg" })).toBeTruthy();
+    expect(screen.queryByRole("img", { name: "Lübeck" })).toBeNull();
     expect(screen.queryByRole("link")).toBeNull();
     fireEvent.change(screen.getByRole("textbox"), {
       target: { value: "not-a-city" },
     });
-    expect(screen.queryByRole("img")).toBeNull();
+    expect(screen.queryByRole("img", { name: "Lübeck" })).toBeNull();
+    expect(screen.queryByRole("img", { name: "Hamburg" })).toBeNull();
     expect(screen.getByRole("status")).toBeTruthy();
   });
   it("keeps denied location non-blocking and city search available", async () => {
@@ -183,7 +183,8 @@ it("finds the same city using either its Arabic display name or original name", 
   render(<HomeScreen />);
   for (const value of ["لوبيك", "Lübeck"]) {
     fireEvent.change(screen.getByRole("textbox"), { target: { value } });
-    expect(screen.getAllByRole("img")).toHaveLength(1);
+    expect(screen.getByRole("img", { name: "لوبيك" })).toBeTruthy();
+    expect(screen.queryByRole("img", { name: "هامبورغ" })).toBeNull();
     expect(screen.getByRole("link").getAttribute("href")).toBe("/city/lubeck");
   }
 });
