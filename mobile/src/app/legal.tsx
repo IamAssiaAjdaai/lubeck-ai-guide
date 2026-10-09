@@ -1,5 +1,5 @@
 import { t, type TranslationKey } from "@citywalk/i18n";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -89,6 +89,16 @@ export default function LegalScreen() {
         ))}
       </View>
 
+      <PressableSurface
+        accessibilityRole="link"
+        accessibilityLabel="Photo credits"
+        onPress={() => router.navigate("/photo-credits")}
+        style={styles.photoCreditsRow}
+      >
+        <NativeIcon ios="photo" android="image" color={colors.primary} size={21} />
+        <AppText variant="label">Photo credits</AppText>
+        <NativeIcon ios={direction === "rtl" ? "chevron.left" : "chevron.right"} android={direction === "rtl" ? "chevron_left" : "chevron_right"} color={colors.textMuted} size={16} />
+      </PressableSurface>
       <View style={styles.analytics} testID="native-analytics-consent">
         <AppText variant="heading">{label("legal.analyticsTitle")}</AppText>
         <AppText variant="metadata" style={styles.secondary}>
@@ -133,6 +143,7 @@ const styles = StyleSheet.create({
   divider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
   icon: { width: 32, alignItems: "center", justifyContent: "center" },
   text: { flex: 1, minWidth: 0, gap: 2 },
+  photoCreditsRow: { minHeight: 64, flexDirection: "row", gap: spacing.md, alignItems: "center" },
   analytics: { gap: spacing.sm, paddingTop: spacing.md },
   analyticsActions: { gap: spacing.sm },
 });
