@@ -3,7 +3,7 @@ import homeHolstentor from "../../assets/images/home-holstentor.jpg";
 import homeHamburg from "../../assets/images/home-hamburg.webp";
 import homeDuesseldorf from "../../assets/images/home-duesseldorf.webp";
 import homeAppMark from "../../assets/images/citywalk-mark.svg";
-import homeWaterfront from "../../assets/images/citywalk-waterfront.webp";
+import homeMulticityApproved from "../../assets/images/home-multicity-approved.webp";
 import homeCardGradient from "../../assets/images/home-card-gradient.svg";
 import homeHeroSkyGradient from "../../assets/images/home-hero-sky-gradient.svg";
 import { Image } from "expo-image";
@@ -15,7 +15,7 @@ import { calculateDistanceMeters } from "@citywalk/traveler-core";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Linking, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { NativeContentImage } from "../components/NativeContentImage";
 import { CitywalkLoading } from "../components/CitywalkLoading";
 import { MediaAttribution } from "../components/MediaAttribution";
@@ -45,11 +45,6 @@ type HomeCity = {
   shortDescription?: string;
   attribution?: { text: string; href?: string; license?: string };
 };
-
-// Wikimedia Commons photograph: Edelmauswaldgeist, CC BY-SA 4.0.
- // Remote for review; bundle the final licensed image after device acceptance.
-const HOME_PANORAMA_URI = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/L%C3%BCbeck_Trave.jpg/960px-L%C3%BCbeck_Trave.jpg";
-const HOME_PANORAMA_CREDIT_URL = "https://commons.wikimedia.org/wiki/File:L%C3%BCbeck_Trave.jpg";
 
 const editorialLabels: Record<string, { eyebrow: string; featured: string; more: string; seeAll: string; brandline: string }> = {
   en: { eyebrow: "EXPLORE CITIES", featured: "Featured cities", more: "More cities coming soon", seeAll: "See all", brandline: "EXPLORE. DISCOVER. FEEL." },
@@ -184,7 +179,6 @@ export default function HomeScreen() {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState<{ lat: number; lng: number }>();
   const [locating, setLocating] = useState(false);
-  const [heroPhotoFailed, setHeroPhotoFailed] = useState(false);
   const [locationHelp, setLocationHelp] = useState("");
 
   async function locate() {
@@ -258,9 +252,7 @@ export default function HomeScreen() {
     <Screen scrollViewRef={scroll} scrollDiagnostics="home" brand={false}>
       <View style={styles.homeHero}>
         <NativeContentImage
-          source={{ uri: HOME_PANORAMA_URI }}
-          fallbackSource={homeWaterfront}
-          onError={() => setHeroPhotoFailed(true)}
+          source={homeMulticityApproved}
           contentFit="cover"
           contentPosition="center"
           cachePolicy="memory-disk"
@@ -328,18 +320,6 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {heroPhotoFailed ? null : (
-        <PressableSurface
-          accessibilityRole="link"
-          accessibilityLabel="Photo: Edelmauswaldgeist, CC BY-SA 4.0"
-          onPress={() => void Linking.openURL(HOME_PANORAMA_CREDIT_URL)}
-          style={styles.heroCredit}
-        >
-          <AppText variant="caption" style={styles.heroCreditText}>
-            Photo: Edelmauswaldgeist · CC BY-SA 4.0
-          </AppText>
-        </PressableSurface>
-      )}
       {locationHelp ? (
         <AppText accessibilityLiveRegion="polite">{locationHelp}</AppText>
       ) : null}
@@ -468,8 +448,6 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: { color: "#FFFFFF", fontSize: 16, lineHeight: 22, textShadowColor: "rgba(0,0,0,0.35)", textShadowRadius: 4 },
   heroActions: { gap: 10 },
-  heroCredit: { alignSelf: "flex-end", minHeight: 26, justifyContent: "center", marginTop: -spacing.xs, marginBottom: 3 },
-  heroCreditText: { color: "#728194", fontSize: 9, lineHeight: 14 },
   search: {
     minHeight: 56,
     backgroundColor: "#FFFFFF",
