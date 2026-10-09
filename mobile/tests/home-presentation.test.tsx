@@ -238,3 +238,10 @@ it("shows the approved multi-city photo and the official app mark without third-
   expect(homeSource).not.toContain("HOME_PANORAMA_CREDIT_URL");
   expect(homeSource).toContain('case "lubeck": return homeHolstentor;');
 });
+
+
+it("keeps Home preview credits off cards and links to accessible licensing details", () => {
+  expect(homeSource).toContain('href="/photo-credits"');
+  expect(homeSource).toContain("city.attribution && city.available");
+  expect(homeSource).not.toContain('<MediaAttribution attribution={city.attribution} />\n    </View>');
+});
