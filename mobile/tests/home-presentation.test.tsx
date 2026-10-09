@@ -153,7 +153,7 @@ describe("native Home V2 (native bridges mocked)", () => {
     expect(document.querySelectorAll('a[href="/profile"]')).toHaveLength(1);
     expect(screen.getByText("Featured cities")).toBeTruthy();
     expect(screen.getByText("More cities coming soon")).toBeTruthy();
-    expect(screen.getByTestId("citywalk-brand-mark")).toBeTruthy();
+    expect(screen.getAllByTestId("citywalk-brand-mark").length).toBeGreaterThan(0);
   });
   it("filters real city cards and exposes an empty search state", () => {
     render(<HomeScreen />);
