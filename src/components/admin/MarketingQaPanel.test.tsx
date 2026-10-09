@@ -137,4 +137,23 @@ describe("Marketing QA CMS results panel", () => {
     expect(screen.getByText(/No verified place was selected/)).toBeTruthy();
   });
 
+  it("hides the verified-place selector on unverified CMS place drafts", async () => {
+    const action = vi.fn(async () => ({
+      findings: [{
+        severity: "warning" as const,
+        checkId: "sources.missing",
+        message: "No source is linked to this place.",
+        origin: "deterministic" as const,
+      }],
+      factualCertification: "not_certified" as const,
+      aiStatus: "skipped" as const,
+    }));
+    render(<MarketingQaPanel action={action} showPlaceSelection={false} />);
+    expect(screen.queryByRole("combobox", { name: /Verified place context/ })).toBeNull();
+    expect(screen.getByText(/Place draft facts and linked references are not verified knowledge/)).toBeTruthy();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Run QA" }));
+    expect(await screen.findByText(/No source is linked to this place/)).toBeTruthy();
+    expect(action).toHaveBeenCalledWith(undefined);
+  });
+
 });
