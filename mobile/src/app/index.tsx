@@ -161,7 +161,7 @@ function HomeCityCard({
           </PressableSurface>
         </Link>
       ) : card}
-      <MediaAttribution attribution={city.attribution} />
+      {city.attribution && city.available ? <MediaAttribution attribution={city.attribution} /> : null}
     </View>
   );
 }
@@ -393,6 +393,12 @@ export default function HomeScreen() {
           </View>
         </>
       ) : null}
+      <Link href="/photo-credits" asChild>
+        <PressableSurface accessibilityRole="link" accessibilityLabel="Photo credits" style={styles.photoCreditsLink}>
+          <AppText variant="metadata" style={styles.photoCreditsText}>Photo credits</AppText>
+          <NativeIcon ios="chevron.right" android="chevron_right" size={14} color="#64748B" />
+        </PressableSurface>
+      </Link>
     </Screen>
   );
 }
@@ -492,6 +498,8 @@ const styles = StyleSheet.create({
   },
   smallGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   smallItem: { width: "47%", flexGrow: 0, minWidth: 0 },
+  photoCreditsLink: { alignSelf: "flex-end", minHeight: 44, flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 4 },
+  photoCreditsText: { color: "#64748B", fontSize: 12 },
   contentWarning: { minHeight: 48, borderRadius: 12, backgroundColor: "#F0F5F8", paddingHorizontal: 12, paddingVertical: 8, flexDirection: "row", alignItems: "center", gap: 8 },
   warningText: { color: "#4F6677", flex: 1 },
   retryButton: { flexDirection: "row", alignItems: "center", gap: 5, minHeight: 44, paddingHorizontal: 8 },
