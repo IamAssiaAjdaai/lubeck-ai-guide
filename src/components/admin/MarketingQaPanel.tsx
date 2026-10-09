@@ -6,11 +6,14 @@ import type { AiContentQaReport } from "@/lib/contentQa/aiReview";
 
 export function MarketingQaPanel({
   action,
+  verifiedPlaces = [],
 }: Readonly<{
-  action: () => Promise<AiContentQaReport>;
+  action: (placeId?: number) => Promise<AiContentQaReport>;
+  verifiedPlaces?: readonly Readonly<{ id: number; slug: string }>[];
 }>) {
   const [report, setReport] = useState<AiContentQaReport | null>(null);
   const [error, setError] = useState(false);
+  const [selectedPlaceId, setSelectedPlaceId] = useState("");
   const [pending, startTransition] = useTransition();
 
   const run = () => {
@@ -18,7 +21,7 @@ export function MarketingQaPanel({
     setReport(null);
     startTransition(async () => {
       try {
-        const next = await action();
+        const next = await action(selectedPlaceId ? Number(selectedPlaceId) : undefined);
         setReport(next);
       } catch {
         // Do not disclose staff authorization state or provider/internal errors.
@@ -37,6 +40,29 @@ export function MarketingQaPanel({
         Save your edits first, then run QA on the latest saved draft. Run it again
         after saving corrections. Warnings are advisory; only a human can approve
         or publish content.
+      </p>
+      <label className="mt-4 block max-w-lg text-sm font-semibold">
+        <span>Verified place context (optional)</span>
+        <select
+          className="mt-2 min-h-11 w-full rounded-xl border border-border bg-white px-3 py-2 text-sm"
+          disabled={pending}
+          value={selectedPlaceId}
+          onChange={(event) => {
+            setSelectedPlaceId(event.target.value);
+            setReport(null);
+            setError(false);
+          }}
+        >
+          <option value="">No place selected — deterministic checks only</option>
+          {verifiedPlaces.map((place) => (
+            <option key={place.id} value={place.id}>{place.slug}</option>
+          ))}
+        </select>
+      </label>
+      <p className="mt-2 max-w-2xl text-xs leading-5 text-text-secondary">
+        Select a published place with verified English knowledge only when the copy is
+        about that place. This does not verify citywide or multi-place claims.
+        {verifiedPlaces.length === 0 ? " No eligible verified places are available." : ""}
       </p>
       <button
         className="button-secondary mt-4 min-h-11 px-5"
@@ -63,9 +89,11 @@ export function MarketingQaPanel({
             </p>
             <p className="text-xs leading-5 text-text-secondary">
               Factual accuracy is not certified. AI review: {report.aiStatus}.
-              {report.aiStatus !== "reviewed"
-                ? " No verified fact package is linked to this marketing draft; AI factual review cannot run without trusted evidence."
-                : ""}
+              {report.findings.some((item) => item.checkId === "ai.evidence_unavailable")
+                ? " No verified place was selected; AI factual review cannot run without trusted evidence."
+                : report.aiStatus === "skipped"
+                  ? " The AI provider was not used; review warnings manually."
+                  : ""}
             </p>
             {report.findings.length > 0 ? (
               <ul className="space-y-3" aria-label="QA findings">
