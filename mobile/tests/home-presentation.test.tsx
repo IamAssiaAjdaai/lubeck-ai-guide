@@ -154,6 +154,11 @@ describe("native Home V2 (native bridges mocked)", () => {
     expect(screen.getByText("Featured cities")).toBeTruthy();
     expect(screen.getByText("More cities coming soon")).toBeTruthy();
     expect(screen.getAllByTestId("citywalk-brand-mark").length).toBeGreaterThan(0);
+    expect(homeSource).toContain('homeAppMark from "../../assets/images/citywalk-mark.svg"');
+    expect(homeSource).not.toContain('home-city-mark.svg');
+    expect(homeSource).toContain("HOME_PANORAMA_URI");
+    expect(homeSource).toContain("fallbackSource={homeWaterfront}");
+    expect(homeSource).toContain("HOME_PANORAMA_CREDIT_URL");
   });
   it("filters real city cards and exposes an empty search state", () => {
     render(<HomeScreen />);
@@ -218,4 +223,15 @@ it("keeps incoming cities compact and removes the flat photo-darkening stripe", 
   expect(homeSource).toContain('smallItem: { width: "47%", flexGrow: 0');
   expect(homeSource).toContain("imageGradientContainer");
   expect(homeSource).not.toContain("imageBottomShade");
+});
+
+
+it("keeps the official app mark and credited scenic hero while preserving city card artwork", () => {
+  expect(homeSource).toContain('source={homeAppMark}');
+  expect(homeSource).toContain('homeAppMark from "../../assets/images/citywalk-mark.svg"');
+  expect(homeSource).toContain('source={{ uri: HOME_PANORAMA_URI }}');
+  expect(homeSource).toContain('fallbackSource={homeWaterfront}');
+  expect(homeSource).toContain('onError={() => setHeroPhotoFailed(true)}');
+  expect(homeSource).toContain("Edelmauswaldgeist · CC BY-SA 4.0");
+  expect(homeSource).toContain('case "lubeck": return homeHolstentor;');
 });
