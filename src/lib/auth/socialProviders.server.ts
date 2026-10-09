@@ -28,14 +28,6 @@ export function getCitywalkSocialAuthConfiguration(
   const googleClientSecret =
     environment.CITYWALK_GOOGLE_OAUTH_CLIENT_SECRET?.trim();
 
-  assertCompleteProvider(
-    "Google",
-    [
-      ["CITYWALK_GOOGLE_OAUTH_CLIENT_ID", googleClientId],
-      ["CITYWALK_GOOGLE_OAUTH_CLIENT_SECRET", googleClientSecret],
-    ],
-  );
-
   const appleClientId = environment.CITYWALK_APPLE_OAUTH_CLIENT_ID?.trim();
   const appleTeamId = environment.CITYWALK_APPLE_TEAM_ID?.trim();
   const appleKeyId = environment.CITYWALK_APPLE_KEY_ID?.trim();
@@ -43,6 +35,14 @@ export function getCitywalkSocialAuthConfiguration(
   const appleBundleIdentifier =
     environment.CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER?.trim();
 
+  const appleOAuthStarted = Boolean(
+    appleClientId ||
+    appleTeamId ||
+    appleKeyId ||
+    applePrivateKey
+  );
+
+if (appleOAuthStarted) {
   assertCompleteProvider(
     "Apple",
     [
@@ -53,6 +53,12 @@ export function getCitywalkSocialAuthConfiguration(
       ["CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER", appleBundleIdentifier],
     ],
   );
+}
+
+assertCompleteProvider("Google", [
+  ["CITYWALK_GOOGLE_OAUTH_CLIENT_ID", googleClientId],
+  ["CITYWALK_GOOGLE_OAUTH_CLIENT_SECRET", googleClientSecret],
+]);
 
   return {
     socialProviders: {

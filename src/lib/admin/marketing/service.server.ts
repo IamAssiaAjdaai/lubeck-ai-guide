@@ -1,17 +1,18 @@
 import "server-only";
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
   marketingCampaignsTable,
   marketingContentTable,
+  marketingContentMediaTable,
   marketingPagesTable,
   type MarketingCampaignRow,
   type MarketingContentRow,
   type MarketingPageRow,
 } from "@/db/marketingSchema";
-import { citiesTable } from "@/db/schema";
+import { citiesTable, mediaAssetsTable } from "@/db/schema";
 import {
   AdminAuthorizationError,
   requireAdminCapability,
@@ -722,4 +723,53 @@ export async function createLubeckStarterCampaign() {
 
     return { campaignId, pageId: pageId ?? null };
   });
+}
+
+export async function getMarketingContentMedia(contentId: number) {
+  const context = await requireAdminCapability("marketing:view");
+  const item = await loadContentItem(contentId);
+
+  assertCityCapability(context.staff, item.cityId, "marketing:view");
+
+  const db = getDb();
+
+  const [available, attached] = await Promise.all([
+    db
+      .select({
+        id: mediaAssetsTable.id,
+        assetKey: mediaAssetsTable.assetKey,
+        originalFilename: mediaAssetsTable.originalFilename,
+        kind: mediaAssetsTable.kind,
+      })
+      .from(mediaAssetsTable)
+      .where(
+        and(
+          eq(mediaAssetsTable.cityId, item.cityId),
+          eq(mediaAssetsTable.approvalStatus, "approved"),
+          eq(mediaAssetsTable.accessLevel, "public"),
+          isNull(mediaAssetsTable.archivedAt),
+          inArray(mediaAssetsTable.kind, ["image", "video"]),
+        ),
+      ),
+
+    db
+      .select({
+        id: marketingContentMediaTable.id,
+        mediaAssetId: mediaAssetsTable.id,
+        originalFilename: mediaAssetsTable.originalFilename,
+        kind: mediaAssetsTable.kind,
+        position: marketingContentMediaTable.position,
+      })
+      .from(marketingContentMediaTable)
+      .innerJoin(
+        mediaAssetsTable,
+        eq(marketingContentMediaTable.mediaAssetId, mediaAssetsTable.id),
+      )
+      .where(eq(marketingContentMediaTable.contentId, contentId)),
+  ]);
+
+  return {
+    available,
+    attached,
+  };
 }

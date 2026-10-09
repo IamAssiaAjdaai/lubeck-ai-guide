@@ -10,7 +10,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
-import { citiesTable, publicationStatusEnum } from "@/db/schema";
+import { citiesTable, mediaAssetsTable, publicationStatusEnum } from "@/db/schema";
 
 function marketingTimestamps() {
   return {
@@ -150,6 +150,50 @@ export const marketingContentTable = pgTable(
     index("marketing_content_city_status_idx").on(table.cityId, table.status),
     index("marketing_content_campaign_idx").on(table.campaignId),
     index("marketing_content_page_idx").on(table.pageId),
+  ],
+);
+
+export const marketingContentMediaTable = pgTable(
+  "marketing_content_media",
+  {
+    id: serial("id").primaryKey(),
+
+    contentId: integer("content_id")
+      .notNull()
+      .references(() => marketingContentTable.id, {
+        onDelete: "cascade",
+      }),
+
+    mediaAssetId: integer("media_asset_id")
+      .notNull()
+      .references(() => mediaAssetsTable.id, {
+        onDelete: "restrict",
+      }),
+
+    position: integer("position")
+      .default(0)
+      .notNull(),
+
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("marketing_content_media_position_unique").on(
+      table.contentId,
+      table.position,
+    ),
+
+    uniqueIndex("marketing_content_media_asset_unique").on(
+      table.contentId,
+      table.mediaAssetId,
+    ),
+
+    index("marketing_content_media_asset_idx").on(
+      table.mediaAssetId,
+    ),
   ],
 );
 

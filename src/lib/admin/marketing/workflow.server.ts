@@ -23,7 +23,7 @@ import {
   type MarketingSocialState,
 } from "@/lib/admin/marketing/workflow";
 import { buildMarketingTrackingPath } from "@/lib/marketingAttribution";
-
+import { notifyMarketingContentApproved } from "@/lib/marketing/automationEvents.server";
 export class MarketingWorkflowError extends Error {
   constructor(message: string) {
     super(message);
@@ -131,9 +131,30 @@ export async function changeMarketingSocialWorkflowStatus(
     })
     .where(eq(marketingContentTable.id, id))
     .returning();
-  if (!updated) throw new MarketingWorkflowError("Social content update failed.");
-  return updated;
+  if (!updated) {
+    throw new MarketingWorkflowError("Social content update failed.");
+  }
+
+  if (!updated) {
+    throw new MarketingWorkflowError("Social content update failed.");
+  }
+
+if (updated.status === "approved") {
+  console.log("[marketing approval]", {
+    id: updated.id,
+    status: updated.status,
+  });
+
+  try {
+    const result = await notifyMarketingContentApproved(updated);
+
+    console.log("[marketing webhook result]", result);
+  } catch (error) {
+    console.error("[marketing webhook error]", error);
+  }
 }
+  return updated;
+  }
 
 export async function listMarketingReviewQueue() {
   const context = await requireAdminCapability("publishing:review");

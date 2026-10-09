@@ -158,6 +158,7 @@ export async function changeMarketingSocialWorkflowAction(
     revalidatePath(`/admin/marketing/social/${id}`);
     destination = appendQuery(destination, "saved", "1");
   } catch (error) {
+    console.error("changeMarketingSocialWorkflowAction failed:", error);
     destination = appendQuery(destination, "error", actionError(error));
   }
   redirect(destination);
