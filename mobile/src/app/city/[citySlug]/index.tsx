@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
   placeCardRow: { flexDirection: "row", alignItems: "flex-start", padding: 10, gap: 4 },
   placeLink: {
     alignItems: "flex-start", flexDirection: "row",
-    flex: 1, minWidth: 0, gap: 10,
+    flex: 1, minWidth: 0, minHeight: 98, gap: 10,
   },
   placeContent: {
     flex: 1,
