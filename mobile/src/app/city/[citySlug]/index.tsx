@@ -144,11 +144,7 @@ export default function CityScreen() {
               badge={city.slug === "lubeck" ? editorial.badge : undefined}
             />
             {city.slug === "lubeck" ? (
-              <MediaAttribution attribution={{
-                text: "Edelmauswaldgeist · CC BY-SA 4.0",
-                href: "https://commons.wikimedia.org/wiki/File:L%C3%BCbeck_Trave.jpg",
-                license: "CC BY-SA 4.0",
-              }} />
+              <MediaAttribution attribution={{ text: "Photo: Edelmauswaldgeist · CC BY-SA 4.0 · Wikimedia Commons" }} />
             ) : null}
             <View testID="city-hub-intro" style={[styles.introRow, nativeRowStyle(appDirection)]}>
               <AppText variant="metadata" style={styles.introText}>{editorial.intro}</AppText>
