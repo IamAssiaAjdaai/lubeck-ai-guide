@@ -80,11 +80,13 @@ vi.mock("../src/components/LocaleSelector", () => ({
 vi.mock("../src/components/NativeContentImage", () => ({
   NativeContentImage: ({
     source,
+    fallbackSource,
     accessibilityLabel,
   }: {
     source?: { uri?: string };
+    fallbackSource?: unknown;
     accessibilityLabel?: string;
-  }) => <img src={source?.uri ?? "bundled-photo"} alt={accessibilityLabel ?? ""} />,
+  }) => <img src={source?.uri ?? "bundled-photo"} data-has-fallback={fallbackSource ? "true" : "false"} alt={accessibilityLabel ?? ""} />,
 }));
 vi.mock("../src/components/NativeIcon", () => ({ NativeIcon: () => null }));
 vi.mock("../src/components/CitywalkLoading", () => ({
@@ -141,7 +143,8 @@ describe("native Home V2 (native bridges mocked)", () => {
     ).toBeTruthy();
     expect(
       screen.getByRole("img", { name: "Lübeck" }).getAttribute("src"),
-    ).toBe("bundled-photo");
+    ).toBe("https://preview.example/landmarks/holstentor.jpg");
+    expect(screen.getByRole("img", { name: "Lübeck" }).getAttribute("data-has-fallback")).toBe("true");
     expect(
       screen.getByRole("img", { name: "Hamburg" }).getAttribute("src"),
     ).toContain("city-hamburg.webp");
