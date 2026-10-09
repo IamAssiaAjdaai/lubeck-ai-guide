@@ -34,7 +34,7 @@ describe("Marketing QA CMS results panel", () => {
     expect(screen.getByText(/Field: cta/)).toBeTruthy();
     expect(screen.getByText(/Evidence: field: CTA/)).toBeTruthy();
     expect(screen.getByText(/Factual accuracy is not certified/)).toBeTruthy();
-    expect(screen.getByText(/No verified fact package is linked/)).toBeTruthy();
+    expect(screen.getByText(/The AI provider was not used/)).toBeTruthy();
     expect(action).toHaveBeenCalledOnce();
   });
 
@@ -74,4 +74,67 @@ describe("Marketing QA CMS results panel", () => {
     expect(await screen.findByRole("alert")).toBeTruthy();
     expect(screen.getByRole("alert").textContent).not.toContain("SECRET_API_KEY");
   });
+  it("allows the editor to choose verified place evidence explicitly", async () => {
+    const action = vi.fn(async (_placeId?: number) => ({
+      findings: [{
+        severity: "info" as const,
+        checkId: "facts.scope_limited",
+        message: "Only English facts for the selected place are available.",
+        origin: "deterministic" as const,
+      }],
+      factualCertification: "not_certified" as const,
+      aiStatus: "reviewed" as const,
+    }));
+    const user = userEvent.setup();
+    render(<MarketingQaPanel action={action} verifiedPlaces={[
+      { id: 21, slug: "holstentor" },
+      { id: 22, slug: "marienkirche" },
+    ]} />);
+    expect(screen.getByText(/No place selected/)).toBeTruthy();
+    await user.selectOptions(screen.getByRole("combobox", { name: /Verified place context/ }), "21");
+    await user.click(screen.getByRole("button", { name: "Run QA" }));
+    expect(await screen.findByText(/Only English facts/)).toBeTruthy();
+    expect(action).toHaveBeenCalledWith(21);
+    expect(screen.getByText(/Factual accuracy is not certified/)).toBeTruthy();
+  });
+
+  it("clears stale findings when the selected place changes", async () => {
+    const action = vi.fn(async () => ({
+      findings: [{
+        severity: "warning" as const,
+        checkId: "ai.evidence_gap",
+        message: "No evidence for the claimed opening hours.",
+        origin: "ai_assisted" as const,
+      }],
+      factualCertification: "not_certified" as const,
+      aiStatus: "reviewed" as const,
+    }));
+    const user = userEvent.setup();
+    render(<MarketingQaPanel action={action} verifiedPlaces={[
+      { id: 21, slug: "holstentor" },
+    ]} />);
+    await user.click(screen.getByRole("button", { name: "Run QA" }));
+    expect(await screen.findByText(/claimed opening hours/)).toBeTruthy();
+    await user.selectOptions(screen.getByRole("combobox", { name: /Verified place context/ }), "21");
+    expect(screen.queryByText(/claimed opening hours/)).toBeNull();
+    expect(screen.getByRole("button", { name: "Run QA" })).toBeTruthy();
+  });
+
+  it("explains missing source evidence when no place was selected", async () => {
+    const action = vi.fn(async () => ({
+      findings: [{
+        severity: "warning" as const,
+        checkId: "ai.evidence_unavailable",
+        message: "Verified fact sources were not supplied.",
+        origin: "deterministic" as const,
+      }],
+      factualCertification: "not_certified" as const,
+      aiStatus: "skipped" as const,
+    }));
+    render(<MarketingQaPanel action={action} />);
+    await userEvent.setup().click(screen.getByRole("button", { name: "Run QA" }));
+    expect(await screen.findByText(/Verified fact sources were not supplied/)).toBeTruthy();
+    expect(screen.getByText(/No verified place was selected/)).toBeTruthy();
+  });
+
 });
