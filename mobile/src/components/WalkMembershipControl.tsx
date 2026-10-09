@@ -10,10 +10,10 @@ import { addPlaceToCurrentWalk, isInWalk, removePlaceFromCurrentWalk } from "../
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { uxCopy } from "../design/uxCopy";
 import { colors, radius, spacing } from "../design/tokens";
-import { PrimaryButton, StatusMessage } from "./ui";
+import { AppText, PrimaryButton, StatusMessage } from "./ui";
 import { NativeIcon } from "./NativeIcon";
 
-export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false, readOnly = false, dense = false, compact = false, inline = false }: { citySlug: string; placeSlug: string; onlyMember?: boolean; readOnly?: boolean; dense?: boolean; compact?: boolean; inline?: boolean }) {
+export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false, readOnly = false, dense = false, compact = false, inline = false, discoveryCard = false }: { citySlug: string; placeSlug: string; onlyMember?: boolean; readOnly?: boolean; dense?: boolean; compact?: boolean; inline?: boolean; discoveryCard?: boolean }) {
   const { locale, messages } = useNativeLocale(), t = uxCopy(locale);
   const state = useCurrentWalk(citySlug);
   const [busy, setBusy] = useState<"add" | "remove">();
@@ -22,10 +22,10 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
   const included = isInWalk(state.current, placeSlug);
   // Discovery cards opt into a content-sized action; Detail and other callers keep their layout.
   const actionStyle: ViewStyle | undefined = dense || inline ? {
-    minHeight: compact ? 64 : 44,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: 12,
-    borderRadius: radius.sm,
+    minHeight: compact ? 44 : 44,
+    paddingVertical: discoveryCard ? 5 : spacing.sm,
+    paddingHorizontal: discoveryCard ? 10 : 12,
+    borderRadius: discoveryCard ? 12 : radius.sm,
     alignSelf: inline ? "flex-start" : "stretch",
     ...(inline ? { maxWidth: "100%" as const } : {}),
   } : undefined;
@@ -50,12 +50,12 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
   }
   if (readOnly) return included ? <View accessible accessibilityLabel={t.included} accessibilityLiveRegion="polite">{membershipCheck}</View> : null;
   if (onlyMember && !included && !busy && !error) return null;
-  return <View style={{ gap: spacing.sm, alignSelf: "stretch" }}>
+  return <View style={{ gap: discoveryCard ? 5 : spacing.sm, alignSelf: discoveryCard ? "flex-end" : "stretch", maxWidth: "100%" }}>
     {state.status === "loading" ? <PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone={actionTone} label={t.checking} busy disabled />
       : state.status === "error" ? <><StatusMessage>{t.failed}</StatusMessage><PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone={actionTone} label={messages.retry} onPress={() => void state.retry()} /></>
       : included ? <PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} label={busy === "remove" ? t.removing : t.remove} leadingIcon={membershipCheck} accessibilityHint={t.included} accessibilityState={{ selected: true }} busy={Boolean(busy)} tone="secondary" onPress={() => void change("remove")} />
       : <PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone={actionTone} label={busy ? t.adding : t.add} leadingIcon={compact || inline ? <NativeIcon ios="plus" android="add" size={18} color={inline ? colors.primary : "#FFFFFF"} /> : undefined} busy={Boolean(busy)} onPress={() => void change("add")} />}
-    {error ? <StatusMessage>{error}</StatusMessage> : null}
+    {error ? discoveryCard ? <AppText accessibilityLiveRegion="polite" numberOfLines={2} variant="caption" style={{ color: colors.textMuted, maxWidth: 220 }}>{error}</AppText> : <StatusMessage>{error}</StatusMessage> : null}
     {error === t.budget ? <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild><PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone="secondary" label={walkCopy(locale).customize} /></Link> : null}
   </View>;
 }
