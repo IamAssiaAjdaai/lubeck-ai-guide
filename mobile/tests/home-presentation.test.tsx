@@ -45,8 +45,8 @@ vi.mock("expo-router", () => ({
   Link: ({
     children,
     href,
-  }: React.PropsWithChildren<{ href: { params: { citySlug: string } } }>) => (
-    <a href={`/city/${href.params.citySlug}`}>{children}</a>
+  }: React.PropsWithChildren<{ href: string | { params: { citySlug: string } } }>) => (
+    <a href={typeof href === "string" ? href : `/city/${href.params.citySlug}`}>{children}</a>
   ),
 }));
 vi.mock("../src/components/ui", () => ({
@@ -69,8 +69,11 @@ vi.mock("../src/components/ui", () => ({
   }) => <button onClick={onPress}>{label}</button>,
   EmptyState: ({ title }: { title: string }) => <p role="status">{title}</p>,
 }));
-vi.mock("../src/components/NativeChrome", () => ({
-  NativeBrand: () => <div data-testid="editorial-native-brand">CITYWALK</div>,
+vi.mock("expo-image", () => ({
+  Image: () => <div data-testid="citywalk-brand-mark" />,
+}));
+vi.mock("../src/components/LocaleSelector", () => ({
+  LocaleSelector: () => <div data-testid="home-locale-selector">English</div>,
 }));
 vi.mock("../src/components/NativeContentImage", () => ({
   NativeContentImage: ({
@@ -138,7 +141,8 @@ describe("native Home V2 (native bridges mocked)", () => {
     expect(
       screen.getByRole("img", { name: "Hamburg" }).getAttribute("src"),
     ).toContain("city-hamburg.webp");
-    expect(screen.getAllByRole("link")).toHaveLength(1);
+    expect(document.querySelectorAll('a[href="/city/lubeck"]')).toHaveLength(1);
+    expect(document.querySelectorAll('a[href="/profile"]')).toHaveLength(1);
     expect(screen.getByText("Featured cities")).toBeTruthy();
     expect(screen.getByText("More cities coming soon")).toBeTruthy();
   });
@@ -149,7 +153,7 @@ describe("native Home V2 (native bridges mocked)", () => {
     });
     expect(screen.getByRole("img", { name: "Hamburg" })).toBeTruthy();
     expect(screen.queryByRole("img", { name: "Lübeck" })).toBeNull();
-    expect(screen.queryByRole("link")).toBeNull();
+    expect(document.querySelector('a[href^="/city/"]')).toBeNull();
     fireEvent.change(screen.getByRole("textbox"), {
       target: { value: "not-a-city" },
     });
@@ -163,7 +167,7 @@ describe("native Home V2 (native bridges mocked)", () => {
     fireEvent.click(screen.getByRole("button", { name: "Use my location" }));
     await vi.waitFor(() => expect(state.location).toHaveBeenCalledOnce());
     expect(screen.getByRole("textbox")).toBeTruthy();
-    expect(screen.getByRole("link").getAttribute("href")).toBe("/city/lubeck");
+    expect(document.querySelector('a[href="/city/lubeck"]')).toBeTruthy();
   });
 });
 
@@ -185,6 +189,6 @@ it("finds the same city using either its Arabic display name or original name", 
     fireEvent.change(screen.getByRole("textbox"), { target: { value } });
     expect(screen.getByRole("img", { name: "لوبيك" })).toBeTruthy();
     expect(screen.queryByRole("img", { name: "هامبورغ" })).toBeNull();
-    expect(screen.getByRole("link").getAttribute("href")).toBe("/city/lubeck");
+    expect(document.querySelector('a[href="/city/lubeck"]')).toBeTruthy();
   }
 });
