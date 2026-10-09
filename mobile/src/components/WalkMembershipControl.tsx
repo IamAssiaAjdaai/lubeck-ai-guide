@@ -1,7 +1,7 @@
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { useRef, useState } from "react";
 import { Link } from "expo-router";
-import { View, type ViewStyle } from "react-native";
+import { ActivityIndicator, Pressable, View, type ViewStyle } from "react-native";
 import { useCurrentWalk, refreshCurrentWalk } from "../hooks/useCurrentWalk";
 import { prefetchPublicCity } from "../hooks/usePublicContent";
 import { publicContentCache, publicContentCacheKey } from "../lib/publicContentCache";
@@ -13,7 +13,7 @@ import { colors, radius, spacing } from "../design/tokens";
 import { AppText, PrimaryButton, StatusMessage } from "./ui";
 import { NativeIcon } from "./NativeIcon";
 
-export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false, readOnly = false, dense = false, compact = false, inline = false, discoveryCard = false }: { citySlug: string; placeSlug: string; onlyMember?: boolean; readOnly?: boolean; dense?: boolean; compact?: boolean; inline?: boolean; discoveryCard?: boolean }) {
+export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false, readOnly = false, dense = false, compact = false, inline = false, discoveryCard = false, iconOnly = false }: { citySlug: string; placeSlug: string; onlyMember?: boolean; readOnly?: boolean; dense?: boolean; compact?: boolean; inline?: boolean; discoveryCard?: boolean; iconOnly?: boolean }) {
   const { locale, messages } = useNativeLocale(), t = uxCopy(locale);
   const state = useCurrentWalk(citySlug);
   const [busy, setBusy] = useState<"add" | "remove">();
@@ -50,6 +50,27 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
   }
   if (readOnly) return included ? <View accessible accessibilityLabel={t.included} accessibilityLiveRegion="polite">{membershipCheck}</View> : null;
   if (onlyMember && !included && !busy && !error) return null;
+  if (iconOnly) return (
+    <View style={{ alignItems: "flex-end", gap: 4 }}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={state.status === "loading" ? t.checking : state.status === "error" ? messages.retry : busy ? t.checking : included ? t.remove : t.add}
+        accessibilityState={{ disabled: Boolean(busy || state.status === "loading"), selected: included }}
+        disabled={Boolean(busy || state.status === "loading")}
+        onPress={() => {
+          if (state.status === "error") void state.retry();
+          else void change(included ? "remove" : "add");
+        }}
+        hitSlop={8}
+        style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: included ? "#0C8792" : "#D6E5ED", backgroundColor: included ? "#E8F6F4" : colors.surface, alignItems: "center", justifyContent: "center" }}
+      >
+        {busy || state.status === "loading" ? <ActivityIndicator color={colors.primary} size="small" /> :
+          <NativeIcon ios={included ? "checkmark" : state.status === "error" ? "arrow.clockwise" : "plus"} android={included ? "check" : state.status === "error" ? "refresh" : "add"} color={colors.primary} size={22} />}
+      </Pressable>
+      {error ? <AppText accessibilityLiveRegion="polite" numberOfLines={2} variant="caption" style={{ color: colors.textMuted, width: 150, textAlign: "right" }}>{error}</AppText> : null}
+      {error === t.budget ? <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild><PrimaryButton compact tone="secondary" label={walkCopy(locale).customize} style={{ minHeight: 38, paddingHorizontal: 8 }} /></Link> : null}
+    </View>
+  );
   return <View style={{ gap: discoveryCard ? 5 : spacing.sm, alignSelf: discoveryCard ? "flex-end" : "stretch", maxWidth: "100%" }}>
     {state.status === "loading" ? <PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone={actionTone} label={t.checking} busy disabled />
       : state.status === "error" ? <><StatusMessage>{t.failed}</StatusMessage><PrimaryButton compact={compact} wrapLabel style={actionStyle} contentStyle={actionContentStyle} tone={actionTone} label={messages.retry} onPress={() => void state.retry()} /></>
