@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   getSocial: vi.fn(),
   requireCity: vi.fn(),
   review: vi.fn(),
+  evidence: vi.fn(),
 }));
 
 vi.mock("@/lib/admin/marketing/service.server", () => ({
@@ -16,6 +17,9 @@ vi.mock("@/lib/admin/authorization.server", () => ({
     constructor() { super("FORBIDDEN"); }
   },
   requireCityCapability: mocks.requireCity,
+}));
+vi.mock("@/lib/admin/marketing/qaEvidence.server", () => ({
+  loadMarketingVerifiedPlaceEvidence: mocks.evidence,
 }));
 vi.mock("@/lib/contentQa/groqReview.server", () => ({
   reviewContentWithGroq: mocks.review,
@@ -67,6 +71,15 @@ describe("Marketing Run QA server action permissions and saved copy", () => {
     mocks.getPage.mockResolvedValue(page);
     mocks.getSocial.mockResolvedValue(social);
     mocks.requireCity.mockResolvedValue(context("content_editor"));
+    mocks.evidence.mockResolvedValue({
+      allowedFactIds: ["123e4567-e89b-42d3-a456-426614174000"],
+      verifiedFacts: [{
+        id: "123e4567-e89b-42d3-a456-426614174000",
+        statement: "The museum closes at 16:00.",
+        sourceReferenceIds: ["source:3"],
+      }],
+      sourceReferences: [{ id: "source:3", label: "Official opening hours" }],
+    });
     mocks.review.mockResolvedValue({
       findings: [],
       factualCertification: "not_certified",
@@ -148,4 +161,71 @@ describe("Marketing Run QA server action permissions and saved copy", () => {
       "trusted-staff-session-id",
     );
   });
+  it("loads selected place evidence only after verifying role and record city", async () => {
+    const report = await runMarketingQaAction("page", 17, 21);
+    expect(mocks.evidence).toHaveBeenCalledWith(3, 21);
+    expect(mocks.review).toHaveBeenCalledWith(
+      expect.objectContaining({
+        allowedFactIds: ["123e4567-e89b-42d3-a456-426614174000"],
+        verifiedFacts: expect.arrayContaining([
+          expect.objectContaining({ statement: "The museum closes at 16:00." }),
+        ]),
+      }),
+      "trusted-staff-session-id",
+    );
+    expect(report.findings).toContainEqual(expect.objectContaining({
+      checkId: "facts.scope_limited",
+      severity: "info",
+    }));
+    expect(report.factualCertification).toBe("not_certified");
+  });
+
+  it("does not fetch verified evidence for unauthorized or post-approval records", async () => {
+    mocks.requireCity.mockResolvedValue(context("viewer"));
+    await expect(runMarketingQaAction("page", 17, 21)).rejects.toThrow("FORBIDDEN");
+    expect(mocks.evidence).not.toHaveBeenCalled();
+    mocks.requireCity.mockResolvedValue(context("content_editor"));
+    mocks.getPage.mockResolvedValue({ ...page, publicationStatus: "published" });
+    await expect(runMarketingQaAction("page", 17, 21)).rejects.toThrow(/before approval/);
+    expect(mocks.evidence).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid place identifiers before even fetching content", async () => {
+    await expect(runMarketingQaAction("page", 17, -2)).rejects.toThrow(/Invalid verified place/);
+    await expect(runMarketingQaAction("social", 32, Number.NaN)).rejects.toThrow(/Invalid verified place/);
+    expect(mocks.getPage).not.toHaveBeenCalled();
+    expect(mocks.getSocial).not.toHaveBeenCalled();
+  });
+
+  it("fails closed when selected place has no authorized verified source", async () => {
+    mocks.evidence.mockRejectedValue(new Error("No verified source is available for this place."));
+    await expect(runMarketingQaAction("social", 32, 21)).rejects.toThrow(/No verified source/);
+    expect(mocks.review).not.toHaveBeenCalled();
+  });
+
+  it("shows human-readable evidence labels without trusting invented references", async () => {
+    mocks.review.mockResolvedValue({
+      aiStatus: "reviewed",
+      factualCertification: "not_certified",
+      findings: [{
+        severity: "warning",
+        checkId: "ai.factual_inconsistency",
+        message: "The time conflicts with the official information.",
+        origin: "ai_assisted",
+        affectedField: "title",
+        evidence: [
+          { kind: "source_fact", id: "123e4567-e89b-42d3-a456-426614174000" },
+          { kind: "source", id: "source:3" },
+        ],
+      }],
+    });
+    const report = await runMarketingQaAction("page", 17, 21);
+    const findings = report.findings.filter((finding) => finding.checkId === "ai.factual_inconsistency");
+    expect(findings).toHaveLength(1);
+    expect(findings[0].evidence).toEqual([
+      expect.objectContaining({ label: "The museum closes at 16:00." }),
+      expect.objectContaining({ label: "Official opening hours" }),
+    ]);
+  });
+
 });
