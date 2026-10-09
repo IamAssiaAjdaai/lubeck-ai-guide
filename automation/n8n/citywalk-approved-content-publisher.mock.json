@@ -1,0 +1,152 @@
+{
+  "name": "CITYWALK - Approved Content Publisher (Mock)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "citywalk-marketing-approved-mock",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1f8ea1c9-283b-4ba2-a48b-0bce3fbca001",
+      "name": "Approval Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "citywalk-marketing-approved-mock"
+    },
+    {
+      "parameters": {
+        "jsCode": "const expectedEventSecret = $env.CITYWALK_MARKETING_APPROVED_WEBHOOK_SECRET;\nconst providedEventSecret = $json.headers?.['x-citywalk-event-key'];\n\nif (!expectedEventSecret || providedEventSecret !== expectedEventSecret) {\n  throw new Error('Unauthorized approval event');\n}\n\nconst envelope = $json.body ?? $json;\n\nif (envelope.event !== 'marketing.content.approved') {\n  throw new Error('Unsupported event');\n}\n\nconst content = envelope.content;\nif (!content || !Number.isInteger(content.id) || content.id <= 0) {\n  throw new Error('Invalid content id');\n}\n\nif (String(content.platform ?? '').trim().toLowerCase() !== 'instagram') {\n  throw new Error('Unsupported platform');\n}\n\nif (!Array.isArray(envelope.media) || envelope.media.length === 0) {\n  throw new Error('Approved media is required');\n}\n\nlet previousPosition = -1;\nfor (const [index, media] of envelope.media.entries()) {\n  if (!media || !media.assetKey || !['image', 'video'].includes(media.kind)) {\n    throw new Error(`Invalid media at index ${index}`);\n  }\n  if (!Number.isInteger(media.position) || media.position <= previousPosition) {\n    throw new Error('Media must be in stable ascending order');\n  }\n  previousPosition = media.position;\n}\n\nreturn [{ json: envelope }];"
+      },
+      "id": "1f8ea1c9-283b-4ba2-a48b-0bce3fbca002",
+      "name": "Validate Approval Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://host.docker.internal:3000/api/internal/marketing/content/' + $('Validate Approval Event').first().json.content.id + '/ready' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-citywalk-automation-key",
+              "value": "={{ $env.CITYWALK_AUTOMATION_SECRET }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1f8ea1c9-283b-4ba2-a48b-0bce3fbca003",
+      "name": "Mark Ready",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const envelope = $('Validate Approval Event').first().json;\nconst contentId = envelope.content.id;\n\n// Local state-machine test only. No external platform call happens here.\nconst publishedUrl = `https://mock.citywalk.invalid/instagram/${contentId}`;\n\nreturn [{\n  json: {\n    contentId,\n    publishedUrl,\n    mock: true,\n  },\n}];"
+      },
+      "id": "1f8ea1c9-283b-4ba2-a48b-0bce3fbca004",
+      "name": "Mock Instagram Publisher",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        760,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://host.docker.internal:3000/api/internal/marketing/content/' + $json.contentId + '/published' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-citywalk-automation-key",
+              "value": "={{ $env.CITYWALK_AUTOMATION_SECRET }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ publishedUrl: $json.publishedUrl }) }}",
+        "options": {}
+      },
+      "id": "1f8ea1c9-283b-4ba2-a48b-0bce3fbca005",
+      "name": "Mark Published",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Approval Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Approval Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Approval Event": {
+      "main": [
+        [
+          {
+            "node": "Mark Ready",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Ready": {
+      "main": [
+        [
+          {
+            "node": "Mock Instagram Publisher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mock Instagram Publisher": {
+      "main": [
+        [
+          {
+            "node": "Mark Published",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
