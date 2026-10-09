@@ -479,6 +479,7 @@ function PlaceCard({
   const textStyle = nativeContentTextStyle(locale, place.resolvedLocale);
   return (
     <View style={styles.placeCard}>
+      <View style={[styles.placeCardRow, nativeRowStyle(direction)]}>
       <Link
         href={{
           pathname: "/city/[citySlug]/place/[placeSlug]",
@@ -528,7 +529,8 @@ function PlaceCard({
           </View>
         </PressableSurface>
       </Link>
-      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense inline discoveryCard /></View>
+      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} iconOnly /></View>
+      </View>
       {imageMedia?.attribution ? <View style={styles.cardAttribution}>
         <MediaAttribution attribution={imageMedia.attribution} />
       </View> : null}
@@ -595,9 +597,10 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     overflow: "hidden",
   },
+  placeCardRow: { flexDirection: "row", alignItems: "flex-start", padding: 10, gap: 4 },
   placeLink: {
     alignItems: "flex-start", flexDirection: "row",
-    minHeight: 98, padding: 10, gap: 10,
+    flex: 1, minWidth: 0, gap: 10,
   },
   placeContent: {
     flex: 1,
@@ -623,7 +626,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primarySoft,
   },
   tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: 12 },
-  cardActions: { paddingHorizontal: 10, paddingBottom: 8, alignSelf: "flex-end", maxWidth: "100%" },
+  cardActions: { width: 44, flexShrink: 0, alignSelf: "flex-start" },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
   stopName: { color: colors.textMuted, marginTop: spacing.xs },
