@@ -569,7 +569,7 @@ const styles = StyleSheet.create({
   },
   placeLink: {
     alignItems: "flex-start", flexDirection: "row",
-    minHeight: 112, padding: 12, gap: 12,
+    minHeight: 120, padding: 12, gap: 12,
   },
   placeContent: {
     flex: 1,
