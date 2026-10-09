@@ -6,11 +6,14 @@ import { approveAndPublishAction, changePublicationAction, deleteDraftAction, up
 import { AdminFormShell, AdminNotice, LocaleNavigator, PublicationActions, TourFields } from "@/components/admin/AdminContentForms";
 import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import { MediaAttachmentPanel } from "@/components/admin/MediaAttachmentPanel";
+import { MarketingQaPanel } from "@/components/admin/MarketingQaPanel";
+import { runCmsContentQaAction } from "@/app/admin/(protected)/content-qa-actions";
+import { listMarketingVerifiedPlaces } from "@/lib/admin/marketing/qaEvidence.server";
 import { getAuthorizedTour, listAuthorizedCities, listAuthorizedPlaces } from "@/lib/admin/content/service.server";
 import { isLocale } from "@/lib/i18n";
 import { listAuthorizedEntityMedia, listAuthorizedMediaAssets } from "@/lib/media/service.server";
 import { requireStaff } from "@/lib/admin/authorization.server";
-import { hasActiveStaffCapability } from "@/lib/admin/permissions";
+import { hasActiveStaffCapability, hasCityCapability } from "@/lib/admin/permissions";
 
 export default async function EditTourPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string; saved?: string; locale?: string }> }) {
   const [{ id: rawId }, query] = await Promise.all([params, searchParams]);
@@ -21,6 +24,13 @@ export default async function EditTourPage({ params, searchParams }: { params: P
   const city = cities.find((candidate) => candidate.id === tour.cityId);
   const cityName = city?.localizations[0]?.name ?? city?.name ?? "City";
   const cityPlaces = places.filter((place) => place.cityId === tour.cityId);
+  const canRunQa = ["draft", "in_review"].includes(tour.publicationStatus) &&
+    (hasCityCapability(admin.staff, tour.cityId, "tours:manage") ||
+      hasCityCapability(admin.staff, tour.cityId, "publishing:review"));
+  const stopIds = new Set(tour.stops.map((stop) => stop.placeId));
+  const verifiedStops = canRunQa && editingLocale === "en"
+    ? (await listMarketingVerifiedPlaces(tour.cityId)).filter((place) => stopIds.has(place.id))
+    : [];
 
   return <section>
     <Link className="text-sm font-bold text-primary" href={`/admin/tours?city=${city?.slug ?? ""}`}>← Back to {cityName} walks</Link>
@@ -57,6 +67,15 @@ export default async function EditTourPage({ params, searchParams }: { params: P
       <div className="mb-4"><p className="eyebrow">4 · Media</p><h2 className="mt-1 text-xl font-extrabold">Show the walk</h2><p className="mt-2 text-sm text-text-secondary">Attach approved photos, audio or video from {cityName}.</p></div>
       <MediaAttachmentPanel assets={mediaAssets.filter((asset) => asset.cityId === tour.cityId)} attachments={mediaAttachments} entityId={id} entityType="tour" readOnly={!hasActiveStaffCapability(admin.staff, "media:manage")} />
     </section>
+
+    {canRunQa ? (
+      <div className="mt-10">
+        <MarketingQaPanel
+          action={runCmsContentQaAction.bind(null, "tour", id, editingLocale)}
+          verifiedPlaces={verifiedStops}
+        />
+      </div>
+    ) : null}
 
     <section id="publish" className="surface-card mt-10 scroll-mt-6 p-5 sm:p-7">
       <p className="eyebrow">5 · Review & publish</p>

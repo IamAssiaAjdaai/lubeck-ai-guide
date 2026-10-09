@@ -7,9 +7,11 @@ import type { AiContentQaReport } from "@/lib/contentQa/aiReview";
 export function MarketingQaPanel({
   action,
   verifiedPlaces = [],
+  showPlaceSelection = true,
 }: Readonly<{
   action: (placeId?: number) => Promise<AiContentQaReport>;
   verifiedPlaces?: readonly Readonly<{ id: number; slug: string }>[];
+  showPlaceSelection?: boolean;
 }>) {
   const [report, setReport] = useState<AiContentQaReport | null>(null);
   const [error, setError] = useState(false);
@@ -41,6 +43,8 @@ export function MarketingQaPanel({
         after saving corrections. Warnings are advisory; only a human can approve
         or publish content.
       </p>
+      {showPlaceSelection ? (
+        <>
       <label className="mt-4 block max-w-lg text-sm font-semibold">
         <span>Verified place context (optional)</span>
         <select
@@ -64,6 +68,13 @@ export function MarketingQaPanel({
         about that place. This does not verify citywide or multi-place claims.
         {verifiedPlaces.length === 0 ? " No eligible verified places are available." : ""}
       </p>
+        </>
+      ) : (
+        <p className="mt-3 text-xs leading-5 text-text-secondary">
+          Place draft facts and linked references are not verified knowledge.
+          Factual claims still need human source review; AI factual review stays off without trusted evidence.
+        </p>
+      )}
       <button
         className="button-secondary mt-4 min-h-11 px-5"
         disabled={pending}

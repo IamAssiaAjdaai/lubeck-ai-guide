@@ -68,7 +68,18 @@ merely to make a test green.
 - Marketing Page and Social Run QA screens + verified place selection: implemented.
 - PostgreSQL trust boundary integration: covered by the added CI suite.
 - Live browser Preview and human authorization acceptance: **not yet evidenced**.
-- Place/Tour admin Run QA surfaces: **not implemented**; issue #321 explicitly
-  includes place/tour/marketing, so keep it open or scope a follow-up.
+- Place/Tour admin Run QA surfaces: **implemented in draft PR** targeting
+  `develop`, with deterministic-only Place QA and optional, one-stop-bounded
+  verified English Tour QA. They are not browser-accepted or merged yet.
+- Place/Tour manual test plan: select a saved `draft` or `in_review` entity;
+  check required/long copy, a missing or expired place source, empty tour
+  stops and explicit stop durations longer than the tour estimate. Verify
+  `in_review` reviewer access, same-city restriction, and that `approved` /
+  `published` never show QA controls. In the Tour editor select a verified
+  **published** stop; confirm fact citations are restricted to that single
+  stop and the panel explains other stops are not certified. Non-English
+  locale must offer no English-only verified stops. Never test Publish.
+- Place/Tour actual browser acceptance is **still unverified** and not implied
+  by CI, just as the earlier Marketing UI acceptance was done separately.
 - Per-warning human accept/acknowledgment persistence: **not implemented**;
   current flow shows warnings but leaves human actions in the existing workflow.
