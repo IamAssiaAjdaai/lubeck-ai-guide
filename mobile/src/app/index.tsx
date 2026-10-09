@@ -3,6 +3,7 @@ import homeHolstentor from "../../assets/images/home-holstentor.jpg";
 import homeHamburg from "../../assets/images/home-hamburg.webp";
 import homeDuesseldorf from "../../assets/images/home-duesseldorf.webp";
 import homeSkylineMark from "../../assets/images/home-city-mark.svg";
+import homeCardGradient from "../../assets/images/home-card-gradient.svg";
 import { Image } from "expo-image";
 import { LocaleSelector } from "../components/LocaleSelector";
 import { nativeCityName } from "../lib/displayNames";
@@ -96,7 +97,9 @@ function HomeCityCard({
         style={styles.destinationImage}
       />
       <View pointerEvents="none" style={styles.imageTint} />
-      <View pointerEvents="none" style={styles.imageBottomShade} />
+      <View pointerEvents="none" style={styles.imageGradientContainer}>
+        <Image source={homeCardGradient} style={styles.imageGradient} contentFit="fill" accessible={false} />
+      </View>
       {isFeatured ? (
         <View style={styles.statusPill}>
           <View style={[styles.pillDot, !city.available && styles.pillDotMuted]} />
@@ -114,7 +117,7 @@ function HomeCityCard({
           {cityName}
         </AppText>
         {isFeatured && city.shortDescription ? (
-          <AppText variant="caption" numberOfLines={1} style={styles.destinationDescription}>
+          <AppText variant="caption" numberOfLines={2} style={styles.destinationDescription}>
             {city.shortDescription}
           </AppText>
         ) : !isFeatured ? (
@@ -445,7 +448,8 @@ const styles = StyleSheet.create({
   smallCard: { height: 180, justifyContent: "flex-end" },
   destinationImage: { ...StyleSheet.absoluteFill },
   imageTint: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0, 25, 37, 0.08)" },
-  imageBottomShade: { position: "absolute", bottom: 0, left: 0, right: 0, height: 110, backgroundColor: "rgba(0, 21, 34, 0.48)" },
+  imageGradientContainer: { position: "absolute", left: 0, bottom: 0, right: 0, height: "64%" },
+  imageGradient: { height: "100%", width: "100%" },
   statusPill: {
     position: "absolute", top: 12, left: 12, maxWidth: "90%",
     backgroundColor: "rgba(255, 255, 255, 0.91)", borderRadius: radius.pill,
@@ -466,7 +470,7 @@ const styles = StyleSheet.create({
     alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.20)", borderRadius: 16,
   },
   smallGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
-  smallItem: { width: "47%", flexGrow: 1, minWidth: 0 },
+  smallItem: { width: "47%", flexGrow: 0, minWidth: 0 },
   contentWarning: { minHeight: 48, borderRadius: 12, backgroundColor: "#F0F5F8", paddingHorizontal: 12, paddingVertical: 8, flexDirection: "row", alignItems: "center", gap: 8 },
   warningText: { color: "#4F6677", flex: 1 },
   retryButton: { flexDirection: "row", alignItems: "center", gap: 5, minHeight: 44, paddingHorizontal: 8 },
