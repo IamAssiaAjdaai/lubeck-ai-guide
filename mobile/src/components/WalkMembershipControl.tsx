@@ -13,7 +13,7 @@ import { colors, radius, spacing } from "../design/tokens";
 import { AppText, PrimaryButton, StatusMessage } from "./ui";
 import { NativeIcon } from "./NativeIcon";
 
-export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false, readOnly = false, dense = false, compact = false, inline = false, discoveryCard = false, iconOnly = false }: { citySlug: string; placeSlug: string; onlyMember?: boolean; readOnly?: boolean; dense?: boolean; compact?: boolean; inline?: boolean; discoveryCard?: boolean; iconOnly?: boolean }) {
+export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false, readOnly = false, dense = false, compact = false, inline = false, discoveryCard = false, iconOnly = false, onFeedback }: { citySlug: string; placeSlug: string; onlyMember?: boolean; readOnly?: boolean; dense?: boolean; compact?: boolean; inline?: boolean; discoveryCard?: boolean; iconOnly?: boolean; onFeedback?: (message: string, showCustomize: boolean) => void }) {
   const { locale, messages } = useNativeLocale(), t = uxCopy(locale);
   const state = useCurrentWalk(citySlug);
   const [busy, setBusy] = useState<"add" | "remove">();
@@ -34,7 +34,7 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
   const membershipCheck = <View accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants"><NativeIcon ios="checkmark" android="check" size={18} color={colors.primary} /></View>;
   async function change(action: "add" | "remove") {
     if (lock.current) return;
-    lock.current = true; setBusy(action); setError("");
+    lock.current = true; setBusy(action); setError(""); onFeedback?.("", false);
     try {
       if (action === "remove") await removePlaceFromCurrentWalk(citySlug, placeSlug);
       else {
@@ -45,7 +45,10 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
       }
       await refreshCurrentWalk(citySlug);
     } catch (failure) {
-      setError(failure instanceof Error && /walk-budget|walk-ineligible/.test(failure.message) ? t.budget : t.failed);
+      const budget = failure instanceof Error && /walk-budget|walk-ineligible/.test(failure.message);
+      const message = budget ? t.budget : t.failed;
+      setError(message);
+      onFeedback?.(message, budget);
     } finally { lock.current = false; setBusy(undefined); }
   }
   if (readOnly) return included ? <View accessible accessibilityLabel={t.included} accessibilityLiveRegion="polite">{membershipCheck}</View> : null;
@@ -67,8 +70,8 @@ export function WalkMembershipControl({ citySlug, placeSlug, onlyMember = false,
         {busy || state.status === "loading" ? <ActivityIndicator color={colors.primary} size="small" /> :
           <NativeIcon ios={included ? "checkmark" : state.status === "error" ? "arrow.clockwise" : "plus"} android={included ? "check" : state.status === "error" ? "refresh" : "add"} color={colors.primary} size={22} />}
       </Pressable>
-      {error ? <AppText accessibilityLiveRegion="polite" numberOfLines={2} variant="caption" style={{ color: colors.textMuted, width: 150, textAlign: "right" }}>{error}</AppText> : null}
-      {error === t.budget ? <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild><PrimaryButton compact tone="secondary" label={walkCopy(locale).customize} style={{ minHeight: 38, paddingHorizontal: 8 }} /></Link> : null}
+      {!onFeedback && error ? <AppText accessibilityLiveRegion="polite" numberOfLines={2} variant="caption" style={{ color: colors.textMuted, width: 150, textAlign: "right" }}>{error}</AppText> : null}
+      {!onFeedback && error === t.budget ? <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild><PrimaryButton compact tone="secondary" label={walkCopy(locale).customize} style={{ minHeight: 38, paddingHorizontal: 8 }} /></Link> : null}
     </View>
   );
   return <View style={{ gap: discoveryCard ? 5 : spacing.sm, alignSelf: discoveryCard ? "flex-end" : "stretch", maxWidth: "100%" }}>
