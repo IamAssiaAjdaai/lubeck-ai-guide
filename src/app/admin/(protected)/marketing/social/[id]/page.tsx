@@ -5,6 +5,7 @@ import { AdminNotice } from "@/components/admin/AdminContentForms";
 import { MarketingMediaPanel } from "@/components/admin/MarketingMediaPanel";
 import { MarketingQaPanel } from "@/components/admin/MarketingQaPanel";
 import { runMarketingQaAction } from "@/app/admin/(protected)/marketing/qa-actions";
+import { listMarketingVerifiedPlaces } from "@/lib/admin/marketing/qaEvidence.server";
 import {
   MarketingFormShell,
   SocialContentFields,
@@ -80,6 +81,11 @@ export default async function MarketingSocialEditor({
       transition.from === currentStatus &&
       canUseWorkflowCapability(transition.capability, workflowAccess),
   ).map(({ to, label }) => ({ to, label }));
+  const canRunQa = (workflowAccess.canManage || workflowAccess.canReview) &&
+    (currentStatus === "idea" || currentStatus === "draft" || currentStatus === "in_review");
+  const verifiedPlaces = canRunQa
+    ? await listMarketingVerifiedPlaces(item.cityId)
+    : [];
   const backHref = cityContext
     ? `/admin/marketing?cityId=${cityContext}`
     : "/admin/marketing";
@@ -121,9 +127,11 @@ export default async function MarketingSocialEditor({
 
       <MarketingTrackingPanel trackingPath={trackingPath} />
 
-      {(workflowAccess.canManage || workflowAccess.canReview) &&
-      (currentStatus === "idea" || currentStatus === "draft" || currentStatus === "in_review") ? (
-        <MarketingQaPanel action={runMarketingQaAction.bind(null, "social", item.id)} />
+      {canRunQa ? (
+        <MarketingQaPanel
+          action={runMarketingQaAction.bind(null, "social", item.id)}
+          verifiedPlaces={verifiedPlaces}
+        />
       ) : null}
 
       <MarketingWorkflowPanel
