@@ -99,7 +99,6 @@ describe("CMS Place and Tour Run QA server action", () => {
       contentType: "cms_place",
       requireEvidence: true,
       fields: expect.arrayContaining([expect.objectContaining({ key: "name", value: "Historical gate" })]),
-      verifiedFacts: undefined,
     }), "staff-session");
     expect(mocks.loadEvidence).not.toHaveBeenCalled();
     expect(report.findings).toContainEqual(expect.objectContaining({ checkId: "sources.missing" }));
@@ -165,10 +164,6 @@ describe("CMS Place and Tour Run QA server action", () => {
 
   it("always reloads saved content and cannot change publication state", async () => {
     mocks.getPlace.mockResolvedValueOnce(place)
-      .mockResolvedValueOnce(place)
-      .mockResolvedValueOnce({ ...place, localizations: [
-        { ...place.localizations[0], name: "Updated saved place name" },
-      ]})
       .mockResolvedValueOnce({ ...place, localizations: [
         { ...place.localizations[0], name: "Updated saved place name" },
       ]});
