@@ -22,6 +22,7 @@ import {
   type MarketingPageState,
   type MarketingSocialState,
 } from "@/lib/admin/marketing/workflow";
+import { notifyMarketingContentApproved } from "@/lib/admin/marketing/automationEvents.server";
 import { buildMarketingTrackingPath } from "@/lib/marketingAttribution";
 
 export class MarketingWorkflowError extends Error {
@@ -132,6 +133,11 @@ export async function changeMarketingSocialWorkflowStatus(
     .where(eq(marketingContentTable.id, id))
     .returning();
   if (!updated) throw new MarketingWorkflowError("Social content update failed.");
+
+  if (currentStatus === "in_review" && requestedStatus === "approved") {
+    await notifyMarketingContentApproved(updated.id);
+  }
+
   return updated;
 }
 
