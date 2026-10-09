@@ -14,7 +14,7 @@ import {
   checkCmsPlaceQa,
   checkCmsTourQa,
 } from "@/lib/admin/content/contentQa";
-import { hasCityCapability } from "@/lib/admin/permissions";
+import { hasCityCapability, type StaffAccess } from "@/lib/admin/permissions";
 import { loadMarketingVerifiedPlaceEvidence } from "@/lib/admin/marketing/qaEvidence.server";
 import type { MarketingQaEvidence } from "@/lib/admin/marketing/qaEvidence";
 import { reviewContentWithGroq } from "@/lib/contentQa/groqReview.server";
@@ -39,24 +39,11 @@ export async function runCmsContentQaAction(
     throw new Error("Invalid CMS QA target.");
   }
 
-  // getAuthorized* checks admin staff and record city VIEW permissions before
-  // returning data. We require a stronger city-scoped capability below.
-  const record = type === "place"
-    ? await getAuthorizedPlace(id)
-    : await getAuthorizedTour(id);
   const context = await requireStaff();
-  const canRun = hasCityCapability(context.staff, record.cityId, type + "s:manage" as
-    "places:manage" | "tours:manage") ||
-    hasCityCapability(context.staff, record.cityId, "publishing:review");
-  if (!canRun) throw new AdminAuthorizationError(403, "FORBIDDEN");
-  if (record.publicationStatus !== "draft" &&
-      record.publicationStatus !== "in_review") {
-    throw new Error("QA is only available before approval.");
-  }
-
   if (type === "place") {
     if (verifiedStopId !== undefined) throw new Error("Invalid place QA evidence.");
     const place = await getAuthorizedPlace(id);
+    assertCanReview(context.staff, place.cityId, "places:manage", place.publicationStatus);
     const input = buildCmsPlaceQaInput(place, locale);
     const reviewed = await reviewContentWithGroq(input, context.user.id);
     return {
@@ -67,6 +54,7 @@ export async function runCmsContentQaAction(
   }
 
   const tour = await getAuthorizedTour(id);
+  assertCanReview(context.staff, tour.cityId, "tours:manage", tour.publicationStatus);
   // Only one explicitly selected, *published*, city-matching tour stop can
   // contribute bounded EN verified knowledge; never citywide certification.
   if (verifiedStopId !== undefined &&
@@ -112,4 +100,19 @@ function withEvidenceLabels(
           : {}),
     })),
   };
+}
+
+function assertCanReview(
+  staff: StaffAccess,
+  cityId: number,
+  manage: "places:manage" | "tours:manage",
+  status: string,
+): void {
+  if (!hasCityCapability(staff, cityId, manage) &&
+      !hasCityCapability(staff, cityId, "publishing:review")) {
+    throw new AdminAuthorizationError(403, "FORBIDDEN");
+  }
+  if (status !== "draft" && status !== "in_review") {
+    throw new Error("QA is only available before approval.");
+  }
 }
