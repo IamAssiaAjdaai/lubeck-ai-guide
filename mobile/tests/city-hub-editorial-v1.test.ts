@@ -14,6 +14,14 @@ describe("City Hub V1 editorial design (approved preview)", () => {
     expect(heroSource).toContain("waterfrontCrop(size.width, size.height)");
   });
 
+  it("loads approved local Lübeck artwork without Wikimedia network dependency or stale photo credit", () => {
+    expect(heroSource).toContain('city-hub-lubeck-approved.webp');
+    expect(heroSource).toContain('citySlug === "lubeck"');
+    expect(heroSource).toContain('fallbackSource={require("../../assets/images/citywalk-waterfront.webp")}');
+    expect(heroSource).not.toContain("lubeckRiversidePhoto");
+    expect(cityHubSource).not.toContain("Edelmauswaldgeist");
+  });
+
   it("keeps the personalized walk and existing three actions wired to real paths", () => {
     expect(cityHubSource).toContain('pathname: "/city/[citySlug]/walk"');
     expect(cityHubSource).toContain('testID="city-hub-quick-actions"');
