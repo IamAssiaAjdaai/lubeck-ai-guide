@@ -7,6 +7,8 @@ import {
   MarketingPageFields,
 } from "@/components/admin/MarketingForms";
 import { MarketingWorkflowPanel } from "@/components/admin/MarketingWorkflowPanel";
+import { MarketingQaPanel } from "@/components/admin/MarketingQaPanel";
+import { runMarketingQaAction } from "@/app/admin/(protected)/marketing/qa-actions";
 import { AdminPageHeader, StatusBadge } from "@/components/admin/AdminContentUi";
 import {
   changeMarketingPageWorkflowAction,
@@ -96,6 +98,11 @@ export default async function MarketingPageEditor({
           The page copy is read-only outside draft status. Use the workflow below to review, publish or return it to draft.
         </p>
       )}
+
+      {(workflowAccess.canManage || workflowAccess.canReview) &&
+      (currentStatus === "draft" || currentStatus === "in_review") ? (
+        <MarketingQaPanel action={runMarketingQaAction.bind(null, "page", page.id)} />
+      ) : null}
 
       <MarketingWorkflowPanel
         action={changeMarketingPageWorkflowAction.bind(null, page.id)}
