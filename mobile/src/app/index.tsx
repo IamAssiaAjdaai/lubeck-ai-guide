@@ -2,7 +2,8 @@ import { nativeTextStyle } from "../design/rtlPresentation";
 import homeHolstentor from "../../assets/images/home-holstentor.jpg";
 import homeHamburg from "../../assets/images/home-hamburg.webp";
 import homeDuesseldorf from "../../assets/images/home-duesseldorf.webp";
-import homeSkylineMark from "../../assets/images/home-city-mark.svg";
+import homeAppMark from "../../assets/images/citywalk-mark.svg";
+import homeWaterfront from "../../assets/images/citywalk-waterfront.webp";
 import homeCardGradient from "../../assets/images/home-card-gradient.svg";
 import homeHeroSkyGradient from "../../assets/images/home-hero-sky-gradient.svg";
 import { Image } from "expo-image";
@@ -14,7 +15,7 @@ import { calculateDistanceMeters } from "@citywalk/traveler-core";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { Linking, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { NativeContentImage } from "../components/NativeContentImage";
 import { CitywalkLoading } from "../components/CitywalkLoading";
 import { MediaAttribution } from "../components/MediaAttribution";
@@ -44,6 +45,11 @@ type HomeCity = {
   shortDescription?: string;
   attribution?: { text: string; href?: string; license?: string };
 };
+
+// Wikimedia Commons photograph: Edelmauswaldgeist, CC BY-SA 4.0.
+ // Remote for review; bundle the final licensed image after device acceptance.
+const HOME_PANORAMA_URI = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/L%C3%BCbeck_Trave.jpg/960px-L%C3%BCbeck_Trave.jpg";
+const HOME_PANORAMA_CREDIT_URL = "https://commons.wikimedia.org/wiki/File:L%C3%BCbeck_Trave.jpg";
 
 const editorialLabels: Record<string, { eyebrow: string; featured: string; more: string; seeAll: string; brandline: string }> = {
   en: { eyebrow: "EXPLORE CITIES", featured: "Featured cities", more: "More cities coming soon", seeAll: "See all", brandline: "EXPLORE. DISCOVER. FEEL." },
@@ -178,6 +184,7 @@ export default function HomeScreen() {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState<{ lat: number; lng: number }>();
   const [locating, setLocating] = useState(false);
+  const [heroPhotoFailed, setHeroPhotoFailed] = useState(false);
   const [locationHelp, setLocationHelp] = useState("");
 
   async function locate() {
@@ -251,8 +258,11 @@ export default function HomeScreen() {
     <Screen scrollViewRef={scroll} scrollDiagnostics="home" brand={false}>
       <View style={styles.homeHero}>
         <NativeContentImage
-          source={homeHolstentor}
+          source={{ uri: HOME_PANORAMA_URI }}
+          fallbackSource={homeWaterfront}
+          onError={() => setHeroPhotoFailed(true)}
           contentFit="cover"
+          contentPosition="center"
           cachePolicy="memory-disk"
           accessibilityLabel={undefined}
           style={styles.heroImage}
@@ -264,7 +274,7 @@ export default function HomeScreen() {
         <View style={[styles.heroHeader, { direction }]}>
           <View style={styles.brandLockup}>
             <Image
-              source={homeSkylineMark}
+              source={homeAppMark}
               contentFit="contain"
               style={styles.brandMark}
               accessible={false}
@@ -318,6 +328,18 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      {heroPhotoFailed ? null : (
+        <PressableSurface
+          accessibilityRole="link"
+          accessibilityLabel="Photo: Edelmauswaldgeist, CC BY-SA 4.0"
+          onPress={() => void Linking.openURL(HOME_PANORAMA_CREDIT_URL)}
+          style={styles.heroCredit}
+        >
+          <AppText variant="caption" style={styles.heroCreditText}>
+            Photo: Edelmauswaldgeist · CC BY-SA 4.0
+          </AppText>
+        </PressableSurface>
+      )}
       {locationHelp ? (
         <AppText accessibilityLiveRegion="polite">{locationHelp}</AppText>
       ) : null}
@@ -397,7 +419,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   homeHero: {
-    minHeight: 423,
+    minHeight: 418,
     marginHorizontal: -spacing.lg,
     marginTop: -14,
     marginBottom: spacing.sm,
@@ -413,7 +435,7 @@ const styles = StyleSheet.create({
   heroImage: { ...StyleSheet.absoluteFill },
   heroScrim: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: "rgba(5, 22, 32, 0.35)",
+    backgroundColor: "rgba(5, 22, 32, 0.31)",
   },
   heroSky: { position: "absolute", top: 0, left: 0, right: 0, height: 140 },
   heroSkyImage: { width: "100%", height: "100%" },
@@ -422,7 +444,7 @@ const styles = StyleSheet.create({
     alignItems: "center", gap: 6,
   },
   brandLockup: { flexDirection: "row", alignItems: "center", gap: 6, flex: 1, minWidth: 0 },
-  brandMark: { width: 32, height: 42 },
+  brandMark: { width: 32, height: 44 },
   brandCopy: { flex: 1, minWidth: 0, gap: 1 },
   brandName: { color: "#0E2C44", fontSize: 17, fontWeight: "700", letterSpacing: 1.3 },
   brandline: { color: "#39536B", fontSize: 7, lineHeight: 10, fontWeight: "600", letterSpacing: 0.7 },
@@ -431,14 +453,14 @@ const styles = StyleSheet.create({
     width: 44, height: 44, borderRadius: 22, backgroundColor: "rgba(255,255,255,0.91)",
     justifyContent: "center", alignItems: "center",
   },
-  heroCopy: { gap: 7, marginTop: 26, paddingBottom: spacing.sm },
+  heroCopy: { gap: 7, marginTop: 28, paddingBottom: spacing.sm },
   heroEyebrow: { color: "#F7FAFC", fontWeight: "700", letterSpacing: 2.8, fontSize: 12 },
   heroTitle: {
     color: "#FFFFFF",
     fontFamily: "Georgia",
     fontWeight: "500",
     fontSize: 30,
-    lineHeight: 37,
+    lineHeight: 38,
     letterSpacing: -0.5,
     textShadowColor: "rgba(0,0,0,0.26)",
     textShadowRadius: 10,
@@ -446,6 +468,8 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: { color: "#FFFFFF", fontSize: 16, lineHeight: 22, textShadowColor: "rgba(0,0,0,0.35)", textShadowRadius: 4 },
   heroActions: { gap: 10 },
+  heroCredit: { alignSelf: "flex-end", minHeight: 26, justifyContent: "center", marginTop: -spacing.xs, marginBottom: 3 },
+  heroCreditText: { color: "#728194", fontSize: 9, lineHeight: 14 },
   search: {
     minHeight: 56,
     backgroundColor: "#FFFFFF",
@@ -478,14 +502,14 @@ const styles = StyleSheet.create({
   pillDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#238D5A" },
   pillDotMuted: { backgroundColor: "#66778B" },
   pillText: { color: "#154861", fontSize: 12, lineHeight: 16, flexShrink: 1 },
-  featuredCopy: { paddingHorizontal: 13, paddingTop: 14, paddingBottom: 17, gap: 7 },
+  featuredCopy: { paddingHorizontal: 13, paddingTop: 14, paddingBottom: 18, gap: 7 },
   featuredCopyWithArrow: { paddingRight: 43 },
   smallCopy: { padding: 12, gap: 4 },
   destinationName: { color: "#FFFFFF", fontWeight: "700", textShadowColor: "rgba(0,0,0,0.4)", textShadowRadius: 4 },
   featuredName: { fontFamily: "Georgia", fontSize: 24, lineHeight: 29 },
   destinationDescription: { color: "#F8FAFB", fontSize: 10, lineHeight: 15, letterSpacing: 0.1 },
   cardArrow: {
-    position: "absolute", bottom: 28, right: 10, width: 30, height: 30,
+    position: "absolute", bottom: 31, right: 10, width: 30, height: 30,
     alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.20)", borderRadius: 16,
   },
   smallGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
