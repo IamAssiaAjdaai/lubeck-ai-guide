@@ -14,8 +14,9 @@ describe("Places V2 compact cards", () => {
   it("preserves detail prefetch, accessibility, and real walk membership controls", () => {
     expect(citySource).toContain("prefetchPublicPlace(citySlug, place.slug, locale)");
     expect(citySource).toContain('accessibilityRole="link"');
-    expect(citySource).toContain("WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense inline discoveryCard");
+    expect(citySource).toContain("WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} iconOnly");
     expect(citySource).toContain("imageMedia?.attribution");
+    expect(citySource).toContain("styles.placeCardRow");
   });
   it("collapses long city context into an accessible opt-in info row", () => {
     expect(citySource).toContain('testID="city-about-card"');
