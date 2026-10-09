@@ -18,6 +18,13 @@ describe("Places V2 compact cards", () => {
     expect(citySource).toContain("imageMedia?.attribution");
     expect(citySource).toContain("styles.placeCardRow");
   });
+  it("keeps the add/remove icon outside the detail link and budget feedback below the row", () => {
+    expect(citySource).toContain('iconOnly onFeedback=');
+    expect(citySource).toContain('styles.placeCardRow');
+    expect(citySource).toContain('walkFeedback.message ? (');
+    expect(citySource).toContain('styles.placeFeedback');
+    expect(citySource).toContain('walkFeedback.customize ? (');
+  });
   it("collapses long city context into an accessible opt-in info row", () => {
     expect(citySource).toContain('testID="city-about-card"');
     expect(citySource).toContain('accessibilityState={{ expanded: aboutExpanded }}');
