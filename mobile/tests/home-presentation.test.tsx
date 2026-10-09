@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import React from "react";
+import homeSource from "../src/app/index.tsx?raw";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
@@ -210,4 +211,11 @@ it("keeps known city photography visible with a safe retry when CMS is unreachab
   expect(document.querySelector('a[href="/city/lubeck"]')).toBeNull();
   expect(screen.getAllByText("Unavailable").length).toBeGreaterThan(0);
   expect(screen.getByText("Featured cities")).toBeTruthy();
+});
+
+
+it("keeps incoming cities compact and removes the flat photo-darkening stripe", () => {
+  expect(homeSource).toContain('smallItem: { width: "47%", flexGrow: 0');
+  expect(homeSource).toContain("imageGradientContainer");
+  expect(homeSource).not.toContain("imageBottomShade");
 });
