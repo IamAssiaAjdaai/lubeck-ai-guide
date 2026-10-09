@@ -375,7 +375,8 @@ describe("image-overlay discovery heroes", () => {
     render(<CityScreen />);
     const hero = screen.getByTestId("image-overlay-hero");
     expect(within(hero).getByText("Lübeck")).toBeTruthy();
-    expect(within(hero).getByText(walkCopy("de").hubSubtitle)).toBeTruthy();
+    // Lübeck now uses localized editorial copy; other cities retain hubSubtitle.
+    expect(within(hero).getByText("Historische Gassen. Verborgene Geschichten. Entdecke die Hansestadt.")).toBeTruthy();
     expect(within(hero).queryByRole("button", { name: walkCopy("de").build })).toBeNull();
     expect(screen.getByRole("button", { name: walkCopy("de").build })).toBeTruthy();
   });
