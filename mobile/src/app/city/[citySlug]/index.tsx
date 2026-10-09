@@ -477,6 +477,7 @@ function PlaceCard({
   const { messages } = useNativeLocale();
   const direction = getNativeDirection(locale);
   const textStyle = nativeContentTextStyle(locale, place.resolvedLocale);
+  const [walkFeedback, setWalkFeedback] = useState({ message: "", customize: false });
   return (
     <View style={styles.placeCard}>
       <View style={[styles.placeCardRow, nativeRowStyle(direction)]}>
@@ -529,8 +530,18 @@ function PlaceCard({
           </View>
         </PressableSurface>
       </Link>
-      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} iconOnly /></View>
+      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} iconOnly onFeedback={(message, customize) => setWalkFeedback({ message, customize })} /></View>
       </View>
+      {walkFeedback.message ? (
+        <View style={styles.placeFeedback}>
+          <AppText variant="caption" accessibilityLiveRegion="polite" style={styles.muted}>{walkFeedback.message}</AppText>
+          {walkFeedback.customize ? (
+            <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild>
+              <PrimaryButton compact tone="secondary" label={walkCopy(locale).customize} style={styles.placeCustomize} />
+            </Link>
+          ) : null}
+        </View>
+      ) : null}
       {imageMedia?.attribution ? <View style={styles.cardAttribution}>
         <MediaAttribution attribution={imageMedia.attribution} />
       </View> : null}
@@ -627,6 +638,8 @@ const styles = StyleSheet.create({
   },
   tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: 12 },
   cardActions: { width: 44, flexShrink: 0, alignSelf: "flex-start" },
+  placeFeedback: { paddingHorizontal: 12, paddingBottom: 10, gap: 6, alignItems: "flex-start" },
+  placeCustomize: { minHeight: 38, paddingHorizontal: 10, alignSelf: "flex-start" },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
   stopName: { color: colors.textMuted, marginTop: spacing.xs },
