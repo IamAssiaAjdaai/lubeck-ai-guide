@@ -177,7 +177,7 @@ it("localizes city cards in Arabic without changing route identity", () => {
   render(<HomeScreen />);
   expect(screen.getByText("لوبيك")).toBeTruthy();
   expect(screen.getByText("هامبورغ")).toBeTruthy();
-  expect(screen.getByRole("link").getAttribute("href")).toBe("/city/lubeck");
+  expect(document.querySelector('a[href="/city/lubeck"]')).toBeTruthy();
   expect(screen.getByRole("img", { name: "لوبيك" })).toBeTruthy();
 });
 
