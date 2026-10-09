@@ -19,8 +19,6 @@ export function waterfrontCrop(width: number, height: number) {
   };
 }
 
-const lubeckRiversidePhoto = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/L%C3%BCbeck_Trave.jpg/960px-L%C3%BCbeck_Trave.jpg";
-
 // Editorial is opt-in: planner, cards and all other legacy heroes keep their old crop.
 export function ImageOverlayHero({ title, subtitle, compact = false, editorial = false, citySlug, badge }: {
   title: string;
@@ -42,7 +40,7 @@ export function ImageOverlayHero({ title, subtitle, compact = false, editorial =
           <>
             <NativeContentImage
               source={citySlug === "lubeck"
-                ? { uri: lubeckRiversidePhoto }
+                ? require("../../assets/images/city-hub-lubeck-approved.webp")
                 : require("../../assets/images/citywalk-waterfront.webp")}
               fallbackSource={require("../../assets/images/citywalk-waterfront.webp")}
               contentFit="cover"
