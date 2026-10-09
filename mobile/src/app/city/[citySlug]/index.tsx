@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
   quickAction: {
     flex: 1,
     minWidth: 0,
-    minHeight: 69,
+    minHeight: 64,
     borderRadius: 15,
     borderColor: "#DFE8E9",
     paddingHorizontal: spacing.xs,
