@@ -28,9 +28,10 @@ describe("CITYWALK native product-design polish", () => {
   });
 
   it("keeps Home compact without changing shared city hero defaults", () => {
-    expect(homeSource).toContain("<ImageOverlayHero compact");
-    expect(homeSource).toContain("minHeight: 52");
-    expect(homeSource).toContain('width: "38%"');
+    expect(homeSource).toContain('brand={false}');
+    expect(homeSource).toContain("styles.homeHero");
+    expect(homeSource).toContain("minHeight: 56");
+    expect(homeSource).toContain("styles.featuredGrid");
   });
 
   it("gives destination and place discovery tactile image-led surfaces", () => {

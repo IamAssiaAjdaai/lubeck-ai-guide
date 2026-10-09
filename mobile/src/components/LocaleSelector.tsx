@@ -9,7 +9,7 @@ import { useNativeLocale } from "../localization/LocaleProvider";
 import { NativeIcon } from "./NativeIcon";
 import { AppText } from "./ui";
 
-export function LocaleSelector({ showLabel = false }: { showLabel?: boolean }) {
+export function LocaleSelector({ showLabel = false, home = false }: { showLabel?: boolean; home?: boolean }) {
   const { locale, direction, messages, setLocale } = useNativeLocale();
   const [open, setOpen] = useState(false);
 
@@ -25,12 +25,13 @@ export function LocaleSelector({ showLabel = false }: { showLabel?: boolean }) {
           styles.trigger,
           { direction },
           showLabel && styles.labelledTrigger,
+          home && styles.homeTrigger,
           pressed && styles.pressed,
         ]}
       >
         <NativeIcon ios="globe" android="language" size={showLabel ? 16 : 22} />
         {showLabel ? (
-          <Text style={styles.currentLanguage}>
+          <Text numberOfLines={1} style={styles.currentLanguage}>
             {getLocaleLabel(locale)}
           </Text>
         ) : null}
@@ -98,6 +99,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     paddingHorizontal: spacing.sm,
   },
+  homeTrigger: { minWidth: 100, maxWidth: 132, flexShrink: 0, paddingHorizontal: 12 },
   currentLanguage: {
     ...typography.caption,
     color: colors.textMuted,
