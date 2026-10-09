@@ -47,9 +47,11 @@ describe.runIf(shouldRun)("Marketing QA real PostgreSQL evidence acceptance", ()
   let placeId: number | undefined;
   let sourceId: number | undefined;
   let chunkId: string | undefined;
+  let localDatabaseConfirmed = false;
 
   beforeAll(async () => {
     requireDisposableLocalDb();
+    localDatabaseConfirmed = true;
 
     const db = getDb();
     const [city] = await db
@@ -102,6 +104,7 @@ describe.runIf(shouldRun)("Marketing QA real PostgreSQL evidence acceptance", ()
   });
 
   afterAll(async () => {
+    if (!localDatabaseConfirmed) return;
     const db = getDb();
     try {
       if (chunkId) {
