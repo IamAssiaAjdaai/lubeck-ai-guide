@@ -10,10 +10,12 @@ import {
   marketingPageInputFromFormData,
 } from "@/lib/admin/marketing/formData";
 import {
+  attachMarketingContentMedia,
   createLubeckStarterCampaign,
   createMarketingCampaign,
   createMarketingContentItem,
   createMarketingPage,
+  detachMarketingContentMedia,
   MarketingConflictError,
   MarketingNotFoundError,
   updateMarketingCampaign,
@@ -120,6 +122,53 @@ export async function updateMarketingContentAction(
   } catch (error) {
     destination = appendQuery(destination, "error", actionError(error));
   }
+  redirect(destination);
+}
+
+
+export async function attachMarketingContentMediaAction(
+  contentId: number,
+  formData: FormData,
+) {
+  const cityId = formCityId(formData);
+  let destination = withCityContext(
+    `/admin/marketing/social/${contentId}`,
+    cityId,
+  );
+
+  try {
+    const mediaAssetId = Number(formData.get("mediaAssetId"));
+    await attachMarketingContentMedia(contentId, mediaAssetId);
+    revalidateMarketing();
+    revalidatePath(`/admin/marketing/social/${contentId}`);
+    destination = appendQuery(destination, "saved", "1");
+  } catch (error) {
+    destination = appendQuery(destination, "error", actionError(error));
+  }
+
+  redirect(destination);
+}
+
+export async function detachMarketingContentMediaAction(
+  contentId: number,
+  attachmentId: number,
+  formData: FormData,
+) {
+  const cityId = formCityId(formData);
+  let destination = withCityContext(
+    `/admin/marketing/social/${contentId}`,
+    cityId,
+  );
+
+  try {
+    await detachMarketingContentMedia(contentId, attachmentId);
+    revalidateMarketing();
+    revalidatePath(`/admin/marketing/social/${contentId}`);
+    destination = appendQuery(destination, "saved", "1");
+  } catch (error) {
+    destination = appendQuery(destination, "error", actionError(error));
+  }
+
   redirect(destination);
 }
 
