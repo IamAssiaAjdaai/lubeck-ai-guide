@@ -252,7 +252,7 @@ export default function CityScreen() {
               <View style={styles.aboutCard} testID="city-about-card">
                 <PressableSurface
                   accessibilityRole="button"
-                  accessibilityLabel={`${locale === "de" ? "Über" : locale === "fr" ? "À propos de" : locale === "es" ? "Sobre" : locale === "nl" ? "Over" : locale === "ar" ? "عن" : "About"} ${nativeCityName(city.slug, city.content.name, locale)}`}
+                  accessibilityLabel={`${locale === "de" ? "Über" : locale === "es" ? "Sobre" : locale === "nl" ? "Over" : locale === "ar" ? "عن" : "About"} ${nativeCityName(city.slug, city.content.name, locale)}`}
                   accessibilityState={{ expanded: aboutExpanded }}
                   onPress={() => setAboutExpanded((current) => !current)}
                   style={StyleSheet.flatten([styles.aboutTrigger, nativeRowStyle(appDirection)])}
@@ -260,7 +260,7 @@ export default function CityScreen() {
                   <NativeIcon ios="info.circle" android="info_outline" size={21} color={colors.primary} />
                   <View style={styles.aboutTitleArea}>
                     <AppText variant="label" style={styles.aboutTitle}>
-                      {`${locale === "de" ? "Über" : locale === "fr" ? "À propos de" : locale === "es" ? "Sobre" : locale === "nl" ? "Over" : locale === "ar" ? "عن" : "About"} ${nativeCityName(city.slug, city.content.name, locale)}`}
+                      {`${locale === "de" ? "Über" : locale === "es" ? "Sobre" : locale === "nl" ? "Over" : locale === "ar" ? "عن" : "About"} ${nativeCityName(city.slug, city.content.name, locale)}`}
                     </AppText>
                     <AppText numberOfLines={1} variant="caption" style={styles.muted}>
                       {locale === "de" ? "UNESCO-Altstadt · Hansegeschichte" : locale === "ar" ? "المدينة القديمة · التاريخ الهانزي" : "UNESCO Old Town · Hanseatic history"}
