@@ -22,7 +22,7 @@ import {
   Screen,
   SectionTitle,
 } from "../components/ui";
-import { colors, motion, radius, spacing } from "../design/tokens";
+import { motion, radius, spacing } from "../design/tokens";
 import { prefetchPublicCity, usePublicCities } from "../hooks/usePublicContent";
 import { citywalkApi } from "../lib/api/instance";
 import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
