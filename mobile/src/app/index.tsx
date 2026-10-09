@@ -1,5 +1,4 @@
 import { nativeTextStyle } from "../design/rtlPresentation";
-import { ContentRecovery } from "../components/ContentRecovery";
 import { Image } from "expo-image";
 import { LocaleSelector } from "../components/LocaleSelector";
 import { nativeCityName } from "../lib/displayNames";
@@ -34,6 +33,7 @@ type HomeCity = {
   slug: string;
   name: string;
   available: boolean;
+  unavailable?: boolean;
   image?: string;
   shortDescription?: string;
   attribution?: { text: string; href?: string; license?: string };
@@ -50,12 +50,22 @@ const editorialLabels: Record<string, { eyebrow: string; featured: string; more:
   ar: { eyebrow: "اكتشف المدن", featured: "مدن تستحق الاكتشاف", more: "مدن قادمة قريباً", seeAll: "عرض الكل", brandline: "اكتشف. استمتع. عش التجربة." },
 };
 
+function bundledCityImage(slug: string) {
+  switch (slug) {
+    case "lubeck": return require("../../assets/images/home-holstentor.jpg");
+    case "hamburg": return require("../../assets/images/home-hamburg.webp");
+    case "duesseldorf": return require("../../assets/images/home-duesseldorf.webp");
+    default: return undefined;
+  }
+}
+
 function HomeCityCard({
   city,
   locale,
   size,
   availableLabel,
   comingSoonLabel,
+  unavailableLabel,
   exploreLabel,
 }: {
   city: HomeCity;
@@ -63,16 +73,18 @@ function HomeCityCard({
   size: "featured" | "small";
   availableLabel: string;
   comingSoonLabel: string;
+  unavailableLabel: string;
   exploreLabel: string;
 }) {
   const isFeatured = size === "featured";
   const cityName = nativeCityName(city.slug, city.name, locale);
+  const localImage = bundledCityImage(city.slug);
   const fallback = cityLaunches[city.slug]?.heroImage;
   const card = (
     <View style={[styles.destinationCard, isFeatured ? styles.featuredCard : styles.smallCard]}>
       <NativeContentImage
-        source={city.image ? { uri: citywalkApi.resolveUrl(city.image) } : undefined}
-        fallbackSource={fallback ? { uri: citywalkApi.resolveUrl(fallback) } : undefined}
+        source={city.image ? { uri: citywalkApi.resolveUrl(city.image) } : localImage ?? (fallback ? { uri: citywalkApi.resolveUrl(fallback) } : undefined)}
+        fallbackSource={localImage ?? (fallback ? { uri: citywalkApi.resolveUrl(fallback) } : undefined)}
         contentFit="cover"
         cachePolicy="memory-disk"
         transition={motion.component}
@@ -80,18 +92,19 @@ function HomeCityCard({
         style={styles.destinationImage}
       />
       <View pointerEvents="none" style={styles.imageTint} />
+      <View pointerEvents="none" style={styles.imageBottomShade} />
       {isFeatured ? (
         <View style={styles.statusPill}>
           <View style={[styles.pillDot, !city.available && styles.pillDotMuted]} />
           <AppText variant="metadata" style={styles.pillText}>
-            {city.available ? availableLabel : comingSoonLabel}
+            {city.unavailable ? unavailableLabel : city.available ? availableLabel : comingSoonLabel}
           </AppText>
         </View>
       ) : null}
-      <View style={isFeatured ? styles.featuredCopy : styles.smallCopy}>
+      <View style={[isFeatured ? styles.featuredCopy : styles.smallCopy, isFeatured && city.available && styles.featuredCopyWithArrow]}>
         <AppText
           variant={isFeatured ? "heading" : "label"}
-          numberOfLines={1}
+          numberOfLines={isFeatured ? 2 : 1}
           style={[styles.destinationName, isFeatured && styles.featuredName]}
         >
           {cityName}
@@ -101,7 +114,7 @@ function HomeCityCard({
             {city.shortDescription}
           </AppText>
         ) : !isFeatured ? (
-          <AppText variant="metadata" style={styles.destinationDescription}>{comingSoonLabel}</AppText>
+          <AppText variant="metadata" style={styles.destinationDescription}>{city.unavailable ? unavailableLabel : comingSoonLabel}</AppText>
         ) : null}
       </View>
       {city.available && isFeatured ? (
@@ -192,7 +205,12 @@ export default function HomeScreen() {
       attribution: city.credit,
     }));
 
-  const choices = [...available, ...upcoming]
+  // Keep destination photography visible on Home during a connection error, but never
+  // make a CMS-unverified city card navigable or claim its content is available.
+  const offlineLubeck: HomeCity[] = cities.status === "error"
+    ? [{ slug: "lubeck", name: cityLaunches.lubeck.name, available: false, unavailable: true }]
+    : [];
+  const choices = [...available, ...offlineLubeck, ...upcoming]
     .filter(city =>
       (city.name + " " + nativeCityName(city.slug, city.name, locale))
         .toLocaleLowerCase(locale)
@@ -212,8 +230,7 @@ export default function HomeScreen() {
     <Screen scrollViewRef={scroll} scrollDiagnostics="home" brand={false}>
       <View style={styles.homeHero}>
         <NativeContentImage
-          source={{ uri: citywalkApi.resolveUrl(cityLaunches.lubeck.heroImage!) }}
-          fallbackSource={require("../../assets/images/citywalk-hero.png")}
+          source={require("../../assets/images/home-holstentor.jpg")}
           contentFit="cover"
           cachePolicy="memory-disk"
           accessibilityLabel={undefined}
@@ -223,7 +240,7 @@ export default function HomeScreen() {
         <View style={[styles.heroHeader, { direction }]}>
           <View style={styles.brandLockup}>
             <Image
-              source={require("../../assets/images/citywalk-mark.svg")}
+              source={require("../../assets/images/home-city-mark.svg")}
               contentFit="contain"
               style={styles.brandMark}
               accessible={false}
@@ -236,7 +253,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={styles.headerControls}>
-            <LocaleSelector showLabel />
+            <LocaleSelector showLabel home />
             <Link href="/profile" asChild>
               <PressableSurface
                 accessibilityRole="link"
@@ -297,7 +314,7 @@ export default function HomeScreen() {
       </View>
 
       {cities.status === "loading" ? <CitywalkLoading variant="home" /> : null}
-      {cities.status === "error" ? <ContentRecovery retry={cities.retry} /> : null}
+
       {cities.status === "available" && !choices.length ? (
         <EmptyState
           title={t.noCities}
@@ -316,9 +333,19 @@ export default function HomeScreen() {
               size="featured"
               availableLabel={t.availableNow}
               comingSoonLabel={t.comingSoon}
+              unavailableLabel={messages.unavailable}
               exploreLabel={messages.exploreCity}
             />
           ))}
+        </View>
+      ) : null}
+      {cities.status === "error" ? (
+        <View testID="home-cities-retry" style={styles.contentWarning}>
+          <AppText variant="metadata" style={styles.warningText}>{messages.unavailable}</AppText>
+          <PressableSurface accessibilityRole="button" accessibilityLabel={t.retry} onPress={cities.retry} style={styles.retryButton}>
+            <NativeIcon ios="arrow.clockwise" android="refresh" color="#0E2C44" size={16} />
+            <AppText variant="label" style={styles.retryLabel}>{t.retry}</AppText>
+          </PressableSurface>
         </View>
       ) : null}
       {remaining.length > 0 ? (
@@ -333,6 +360,7 @@ export default function HomeScreen() {
                 size="small"
                 availableLabel={t.availableNow}
                 comingSoonLabel={t.comingSoon}
+                unavailableLabel={messages.unavailable}
                 exploreLabel={messages.exploreCity}
               />
             ))}
@@ -345,10 +373,10 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   homeHero: {
-    minHeight: 485,
+    minHeight: 408,
     marginHorizontal: -spacing.lg,
     marginTop: -14,
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
     paddingTop: spacing.sm,
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.lg,
@@ -361,36 +389,36 @@ const styles = StyleSheet.create({
   heroImage: { ...StyleSheet.absoluteFill },
   heroScrim: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: "rgba(10, 27, 38, 0.30)",
+    backgroundColor: "rgba(10, 27, 38, 0.28)",
   },
   heroHeader: {
     minHeight: 60, flexDirection: "row", justifyContent: "space-between",
     alignItems: "center", gap: 6,
   },
   brandLockup: { flexDirection: "row", alignItems: "center", gap: 6, flex: 1, minWidth: 0 },
-  brandMark: { width: 32, height: 44 },
+  brandMark: { width: 32, height: 42 },
   brandCopy: { flex: 1, minWidth: 0, gap: 1 },
-  brandName: { color: "#0E2C44", fontSize: 19, fontWeight: "700", letterSpacing: 1.8 },
-  brandline: { color: "#39536B", fontSize: 8, lineHeight: 11, fontWeight: "700", letterSpacing: 1.1 },
+  brandName: { color: "#0E2C44", fontSize: 17, fontWeight: "700", letterSpacing: 1.3 },
+  brandline: { color: "#39536B", fontSize: 7, lineHeight: 10, fontWeight: "600", letterSpacing: 0.7 },
   headerControls: { flexDirection: "row", alignItems: "center", gap: 6 },
   profileControl: {
     width: 44, height: 44, borderRadius: 22, backgroundColor: "rgba(255,255,255,0.91)",
     justifyContent: "center", alignItems: "center",
   },
-  heroCopy: { gap: 8, marginTop: 56, paddingBottom: spacing.sm },
+  heroCopy: { gap: 7, marginTop: 24, paddingBottom: spacing.sm },
   heroEyebrow: { color: "#F7FAFC", fontWeight: "700", letterSpacing: 2.8, fontSize: 12 },
   heroTitle: {
     color: "#FFFFFF",
     fontFamily: "Georgia",
     fontWeight: "700",
-    fontSize: 42,
-    lineHeight: 48,
-    letterSpacing: -1.5,
+    fontSize: 33,
+    lineHeight: 39,
+    letterSpacing: -0.9,
     textShadowColor: "rgba(0,0,0,0.26)",
     textShadowRadius: 10,
     textShadowOffset: { width: 0, height: 2 },
   },
-  heroSubtitle: { color: "#FFFFFF", fontSize: 17, lineHeight: 23 },
+  heroSubtitle: { color: "#FFFFFF", fontSize: 16, lineHeight: 22 },
   heroActions: { gap: 10 },
   search: {
     minHeight: 56,
@@ -409,10 +437,11 @@ const styles = StyleSheet.create({
   featuredGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, alignItems: "flex-start" },
   featuredItem: { width: "48%", flexGrow: 1, minWidth: 0 },
   destinationCard: { backgroundColor: "#D5E2E9", overflow: "hidden", borderRadius: radius.lg },
-  featuredCard: { height: 256, justifyContent: "flex-end" },
+  featuredCard: { height: 236, justifyContent: "flex-end" },
   smallCard: { height: 180, justifyContent: "flex-end" },
   destinationImage: { ...StyleSheet.absoluteFill },
-  imageTint: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0, 25, 37, 0.28)" },
+  imageTint: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0, 25, 37, 0.08)" },
+  imageBottomShade: { position: "absolute", bottom: 0, left: 0, right: 0, height: 110, backgroundColor: "rgba(0, 21, 34, 0.48)" },
   statusPill: {
     position: "absolute", top: 12, left: 12, maxWidth: "90%",
     backgroundColor: "rgba(255, 255, 255, 0.91)", borderRadius: radius.pill,
@@ -422,10 +451,11 @@ const styles = StyleSheet.create({
   pillDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#238D5A" },
   pillDotMuted: { backgroundColor: "#66778B" },
   pillText: { color: "#154861", fontSize: 12, lineHeight: 16, flexShrink: 1 },
-  featuredCopy: { padding: 16, paddingRight: 42, gap: 4 },
+  featuredCopy: { padding: 12, gap: 4 },
+  featuredCopyWithArrow: { paddingRight: 43 },
   smallCopy: { padding: 12, gap: 4 },
   destinationName: { color: "#FFFFFF", fontWeight: "700", textShadowColor: "rgba(0,0,0,0.4)", textShadowRadius: 4 },
-  featuredName: { fontFamily: "Georgia", fontSize: 29, lineHeight: 34 },
+  featuredName: { fontFamily: "Georgia", fontSize: 24, lineHeight: 27 },
   destinationDescription: { color: "#F0F4F5", fontSize: 11, lineHeight: 16 },
   cardArrow: {
     position: "absolute", bottom: 18, right: 12, width: 32, height: 32,
@@ -433,4 +463,8 @@ const styles = StyleSheet.create({
   },
   smallGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   smallItem: { width: "47%", flexGrow: 1, minWidth: 0 },
+  contentWarning: { minHeight: 48, borderRadius: 12, backgroundColor: "#F0F5F8", paddingHorizontal: 12, paddingVertical: 8, flexDirection: "row", alignItems: "center", gap: 8 },
+  warningText: { color: "#4F6677", flex: 1 },
+  retryButton: { flexDirection: "row", alignItems: "center", gap: 5, minHeight: 44, paddingHorizontal: 8 },
+  retryLabel: { color: "#0E2C44" },
 });
