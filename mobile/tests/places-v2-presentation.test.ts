@@ -24,6 +24,9 @@ describe("Places V2 compact cards", () => {
     expect(citySource).toContain('walkFeedback.message ? (');
     expect(citySource).toContain('styles.placeFeedback');
     expect(citySource).toContain('walkFeedback.customize ? (');
+    expect(citySource).toContain("Doesn\'t fit your walk time.");
+    expect(citySource).toContain("styles.placeFeedbackText");
+    expect(citySource).toContain("styles.placeCustomizeText");
   });
   it("collapses long city context into an accessible opt-in info row", () => {
     expect(citySource).toContain('testID="city-about-card"');
