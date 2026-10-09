@@ -22,12 +22,13 @@ export function waterfrontCrop(width: number, height: number) {
 const lubeckRiversidePhoto = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/L%C3%BCbeck_Trave.jpg/960px-L%C3%BCbeck_Trave.jpg";
 
 // Editorial is opt-in: planner, cards and all other legacy heroes keep their old crop.
-export function ImageOverlayHero({ title, subtitle, compact = false, editorial = false, citySlug }: {
+export function ImageOverlayHero({ title, subtitle, compact = false, editorial = false, citySlug, badge }: {
   title: string;
   subtitle?: string;
   compact?: boolean;
   editorial?: boolean;
   citySlug?: string;
+  badge?: string;
 }) {
   const { direction } = useNativeLocale();
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -67,6 +68,11 @@ export function ImageOverlayHero({ title, subtitle, compact = false, editorial =
         {editorial ? <AppText style={styles.editorialEyebrow}>YOUR CITY, YOUR WAY</AppText> : null}
         <AppText accessibilityRole="header" variant="screenTitle" style={[styles.title, nativeTextStyle(direction), editorial && styles.editorialTitle]}>{title}</AppText>
         {subtitle ? <AppText style={[styles.subtitle, compact && styles.compactSubtitle, nativeTextStyle(direction), editorial && styles.editorialSubtitle]}>{subtitle}</AppText> : null}
+        {editorial && badge ? (
+          <View style={styles.editorialBadge}>
+            <AppText variant="metadata" style={styles.editorialBadgeText}>{badge}</AppText>
+          </View>
+        ) : null}
       </View>
     </View>
   );
@@ -93,6 +99,8 @@ const styles = StyleSheet.create({
   editorialEyebrow: { color: "#E5F5F2", fontSize: 11, lineHeight: 16, fontWeight: "800", letterSpacing: 2.1 },
   editorialTitle: { fontFamily: "Georgia", fontWeight: "700", fontSize: 40, lineHeight: 47, letterSpacing: -1 },
   editorialSubtitle: { fontSize: 15, lineHeight: 22, color: "#FFFFFF" },
+  editorialBadge: { alignSelf: "flex-start", borderRadius: radius.pill, backgroundColor: "rgba(255,255,255,0.94)", paddingVertical: 6, paddingHorizontal: 12, marginTop: spacing.xs },
+  editorialBadgeText: { color: "#124662", fontWeight: "700", fontSize: 11, lineHeight: 15 },
   title: { color: "#fff" },
   subtitle: { color: "#fff", fontSize: 17, lineHeight: 25 },
   compactSubtitle: { fontSize: 16, lineHeight: 23 },
