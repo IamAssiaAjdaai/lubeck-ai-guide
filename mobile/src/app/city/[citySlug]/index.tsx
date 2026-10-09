@@ -533,11 +533,19 @@ function PlaceCard({
       <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} iconOnly onFeedback={(message, customize) => setWalkFeedback({ message, customize })} /></View>
       </View>
       {walkFeedback.message ? (
-        <View style={styles.placeFeedback}>
-          <AppText variant="caption" accessibilityLiveRegion="polite" style={styles.muted}>{walkFeedback.message}</AppText>
+        <View style={[styles.placeFeedback, nativeRowStyle(direction)]}>
+          <NativeIcon ios="info.circle" android="info_outline" color={colors.textMuted} size={16} />
+          <AppText variant="caption" accessibilityLiveRegion="polite" numberOfLines={2} style={styles.placeFeedbackText}>
+            {walkFeedback.customize
+              ? locale === "de" ? "Passt nicht in deine Gehzeit." : locale === "es" ? "No cabe en el tiempo disponible." : locale === "nl" ? "Past niet binnen je wandeltijd." : locale === "da" ? "Passer ikke til din gåtid." : locale === "sv" ? "Ryms inte inom din promenadtid." : locale === "ar" ? "لا يناسب الوقت المتاح." : "Doesn't fit your walk time."
+              : walkFeedback.message}
+          </AppText>
           {walkFeedback.customize ? (
             <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild>
-              <PrimaryButton compact tone="secondary" label={walkCopy(locale).customize} style={styles.placeCustomize} />
+              <PressableSurface accessibilityRole="link" style={styles.placeCustomize}>
+                <AppText variant="caption" style={styles.placeCustomizeText}>{walkCopy(locale).customize}</AppText>
+                <NativeIcon ios="arrow.up.right" android="north_east" color={colors.primary} size={13} />
+              </PressableSurface>
             </Link>
           ) : null}
         </View>
@@ -638,8 +646,10 @@ const styles = StyleSheet.create({
   },
   tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: 12 },
   cardActions: { width: 44, flexShrink: 0, alignSelf: "flex-start" },
-  placeFeedback: { paddingHorizontal: 12, paddingBottom: 10, gap: 6, alignItems: "flex-start" },
-  placeCustomize: { minHeight: 38, paddingHorizontal: 10, alignSelf: "flex-start" },
+  placeFeedback: { paddingHorizontal: 12, paddingBottom: 10, gap: 6, flexDirection: "row", alignItems: "center", flexWrap: "wrap" },
+  placeFeedbackText: { color: colors.textMuted, fontSize: 12, lineHeight: 17, flexShrink: 1 },
+  placeCustomize: { flexDirection: "row", alignItems: "center", gap: 3, minHeight: 38, paddingHorizontal: 4 },
+  placeCustomizeText: { color: colors.primary, fontWeight: "700" },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
   stopName: { color: colors.textMuted, marginTop: spacing.xs },
