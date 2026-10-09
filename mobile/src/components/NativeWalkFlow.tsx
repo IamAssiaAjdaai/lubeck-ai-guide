@@ -995,7 +995,6 @@ export function NativeWalkFlow({
                 label={t.interests}
                 help={t.interestsHelp}
                 multiple
-                compact
                 options={(Object.keys(interestTags) as Interest[]).map(
                   (value) => ({ value, label: t[value] }),
                 )}
@@ -1022,7 +1021,6 @@ export function NativeWalkFlow({
                     <WalkChoices
                       label=""
                       multiple
-                      compact
                       options={dynamicTags.map((value) => ({
                         value,
                         label: nativeCategoryLabel(value, locale),
