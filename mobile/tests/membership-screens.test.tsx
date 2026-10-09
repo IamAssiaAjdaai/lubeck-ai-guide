@@ -106,17 +106,17 @@ describe("actual Explore and Detail share current-walk state (native bridges moc
     state.locale = locale; const t = uxCopy(locale), { explore, detail } = surfaces();
     const exploreAdd = await explore.findByRole("button", { name: t.add });
     const detailAdd = await detail.findByRole("button", { name: t.add });
-    expect(JSON.parse(exploreAdd.dataset.style!)).toMatchObject({ alignSelf: "flex-start", maxWidth: "100%", minHeight: 44 });
-    expect(exploreAdd.dataset.tone).toBe("secondary");
-    expect(exploreAdd.dataset.compact).toBe("false");
+    // Explore now uses an accessible icon-only PressableSurface, while Detail keeps its labeled button.
+    expect(exploreAdd.getAttribute("aria-label")).toBe(t.add);
+    expect(exploreAdd.dataset.style).toBeUndefined();
     expect(JSON.parse(detailAdd.dataset.style!)).toMatchObject({ alignSelf: "stretch", minHeight: 64 });
     expect(detailAdd.dataset.tone).toBe("primary");
     expect(detailAdd.dataset.compact).toBe("true");
     fireEvent.click(exploreAdd);
     await detail.findByRole("button", { name: t.remove, pressed: true });
     const exploreRemove = explore.getByRole("button", { name: t.remove, pressed: true });
-    expect(JSON.parse(exploreRemove.dataset.style!)).toMatchObject({ alignSelf: "flex-start", maxWidth: "100%", minHeight: 44 });
-    expect(exploreRemove.dataset.tone).toBe("secondary");
+    expect(exploreRemove.getAttribute("aria-label")).toBe(t.remove);
+    expect(exploreRemove.getAttribute("aria-pressed")).toBe("true");
     expect(screen.queryByText(t.included)).toBeNull();
     expect(detail.queryByRole("button", { name: t.add })).toBeNull();
     expect((await loadCurrentWalk("lubeck"))?.journey.remaining).toEqual(["holstentor"]);

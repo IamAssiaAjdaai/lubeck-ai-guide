@@ -80,6 +80,7 @@ export default function CityScreen() {
   const headerOffset = useRef(0);
   const [category, setCategory] = useState("all");
   const [mapVisible, setMapVisible] = useState(false);
+  const [aboutExpanded, setAboutExpanded] = useState(false);
   const labels = discoveryCopy(locale);
   const [near, setNear] = useState<{ lat: number; lng: number }>();
   const [locationMessage, setLocationMessage] = useState("");
@@ -248,7 +249,29 @@ export default function CityScreen() {
             ) : null}
 
             {city.content.description ? (
-              <AppText style={styles.muted}>{city.content.description}</AppText>
+              <View style={styles.aboutCard} testID="city-about-card">
+                <PressableSurface
+                  accessibilityRole="button"
+                  accessibilityLabel={`${locale === "de" ? "Über" : locale === "es" ? "Sobre" : locale === "nl" ? "Over" : locale === "ar" ? "عن" : "About"} ${nativeCityName(city.slug, city.content.name, locale)}`}
+                  accessibilityState={{ expanded: aboutExpanded }}
+                  onPress={() => setAboutExpanded((current) => !current)}
+                  style={StyleSheet.flatten([styles.aboutTrigger, nativeRowStyle(appDirection)])}
+                >
+                  <NativeIcon ios="info.circle" android="info_outline" size={21} color={colors.primary} />
+                  <View style={styles.aboutTitleArea}>
+                    <AppText variant="label" style={styles.aboutTitle}>
+                      {`${locale === "de" ? "Über" : locale === "es" ? "Sobre" : locale === "nl" ? "Over" : locale === "ar" ? "عن" : "About"} ${nativeCityName(city.slug, city.content.name, locale)}`}
+                    </AppText>
+                    <AppText numberOfLines={1} variant="caption" style={styles.muted}>
+                      {locale === "de" ? "UNESCO-Altstadt · Hansegeschichte" : locale === "ar" ? "المدينة القديمة · التاريخ الهانزي" : "UNESCO Old Town · Hanseatic history"}
+                    </AppText>
+                  </View>
+                  <NativeIcon ios={aboutExpanded ? "chevron.up" : "chevron.down"} android={aboutExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={19} color={colors.textMuted} />
+                </PressableSurface>
+                {aboutExpanded ? (
+                  <AppText style={styles.aboutBody}>{city.content.description}</AppText>
+                ) : null}
+              </View>
             ) : null}
             <View
               style={styles.section}
@@ -399,7 +422,7 @@ function TourCard({
                 ))}
             </View>
             <AppText
-              numberOfLines={expanded ? undefined : 2}
+              numberOfLines={expanded ? undefined : 1}
               variant="caption"
               style={styles.stopName}
             >
@@ -454,8 +477,10 @@ function PlaceCard({
   const { messages } = useNativeLocale();
   const direction = getNativeDirection(locale);
   const textStyle = nativeContentTextStyle(locale, place.resolvedLocale);
+  const [walkFeedback, setWalkFeedback] = useState({ message: "", customize: false });
   return (
     <View style={styles.placeCard}>
+      <View style={[styles.placeCardRow, nativeRowStyle(direction)]}>
       <Link
         href={{
           pathname: "/city/[citySlug]/place/[placeSlug]",
@@ -505,7 +530,26 @@ function PlaceCard({
           </View>
         </PressableSurface>
       </Link>
-      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense inline /></View>
+      <View style={styles.cardActions}><WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} iconOnly onFeedback={(message, customize) => setWalkFeedback({ message, customize })} /></View>
+      </View>
+      {walkFeedback.message ? (
+        <View style={[styles.placeFeedback, nativeRowStyle(direction)]}>
+          <NativeIcon ios="info.circle" android="info_outline" color={colors.textMuted} size={16} />
+          <AppText variant="caption" accessibilityLiveRegion="polite" numberOfLines={2} style={styles.placeFeedbackText}>
+            {walkFeedback.customize
+              ? locale === "de" ? "Passt nicht in deine Gehzeit." : locale === "es" ? "No cabe en el tiempo disponible." : locale === "nl" ? "Past niet binnen je wandeltijd." : locale === "da" ? "Passer ikke til din gåtid." : locale === "sv" ? "Ryms inte inom din promenadtid." : locale === "ar" ? "لا يناسب الوقت المتاح." : "Doesn't fit your walk time."
+              : walkFeedback.message}
+          </AppText>
+          {walkFeedback.customize ? (
+            <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild>
+              <PressableSurface accessibilityRole="link" style={styles.placeCustomize}>
+                <AppText variant="caption" style={styles.placeCustomizeText}>{walkCopy(locale).customize}</AppText>
+                <NativeIcon ios="arrow.up.right" android="north_east" color={colors.primary} size={13} />
+              </PressableSurface>
+            </Link>
+          ) : null}
+        </View>
+      ) : null}
       {imageMedia?.attribution ? <View style={styles.cardAttribution}>
         <MediaAttribution attribution={imageMedia.attribution} />
       </View> : null}
@@ -545,6 +589,11 @@ const styles = StyleSheet.create({
   },
   cityIntroduction: { gap: spacing.sm },
   section: { gap: spacing.md },
+  aboutCard: { backgroundColor: colors.surface, borderRadius: 16, borderColor: colors.border, borderWidth: StyleSheet.hairlineWidth, overflow: "hidden" },
+  aboutTrigger: { minHeight: 64, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
+  aboutTitleArea: { flex: 1, minWidth: 0, gap: 2 },
+  aboutTitle: { color: colors.primary },
+  aboutBody: { color: colors.textMuted, lineHeight: 23, paddingHorizontal: spacing.md, paddingBottom: spacing.md },
   placeControls: { gap: spacing.sm },
   placeImage: {
     width: "37%",
@@ -553,30 +602,34 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primarySoft,
   },
   placeThumbnail: {
-    backgroundColor: colors.primarySoft,
-    width: 96,
-    height: 96,
+    backgroundColor: "#EAF2F8",
+    width: 88,
+    height: 88,
     flexShrink: 0,
-    borderRadius: radius.sm,
+    borderRadius: 14,
   },
   placeCard: {
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    borderColor: colors.border,
-    borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: spacing.md,
+    borderRadius: 19,
+    borderColor: "#DFE8EE",
+    borderWidth: 1,
+    marginBottom: spacing.sm,
     overflow: "hidden",
   },
-  placeLink: { alignItems: "flex-start", flexDirection: "row", minHeight: 120, padding: 12, gap: 12 },
+  placeCardRow: { flexDirection: "row", alignItems: "flex-start", padding: 10, gap: 4 },
+  placeLink: {
+    alignItems: "flex-start", flexDirection: "row",
+    flex: 1, minWidth: 0, minHeight: 98, gap: 10,
+  },
   placeContent: {
     flex: 1,
-    gap: spacing.xs,
+    gap: 3,
     minWidth: 0,
     paddingVertical: 2,
   },
   metadata: { color: colors.textMuted, marginTop: spacing.xs },
   muted: { color: colors.textMuted },
-  description: { color: colors.textMuted },
+  description: { color: colors.textMuted, fontSize: 12, lineHeight: 17 },
   tourCard: {
     backgroundColor: colors.surface,
     borderColor: "#DFE8E9",
@@ -591,8 +644,12 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     backgroundColor: colors.primarySoft,
   },
-  tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: spacing.md },
-  cardActions: { paddingHorizontal: 12, paddingBottom: 12 },
+  tourContent: { flex: 1, minWidth: 0, gap: spacing.xs, padding: 12 },
+  cardActions: { width: 44, flexShrink: 0, alignSelf: "flex-start" },
+  placeFeedback: { paddingHorizontal: 12, paddingBottom: 10, gap: 6, flexDirection: "row", alignItems: "center", flexWrap: "wrap" },
+  placeFeedbackText: { color: colors.textMuted, fontSize: 12, lineHeight: 17, flexShrink: 1 },
+  placeCustomize: { flexDirection: "row", alignItems: "center", gap: 3, minHeight: 38, paddingHorizontal: 4 },
+  placeCustomizeText: { color: colors.primary, fontWeight: "700" },
   cardAttribution: { paddingBottom: spacing.sm, paddingHorizontal: spacing.md },
   fallback: { color: colors.violet, marginTop: spacing.xs },
   stopName: { color: colors.textMuted, marginTop: spacing.xs },
