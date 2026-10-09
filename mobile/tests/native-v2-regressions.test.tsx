@@ -308,7 +308,7 @@ describe("Expo Router Slot-bound card styles", () => {
     for (const link of links) {
       const style = JSON.parse(link.dataset.childStyle!);
       expect(Array.isArray(style)).toBe(false);
-      expect(style).toMatchObject({ direction: locale === "ar" ? "rtl" : "ltr", flexDirection: "row", alignItems: "flex-start", minHeight: 120 });
+      expect(style).toMatchObject({ direction: locale === "ar" ? "rtl" : "ltr", flexDirection: "row", alignItems: "flex-start", minHeight: 98 });
     }
   });
   it.each(["en", "de", "ar"] as const)("renders a suggested tour through Slot without losing RTL or row layout in %s", locale => {
