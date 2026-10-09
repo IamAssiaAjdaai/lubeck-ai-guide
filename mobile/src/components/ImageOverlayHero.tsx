@@ -19,25 +19,54 @@ export function waterfrontCrop(width: number, height: number) {
   };
 }
 
-export function ImageOverlayHero({ title, subtitle, compact = false }: { title: string; subtitle?: string; compact?: boolean }) {
+const lubeckRiversidePhoto = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/L%C3%BCbeck_Trave.jpg/960px-L%C3%BCbeck_Trave.jpg";
+
+// Editorial is opt-in: planner, cards and all other legacy heroes keep their old crop.
+export function ImageOverlayHero({ title, subtitle, compact = false, editorial = false, citySlug }: {
+  title: string;
+  subtitle?: string;
+  compact?: boolean;
+  editorial?: boolean;
+  citySlug?: string;
+}) {
   const { direction } = useNativeLocale();
   const [size, setSize] = useState({ width: 0, height: 0 });
   return (
-    <View testID="image-overlay-hero" style={[styles.hero, compact && styles.compactHero]} onLayout={({ nativeEvent: { layout } }) => {
+    <View testID="image-overlay-hero" style={[styles.hero, compact && styles.compactHero, editorial && styles.editorialHero]} onLayout={({ nativeEvent: { layout } }) => {
       setSize(previous => previous.width === layout.width && previous.height === layout.height
         ? previous : { width: layout.width, height: layout.height });
     }}>
       <View pointerEvents="none" style={styles.background} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-        {size.width > 0 && size.height > 0 ? <NativeContentImage
+        {editorial ? (
+          <>
+            <NativeContentImage
+              source={citySlug === "lubeck"
+                ? { uri: lubeckRiversidePhoto }
+                : require("../../assets/images/citywalk-waterfront.webp")}
+              fallbackSource={require("../../assets/images/citywalk-waterfront.webp")}
+              contentFit="cover"
+              accessible={false}
+              cachePolicy="memory-disk"
+              style={styles.editorialImage}
+            />
+            <NativeContentImage
+              source={require("../../assets/images/city-hub-overlay.svg")}
+              contentFit="fill"
+              accessible={false}
+              style={styles.editorialGradient}
+            />
+          </>
+        ) : size.width > 0 && size.height > 0 ? <NativeContentImage
           source={require("../../assets/images/citywalk-waterfront.webp")}
           contentFit="cover"
           accessible={false}
           style={[styles.art, waterfrontCrop(size.width, size.height)]}
         /> : null}
       </View>
-      <View style={[styles.copy, compact && styles.compactCopy]}>
-        <AppText accessibilityRole="header" variant="screenTitle" style={[styles.title, nativeTextStyle(direction)]}>{title}</AppText>
-        {subtitle ? <AppText style={[styles.subtitle, compact && styles.compactSubtitle, nativeTextStyle(direction)]}>{subtitle}</AppText> : null}
+      <View style={[styles.copy, compact && styles.compactCopy, editorial && styles.editorialCopy]}>
+        {editorial ? <AppText style={styles.editorialEyebrow}>YOUR CITY, YOUR WAY</AppText> : null}
+        <AppText accessibilityRole="header" variant="screenTitle" style={[styles.title, nativeTextStyle(direction), editorial && styles.editorialTitle]}>{title}</AppText>
+        {subtitle ? <AppText style={[styles.subtitle, compact && styles.compactSubtitle, nativeTextStyle(direction), editorial && styles.editorialSubtitle]}>{subtitle}</AppText> : null}
       </View>
     </View>
   );
@@ -46,14 +75,24 @@ export function ImageOverlayHero({ title, subtitle, compact = false }: { title: 
 const styles = StyleSheet.create({
   hero: { minHeight: 244, justifyContent: "center", borderRadius: radius.hero, overflow: "hidden", backgroundColor: colors.primary },
   compactHero: { minHeight: 196 },
+  editorialHero: { minHeight: 256, borderRadius: 27, backgroundColor: "#254E65", justifyContent: "flex-end" },
   // Physical coordinates deliberately stay LTR: Arabic aligns the real text,
   // never mirrors or repositions the illustration.
   background: { ...StyleSheet.absoluteFill, direction: "ltr", overflow: "hidden" },
   art: { position: "absolute" },
+  editorialImage: { ...StyleSheet.absoluteFill },
+  editorialGradient: { ...StyleSheet.absoluteFill },
   // Contrast follows the intrinsic text block, leaving the surrounding artwork
   // at its original brightness. No opacity is applied to the text or image.
   copy: { margin: spacing.md, padding: spacing.md, gap: spacing.sm, borderRadius: radius.sm, backgroundColor: "rgba(7, 30, 64, 0.68)" },
   compactCopy: { margin: spacing.sm, padding: spacing.md },
+  editorialCopy: {
+    margin: 0, paddingHorizontal: spacing.lg, paddingTop: 42, paddingBottom: spacing.lg,
+    borderRadius: 0, backgroundColor: "transparent", gap: 6,
+  },
+  editorialEyebrow: { color: "#E5F5F2", fontSize: 11, lineHeight: 16, fontWeight: "800", letterSpacing: 2.1 },
+  editorialTitle: { fontFamily: "Georgia", fontWeight: "700", fontSize: 40, lineHeight: 47, letterSpacing: -1 },
+  editorialSubtitle: { fontSize: 15, lineHeight: 22, color: "#FFFFFF" },
   title: { color: "#fff" },
   subtitle: { color: "#fff", fontSize: 17, lineHeight: 25 },
   compactSubtitle: { fontSize: 16, lineHeight: 23 },
