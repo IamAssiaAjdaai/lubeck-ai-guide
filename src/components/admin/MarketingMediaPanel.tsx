@@ -7,14 +7,14 @@ type AvailableMarketingMedia = Readonly<{
   id: number;
   assetKey: string;
   originalFilename: string;
-  kind: "image" | "video";
+  kind: string;
 }>;
 
 type AttachedMarketingMedia = Readonly<{
   id: number;
   mediaAssetId: number;
   originalFilename: string;
-  kind: "image" | "video";
+  kind: string;
   position: number;
 }>;
 
