@@ -1,6 +1,7 @@
 import { nativeTextStyle } from "../design/rtlPresentation";
 import { ContentRecovery } from "../components/ContentRecovery";
-import { NativeBrand } from "../components/NativeChrome";
+import { Image } from "expo-image";
+import { LocaleSelector } from "../components/LocaleSelector";
 import { nativeCityName } from "../lib/displayNames";
 import { triggerCitywalkHaptic } from "../lib/haptics";
 import { cityLaunches, getLaunchDescription } from "@citywalk/traveler-core/cityAvailability";
@@ -219,7 +220,34 @@ export default function HomeScreen() {
           style={styles.heroImage}
         />
         <View pointerEvents="none" style={styles.heroScrim} />
-        <View style={styles.heroHeader}><NativeBrand /></View>
+        <View style={[styles.heroHeader, { direction }]}>
+          <View style={styles.brandLockup}>
+            <Image
+              source={require("../../assets/images/citywalk-mark.svg")}
+              contentFit="contain"
+              style={styles.brandMark}
+              accessible={false}
+            />
+            <View style={styles.brandCopy}>
+              <AppText style={styles.brandName}>CITYWALK</AppText>
+              <AppText variant="caption" numberOfLines={1} style={styles.brandline}>
+                {editorial.brandline}
+              </AppText>
+            </View>
+          </View>
+          <View style={styles.headerControls}>
+            <LocaleSelector showLabel />
+            <Link href="/profile" asChild>
+              <PressableSurface
+                accessibilityRole="link"
+                accessibilityLabel={t.profile}
+                style={styles.profileControl}
+              >
+                <NativeIcon ios="person.crop.circle" android="person_outline" size={22} color="#0E2C44" />
+              </PressableSurface>
+            </Link>
+          </View>
+        </View>
         <View style={styles.heroCopy}>
           <AppText variant="metadata" style={styles.heroEyebrow}>{editorial.eyebrow}</AppText>
           <AppText accessibilityRole="header" variant="hero" style={[styles.heroTitle, direction === "rtl" && { textAlign: "right" }]}>
@@ -336,9 +364,18 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(10, 27, 38, 0.30)",
   },
   heroHeader: {
-    marginHorizontal: -spacing.sm,
-    backgroundColor: "rgba(255, 255, 255, 0.84)",
-    borderRadius: 22,
+    minHeight: 60, flexDirection: "row", justifyContent: "space-between",
+    alignItems: "center", gap: 6,
+  },
+  brandLockup: { flexDirection: "row", alignItems: "center", gap: 6, flex: 1, minWidth: 0 },
+  brandMark: { width: 32, height: 44 },
+  brandCopy: { flex: 1, minWidth: 0, gap: 1 },
+  brandName: { color: "#0E2C44", fontSize: 19, fontWeight: "700", letterSpacing: 1.8 },
+  brandline: { color: "#39536B", fontSize: 8, lineHeight: 11, fontWeight: "700", letterSpacing: 1.1 },
+  headerControls: { flexDirection: "row", alignItems: "center", gap: 6 },
+  profileControl: {
+    width: 44, height: 44, borderRadius: 22, backgroundColor: "rgba(255,255,255,0.91)",
+    justifyContent: "center", alignItems: "center",
   },
   heroCopy: { gap: 8, marginTop: 56, paddingBottom: spacing.sm },
   heroEyebrow: { color: "#F7FAFC", fontWeight: "700", letterSpacing: 2.8, fontSize: 12 },
