@@ -1,4 +1,8 @@
 import { nativeTextStyle } from "../design/rtlPresentation";
+import homeHolstentor from "../../assets/images/home-holstentor.jpg";
+import homeHamburg from "../../assets/images/home-hamburg.webp";
+import homeDuesseldorf from "../../assets/images/home-duesseldorf.webp";
+import homeSkylineMark from "../../assets/images/home-city-mark.svg";
 import { Image } from "expo-image";
 import { LocaleSelector } from "../components/LocaleSelector";
 import { nativeCityName } from "../lib/displayNames";
@@ -52,9 +56,9 @@ const editorialLabels: Record<string, { eyebrow: string; featured: string; more:
 
 function bundledCityImage(slug: string) {
   switch (slug) {
-    case "lubeck": return require("../../assets/images/home-holstentor.jpg");
-    case "hamburg": return require("../../assets/images/home-hamburg.webp");
-    case "duesseldorf": return require("../../assets/images/home-duesseldorf.webp");
+    case "lubeck": return homeHolstentor;
+    case "hamburg": return homeHamburg;
+    case "duesseldorf": return homeDuesseldorf;
     default: return undefined;
   }
 }
@@ -230,7 +234,7 @@ export default function HomeScreen() {
     <Screen scrollViewRef={scroll} scrollDiagnostics="home" brand={false}>
       <View style={styles.homeHero}>
         <NativeContentImage
-          source={require("../../assets/images/home-holstentor.jpg")}
+          source={homeHolstentor}
           contentFit="cover"
           cachePolicy="memory-disk"
           accessibilityLabel={undefined}
@@ -240,7 +244,7 @@ export default function HomeScreen() {
         <View style={[styles.heroHeader, { direction }]}>
           <View style={styles.brandLockup}>
             <Image
-              source={require("../../assets/images/home-city-mark.svg")}
+              source={homeSkylineMark}
               contentFit="contain"
               style={styles.brandMark}
               accessible={false}
