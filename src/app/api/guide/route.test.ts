@@ -130,6 +130,22 @@ describe("POST /api/guide", () => {
     expect(enforceAllowance).toHaveBeenCalledWith(expect.objectContaining({ fallbackIdentity: "unattributed" }));
   });
 
+  it("counts retries independently and does not call Groq once the shared cap is hit", async () => {
+    globalBudget
+      .mockResolvedValueOnce({ success: true, limit: 120, remaining: 1, reset: Date.now() + 60_000 })
+      .mockResolvedValueOnce({ success: false, limit: 120, remaining: 0, reset: Date.now() + 60_000 });
+    createCompletion.mockResolvedValueOnce({ choices: [{ message: { content: "not a JSON answer" } }] });
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: "When was this built?", citySlug: "lubeck", placeSlug: "holstentor", locale: "en" }),
+    }));
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toMatchObject({ code: "guide_global_budget_exhausted" });
+    expect(globalBudget).toHaveBeenCalledTimes(2);
+    expect(createCompletion).toHaveBeenCalledTimes(1);
+  });
+
   it("returns authoritative daily allowance metadata separately from abuse limits", async () => {
     const response = await POST(new Request("http://localhost/api/guide", {
       method: "POST",
