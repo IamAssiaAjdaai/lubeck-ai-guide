@@ -995,6 +995,7 @@ export function NativeWalkFlow({
                 label={t.interests}
                 help={t.interestsHelp}
                 multiple
+                interestGrid
                 options={(Object.keys(interestTags) as Interest[]).map(
                   (value) => ({ value, label: t[value] }),
                 )}
@@ -1021,6 +1022,7 @@ export function NativeWalkFlow({
                     <WalkChoices
                       label=""
                       multiple
+                      interestGrid
                       options={dynamicTags.map((value) => ({
                         value,
                         label: nativeCategoryLabel(value, locale),
