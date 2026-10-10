@@ -186,6 +186,11 @@ vi.mock("../src/components/WalkControls", () => ({
     </label>
   ),
 }));
+vi.mock("../src/components/ReturnByTimePicker", () => ({
+  ReturnByTimePicker: ({ label, value, onChangeText }: { label: string; value: string; onChangeText: (next: string) => void }) => (
+    <label>{label}<input value={value} onChange={(event) => onChangeText(event.target.value)} /></label>
+  ),
+}));
 vi.mock("../src/components/NativeIcon", () => ({ NativeIcon: () => null }));
 vi.mock("../src/components/V2Presentation", () => ({
   V2Hero: ({ title, subtitle }: { title: string; subtitle?: string }) => (
