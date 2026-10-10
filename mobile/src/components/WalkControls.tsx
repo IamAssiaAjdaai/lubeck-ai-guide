@@ -45,6 +45,9 @@ export function WalkChoices<T extends string | number>({
   number,
   showHeading = true,
   compact = false,
+  interestGrid = false,
+  compactInterests = false,
+  compactPace = false,
 }: {
   label: string;
   options: readonly { value: T; label: string; description?: string }[];
@@ -56,6 +59,9 @@ export function WalkChoices<T extends string | number>({
   number?: number;
   showHeading?: boolean;
   compact?: boolean;
+  interestGrid?: boolean;
+  compactInterests?: boolean;
+  compactPace?: boolean;
 }) {
   const { width } = useWindowDimensions();
   const { categoryColumns } = useResponsiveTextLayout();
@@ -87,6 +93,7 @@ export function WalkChoices<T extends string | number>({
           variant === "segment" && styles.segment,
           variant === "radio" && styles.radioList,
           compact && [styles.compactOptions, { direction, flexWrap: wrapSegments ? "wrap" : "nowrap" }],
+          interestGrid && styles.interestGrid,
         ]}
       >
         {options.map((option) => {
@@ -105,7 +112,7 @@ export function WalkChoices<T extends string | number>({
               onPress={() => onSelect(option.value)}
               style={[
                 styles.option,
-                variant === "chips" && width >= 380 && !compact && styles.wideChip,
+                variant === "chips" && width >= 380 && !compact && !interestGrid && styles.wideChip,
                 variant === "time" && styles.time,
                 variant === "segment" && styles.segmentOption,
                 variant === "radio" && styles.radio,
@@ -113,9 +120,12 @@ export function WalkChoices<T extends string | number>({
                 variant === "segment" && checked && styles.activeSegment,
                 compact && [styles.compactOption, wrapSegments && { flexBasis: "45%" }],
                 isCompactChip && styles.compactChip,
+                interestGrid && styles.interestOption,
+                compactInterests && styles.compactInterestOption,
+                variant === "segment" && compactPace && styles.compactPaceOption,
               ]}
             >
-              {icon && !isCompactChip ? (
+              {icon && !isCompactChip && !interestGrid && !(variant === "segment" && compactPace) ? (
                 <NativeIcon
                   {...icon}
                   size={20}
@@ -126,8 +136,12 @@ export function WalkChoices<T extends string | number>({
                   }
                 />
               ) : null}
+              {interestGrid && !compactInterests ? <View style={styles.interestIconRow}>
+                {icon ? <NativeIcon {...icon} size={21} color={colors.primary} /> : <View />}
+                <NativeIcon ios={checked ? "checkmark.circle.fill" : "circle"} android={checked ? "check_circle" : "radio_button_unchecked"} size={19} color={checked ? colors.primary : colors.borderStrong} />
+              </View> : null}
               <View
-                style={
+                style={compactInterests ? styles.compactInterestLabelArea : interestGrid ? styles.interestLabelArea :
                   compact
                     ? { minWidth: 0, flexShrink: 1, flexGrow: 1 }
                     : variant === "time"
@@ -135,13 +149,16 @@ export function WalkChoices<T extends string | number>({
                       : styles.optionText
                 }
               >
+                {interestGrid && !compactInterests && option.description ? (
+                  <AppText variant="caption" numberOfLines={2} style={styles.interestDescription}>{option.description}</AppText>
+                ) : null}
                 {compact ? (
                   <Text
                     style={[
                       styles.compactLabel,
                       { writingDirection: direction },
                       checked && variant === "chips" && styles.compactLabelSelected,
-                      variant === "segment" && checked && { color: colors.surface },
+                      interestGrid ? (compactInterests ? styles.compactInterestLabel : styles.interestLabel) : variant === "segment" && checked && { color: colors.surface },
                     ]}
                   >
                     {option.label}
@@ -150,7 +167,7 @@ export function WalkChoices<T extends string | number>({
                   <AppText
                     variant={variant === "time" ? "label" : "metadata"}
                     style={
-                      variant === "segment" && checked
+                      interestGrid ? styles.interestLabel : variant === "segment" && checked
                         ? { color: colors.surface, textAlign: "center" }
                         : variant === "time"
                           ? styles.timeLabel
@@ -160,13 +177,13 @@ export function WalkChoices<T extends string | number>({
                     {option.label}
                   </AppText>
                 )}
-                {option.description && variant !== "time" ? (
+                {option.description && variant !== "time" && !interestGrid ? (
                   <AppText variant="metadata" style={styles.muted}>
                     {option.description}
                   </AppText>
                 ) : null}
               </View>
-              {isCompactChip && checked ? (
+              {compactInterests ? <NativeIcon ios={checked ? "checkmark.circle.fill" : "circle"} android={checked ? "check_circle" : "radio_button_unchecked"} size={18} color={checked ? colors.primary : colors.borderStrong} /> : interestGrid ? null : isCompactChip && checked ? (
                 <NativeIcon
                   ios="checkmark"
                   android="check"
@@ -312,6 +329,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   wideChip: { flexBasis: "29%", minWidth: 0, paddingHorizontal: spacing.sm },
+  interestGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  interestOption: { flexGrow: 1, flexBasis: "46%", minWidth: 0, minHeight: 98, flexDirection: "column", alignItems: "stretch", justifyContent: "space-between", padding: 12 },
+  interestIconRow: { width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  compactInterestOption: { minHeight: 54, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 10 },
+  compactInterestLabelArea: { flex: 1, minWidth: 0 },
+  compactInterestLabel: { color: colors.text, fontSize: 14, lineHeight: 19, fontWeight: "500" },
+  compactPaceOption: { paddingHorizontal: 2, gap: 2, minHeight: 48 },
+  interestLabelArea: { width: "100%", minWidth: 0 },
+  interestLabel: { color: colors.text, fontSize: 14, lineHeight: 19, fontWeight: "600" },
+  interestDescription: { color: colors.textMuted, fontSize: 11, lineHeight: 15, marginBottom: 4 },
   optionText: { flex: 1 },
   selected: {
     borderColor: colors.primary,
@@ -364,7 +391,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     backgroundColor: colors.surface,
   },
-  compactLabel: { ...typography.metadata, color: colors.text, textAlign: "center" },
+  compactLabel: { ...typography.metadata, color: colors.text, textAlign: "center", fontSize: 12, lineHeight: 17 },
   compactLabelSelected: { color: colors.primary, fontWeight: "600" },
   radioList: { flexDirection: "column" },
   radio: { flexBasis: "auto", width: "100%" },
