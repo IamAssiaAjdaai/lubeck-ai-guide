@@ -1,15 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
-const { createCompletion, enforceAllowance, rateLimit } = vi.hoisted(() => ({
-  createCompletion: vi.fn(), enforceAllowance: vi.fn(), rateLimit: vi.fn(),
+const { createCompletion, enforceAllowance, rateLimit, globalBudget } = vi.hoisted(() => ({
+  createCompletion: vi.fn(), enforceAllowance: vi.fn(), rateLimit: vi.fn(), globalBudget: vi.fn(),
 }));
 vi.mock("groq-sdk", () => ({
   default: class MockGroq {
     chat = { completions: { create: createCompletion } };
   },
 }));
-vi.mock("@/lib/rateLimit", () => ({ aiGuideRateLimit: { limit: rateLimit } }));
+vi.mock("@/lib/rateLimit", () => ({
+  aiGuideRateLimit: { limit: rateLimit },
+  aiGuideGlobalProviderBudget: { limit: globalBudget },
+}));
 vi.mock("@/lib/guideAllowance.server", () => ({ enforceGuideDailyAllowance: enforceAllowance }));
 
 import { POST } from "./route";
@@ -31,6 +34,7 @@ beforeEach(() => {
   vi.stubEnv("GROQ_API_KEY", "test-key");
   rateLimit.mockResolvedValue({ success: true, limit: 10, remaining: 9, reset: 1_800_000_000_000 });
   enforceAllowance.mockResolvedValue({ success: true, limit: 3, remaining: 2, reset: 1_800_000_000_000, tier: "free" });
+  globalBudget.mockResolvedValue({ success: true, limit: 120, remaining: 119, reset: 1_800_000_000_000 });
   createCompletion.mockResolvedValue({
     choices: [{ message: { content: JSON.stringify({
       answer: "I do not have enough verified information.",
