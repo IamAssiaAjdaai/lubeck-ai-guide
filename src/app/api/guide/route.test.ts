@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-const { createCompletion, enforceAllowance, rateLimit } = vi.hoisted(() => ({
+const { createCompletion, enforceAllowance, rateLimit, globalBudget } = vi.hoisted(() => ({
   createCompletion: vi.fn(),
   enforceAllowance: vi.fn(),
   rateLimit: vi.fn(),
+  globalBudget: vi.fn(),
 }));
 
 vi.mock("groq-sdk", () => {
@@ -23,9 +24,8 @@ vi.mock("groq-sdk", () => {
 });
 
 vi.mock("@/lib/rateLimit", () => ({
-  aiGuideRateLimit: {
-    limit: rateLimit,
-  },
+  aiGuideRateLimit: { limit: rateLimit },
+  aiGuideGlobalProviderBudget: { limit: globalBudget },
 }));
 vi.mock("@/lib/guideAllowance.server", () => ({
   enforceGuideDailyAllowance: enforceAllowance,
@@ -74,6 +74,8 @@ describe("POST /api/guide", () => {
       reset: Date.now() + 60_000,
     });
 
+    globalBudget.mockResolvedValue({ success: true, limit: 120, remaining: 119, reset: Date.now() + 86_400_000 });
+
     enforceAllowance.mockResolvedValue({
       success: true,
       limit: 3,
@@ -101,6 +103,31 @@ describe("POST /api/guide", () => {
 
       usage: {},
     });
+  });
+
+  it("rejects global provider budget exhaustion before calling Groq", async () => {
+    globalBudget.mockResolvedValueOnce({ success: false, limit: 120, remaining: 0, reset: Date.now() + 60_000 });
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: "What is this?", citySlug: "lubeck", placeSlug: "holstentor", locale: "en" }),
+    }));
+    expect(response.status).toBe(503);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    await expect(response.json()).resolves.toMatchObject({ code: "guide_global_budget_exhausted" });
+    expect(createCompletion).not.toHaveBeenCalled();
+    expect(globalBudget).toHaveBeenCalledOnce();
+  });
+
+  it("ignores spoofed forwarded IPs outside Cloudflare", async () => {
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-forwarded-for": "198.51.100.100, 203.0.113.25" },
+      body: JSON.stringify({ question: "What is this?", citySlug: "lubeck", placeSlug: "holstentor", locale: "en" }),
+    }));
+    expect(response.status).toBe(200);
+    expect(rateLimit).toHaveBeenCalledWith("unattributed");
+    expect(enforceAllowance).toHaveBeenCalledWith(expect.objectContaining({ fallbackIdentity: "unattributed" }));
   });
 
   it("returns authoritative daily allowance metadata separately from abuse limits", async () => {
