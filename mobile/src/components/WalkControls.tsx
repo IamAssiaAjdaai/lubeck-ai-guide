@@ -147,6 +147,9 @@ export function WalkChoices<T extends string | number>({
                       : styles.optionText
                 }
               >
+                {interestGrid && !compactInterests && option.description ? (
+                  <AppText variant="caption" numberOfLines={2} style={styles.interestDescription}>{option.description}</AppText>
+                ) : null}
                 {compact ? (
                   <Text
                     style={[
@@ -172,7 +175,7 @@ export function WalkChoices<T extends string | number>({
                     {option.label}
                   </AppText>
                 )}
-                {option.description && variant !== "time" ? (
+                {option.description && variant !== "time" && !interestGrid ? (
                   <AppText variant="metadata" style={styles.muted}>
                     {option.description}
                   </AppText>
@@ -333,6 +336,7 @@ const styles = StyleSheet.create({
   compactPaceOption: { paddingHorizontal: 2, gap: 2, minHeight: 48 },
   interestLabelArea: { width: "100%", minWidth: 0 },
   interestLabel: { color: colors.text, fontSize: 14, lineHeight: 19, fontWeight: "600" },
+  interestDescription: { color: colors.textMuted, fontSize: 11, lineHeight: 15, marginBottom: 4 },
   optionText: { flex: 1 },
   selected: {
     borderColor: colors.primary,
