@@ -42,6 +42,20 @@ describe("grounded AI answer cited-year guard", () => {
     expect(hasUnsupportedYear(missing, evidence)).toBe(false);
   });
 
+  it("allows repeated and reordered years when both are cited", () => {
+    expect(hasUnsupportedYear(answer("Between 1478 and 1464, the gate was built."), evidence)).toBe(false);
+  });
+
+  it("rejects a partially supported year range", () => {
+    expect(hasUnsupportedYear(answer("The gate was built between 1464 and 1900."), evidence)).toBe(true);
+  });
+
+  it("documents a conservative false positive for otherwise harmless contextual dates", () => {
+    // The guard has no semantic attribution: a year unrelated to the monument
+    // is still blocked unless it occurs in the cited historical evidence.
+    expect(hasUnsupportedYear(answer("In 2026, you can ask about the gate."), evidence)).toBe(true);
+  });
+
   it("does not pretend to validate claims without four-digit years", () => {
     expect(hasUnsupportedYear(answer("The gate is made entirely of gold."), evidence)).toBe(false);
   });
