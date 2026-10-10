@@ -997,7 +997,19 @@ export function NativeWalkFlow({
                 multiple
                 interestGrid
                 options={(Object.keys(interestTags) as Interest[]).map(
-                  (value) => ({ value, label: t[value] }),
+                  (value) => ({
+                    value,
+                    label: t[value],
+                    description: ({
+                      en: { history: "Discover the past", architecture: "Iconic buildings", "hidden-gems": "Secret local spots", nature: "Parks & gardens", food: "Local flavors", culture: "Art & traditions", family: "Fun for everyone" },
+                      de: { history: "Geschichte entdecken", architecture: "Besondere Bauwerke", "hidden-gems": "Geheime Lieblingsorte", nature: "Parks & Gärten", food: "Lokale Spezialitäten", culture: "Kunst & Traditionen", family: "Für Groß und Klein" },
+                      da: { history: "Udforsk historien", architecture: "Ikoniske bygninger", "hidden-gems": "Skjulte perler", nature: "Parker og haver", food: "Lokale smage", culture: "Kunst og traditioner", family: "For hele familien" },
+                      sv: { history: "Upptäck historien", architecture: "Kända byggnader", "hidden-gems": "Dolda pärlor", nature: "Parker och trädgårdar", food: "Lokala smaker", culture: "Konst och traditioner", family: "För hela familjen" },
+                      nl: { history: "Ontdek het verleden", architecture: "Bijzondere gebouwen", "hidden-gems": "Verborgen parels", nature: "Parken en tuinen", food: "Lokale smaken", culture: "Kunst en tradities", family: "Voor het hele gezin" },
+                      es: { history: "Descubre el pasado", architecture: "Edificios emblemáticos", "hidden-gems": "Rincones secretos", nature: "Parques y jardines", food: "Sabores locales", culture: "Arte y tradiciones", family: "Para toda la familia" },
+                      ar: { history: "اكتشف التاريخ", architecture: "مبانٍ مميزة", "hidden-gems": "أماكن خفية", nature: "حدائق وطبيعة", food: "نكهات محلية", culture: "فن وتقاليد", family: "للأسرة كلها" },
+                    } as Record<string, Record<Interest, string>>)[locale]?.[value] ?? "",
+                  }),
                 )}
                 selected={interests}
                 onSelect={(key) =>
