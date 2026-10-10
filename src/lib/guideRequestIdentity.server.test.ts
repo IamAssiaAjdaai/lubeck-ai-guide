@@ -13,7 +13,7 @@ describe("trusted Cloudflare guide request identity", () => {
 
     expect(getTrustedGuideAbuseIdentifier(headers, "hyperdrive")).toBe("cloudflare:203.0.113.20");
     expect(getTrustedGuideAbuseIdentifier(headers, "local")).toBe("unattributed");
-    expect(getTrustedGuideAbuseIdentifier(headers, undefined)).toBe("unattributed");
+    expect(getTrustedGuideAbuseIdentifier(headers, "development")).toBe("unattributed");
   });
 
   it("accepts IPv6 and never uses X-Forwarded-For or X-Real-IP", () => {
@@ -30,15 +30,12 @@ describe("trusted Cloudflare guide request identity", () => {
     "198.51.100.1, 203.0.113.10",
     "unknown",
     "not-an-ip",
-    "192.0.2.1\nX-Forwarded-For: 203.0.113.1",
+    "999.999.999.999",
+    "127.0.0.1:8080",
   ])("fails closed for absent or malformed edge addresses (%s)", (candidate) => {
     const headers = new Headers({ "x-forwarded-for": "203.0.113.20" });
     if (candidate) {
       // A malformed value is untrusted even if another header looks plausible.
-      if (candidate.includes("\n")) {
-        expect(getTrustedGuideAbuseIdentifier(headers, "hyperdrive")).toBe("unattributed");
-        return;
-      }
       headers.set("cf-connecting-ip", candidate);
     }
     expect(getTrustedGuideAbuseIdentifier(headers, "hyperdrive")).toBe("unattributed");
