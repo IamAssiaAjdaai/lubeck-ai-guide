@@ -63,7 +63,7 @@ export function WalkChoices<T extends string | number>({
 }) {
   const { width } = useWindowDimensions();
   const { categoryColumns } = useResponsiveTextLayout();
-  const wrapSegments = compact && variant === "chips" && options.length > categoryColumns;
+  const wrapSegments = compact && options.length > categoryColumns;
   const { direction } = useNativeLocale();
   return (
     <View style={styles.section}>
