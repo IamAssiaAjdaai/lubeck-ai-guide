@@ -45,6 +45,7 @@ export function WalkChoices<T extends string | number>({
   number,
   showHeading = true,
   compact = false,
+  interestGrid = false,
 }: {
   label: string;
   options: readonly { value: T; label: string; description?: string }[];
@@ -56,10 +57,11 @@ export function WalkChoices<T extends string | number>({
   number?: number;
   showHeading?: boolean;
   compact?: boolean;
+  interestGrid?: boolean;
 }) {
   const { width } = useWindowDimensions();
   const { categoryColumns } = useResponsiveTextLayout();
-  const wrapSegments = compact && options.length > categoryColumns;
+  const wrapSegments = compact && variant === "chips" && options.length > categoryColumns;
   const { direction } = useNativeLocale();
   return (
     <View style={styles.section}>
@@ -87,6 +89,7 @@ export function WalkChoices<T extends string | number>({
           variant === "segment" && styles.segment,
           variant === "radio" && styles.radioList,
           compact && [styles.compactOptions, { direction, flexWrap: wrapSegments ? "wrap" : "nowrap" }],
+          interestGrid && styles.interestGrid,
         ]}
       >
         {options.map((option) => {
@@ -113,9 +116,10 @@ export function WalkChoices<T extends string | number>({
                 variant === "segment" && checked && styles.activeSegment,
                 compact && [styles.compactOption, wrapSegments && { flexBasis: "45%" }],
                 isCompactChip && styles.compactChip,
+                interestGrid && styles.interestOption,
               ]}
             >
-              {icon && !isCompactChip ? (
+              {icon && !isCompactChip && !interestGrid ? (
                 <NativeIcon
                   {...icon}
                   size={20}
@@ -126,8 +130,12 @@ export function WalkChoices<T extends string | number>({
                   }
                 />
               ) : null}
+              {interestGrid ? <View style={styles.interestIconRow}>
+                {icon ? <NativeIcon {...icon} size={21} color={colors.primary} /> : <View />}
+                <NativeIcon ios={checked ? "checkmark.circle.fill" : "circle"} android={checked ? "check_circle" : "radio_button_unchecked"} size={19} color={checked ? colors.primary : colors.borderStrong} />
+              </View> : null}
               <View
-                style={
+                style={interestGrid ? styles.interestLabelArea :
                   compact
                     ? { minWidth: 0, flexShrink: 1, flexGrow: 1 }
                     : variant === "time"
@@ -141,7 +149,7 @@ export function WalkChoices<T extends string | number>({
                       styles.compactLabel,
                       { writingDirection: direction },
                       checked && variant === "chips" && styles.compactLabelSelected,
-                      variant === "segment" && checked && { color: colors.surface },
+                      interestGrid ? styles.interestLabel : variant === "segment" && checked && { color: colors.surface },
                     ]}
                   >
                     {option.label}
@@ -166,7 +174,7 @@ export function WalkChoices<T extends string | number>({
                   </AppText>
                 ) : null}
               </View>
-              {isCompactChip && checked ? (
+              {interestGrid ? null : isCompactChip && checked ? (
                 <NativeIcon
                   ios="checkmark"
                   android="check"
@@ -312,6 +320,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   wideChip: { flexBasis: "29%", minWidth: 0, paddingHorizontal: spacing.sm },
+  interestGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  interestOption: { flexGrow: 1, flexBasis: "46%", minWidth: 0, minHeight: 98, flexDirection: "column", alignItems: "stretch", justifyContent: "space-between", padding: 12 },
+  interestIconRow: { width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  interestLabelArea: { width: "100%", minWidth: 0 },
+  interestLabel: { color: colors.text, fontSize: 14, lineHeight: 19, fontWeight: "600" },
   optionText: { flex: 1 },
   selected: {
     borderColor: colors.primary,
