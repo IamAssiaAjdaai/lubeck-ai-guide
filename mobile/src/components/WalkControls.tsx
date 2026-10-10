@@ -108,7 +108,7 @@ export function WalkChoices<T extends string | number>({
               onPress={() => onSelect(option.value)}
               style={[
                 styles.option,
-                variant === "chips" && width >= 380 && !compact && styles.wideChip,
+                variant === "chips" && width >= 380 && !compact && !interestGrid && styles.wideChip,
                 variant === "time" && styles.time,
                 variant === "segment" && styles.segmentOption,
                 variant === "radio" && styles.radio,
@@ -158,7 +158,7 @@ export function WalkChoices<T extends string | number>({
                   <AppText
                     variant={variant === "time" ? "label" : "metadata"}
                     style={
-                      variant === "segment" && checked
+                      interestGrid ? styles.interestLabel : variant === "segment" && checked
                         ? { color: colors.surface, textAlign: "center" }
                         : variant === "time"
                           ? styles.timeLabel
