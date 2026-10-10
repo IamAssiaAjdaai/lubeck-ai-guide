@@ -1023,6 +1023,7 @@ export function NativeWalkFlow({
                       label=""
                       multiple
                       interestGrid
+                      compactInterests
                       options={dynamicTags.map((value) => ({
                         value,
                         label: nativeCategoryLabel(value, locale),
