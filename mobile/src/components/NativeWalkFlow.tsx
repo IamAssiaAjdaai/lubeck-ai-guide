@@ -1056,6 +1056,7 @@ export function NativeWalkFlow({
                 label={t.walking}
                 variant="segment"
                 compact
+                compactPace
                 options={(["easy", "balanced", "long"] as const).map(
                   (value) => ({
                     value,
