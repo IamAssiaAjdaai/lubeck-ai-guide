@@ -47,6 +47,7 @@ export function WalkChoices<T extends string | number>({
   compact = false,
   interestGrid = false,
   compactInterests = false,
+  compactPace = false,
 }: {
   label: string;
   options: readonly { value: T; label: string; description?: string }[];
@@ -60,6 +61,7 @@ export function WalkChoices<T extends string | number>({
   compact?: boolean;
   interestGrid?: boolean;
   compactInterests?: boolean;
+  compactPace?: boolean;
 }) {
   const { width } = useWindowDimensions();
   const { categoryColumns } = useResponsiveTextLayout();
@@ -120,10 +122,10 @@ export function WalkChoices<T extends string | number>({
                 isCompactChip && styles.compactChip,
                 interestGrid && styles.interestOption,
                 compactInterests && styles.compactInterestOption,
-                variant === "segment" && compact && styles.compactPaceOption,
+                variant === "segment" && compactPace && styles.compactPaceOption,
               ]}
             >
-              {icon && !isCompactChip && !interestGrid && !(variant === "segment" && compact) ? (
+              {icon && !isCompactChip && !interestGrid && !(variant === "segment" && compactPace) ? (
                 <NativeIcon
                   {...icon}
                   size={20}
