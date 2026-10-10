@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Host, DatePicker } from "@expo/ui/swift-ui";
 import { Modal, Platform, StyleSheet, View } from "react-native";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { colors, radius, spacing } from "../design/tokens";
@@ -30,7 +31,7 @@ export function ReturnByTimePicker({ label, value, onChangeText, placeholder }: 
   if (Platform?.OS !== "ios") {
     return <WalkInput label={label} value={value} onChangeText={onChangeText} placeholder={placeholder} />;
   }
-  const { Host, DatePicker } = require("@expo/ui/swift-ui") as typeof import("@expo/ui/swift-ui");
+
   const done = locale === "de" ? "Fertig" : locale === "es" ? "Listo" : locale === "nl" ? "Gereed" : locale === "da" ? "Færdig" : locale === "sv" ? "Klar" : locale === "ar" ? "تم" : "Done";
   const clear = locale === "de" ? "Keine feste Uhrzeit" : locale === "es" ? "Sin hora fija" : locale === "nl" ? "Geen eindtijd" : locale === "da" ? "Intet fast tidspunkt" : locale === "sv" ? "Ingen fast tid" : locale === "ar" ? "بدون موعد محدد" : "No deadline";
   return (
