@@ -1,6 +1,9 @@
 /**
  * Real CITYWALK local /api/guide smoke + optional human review capture.
- * Explicit opt-in; never invoked by CI or app runtime.
+ * Explicit opt-in for paid calls; CI may exercise --dry-run without network or provider credits.
+ *
+ * Safe local preflight (zero provider calls):
+ *   node scripts/evaluate-citywalk-guide-api.mjs --dry-run
  *
  * Examples:
  * CITYWALK_RUN_LIVE_AI_EVAL=YES CITYWALK_EVAL_MAX_CALLS=2 \
@@ -20,11 +23,15 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { guideEvaluationFixtures, scoreGuideManualReviews } from "./evaluation/score-citywalk-guide.mjs";
 
-if (process.env.CITYWALK_RUN_LIVE_AI_EVAL !== "YES") {
+const dryRun = process.argv.length === 3 && process.argv[2] === "--dry-run";
+if (process.argv.length > 2 && !dryRun) {
+  throw new Error("Only --dry-run is supported as a CLI argument.");
+}
+if (!dryRun && process.env.CITYWALK_RUN_LIVE_AI_EVAL !== "YES") {
   console.log("Local guide API evaluation disabled (opt-in required).");
   process.exit(0);
 }
-const maxCalls = Number(process.env.CITYWALK_EVAL_MAX_CALLS);
+const maxCalls = Number(process.env.CITYWALK_EVAL_MAX_CALLS ?? (dryRun ? "2" : ""));
 if (!Number.isSafeInteger(maxCalls) || maxCalls < 1 || maxCalls > guideEvaluationFixtures.length) {
   throw new Error("CITYWALK_EVAL_MAX_CALLS must be 1.." + guideEvaluationFixtures.length);
 }
@@ -37,6 +44,26 @@ if (
   target.search || target.hash
 ) {
   throw new Error("Only a plain HTTP localhost origin is permitted for evaluation.");
+}
+
+if (dryRun) {
+  console.log(JSON.stringify({
+    kind: "citywalk_guide_api_eval_preflight",
+    mode: "dry-run",
+    target: target.origin,
+    fixtureIds: guideEvaluationFixtures.slice(0, maxCalls).map((fixture) => fixture.id),
+    plannedHttpRequests: maxCalls,
+    maximumPotentialGroqAttemptsIfEnabled: maxCalls * 2,
+    performedHttpRequests: 0,
+    performedProviderCalls: 0,
+    costIncurredByPreflight: 0,
+    humanScoring: scoreGuideManualReviews(
+      guideEvaluationFixtures.slice(0, maxCalls).map((fixture) => ({
+        id: fixture.id, humanVerdict: "unreviewed",
+      })),
+    ),
+  }, null, 2));
+  process.exit(0);
 }
 
 const rows = [];
