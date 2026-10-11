@@ -80,6 +80,19 @@ describe("grounded AI answer cited-year guard", () => {
     expect(hasUnsupportedYear(answer("Could it have been built in 1900?"), evidence)).toBe(false);
   });
 
+  it.each([
+    ["EN invented statement", "The gate was built in 1900!", true],
+    ["DE invented statement", "Das Holstentor wurde 1900 erbaut!", true],
+    ["DE verified historical range", "Das Tor wurde zwischen 1464 und 1478 erbaut.", false],
+    ["DE unsupported follow-up after a question", "Wurde es 1900 erbaut? Es stammt aus dem Jahr 1900!", true],
+    ["EN supported fact after unsupported question", "Was it built in 1900? It was built between 1464 and 1478.", false],
+    ["EN unsupported after exclamation", "Amazing! It was built in 1900.", true],
+    ["DE standalone question", "Wurde das Tor im Jahr 1900 erbaut?", false],
+    ["EN supported multiline answer", "The gate was built in 1464.\\nWork ended in 1478.", false],
+  ] as const)("handles multilingual punctuation: %s", (_name, message, expected) => {
+    expect(hasUnsupportedYear(answer(message), evidence)).toBe(expected);
+  });
+
   it("does not pretend to validate claims without four-digit years", () => {
     expect(hasUnsupportedYear(answer("The gate is made entirely of gold."), evidence)).toBe(false);
   });
