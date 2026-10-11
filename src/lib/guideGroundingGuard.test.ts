@@ -68,6 +68,18 @@ describe("grounded AI answer cited-year guard", () => {
     expect(hasUnsupportedYear(answer("Was it built in 1900? The sources say 1464 to 1478."), evidence)).toBe(false);
   });
 
+  it("rejects a fabricated assertion even when followed by a question", () => {
+    expect(hasUnsupportedYear(answer("The gate was built in 1900. Did you know that?"), evidence)).toBe(true);
+  });
+
+  it("rejects fabricated dates between two questions", () => {
+    expect(hasUnsupportedYear(answer("Was it built in 1900? It was built in 1900. Really?"), evidence)).toBe(true);
+  });
+
+  it("does not reject a standalone question containing an unsupported year", () => {
+    expect(hasUnsupportedYear(answer("Could it have been built in 1900?"), evidence)).toBe(false);
+  });
+
   it("does not pretend to validate claims without four-digit years", () => {
     expect(hasUnsupportedYear(answer("The gate is made entirely of gold."), evidence)).toBe(false);
   });
