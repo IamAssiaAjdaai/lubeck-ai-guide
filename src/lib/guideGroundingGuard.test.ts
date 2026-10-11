@@ -93,6 +93,15 @@ describe("grounded AI answer cited-year guard", () => {
     expect(hasUnsupportedYear(answer(message), evidence)).toBe(expected);
   });
 
+  it.each(["2100", "2500", "9999"])("rejects unsupported four-digit year %s", (year) => {
+    expect(hasUnsupportedYear(answer("The gate was built in " + year + "."), evidence)).toBe(true);
+  });
+
+  it("documents an unresolved limitation for numbers written as words", () => {
+    // Only numeric four-digit years are validated; semantic QA is still needed.
+    expect(hasUnsupportedYear(answer("The gate was built in nineteen hundred."), evidence)).toBe(false);
+  });
+
   it("does not pretend to validate claims without four-digit years", () => {
     expect(hasUnsupportedYear(answer("The gate is made entirely of gold."), evidence)).toBe(false);
   });
