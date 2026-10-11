@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { execFileSync, spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 
-const harnessPath = fileURLToPath(new URL("../evaluate-citywalk-guide-api.mjs", import.meta.url));
+const harnessPath = resolve(process.cwd(), "scripts/evaluate-citywalk-guide-api.mjs");
 const env = {
   ...process.env,
   CITYWALK_RUN_LIVE_AI_EVAL: "NO",
