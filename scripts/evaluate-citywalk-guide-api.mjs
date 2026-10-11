@@ -78,7 +78,7 @@ for (const fixture of guideEvaluationFixtures.slice(0, maxCalls)) {
     humanSemanticReview: "pending",
   });
   reviewRows.push({
-    id: fixture.id, humanVerdict: "unreviewed",
+    id: fixture.id, status, humanVerdict: "unreviewed",
     question: fixture.question, expected: fixture.expected,
     // Synthetic questions only: this is intentionally restricted to local review.
     answer, sources,
