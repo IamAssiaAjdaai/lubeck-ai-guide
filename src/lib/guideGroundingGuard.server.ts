@@ -16,7 +16,7 @@ export function hasUnsupportedYear(
     .map((item) => item.retrieved.chunk.text)
     .join(" ");
   const years = (text: string) =>
-    [...text.matchAll(/\b(?:1[0-9]{3}|20[0-9]{2})\b/g)].map((m) => m[0]);
+    [...text.matchAll(/\b[1-9][0-9]{3}\b/g)].map((m) => m[0]);
   const supported = new Set(years(citedText));
   // Questions are not asserted historical facts. Split only at question
   // boundaries, preserving the preceding statement and the following one.
