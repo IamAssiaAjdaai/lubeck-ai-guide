@@ -93,7 +93,8 @@ import {
   SectionTitle,
   StatusMessage,
 } from "./ui";
-import { WalkChoices, WalkInput, WalkPlacePicker } from "./WalkControls";
+import { WalkChoices, WalkPlacePicker } from "./WalkControls";
+import { ReturnByTimePicker } from "./ReturnByTimePicker";
 import {
   MetricSummary,
   StepProgress,
@@ -982,7 +983,7 @@ export function NativeWalkFlow({
                 <AppText variant="label">{t.deadlineQuestion}</AppText>
                 <AppText variant="metadata" style={styles.muted}>{t.deadlineHelp}</AppText>
               </View>
-              <WalkInput
+              <ReturnByTimePicker
                 label={t.returnBy}
                 value={returnBy}
                 onChangeText={setReturnBy}
