@@ -21,8 +21,7 @@ export function hasUnsupportedYear(
   // Questions are not asserted historical facts. Split only at question
   // boundaries, preserving the preceding statement and the following one.
   // Other sentences (including contextual dates) remain fail-closed.
-  const assertions = answer.answer
-    .split(/(?<=\?)\s+/)
+  const assertions = (answer.answer.match(/[^.!?]+[.!?]?/g) ?? [])
     .filter((sentence) => !sentence.trim().endsWith("?"));
   return years(assertions.join(" ")).some((year) => !supported.has(year));
 }
