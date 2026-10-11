@@ -44,6 +44,9 @@ export function scoreGuideManualReviews(rows, fixtures = guideEvaluationFixtures
       throw new Error("INVALID_OR_DUPLICATE_EVALUATION_LABEL");
     }
     seen.add(row.id);
+    if (Number.isInteger(row.status) && row.status !== 200 && row.humanVerdict !== "unreviewed") {
+      throw new Error("CANNOT_SCORE_UNSUCCESSFUL_API_RESPONSE");
+    }
     const expected = fixtureMap.get(row.id).expected;
     if (expected !== "answerable" && expected !== "unanswerable") {
       throw new Error("INVALID_FIXTURE_EXPECTATION");
