@@ -1071,17 +1071,33 @@ export function NativeWalkFlow({
           ) : (
             <>
               <SectionTitle>{t.start}</SectionTitle>
-              <PrimaryButton
-                wrapLabel
-                label={t.current}
-                busy={locating}
-                tone={startMode === "gps" ? "primary" : "secondary"}
+              <PressableSurface
+                accessibilityRole="button"
+                accessibilityLabel={t.current}
+                accessibilityState={{ selected: startMode === "gps" }}
+                disabled={locating}
                 onPress={() => void locate()}
-              />
+                style={{
+                  minHeight: 70, flexDirection: "row", alignItems: "center",
+                  gap: 12, padding: 14, borderWidth: 1,
+                  borderColor: startMode === "gps" ? colors.primary : colors.border,
+                  backgroundColor: startMode === "gps" ? colors.primarySoft : colors.surface,
+                  borderRadius: 14,
+                }}
+              >
+                <NativeIcon ios="location.fill" android="my_location" size={21} color={colors.primary} />
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <AppText variant="label" style={{ color: colors.text }}>{t.current}</AppText>
+                  {locating ? <AppText variant="metadata" style={{ color: colors.textMuted }}>{t.gpsHelp}</AppText> : null}
+                </View>
+                <NativeIcon ios={startMode === "gps" ? "checkmark.circle.fill" : "circle"} android={startMode === "gps" ? "check_circle" : "radio_button_unchecked"} size={20} color={startMode === "gps" ? colors.primary : colors.borderStrong} />
+              </PressableSurface>
               <WalkPlacePicker
                 label={t.choosePlace}
+                startChoice
+                active={startMode === "place"}
                 options={options}
-                selected={startMode === "place" ? [startSlug] : []}
+                selected={[startSlug]}
                 onSelect={(slug) => {
                   setStartSlug(slug);
                   setStartMode("place");
