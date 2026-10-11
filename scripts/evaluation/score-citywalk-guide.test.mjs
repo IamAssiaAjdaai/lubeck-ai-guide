@@ -59,6 +59,15 @@ describe("human-labeled CITYWALK guide scoring", () => {
     ])).toThrow();
   });
 
+  it("rejects semantic labels for failed HTTP requests", () => {
+    expect(() => scoreGuideManualReviews([
+      { id: "en-supported", status: 429, humanVerdict: "refusal" },
+    ])).toThrow("CANNOT_SCORE_UNSUCCESSFUL_API_RESPONSE");
+    expect(scoreGuideManualReviews([
+      { id: "en-supported", status: 429, humanVerdict: "unreviewed" },
+    ])).toMatchObject({ reviewed: 0, unreviewed: 1 });
+  });
+
   it("keeps expected answerability explicit in each fixture", () => {
     expect(guideEvaluationFixtures.map((f) => f.expected)).toEqual([
       "answerable", "answerable", "answerable", "answerable", "unanswerable",
