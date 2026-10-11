@@ -19,6 +19,26 @@ standalone model smoke test and is NOT the full CITYWALK pipeline.
 - HTTP origin must be localhost; remote/prod URLs are rejected.
 - Questions are synthetic fixtures. Never replace with personal chat logs.
 
+## Step 15: zero-cost CLI preflight
+
+Run the exact evaluation harness in **offline dry-run mode** before any
+provider-funded test:
+
+```bash
+node scripts/evaluate-citywalk-guide-api.mjs --dry-run
+```
+
+The preflight validates the loopback target and request cap, lists only
+synthetic fixture IDs, and reports `performedHttpRequests: 0` and
+`performedProviderCalls: 0`. It does not require `GROQ_API_KEY`,
+`CITYWALK_RUN_LIVE_AI_EVAL=YES`, local content, or a running server.
+It does **not** measure model accuracy. Automated tests verify this CLI path,
+an invalid request limit, and rejection of remote URLs.
+
+A real evaluation still requires explicit opt-in, a local configured
+server, and a valid provider key; each HTTP request may trigger two model
+attempts. The preflight request ceiling is not a monetary cost cap.
+
 ## Run one or two real local requests
 
 ```bash
