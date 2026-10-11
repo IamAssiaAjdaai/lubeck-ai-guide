@@ -22,7 +22,7 @@ export function hasUnsupportedYear(
   // boundaries, preserving the preceding statement and the following one.
   // Other sentences (including contextual dates) remain fail-closed.
   const assertions = answer.answer
-    .split(/(?<=\\?)\\s+/)
+    .split(/(?<=\?)\s+/)
     .filter((sentence) => !sentence.trim().endsWith("?"));
   return years(assertions.join(" ")).some((year) => !supported.has(year));
 }
