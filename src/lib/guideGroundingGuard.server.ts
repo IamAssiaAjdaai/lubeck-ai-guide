@@ -18,5 +18,11 @@ export function hasUnsupportedYear(
   const years = (text: string) =>
     [...text.matchAll(/\b(?:1[0-9]{3}|20[0-9]{2})\b/g)].map((m) => m[0]);
   const supported = new Set(years(citedText));
-  return years(answer.answer).some((year) => !supported.has(year));
+  // Questions are not asserted historical facts. Split only at question
+  // boundaries, preserving the preceding statement and the following one.
+  // Other sentences (including contextual dates) remain fail-closed.
+  const assertions = answer.answer
+    .split(/(?<=\\?)\\s+/)
+    .filter((sentence) => !sentence.trim().endsWith("?"));
+  return years(assertions.join(" ")).some((year) => !supported.has(year));
 }
