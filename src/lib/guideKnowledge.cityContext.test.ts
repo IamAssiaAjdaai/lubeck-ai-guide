@@ -41,8 +41,12 @@ describe("verified city history for related concept questions", () => {
     expect(evidence.some((item) => item.role === "current")).toBe(true);
   });
 
-  it("does not inject background into unrelated landmark questions", async () => {
-    const evidence = await ask("When was Holstentor built?");
+  it.each([
+    "When was Holstentor built?",
+    "Tell me about its history and architecture",
+    "What is special about its towers?",
+  ])("does not inject Hanseatic city background into an unrelated place question: %s", async (question) => {
+    const evidence = await ask(question);
     expect(evidence.filter((item) => item.role === "city")).toHaveLength(0);
     expect(evidence.some((item) => item.role === "current")).toBe(true);
   });
