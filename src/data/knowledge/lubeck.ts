@@ -31,6 +31,22 @@ function requireSource(
   return source;
 }
 
+// City-wide historical context is curated separately from place facts.
+// It uses independently verified reference sources, not model memory.
+const hanseaticHistorySource = {
+  label: "The Hansa — The medieval Hanseatic League",
+  url: "https://www.hanse.org/en/the-medieval-hanseatic-league",
+  type: "official" as const,
+  verifiedAt: "2026-10-12",
+};
+
+const hanseaticLubeckSource = {
+  label: "European Hansemuseum — The Hanse",
+  url: "https://www.hansemuseum.eu/en/",
+  type: "official" as const,
+  verifiedAt: "2026-10-12",
+};
+
 const holstentorSource =
   requireSource(
     "holstentor",
@@ -64,6 +80,29 @@ const buddenbrookhausSource =
 
 export const lubeckKnowledgeChunks =
   [
+    {
+      id: "lubeck-hanseatic-network-context",
+      citySlug: "lubeck",
+      // Reserved scope: not a visitor-navigable place or a claim about a stop.
+      placeSlug: "__city_context__",
+      locale: "en",
+      text:
+        "From the 12th century onward, merchant groups in northern Europe developed into the Hanseatic League, a network of trading towns. The merchants and cities cooperated to protect their shared commercial interests. The network shaped trade and politics around the North and Baltic Seas for centuries before losing influence in the mid-17th century.",
+      topics: ["hanseatic", "hanseatic-league", "hanse", "medieval", "merchant", "trade", "history"],
+      priority: 95,
+      source: hanseaticHistorySource,
+    },
+    {
+      id: "lubeck-hanseatic-city-context",
+      citySlug: "lubeck",
+      placeSlug: "__city_context__",
+      locale: "en",
+      text:
+        "Lübeck became one of the most important trading cities of the Hanseatic League. Its strategic position in the Baltic Sea region helped its development as a major trading partner of the Hanseatic network.",
+      topics: ["hanseatic", "lubeck", "hansa", "trade", "merchants"],
+      priority: 90,
+      source: hanseaticLubeckSource,
+    },
     {
       id: "holstentor-history",
       citySlug: "lubeck",
