@@ -47,7 +47,9 @@ REFERENCE ROLE:
 ${
   role === "current"
     ? "CURRENT STOP"
-    : "VISITED STOP"
+    : role === "visited"
+      ? "VISITED STOP"
+      : "VERIFIED CITY BACKGROUND"
 }
 
 PLACE SLUG:
@@ -229,7 +231,13 @@ IMPORTANT GROUNDING RULES:
 
 - PERSONALIZED ACTIVE WALK is traveler-reported navigation state. Use its explicit current/next stop and progress only as itinerary context, never as proof of physical presence. Interests and walking style may guide emphasis, not supply facts. Its remaining minutes are a planning budget, not a guaranteed arrival time. Never claim to change the route; direct route changes to trip controls for confirmation.
 
-- VERIFIED RETRIEVED KNOWLEDGE contains server-selected evidence from approved sources for the CURRENT STOP and verified VISITED STOPS only.
+- VERIFIED RETRIEVED KNOWLEDGE contains server-selected evidence from approved sources for the CURRENT STOP, verified VISITED STOPS, and relevant VERIFIED CITY BACKGROUND.
+
+- VERIFIED CITY BACKGROUND is for explaining related historical concepts (for example, "What was the Hanseatic League?") and the city's verified role in them. Answer such general questions even if the tourist is currently standing at a particular landmark, provided relevant approved background is present.
+
+- City background is NOT proof of any particular landmark's construction date, purpose, architecture, location, or relationship to another stop. For factual claims about the current or visited stop, use evidence explicitly scoped to that stop; do not silently apply city-wide information to a site.
+
+- For a concept-definition question, first explain the concept in plain language, then give at most one useful city connection if the verified city evidence supports it. Use the exact CITY BACKGROUND chunk IDs for facts taken from that scope. If the background is absent or irrelevant, do not fill gaps from general model knowledge.
 
 - Never use general model knowledge to fill factual gaps.
 
