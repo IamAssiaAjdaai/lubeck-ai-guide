@@ -210,11 +210,15 @@ export function WalkPlacePicker({
   options,
   selected,
   onSelect,
+  startChoice = false,
+  active = false,
 }: {
   label: string;
   options: readonly { value: string; label: string }[];
   selected: readonly string[];
   onSelect: (value: string) => void;
+  startChoice?: boolean;
+  active?: boolean;
 }) {
   const [open, setOpen] = useState(false),
     [query, setQuery] = useState("");
@@ -222,19 +226,32 @@ export function WalkPlacePicker({
     t = walkCopy(locale);
   return (
     <View>
-      <PrimaryButton
-        tone="secondary"
-        wrapLabel
-        label={`${label}${selected.length ? ` · ${options.find((o) => o.value === selected[0])?.label ?? ""}` : ""}`}
-        onPress={() => setOpen(true)}
-        trailingIcon={
-          <NativeIcon
-            ios="chevron.down"
-            android="expand_more"
-            color={colors.primary}
-          />
-        }
-      />
+      {startChoice ? (
+        <PressableSurface
+          accessibilityRole="button"
+          accessibilityLabel={`${label}: ${options.find((o) => o.value === selected[0])?.label ?? label}`}
+          accessibilityState={{ selected: active }}
+          onPress={() => setOpen(true)}
+          style={[styles.startChoice, active && styles.selected]}
+        >
+          <NativeIcon ios="mappin.and.ellipse" android="place" size={21} color={colors.primary} />
+          <View style={styles.startChoiceText}>
+            <AppText variant="metadata" style={styles.muted}>{label}</AppText>
+            <AppText variant="label" style={styles.startChoiceName} numberOfLines={2}>
+              {options.find((o) => o.value === selected[0])?.label ?? label}
+            </AppText>
+          </View>
+          <NativeIcon ios={active ? "checkmark.circle.fill" : "chevron.down"} android={active ? "check_circle" : "expand_more"} size={20} color={colors.primary} />
+        </PressableSurface>
+      ) : (
+        <PrimaryButton
+          tone="secondary"
+          wrapLabel
+          label={`${label}${selected.length ? ` · ${options.find((o) => o.value === selected[0])?.label ?? ""}` : ""}`}
+          onPress={() => setOpen(true)}
+          trailingIcon={<NativeIcon ios="chevron.down" android="expand_more" color={colors.primary} />}
+        />
+      )}
       <Modal
         visible={open}
         animationType="slide"
@@ -393,6 +410,9 @@ const styles = StyleSheet.create({
   },
   compactLabel: { ...typography.metadata, color: colors.text, textAlign: "center", fontSize: 12, lineHeight: 17 },
   compactLabelSelected: { color: colors.primary, fontWeight: "600" },
+  startChoice: { minHeight: 76, flexDirection: "row", alignItems: "center", gap: 12, padding: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, borderRadius: radius.md },
+  startChoiceText: { flex: 1, minWidth: 0, gap: 3 },
+  startChoiceName: { color: colors.text, fontWeight: "600" },
   radioList: { flexDirection: "column" },
   radio: { flexBasis: "auto", width: "100%" },
   input: {
