@@ -91,10 +91,19 @@ although its source from the European Hansemuseum appeared in the citations.
 This is a useful factual definition with a **missing city connection and an
 unused citation**, not evidence of a fabricated historical claim.
 
-The prompt was subsequently tightened to encourage one directly sourced
-Lübeck connection and cite only chunks actually used. This adjustment is
-a prompt/test change: **it has not yet been verified in a subsequent live
-model evaluation**. Human-review full future answers and source precision.
+A second opt-in live run (HTTP 200, 661 ms) returned the same historical
+definition and **only the THE HANSA source**, which supports the stated
+facts. Its unused museum citation was gone, but the useful verified Lübeck
+connection was still missing. This distinguishes citation improvement
+from contextual storytelling quality.
+
+After this second observation, the prompt gained a conditional, end-of-context
+reminder that identifies the actual retrieved city-background chunk when it
+explicitly mentions the current city. The reminder asks for one verified city
+connection in concept answers and instructs the model not to cite that chunk
+unless the connection really appears in the final answer. The change is
+**not yet verified by a subsequent live model run**. Do not label the
+connection complete on the basis of prompt tests or source counts alone.
 
 ## Before you run
 
