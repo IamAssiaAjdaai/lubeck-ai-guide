@@ -73,6 +73,20 @@ describe("CITYWALK guide API offline preflight (zero provider calls)", () => {
     });
   });
 
+  it("selects the Hanseatic concept question without hitting the provider", () => {
+    const report = JSON.parse(execFileSync(process.execPath, [harnessPath, "--dry-run"], {
+      env: { ...env, CITYWALK_EVAL_CASE_ID: "en-hanseatic-era", CITYWALK_EVAL_MAX_CALLS: "1" },
+      encoding: "utf8", timeout: 10_000,
+    }));
+    expect(report).toMatchObject({
+      fixtureIds: ["en-hanseatic-era"],
+      plannedHttpRequests: 1,
+      maximumPotentialGroqAttemptsIfEnabled: 2,
+      performedHttpRequests: 0,
+      performedProviderCalls: 0,
+    });
+  });
+
   it("fails closed on unrecognized fixture IDs before network access", () => {
     const run = spawnSync(process.execPath, [harnessPath, "--dry-run"], {
       env: { ...env, CITYWALK_EVAL_CASE_ID: "unknown-case", CITYWALK_EVAL_MAX_CALLS: "1" },
