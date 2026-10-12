@@ -39,6 +39,22 @@ A real evaluation still requires explicit opt-in, a local configured
 server, and a valid provider key; each HTTP request may trigger two model
 attempts. The preflight request ceiling is not a monetary cost cap.
 
+## Select one fixture without repeating previous calls
+
+The optional `CITYWALK_EVAL_CASE_ID` must exactly match an existing
+synthetic fixture ID. This skips previously reviewed questions and keeps the
+real model-call count small. The following preflight does not use credits:
+
+```bash
+CITYWALK_EVAL_CASE_ID=en-false-date CITYWALK_EVAL_MAX_CALLS=1 \
+  node scripts/evaluate-citywalk-guide-api.mjs --dry-run
+```
+
+The corresponding **opt-in live run** can be launched after preflight with
+`CITYWALK_RUN_LIVE_AI_EVAL=YES` and optional
+`CITYWALK_EVAL_CAPTURE_ANSWERS=YES`. One request can still trigger up
+to two billable attempts. Unknown IDs are rejected before any network call.
+
 ## Run one or two real local requests
 
 ```bash
