@@ -47,6 +47,26 @@ cross-stop relationships, the existing strict evidence boundary remains.
 The prompt is a style/behavior instruction, not a semantic verification
 mechanism; a live human review is still required to confirm actual responses.
 
+## Related historical concepts: city-scoped evidence
+
+A tourist can ask a concept question such as **"What is the Hanseatic era?"**
+while standing at Holstentor. The answer must be grounded in a verified
+*city-level* historical reference, not restricted to the monument's own
+construction and architecture snippets and not fabricated from model memory.
+
+For Lübeck, two curated `__city_context__` chunks are available:
+`lubeck-hanseatic-network-context` (medieval merchants and trading cities,
+[The Hansa](https://www.hanse.org/en/the-medieval-hanseatic-league))
+and `lubeck-hanseatic-city-context` (Lübeck's historic role,
+[European Hansemuseum](https://www.hansemuseum.eu/en/)).
+Only lexically relevant city background is retrieved. The prompt identifies
+this scope separately from current/visited stops and forbids using it to
+invent landmark-specific facts or links between landmarks.
+
+Current local tests verify selection, no unrelated retrieval, cross-city
+isolation, cited source metadata, and the prompt contract. They do not prove
+that the model will answer correctly every time; human-review the live output.
+
 ## Before you run
 
 - Check out PR #355 on your local machine. Start the local CITYWALK server
