@@ -860,8 +860,8 @@ export function NativeWalkFlow({
     <View style={styles.previewSummary}>
       <View style={{ flexDirection: "row", gap: 8 }}>
         {([
-          { value: duration(r.minutes), label: locale === "de" ? "Dauer" : "Duration" },
-          { value: distance(r.distance), label: locale === "de" ? "Strecke" : "Distance" },
+          { value: duration(r.minutes), label: ({ en: "Duration", de: "Dauer", da: "Varighed", sv: "Tid", nl: "Duur", es: "Duración", ar: "المدة" } as Record<string, string>)[locale] ?? "Duration" },
+          { value: distance(r.distance), label: ({ en: "Distance", de: "Strecke", da: "Afstand", sv: "Sträcka", nl: "Afstand", es: "Distancia", ar: "المسافة" } as Record<string, string>)[locale] ?? "Distance" },
           { value: String(r.places.length), label: t.stops },
         ] as const).map((metric) => (
           <View key={metric.label} style={{ flex: 1, minWidth: 0, alignItems: "center", justifyContent: "center", gap: 4, borderRadius: 12, paddingVertical: 13, paddingHorizontal: 4, backgroundColor: colors.surfaceMuted }}>
