@@ -80,6 +80,22 @@ for a real model request (up to two billable attempts). Manually verify that
 the answer defines the league, explains the period, connects Lübeck based on
 the cited museum source, and does not invent landmark-specific claims.
 
+## Human review: first Hanseatic concept live response
+
+After adding city-scoped verified knowledge, the local opt-in `en-hanseatic-era`
+test returned HTTP 200 and a substantive explanation defining the merchant
+network and its influence on trade and politics. The factual content matched
+the retrieved reference from THE HANSA, and that primary source is publicly
+accessible. **But** the answer omitted Lübeck's city-specific significance,
+although its source from the European Hansemuseum appeared in the citations.
+This is a useful factual definition with a **missing city connection and an
+unused citation**, not evidence of a fabricated historical claim.
+
+The prompt was subsequently tightened to encourage one directly sourced
+Lübeck connection and cite only chunks actually used. This adjustment is
+a prompt/test change: **it has not yet been verified in a subsequent live
+model evaluation**. Human-review full future answers and source precision.
+
 ## Before you run
 
 - Check out PR #355 on your local machine. Start the local CITYWALK server
