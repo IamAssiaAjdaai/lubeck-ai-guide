@@ -122,6 +122,43 @@ describe("AI Guide prompt injection boundary", () => {
     expect(prompt).toContain("do not fill gaps from general model knowledge");
   });
 
+  it("guides city-connected concept answers and discourages unused city citations", () => {
+    const base = maliciousEvidence[0]!;
+    const createCityItem = (id: string, text: string): GuideKnowledgeItem => ({
+      ...base,
+      role: "city",
+      placeSlug: "__city_context__",
+      retrieved: {
+        ...base.retrieved,
+        chunk: {
+          ...base.retrieved.chunk,
+          id,
+          placeSlug: "__city_context__",
+          text,
+        },
+      },
+    });
+
+    const prompt = buildGuideSystemPrompt({
+      citySlug: "lubeck",
+      cityName: "Lübeck",
+      currentPlace: { slug: "holstentor", name: "Holstentor" },
+      locale: "en",
+      tourContext: null,
+      knowledge: [
+        createCityItem("network", "The Hanseatic League was a network of trading cities."),
+        createCityItem("city", "Lübeck was an important trading city in the Hanseatic League."),
+      ],
+    });
+
+    expect(prompt).toContain("add ONE brief sentence explaining that connection");
+    expect(prompt).toContain("Do not stop at a generic encyclopedia definition");
+    expect(prompt).toContain("Lübeck's verified role");
+    expect(prompt).toContain("Cite both chunks if and only if both sets of facts actually appear");
+    expect(prompt).toContain("usedChunkIds is a list of USED evidence");
+    expect(prompt).toContain("Do not include an extra city-background citation");
+  });
+
   it("keeps the trust instruction with an empty knowledge set", () => {
     const prompt = buildGuideSystemPrompt({
       citySlug: "lubeck",
