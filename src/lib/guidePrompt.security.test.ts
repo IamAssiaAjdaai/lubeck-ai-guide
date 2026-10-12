@@ -158,6 +158,12 @@ describe("AI Guide prompt injection boundary", () => {
     expect(prompt).toContain("Cite both chunks if and only if both sets of facts actually appear");
     expect(prompt).toContain("usedChunkIds is a list of USED evidence");
     expect(prompt).toContain("Do not include an extra city-background citation");
+    expect(prompt).toContain("CURRENT ANSWER QUALITY CHECK");
+    expect(prompt).toContain("Relevant city-wide background about Lübeck");
+    expect(prompt).toContain("CHUNK ID city");
+    expect(prompt).toContain("explain it clearly AND add one short sentence");
+    expect(prompt).toContain("Cite the city-background chunk ONLY if the final answer actually uses a fact from it");
+    expect(prompt).toContain("never infer a landmark-specific fact from city background");
   });
 
   it("keeps the trust instruction with an empty knowledge set", () => {
@@ -172,5 +178,6 @@ describe("AI Guide prompt injection boundary", () => {
     expect(prompt).toContain("UNTRUSTED INPUT BOUNDARY");
     expect(prompt).toContain("VERIFIED RETRIEVED KNOWLEDGE:");
     expect(prompt).toContain("None");
+    expect(prompt).not.toContain("CURRENT ANSWER QUALITY CHECK");
   });
 });
