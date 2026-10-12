@@ -7,6 +7,28 @@ real content and verified-knowledge pipeline, real prompt, Groq model and
 grounding guard. The separate `scripts/evaluate-ai-live.mjs` is only a
 standalone model smoke test and is NOT the full CITYWALK pipeline.
 
+## Observed local live cases (2026-10-12, before date-correction prompt fix)
+
+These are **manually supplied results** from two opt-in local calls, not a
+reproducible provider trace:
+
+| Fixture | HTTP | Citations | Latency | Human observation |
+|---|---:|---:|---:|---|
+| `en-supported` | 200 | 1 | 787 ms | Supported answer: 1464–1478 |
+| `en-false-date` | 200 | 0 | 1303 ms | **False refusal**: "I don't have enough verified information to answer that." |
+
+The second question asks if Holstentor was built in 1900. Previously retrieved
+approved evidence says it was built 1464–1478, so a source-backed correction
+should be possible. The visible response cannot distinguish the model's initial
+`insufficient_evidence` decision from a grounded candidate rejected by the
+strict unsupported-year guard and a final fallback. **Root cause is not proven.**
+
+Mitigation in this audit PR: teach the model to correct date questions using the
+verified construction years **without echoing unsupported years**. Preserve the
+strict year guard; deterministic tests pin the correction contract and its
+limitation. A new one-case live evaluation is required to verify impact.
+Do not claim the mitigation worked until that result is reviewed.
+
 ## Before you run
 
 - Check out PR #355 on your local machine. Start the local CITYWALK server
