@@ -70,7 +70,7 @@ describe("human-labeled CITYWALK guide scoring", () => {
 
   it("keeps expected answerability explicit in each fixture", () => {
     expect(guideEvaluationFixtures.map((f) => f.expected)).toEqual([
-      "answerable", "answerable", "answerable", "answerable", "unanswerable",
+      "answerable", "answerable", "answerable", "answerable", "unanswerable", "answerable",
     ]);
   });
 });
