@@ -55,6 +55,39 @@ describe("AI Guide prompt injection boundary", () => {
     expect(prompt).toContain("does not establish a contradictory date for the same event");
   });
 
+  it("allows concise, relevant verified context without inventing connections or dropping citations", () => {
+    const relevantKnowledge: readonly GuideKnowledgeItem[] = [
+      {
+        ...maliciousEvidence[0],
+        retrieved: {
+          ...maliciousEvidence[0].retrieved,
+          chunk: {
+            ...maliciousEvidence[0].retrieved.chunk,
+            id: "holstentor-history",
+            text: "The Holstentor was built between 1464 and 1478. It protected the city while showing Lübeck's importance during the Hanseatic era.",
+          },
+        },
+      },
+    ];
+    const prompt = buildGuideSystemPrompt({
+      citySlug: "lubeck",
+      cityName: "Lübeck",
+      currentPlace: { slug: "holstentor", name: "Holstentor" },
+      locale: "en",
+      tourContext: null,
+      knowledge: relevantKnowledge,
+    });
+
+    expect(prompt).toContain("answer it directly first");
+    expect(prompt).toContain("ONE short, naturally connected sentence");
+    expect(prompt).toContain("A related detail is optional");
+    expect(prompt).toContain("do not introduce unrelated facts");
+    expect(prompt).toContain("never pretend the original chunk supports a different claim");
+    expect(prompt).toContain("It protected the city");
+    expect(prompt).toContain("CHUNK ID:\\nholstentor-history");
+    expect(prompt).toContain("do not claim an explicit relationship between two places or events");
+  });
+
   it("keeps the trust instruction with an empty knowledge set", () => {
     const prompt = buildGuideSystemPrompt({
       citySlug: "lubeck",
