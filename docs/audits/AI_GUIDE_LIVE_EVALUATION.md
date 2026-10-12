@@ -29,6 +29,24 @@ strict year guard; deterministic tests pin the correction contract and its
 limitation. A new one-case live evaluation is required to verify impact.
 Do not claim the mitigation worked until that result is reviewed.
 
+## Conversational relevance contract (audit PR only)
+
+CITYWALK should answer the question first, then *optionally* add one short,
+naturally related and **cited** fact from verified evidence about the same
+subject. The extra fact must help visitors understand the answer; it is not a
+generic trivia dump or a reason to mention unrelated previous/future stops.
+
+Example, where the approved Holstentor history chunk already supports all
+facts (illustrative target wording, **not a captured model output**):
+
+> No. The Holstentor was built between 1464 and 1478. It also protected
+> Lübeck and represented the city's importance during the Hanseatic era.
+
+For unsupported follow-up claims, real-time observations, geography and
+cross-stop relationships, the existing strict evidence boundary remains.
+The prompt is a style/behavior instruction, not a semantic verification
+mechanism; a live human review is still required to confirm actual responses.
+
 ## Before you run
 
 - Check out PR #355 on your local machine. Start the local CITYWALK server
