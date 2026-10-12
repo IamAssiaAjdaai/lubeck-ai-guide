@@ -89,6 +89,39 @@ describe("AI Guide prompt injection boundary", () => {
     expect(prompt).toContain("do not claim an explicit relationship between two places or events");
   });
 
+  it("presents verified city concepts separately from current landmark facts", () => {
+    const base = maliciousEvidence[0]!;
+    const cityEvidence: GuideKnowledgeItem = {
+      ...base,
+      role: "city",
+      placeSlug: "__city_context__",
+      retrieved: {
+        ...base.retrieved,
+        chunk: {
+          ...base.retrieved.chunk,
+          id: "lubeck-hanseatic-network-context",
+          placeSlug: "__city_context__",
+          text: "The Hanseatic League was a medieval network of merchants and trading cities.",
+        },
+      },
+    };
+    const prompt = buildGuideSystemPrompt({
+      citySlug: "lubeck",
+      cityName: "Lübeck",
+      currentPlace: { slug: "holstentor", name: "Holstentor" },
+      locale: "en",
+      tourContext: null,
+      knowledge: [cityEvidence],
+    });
+
+    expect(prompt).toContain("REFERENCE ROLE:\\nVERIFIED CITY BACKGROUND");
+    expect(prompt).toContain("The Hanseatic League was a medieval network");
+    expect(prompt).toContain("Answer such general questions");
+    expect(prompt).toContain("City background is NOT proof");
+    expect(prompt).toContain("Use the exact CITY BACKGROUND chunk IDs");
+    expect(prompt).toContain("do not fill gaps from general model knowledge");
+  });
+
   it("keeps the trust instruction with an empty knowledge set", () => {
     const prompt = buildGuideSystemPrompt({
       citySlug: "lubeck",
