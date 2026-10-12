@@ -118,7 +118,8 @@ describe("AI Guide prompt injection boundary", () => {
     expect(prompt).toContain("The Hanseatic League was a medieval network");
     expect(prompt).toContain("Answer such general questions");
     expect(prompt).toContain("City background is NOT proof");
-    expect(prompt).toContain("Use the exact CITY BACKGROUND chunk IDs");
+    expect(prompt).toContain("usedChunkIds is a list of USED evidence");
+    expect(prompt).toContain("Include a chunk only if a factual statement in the final answer actually draws on that chunk");
     expect(prompt).toContain("do not fill gaps from general model knowledge");
   });
 
