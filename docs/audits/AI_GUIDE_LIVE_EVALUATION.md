@@ -67,6 +67,19 @@ Current local tests verify selection, no unrelated retrieval, cross-city
 isolation, cited source metadata, and the prompt contract. They do not prove
 that the model will answer correctly every time; human-review the live output.
 
+One-case **offline preflight**:
+
+```bash
+CITYWALK_EVAL_CASE_ID=en-hanseatic-era CITYWALK_EVAL_MAX_CALLS=1 \
+  node scripts/evaluate-citywalk-guide-api.mjs --dry-run
+```
+
+Then run with `CITYWALK_RUN_LIVE_AI_EVAL=YES`,
+`CITYWALK_EVAL_CAPTURE_ANSWERS=YES`, and the same case ID only when ready
+for a real model request (up to two billable attempts). Manually verify that
+the answer defines the league, explains the period, connects Lübeck based on
+the cited museum source, and does not invent landmark-specific claims.
+
 ## Before you run
 
 - Check out PR #355 on your local machine. Start the local CITYWALK server
