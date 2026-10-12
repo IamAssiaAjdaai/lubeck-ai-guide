@@ -39,8 +39,8 @@ const chosenFixtures = requestedFixtureId === undefined
   ? guideEvaluationFixtures
   : guideEvaluationFixtures.filter((fixture) => fixture.id === requestedFixtureId);
 const maxCalls = Number(process.env.CITYWALK_EVAL_MAX_CALLS ?? (dryRun ? "2" : ""));
-if (!Number.isSafeInteger(maxCalls) || maxCalls < 1 || maxCalls > chosenFixtures.length) {
-  throw new Error("CITYWALK_EVAL_MAX_CALLS must be 1.." + chosenFixtures.length);
+if (!Number.isSafeInteger(maxCalls) || maxCalls < 1 || maxCalls > Math.min(5, chosenFixtures.length)) {
+  throw new Error("CITYWALK_EVAL_MAX_CALLS must be 1.." + Math.min(5, chosenFixtures.length));
 }
 const capture = process.env.CITYWALK_EVAL_CAPTURE_ANSWERS === "YES";
 const target = new URL(process.env.CITYWALK_EVAL_BASE_URL || "http://127.0.0.1:3000");
