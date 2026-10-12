@@ -114,7 +114,7 @@ describe("AI Guide prompt injection boundary", () => {
       knowledge: [cityEvidence],
     });
 
-    expect(prompt).toContain("REFERENCE ROLE:\\nVERIFIED CITY BACKGROUND");
+    expect(prompt).toContain("REFERENCE ROLE:\nVERIFIED CITY BACKGROUND");
     expect(prompt).toContain("The Hanseatic League was a medieval network");
     expect(prompt).toContain("Answer such general questions");
     expect(prompt).toContain("City background is NOT proof");
