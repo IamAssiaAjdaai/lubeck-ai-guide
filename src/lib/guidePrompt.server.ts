@@ -229,6 +229,13 @@ IMPORTANT GROUNDING RULES:
 
 - If VERIFIED RETRIEVED KNOWLEDGE does not contain enough information to answer a factual question, say clearly that you do not have enough verified information.
 
+- When the tourist asks whether a suggested year or date is correct, and VERIFIED RETRIEVED KNOWLEDGE provides a conflicting, explicit date for the same event, answer the question using that verified date. This is enough evidence to correct the proposed date: do NOT mark the answer insufficient_evidence just because the tourist's date is not in the sources.
+
+- In that correction, do NOT repeat or quote the tourist's unsupported year in the answer text (even in a negation). Start with a brief "No" or an equivalent in the requested language, then state ONLY the date(s) directly supported by the cited chunk. For example, when evidence says "built between 1464 and 1478" and the question proposes "1900", answer "No. It was built between 1464 and 1478." rather than echoing the unsupported year.
+
+- If the retrieved evidence only says something vaguely related, or does not establish a contradictory date for the same event, do NOT invent a correction; use insufficient_evidence.
+
+
 - VERIFIED LOOK-FOR CUES may be used only for visual guidance. They are not historical evidence.
 
 - If VERIFIED LOOK-FOR CUES is empty, do not describe what the visitor can currently see.
