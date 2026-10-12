@@ -31,9 +31,16 @@ if (!dryRun && process.env.CITYWALK_RUN_LIVE_AI_EVAL !== "YES") {
   console.log("Local guide API evaluation disabled (opt-in required).");
   process.exit(0);
 }
+const requestedFixtureId = process.env.CITYWALK_EVAL_CASE_ID;
+if (requestedFixtureId !== undefined && !guideEvaluationFixtures.some((fixture) => fixture.id === requestedFixtureId)) {
+  throw new Error("CITYWALK_EVAL_CASE_ID must match an existing synthetic fixture ID.");
+}
+const chosenFixtures = requestedFixtureId === undefined
+  ? guideEvaluationFixtures
+  : guideEvaluationFixtures.filter((fixture) => fixture.id === requestedFixtureId);
 const maxCalls = Number(process.env.CITYWALK_EVAL_MAX_CALLS ?? (dryRun ? "2" : ""));
-if (!Number.isSafeInteger(maxCalls) || maxCalls < 1 || maxCalls > guideEvaluationFixtures.length) {
-  throw new Error("CITYWALK_EVAL_MAX_CALLS must be 1.." + guideEvaluationFixtures.length);
+if (!Number.isSafeInteger(maxCalls) || maxCalls < 1 || maxCalls > chosenFixtures.length) {
+  throw new Error("CITYWALK_EVAL_MAX_CALLS must be 1.." + chosenFixtures.length);
 }
 const capture = process.env.CITYWALK_EVAL_CAPTURE_ANSWERS === "YES";
 const target = new URL(process.env.CITYWALK_EVAL_BASE_URL || "http://127.0.0.1:3000");
@@ -51,14 +58,14 @@ if (dryRun) {
     kind: "citywalk_guide_api_eval_preflight",
     mode: "dry-run",
     target: target.origin,
-    fixtureIds: guideEvaluationFixtures.slice(0, maxCalls).map((fixture) => fixture.id),
+    fixtureIds: chosenFixtures.slice(0, maxCalls).map((fixture) => fixture.id),
     plannedHttpRequests: maxCalls,
     maximumPotentialGroqAttemptsIfEnabled: maxCalls * 2,
     performedHttpRequests: 0,
     performedProviderCalls: 0,
     costIncurredByPreflight: 0,
     humanScoring: scoreGuideManualReviews(
-      guideEvaluationFixtures.slice(0, maxCalls).map((fixture) => ({
+      chosenFixtures.slice(0, maxCalls).map((fixture) => ({
         id: fixture.id, humanVerdict: "unreviewed",
       })),
     ),
@@ -68,7 +75,7 @@ if (dryRun) {
 
 const rows = [];
 const reviewRows = [];
-for (const fixture of guideEvaluationFixtures.slice(0, maxCalls)) {
+for (const fixture of chosenFixtures.slice(0, maxCalls)) {
   const start = performance.now();
   let status = 0;
   let code = "unknown";
