@@ -88,7 +88,7 @@ export const lubeckKnowledgeChunks =
       locale: "en",
       text:
         "From the 12th century onward, merchant groups in northern Europe developed into the Hanseatic League, a network of trading towns. The merchants and cities cooperated to protect their shared commercial interests. The network shaped trade and politics around the North and Baltic Seas for centuries before losing influence in the mid-17th century.",
-      topics: ["hanseatic", "hanseatic-league", "hanse", "medieval", "merchant", "trade", "history"],
+      topics: ["hanseatic", "hanseatic-league", "hanse", "medieval", "merchant", "trade"],
       priority: 95,
       source: hanseaticHistorySource,
     },
