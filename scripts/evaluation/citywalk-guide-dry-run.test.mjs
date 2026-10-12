@@ -59,6 +59,29 @@ describe("CITYWALK guide API offline preflight (zero provider calls)", () => {
     }
   });
 
+  it("targets only the selected historical challenge and no provider calls", () => {
+    const report = JSON.parse(execFileSync(process.execPath, [harnessPath, "--dry-run"], {
+      env: { ...env, CITYWALK_EVAL_CASE_ID: "en-false-date", CITYWALK_EVAL_MAX_CALLS: "1" },
+      encoding: "utf8", timeout: 10_000,
+    }));
+    expect(report).toMatchObject({
+      fixtureIds: ["en-false-date"],
+      plannedHttpRequests: 1,
+      maximumPotentialGroqAttemptsIfEnabled: 2,
+      performedHttpRequests: 0,
+      performedProviderCalls: 0,
+    });
+  });
+
+  it("fails closed on unrecognized fixture IDs before network access", () => {
+    const run = spawnSync(process.execPath, [harnessPath, "--dry-run"], {
+      env: { ...env, CITYWALK_EVAL_CASE_ID: "unknown-case", CITYWALK_EVAL_MAX_CALLS: "1" },
+      encoding: "utf8", timeout: 10_000,
+    });
+    expect(run.status).not.toBe(0);
+    expect(run.stderr).toContain("CITYWALK_EVAL_CASE_ID");
+  });
+
   it("supports a one-fixture dry run with zero calls", () => {
     const report = JSON.parse(execFileSync(process.execPath, [harnessPath, "--dry-run"], {
       env: { ...env, CITYWALK_EVAL_MAX_CALLS: "1" },
