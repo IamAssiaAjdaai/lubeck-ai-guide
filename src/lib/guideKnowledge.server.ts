@@ -17,7 +17,7 @@ function matchesCityBackgroundTopic(
   citySlug: string,
 ): boolean {
   const words = (text: string) =>
-    text.normalize("NFKD").toLowerCase().match(/[\\p{L}\\p{N}]+/gu) ?? [];
+    text.normalize("NFKD").toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
   const asked = new Set(words(question));
   // City names and broad category tags alone do not establish that a
   // city-wide source is relevant to the visitor's specific question.
