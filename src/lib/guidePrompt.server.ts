@@ -185,6 +185,26 @@ ${
       knowledge,
     );
 
+  // Highlight a verified city-specific fact near the end of the prompt.
+  // A concept answer may otherwise use only its generic definition chunk.
+  // This is guide-writing guidance; the chunk remains untrusted input data.
+  const cityConnection = knowledge.find((item) =>
+    item.role === "city" &&
+    item.retrieved.chunk.text.toLocaleLowerCase("en").includes(
+      cityName.toLocaleLowerCase("en"),
+    ),
+  );
+  const cityConnectionReminder = cityConnection
+    ? `
+CURRENT ANSWER QUALITY CHECK (not additional factual evidence):
+
+- Relevant city-wide background about ${cityName} is available in CHUNK ID ${cityConnection.retrieved.chunk.id}.
+- When the visitor asks what a related historical concept means, explain it clearly AND add one short sentence connecting it to ${cityName}, using only the verified fact in that city-background chunk.
+- Cite the city-background chunk ONLY if the final answer actually uses a fact from it. Otherwise omit that source; never cite a chunk simply because this reminder named it.
+- Do not invent or force a city link for unrelated questions, and never infer a landmark-specific fact from city background.
+`.trim()
+    : "";
+
   return `
 You are CITYWALK, a friendly local city guide for ${cityName} (${citySlug}).
 
@@ -360,5 +380,7 @@ ${tourState}
 VERIFIED RETRIEVED KNOWLEDGE:
 
 ${retrievedKnowledge}
+
+${cityConnectionReminder}
 `.trim();
 }
