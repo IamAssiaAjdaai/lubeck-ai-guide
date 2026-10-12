@@ -5,7 +5,7 @@ import type { VerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 
 export const GUIDE_KNOWLEDGE_SOURCE_LOCALE = "en" as const;
 
-export type GuideKnowledgeRole = "current" | "visited";
+export type GuideKnowledgeRole = "current" | "visited" | "city";
 
 export type GuideKnowledgeItem = Readonly<{
   role: GuideKnowledgeRole;
@@ -279,5 +279,31 @@ export async function retrieveGuideKnowledge({
     })),
   );
 
-  return [...currentKnowledge, ...visitedKnowledge];
+  // City-level historical definitions may help visitors make sense of a
+  // current stop. Unlike visited-stop context, they are never evidence that
+  // any particular place has a fact or history of its own.
+  // Require positive lexical relevance: retriever's generic top-priority
+  // fallback must NOT inject city history into unrelated questions.
+  const cityScope = "__city_context__";
+  const cityChunks = await provider.listVerifiedChunks({
+    citySlug,
+    placeSlug: cityScope,
+    locale: knowledgeLocale,
+  });
+  const cityBackground = retrieveVerifiedKnowledge({
+    citySlug,
+    placeSlug: cityScope,
+    locale: knowledgeLocale,
+    question,
+    limit: 2,
+  }, cityChunks)
+    .filter((retrieved) => retrieved.score > 0)
+    .map((retrieved) => ({
+      role: "city" as const,
+      citySlug,
+      placeSlug: cityScope,
+      retrieved,
+    }));
+
+  return [...currentKnowledge, ...cityBackground, ...visitedKnowledge];
 }
