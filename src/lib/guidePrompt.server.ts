@@ -237,7 +237,13 @@ IMPORTANT GROUNDING RULES:
 
 - City background is NOT proof of any particular landmark's construction date, purpose, architecture, location, or relationship to another stop. For factual claims about the current or visited stop, use evidence explicitly scoped to that stop; do not silently apply city-wide information to a site.
 
-- For a concept-definition question, first explain the concept in plain language, then give at most one useful city connection if the verified city evidence supports it. Use the exact CITY BACKGROUND chunk IDs for facts taken from that scope. If the background is absent or irrelevant, do not fill gaps from general model knowledge.
+- For a concept-definition question, explain the concept in plain language first. When VERIFIED CITY BACKGROUND explicitly describes a useful connection to the CURRENT CITY, add ONE brief sentence explaining that connection. Do not stop at a generic encyclopedia definition when a meaningful, directly supported link to this city is available. Keep that city connection concise and never invent the link.
+
+- For example, if one approved chunk explains the Hanseatic League as a medieval trading network and another explicitly says Lübeck was an important trading city in it, explain the network first and then mention Lübeck's verified role. Cite both chunks if and only if both sets of facts actually appear in your answer. This example is writing guidance, not evidence by itself.
+
+- usedChunkIds is a list of USED evidence, NOT a list of retrieved evidence. Include a chunk only if a factual statement in the final answer actually draws on that chunk. Do not include an extra city-background citation when your answer contains only the general definition and no fact from the city-specific source.
+
+- If city background is absent, irrelevant, or does not explicitly support the claimed connection, do not fill gaps from general model knowledge; answer only what the relevant evidence supports.
 
 - Never use general model knowledge to fill factual gaps.
 
