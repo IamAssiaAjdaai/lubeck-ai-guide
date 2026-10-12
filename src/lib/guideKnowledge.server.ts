@@ -5,6 +5,30 @@ import type { VerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 
 export const GUIDE_KNOWLEDGE_SOURCE_LOCALE = "en" as const;
 
+/**
+ * City-wide background should be retrieved for the historical concept
+ * asked about, never because a generic pronoun appears in both the
+ * question and a city reference. Exact topic matching is deliberately
+ * conservative; the place-level retriever keeps its existing fallback.
+ */
+function matchesCityBackgroundTopic(
+  question: string,
+  chunk: KnowledgeChunk,
+  citySlug: string,
+): boolean {
+  const words = (text: string) =>
+    text.normalize("NFKD").toLowerCase().match(/[\\p{L}\\p{N}]+/gu) ?? [];
+  const asked = new Set(words(question));
+  // City names and broad category tags alone do not establish that a
+  // city-wide source is relevant to the visitor's specific question.
+  const generic = new Set([citySlug.toLowerCase(), "city", "history", "overview", "league"]);
+  return chunk.topics.some((topic) =>
+    words(topic).some((word) =>
+      word.length >= 4 && !generic.has(word) && asked.has(word)
+    )
+  );
+}
+
 export type GuideKnowledgeRole = "current" | "visited" | "city";
 
 export type GuideKnowledgeItem = Readonly<{
@@ -297,7 +321,10 @@ export async function retrieveGuideKnowledge({
     question,
     limit: 2,
   }, cityChunks)
-    .filter((retrieved) => retrieved.score > 0)
+    .filter((retrieved) =>
+      retrieved.score > 0 &&
+      matchesCityBackgroundTopic(question, retrieved.chunk, citySlug)
+    )
     .map((retrieved) => ({
       role: "city" as const,
       citySlug,
