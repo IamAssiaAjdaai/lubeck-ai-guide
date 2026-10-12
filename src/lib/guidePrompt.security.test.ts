@@ -39,6 +39,22 @@ describe("AI Guide prompt injection boundary", () => {
     expect(prompt).toContain("Historical and factual claims may come ONLY from VERIFIED RETRIEVED KNOWLEDGE");
   });
 
+  it("instructs grounded date correction instead of false refusal or echoing an unsupported year", () => {
+    const prompt = buildGuideSystemPrompt({
+      citySlug: "lubeck",
+      cityName: "Lübeck",
+      currentPlace: { slug: "holstentor", name: "Holstentor" },
+      locale: "en",
+      tourContext: null,
+      knowledge: maliciousEvidence,
+    });
+
+    expect(prompt).toContain("do NOT mark the answer insufficient_evidence");
+    expect(prompt).toContain("do NOT repeat or quote the tourist's unsupported year");
+    expect(prompt).toContain("No. It was built between 1464 and 1478.");
+    expect(prompt).toContain("does not establish a contradictory date for the same event");
+  });
+
   it("keeps the trust instruction with an empty knowledge set", () => {
     const prompt = buildGuideSystemPrompt({
       citySlug: "lubeck",
