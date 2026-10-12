@@ -56,13 +56,14 @@ describe("AI Guide prompt injection boundary", () => {
   });
 
   it("allows concise, relevant verified context without inventing connections or dropping citations", () => {
+    const base = maliciousEvidence[0]!;
     const relevantKnowledge: readonly GuideKnowledgeItem[] = [
       {
-        ...maliciousEvidence[0],
+        ...base,
         retrieved: {
-          ...maliciousEvidence[0].retrieved,
+          ...base.retrieved,
           chunk: {
-            ...maliciousEvidence[0].retrieved.chunk,
+            ...base.retrieved.chunk,
             id: "holstentor-history",
             text: "The Holstentor was built between 1464 and 1478. It protected the city while showing Lübeck's importance during the Hanseatic era.",
           },
