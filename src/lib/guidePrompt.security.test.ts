@@ -82,10 +82,10 @@ describe("AI Guide prompt injection boundary", () => {
     expect(prompt).toContain("answer it directly first");
     expect(prompt).toContain("ONE short, naturally connected sentence");
     expect(prompt).toContain("A related detail is optional");
-    expect(prompt).toContain("do not introduce unrelated facts");
+    expect(prompt).toContain("Do not introduce unrelated facts");
     expect(prompt).toContain("never pretend the original chunk supports a different claim");
     expect(prompt).toContain("It protected the city");
-    expect(prompt).toContain("CHUNK ID:\\nholstentor-history");
+    expect(prompt).toContain("CHUNK ID:\nholstentor-history");
     expect(prompt).toContain("do not claim an explicit relationship between two places or events");
   });
 
