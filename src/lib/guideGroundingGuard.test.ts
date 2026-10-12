@@ -25,6 +25,21 @@ const answer = (text: string, usedChunkIds = ["gate-history"]): ParsedGuideAnswe
 });
 
 describe("grounded AI answer cited-year guard", () => {
+  it("accepts a concise correction using only cited historical years", () => {
+    expect(hasUnsupportedYear(answer(
+      "No. The Holstentor was built between 1464 and 1478.",
+    ), evidence)).toBe(false);
+  });
+
+  it("conservatively rejects a correction that repeats the uncited year", () => {
+    // Historical meaning can be correct here, but the year guard cannot
+    // distinguish a quoted, negated year from an unsupported assertion.
+    // The prompt should avoid echoing user-proposed years instead.
+    expect(hasUnsupportedYear(answer(
+      "No, it was not built in 1900. It was built between 1464 and 1478.",
+    ), evidence)).toBe(true);
+  });
+
   it("rejects unsupported fabricated dates", () => {
     expect(hasUnsupportedYear(answer("The Holstentor was built in 1900."), evidence)).toBe(true);
   });
