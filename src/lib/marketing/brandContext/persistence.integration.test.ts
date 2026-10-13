@@ -46,7 +46,8 @@ describe.runIf(enabled)("Brand persistence PostgreSQL authorization, concurrency
     b = await services[1].create({ campaignId: campaigns[1], brief: germanSmeBrief });
   });
   afterEach(async () => {
-    await client.query("DELETE FROM brand_projects WHERE id IN (SELECT project_id FROM citywalk_brand_projects WHERE campaign_id=ANY($1::int[]))", [campaigns]);
+    await client.query("DELETE FROM brand_projects WHERE id=ANY($1::uuid[])", [[a?.projectId, b?.projectId].filter(Boolean)]);
+    await client.query("DELETE FROM staff_city_access WHERE city_id=$1 AND staff_membership_id IN (SELECT id FROM staff_memberships WHERE user_id=$2)", [cities[1], users[0]]);
     await client.query("UPDATE staff_memberships SET role='admin',active=true WHERE user_id=ANY($1::text[])", [users]);
   });
   afterAll(async () => {
@@ -185,14 +186,66 @@ describe.runIf(enabled)("Brand persistence PostgreSQL authorization, concurrency
     try {
       const project = randomUUID();
       await client.query("INSERT INTO brand_projects(id) VALUES($1)", [project]);
-      await expect(client.query("INSERT INTO citywalk_brand_projects(project_id,campaign_id,city_id) VALUES($1,$2,$3)", [project, campaigns[0], cities[1]])).rejects.toMatchObject({ code: "23503" });
+      await client.query("INSERT INTO citywalk_brand_projects(project_id,city_id) VALUES($1,$2)", [project, cities[1]]);
+      await expect(client.query("INSERT INTO citywalk_brand_project_campaigns(project_id,campaign_id,city_id) VALUES($1,$2,$3)", [project, campaigns[0], cities[1]])).rejects.toMatchObject({ code: "23503", constraint: "citywalk_brand_campaign_owner_fk" });
     } finally { await client.query("ROLLBACK"); }
   });
-  it("purges owned history when its CITYWALK campaign is explicitly erased", async () => {
+  it("shares one context across campaigns while authorizing every durable city scope", async () => {
+    const campaign = (await client.query("INSERT INTO marketing_campaigns(city_id,slug,name,objective,audience,message,cta) VALUES($1,$2,'Different goal','Retention','SME','Test','Test') RETURNING id", [cities[0], randomUUID()])).rows[0].id;
+    try {
+      await Promise.all([services[0].associateCampaign({ ...request(a), campaignId: campaign }), services[0].associateCampaign({ ...request(a), campaignId: campaign })]); // Concurrent idempotent association.
+      expect((await client.query("SELECT count(*)::int n FROM citywalk_brand_project_campaigns WHERE project_id=$1", [a.projectId])).rows[0].n).toBe(2);
+      expect(await services[0].read(request(a))).toEqual(a);
+      const before = await services[0].history(request(a));
+      await client.query("DELETE FROM marketing_campaigns WHERE id=$1", [campaign]);
+      expect(await services[0].history(request(a))).toEqual(before);
+      expect((await client.query("SELECT count(*)::int n FROM citywalk_brand_project_campaigns WHERE project_id=$1", [a.projectId])).rows[0].n).toBe(1);
+      await expect(services[0].associateCampaign({ ...request(a), campaignId: campaigns[1] })).rejects.toMatchObject({ code: "FORBIDDEN" });
+      await expect(services[1].associateCampaign({ ...request(a), campaignId: campaigns[1] })).rejects.toMatchObject({ code: "FORBIDDEN" });
+      await client.query("INSERT INTO staff_city_access(staff_membership_id,city_id) SELECT id,$1 FROM staff_memberships WHERE user_id=$2", [cities[1], users[0]]);
+      await services[0].associateCampaign({ ...request(a), campaignId: campaigns[1] });
+      expect(await services[0].read(request(a))).toEqual(a);
+      await expect(services[1].read(request(a))).rejects.toMatchObject({ code: "FORBIDDEN" });
+      await client.query("DELETE FROM staff_city_access WHERE city_id=$1 AND staff_membership_id IN (SELECT id FROM staff_memberships WHERE user_id=$2)", [cities[1], users[0]]);
+      for (const operation of [() => services[0].read(request(a)), () => services[0].history(request(a)), () => services[0].confirm(confirmation(a)), () => services[0].correct({ ...request(a), expectedRevision: 1, brief: citywalkBrief }), () => services[0].purge({ ...request(a), expectedRevision: 1, eraseHistory: true }), () => services[0].associateCampaign({ ...request(a), campaignId: campaigns[0] })]) await expect(operation()).rejects.toMatchObject({ code: "FORBIDDEN" });
+      await expect(client.query("DELETE FROM citywalk_brand_projects WHERE project_id=$1 AND city_id=$2", [a.projectId, cities[1]])).rejects.toMatchObject({ code: "23514" });
+      // Deleting the cross-city association directly cannot shrink retained scope.
+      await client.query("DELETE FROM citywalk_brand_project_campaigns WHERE project_id=$1 AND campaign_id=$2", [a.projectId, campaigns[1]]);
+      await expect(services[0].read(request(a))).rejects.toMatchObject({ code: "FORBIDDEN" });
+      await client.query("INSERT INTO staff_city_access(staff_membership_id,city_id) SELECT id,$1 FROM staff_memberships WHERE user_id=$2", [cities[1], users[0]]);
+      const results = await Promise.allSettled([services[0].confirm(confirmation(a)), services[0].confirm(confirmation(a))]);
+      expect(results.filter(r => r.status === "fulfilled")).toHaveLength(1);
+      expect((results.find(r => r.status === "rejected") as PromiseRejectedResult).reason.code).toBe("STALE_REVISION");
+      expect(await services[0].history(request(a))).toHaveLength(2);
+      await services[0].purge({ ...request(a), expectedRevision: 2, eraseHistory: true });
+      expect((await client.query("SELECT count(*)::int n FROM citywalk_brand_projects WHERE project_id=$1", [a.projectId])).rows[0].n).toBe(0);
+      expect((await client.query("SELECT count(*)::int n FROM citywalk_brand_project_campaigns WHERE project_id=$1", [a.projectId])).rows[0].n).toBe(0);
+      expect((await client.query("SELECT count(*)::int n FROM brand_context_audit WHERE context_id=$1", [a.contextId])).rows[0].n).toBe(0);
+      expect(await services[1].read(request(b))).toEqual(b);
+    } finally { await client.query("DELETE FROM marketing_campaigns WHERE id=$1", [campaign]); }
+  });
+  it("refuses city deletion until explicit project erasure and rolls back campaign unlinking", async () => {
+    const before = await services[0].history(request(a));
+    await expect(client.query("DELETE FROM cities WHERE id=$1", [cities[0]])).rejects.toMatchObject({ code: "23503" });
+    expect(await services[0].history(request(a))).toEqual(before);
+    expect((await client.query("SELECT count(*)::int n FROM citywalk_brand_project_campaigns WHERE project_id=$1", [a.projectId])).rows[0].n).toBe(1);
+  });
+  it("retains project history and scope when every associated campaign is deleted", async () => {
     const campaign = (await client.query("INSERT INTO marketing_campaigns(city_id,slug,name,objective,audience,message,cta) VALUES($1,$2,'Test','Test','Test','Test','Test') RETURNING id", [cities[0], randomUUID()])).rows[0].id;
     const context = await services[0].create({ campaignId: campaign, brief: citywalkBrief });
-    await client.query("DELETE FROM marketing_campaigns WHERE id=$1", [campaign]);
-    expect((await client.query("SELECT count(*)::int n FROM brand_projects WHERE id=$1", [context.projectId])).rows[0].n).toBe(0);
+    try {
+      await services[0].confirm(confirmation(context));
+      const before = await services[0].history(request(context));
+      await client.query("DELETE FROM marketing_campaigns WHERE id=$1", [campaign]);
+      expect(await services[0].history(request(context))).toEqual(before);
+      expect((await client.query("SELECT count(*)::int n FROM citywalk_brand_project_campaigns WHERE project_id=$1", [context.projectId])).rows[0].n).toBe(0);
+      expect((await client.query("SELECT count(*)::int n FROM citywalk_brand_projects WHERE project_id=$1", [context.projectId])).rows[0].n).toBe(1);
+      await services[0].purge({ ...request(context), expectedRevision: 2, eraseHistory: true });
+      expect((await client.query("SELECT count(*)::int n FROM brand_projects WHERE id=$1", [context.projectId])).rows[0].n).toBe(0);
+    } finally {
+      await client.query("DELETE FROM brand_projects WHERE id=$1", [context.projectId]);
+      await client.query("DELETE FROM marketing_campaigns WHERE id=$1", [campaign]);
+    }
     expect(await services[1].read(request(b))).toEqual(b);
   });
 });

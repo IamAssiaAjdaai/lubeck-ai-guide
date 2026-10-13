@@ -7,11 +7,11 @@ import { confirmBrandFacts, createBrandContext, type BrandContext } from "@marke
 import { getDb, type Database } from "@/db/client";
 import { staffCityAccess, staffMemberships, user } from "@/db/authSchema";
 import { brandContextAudit, brandContextRevisions, brandContexts, brandProjects } from "@/db/brandContextSchema";
-import { citywalkBrandProjects, citywalkBrandReviewers } from "@/db/citywalkBrandContextSchema";
+import { citywalkBrandProjects, citywalkBrandProjectCampaigns, citywalkBrandReviewers } from "@/db/citywalkBrandContextSchema";
 import { marketingCampaignsTable } from "@/db/marketingSchema";
 import { AdminAuthorizationError, requireAdminCapability, type AdminContext } from "@/lib/admin/authorization.server";
 import { hasCityCapability, type AdminCapability } from "@/lib/admin/permissions";
-import { canonicalJson, confirmRequest, correctRequest, createRequest, purgeRequest, readRequest, validateStoredContext } from "./validation";
+import { associateRequest, canonicalJson, confirmRequest, correctRequest, createRequest, purgeRequest, readRequest, validateStoredContext } from "./validation";
 
 type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
 export class BrandContextPersistenceError extends Error {
@@ -42,11 +42,14 @@ export function createBrandContextService(db: Database, authenticate: (capabilit
     return result.rows[0].now;
   }
   async function scope(tx: Transaction, projectId: string, auth: AdminContext, capability: AdminCapability) {
-    const [binding] = await tx.select().from(citywalkBrandProjects).where(eq(citywalkBrandProjects.projectId, projectId)).for("update");
-    if (!binding) throw new BrandContextPersistenceError("NOT_FOUND");
-    await authorize(tx, auth, binding.cityId, capability);
-    return binding;
+    // Lock the independent project before inspecting its entire durable scope.
+    const [project] = await tx.select().from(brandProjects).where(eq(brandProjects.id, projectId)).for("update");
+    if (!project) throw new BrandContextPersistenceError("NOT_FOUND");
+    const bindings = await tx.select().from(citywalkBrandProjects).where(eq(citywalkBrandProjects.projectId, projectId)).orderBy(asc(citywalkBrandProjects.cityId));
+    if (!bindings.length) throw new AdminAuthorizationError(403, "FORBIDDEN");
+    for (const binding of bindings) await authorize(tx, auth, binding.cityId, capability);
   }
+
   function validate(row: typeof brandContextRevisions.$inferSelect) {
     try {
       const context = validateStoredContext(row.contextJson);
@@ -81,10 +84,24 @@ export function createBrandContextService(db: Database, authenticate: (capabilit
         const now = await time(tx), actorId = await actor(tx, auth.user.id);
         const context = createBrandContext(request.brief, { contextId: randomUUID(), projectId: randomUUID(), briefSourceId: randomUUID(), createdAt: now });
         await tx.insert(brandProjects).values({ id: context.projectId });
-        await tx.insert(citywalkBrandProjects).values({ projectId: context.projectId, campaignId: campaign.id, cityId: campaign.cityId });
+        await tx.insert(citywalkBrandProjects).values({ projectId: context.projectId, cityId: campaign.cityId });
+        await tx.insert(citywalkBrandProjectCampaigns).values({ projectId: context.projectId, campaignId: campaign.id, cityId: campaign.cityId });
         await tx.insert(brandContexts).values({ id: context.contextId, projectId: context.projectId, currentRevision: 1 });
         await append(tx, context, "created", actorId, now, []);
         return context;
+      });
+    },
+    async associateCampaign(input: unknown) {
+      const auth = await authenticate("marketing:manage"), request = associateRequest.parse(input);
+      return db.transaction(async tx => {
+        await tx.execute(sql`SET LOCAL lock_timeout = '3s'`);
+        await scope(tx, request.projectId, auth, "marketing:manage");
+        await current(tx, request.projectId, request.contextId);
+        const [campaign] = await tx.select().from(marketingCampaignsTable).where(eq(marketingCampaignsTable.id, request.campaignId)).for("share");
+        if (!campaign) throw new BrandContextPersistenceError("NOT_FOUND");
+        await authorize(tx, auth, campaign.cityId, "marketing:manage");
+        await tx.insert(citywalkBrandProjects).values({ projectId: request.projectId, cityId: campaign.cityId }).onConflictDoNothing();
+        await tx.insert(citywalkBrandProjectCampaigns).values({ projectId: request.projectId, campaignId: campaign.id, cityId: campaign.cityId }).onConflictDoNothing();
       });
     },
     async read(input: unknown) {
@@ -161,3 +178,5 @@ export const readBrandContextHistory = (input: unknown) => createBrandContextSer
 export const confirmPersistedBrandFacts = (input: unknown) => createBrandContextService(getDb(), requireAdminCapability).confirm(input);
 export const correctPersistedBrandContext = (input: unknown) => createBrandContextService(getDb(), requireAdminCapability).correct(input);
 export const purgeBrandProject = (input: unknown) => createBrandContextService(getDb(), requireAdminCapability).purge(input);
+
+export const associateBrandProjectCampaign = (input: unknown) => createBrandContextService(getDb(), requireAdminCapability).associateCampaign(input);

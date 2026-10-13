@@ -4,6 +4,7 @@ import { z } from "zod";
 const id = z.uuid();
 export const createRequest = z.strictObject({ campaignId: z.number().int().positive(), brief: rawBusinessBriefSchema });
 export const readRequest = z.strictObject({ projectId: id, contextId: id });
+export const associateRequest = readRequest.extend({ campaignId: z.number().int().positive() });
 export const confirmRequest = readRequest.extend({ command: factConfirmationCommandSchema });
 export const correctRequest = readRequest.extend({ expectedRevision: z.number().int().positive(), brief: rawBusinessBriefSchema });
 export const purgeRequest = z.strictObject({ projectId: id, contextId: id, expectedRevision: z.number().int().positive(), eraseHistory: z.literal(true) });

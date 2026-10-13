@@ -1,5 +1,5 @@
 {
-  "id": "f361c58d-e73f-4126-93c7-40066f068de4",
+  "id": "5e38443c-7580-4fb1-a24b-fb1823b43157",
   "prevId": "8bb5add4-c591-4939-9119-0cb26e599549",
   "version": "7",
   "dialect": "postgresql",
@@ -6874,14 +6874,14 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.citywalk_brand_projects": {
-      "name": "citywalk_brand_projects",
+    "public.citywalk_brand_project_campaigns": {
+      "name": "citywalk_brand_project_campaigns",
       "schema": "",
       "columns": {
         "project_id": {
           "name": "project_id",
           "type": "uuid",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "campaign_id": {
@@ -6915,22 +6915,24 @@
         }
       },
       "foreignKeys": {
-        "citywalk_brand_projects_project_id_brand_projects_id_fk": {
-          "name": "citywalk_brand_projects_project_id_brand_projects_id_fk",
-          "tableFrom": "citywalk_brand_projects",
-          "tableTo": "brand_projects",
+        "citywalk_brand_campaign_scope_fk": {
+          "name": "citywalk_brand_campaign_scope_fk",
+          "tableFrom": "citywalk_brand_project_campaigns",
+          "tableTo": "citywalk_brand_projects",
           "columnsFrom": [
-            "project_id"
+            "project_id",
+            "city_id"
           ],
           "columnsTo": [
-            "id"
+            "project_id",
+            "city_id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "citywalk_brand_campaign_owner_fk": {
           "name": "citywalk_brand_campaign_owner_fk",
-          "tableFrom": "citywalk_brand_projects",
+          "tableFrom": "citywalk_brand_project_campaigns",
           "tableTo": "marketing_campaigns",
           "columnsFrom": [
             "campaign_id",
@@ -6944,7 +6946,75 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "citywalk_brand_project_campaigns_project_id_campaign_id_pk": {
+          "name": "citywalk_brand_project_campaigns_project_id_campaign_id_pk",
+          "columns": [
+            "project_id",
+            "campaign_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.citywalk_brand_projects": {
+      "name": "citywalk_brand_projects",
+      "schema": "",
+      "columns": {
+        "project_id": {
+          "name": "project_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city_id": {
+          "name": "city_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "citywalk_brand_projects_project_id_brand_projects_id_fk": {
+          "name": "citywalk_brand_projects_project_id_brand_projects_id_fk",
+          "tableFrom": "citywalk_brand_projects",
+          "tableTo": "brand_projects",
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "citywalk_brand_projects_city_id_cities_id_fk": {
+          "name": "citywalk_brand_projects_city_id_cities_id_fk",
+          "tableFrom": "citywalk_brand_projects",
+          "tableTo": "cities",
+          "columnsFrom": [
+            "city_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "citywalk_brand_projects_project_id_city_id_pk": {
+          "name": "citywalk_brand_projects_project_id_city_id_pk",
+          "columns": [
+            "project_id",
+            "city_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},

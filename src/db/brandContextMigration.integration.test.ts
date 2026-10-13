@@ -25,7 +25,9 @@ describe.runIf(process.env.BRAND_CONTEXT_MIGRATION_INTEGRATION === "1")("Brand c
       expect((await client.query("SELECT * FROM marketing_campaigns WHERE id=$1", [campaign.id])).rows[0]).toEqual(campaign);
       expect((await client.query("SELECT * FROM marketing_pages WHERE id=$1", [page.id])).rows[0]).toEqual(page);
       expect(await generationFunctions()).toEqual(beforeFunctions);
-      for (const table of ["brand_projects", "brand_contexts", "brand_context_revisions", "brand_context_audit", "citywalk_brand_projects", "citywalk_brand_reviewers"]) expect((await client.query(`SELECT count(*)::int n FROM ${table}`)).rows[0].n).toBe(0);
+      for (const table of ["brand_projects", "brand_contexts", "brand_context_revisions", "brand_context_audit", "citywalk_brand_projects", "citywalk_brand_project_campaigns", "citywalk_brand_reviewers"]) expect((await client.query(`SELECT count(*)::int n FROM ${table}`)).rows[0].n).toBe(0);
+      expect((await client.query("SELECT count(*)::int n FROM pg_trigger WHERE tgname='citywalk_brand_owner_erasure'")).rows[0].n).toBe(0);
+      expect((await client.query("SELECT confdeltype FROM pg_constraint WHERE conname='citywalk_brand_projects_city_id_cities_id_fk'")).rows[0].confdeltype).toBe("r");
       await client.query("ROLLBACK TO SAVEPOINT before_brand");
       expect((await client.query("SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename")).rows).toEqual(beforeTables);
       expect((await client.query("SELECT * FROM marketing_pages WHERE id=$1", [page.id])).rows[0]).toEqual(page);

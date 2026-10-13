@@ -159,3 +159,10 @@ reviewer bindings; neither is wired into current CMS flows or Generation.
 See [Brand Context persistence, retention and extraction](marketing-brand-context-persistence.md)
 for current contracts, authorization, supported correction/purge and export plan.
 The generic core and migration 0024 contracts remain unchanged.
+
+Sprint 02 pre-merge review aligns persistence with the multi-campaign adapter model:
+independent projects retain durable all-city access scopes; separate host campaign
+associations never own generic context. Campaign deletion unlinks only the campaign.
+Explicit all-city admin purge erases the whole project, and city deletion is
+restricted while retained project scopes exist. See the persistence document for
+upgrade limits and historical-scope policy.

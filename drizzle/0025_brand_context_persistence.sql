@@ -33,10 +33,17 @@ CREATE TABLE "brand_projects" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "citywalk_brand_projects" (
-	"project_id" uuid PRIMARY KEY NOT NULL,
+CREATE TABLE "citywalk_brand_project_campaigns" (
+	"project_id" uuid NOT NULL,
 	"campaign_id" integer NOT NULL,
-	"city_id" integer NOT NULL
+	"city_id" integer NOT NULL,
+	CONSTRAINT "citywalk_brand_project_campaigns_project_id_campaign_id_pk" PRIMARY KEY("project_id","campaign_id")
+);
+--> statement-breakpoint
+CREATE TABLE "citywalk_brand_projects" (
+	"project_id" uuid NOT NULL,
+	"city_id" integer NOT NULL,
+	CONSTRAINT "citywalk_brand_projects_project_id_city_id_pk" PRIMARY KEY("project_id","city_id")
 );
 --> statement-breakpoint
 CREATE TABLE "citywalk_brand_reviewers" (
@@ -48,12 +55,14 @@ CREATE UNIQUE INDEX "brand_context_owner_unique" ON "brand_contexts" USING btree
 ALTER TABLE "brand_context_audit" ADD CONSTRAINT "brand_audit_revision_fk" FOREIGN KEY ("context_id","revision") REFERENCES "public"."brand_context_revisions"("context_id","revision") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "brand_context_revisions" ADD CONSTRAINT "brand_revision_context_owner_fk" FOREIGN KEY ("context_id","project_id") REFERENCES "public"."brand_contexts"("id","project_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "brand_contexts" ADD CONSTRAINT "brand_contexts_project_id_brand_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."brand_projects"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "citywalk_brand_project_campaigns" ADD CONSTRAINT "citywalk_brand_campaign_scope_fk" FOREIGN KEY ("project_id","city_id") REFERENCES "public"."citywalk_brand_projects"("project_id","city_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "citywalk_brand_project_campaigns" ADD CONSTRAINT "citywalk_brand_campaign_owner_fk" FOREIGN KEY ("campaign_id","city_id") REFERENCES "public"."marketing_campaigns"("id","city_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "citywalk_brand_projects" ADD CONSTRAINT "citywalk_brand_projects_project_id_brand_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."brand_projects"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "citywalk_brand_projects" ADD CONSTRAINT "citywalk_brand_campaign_owner_fk" FOREIGN KEY ("campaign_id","city_id") REFERENCES "public"."marketing_campaigns"("id","city_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "citywalk_brand_projects" ADD CONSTRAINT "citywalk_brand_projects_city_id_cities_id_fk" FOREIGN KEY ("city_id") REFERENCES "public"."cities"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "citywalk_brand_reviewers" ADD CONSTRAINT "citywalk_brand_reviewers_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "brand_audit_actor_idx" ON "brand_context_audit" USING btree ("actor_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "brand_context_project_idx" ON "brand_contexts" USING btree ("project_id");--> statement-breakpoint
-CREATE INDEX "citywalk_brand_campaign_idx" ON "citywalk_brand_projects" USING btree ("campaign_id");--> statement-breakpoint
+CREATE INDEX "citywalk_brand_campaign_idx" ON "citywalk_brand_project_campaigns" USING btree ("campaign_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "citywalk_brand_reviewer_user_unique" ON "citywalk_brand_reviewers" USING btree ("user_id");
 -- Handwritten integrity/retention policy. No changes to generation migration 0024.
 --> statement-breakpoint
@@ -121,19 +130,14 @@ CREATE CONSTRAINT TRIGGER brand_revision_audit_required AFTER INSERT ON brand_co
 --> statement-breakpoint
 CREATE FUNCTION citywalk_brand_binding_guard() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  IF TG_OP = 'UPDATE' THEN
-    RAISE EXCEPTION 'Project scope cannot be reassigned' USING ERRCODE='23514';
+  IF TG_OP = 'UPDATE' OR EXISTS (SELECT 1 FROM brand_projects WHERE id=OLD.project_id) THEN
+    RAISE EXCEPTION 'Durable project scope may only be erased with its project' USING ERRCODE='23514';
   END IF;
-  -- Campaign/city erasure removes this binding, then its entire private project.
-  -- Project erasure itself already cascades here; the second DELETE is a no-op.
-  DELETE FROM brand_projects WHERE id=OLD.project_id;
   RETURN OLD;
 END;
 $$;
 --> statement-breakpoint
-CREATE TRIGGER citywalk_brand_scope_guard BEFORE UPDATE ON citywalk_brand_projects FOR EACH ROW EXECUTE FUNCTION citywalk_brand_binding_guard();
---> statement-breakpoint
-CREATE TRIGGER citywalk_brand_owner_erasure AFTER DELETE ON citywalk_brand_projects FOR EACH ROW EXECUTE FUNCTION citywalk_brand_binding_guard();
+CREATE TRIGGER citywalk_brand_scope_guard BEFORE UPDATE OR DELETE ON citywalk_brand_projects FOR EACH ROW EXECUTE FUNCTION citywalk_brand_binding_guard();
 --> statement-breakpoint
 CREATE FUNCTION brand_history_no_truncate() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN

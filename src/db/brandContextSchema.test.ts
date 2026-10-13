@@ -3,7 +3,7 @@ import { getTableConfig } from "drizzle-orm/pg-core";
 import { describe, expect, it } from "vitest";
 import { brandContextAudit, brandContextRevisions, brandContexts, brandProjects } from "./brandContextSchema";
 
-import { citywalkBrandProjects, citywalkBrandReviewers } from "./citywalkBrandContextSchema";
+import { citywalkBrandProjects, citywalkBrandProjectCampaigns, citywalkBrandReviewers } from "./citywalkBrandContextSchema";
 
 describe("brand context persistence schema", () => {
   it("keeps CITYWALK scope and identity out of generic tables", () => {
@@ -17,7 +17,8 @@ describe("brand context persistence schema", () => {
   it("encodes explicit project purge cascades, version bounds and no account erasure restriction", () => {
     expect(getTableConfig(brandContextRevisions).checks.map(c => c.name)).toContain("brand_revision_shape");
     expect(getTableConfig(brandContextAudit).primaryKeys).toHaveLength(1);
-    expect(getTableConfig(citywalkBrandProjects).foreignKeys.every(f => f.onDelete === "cascade")).toBe(true);
+    expect(getTableConfig(citywalkBrandProjects).foreignKeys.map(f => f.onDelete)).toEqual(["cascade", "restrict"]);
+    expect(getTableConfig(citywalkBrandProjectCampaigns).foreignKeys.every(f => f.onDelete === "cascade")).toBe(true);
     expect(getTableConfig(citywalkBrandReviewers).foreignKeys[0].onDelete).toBe("set null");
   });
 });
