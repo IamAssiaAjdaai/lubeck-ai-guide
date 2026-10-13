@@ -25,6 +25,13 @@
     {"idx":20,"version":"7","when":1791210000000,"tag":"0020_revenuecat_event_ordering","breakpoints":true},
     {"idx":21,"version":"7","when":1791282600000,"tag":"0021_account_erasure_outbox","breakpoints":true},
     {"idx":22,"version":"7","when":1791315000000,"tag":"0022_citywalk_marketing","breakpoints":true},
-    {"idx":23,"version":"7","when":1791513600000,"tag":"0023_marketing_content_media","breakpoints":true}
+    {"idx":23,"version":"7","when":1791513600000,"tag":"0023_marketing_content_media","breakpoints":true},
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791894225938,
+      "tag": "0024_marketing_generation_foundation",
+      "breakpoints": true
+    }
   ]
 }
