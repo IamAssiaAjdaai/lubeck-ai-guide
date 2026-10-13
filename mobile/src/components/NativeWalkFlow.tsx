@@ -1266,7 +1266,7 @@ export function NativeWalkFlow({
                 </View>
               ) : null}
 
-              {!livePresentation ? (
+              {!livePresentation && current ? (
                 <PrimaryButton
                   label={translate(locale, "liveWalk.continueWalk")}
                   disabled={!liveNavigationTarget}
@@ -1587,7 +1587,7 @@ export function NativeWalkFlow({
               {!isLiveActive ? (
                 <PrimaryButton
                   label={t.finish}
-                  tone="secondary"
+                  tone={current ? "secondary" : "primary"}
                   busy={updating}
                   onPress={() => {
                     const next = {
