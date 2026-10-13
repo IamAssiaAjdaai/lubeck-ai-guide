@@ -858,9 +858,18 @@ export function NativeWalkFlow({
   );
   const summary = (r: WalkRoute<PublicPlaceCard>) => (
     <View style={styles.previewSummary}>
-      <AppText variant="label">
-        {duration(r.minutes)} · {distance(r.distance)} · {r.places.length} {t.stops}
-      </AppText>
+      <View style={{ flexDirection: "row", gap: 8 }}>
+        {([
+          { value: duration(r.minutes), label: ({ en: "Duration", de: "Dauer", da: "Varighed", sv: "Tid", nl: "Duur", es: "Duración", ar: "المدة" } as Record<string, string>)[locale] ?? "Duration" },
+          { value: distance(r.distance), label: ({ en: "Distance", de: "Strecke", da: "Afstand", sv: "Sträcka", nl: "Afstand", es: "Distancia", ar: "المسافة" } as Record<string, string>)[locale] ?? "Distance" },
+          { value: String(r.places.length), label: t.stops },
+        ] as const).map((metric) => (
+          <View key={metric.label} style={{ flex: 1, minWidth: 0, alignItems: "center", justifyContent: "center", gap: 4, borderRadius: 12, paddingVertical: 13, paddingHorizontal: 4, backgroundColor: colors.surfaceMuted }}>
+            <AppText variant="label" style={{ color: colors.text }} numberOfLines={1}>{metric.value}</AppText>
+            <AppText variant="caption" style={{ color: colors.textMuted }} numberOfLines={1}>{metric.label}</AppText>
+          </View>
+        ))}
+      </View>
       <AppText variant="caption" style={styles.muted}>
         {translate(locale, "walk.estimateShort")}
         {r.finish ? ` · ${t.returnLeg}` : ""}
@@ -1192,7 +1201,7 @@ export function NativeWalkFlow({
           ) : null}
           {stage === "preview" ? (
             <PrimaryButton
-              label={t.map}
+              label={showMap ? translate(locale, "planner.showLess") : t.map}
               tone="secondary"
               onPress={() => setShowMap((v) => !v)}
               leadingIcon={
@@ -1200,7 +1209,7 @@ export function NativeWalkFlow({
               }
             />
           ) : null}
-          {stage === "active" || showMap ? (
+          {stage === "preview" || stage === "active" ? (
             <NativeCityMap
               citySlug={citySlug}
               places={route.places}
@@ -1208,6 +1217,7 @@ export function NativeWalkFlow({
               routeFinish={journey.finish}
               currentSlug={current?.slug}
               compact={stage === "active"}
+              previewCompact={stage === "preview" && !showMap}
               liveFocus={isLiveActive}
               followUserLocation={stage === "active" && activeMode === "live" && premium.active}
               onLocation={(point) => {
@@ -1230,32 +1240,26 @@ export function NativeWalkFlow({
                 startStatus !== "ready" ? <StatusMessage>{startStatus === "empty" ? t.emptyHelp : t.planContentUnavailable}</StatusMessage> : null}
               <PrimaryButton
                 wrapLabel
+                label={t.startWalk}
+                disabled={startStatus !== "ready"}
+                busy={updating}
+                leadingIcon={<NativeIcon ios="map" android="map" color={colors.surface} />}
+                onPress={() => void start("basic")}
+              />
+              <PrimaryButton
+                wrapLabel
                 label={translate(locale, "liveWalk.turnOn")}
+                tone="secondary"
                 disabled={startStatus !== "ready"}
                 busy={updating}
                 leadingIcon={
                   <NativeIcon
                     ios={premium.active ? "location.fill" : "lock.fill"}
                     android={premium.active ? "near_me" : "lock"}
-                    color={colors.surface}
-                  />
-                }
-                onPress={() => premium.active ? void start("live") : unlockPremium()}
-              />
-              <PrimaryButton
-                wrapLabel
-                label={t.startWalk}
-                tone="secondary"
-                disabled={startStatus !== "ready"}
-                busy={updating}
-                leadingIcon={
-                  <NativeIcon
-                    ios="map"
-                    android="map"
                     color={colors.primary}
                   />
                 }
-                onPress={() => void start("basic")}
+                onPress={() => premium.active ? void start("live") : unlockPremium()}
               />
               {saveFeedback}
               <View style={styles.actionRow}>

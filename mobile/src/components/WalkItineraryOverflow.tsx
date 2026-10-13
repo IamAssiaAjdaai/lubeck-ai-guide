@@ -25,6 +25,7 @@ export function WalkItineraryOverflow({
 }>) {
   const { locale, messages } = useNativeLocale();
   const copy = uxCopy(locale);
+  const actionsLabel = ({ en: "Options for", de: "Optionen für", da: "Muligheder for", sv: "Alternativ för", nl: "Opties voor", es: "Opciones para", ar: "خيارات" } as Record<string, string>)[locale] ?? "Options for";
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -51,7 +52,7 @@ export function WalkItineraryOverflow({
     <>
       <PressableSurface
         accessibilityRole="button"
-        accessibilityLabel={copy.remove + ": " + placeName}
+        accessibilityLabel={actionsLabel + ": " + placeName}
         onPress={() => {
           setError("");
           setOpen(true);
