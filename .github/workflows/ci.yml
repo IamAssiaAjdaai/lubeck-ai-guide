@@ -77,6 +77,9 @@ jobs:
 
       - name: Run lint
         run: npm run lint
+
+      - name: Check standalone Marketing Core types
+        run: npm run typecheck --workspace @marketing/core
       
       - name: Run tests
         run: npm run test:run
