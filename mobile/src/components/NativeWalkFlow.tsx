@@ -1201,7 +1201,7 @@ export function NativeWalkFlow({
           ) : null}
           {stage === "preview" ? (
             <PrimaryButton
-              label={t.map}
+              label={showMap ? translate(locale, "planner.showLess") : t.map}
               tone="secondary"
               onPress={() => setShowMap((v) => !v)}
               leadingIcon={
@@ -1209,7 +1209,7 @@ export function NativeWalkFlow({
               }
             />
           ) : null}
-          {stage === "active" || showMap ? (
+          {stage === "preview" || stage === "active" ? (
             <NativeCityMap
               citySlug={citySlug}
               places={route.places}
@@ -1217,6 +1217,7 @@ export function NativeWalkFlow({
               routeFinish={journey.finish}
               currentSlug={current?.slug}
               compact={stage === "active"}
+              previewCompact={stage === "preview" && !showMap}
               liveFocus={isLiveActive}
               followUserLocation={stage === "active" && activeMode === "live" && premium.active}
               onLocation={(point) => {
