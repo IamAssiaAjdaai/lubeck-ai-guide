@@ -35,10 +35,10 @@ describe("text-driven layout budgets (not native text measurements)", () => {
       "expanded ? styles.metricDividerExpanded : styles.metricDivider",
     );
     expect(v2PresentationSource).toContain(
-      "numberOfLines={compact && !expanded ? 1 : undefined}",
+      "numberOfLines={compact && !expanded ? 2 : undefined}",
     );
     expect(v2PresentationSource.match(
-      /numberOfLines=\{compact && !expanded \? 1 : undefined\}/g,
+      /numberOfLines=\{compact && !expanded \? 2 : undefined\}/g,
     )?.length).toBeGreaterThanOrEqual(2);
   });
 });
