@@ -217,6 +217,7 @@ export function NativeWalkFlow({
   const [now, setNow] = useState(() => Date.now()),
     [generatedAt, setGeneratedAt] = useState(() => Date.now());
   const [showMap, setShowMap] = useState(false);
+  const [showActiveExtras, setShowActiveExtras] = useState(false);
   const [showMoreInterests, setShowMoreInterests] = useState(false);
   const [buildError, setBuildError] = useState<"empty" | "error">();
   const [buildStage, setBuildStage] = useState<WalkBuildStage>("matching");
@@ -1321,6 +1322,14 @@ export function NativeWalkFlow({
               }
             />
           ) : null}
+          {stage === "active" && !isLiveActive ? (
+            <PrimaryButton
+              label={showMap ? translate(locale, "planner.showLess") : t.map}
+              tone="secondary"
+              onPress={() => setShowMap((value) => !value)}
+              leadingIcon={<NativeIcon ios="map" android="map" color={colors.primary} />}
+            />
+          ) : null}
           {stage === "preview" || stage === "active" ? (
             <NativeCityMap
               citySlug={citySlug}
@@ -1329,7 +1338,7 @@ export function NativeWalkFlow({
               routeFinish={journey.finish}
               currentSlug={current?.slug}
               compact={stage === "active" && isLiveActive}
-              previewCompact={(stage === "preview" && !showMap) || (stage === "active" && !isLiveActive)}
+              previewCompact={(stage === "preview" || (stage === "active" && !isLiveActive)) && !showMap}
               liveFocus={isLiveActive}
               followUserLocation={stage === "active" && activeMode === "live" && premium.active}
               onLocation={(point) => {
@@ -1396,6 +1405,20 @@ export function NativeWalkFlow({
               {livePresentation ? (
                 <NativeLiveWalkCard presentation={livePresentation} />
               ) : null}
+              {!isLiveActive ? (
+                <PressableSurface
+                  accessibilityRole="button"
+                  accessibilityLabel={t.tripControls}
+                  accessibilityState={{ expanded: showActiveExtras }}
+                  onPress={() => setShowActiveExtras((value) => !value)}
+                  style={styles.liveItineraryToggle}
+                >
+                  <AppText variant="label" style={styles.liveItineraryLabel}>{t.tripControls} · {translate(locale, "liveWalk.turnOn")}</AppText>
+                  <AppText style={styles.liveItineraryIndicator}>{showActiveExtras ? "−" : "+"}</AppText>
+                </PressableSurface>
+              ) : null}
+              {isLiveActive || showActiveExtras ? (
+                <>
               {activeMode === "basic" ? (
                 <PrimaryButton
                   label={translate(locale, "liveWalk.turnOn")}
@@ -1489,6 +1512,8 @@ export function NativeWalkFlow({
                 </>
               ) : null}
 
+                </>
+              ) : null}
               {route.places.length ? (
                 isLiveActive ? (
                   <View style={styles.liveItinerary}>
