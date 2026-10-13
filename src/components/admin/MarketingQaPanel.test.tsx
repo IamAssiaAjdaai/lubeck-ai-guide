@@ -115,7 +115,11 @@ describe("Marketing QA CMS results panel", () => {
     ]} />);
     await user.click(screen.getByRole("button", { name: "Run QA" }));
     expect(await screen.findByText(/claimed opening hours/)).toBeTruthy();
-    await user.selectOptions(screen.getByRole("combobox", { name: /Verified place context/ }), "21");
+    const selector = screen.getByRole("combobox", { name: /Verified place context/ }) as HTMLSelectElement;
+    // Report rendering can precede transition completion; disabled selects ignore user input.
+    await waitFor(() => expect(selector.disabled).toBe(false));
+    await user.selectOptions(selector, "21");
+    expect(selector.value).toBe("21");
     expect(screen.queryByText(/claimed opening hours/)).toBeNull();
     expect(screen.getByRole("button", { name: "Run QA" })).toBeTruthy();
   });
