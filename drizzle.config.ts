@@ -23,6 +23,8 @@ export default defineConfig({
     "./src/db/rateLimitSchema.ts",
     "./src/db/marketingSchema.ts",
     "./src/db/marketingGenerationSchema.ts",
+    "./src/db/brandContextSchema.ts",
+    "./src/db/citywalkBrandContextSchema.ts",
   ],
   out: "./drizzle",
   ...(databaseUrl

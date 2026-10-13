@@ -11,6 +11,10 @@ import * as rateLimitSchema from "@/db/rateLimitSchema";
 import * as marketingSchema from "@/db/marketingSchema";
 import * as marketingGenerationSchema from "@/db/marketingGenerationSchema";
 
+import * as brandContextSchema from "@/db/brandContextSchema";
+
+import * as citywalkBrandContextSchema from "@/db/citywalkBrandContextSchema";
+
 export const databaseSchema = {
   ...citywalkSchema,
   ...authSchema,
@@ -19,6 +23,8 @@ export const databaseSchema = {
   ...rateLimitSchema,
   ...marketingSchema,
   ...marketingGenerationSchema,
+  ...brandContextSchema,
+  ...citywalkBrandContextSchema,
 };
 
 function createPoolDatabase(databasePool: Pool) {
