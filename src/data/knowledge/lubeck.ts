@@ -1,4 +1,5 @@
 import {
+  getCityKnowledgeSources,
   getPlaceSources,
   type PlaceSource,
 } from "@/data/placeSources";
@@ -31,21 +32,27 @@ function requireSource(
   return source;
 }
 
-// City-wide historical context is curated separately from place facts.
-// It uses independently verified reference sources, not model memory.
-const hanseaticHistorySource = {
-  label: "The Hansa — The medieval Hanseatic League",
-  url: "https://www.hanse.org/en/the-medieval-hanseatic-league",
-  type: "official" as const,
-  verifiedAt: "2026-10-12",
-};
+// City-wide history is approved against its own registry. These
+// references are not registered as evidence about any individual stop.
+function requireCitySource(citySlug: string, url: string): PlaceSource {
+  const source = getCityKnowledgeSources(citySlug).find(
+    (candidate) => candidate.type === "official" && candidate.url === url,
+  );
+  if (!source) {
+    throw new Error(`Missing verified city source ${url} for ${citySlug}`);
+  }
+  return source;
+}
 
-const hanseaticLubeckSource = {
-  label: "European Hansemuseum — The Hanse",
-  url: "https://www.hansemuseum.eu/en/",
-  type: "official" as const,
-  verifiedAt: "2026-10-12",
-};
+const hanseaticHistorySource = requireCitySource(
+  "lubeck",
+  "https://www.hanse.org/en/the-medieval-hanseatic-league",
+);
+
+const hanseaticLubeckSource = requireCitySource(
+  "lubeck",
+  "https://www.hansemuseum.eu/en/",
+);
 
 const holstentorSource =
   requireSource(
