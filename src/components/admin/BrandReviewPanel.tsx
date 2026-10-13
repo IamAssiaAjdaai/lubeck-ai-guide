@@ -1,0 +1,23 @@
+"use client";
+import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import type { BrandContext } from "@marketing/core";
+import type { BrandAction, BrandActionResult } from "@/lib/marketing/brandContext/ui";
+import { brandInputClass, BrandActionFeedback } from "./BrandBriefForm";
+
+export function BrandReviewPanel({ context, action }: { context: Pick<BrandContext, "projectId" | "contextId" | "revision" | "facts">; action: BrandAction }) {
+  const router = useRouter();
+  const [selected, setSelected] = useState<string[]>([]), [explicit, setExplicit] = useState(false), [busy, setBusy] = useState(false), [result, setResult] = useState<BrandActionResult | null>(null);
+  async function submit(e: FormEvent) {
+    e.preventDefault(); if (!explicit || !selected.length) return; setBusy(true); setResult(null);
+    try { const reply = await action({ projectId: context.projectId, contextId: context.contextId, command: { expectedRevision: context.revision, factIds: selected } }); setResult(reply); if (reply.ok) { setSelected([]); setExplicit(false); router.refresh(); } }
+    catch { setResult({ ok: false, code: "UNAVAILABLE", message: "Verbindung unterbrochen. Bitte aktuellen Stand prüfen, bevor Sie erneut bestätigen." }); }
+    finally { setBusy(false); }
+  }
+  return <form onSubmit={submit} className="surface-card mt-6 space-y-4 p-5" aria-label="Fakten menschlich bestätigen"><h2 className="text-xl font-bold">Faktenprüfung · Revision {context.revision}</h2><p className="text-sm">Quellen und Aussagen oben prüfen. Eine menschliche Bestätigung ist keine unabhängige Verifizierung und keine Veröffentlichung.</p><BrandActionFeedback result={result} /><fieldset disabled={busy} className="min-w-0 space-y-3"><legend className="font-semibold">Aussagen zur Bestätigung auswählen</legend>{context.facts.filter(f => !f.confirmation).map(f => <label key={f.id} className="flex min-h-11 items-start gap-3 rounded-xl border border-border p-3 text-sm"><input type="checkbox" className="mt-1 size-5 shrink-0" checked={selected.includes(f.id)} onChange={e => setSelected(s => e.target.checked ? [...s, f.id] : s.filter(id => id !== f.id))} /><span className="break-words">{f.statement}</span></label>)}<label className="flex items-start gap-3 text-sm"><input type="checkbox" className="size-5 shrink-0" checked={explicit} onChange={e => setExplicit(e.target.checked)} /><span>Ich habe die ausgewählten Aussagen und ihre Quellen geprüft und bestätige sie ausdrücklich als Markenangaben.</span></label><button className="button-primary min-h-11 px-5" disabled={!explicit || !selected.length} type="submit">{busy ? "Wird bestätigt …" : "Ausgewählte Fakten bestätigen"}</button></fieldset>{result && !result.ok && result.code === "STALE_REVISION" ? <button className="button-secondary min-h-11 px-4" type="button" onClick={() => window.location.reload()}>Aktuelle Revision neu laden</button> : null}</form>;
+}
+export function BrandCampaignAssociation({ projectId, contextId, campaigns, action }: { projectId: string; contextId: string; campaigns: { id: number; name: string; cityId: number }[]; action: BrandAction }) {
+  const router = useRouter(); const [id, setId] = useState(""), [busy, setBusy] = useState(false), [result, setResult] = useState<BrandActionResult | null>(null);
+  async function submit(e: FormEvent) { e.preventDefault(); setBusy(true); try { const reply = await action({ projectId, contextId, campaignId: Number(id) }); setResult(reply); if (reply.ok) { setId(""); router.refresh(); } } catch { setResult({ ok: false, code: "UNAVAILABLE", message: "Verbindung unterbrochen. Bitte aktuellen Stand prüfen." }); } finally { setBusy(false); } }
+  return <form aria-label="Kampagne zuordnen" onSubmit={submit} className="surface-card mt-6 space-y-4 p-5"><h2 className="text-xl font-bold">Kampagne zuordnen</h2><p className="text-sm">Alle bisherigen Stadtzugriffe bleiben erhalten. Eine weitere Stadt erweitert die Zugriffsanforderungen für die gesamte Marke. Kampagnenlöschung entfernt nur die Zuordnung.</p><BrandActionFeedback result={result} /><fieldset disabled={busy} className="min-w-0 space-y-4"><label className="grid gap-2 text-sm font-semibold">Weitere bestehende Kampagne<select className={brandInputClass} required value={id} onChange={e => setId(e.target.value)}><option value="">Bitte auswählen</option>{campaigns.map(c => <option key={c.id} value={c.id}>{c.name} · Stadt {c.cityId}</option>)}</select></label><button className="button-secondary min-h-11 px-5" type="submit">{busy ? "Wird zugeordnet …" : "Kampagne zuordnen"}</button></fieldset></form>;
+}
