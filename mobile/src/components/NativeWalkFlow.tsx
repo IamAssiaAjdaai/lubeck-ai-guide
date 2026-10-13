@@ -1399,7 +1399,7 @@ export function NativeWalkFlow({
                             String(journey.visited.length + journey.remaining.length),
                           )}
                       </AppText>
-                      <AppText variant="label" numberOfLines={1}>
+                      <AppText variant="label" numberOfLines={2}>
                         {nativePlaceName(citySlug, current.slug, current.content.name, locale)}
                       </AppText>
                     </View>
@@ -1570,6 +1570,7 @@ export function NativeWalkFlow({
               {!isLiveActive ? (
                 <PrimaryButton
                   label={t.finish}
+                  tone="secondary"
                   busy={updating}
                   onPress={() => {
                     const next = {
