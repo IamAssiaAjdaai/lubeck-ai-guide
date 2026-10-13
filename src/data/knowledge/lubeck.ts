@@ -1,4 +1,5 @@
 import {
+  getCityKnowledgeSources,
   getPlaceSources,
   type PlaceSource,
 } from "@/data/placeSources";
@@ -30,6 +31,28 @@ function requireSource(
 
   return source;
 }
+
+// City-wide history is approved against its own registry. These
+// references are not registered as evidence about any individual stop.
+function requireCitySource(citySlug: string, url: string): PlaceSource {
+  const source = getCityKnowledgeSources(citySlug).find(
+    (candidate) => candidate.type === "official" && candidate.url === url,
+  );
+  if (!source) {
+    throw new Error(`Missing verified city source ${url} for ${citySlug}`);
+  }
+  return source;
+}
+
+const hanseaticHistorySource = requireCitySource(
+  "lubeck",
+  "https://www.hanse.org/en/the-medieval-hanseatic-league",
+);
+
+const hanseaticLubeckSource = requireCitySource(
+  "lubeck",
+  "https://www.hansemuseum.eu/en/",
+);
 
 const holstentorSource =
   requireSource(
@@ -64,6 +87,29 @@ const buddenbrookhausSource =
 
 export const lubeckKnowledgeChunks =
   [
+    {
+      id: "lubeck-hanseatic-network-context",
+      citySlug: "lubeck",
+      // Reserved scope: not a visitor-navigable place or a claim about a stop.
+      placeSlug: "__city_context__",
+      locale: "en",
+      text:
+        "From the 12th century onward, merchant groups in northern Europe developed into the Hanseatic League, a network of trading towns. The merchants and cities cooperated to protect their shared commercial interests. The network shaped trade and politics around the North and Baltic Seas for centuries before losing influence in the mid-17th century.",
+      topics: ["hanseatic", "hanseatic-league", "hanse", "medieval", "merchant", "trade"],
+      priority: 95,
+      source: hanseaticHistorySource,
+    },
+    {
+      id: "lubeck-hanseatic-city-context",
+      citySlug: "lubeck",
+      placeSlug: "__city_context__",
+      locale: "en",
+      text:
+        "Lübeck became one of the most important trading cities of the Hanseatic League. Its strategic position in the Baltic Sea region helped its development as a major trading partner of the Hanseatic network.",
+      topics: ["hanseatic", "lubeck", "hansa", "trade", "merchants"],
+      priority: 90,
+      source: hanseaticLubeckSource,
+    },
     {
       id: "holstentor-history",
       citySlug: "lubeck",

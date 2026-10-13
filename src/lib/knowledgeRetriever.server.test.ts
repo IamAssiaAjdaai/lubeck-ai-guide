@@ -4,7 +4,7 @@ import { retrieveVerifiedKnowledge } from "@/lib/knowledgeRetriever.server";
 
 import { lubeckKnowledgeChunks } from "@/data/knowledge/lubeck";
 
-import { getPlaceSources } from "@/data/placeSources";
+import { getCityKnowledgeSources, getPlaceSources } from "@/data/placeSources";
 
 describe("retrieveVerifiedKnowledge", () => {
   it("retrieves relevant knowledge for the current place", () => {
@@ -125,7 +125,14 @@ describe("retrieveVerifiedKnowledge", () => {
     for (const chunk of lubeckKnowledgeChunks) {
       expect(chunk.source.type).toBe("official");
 
-      expect(getPlaceSources(chunk.placeSlug)).toContainEqual(chunk.source);
+      const approved = chunk.placeSlug === "__city_context__"
+        ? getCityKnowledgeSources(chunk.citySlug)
+        : getPlaceSources(chunk.placeSlug);
+      expect(approved).toContainEqual(chunk.source);
+
+      if (chunk.placeSlug === "__city_context__") {
+        expect(getPlaceSources(chunk.placeSlug)).toEqual([]);
+      }
     }
   });
 

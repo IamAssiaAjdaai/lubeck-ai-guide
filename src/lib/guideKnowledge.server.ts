@@ -5,7 +5,31 @@ import type { VerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 
 export const GUIDE_KNOWLEDGE_SOURCE_LOCALE = "en" as const;
 
-export type GuideKnowledgeRole = "current" | "visited";
+/**
+ * City-wide background should be retrieved for the historical concept
+ * asked about, never because a generic pronoun appears in both the
+ * question and a city reference. Exact topic matching is deliberately
+ * conservative; the place-level retriever keeps its existing fallback.
+ */
+function matchesCityBackgroundTopic(
+  question: string,
+  chunk: KnowledgeChunk,
+  citySlug: string,
+): boolean {
+  const words = (text: string) =>
+    text.normalize("NFKD").toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
+  const asked = new Set(words(question));
+  // City names and broad category tags alone do not establish that a
+  // city-wide source is relevant to the visitor's specific question.
+  const generic = new Set([citySlug.toLowerCase(), "city", "history", "overview", "league"]);
+  return chunk.topics.some((topic) =>
+    words(topic).some((word) =>
+      word.length >= 4 && !generic.has(word) && asked.has(word)
+    )
+  );
+}
+
+export type GuideKnowledgeRole = "current" | "visited" | "city";
 
 export type GuideKnowledgeItem = Readonly<{
   role: GuideKnowledgeRole;
@@ -279,5 +303,34 @@ export async function retrieveGuideKnowledge({
     })),
   );
 
-  return [...currentKnowledge, ...visitedKnowledge];
+  // City-level historical definitions may help visitors make sense of a
+  // current stop. Unlike visited-stop context, they are never evidence that
+  // any particular place has a fact or history of its own.
+  // Require positive lexical relevance: retriever's generic top-priority
+  // fallback must NOT inject city history into unrelated questions.
+  const cityScope = "__city_context__";
+  const cityChunks = await provider.listVerifiedChunks({
+    citySlug,
+    placeSlug: cityScope,
+    locale: knowledgeLocale,
+  });
+  const cityBackground = retrieveVerifiedKnowledge({
+    citySlug,
+    placeSlug: cityScope,
+    locale: knowledgeLocale,
+    question,
+    limit: 2,
+  }, cityChunks)
+    .filter((retrieved) =>
+      retrieved.score > 0 &&
+      matchesCityBackgroundTopic(question, retrieved.chunk, citySlug)
+    )
+    .map((retrieved) => ({
+      role: "city" as const,
+      citySlug,
+      placeSlug: cityScope,
+      retrieved,
+    }));
+
+  return [...currentKnowledge, ...cityBackground, ...visitedKnowledge];
 }

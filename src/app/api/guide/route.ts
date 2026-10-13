@@ -18,6 +18,7 @@ import {
   retrieveGuideKnowledge,
 } from "@/lib/guideKnowledge.server";
 import { buildGuideSystemPrompt } from "@/lib/guidePrompt.server";
+import { hasUnsupportedYear } from "@/lib/guideGroundingGuard.server";
 import { getTranslations, isLocale } from "@/lib/i18n";
 import { aiGuideRateLimit } from "@/lib/rateLimit";
 import { enforceGuideDailyAllowance } from "@/lib/guideAllowance.server";
@@ -264,7 +265,7 @@ export async function POST(request: Request) {
         parsedAnswer &&
         (
           parsedAnswer.groundingStatus === "insufficient_evidence" ||
-          parsedAnswer.usedChunkIds.length > 0
+          (parsedAnswer.usedChunkIds.length > 0 && !hasUnsupportedYear(parsedAnswer, knowledge))
         )
       ) {
         guideAnswer = parsedAnswer;
