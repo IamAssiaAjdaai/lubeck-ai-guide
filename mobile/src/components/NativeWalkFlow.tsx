@@ -1405,7 +1405,7 @@ export function NativeWalkFlow({
               {livePresentation ? (
                 <NativeLiveWalkCard presentation={livePresentation} />
               ) : null}
-              {!isLiveActive ? (
+              {!isLiveActive && !premium.active ? (
                 <PressableSurface
                   accessibilityRole="button"
                   accessibilityLabel={t.tripControls}
@@ -1417,7 +1417,7 @@ export function NativeWalkFlow({
                   <AppText style={styles.liveItineraryIndicator}>{showActiveExtras ? "−" : "+"}</AppText>
                 </PressableSurface>
               ) : null}
-              {isLiveActive || showActiveExtras ? (
+              {isLiveActive || premium.active || showActiveExtras ? (
                 <>
               {activeMode === "basic" ? (
                 <PrimaryButton
