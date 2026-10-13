@@ -1474,6 +1474,7 @@ export function NativeWalkFlow({
                       style={styles.flex}
                       label={t.visited}
                       busy={updating}
+                      leadingIcon={<NativeIcon ios="checkmark.circle" android="check_circle" color={colors.surface} />}
                       onPress={() =>
                         void update(advanceWalk(journey, current, true))
                       }
@@ -1482,6 +1483,8 @@ export function NativeWalkFlow({
                       style={styles.flex}
                       label={t.skip}
                       tone="secondary"
+                      disabled={updating}
+                      leadingIcon={<NativeIcon ios="forward.end" android="skip_next" color={colors.primary} />}
                       onPress={() => {
                         setProposalKind("adaptation");
                         setProposed(
