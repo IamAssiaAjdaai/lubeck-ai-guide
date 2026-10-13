@@ -166,7 +166,7 @@ export function V2Itinerary({
               </AppText>
               <AppText
                 variant="caption"
-                numberOfLines={compact && !expanded ? 1 : undefined}
+                numberOfLines={compact && !expanded ? 2 : undefined}
                 style={styles.muted}
               >
                 {t.minutes.replace("{minutes}", String(place.durationMinutes))}{" "}
