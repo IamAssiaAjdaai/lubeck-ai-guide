@@ -8,7 +8,7 @@ import { storeReview } from "../lib/storeReview";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { colors, spacing } from "../design/tokens";
 import { WalkChoices } from "./WalkControls";
-import { AppText, Card, PrimaryButton } from "./ui";
+import { AppText, Card, PressableSurface, PrimaryButton } from "./ui";
 
 type FeedbackTag = "route" | "places" | "audio" | "hidden-gems";
 
@@ -59,19 +59,26 @@ export function PublicStoreReview(props: {
   return (
     <>
       <View style={styles.feedback}>
-        <WalkChoices
-          label={t(locale, "complete.ratingQuestion")}
-          compact
-          options={[1, 2, 3, 4, 5].map((value) => ({
-            value: String(value),
-            label: `${value} ★`,
-          }))}
-          selected={rating}
-          onSelect={(value) => {
-            setRating([value]);
-            void persistFeedback("rating", value);
-          }}
-        />
+        <AppText variant="heading">{t(locale, "complete.ratingQuestion")}</AppText>
+        <View style={styles.ratingRow}>
+          {[1, 2, 3, 4, 5].map((value) => (
+            <PressableSurface
+              key={value}
+              accessibilityRole="radio"
+              accessibilityLabel={`${value} / 5`}
+              accessibilityState={{ checked: rating[0] === String(value) }}
+              onPress={() => {
+                setRating([String(value)]);
+                void persistFeedback("rating", String(value));
+              }}
+              style={styles.ratingStar}
+            >
+              <AppText style={{ color: rating.length && Number(rating[0]) >= value ? colors.primary : colors.textMuted, fontSize: 28 }}>
+                {rating.length && Number(rating[0]) >= value ? "★" : "☆"}
+              </AppText>
+            </PressableSurface>
+          ))}
+        </View>
         <WalkChoices
           label=""
           multiple
@@ -130,4 +137,6 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   muted: { color: colors.textMuted },
+  ratingRow: { flexDirection: "row", flexWrap: "nowrap", gap: spacing.sm },
+  ratingStar: { flex: 1, minHeight: 48, alignItems: "center", justifyContent: "center" },
 });
