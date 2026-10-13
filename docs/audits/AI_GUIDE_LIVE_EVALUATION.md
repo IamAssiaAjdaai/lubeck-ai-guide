@@ -101,9 +101,25 @@ After this second observation, the prompt gained a conditional, end-of-context
 reminder that identifies the actual retrieved city-background chunk when it
 explicitly mentions the current city. The reminder asks for one verified city
 connection in concept answers and instructs the model not to cite that chunk
-unless the connection really appears in the final answer. The change is
-**not yet verified by a subsequent live model run**. Do not label the
-connection complete on the basis of prompt tests or source counts alone.
+unless the connection really appears in the final answer.
+
+A third opt-in local live run for `en-hanseatic-era` returned HTTP 200 in
+952 ms with two sources. The captured answer explained the network of northern
+European trading towns and its commercial interests, then said Lübeck became
+one of its most important trading cities because of its strategic position in
+the Baltic Sea region. Human review compared each claim with the actual
+official sources:
+- [THE HANSA](https://www.hanse.org/en/the-medieval-hanseatic-league)
+  supports the trading-network explanation;
+- [European Hansemuseum](https://www.hansemuseum.eu/en/)
+  explicitly supports the city-specific role and Baltic location.
+
+**Review verdict for this one synthetic fixture: `supported`**; the answer
+uses both sources for substantive claims and makes the relevant city
+connection. This documents reviewer assessment of the user-shared response,
+not an automatically generated accuracy metric or evidence of live-user
+reliability. The local temporary `manual-review.json` still needs its
+`humanVerdict` updated and scored separately if metrics are required.
 
 ## Before you run
 
