@@ -533,6 +533,7 @@ export const mediaAssetsTable = pgTable(
     ...contentTimestamps(),
   },
   (table) => [
+    uniqueIndex("media_assets_id_city_unique").on(table.id, table.cityId),
     index("media_assets_city_id_idx").on(table.cityId),
     index("media_assets_kind_status_idx").on(
       table.kind,

@@ -66,6 +66,7 @@ export const marketingCampaignsTable = pgTable(
     ...marketingTimestamps(),
   },
   (table) => [
+    uniqueIndex("marketing_campaigns_id_city_unique").on(table.id, table.cityId),
     uniqueIndex("marketing_campaigns_city_slug_unique").on(
       table.cityId,
       table.slug,
@@ -104,6 +105,11 @@ export const marketingPagesTable = pgTable(
     ...marketingTimestamps(),
   },
   (table) => [
+    uniqueIndex("marketing_pages_generation_owner_unique").on(
+      table.id,
+      table.campaignId,
+      table.cityId,
+    ),
     uniqueIndex("marketing_pages_path_unique").on(table.path),
     uniqueIndex("marketing_pages_city_kind_slug_unique").on(
       table.cityId,
@@ -146,6 +152,11 @@ export const marketingContentTable = pgTable(
     ...marketingTimestamps(),
   },
   (table) => [
+    uniqueIndex("marketing_content_generation_owner_unique").on(
+      table.id,
+      table.campaignId,
+      table.cityId,
+    ),
     uniqueIndex("marketing_content_code_unique").on(table.contentCode),
     index("marketing_content_city_status_idx").on(table.cityId, table.status),
     index("marketing_content_campaign_idx").on(table.campaignId),

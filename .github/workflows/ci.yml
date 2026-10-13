@@ -124,6 +124,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify Marketing generation migration upgrade
+        run: |
+          psql "$DATABASE_URL" -c 'CREATE DATABASE citywalk_marketing_migration_test'
+          DATABASE_URL=postgresql://citywalk:citywalk@localhost:5432/citywalk_marketing_migration_test MARKETING_MIGRATION_INTEGRATION=1 npm run test:run -- src/db/marketingGenerationMigration.integration.test.ts
+
       - name: Apply database migration
         run: npm run db:migrate
 
