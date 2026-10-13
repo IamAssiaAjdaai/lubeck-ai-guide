@@ -254,3 +254,27 @@ export const lubeckPlaceSources = {
 export function getPlaceSources(slug: string): readonly PlaceSource[] {
   return (lubeckPlaceSources as PlaceSourceRegistry)[slug] ?? [];
 }
+
+/**
+ * Verified historical context for the CITY, not a navigable place.
+ * Keep this separate from place sources so city facts cannot be mistaken
+ * for approved evidence about a landmark.
+ */
+export const cityKnowledgeSources = {
+  lubeck: [
+    official(
+      "The Hansa — The medieval Hanseatic League",
+      "https://www.hanse.org/en/the-medieval-hanseatic-league",
+      "2026-10-12",
+    ),
+    official(
+      "European Hansemuseum — The Hanse",
+      "https://www.hansemuseum.eu/en/",
+      "2026-10-12",
+    ),
+  ],
+} as const satisfies Readonly<Record<"lubeck", readonly PlaceSource[]>>;
+
+export function getCityKnowledgeSources(citySlug: string): readonly PlaceSource[] {
+  return (cityKnowledgeSources as PlaceSourceRegistry)[citySlug] ?? [];
+}
