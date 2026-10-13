@@ -1696,6 +1696,8 @@ export function NativeWalkFlow({
           <PrimaryButton
             wrapLabel
             label={t.share}
+            tone="secondary"
+            leadingIcon={<NativeIcon ios="square.and.arrow.up" android="share" color={colors.primary} />}
             onPress={() => {
               void Share.share({
                 message: `${t.finished.replace("{city}", nativeCityName(citySlug, cityName, locale))}\n${named(
@@ -1707,7 +1709,10 @@ export function NativeWalkFlow({
             }}
           />
           {journey.visited.length ? (
-            itinerary(named(journey.visited), true, false, true)
+            <View style={styles.section}>
+              <SectionTitle>{({ en: "Places visited", de: "Besuchte Orte", da: "Besøgte steder", sv: "Besökta platser", nl: "Bezochte plekken", es: "Lugares visitados", ar: "الأماكن التي زرتها" } as Record<string, string>)[locale] ?? "Places visited"}</SectionTitle>
+              <V2Itinerary places={named(journey.visited)} citySlug={citySlug} compact interactive />
+            </View>
           ) : (
             <AppText>{t.noVisited}</AppText>
           )}
@@ -1717,7 +1722,7 @@ export function NativeWalkFlow({
             label={saveLabel}
             disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
             busy={saving}
-            tone="secondary"
+            tone={savedState === "saved" ? "secondary" : "primary"}
             onPress={() => void save()}
           />
           <PrimaryButton
