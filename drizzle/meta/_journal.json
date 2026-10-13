@@ -32,6 +32,13 @@
       "when": 1791894225938,
       "tag": "0024_marketing_generation_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1791916490118,
+      "tag": "0025_brand_context_persistence",
+      "breakpoints": true
     }
   ]
 }

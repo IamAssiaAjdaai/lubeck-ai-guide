@@ -129,6 +129,9 @@ jobs:
           psql "$DATABASE_URL" -c 'CREATE DATABASE citywalk_marketing_migration_test'
           DATABASE_URL=postgresql://citywalk:citywalk@localhost:5432/citywalk_marketing_migration_test MARKETING_MIGRATION_INTEGRATION=1 npm run test:run -- src/db/marketingGenerationMigration.integration.test.ts
 
+      - name: Verify Brand Context migration upgrade
+        run: BRAND_CONTEXT_MIGRATION_INTEGRATION=1 npm run test:run -- src/db/brandContextMigration.integration.test.ts
+
       - name: Apply database migration
         run: npm run db:migrate
 
@@ -158,6 +161,9 @@ jobs:
 
       - name: Verify CMS import idempotency
         run: npm run cms:import-lubeck
+
+      - name: Run Brand Context persistence integration tests
+        run: npm run brand-context:test:integration
 
       - name: Run CMS content integration tests
         run: npm run cms:test:integration
