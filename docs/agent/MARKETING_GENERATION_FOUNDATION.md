@@ -66,6 +66,38 @@ traceability. Campaign/city deletion and requester account erasure can therefore
 be blocked once snapshots/jobs exist. Any future retention/erasure policy requires
 an explicit reviewed migration; this phase adds no deletion bypass.
 
+### Retention review after integration with Marketing Core
+
+There is no expiry, purge, anonymization or supported correction path for snapshot
+rows. Even deleting outputs and jobs does not make a snapshot deletable: its
+DELETE/UPDATE triggers still reject the operation. Snapshot creator user FKs and
+job requester user FKs use RESTRICT; account deletion cannot erase those users
+while the rows remain. Existing account erasure runs in a transaction, so a FK
+failure rolls back the deletion and external-erasure intents together. It does
+not resolve retention or provide a generation-specific eligibility message.
+Future staff-only APIs must enforce authorization; these user FKs accept any
+existing user and do not by themselves prevent traveler accounts being linked.
+
+Output FKs also restrict deletion of linked jobs, CMS content/pages and media.
+Jobs/outputs are not immutable: authorized future code could remove outputs or
+clear optional CMS/media associations, but Phase 1 supplies no retention service
+or audit policy for doing so. Historical fact/reference/media JSON is not a live
+foreign-key graph; deleting or changing a live source does not remove its copied
+snapshot data. Rights withdrawal, source corrections and personal-data erasure
+therefore require an explicit policy and reviewed migration before execution or
+external customer use. Do not disable triggers or introduce cascades as an
+operational workaround. Backups retain historical data too; their retention must
+be included in that policy.
+
+Marketing Core remains a separate pure Zod/TypeScript domain package with no
+Drizzle, CITYWALK schema, city identifiers or auth imports. Its human-confirmed
+Brand Context facts do not automatically qualify as verified CITYWALK source
+facts. Generation snapshots still require their existing PostgreSQL source/media
+validation. No Brand Context persistence, conversion or generation integration is
+added here; any future bridge belongs to a CITYWALK adapter with explicit trust
+validation. The independent core and Generation schema have no import dependency
+on one another, and their existing boundary/schema/integration tests run together.
+
 No server authorization surface is added. Future APIs must derive staff identity
 and city capabilities server-side; the user FK alone does not prove staff access.
 Approval updates require future human-review authorization. No generated content
