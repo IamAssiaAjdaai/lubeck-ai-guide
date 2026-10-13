@@ -1165,245 +1165,10 @@ export function NativeWalkFlow({
               ) : null}
             </View>
           ) : null}
-          {stage === "preview" ? summary(route) : null}
-          {stage === "preview" ? <View
-            style={[
-              styles.returnCard,
-              deadline && eta > deadline ? styles.lateCard : undefined,
-            ]}
-          >
-            <NativeIcon
-              ios="clock"
-              android="schedule"
-              color={
-                deadline && eta > deadline ? colors.warning : colors.success
-              }
-              size={20}
-            />
-            <View style={styles.flex}>
-              <AppText variant="label">
-                {t.eta.replace("{time}", clock(eta))}
-              </AppText>
-              {deadline ? (
-                <AppText variant="metadata" style={styles.muted}>
-                  {t.buffer
-                    .replace("{time}", clock(deadline))
-                    .replace(
-                      "{minutes}",
-                      String(Math.floor((deadline - eta) / 60000)),
-                    )}
-                </AppText>
-              ) : null}
-            </View>
-          </View> : null}
-          {stage === "preview" && deadline && eta > deadline ? (
-            <StatusMessage>{t.late}</StatusMessage>
-          ) : null}
-          {stage === "preview" ? (
-            <PrimaryButton
-              label={showMap ? translate(locale, "planner.showLess") : t.map}
-              tone="secondary"
-              onPress={() => setShowMap((v) => !v)}
-              leadingIcon={
-                <NativeIcon ios="map" android="map" color={colors.primary} />
-              }
-            />
-          ) : null}
-          {stage === "preview" || stage === "active" ? (
-            <NativeCityMap
-              citySlug={citySlug}
-              places={route.places}
-              routeStart={journey.position}
-              routeFinish={journey.finish}
-              currentSlug={current?.slug}
-              compact={stage === "active"}
-              previewCompact={stage === "preview" && !showMap}
-              liveFocus={isLiveActive}
-              followUserLocation={stage === "active" && activeMode === "live" && premium.active}
-              onLocation={(point) => {
-                if (stage === "active" && activeMode === "live" && premium.active) {
-                  setForegroundPoint(point);
-                  setJourney((currentJourney) =>
-                    currentJourney?.id === journey.id
-                      ? { ...currentJourney, position: point }
-                      : currentJourney,
-                  );
-                  void publishForegroundLiveWalkLocation(point);
-                }
-              }}
-            />
-          ) : null}
-          {stage === "preview" ? (
+          {stage === "active" ? (
             <>
-              {itinerary(route.places, true, true, true)}
-              {startStatus === "loading" ? <CitywalkLoading compact label={discoveryCopy(locale).loadingWalkContent} /> :
-                startStatus !== "ready" ? <StatusMessage>{startStatus === "empty" ? t.emptyHelp : t.planContentUnavailable}</StatusMessage> : null}
-              <PrimaryButton
-                wrapLabel
-                label={t.startWalk}
-                disabled={startStatus !== "ready"}
-                busy={updating}
-                leadingIcon={<NativeIcon ios="map" android="map" color={colors.surface} />}
-                onPress={() => void start("basic")}
-              />
-              <PrimaryButton
-                wrapLabel
-                label={translate(locale, "liveWalk.turnOn")}
-                tone="secondary"
-                disabled={startStatus !== "ready"}
-                busy={updating}
-                leadingIcon={
-                  <NativeIcon
-                    ios={premium.active ? "location.fill" : "lock.fill"}
-                    android={premium.active ? "near_me" : "lock"}
-                    color={colors.primary}
-                  />
-                }
-                onPress={() => premium.active ? void start("live") : unlockPremium()}
-              />
-              {saveFeedback}
-              <View style={styles.actionRow}>
-                <PrimaryButton
-                  style={styles.flex}
-                  label={t.customize}
-                  tone="secondary"
-                  onPress={customize}
-                />
-                <PrimaryButton
-                  style={styles.flex}
-                  label={saveLabel}
-                  disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
-                  busy={saving}
-                  tone="secondary"
-                  onPress={() => void save()}
-                />
-              </View>
-            </>
-          ) : (
-            <>
-              {livePresentation ? (
-                <NativeLiveWalkCard presentation={livePresentation} />
-              ) : null}
-              {activeMode === "basic" ? (
-                <PrimaryButton
-                  label={translate(locale, "liveWalk.turnOn")}
-                  tone="secondary"
-                  busy={liveBusy}
-                  onPress={() => premium.active ? void toggleLiveWalk() : unlockPremium()}
-                  leadingIcon={
-                    <NativeIcon
-                      ios={premium.active ? "sparkles" : "lock.fill"}
-                      android={premium.active ? "auto_awesome" : "lock"}
-                      color={colors.primary}
-                    />
-                  }
-                />
-              ) : Platform.OS === "ios" && premium.active && !liveSession?.enabled ? (
-                <>
-                  <AppText variant="metadata" style={styles.muted}>
-                    {translate(locale, "liveWalk.permissionHelp")}
-                  </AppText>
-                  <PrimaryButton
-                    label={translate(locale, "liveWalk.turnOn")}
-                    busy={liveBusy}
-                    onPress={() => void toggleLiveWalk()}
-                  />
-                </>
-              ) : null}
-              {!livePresentation ? (
-                <PrimaryButton
-                  label={translate(locale, "liveWalk.continueWalk")}
-                  disabled={!liveNavigationTarget}
-                  onPress={() => {
-                    if (liveNavigationTarget) void navigate(liveNavigationTarget);
-                  }}
-                />
-              ) : null}
-
-              {!isLiveActive ? (
-                <>
-                  <AppText variant="label" style={styles.routeLabel}>
-                    {t.tripControls}
-                  </AppText>
-                  {premium.active ? (
-                    <View style={styles.controls}>
-                      <PrimaryButton
-                        compact
-                        style={styles.control}
-                        wrapLabel
-                        tone="secondary"
-                        label={t.add}
-                        disabled={journey.takeBack === true}
-                        onPress={() => {
-                          setProposalKind("adaptation");
-                          setProposalMessage("");
-                          setPanel("add");
-                        }}
-                        leadingIcon={<NativeIcon ios="plus" android="add" />}
-                      />
-                      <PrimaryButton
-                        compact
-                        style={styles.control}
-                        wrapLabel
-                        tone="secondary"
-                        label={t.shorten}
-                        disabled={!current || journey.takeBack === true}
-                        onPress={shorten}
-                        leadingIcon={
-                          <NativeIcon
-                            ios="arrow.triangle.branch"
-                            android="alt_route"
-                          />
-                        }
-                      />
-                      <PrimaryButton
-                        compact
-                        style={styles.control}
-                        wrapLabel
-                        tone="secondary"
-                        label={t.takeBack}
-                        onPress={() => setPanel("back")}
-                        leadingIcon={
-                          <NativeIcon ios="arrow.uturn.backward" android="undo" />
-                        }
-                      />
-                    </View>
-                  ) : (
-                    <View style={styles.section}>
-                      <AppText variant="metadata" style={styles.muted}>
-                        {translate(locale, "premium.benefitAdapt")} ·{" "}
-                        {translate(locale, "premium.benefitBackOnTime")}
-                      </AppText>
-                      <PrimaryButton
-                        compact
-                        wrapLabel
-                        tone="secondary"
-                        label={translate(locale, "premium.unlock")}
-                        onPress={unlockPremium}
-                        leadingIcon={<NativeIcon ios="sparkles" android="auto_awesome" />}
-                      />
-                    </View>
-                  )}
-                </>
-              ) : null}
-
               {current ? (
                 <View style={styles.currentStopPanel}>
-                  {!isLiveActive ? (
-                    <View style={styles.currentStopHeader}>
-                      <AppText variant="caption" style={styles.eyebrow}>
-                        {t.stop
-                          .replace("{number}", String(journey.visited.length + 1))
-                          .replace(
-                            "{total}",
-                            String(journey.visited.length + journey.remaining.length),
-                          )}
-                      </AppText>
-                      <AppText variant="label" numberOfLines={2}>
-                        {nativePlaceName(citySlug, current.slug, current.content.name, locale)}
-                      </AppText>
-                    </View>
-                  ) : null}
                   <View style={styles.currentActions}>
                     {[
                       {
@@ -1498,6 +1263,230 @@ export function NativeWalkFlow({
                     />
                   </View>
                 </View>
+              ) : null}
+
+              {!livePresentation ? (
+                <PrimaryButton
+                  label={translate(locale, "liveWalk.continueWalk")}
+                  disabled={!liveNavigationTarget}
+                  onPress={() => {
+                    if (liveNavigationTarget) void navigate(liveNavigationTarget);
+                  }}
+                />
+              ) : null}
+
+            </>
+          ) : null}
+          {stage === "preview" ? summary(route) : null}
+          {stage === "preview" ? <View
+            style={[
+              styles.returnCard,
+              deadline && eta > deadline ? styles.lateCard : undefined,
+            ]}
+          >
+            <NativeIcon
+              ios="clock"
+              android="schedule"
+              color={
+                deadline && eta > deadline ? colors.warning : colors.success
+              }
+              size={20}
+            />
+            <View style={styles.flex}>
+              <AppText variant="label">
+                {t.eta.replace("{time}", clock(eta))}
+              </AppText>
+              {deadline ? (
+                <AppText variant="metadata" style={styles.muted}>
+                  {t.buffer
+                    .replace("{time}", clock(deadline))
+                    .replace(
+                      "{minutes}",
+                      String(Math.floor((deadline - eta) / 60000)),
+                    )}
+                </AppText>
+              ) : null}
+            </View>
+          </View> : null}
+          {stage === "preview" && deadline && eta > deadline ? (
+            <StatusMessage>{t.late}</StatusMessage>
+          ) : null}
+          {stage === "preview" ? (
+            <PrimaryButton
+              label={showMap ? translate(locale, "planner.showLess") : t.map}
+              tone="secondary"
+              onPress={() => setShowMap((v) => !v)}
+              leadingIcon={
+                <NativeIcon ios="map" android="map" color={colors.primary} />
+              }
+            />
+          ) : null}
+          {stage === "preview" || stage === "active" ? (
+            <NativeCityMap
+              citySlug={citySlug}
+              places={route.places}
+              routeStart={journey.position}
+              routeFinish={journey.finish}
+              currentSlug={current?.slug}
+              compact={stage === "active" && isLiveActive}
+              previewCompact={(stage === "preview" && !showMap) || (stage === "active" && !isLiveActive)}
+              liveFocus={isLiveActive}
+              followUserLocation={stage === "active" && activeMode === "live" && premium.active}
+              onLocation={(point) => {
+                if (stage === "active" && activeMode === "live" && premium.active) {
+                  setForegroundPoint(point);
+                  setJourney((currentJourney) =>
+                    currentJourney?.id === journey.id
+                      ? { ...currentJourney, position: point }
+                      : currentJourney,
+                  );
+                  void publishForegroundLiveWalkLocation(point);
+                }
+              }}
+            />
+          ) : null}
+          {stage === "preview" ? (
+            <>
+              {itinerary(route.places, true, true, true)}
+              {startStatus === "loading" ? <CitywalkLoading compact label={discoveryCopy(locale).loadingWalkContent} /> :
+                startStatus !== "ready" ? <StatusMessage>{startStatus === "empty" ? t.emptyHelp : t.planContentUnavailable}</StatusMessage> : null}
+              <PrimaryButton
+                wrapLabel
+                label={t.startWalk}
+                disabled={startStatus !== "ready"}
+                busy={updating}
+                leadingIcon={<NativeIcon ios="map" android="map" color={colors.surface} />}
+                onPress={() => void start("basic")}
+              />
+              <PrimaryButton
+                wrapLabel
+                label={translate(locale, "liveWalk.turnOn")}
+                tone="secondary"
+                disabled={startStatus !== "ready"}
+                busy={updating}
+                leadingIcon={
+                  <NativeIcon
+                    ios={premium.active ? "location.fill" : "lock.fill"}
+                    android={premium.active ? "near_me" : "lock"}
+                    color={colors.primary}
+                  />
+                }
+                onPress={() => premium.active ? void start("live") : unlockPremium()}
+              />
+              {saveFeedback}
+              <View style={styles.actionRow}>
+                <PrimaryButton
+                  style={styles.flex}
+                  label={t.customize}
+                  tone="secondary"
+                  onPress={customize}
+                />
+                <PrimaryButton
+                  style={styles.flex}
+                  label={saveLabel}
+                  disabled={saveStatus !== "ready" || account.loading || savedState === "saved"}
+                  busy={saving}
+                  tone="secondary"
+                  onPress={() => void save()}
+                />
+              </View>
+            </>
+          ) : (
+            <>
+              {livePresentation ? (
+                <NativeLiveWalkCard presentation={livePresentation} />
+              ) : null}
+              {activeMode === "basic" ? (
+                <PrimaryButton
+                  label={translate(locale, "liveWalk.turnOn")}
+                  tone="secondary"
+                  busy={liveBusy}
+                  onPress={() => premium.active ? void toggleLiveWalk() : unlockPremium()}
+                  leadingIcon={
+                    <NativeIcon
+                      ios={premium.active ? "sparkles" : "lock.fill"}
+                      android={premium.active ? "auto_awesome" : "lock"}
+                      color={colors.primary}
+                    />
+                  }
+                />
+              ) : Platform.OS === "ios" && premium.active && !liveSession?.enabled ? (
+                <>
+                  <AppText variant="metadata" style={styles.muted}>
+                    {translate(locale, "liveWalk.permissionHelp")}
+                  </AppText>
+                  <PrimaryButton
+                    label={translate(locale, "liveWalk.turnOn")}
+                    busy={liveBusy}
+                    onPress={() => void toggleLiveWalk()}
+                  />
+                </>
+              ) : null}
+              {!isLiveActive ? (
+                <>
+                  <AppText variant="label" style={styles.routeLabel}>
+                    {t.tripControls}
+                  </AppText>
+                  {premium.active ? (
+                    <View style={styles.controls}>
+                      <PrimaryButton
+                        compact
+                        style={styles.control}
+                        wrapLabel
+                        tone="secondary"
+                        label={t.add}
+                        disabled={journey.takeBack === true}
+                        onPress={() => {
+                          setProposalKind("adaptation");
+                          setProposalMessage("");
+                          setPanel("add");
+                        }}
+                        leadingIcon={<NativeIcon ios="plus" android="add" />}
+                      />
+                      <PrimaryButton
+                        compact
+                        style={styles.control}
+                        wrapLabel
+                        tone="secondary"
+                        label={t.shorten}
+                        disabled={!current || journey.takeBack === true}
+                        onPress={shorten}
+                        leadingIcon={
+                          <NativeIcon
+                            ios="arrow.triangle.branch"
+                            android="alt_route"
+                          />
+                        }
+                      />
+                      <PrimaryButton
+                        compact
+                        style={styles.control}
+                        wrapLabel
+                        tone="secondary"
+                        label={t.takeBack}
+                        onPress={() => setPanel("back")}
+                        leadingIcon={
+                          <NativeIcon ios="arrow.uturn.backward" android="undo" />
+                        }
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.section}>
+                      <AppText variant="metadata" style={styles.muted}>
+                        {translate(locale, "premium.benefitAdapt")} ·{" "}
+                        {translate(locale, "premium.benefitBackOnTime")}
+                      </AppText>
+                      <PrimaryButton
+                        compact
+                        wrapLabel
+                        tone="secondary"
+                        label={translate(locale, "premium.unlock")}
+                        onPress={unlockPremium}
+                        leadingIcon={<NativeIcon ios="sparkles" android="auto_awesome" />}
+                      />
+                    </View>
+                  )}
+                </>
               ) : null}
 
               {route.places.length ? (
