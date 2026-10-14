@@ -171,6 +171,9 @@ jobs:
       - name: Run generic city content integration tests
         run: npm run content:test:integration
 
+      - name: Verify public share creation and anonymous lookup
+        run: SHARED_WALK_DB_INTEGRATION=1 npm run test:run -- src/lib/sharing/sharedWalks.integration.test.ts
+
       - name: Run CMS media integration tests
         run: npm run media:test:integration
 
