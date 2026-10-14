@@ -82,7 +82,6 @@ export function PublicStoreReview(props: {
         <WalkChoices
           label=""
           multiple
-          compact
           options={[
             { value: "route" as const, label: t(locale, "planner.yourRoute") },
             { value: "places" as const, label: t(locale, "place.places") },
