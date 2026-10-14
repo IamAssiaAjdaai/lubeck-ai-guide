@@ -2,11 +2,15 @@
 
 CITYWALK deploys the public web/API runtime to Cloudflare Workers through vinext while keeping the normal Next.js development path available locally.
 
+For the legal/landing launch audit, owner configuration, exact artifact provenance, API-preserving release and rollback gates, follow [Legal launch readiness](./LEGAL-LAUNCH-READINESS.md). Production operations remain separately authorized.
+
 ## Local verification
 
 ```bash
 npm ci
 npm run build:vinext
+npm run check:cloudflare-build
+npm run typecheck:cloudflare
 ```
 
 To validate the exact deployment path without uploading a Worker or making Cloudflare API changes:

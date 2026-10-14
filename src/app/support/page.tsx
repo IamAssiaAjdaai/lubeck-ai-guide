@@ -32,7 +32,7 @@ const supportTopics = [
 
 export default function SupportPage() {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-950">
+    <main className="min-h-screen bg-slate-50 text-slate-950 [overflow-wrap:anywhere]">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-5">
           <Link href="/" className="font-extrabold tracking-[-0.04em] text-blue-700">CITYWALK</Link>
