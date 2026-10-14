@@ -60,6 +60,7 @@ vi.mock("../src/components/WalkControls", () => ({
 }));
 vi.mock("../src/components/ui", () => ({
   Card: ({ children }: React.PropsWithChildren) => <section>{children}</section>,
+  PressableSurface: ({ children, onPress, accessibilityLabel }: React.PropsWithChildren<{ onPress?: () => void; accessibilityLabel?: string }>) => <button aria-label={accessibilityLabel} onClick={onPress}>{children}</button>,
   AppText: ({ children }: React.PropsWithChildren) => <p>{children}</p>,
   PrimaryButton: ({
     label,
@@ -132,7 +133,7 @@ describe("public review Finish presentation", () => {
   it("persists a star rating and compact completion tags on the finished walk", async () => {
     render(<PublicStoreReview journey={journey} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "5 ★" }));
+    fireEvent.click(screen.getByRole("button", { name: "5 / 5" }));
     await waitFor(() =>
       expect(state.feedback).toHaveBeenCalledWith("finished", "rating", "5"),
     );
