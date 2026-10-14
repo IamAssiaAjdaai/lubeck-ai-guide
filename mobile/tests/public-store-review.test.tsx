@@ -145,7 +145,8 @@ describe("public review Finish presentation", () => {
         JSON.stringify(["route"]),
       ),
     );
-    expect(screen.getByText(t("en", "walk.thanks"))).toBeTruthy();
+    // The save promise and its React state update settle asynchronously.
+    expect(await screen.findByText(t("en", "walk.thanks"))).toBeTruthy();
   });
 
   it("does not gate private feedback on the public store-review settlement callback", async () => {
