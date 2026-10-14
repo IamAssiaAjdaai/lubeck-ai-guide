@@ -1,0 +1,94 @@
+{
+  "worker": "citywalk-production",
+  "activeVersion": "4c18d94c-f9a8-4102-b887-145bc3ad499d",
+  "versionCreatedAt": "2026-10-04T23:06:48.557667Z",
+  "deploymentCreatedAt": "2026-10-04T23:06:50.854787Z",
+  "source": "cf_cli",
+  "trafficPercent": 100,
+  "gitSha": null,
+  "evidence": "Authenticated read-only cf workers versions get and deployments list, 14 October 2026. Secret names/types only; secret values and author identity excluded.",
+  "compatibilityDate": "2026-10-03",
+  "compatibilityFlags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "notFoundHandling": "none"
+  },
+  "bindings": {
+    "ASSETS": {
+      "type": "assets"
+    },
+    "BETTER_AUTH_SECRET": {
+      "type": "secret"
+    },
+    "BETTER_AUTH_URL": {
+      "type": "secret"
+    },
+    "CITYWALK_CONTENT_SOURCE": {
+      "type": "text",
+      "value": "database"
+    },
+    "CITYWALK_DATABASE_RUNTIME": {
+      "type": "text",
+      "value": "hyperdrive"
+    },
+    "CITYWALK_EMAIL_FROM": {
+      "type": "secret"
+    },
+    "CITYWALK_MEDIA_S3_ACCESS_KEY_ID": {
+      "type": "secret"
+    },
+    "CITYWALK_MEDIA_S3_BUCKET": {
+      "type": "secret"
+    },
+    "CITYWALK_MEDIA_S3_ENDPOINT": {
+      "type": "secret"
+    },
+    "CITYWALK_MEDIA_S3_REGION": {
+      "type": "secret"
+    },
+    "CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY": {
+      "type": "secret"
+    },
+    "CITYWALK_MEDIA_STORAGE": {
+      "type": "text",
+      "value": "s3"
+    },
+    "DATABASE_URL": {
+      "type": "secret"
+    },
+    "GROQ_API_KEY": {
+      "type": "secret"
+    },
+    "HYPERDRIVE": {
+      "type": "hyperdrive",
+      "id": "390958927c2946be8571ec5282b35ce6"
+    },
+    "RESEND_API_KEY": {
+      "type": "secret"
+    }
+  },
+  "reviewedAdditions": {
+    "CITYWALK_RUNTIME_ENV": {
+      "type": "text",
+      "value": "production"
+    },
+    "CITYWALK_LEGAL_ENTITY_TYPE": {
+      "type": "text",
+      "value": "individual"
+    },
+    "CITYWALK_LEGAL_OPERATOR_COUNTRY": {
+      "type": "text",
+      "value": "Germany"
+    },
+    "CITYWALK_LEGAL_OPERATOR_NAME": {
+      "type": "secret"
+    },
+    "CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS": {
+      "type": "secret"
+    },
+    "CITYWALK_LEGAL_OPERATOR_POSTAL_CITY": {
+      "type": "secret"
+    }
+  }
+}

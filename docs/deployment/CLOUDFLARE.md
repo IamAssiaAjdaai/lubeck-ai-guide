@@ -10,6 +10,7 @@ For the legal/landing launch audit, owner configuration, exact artifact provenan
 npm ci
 npm run build:vinext
 npm run check:cloudflare-build
+npm run check:cloudflare-bindings
 npm run typecheck:cloudflare
 ```
 

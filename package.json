@@ -48,6 +48,7 @@
     "dev:vinext": "vite dev --port 3001",
     "build:vinext": "vite build",
     "check:cloudflare-build": "node scripts/check-cloudflare-build.mjs",
+    "check:cloudflare-bindings": "node scripts/check-cloudflare-bindings.mjs",
     "typecheck:cloudflare": "tsc --noEmit -p tsconfig.cloudflare.json",
     "legal:check": "node --import tsx scripts/check-legal-configuration.ts",
     "start:vinext": "vite preview",

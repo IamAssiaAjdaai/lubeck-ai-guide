@@ -8,7 +8,7 @@ Existing landing components and root cutover, `/explore`, localized traveler/acc
 
 ## B. Root cause
 
-Public production GETs reproduced the old German city-selector homepage (HTTP 200) and all three legal URLs (HTTP 404). Local current-code Next and Worker builds contain those routes and render the marketing landing. Missing identity causes a warning/200, not a 404. A stale artifact is plausible from source/deployment chronology, but **active Worker version to Git-SHA mapping is unresolved**: read-only Cloudflare deployment-history command has no authenticated token. The supplied version prefix `4c18d94c` is not an independently verified SHA/version mapping. No DNS/build-routing cause is asserted without evidence.
+Public production GETs reproduced the old German city-selector homepage (HTTP 200) and all three legal URLs (HTTP 404). Authenticated metadata now confirms active version `4c18d94c-f9a8-4102-b887-145bc3ad499d`, created 4 October 2026 at 23:06:48 UTC and deployed at 23:06:50 UTC via `cf_cli`, with 100% traffic. It predates the 5 October landing cutover and 7 October legal routes. This confirms the release predates those features; no exact Git SHA annotation exists, and the historical artifact SHA is not equated to this version. Local builds contain the routes; missing identity remains warning/200, not 404. See [binding audit and follow-up evidence](./CLOUDFLARE-BINDING-AUDIT.md).
 
 ## C. Code changes
 
@@ -71,7 +71,7 @@ Local routes do not prove production publication, OAuth/provider completion, ema
 
 ## E. Remaining blockers
 
-- **Technical evidence:** authenticated active Worker version/source-artifact mapping, isolated infrastructure Preview acceptance, latest production migration-journal comparison and full OAuth/share/media/lifecycle acceptance on the approved candidate.
+- **Technical evidence:** fresh pre-release binding/traffic acceptance, isolated infrastructure Preview acceptance, latest production migration-journal comparison and full OAuth/share/media/lifecycle acceptance on the approved candidate.
 - **Configuration:** real public operator name and usable postal address; any genuinely applicable register/VAT bindings; reviewed provider/runtime settings; external erasure processor/cron activation and completion evidence. No production values were changed.
 - **Privacy/legal:** provider DPAs/transfers and retention/training, support/log/backup/deletion propagation, native attribution lifetime, commercial terms and owner rights-handling procedure approval. Storage failure on both write and cleanup cannot guarantee remembered withdrawal after app restart.
 - **Store/device:** final declarations/manifests/privacy reports, exact signed artifacts, iOS and Android consent/deletion/export and full traveler device QA. Existing store draft remains “DO NOT SUBMIT YET.” No store listing links were invented.
@@ -86,4 +86,10 @@ Dedicated branch: `codex/legal-cloudflare-launch-readiness`; target `develop`. D
 
 ## H. Final status
 
-**BLOCKED — NEEDS OWNER INPUT** for public launch. Code-side fixes and local production-like checks are ready for review. Real identity/legal/provider decisions, deployment provenance and separately approved infrastructure/store/device acceptance remain required. No production infrastructure or user data was changed.
+**BLOCKED — NEEDS OWNER INPUT** for public launch. Code-side fixes and local production-like checks are ready for review. Real identity/legal/provider decisions, fresh binding/traffic review and separately approved infrastructure/store/device acceptance remain required. No production infrastructure or user data was changed.
+
+## Authenticated binding follow-up
+
+The [complete 16-binding comparison](./CLOUDFLARE-BINDING-AUDIT.md) supersedes the initial deployment-access limitation. Active version `4c18d94c-f9a8-4102-b887-145bc3ad499d` is confirmed at 100%, deployed 4 October via `cf_cli`; no Git SHA annotation is present. `DATABASE_URL` is restored as a secret binding, preserving Node/auth-bootstrap/operational compatibility while Worker access remains Hyperdrive-scoped.
+
+Follow-up local validation: **1,439 passed / 133 skipped**, 230 passing test files; **35 focused tests**; lint zero errors/eight existing warnings; application and Worker typechecks, Next build, vinext build, nine-page/seven-handler bundle check, deploy dry-run and authenticated metadata binding gate passed (**16 preserved / six reviewed additions**). A concurrent typecheck initially saw build-generated route types mid-regeneration; the sequential post-build typecheck is the reported final gate. Native code was unchanged and the previous 773-test native result remains historical evidence, not a rerun in this follow-up. No migration or other database operation was run in this follow-up. Latest remote CI results and commit are reported in PR #369 and issue #187.

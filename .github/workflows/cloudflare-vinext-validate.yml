@@ -8,6 +8,9 @@ on:
       - "public/**"
       - "packages/**"
       - "scripts/check-cloudflare-build.mjs"
+      - "scripts/check-cloudflare-bindings.mjs"
+      - "scripts/lib/cloudflare-binding-contract.mjs"
+      - "docs/deployment/cloudflare-production-binding-baseline.json"
       - "next.config.ts"
       - "package.json"
       - "package-lock.json"
@@ -39,6 +42,9 @@ jobs:
 
       - name: Verify vinext SSR module
         run: npm run check:cloudflare-build
+
+      - name: Preserve reviewed production bindings
+        run: npm run check:cloudflare-bindings
 
       - name: Check isolated Cloudflare types
         run: npm run typecheck:cloudflare

@@ -22,6 +22,9 @@ export default defineConfig({
       HYPERDRIVE: bindings.hyperdrive({
         id: "390958927c2946be8571ec5282b35ce6",
       }),
+      // Preserve the active secret for Node/operational compatibility paths.
+      // Worker requests still use the request-scoped Hyperdrive client.
+      DATABASE_URL: bindings.secret(),
       BETTER_AUTH_SECRET: bindings.secret(),
       BETTER_AUTH_URL: bindings.secret(),
       RESEND_API_KEY: bindings.secret(),

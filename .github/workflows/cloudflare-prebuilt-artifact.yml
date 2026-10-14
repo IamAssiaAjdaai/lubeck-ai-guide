@@ -28,6 +28,9 @@ jobs:
       - name: Verify vinext SSR module
         run: npm run check:cloudflare-build
 
+      - name: Preserve reviewed production bindings
+        run: npm run check:cloudflare-bindings
+
       - name: Check isolated Cloudflare types
         run: npm run typecheck:cloudflare
 
