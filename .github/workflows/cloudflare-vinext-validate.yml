@@ -8,6 +8,13 @@ on:
       - "package-lock.json"
       - "vite.config.mts"
       - "cloudflare.config.ts"
+      - "src/cloudflare/previewConfig.ts"
+      - "src/cloudflare/previewConfig.test.ts"
+      - "src/app/**"
+      - "src/components/walk/**"
+      - "src/lib/sharing/**"
+      - "src/db/travelerSchema.ts"
+      - "drizzle/**"
       - "tsconfig.json"
       - ".github/workflows/cloudflare-vinext-validate.yml"
 
@@ -36,3 +43,28 @@ jobs:
 
       - name: Validate production deploy without upload
         run: npm run deploy:vinext:dry-run
+
+  cloudflare-preview-build:
+    runs-on: ubuntu-latest
+    env:
+      # Build/dry-run only: synthetic, non-production binding. Never upload it.
+      CITYWALK_PREVIEW_HYPERDRIVE_ID: "11111111111111111111111111111111"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build isolated Preview Worker
+        run: npm run build:vinext:preview
+
+      - name: Verify vinext SSR module
+        run: test -f .cloudflare/output/v0/workers/default/bundle/ssr/index.js
+
+      - name: Validate Preview deploy without upload
+        run: npm run deploy:vinext:preview:dry-run
