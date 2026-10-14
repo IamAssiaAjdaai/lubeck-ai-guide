@@ -5,7 +5,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
   if (!uuid.test(id)) return Response.json({ error: "Not found" }, { status: 404 });
   try {
     const walk = await getSharedWalk(id);
-    return Response.json(walk, { headers: { "Cache-Control": "public, max-age=30" } });
+    return Response.json(walk, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return Response.json({ error: "Walk unavailable" }, { status: error instanceof SharedWalkError ? error.status : 503 });
   }
