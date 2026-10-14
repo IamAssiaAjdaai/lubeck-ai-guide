@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import StartSharedWalk from "@/components/walk/StartSharedWalk";
 import { getSharedWalk, SharedWalkError } from "@/lib/sharing/sharedWalks.server";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { isLocale, type Locale } from "@/lib/i18n";
@@ -45,9 +46,7 @@ export default async function GuestWalkPage({ params }: {
           </li>
         ))}
       </ol>
-      <p className="mt-8 text-sm opacity-70">
-        You can view this route without an account. Guest start and app-opening links are coming in the next iteration.
-      </p>
+      <StartSharedWalk route={walk.route} cityName={title} locale={locale} shareId={id} />
     </main>
   );
 }
