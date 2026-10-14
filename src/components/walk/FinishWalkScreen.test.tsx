@@ -1,4 +1,4 @@
-// @vitest-environment-options {"jsdom":{"url":"https://citywalk.example"}}
+// @vitest-environment-options {"url":"https://citywalk.example"}
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import FinishWalkScreen from "./FinishWalkScreen";
@@ -22,6 +22,7 @@ function mount() {
   );
 }
 beforeEach(() => {
+  expect(window.location.protocol).toBe("https:");
   getSession.mockReset();
   getSession.mockResolvedValue({ data: { user: { id: "sender-id" } } });
   post.mockReset(); publicGet.mockReset();
