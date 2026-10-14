@@ -57,7 +57,10 @@
     "mobile:ios": "npm --prefix mobile run ios",
     "mobile:android": "npm --prefix mobile run android",
     "mobile:doctor": "npm --prefix mobile run doctor",
-    "mobile:local-check": "npm --prefix mobile run local:check"
+    "mobile:local-check": "npm --prefix mobile run local:check",
+    "build:vinext:preview": "vite build --mode preview",
+    "deploy:vinext:preview": "vinext-cloudflare deploy --env preview",
+    "deploy:vinext:preview:dry-run": "vinext-cloudflare deploy --env preview --dry-run"
   },
   "dependencies": {
     "@apple/app-store-server-library": "3.1.0",

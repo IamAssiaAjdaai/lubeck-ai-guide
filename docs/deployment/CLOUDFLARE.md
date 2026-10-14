@@ -110,3 +110,39 @@ Verify on a Cloudflare preview / temporary hostname before moving the real domai
 11. admin core content/media flows
 
 The legacy content-image API no longer reads from the host filesystem or requires a native image-processing dependency; it redirects approved legacy assets to the static asset tree. The remaining manifest path loader uses `node:fs`, but it is currently consumed by the operator CLI import script rather than the traveler runtime. Keep that CLI outside the Worker deployment path unless it is later replaced by an upload-based import.
+
+
+## Shareable Walks isolated Preview (PR #373)
+
+The Preview Worker is **`citywalk-share-preview`**, never `citywalk-production`.
+These are separate Worker names; preview mode is selected explicitly via
+`--env preview`. The preview Worker is not attached to `getcitywalk.com`,
+and GitHub PR validation only builds and dry-runs (no Cloudflare upload).
+
+**Mandatory setup before an actual Preview deployment:**
+
+1. Create or select a separate, disposable **Neon preview PostgreSQL database**. Confirm it contains no production customer data. Apply migrations including `0026_shared_walk_links` to that preview database only, using the existing `npm run db:migrate` command with a verified preview `DATABASE_URL`.
+2. Create a **new Cloudflare Hyperdrive resource** pointing to that exact preview database. Obtain its 32-character ID from your Cloudflare dashboard. The production ID is explicitly rejected by the preview configuration.
+3. Configure secrets on the **`citywalk-share-preview` Worker only**. In particular, `BETTER_AUTH_URL` must equal that Worker's final public HTTPS URL; set a separate `BETTER_AUTH_SECRET`. Do not copy production account/payment/provider secrets into the preview Worker. Use a separate preview media bucket and test-only email/payment credentials, or leave those features disabled.
+4. Supply `CITYWALK_PREVIEW_HYPERDRIVE_ID` locally without committing it, then run:
+
+   ```bash
+   npm ci
+   npm run build:vinext:preview
+   npm run deploy:vinext:preview:dry-run
+   ```
+
+5. **Only after confirming the target Worker, preview DB and preview secrets** and authenticating to the intended Cloudflare account, perform an explicit Preview-only deploy:
+
+   ```bash
+   npm run deploy:vinext:preview
+   ```
+
+The default `npm run deploy:vinext` targets **production** and must not be used
+for this QA exercise. The CI placeholder Hyperdrive ID is not a usable database
+connection and MUST NOT be used for a real deployment.
+
+After deployment, test signed-in Finish Walk → create link → unauthenticated
+`GET /api/shared-walks/{id}` → guest page → Start Walk on desktop and iPhone.
+Reopening or revoking a link must not reveal owner identity or personal progress.
+Real device testing and approval are required before either source PR is merged.
