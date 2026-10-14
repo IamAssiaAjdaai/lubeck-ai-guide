@@ -59,3 +59,18 @@ export const accountSavedWalks = pgTable("account_saved_walks", {
   route: jsonb("route").$type<import("@citywalk/traveler-core").SavedRoute>().notNull(),
   ...createTimestamps(),
 }, table => [uniqueIndex("account_saved_walks_user_route_unique").on(table.userId, table.fingerprint)]);
+
+/**
+ * Opaque public links, owned by an account but readable without a session.
+ * Public responses must project `route` only — never serialize ownerId.
+ */
+export const sharedWalkLinks = pgTable("shared_walk_links", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  ownerId: text("owner_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  citySlug: text("city_slug").notNull(),
+  route: jsonb("route").$type<import("@citywalk/traveler-core").SavedRoute>().notNull(),
+  revokedAt: timestamp("revoked_at", { withTimezone: true }),
+  ...createTimestamps(),
+}, table => [
+  index("shared_walk_links_owner_idx").on(table.ownerId),
+]);
