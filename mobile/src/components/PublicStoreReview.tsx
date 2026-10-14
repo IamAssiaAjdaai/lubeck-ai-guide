@@ -74,7 +74,7 @@ export function PublicStoreReview(props: {
               style={styles.ratingStar}
             >
               <AppText style={{ color: rating.length && Number(rating[0]) >= value ? colors.primary : colors.textMuted, fontSize: 28 }}>
-                {rating.length && Number(rating[0]) >= value ? "★" : "☆"}
+                {"★"}
               </AppText>
             </PressableSurface>
           ))}
