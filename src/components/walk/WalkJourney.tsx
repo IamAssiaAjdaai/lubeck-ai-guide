@@ -40,6 +40,7 @@ import { walkCopy } from "@/lib/walk/copy";
 import { buildWalkGuideContext } from "@/lib/walk/guideContext";
 import { proposeAddedStop, proposeShorterWalk, remainingWalkBudget } from "@citywalk/traveler-core/walkJourney";
 import type { JourneySession } from "@/lib/walk/session";
+import { createFinishedShareRoute } from "@/lib/sharing/finishedRoute";
 import { saveWalk } from "@/lib/walk/storage";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import AskGuide from "@/components/AskGuide";
@@ -72,6 +73,10 @@ export default function WalkJourney({
   const t = walkCopy(locale),
     existing = getTranslations(locale);
   const [route, setRoute] = useState(initial);
+  // Track replayable stop order separately from visit/skip progress.
+  const [shareStopSlugs, setShareStopSlugs] = useState<string[]>(() =>
+    restored ? [...new Set([...restored.visited, ...restored.remaining])] : initial.places.map(place => place.slug),
+  );
   const [stage, setStage] = useState<"preview" | "active" | "finished">(
     restored ? "active" : "preview",
   );
@@ -243,6 +248,9 @@ export default function WalkJourney({
           citySlug={citySlug}
           cityName={cityName}
           visited={visited}
+          shareRoute={createFinishedShareRoute({
+            citySlug, stopSlugs: shareStopSlugs, places, settings, finish: route.finish,
+          })}
           historyDistance={historyDistance}
           elapsedMinutes={Math.max(
             0,
@@ -547,6 +555,8 @@ export default function WalkJourney({
                   route={proposed}
                   locale={locale}
                   confirm={() => {
+                    // Confirmed replans become the route that is replayed by recipients.
+                    setShareStopSlugs([...new Set([...visited.map(p => p.slug), ...proposed.places.map(p => p.slug)])]);
                     setRoute(proposed);
                     setPosition(origin);
                     setNow(Date.now());
