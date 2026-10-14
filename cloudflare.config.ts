@@ -2,7 +2,7 @@ import { bindings, defineConfig, defineWorker } from "cf/config";
 import {
   CITYWALK_PRODUCTION_HYPERDRIVE_ID,
   requireIsolatedPreviewHyperdriveId,
-} from "./src/cloudflare/previewConfig";
+} from "./src/cloudflare/previewConfig.ts";
 
 // Only an explicit Vite preview mode can target the isolated Worker.
 // The default build/deployment remains the existing production configuration.
