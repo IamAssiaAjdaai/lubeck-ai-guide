@@ -80,7 +80,7 @@ export default function FinishWalkScreen({
   customize: () => void;
 }) {
   const t = walkCopy(locale);
-  const c = messages[locale];
+  const c = locale in messages ? messages[locale as keyof typeof messages] : messages.en;
   const [busy, setBusy] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
   const [shareError, setShareError] = useState("");

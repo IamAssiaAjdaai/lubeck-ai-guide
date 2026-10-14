@@ -34,6 +34,14 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 describe("Finish Walk public sharing", () => {
+  it("renders English fallback for supported locales without custom share copy", () => {
+    render(
+      <FinishWalkScreen locale="da" citySlug="lubeck" cityName="Lübeck"
+        visited={[]} shareRoute={shareRoute} historyDistance={0} elapsedMinutes={10}
+        save={vi.fn()} setMessage={vi.fn()} feedback={vi.fn()} customize={vi.fn()} />,
+    );
+    expect(screen.getByRole("button", { name: "Create share link" })).toBeTruthy();
+  });
   it("creates and checks an authenticated HTTPS public link, without progress or private identity in the body", async () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Create share link" }));
