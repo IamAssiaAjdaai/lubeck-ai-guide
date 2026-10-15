@@ -65,6 +65,7 @@ describe("native app-first shared walk", () => {
   it("creates an exact ordered local preview with zero copied history", () => {
     const result = sharedWalkToNativeJourney(shared, stops, "native-replay", 1234);
     expect(result?.remaining).toEqual(["holstentor", "rathaus", "marienkirche"]);
+    expect(result?.shareStopSlugs).toEqual(["holstentor", "rathaus", "marienkirche"]);
     expect(result?.visited).toEqual([]);
     expect(result?.historyDistance).toBe(0);
     expect(result?.position).toEqual(stops[1].coordinates);
