@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { readCityUnlock } from "./cityUnlockAccess";
 import {
   RevenueCatCityPassBilling,
@@ -35,4 +36,7 @@ const defaultDependencies: RevenueCatCityPassDependencies = {
   wait: (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
 };
 
-export const revenueCatCityPassBilling = new RevenueCatCityPassBilling(defaultDependencies);
+export const revenueCatCityPassBilling = new RevenueCatCityPassBilling(
+  defaultDependencies,
+  Platform.OS === "android" ? "android" : "ios",
+);
