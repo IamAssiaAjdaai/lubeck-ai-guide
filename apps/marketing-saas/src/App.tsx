@@ -156,12 +156,12 @@ export default function App() {
                       <p className="muted">Choose the option that best describes your project.</p>
                       <div className="types" role="radiogroup" aria-label="Project type">
                         {kinds.map((item) => (
-                          <button type="button" role="radio" aria-checked={draft.kind === item.kind}
-                            key={item.kind} className={`type-option ${draft.kind === item.kind ? "selected" : ""}`}
-                            onClick={() => edit("kind", item.kind)}>
+                          <label key={item.kind} className={`type-option ${draft.kind === item.kind ? "selected" : ""}`}>
+                            <input type="radio" name="projectKind" value={item.kind} checked={draft.kind === item.kind}
+                              onChange={() => edit("kind", item.kind)} />
                             <span className="type-icon" aria-hidden="true">{item.icon}</span>
                             <strong>{item.title}</strong><small>{item.help}</small>
-                          </button>
+                          </label>
                         ))}
                       </div>
                       <div className="soft-note">You can start with a simple description. No marketing knowledge needed.</div>
