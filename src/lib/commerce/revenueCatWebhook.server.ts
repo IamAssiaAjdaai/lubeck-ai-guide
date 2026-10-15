@@ -1,4 +1,8 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
+import {
+  CITYWALK_REVENUECAT_PRODUCT_IDS,
+  matchesCitywalkRevenueCatProduct,
+} from "@citywalk/traveler-core";
 
 import { and, eq, sql } from "drizzle-orm";
 
@@ -17,9 +21,11 @@ const SIGNATURE_TOLERANCE_SECONDS = 300;
 const ANONYMOUS_PREFIX = "$RCAnonymousID:";
 
 const PRODUCT_SLUG_BY_REVENUECAT_PRODUCT = Object.freeze({
-  "com.citywalk.premium.monthly": "citywalk-premium",
+  [CITYWALK_REVENUECAT_PRODUCT_IDS.monthly]: "citywalk-premium",
+  [CITYWALK_REVENUECAT_PRODUCT_IDS.annual]: "citywalk-premium",
+  // Older annual purchase receipts remain valid; new Offerings use yearly.
   "com.citywalk.premium.annual": "citywalk-premium",
-  "com.citywalk.lubeck.pass72h": "lubeck-digital-guide-pass-72h",
+  [CITYWALK_REVENUECAT_PRODUCT_IDS.cityPass72h]: "lubeck-digital-guide-pass-72h",
 });
 
 type RevenueCatProductId = keyof typeof PRODUCT_SLUG_BY_REVENUECAT_PRODUCT;
@@ -147,8 +153,15 @@ function isRevenueCatEnvelope(value: unknown): value is RevenueCatWebhookEnvelop
     && Number.isFinite(event.event_timestamp_ms);
 }
 
-function knownProduct(value: string | null | undefined): value is RevenueCatProductId {
-  return Boolean(value && value in PRODUCT_SLUG_BY_REVENUECAT_PRODUCT);
+/** Match signed RevenueCat store products; never grant from arbitrary product IDs. */
+export function resolveRevenueCatProductId(
+  value: string | null | undefined,
+  store: string | null | undefined,
+): RevenueCatProductId | undefined {
+  if (!value) return undefined;
+  const platform = normalizedStore(store) === "play_store" ? "android" : "ios";
+  return (Object.keys(PRODUCT_SLUG_BY_REVENUECAT_PRODUCT) as RevenueCatProductId[])
+    .find((expected) => matchesCitywalkRevenueCatProduct(expected, value, platform));
 }
 
 function citywalkUserId(event: RevenueCatEvent): string | undefined {
@@ -249,7 +262,8 @@ export async function processRevenueCatWebhookEvent(
     const providerProductId = event.type === "PRODUCT_CHANGE"
       ? event.new_product_id ?? event.product_id
       : event.product_id;
-    if (!policy || !knownProduct(providerProductId)) return "ignored" as const;
+    const productKey = resolveRevenueCatProductId(providerProductId, event.store);
+    if (!policy || !productKey) return "ignored" as const;
 
     const userId = citywalkUserId(event);
     const providerSubscriptionId = event.original_transaction_id?.trim();
@@ -266,7 +280,7 @@ export async function processRevenueCatWebhookEvent(
       .limit(1);
     if (!knownUser) return "ignored" as const;
 
-    const productSlug = PRODUCT_SLUG_BY_REVENUECAT_PRODUCT[providerProductId];
+    const productSlug = PRODUCT_SLUG_BY_REVENUECAT_PRODUCT[productKey];
     const [product] = await tx
       .select({ id: commerceProducts.id })
       .from(commerceProducts)
@@ -316,8 +330,7 @@ export async function processRevenueCatWebhookEvent(
         undefined,
       );
 
-    const isPremiumProduct = providerProductId === "com.citywalk.premium.monthly"
-      || providerProductId === "com.citywalk.premium.annual";
+    const isPremiumProduct = productSlug === "citywalk-premium";
     if (!policy.revokeImmediately && isPremiumProduct && !currentPeriodEndsAt) {
       return "ignored" as const;
     }
