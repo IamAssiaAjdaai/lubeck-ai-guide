@@ -18,6 +18,7 @@ import { getDb, closeDb } from "@/db/client";
 import { user } from "@/db/authSchema";
 import { sharedWalkLinks } from "@/db/travelerSchema";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
+import { toPublicWalk } from "@/lib/sharing/publicWalk";
 import { POST } from "@/app/api/shared-walks/route";
 import { GET } from "@/app/api/shared-walks/[id]/route";
 
@@ -65,10 +66,22 @@ describe.runIf(process.env.SHARED_WALK_DB_INTEGRATION === "1")(
 
     beforeAll(async () => {
       const url = new URL(process.env.DATABASE_URL!);
-      if (process.env.GITHUB_ACTIONS !== "true" ||
-          !["localhost", "127.0.0.1"].includes(url.hostname) ||
-          url.port !== "5432" || url.pathname !== "/citywalk") {
-        throw new Error("Only disposable CI PostgreSQL is allowed");
+      const isCI =
+        process.env.GITHUB_ACTIONS === "true" &&
+        ["localhost", "127.0.0.1"].includes(url.hostname) &&
+        url.port === "5432" &&
+        url.pathname === "/citywalk";
+
+      const isLocalQA =
+        process.env.CITYWALK_SHARE_QA === "1" &&
+        process.env.GITHUB_ACTIONS !== "true" &&
+        url.hostname === "127.0.0.1" &&
+        url.port === "55433" &&
+        url.pathname === "/citywalk_share_qa" &&
+        url.username === "citywalk_qa";
+
+      if (!isCI && !isLocalQA) {
+        throw new Error("Only isolated CI or local QA PostgreSQL is allowed");
       }
       await getDb().insert(user).values([
         { id: ownerId, name: "Sharing owner", email: ownerId + "@example.test" },
@@ -129,6 +142,32 @@ describe.runIf(process.env.SHARED_WALK_DB_INTEGRATION === "1")(
       const countAfter = (await getDb().select({ id: sharedWalkLinks.id })
         .from(sharedWalkLinks).where(eq(sharedWalkLinks.ownerId, ownerId))).length;
       expect(countAfter).toBe(countBefore);
+    });
+
+    it("re-sanitizes legacy persisted GPS coordinates on anonymous reads", async () => {
+      // Simulate a link persisted before the server-side share guard existed.
+      // Such a row must not leak the author's origin or arbitrary finish.
+      const unsafe = toPublicWalk(route);
+      expect(unsafe).not.toBeNull();
+      expect(unsafe!.route.settings.start).toEqual(privateOrigin);
+      expect(unsafe!.route.finish).toEqual(privateFinish);
+      const [legacy] = await getDb().insert(sharedWalkLinks).values({
+        ownerId, citySlug: "lubeck", route: unsafe!.route,
+      }).returning({ id: sharedWalkLinks.id });
+      expect(legacy).toBeDefined();
+
+      const publicResponse = await get(legacy!.id);
+      expect(publicResponse.status).toBe(200);
+      const publicBody = await publicResponse.json();
+      const snapshot = await getPublicCitySnapshot("lubeck");
+      const first = snapshot.places.find(place => place.slug === "holstentor");
+      expect(publicBody.route.settings.start).toEqual(first?.coordinates);
+      expect(publicBody.route.finish).toBeUndefined();
+      expect(publicBody.route.settings.finish).toBeUndefined();
+      const serialized = JSON.stringify(publicBody);
+      for (const secret of ["51.111111", "7.222222", "51.333333", "7.444444"]) {
+        expect(serialized).not.toContain(secret);
+      }
     });
 
     it("refuses unknown or revoked links for anonymous readers", async () => {

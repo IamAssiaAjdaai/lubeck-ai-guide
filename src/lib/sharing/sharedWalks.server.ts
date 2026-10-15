@@ -9,18 +9,18 @@ import { toPublicWalk } from "./publicWalk";
 export class SharedWalkError extends Error {
   constructor(readonly status: number) { super("Shared walk unavailable."); }
 }
-export async function createSharedWalk(ownerId: string, input: unknown) {
+async function canonicalShareRoute(input: unknown, invalidStatus: 400 | 404) {
   const publicWalk = toPublicWalk(input);
-  if (!publicWalk) throw new SharedWalkError(400);
+  if (!publicWalk) throw new SharedWalkError(invalidStatus);
   const snapshot = await getPublicCitySnapshot(publicWalk.route.citySlug).catch(() => {
-    throw new SharedWalkError(400);
+    throw new SharedWalkError(invalidStatus);
   });
   const eligible = new Map(
     snapshot.places.filter(isEligibleTourPlace).map(place => [place.slug, place] as const),
   );
   const firstStop = eligible.get(publicWalk.route.stopSlugs[0]);
   if (!firstStop || publicWalk.route.stopSlugs.some(slug => !eligible.has(slug))) {
-    throw new SharedWalkError(400);
+    throw new SharedWalkError(invalidStatus);
   }
 
   // The server must enforce the privacy boundary even for crafted requests.
@@ -50,6 +50,11 @@ export async function createSharedWalk(ownerId: string, input: unknown) {
     ...(safeFinish ? { finish: safeFinish } : {}),
   };
 
+  return route;
+}
+
+export async function createSharedWalk(ownerId: string, input: unknown) {
+  const route = await canonicalShareRoute(input, 400);
   const [record] = await getDb().insert(sharedWalkLinks).values({
     ownerId, citySlug: route.citySlug, route,
   }).returning({ id: sharedWalkLinks.id });
@@ -61,7 +66,11 @@ export async function getSharedWalk(id: string) {
     route: sharedWalkLinks.route,
   }).from(sharedWalkLinks).where(and(eq(sharedWalkLinks.id, id), isNull(sharedWalkLinks.revokedAt))).limit(1);
   if (!record) throw new SharedWalkError(404);
-  const result = toPublicWalk(record.route);
+  // Previously stored links may contain arbitrary start/finish GPS data.
+  // Re-apply today's published-place allowlist on *every public read*;
+  // never trust persisted JSON as already public-safe.
+  const safeRoute = await canonicalShareRoute(record.route, 404);
+  const result = toPublicWalk(safeRoute);
   if (!result) throw new SharedWalkError(404);
   return result;
 }
