@@ -813,7 +813,6 @@ export function NativeWalkFlow({
       const userId = session.data?.user?.id;
       if (!userId) {
         setMessage(locale === "de" ? "Bitte anmelden, um eine Tour zu teilen."
-          : locale === "fr" ? "Connectez-vous pour partager la balade."
           : locale === "ar" ? "سجّل الدخول باش تشارك الجولة."
           : "Sign in to share this walk.");
         return;
