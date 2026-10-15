@@ -33,39 +33,40 @@ const copy = {
 } as const;
 
 type SharedLoad =
-  | { status: "loading"; id: string }
-  | { status: "error"; id: string }
-  | { status: "ready"; id: string; shared: NativeSharedWalk };
+  | { status: "loading"; requestKey: string }
+  | { status: "error"; requestKey: string }
+  | { status: "ready"; requestKey: string; shared: NativeSharedWalk };
 
 export default function NativeSharedWalkScreen() {
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = typeof params.id === "string" && SHARE_ID.test(params.id) ? params.id : "";
   const [reload, setReload] = useState(0);
-  const [load, setLoad] = useState<SharedLoad>({ status: "loading", id });
+  // Derive request identity during render. An ID change or Retry immediately
+  // displays Loading without synchronously setting state in an effect.
+  const requestKey = id + ":" + reload;
+  const [load, setLoad] = useState<SharedLoad>({ status: "loading", requestKey });
 
   useEffect(() => {
-    if (!id) {
-      setLoad({ status: "error", id: "" });
-      return;
-    }
+    if (!id) return;
     const controller = new AbortController();
-    setLoad({ status: "loading", id });
     void fetchNativeSharedWalk(id, citywalkApi.origin, fetch, controller.signal)
-      .then(shared => { if (!controller.signal.aborted) setLoad({ status: "ready", id, shared }); })
-      .catch(() => { if (!controller.signal.aborted) setLoad({ status: "error", id }); });
+      .then(shared => { if (!controller.signal.aborted) setLoad({ status: "ready", requestKey, shared }); })
+      .catch(() => { if (!controller.signal.aborted) setLoad({ status: "error", requestKey }); });
     return () => controller.abort();
-  }, [id, reload]);
+  }, [id, requestKey]);
 
   const { locale } = useNativeLocale();
   const t = copy[locale as keyof typeof copy] ?? copy.en;
-  if (load.status === "loading" || load.id !== id)
+  if (!id)
+    return <Screen navigation={false}><StatusMessage tone="error">{t.error}</StatusMessage></Screen>;
+  if (load.status === "loading" || load.requestKey !== requestKey)
     return <Screen navigation={false}><CitywalkLoading variant="city" label={t.loading} /></Screen>;
   if (load.status === "error")
     return <Screen navigation={false}>
       <StatusMessage tone="error">{t.error}</StatusMessage>
       <PrimaryButton label={t.retry} onPress={() => setReload(n => n + 1)} />
     </Screen>;
-  return <NativeSharedPreview key={id} id={id} shared={load.shared} />;
+  return <NativeSharedPreview key={requestKey} id={id} shared={load.shared} />;
 }
 
 function NativeSharedPreview({ id, shared }: { id: string; shared: NativeSharedWalk }) {
