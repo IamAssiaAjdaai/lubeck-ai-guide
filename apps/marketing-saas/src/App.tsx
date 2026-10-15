@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import {
   blankIntake,
   validateProjectIntake,
@@ -38,7 +38,7 @@ function Field(props: {
     id,
     name: props.name,
     value: props.value,
-    onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => props.onChange(event.target.value),
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => props.onChange(event.target.value),
     "aria-invalid": props.error ? true as const : undefined,
     "aria-describedby": [props.helper ? helpId : "", props.error ? errorId : ""].filter(Boolean).join(" ") || undefined,
     placeholder: props.placeholder,
