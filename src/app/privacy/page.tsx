@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import Link from "next/link";
 
 import { AnalyticsConsentPreferences } from "@/components/AnalyticsConsentControl";
@@ -11,7 +12,8 @@ import {
 } from "@/lib/legal";
 import { citywalkPublicUrl } from "@/lib/site";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  await connection();
   const operator = getLegalOperator();
   return {
     title: "Privacy | CITYWALK",
@@ -21,7 +23,8 @@ export function generateMetadata(): Metadata {
   };
 }
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  await connection();
   const operator = getLegalOperator();
 
   return (
@@ -98,6 +101,7 @@ export default function PrivacyPage() {
         <p>Personal data is shared only where needed to run a requested feature, secure the service, process a purchase or meet a legal obligation. Current categories and relevant providers include:</p>
         <ul>
           <li>hosting, content delivery, security and infrastructure providers, including Cloudflare where CITYWALK is deployed there;</li>
+          <li>Neon for the production PostgreSQL database, and IONOS for the support mailbox;</li>
           <li>Groq for Ask CITYWALK model processing;</li>
           <li>Resend for transactional account email;</li>
           <li>PostHog for optional product and Marketing analytics when configured;</li>

@@ -3,6 +3,18 @@ import { describe, expect, it } from "vitest";
 import { getLegalOperator, legalRobots } from "@/lib/legal";
 
 describe("legal operator configuration", () => {
+  it.each(["CITYWALK_LEGAL_REGISTER_NAME", "CITYWALK_LEGAL_REGISTER_NUMBER"])("rejects a partial register pair: %s", (field) => {
+    const operator = getLegalOperator({
+      CITYWALK_LEGAL_ENTITY_TYPE: "individual",
+      CITYWALK_LEGAL_OPERATOR_NAME: "Synthetic Operator",
+      CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS: "Synthetic Street 1",
+      CITYWALK_LEGAL_OPERATOR_POSTAL_CITY: "12345 Synthetic City",
+      CITYWALK_LEGAL_OPERATOR_COUNTRY: "Germany",
+      [field]: "Synthetic registration",
+    });
+    expect(operator.isConfigured).toBe(false);
+    expect(legalRobots(operator).index).toBe(false);
+  });
   it("fails closed when the public operator identity is missing", () => {
     const operator = getLegalOperator({});
 

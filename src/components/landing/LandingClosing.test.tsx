@@ -65,7 +65,7 @@ describe("landing launch / FAQ / footer checkpoint", () => {
       expect(screen.getByRole("link", { name: label }).getAttribute("href")).toBe(href);
     }
     expect(screen.getByRole("link", { name: "Account deletion" }).getAttribute("href")).toBe("/account-deletion");
-    expect(screen.getByText(/Privacy, Terms, Imprint and the public account-deletion resource are available directly/)).toBeDefined();
+    expect(screen.getByText(/Legal operator configuration is required before launch/)).toBeDefined();
   });
 
   it("integrates one footer outside main and gives every link a real destination", () => {

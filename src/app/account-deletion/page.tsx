@@ -2,17 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { AccountDeletionRequestPanel } from "@/components/account/AccountDeletionRequestPanel";
+import { citywalkPublicUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Delete your CITYWALK account",
   description: "Request deletion of your CITYWALK account and associated traveler data.",
-  alternates: { canonical: "/account-deletion" },
+  alternates: { canonical: citywalkPublicUrl("/account-deletion") },
   robots: { index: true, follow: true },
 };
 
 export default function AccountDeletionPage() {
   return (
-    <main className="mx-auto min-h-screen max-w-3xl px-6 py-16 sm:px-8 sm:py-24">
+    <main className="mx-auto min-h-screen max-w-3xl px-6 py-16 sm:px-8 sm:py-24 [overflow-wrap:anywhere]">
       <Link href="/" className="text-sm font-semibold text-blue-700 hover:underline">
         CITYWALK
       </Link>
@@ -80,6 +81,12 @@ export default function AccountDeletionPage() {
       <p className="mt-14 border-t border-slate-200 pt-8 text-sm leading-6 text-slate-600">
         Need help with an account-deletion request? Contact <a className="font-semibold text-blue-700 hover:underline" href="mailto:support@getcitywalk.com">support@getcitywalk.com</a>.
       </p>
+      <nav aria-label="Legal navigation" className="mt-6 flex flex-wrap gap-5 text-sm text-blue-700 underline">
+        <Link href="/privacy">Privacy</Link>
+        <Link href="/terms">Terms</Link>
+        <Link href="/imprint">Imprint</Link>
+        <Link href="/support">Support</Link>
+      </nav>
     </main>
   );
 }

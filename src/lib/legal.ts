@@ -1,5 +1,5 @@
 export const CITYWALK_SUPPORT_EMAIL = "support@getcitywalk.com" as const;
-export const LEGAL_LAST_UPDATED = "7 October 2026" as const;
+export const LEGAL_LAST_UPDATED = "14 October 2026" as const;
 
 export type LegalEntityType = "individual" | "company";
 
@@ -40,6 +40,8 @@ export function getLegalOperator(
   const postalCity = clean(environment.CITYWALK_LEGAL_OPERATOR_POSTAL_CITY);
   const country = clean(environment.CITYWALK_LEGAL_OPERATOR_COUNTRY);
   const representative = clean(environment.CITYWALK_LEGAL_REPRESENTATIVE);
+  const registerName = clean(environment.CITYWALK_LEGAL_REGISTER_NAME);
+  const registerNumber = clean(environment.CITYWALK_LEGAL_REGISTER_NUMBER);
 
   const missingRequiredFields = [
     !type ? "operator type" : undefined,
@@ -48,6 +50,8 @@ export function getLegalOperator(
     !postalCity ? "postal code and city" : undefined,
     !country ? "country" : undefined,
     type === "company" && !representative ? "legal representative" : undefined,
+    registerName && !registerNumber ? "registration number" : undefined,
+    registerNumber && !registerName ? "register name" : undefined,
   ].filter((value): value is string => Boolean(value));
 
   return Object.freeze({

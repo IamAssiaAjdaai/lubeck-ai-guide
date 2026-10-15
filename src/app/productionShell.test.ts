@@ -1,4 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
 
 import { metadata as homeMetadata } from "@/app/page";
 import robots from "@/app/robots";
@@ -33,8 +35,8 @@ describe("production landing shell", () => {
     });
   });
 
-  it("advertises the public deletion resource while withholding unconfigured legal pages", () => {
-    expect(sitemap()).toEqual([
+  it("advertises the public deletion resource while withholding unconfigured legal pages", async () => {
+    expect(await sitemap()).toEqual([
       {
         url: CITYWALK_PUBLIC_ORIGIN,
         changeFrequency: "weekly",

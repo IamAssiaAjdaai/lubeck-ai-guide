@@ -13,9 +13,18 @@ export default defineConfig({
       CITYWALK_MEDIA_STORAGE: bindings.text("s3"),
       CITYWALK_DATABASE_RUNTIME: bindings.text("hyperdrive"),
       CITYWALK_RUNTIME_ENV: bindings.text("production"),
+      CITYWALK_LEGAL_ENTITY_TYPE: bindings.text("individual"),
+      CITYWALK_LEGAL_OPERATOR_COUNTRY: bindings.text("Germany"),
+      // Owner-supplied public identity, kept out of source and build artifacts.
+      CITYWALK_LEGAL_OPERATOR_NAME: bindings.secret(),
+      CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS: bindings.secret(),
+      CITYWALK_LEGAL_OPERATOR_POSTAL_CITY: bindings.secret(),
       HYPERDRIVE: bindings.hyperdrive({
         id: "390958927c2946be8571ec5282b35ce6",
       }),
+      // Preserve the active secret for Node/operational compatibility paths.
+      // Worker requests still use the request-scoped Hyperdrive client.
+      DATABASE_URL: bindings.secret(),
       BETTER_AUTH_SECRET: bindings.secret(),
       BETTER_AUTH_URL: bindings.secret(),
       RESEND_API_KEY: bindings.secret(),

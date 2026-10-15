@@ -142,11 +142,11 @@ export function LandingFooter() {
           <li><Link href="/terms">Terms</Link></li>
           <li><Link href="/imprint">Imprint</Link></li>
         </ul>
-        <p>Privacy, Terms, Imprint and the public account-deletion resource are available directly from CITYWALK.</p>
+        <p>Read our Privacy, Terms and Imprint pages, or use the public account-deletion resource. Legal operator configuration is required before launch.</p>
       </div>
       <div className={styles.footerBottom}>
         <span>© 2026 CITYWALK</span>
-        <span>Design preview · not a live download or email signup page.</span>
+        <span>Preparing for launch on iPhone and Android.</span>
       </div>
     </footer>
   );

@@ -16,6 +16,7 @@ describe("native Marketing performance", () => {
     expect(send).toHaveBeenCalledOnce();
     expect(String(send.mock.calls[0]?.[0])).toBe("https://getcitywalk.com/api/analytics/marketing-funnel");
     expect(String(send.mock.calls[0]?.[1]?.body)).toContain("walk_started");
+    expect(send.mock.calls[0]?.[1]?.headers).toMatchObject({ "X-Citywalk-Analytics-Consent": "granted" });
   });
   it("does not attribute another city", async () => {
     await setNativeAnalyticsConsent("granted");

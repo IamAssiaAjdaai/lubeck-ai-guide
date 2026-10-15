@@ -114,14 +114,52 @@ existing concurrency/audit rollback/history/campaign deletion and erasure regres
 
 ## Preview prerequisite and limitations
 
-**Persistent Preview migration 0025 is unverified.** Before Preview acceptance,
-identify an isolated non-production DB, compare the applied 0025 journal hash and
-schema/trigger definitions against current committed SQL, and verify required tables,
-keys and retained-scope policy. Do not overwrite an earlier Draft 0025 or rerun it
-in place. An old Draft schema needs a separately reviewed forward-migration plan.
-No migration is run by build, rendering or this browser harness. No deployment was
-initiated. Preview migration/state verification and manual Preview acceptance remain
-separate gates before merge.
+The release owner supplied persistent Preview verification on 2026-10-15:
+Neon project `blue-king-95814774`, branch `br-orange-term-b9tomkyo`, database
+`neondb`, PostgreSQL 16.15; migrations 0000–0026 applied; 0025 SHA256 matches
+committed SQL; seven tables, six constraints and eight triggers verified; obsolete
+campaign deletion trigger absent. This is owner-provided evidence, not a fresh
+remote inspection by this release run. No Neon connection or migration was run.
+Manual deployed Preview acceptance remains separate from local browser acceptance.
+
+### Develop synchronization acceptance (2026-10-15)
+
+Merged develop `7b78a96fa2ae274f7710a0ba3f873e3fa35bdf7e` without conflicts.
+Brand Workspace remains intact; latest Cloudflare configuration, mobile fixes and
+CITYWALK changes are inherited unchanged. SQL 0025 and 0026 are byte-identical to
+develop (SHA256 respectively `2f07f24fe4cc9c31acdd29263a3b4bddb516e85e9be800215d9c2d6f9de5a0ff`
+and `26bc7c72ae589da9bf49d82cc84903c70d3991fc2ac4072ac0c14c0fc72bae8f`).
+
+Develop lacked a Drizzle snapshot for handwritten migration 0026. Generation
+initially proposed a duplicate shared_walk_links table. Added only missing
+`drizzle/meta/0026_snapshot.json`; its sole table difference from 0025's snapshot
+is shared_walk_links. Discarded the generated duplicate SQL/journal entry before
+successful fresh local migration. Committed SQL and journal remain unchanged.
+This metadata does not execute against or alter an already migrated database.
+
+- Full unit and coverage: each **1,455 passed, 135 skipped**; 234 passing files.
+  Existing configured coverage target remains 100%; not repository-wide coverage.
+- Lint: zero errors, eight existing warnings. Application, standalone Core and
+  Cloudflare typechecks passed. Next build, vinext build and Cloudflare build/
+  binding checks passed.
+- Local 0024 and 0025 committed-SQL upgrade/transactional rollback: one test each
+  passed. Fresh 0000–0026 migration, seed, CMS import and db:verify passed.
+- PostgreSQL: Brand Context 17, CMS/generation 23, city 6, media 7, commerce 13,
+  lifecycle 25, verified knowledge 1 tests passed; atomic rate-limit checks passed.
+- Schema generation after metadata repair: no changes. No constraint or trigger
+  was disabled or weakened.
+- Real Chrome acceptance passed both businesses, explicit confirmation, correction,
+  stale two-tab writes, association, cross-city authorization, labels/focus and
+  375px/1440px overflow. Fresh synthetic screenshots were inspected locally.
+- Mobile: first run 772 passed/one timing-sensitive Apple-to-Google sign-in test
+  failed; unchanged full rerun **773 passed**. Lint, types, config and Expo Doctor
+  passed. No mobile file differs from develop; preserve this flake as a remaining
+  test reliability risk, without weakening assertions.
+
+All database validation used newly created disposable localhost databases. No
+production access, deployment or merge; original workspace `.env` and `.env.example`
+hashes remain unchanged. The merge inherits develop's tracked example changes;
+there is no PR diff to `.env.example` against develop.
 
 The UI is internal and JavaScript-dependent; no public intake/external tenancy.
 History is bounded to the last 20 summaries, with older durable records preserved;

@@ -16,11 +16,38 @@ import {
   NATIVE_ANALYTICS_CONSENT_STORAGE_KEY,
   setNativeAnalyticsConsent,
 } from "../src/lib/analyticsConsent";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 describe("native analytics consent", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     storage.clear();
     vi.clearAllMocks();
+    await clearNativeAnalyticsConsent();
+  });
+
+  it("stops a previous grant when withdrawal cannot be stored", async () => {
+    await setNativeAnalyticsConsent("granted");
+    vi.mocked(AsyncStorage.setItem).mockRejectedValueOnce(new Error("Unavailable"));
+    await setNativeAnalyticsConsent("denied");
+    await expect(getNativeAnalyticsConsent()).resolves.toBe("denied");
+    expect(storage.has(NATIVE_ANALYTICS_CONSENT_STORAGE_KEY)).toBe(false);
+  });
+
+  it("fails closed even when both write and cleanup fail", async () => {
+    await setNativeAnalyticsConsent("granted");
+    vi.mocked(AsyncStorage.setItem).mockRejectedValueOnce(new Error("Unavailable"));
+    vi.mocked(AsyncStorage.removeItem).mockRejectedValueOnce(new Error("Unavailable"));
+    await setNativeAnalyticsConsent("denied");
+    await expect(getNativeAnalyticsConsent()).resolves.toBe("denied");
+  });
+
+  it("keeps withdrawal authoritative when allow and decline overlap", async () => {
+    const allow = setNativeAnalyticsConsent("granted");
+    const decline = setNativeAnalyticsConsent("denied");
+    await expect(getNativeAnalyticsConsent()).resolves.toBe("denied");
+    await Promise.all([allow, decline]);
+    await expect(getNativeAnalyticsConsent()).resolves.toBe("denied");
+    expect(JSON.parse(storage.get(NATIVE_ANALYTICS_CONSENT_STORAGE_KEY)!)).toMatchObject({ decision: "denied" });
   });
 
   it("fails closed when no valid decision is stored", async () => {
