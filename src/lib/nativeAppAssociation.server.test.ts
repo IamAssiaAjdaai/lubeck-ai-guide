@@ -15,7 +15,7 @@ describe("native app association files", () => {
         details: [
           {
             appID: "TEAM123456.com.citywalk.app",
-            paths: ["/open/*/*"],
+            paths: ["/open/*/*", "/shared-walk/*"],
           },
         ],
       },
