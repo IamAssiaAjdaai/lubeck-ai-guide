@@ -22,6 +22,18 @@ npm --prefix apps/marketing-saas run dev
 
 Open `http://127.0.0.1:3108`. Vite binds to loopback only. Mobile device responsiveness can be tested in desktop Chrome's device toolbar or Playwright with 390×844 and 375×812 viewports.
 
+## Automated local Chrome browser QA
+
+Start the local Vite dev server using the command above and leave it running. From a **second terminal**, in the repository root, run:
+
+```bash
+CITYWALK_PLAYWRIGHT_MODULE="$HOME/.cache/citywalk-brand-playwright/node_modules/playwright" \
+PLAYWRIGHT_CHANNEL=chrome \
+node scripts/marketing-saas-onboarding-smoke.mjs
+```
+
+The smoke script only accepts `http://127.0.0.1:3108` (or `http://localhost:3108`), refuses non-local requests, uses synthetic data and writes screenshots to a fresh `/tmp/marketing-saas-ui-...` directory. It checks both desktop/mobile, required input validation, honest no-analysis/no-confirmation states, empty unsaved dashboard, and 390px/375px overflow. **This is not an authenticated SaaS or a WCAG certification**. Results are pending until the founder executes the script; do not claim the test is green before seeing the terminal output.
+
 ## Manual acceptance / shortcomings
 
 1. At 1440px, select **Website** then enter a company name, valid HTTPS URL, objective and offer; follow through to review and the **unsaved** dashboard.
