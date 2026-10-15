@@ -53,3 +53,15 @@ function cleanSegment(value: string): string {
   }
   return normalized;
 }
+
+// Universal/App Link path for sharing an exact guest walk.
+export function buildSharedWalkHandoffPath(id: string): string {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    throw new Error("Invalid CITYWALK shared-walk ID.");
+  }
+  return "/shared-walk/" + id;
+}
+
+export function buildSharedWalkSchemeUrl(id: string): string {
+  return "citywalk://" + buildSharedWalkHandoffPath(id).slice(1);
+}
