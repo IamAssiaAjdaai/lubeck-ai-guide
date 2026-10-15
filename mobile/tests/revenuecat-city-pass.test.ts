@@ -12,7 +12,7 @@ const storePackage = {
   product: { identifier: pass.productIdentifier },
 };
 
-function fixture() {
+function fixture(platform: "ios" | "android" = "ios") {
   const ensureConfigured = vi.fn(async () => true);
   const loadPlans = vi.fn(async () => [{
     kind: "city_pass_72h" as const,
@@ -37,7 +37,7 @@ function fixture() {
     wait,
   } as RevenueCatCityPassDependencies;
   return {
-    billing: new RevenueCatCityPassBilling(deps),
+    billing: new RevenueCatCityPassBilling(deps, platform),
     ensureConfigured,
     loadPlans,
     getOfferings,
@@ -94,5 +94,44 @@ describe("RevenueCat City Pass adapter", () => {
     await expect(h.billing.activate("user-123")).resolves.toBe(false);
     expect(h.access).toHaveBeenCalledTimes(8);
     expect(h.wait).toHaveBeenCalledTimes(7);
+  });
+});
+
+describe("Google Play prepaid City Pass", () => {
+  it("matches the prepaid base plan and returns the canonical logical unlock ID", async () => {
+    const h = fixture("android");
+    const googleId = `${pass.productIdentifier}:prepaid-3d`;
+    h.loadPlans.mockResolvedValueOnce([{
+      kind: "city_pass_72h",
+      packageIdentifier: pass.packageIdentifier,
+      productIdentifier: googleId,
+      localizedPrice: "4,99 €",
+      currencyCode: "EUR",
+      price: 4.99,
+    }]);
+    await expect(h.billing.product(pass.productIdentifier))
+      .resolves.toEqual({ id: pass.productIdentifier, localizedPrice: "4,99 €" });
+    h.getOfferings.mockResolvedValueOnce({
+      current: { availablePackages: [{ identifier: pass.packageIdentifier, product: { identifier: googleId } }] },
+    });
+    await expect(h.billing.purchase(pass.productIdentifier, "user-123"))
+      .resolves.toEqual({ status: "purchased" });
+    expect(h.purchasePackage).toHaveBeenCalledWith({
+      identifier: pass.packageIdentifier,
+      product: { identifier: googleId },
+    });
+  });
+
+  it("rejects Android base-plan IDs when loading Apple products", async () => {
+    const h = fixture("ios");
+    h.loadPlans.mockResolvedValueOnce([{
+      kind: "city_pass_72h",
+      packageIdentifier: pass.packageIdentifier,
+      productIdentifier: `${pass.productIdentifier}:prepaid-3d`,
+      localizedPrice: "4,99 €",
+      currencyCode: "EUR",
+      price: 4.99,
+    }]);
+    await expect(h.billing.product(pass.productIdentifier)).resolves.toBeUndefined();
   });
 });
