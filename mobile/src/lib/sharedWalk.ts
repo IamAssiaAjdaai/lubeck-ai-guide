@@ -10,9 +10,19 @@ export function parseNativeSharedWalk(value: unknown): NativeSharedWalk | undefi
   if (!value || typeof value !== "object" || Array.isArray(value)) return;
   const data = value as { version?: unknown; route?: unknown };
   if (data.version !== 1) return;
-  const route = parseSavedRoute(data.route);
-  if (!route || route.stopSlugs.length < 1 || route.stopSlugs.length > 30 ||
-      new Set(route.stopSlugs).size !== route.stopSlugs.length) return;
+  // parseSavedRoute intentionally de-duplicates stops for saved journeys.
+  // Shared walks must reject malformed *source* order instead of silently
+  // shortening the itinerary a friend sent.
+  const raw = data.route;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw) ||
+      !("stopSlugs" in raw) || !Array.isArray(raw.stopSlugs)) return;
+  const stopSlugs: unknown[] = raw.stopSlugs;
+  if (stopSlugs.length < 1 || stopSlugs.length > 30 ||
+      !stopSlugs.every(slug => typeof slug === "string") ||
+      new Set(stopSlugs).size !== stopSlugs.length) return;
+  const route = parseSavedRoute(raw);
+  if (!route || route.stopSlugs.length !== stopSlugs.length ||
+      route.stopSlugs.some((slug, i) => slug !== stopSlugs[i])) return;
   return { version: 1, route };
 }
 
