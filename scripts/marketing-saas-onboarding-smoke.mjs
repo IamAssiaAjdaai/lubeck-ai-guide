@@ -47,7 +47,11 @@ try {
   const d = desktop.page;
   await assertNoOverflow(d, "1440px");
   await d.screenshot({ path: path.join(screenshots, "desktop-project-type.png"), fullPage: true });
-  await d.getByRole("radio", { name: /Website/ }).check();
+  // Exercise pointer interaction on previously unchecked radio controls.
+  await d.getByRole("radio", { name: /^App/ }).check();
+  assert.equal(await d.getByRole("radio", { name: /^App/ }).isChecked(), true);
+  await d.getByRole("radio", { name: /^Website/ }).check();
+  assert.equal(await d.getByRole("radio", { name: /^Website/ }).isChecked(), true);
   await d.getByRole("button", { name: /Continue/ }).click();
   await d.getByRole("button", { name: /Continue/ }).click();
   await d.getByRole("alert").filter({ hasText: "Enter at least 2 characters." }).waitFor();
@@ -76,6 +80,7 @@ try {
   const mobile = await pageAt(390, 844);
   const m = mobile.page;
   await m.getByRole("radio", { name: /Local Business/ }).check();
+  assert.equal(await m.getByRole("radio", { name: /Local Business/ }).isChecked(), true);
   await assertNoOverflow(m, "390px project type");
   await m.screenshot({ path: path.join(screenshots, "mobile-project-type.png"), fullPage: true });
   await m.getByRole("button", { name: /Continue/ }).click();
