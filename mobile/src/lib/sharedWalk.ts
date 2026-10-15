@@ -43,7 +43,7 @@ const same = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) 
  */
 export function sharedWalkToNativeJourney(
   shared: NativeSharedWalk, places: readonly PublicPlaceCard[], id: string, startedAt = Date.now(),
-): WalkJourney | undefined {
+): (WalkJourney & { shareStopSlugs: string[] }) | undefined {
   const route = shared.route;
   const eligible = new Map(places.filter(isEligibleTourPlace).map(place => [place.slug, place]));
   const first = eligible.get(route.stopSlugs[0]);
@@ -62,6 +62,7 @@ export function sharedWalkToNativeJourney(
       ...(route.finish ? { finish: { ...route.finish } } : {}),
     },
     remaining: [...route.stopSlugs],
+    shareStopSlugs: [...route.stopSlugs],
     visited: [],
     position: { ...first.coordinates },
     ...(route.finish ? { finish: { ...route.finish } } : {}),
