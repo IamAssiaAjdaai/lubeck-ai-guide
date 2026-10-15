@@ -1,0 +1,24 @@
+# Isolated, local development database for the independent Marketing SaaS API.
+# This file deliberately NEVER uses CITYWALK's compose stack, .env or migrations.
+# Use ONLY with synthetic QA identities, never customer/production data.
+name: marketing-saas-qa
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: marketing_qa
+      POSTGRES_PASSWORD: local_marketing_qa_only
+      POSTGRES_DB: marketing_saas_qa
+    ports:
+      - "127.0.0.1:55433:5432"
+    volumes:
+      - marketing_saas_qa_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketing_qa -d marketing_saas_qa"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  marketing_saas_qa_pgdata:
