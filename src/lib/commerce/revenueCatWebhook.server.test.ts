@@ -8,6 +8,7 @@ import {
   PRODUCT_SLUG_BY_REVENUECAT_PRODUCT,
   RevenueCatWebhookError,
   revenueCatEventPolicy,
+  resolveRevenueCatProductId,
   verifyRevenueCatWebhook,
 } from "@/lib/commerce/revenueCatWebhook.server";
 
@@ -117,10 +118,26 @@ describe("RevenueCat webhook verification", () => {
 });
 
 describe("RevenueCat product mapping", () => {
-  it("uses the annual product ID and rejects the stale yearly ID", () => {
+  it("uses yearly as the approved ID while preserving old annual receipt handling", () => {
+    expect(PRODUCT_SLUG_BY_REVENUECAT_PRODUCT["com.citywalk.premium.yearly"])
+      .toBe("citywalk-premium");
     expect(PRODUCT_SLUG_BY_REVENUECAT_PRODUCT["com.citywalk.premium.annual"])
       .toBe("citywalk-premium");
-    expect("com.citywalk.premium.yearly" in PRODUCT_SLUG_BY_REVENUECAT_PRODUCT).toBe(false);
+  });
+
+  it("accepts known Play base plans but rejects other store and forged product patterns", () => {
+    expect(resolveRevenueCatProductId("com.citywalk.premium.monthly:monthly-autorenew", "PLAY_STORE"))
+      .toBe("com.citywalk.premium.monthly");
+    expect(resolveRevenueCatProductId("com.citywalk.premium.yearly:annual-autorenew", "PLAY_STORE"))
+      .toBe("com.citywalk.premium.yearly");
+    expect(resolveRevenueCatProductId("com.citywalk.lubeck.pass72h:prepaid-3d", "PLAY_STORE"))
+      .toBe("com.citywalk.lubeck.pass72h");
+    expect(resolveRevenueCatProductId("com.citywalk.premium.monthly:monthly-autorenew", "APP_STORE"))
+      .toBeUndefined();
+    expect(resolveRevenueCatProductId("com.citywalk.premium.monthly:Bad_plan", "PLAY_STORE"))
+      .toBeUndefined();
+    expect(resolveRevenueCatProductId("com.citywalk.other:monthly-autorenew", "PLAY_STORE"))
+      .toBeUndefined();
   });
 });
 
