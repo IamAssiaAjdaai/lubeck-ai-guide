@@ -71,7 +71,10 @@ export default async function GuestWalkPage({ params }: {
           {iosUrl ? <a href={iosUrl} className="button-secondary inline-flex min-h-12 items-center justify-center px-6" rel="noreferrer">Download for iPhone</a> : null}
           {androidUrl ? <a href={androidUrl} className="button-secondary inline-flex min-h-12 items-center justify-center px-6" rel="noreferrer">Download for Android</a> : null}
         </div>
-        {!iosUrl && !androidUrl ? <p className="text-sm opacity-70">Download links will appear when the official CITYWALK store listings are ready.</p> : null}
+        <p className="text-sm opacity-70">
+          After installing CITYWALK, open this shared link again to see the same walk in the app.
+        </p>
+        {!iosUrl && !androidUrl ? <p className="text-sm opacity-70">Official download links are not available yet.</p> : null}
       </section>
     </main>
   );
