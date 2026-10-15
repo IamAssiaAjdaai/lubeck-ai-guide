@@ -30,6 +30,11 @@ describe("CITYWALK native app links", () => {
             host: CITYWALK_APP_LINK_HOST,
             pathPrefix: "/open/",
           },
+          {
+            scheme: "https",
+            host: CITYWALK_APP_LINK_HOST,
+            pathPrefix: "/shared-walk/",
+          },
         ],
         category: ["BROWSABLE", "DEFAULT"],
       });

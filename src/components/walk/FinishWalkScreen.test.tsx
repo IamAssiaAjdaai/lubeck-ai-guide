@@ -52,7 +52,7 @@ describe("Finish Walk public sharing", () => {
     expect(post.mock.calls[0][1].body).not.toContain("sender-id");
     expect(publicGet.mock.calls[0][1].credentials).toBe("omit");
     expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe(
-      "https://citywalk.example/en/shared-walk/" + id,
+      "https://citywalk.example/shared-walk/" + id,
     );
   });
   it("rejects unauthenticated sender, without POST or fabricated URL", async () => {

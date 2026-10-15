@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   approvedStoreUrl,
+  buildSharedWalkHandoffPath,
+  buildSharedWalkSchemeUrl,
   buildCitywalkSchemeUrl,
   buildNativeAppHandoffPath,
 } from "@/lib/nativeAppHandoff";
@@ -30,6 +32,12 @@ describe("native app handoff", () => {
     })).toBe("citywalk://open/lubeck/2-hours?intent=build_walk&utm_source=instagram");
   });
 
+  it("creates safe canonical app-first share routes", () => {
+    const id = "11111111-1111-4111-8111-111111111111";
+    expect(buildSharedWalkHandoffPath(id)).toBe("/shared-walk/" + id);
+    expect(buildSharedWalkSchemeUrl(id)).toBe("citywalk://shared-walk/" + id);
+    expect(() => buildSharedWalkHandoffPath("../admin")).toThrow();
+  });
   it("accepts only credential-free HTTPS store URLs", () => {
     expect(approvedStoreUrl("https://apps.apple.com/app/id123")).toBe(
       "https://apps.apple.com/app/id123",

@@ -107,6 +107,8 @@ import { NativeIcon } from "./NativeIcon";
 import { colors } from "../design/tokens";
 import { walkStyles as styles } from "../design/walkStyles";
 import { captureNativeMarketingFunnelEvent } from "../lib/marketingPerformance";
+import { citywalkApi } from "../lib/api/instance";
+import { fetchNativeSharedWalk, nativeFinishedShareRoute, SHARE_ID } from "../lib/sharedWalk";
 
 type ActiveWalkMode = "basic" | "live";
 
@@ -141,6 +143,8 @@ export function NativeWalkFlow({
   const [saveGate, setSaveGate] = useState(false);
 
   const [saving, setSaving] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const shareLock = useRef(false);
   const saveLock = useRef(false);
   const [updating, setUpdating] = useState(false);
   const [rebuildConfirmation, setRebuildConfirmation] = useState<{ current: CurrentWalk | undefined }>();
@@ -554,11 +558,12 @@ export function NativeWalkFlow({
       const time = Date.now();
       setGeneratedAt(time);
       setNow(time);
-      const generated: WalkJourney = {
+      const generated: WalkJourney & { shareStopSlugs: string[] } = {
         id: createMobileTripId("walk"),
         citySlug,
         settings,
         remaining: route.places.map((p) => p.slug),
+        shareStopSlugs: route.places.map((p) => p.slug),
         visited: [],
         position: start,
         finish,
@@ -798,6 +803,49 @@ export function NativeWalkFlow({
     setLiveInspect(JSON.stringify({ ...runtime, diagnostics }, null, 2));
     setShowLiveInspect(true);
   }
+  async function shareFinishedWalk() {
+    if (!journey || shareLock.current) return;
+    shareLock.current = true;
+    setSharing(true);
+    setMessage("");
+    try {
+      const session = await nativeAuthClient.getSession();
+      const userId = session.data?.user?.id;
+      if (!userId) {
+        setMessage(locale === "de" ? "Bitte anmelden, um eine Tour zu teilen."
+          : locale === "ar" ? "سجّل الدخول باش تشارك الجولة."
+          : "Sign in to share this walk.");
+        return;
+      }
+      if (!citywalkApi.origin.startsWith("https://")) throw new Error("HTTPS required");
+      const shareStops = (journey as WalkJourney & { shareStopSlugs?: string[] }).shareStopSlugs
+        ?? [...journey.visited, ...journey.remaining];
+      const shareRoute = nativeFinishedShareRoute(journey, shareStops, places);
+      if (!shareRoute) throw new Error("No public route");
+      const response = await citywalkApi.fetchAuthenticated("/api/shared-walks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Citywalk-Account": userId },
+        body: JSON.stringify(shareRoute),
+      });
+      if (!response.ok) throw new Error("Shared walk creation failed");
+      const data: unknown = await response.json();
+      if (!data || typeof data !== "object" || !("id" in data) ||
+          typeof data.id !== "string" || !SHARE_ID.test(data.id)) throw new Error("Invalid share ID");
+      const confirmed = await fetchNativeSharedWalk(data.id, citywalkApi.origin);
+      if (confirmed.route.citySlug !== shareRoute.citySlug ||
+          JSON.stringify(confirmed.route.stopSlugs) !== JSON.stringify(shareRoute.stopSlugs)) {
+        throw new Error("Route mismatch");
+      }
+      const url = new URL("/shared-walk/" + data.id, citywalkApi.origin).toString();
+      await Share.share({ message: url, url });
+    } catch {
+      setMessage(t.shareFailed);
+    } finally {
+      shareLock.current = false;
+      setSharing(false);
+    }
+  }
+
   async function feedback(key: "rating" | "fit", value: string) {
     if (!journey || feedbackLock.current) return;
     feedbackLock.current = true; setFeedbackSaving(true);
@@ -1694,19 +1742,12 @@ export function NativeWalkFlow({
           {feedbackSaving ? <PrimaryButton label={uxCopy(locale).saving} busy disabled /> : null}
           </> : null}
           <PrimaryButton
-            wrapLabel
-            label={t.share}
-            onPress={() => {
-              void Share.share({
-                message: `${t.finished.replace("{city}", nativeCityName(citySlug, cityName, locale))}\n${named(
-                  journey.visited,
-                )
-                  .map((p) => nativePlaceName(citySlug, p.slug, p.content.name, locale))
-                  .join(" · ")}`,
-              }).catch(() => setMessage(t.shareFailed));
-            }}
-          />
-          {journey.visited.length ? (
+             wrapLabel
+             label={t.share}
+             busy={sharing}
+             onPress={() => void shareFinishedWalk()}
+           />
+           {journey.visited.length ? (
             itinerary(named(journey.visited), true, false, true)
           ) : (
             <AppText>{t.noVisited}</AppText>
@@ -1905,8 +1946,9 @@ export function NativeWalkFlow({
                 setProposalMessage(t.late);
                 return;
               }
-              const next: WalkJourney = {
+              const next: WalkJourney & { shareStopSlugs: string[] } = {
                 ...journey,
+                shareStopSlugs: [...new Set([...journey.visited, ...proposed.places.map((p) => p.slug)])],
                 remaining: proposed.places.map((p) => p.slug),
                 finish: proposed.finish,
                 takeBack: proposalKind === "take_back",

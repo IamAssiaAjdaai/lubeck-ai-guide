@@ -16,7 +16,7 @@ export function buildAppleAppSiteAssociation(teamId = process.env.CITYWALK_APPLE
       details: [
         {
           appID: appId,
-          paths: ["/open/*/*"],
+          paths: ["/open/*/*", "/shared-walk/*"],
         },
       ],
     },

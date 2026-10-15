@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
+import { approvedStoreUrl, buildSharedWalkSchemeUrl } from "@/lib/nativeAppHandoff";
 import { isEligibleTourPlace } from "@citywalk/traveler-core";
-import StartSharedWalk from "@/components/walk/StartSharedWalk";
 import { getSharedWalk, SharedWalkError } from "@/lib/sharing/sharedWalks.server";
 import { getPublicCitySnapshot } from "@/lib/content/publicRepository.server";
 import { prepareMapPlaces } from "@/lib/mapPlaces";
@@ -27,6 +27,8 @@ export default async function GuestWalkPage({ params }: {
   const city = await getPublicCitySnapshot(walk.route.citySlug);
   const title = city.city.content[locale]?.name ?? city.city.content.en?.name ?? walk.route.citySlug;
   const translations = getTranslations(locale);
+  const iosUrl = approvedStoreUrl(process.env.EXPO_PUBLIC_IOS_APP_STORE_URL);
+  const androidUrl = approvedStoreUrl(process.env.EXPO_PUBLIC_ANDROID_PLAY_STORE_URL);
   const bySlug = new Map(
     prepareMapPlaces(
       city.places.filter(isEligibleTourPlace),
@@ -61,7 +63,19 @@ export default async function GuestWalkPage({ params }: {
           </li>
         ))}
       </ol>
-      <StartSharedWalk route={walk.route} places={stops} cityName={title} locale={locale} shareId={id} />
+      <section className="mt-8 space-y-4" aria-label="Open shared walk in CITYWALK">
+        <h2 className="text-xl font-semibold">Start this walk in the CITYWALK app</h2>
+        <p className="opacity-75">Your friend shared this exact route. Open it in CITYWALK to preview and walk the same ordered stops — no account needed.</p>
+        <div className="flex flex-wrap gap-3">
+          <a href={buildSharedWalkSchemeUrl(id)} className="button-primary inline-flex min-h-12 items-center justify-center px-6">Open CITYWALK</a>
+          {iosUrl ? <a href={iosUrl} className="button-secondary inline-flex min-h-12 items-center justify-center px-6" rel="noreferrer">Download for iPhone</a> : null}
+          {androidUrl ? <a href={androidUrl} className="button-secondary inline-flex min-h-12 items-center justify-center px-6" rel="noreferrer">Download for Android</a> : null}
+        </div>
+        <p className="text-sm opacity-70">
+          After installing CITYWALK, open this shared link again to see the same walk in the app.
+        </p>
+        {!iosUrl && !androidUrl ? <p className="text-sm opacity-70">Official download links are not available yet.</p> : null}
+      </section>
     </main>
   );
 }

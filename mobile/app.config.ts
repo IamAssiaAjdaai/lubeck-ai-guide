@@ -153,7 +153,7 @@ export function createCitywalkExpoConfig(
     android: {
       ...config.android,
       package: applicationIdentifier,
-      ...(appLinksEnabled ? { intentFilters: [...(config.android?.intentFilters ?? []), { action: "VIEW", autoVerify: true, data: [{ scheme: "https", host: CITYWALK_APP_LINK_HOST, pathPrefix: "/open/" }], category: ["BROWSABLE", "DEFAULT"] }] } : {}),
+      ...(appLinksEnabled ? { intentFilters: [...(config.android?.intentFilters ?? []), { action: "VIEW", autoVerify: true, data: [{ scheme: "https", host: CITYWALK_APP_LINK_HOST, pathPrefix: "/open/" }, { scheme: "https", host: CITYWALK_APP_LINK_HOST, pathPrefix: "/shared-walk/" }], category: ["BROWSABLE", "DEFAULT"] }] } : {}),
     },
   };
 

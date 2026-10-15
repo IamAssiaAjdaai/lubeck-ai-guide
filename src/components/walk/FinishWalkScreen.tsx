@@ -9,6 +9,7 @@ import { formatMessage, type Locale } from "@/lib/i18n";
 import { formatDistance } from "@/lib/distance";
 import { walkCopy } from "@/lib/walk/copy";
 import { Itinerary } from "./RouteSummary";
+import { buildSharedWalkHandoffPath } from "@/lib/nativeAppHandoff";
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const messages = {
@@ -123,7 +124,7 @@ export default function FinishWalkScreen({
           JSON.stringify(confirmed.route.stopSlugs) !== JSON.stringify(shareRoute.stopSlugs))
         throw Error("Shared route mismatch");
 
-      const url = new URL("/" + locale + "/shared-walk/" + data.id, window.location.origin);
+      const url = new URL(buildSharedWalkHandoffPath(data.id), window.location.origin);
       if (url.protocol !== "https:") throw Error("Insecure URL");
       setShareUrl(url.href);
       setShareNotice(c.ready);
