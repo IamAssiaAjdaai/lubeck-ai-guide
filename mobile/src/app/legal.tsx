@@ -48,8 +48,8 @@ export default function LegalScreen() {
 
   async function chooseAnalyticsConsent(decision: Exclude<NativeAnalyticsConsent, "unset">) {
     await setNativeAnalyticsConsent(decision);
-    if (decision === "denied") await clearNativeMarketingAttribution();
-    setAnalyticsConsentState(decision);
+    if (decision === "denied") await clearNativeMarketingAttribution().catch(() => undefined);
+    setAnalyticsConsentState(await getNativeAnalyticsConsent());
   }
 
   const analyticsStatusKey = `legal.analyticsStatus_${analyticsConsent}` as TranslationKey;

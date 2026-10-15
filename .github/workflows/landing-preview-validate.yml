@@ -4,6 +4,14 @@ on:
   pull_request:
     branches: [develop]
     paths:
+      - "src/app/page.tsx"
+      - "src/app/privacy/**"
+      - "src/app/terms/**"
+      - "src/app/imprint/**"
+      - "src/app/support/**"
+      - "src/components/legal/**"
+      - "src/lib/legal.ts"
+      - "scripts/check-launch-routes.mjs"
       - "src/app/landing-preview/**"
       - "src/components/landing/**"
       - "scripts/check-landing-preview.mjs"
@@ -16,6 +24,20 @@ jobs:
   landing-preview:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: citywalk_build
+          POSTGRES_USER: citywalk
+          POSTGRES_PASSWORD: citywalk
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U citywalk -d citywalk_build"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
       CITYWALK_CONTENT_SOURCE: code
       DATABASE_URL: postgresql://citywalk:citywalk@127.0.0.1:5432/citywalk_build
@@ -29,6 +51,8 @@ jobs:
       - name: Set disposable build-only secret
         run: echo "BETTER_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
       - run: npm ci
+      - name: Migrate disposable route-test database
+        run: npm run db:migrate
       - name: Build Next.js preview
         run: npm run build
       - name: Install isolated browser tooling
@@ -46,6 +70,22 @@ jobs:
             sleep 1
           done
           CITYWALK_PLAYWRIGHT_MODULE="$RUNNER_TEMP/citywalk-ui/node_modules/playwright" node scripts/check-landing-preview.mjs
+          CITYWALK_PLAYWRIGHT_MODULE="$RUNNER_TEMP/citywalk-ui/node_modules/playwright" node scripts/check-launch-routes.mjs
+          kill "$SERVER_PID"
+          wait "$SERVER_PID" || true
+          CITYWALK_LEGAL_ENTITY_TYPE=individual \
+            CITYWALK_LEGAL_OPERATOR_NAME="Synthetic Public Operator" \
+            CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS="Synthetic Street 1" \
+            CITYWALK_LEGAL_OPERATOR_POSTAL_CITY="12345 Synthetic City" \
+            CITYWALK_LEGAL_OPERATOR_COUNTRY=Germany \
+            ./node_modules/.bin/next start --hostname 127.0.0.1 --port 3100 > "$RUNNER_TEMP/citywalk-next-configured.log" 2>&1 &
+          SERVER_PID=$!
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3100/privacy > /dev/null; then break; fi
+            sleep 1
+          done
+          CITYWALK_LAUNCH_TEST_LEGAL_CONFIGURED=1 \
+            CITYWALK_PLAYWRIGHT_MODULE="$RUNNER_TEMP/citywalk-ui/node_modules/playwright" node scripts/check-launch-routes.mjs
       - name: Upload design-review screenshots
         if: ${{ always() }}
         uses: actions/upload-artifact@v4

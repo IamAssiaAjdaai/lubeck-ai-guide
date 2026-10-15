@@ -4,6 +4,11 @@ const events = new Set<MarketingFunnelEvent>(["walk_started", "walk_completed"])
 const value = /^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$/;
 
 export async function POST(request: Request) {
+  // Older clients remain compatible, but never forward analytics without an
+  // explicit client assertion. This is not proof of a human consent decision.
+  if (request.headers.get("X-Citywalk-Analytics-Consent") !== "granted") {
+    return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
+  }
   if (!request.headers.get("content-type")?.startsWith("application/json")) return Response.json({ error: "Invalid request." }, { status: 415 });
   let body: unknown;
   try { body = await request.json(); } catch { return Response.json({ error: "Invalid request." }, { status: 400 }); }

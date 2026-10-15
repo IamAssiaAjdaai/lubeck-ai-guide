@@ -1,9 +1,11 @@
 import type { MetadataRoute } from "next";
+import { connection } from "next/server";
 
 import { getLegalOperator } from "@/lib/legal";
 import { CITYWALK_PUBLIC_ORIGIN, citywalkPublicUrl } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await connection();
   const operator = getLegalOperator();
   const routes: MetadataRoute.Sitemap = [
     {

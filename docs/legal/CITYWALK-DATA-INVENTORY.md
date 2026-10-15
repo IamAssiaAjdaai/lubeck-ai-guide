@@ -126,6 +126,8 @@ This means the older statement that "the current public web code does not activa
 
 Still confirm the production PostHog project's provider-side retention and final operational configuration before launch.
 
+14 October release audit: native clients recheck consent immediately before sending and assert `X-Citywalk-Analytics-Consent: granted`; the endpoint drops requests without that assertion, including older clients, with no provider forwarding. This assertion is not verified proof of a human decision. Native preference writes are serialized and storage failures fail closed in the running app; if both storage write and cleanup fail, withdrawal cannot be guaranteed after process restart. Already-sent/in-flight analytics cannot be recalled. Provider retention and consent/deletion device acceptance remain open; see `docs/deployment/LEGAL-LAUNCH-READINESS.md`.
+
 ## 6. Account deletion mapping
 
 Current server behavior:

@@ -24,6 +24,8 @@ Source of truth: `docs/legal/CITYWALK-DATA-INVENTORY.md`.
 
 The optional Apple Privacy Choices URL should point to the privacy page only if the exact release still links users to the implemented account deletion, data access/export and analytics-consent controls described there.
 
+14 October deployment audit: “Implemented” in this table means code exists, not that the URL has passed production acceptance. `/privacy` returned 404 on the production domain during this audit. Operator identity, reviewed disclosures, actual production URL acceptance and exact release artifacts remain blockers; follow `docs/deployment/LEGAL-LAUNCH-READINESS.md` before submission.
+
 ## 2. Release facts that drive the declarations
 
 Confirmed in the reviewed code:

@@ -26,7 +26,13 @@ jobs:
         run: npm run build:vinext
 
       - name: Verify vinext SSR module
-        run: test -f .cloudflare/output/v0/workers/default/bundle/ssr/index.js
+        run: npm run check:cloudflare-build
+
+      - name: Preserve reviewed production bindings
+        run: npm run check:cloudflare-bindings
+
+      - name: Check isolated Cloudflare types
+        run: npm run typecheck:cloudflare
 
       - name: Validate deploy path without upload
         run: npm run deploy:vinext:dry-run

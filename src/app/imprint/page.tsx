@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 
 import { LegalPage } from "@/components/legal/LegalPage";
 import {
@@ -9,7 +10,8 @@ import {
 } from "@/lib/legal";
 import { citywalkPublicUrl } from "@/lib/site";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  await connection();
   const operator = getLegalOperator();
   return {
     title: "Imprint | CITYWALK",
@@ -19,7 +21,8 @@ export function generateMetadata(): Metadata {
   };
 }
 
-export default function ImprintPage() {
+export default async function ImprintPage() {
+  await connection();
   const operator = getLegalOperator();
 
   return (

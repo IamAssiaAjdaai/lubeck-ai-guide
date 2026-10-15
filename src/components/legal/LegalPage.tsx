@@ -17,7 +17,7 @@ export function LegalPage({
   children: ReactNode;
 }) {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-950">
+    <main className="min-h-screen bg-slate-50 text-slate-950 [overflow-wrap:anywhere]">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-5">
           <Link href="/" className="font-extrabold tracking-[-0.04em] text-blue-700">
@@ -28,6 +28,7 @@ export function LegalPage({
             <Link href="/terms" className="hover:text-blue-700">Terms</Link>
             <Link href="/imprint" className="hover:text-blue-700">Imprint</Link>
             <Link href="/account-deletion" className="hover:text-blue-700">Account deletion</Link>
+            <Link href="/support" className="hover:text-blue-700">Support</Link>
           </nav>
         </div>
       </header>

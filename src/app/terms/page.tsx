@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import Link from "next/link";
 
 import { LegalPage } from "@/components/legal/LegalPage";
@@ -10,7 +11,8 @@ import {
 } from "@/lib/legal";
 import { citywalkPublicUrl } from "@/lib/site";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  await connection();
   const operator = getLegalOperator();
   return {
     title: "Terms | CITYWALK",
@@ -20,7 +22,8 @@ export function generateMetadata(): Metadata {
   };
 }
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  await connection();
   const operator = getLegalOperator();
 
   return (

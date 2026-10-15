@@ -13,9 +13,10 @@ export async function captureNativeMarketingFunnelEvent(
     if (await getNativeAnalyticsConsent() !== "granted") return;
     const attribution = await loadNativeMarketingAttribution();
     if (!attribution || attribution.citySlug !== citySlug) return;
+    if (await getNativeAnalyticsConsent() !== "granted") return;
     await send(new URL("/api/analytics/marketing-funnel", getConfiguredApiOrigin()), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-Citywalk-Analytics-Consent": "granted" },
       body: JSON.stringify({
         event,
         city: citySlug,
