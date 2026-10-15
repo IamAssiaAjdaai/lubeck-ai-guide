@@ -16,7 +16,7 @@ describe("marketing SaaS customer intake (untrusted owner-declared input)", () =
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.brief.identity.name).toBe("Nordlicht Studio");
-    expect(result.brief.identity.website).toBe("https://studio.example/");
+    expect(result.brief.identity.website).toBe("https://studio.example");
     expect(result.brief.facts).toEqual([{
       id: "owner-claim",
       statement: "We offer design consulting.",
