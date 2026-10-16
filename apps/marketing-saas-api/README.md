@@ -7,13 +7,22 @@
 Unlike CITYWALK's regular `docker-compose.yml`, this project's standalone `compose.qa.yml`:
 
 - uses a unique Compose project `marketing-saas-qa`
-- binds PostgreSQL **only** to `127.0.0.1:55433`
+- binds PostgreSQL **only** to `127.0.0.1:55434`
 - creates `marketing_saas_qa` under a dedicated `marketing_qa` local user
 - stores test data in independent volume `marketing_saas_qa_pgdata`
 - contains **obvious dummy local-only** credentials and must never be deployed
 - does not read or modify CITYWALK env, development databases, migrations or auth tables.
 
 ### Inspect, then run (from root of the dedicated SaaS backend worktree)
+
+Host port `55433` is occupied on the founder's Mac by `citywalk-share-qa-pg` and `55432` by `citywalk-brand-qa-pg`. The SaaS QA default is therefore **55434**. Confirm it is free before starting:
+
+```bash
+docker ps --format 'table {{.Names}}\\t{{.Ports}}'
+lsof -nP -iTCP:55434 -sTCP:LISTEN
+```
+
+If any unrelated process uses `55434`, **do not stop or remove it**. Choose another confirmed free port by prefixing every subsequent Compose command with `MARKETING_SAAS_QA_PG_PORT=<free-port>`; adjust only the future SaaS API connection string accordingly. Compose interpolation changes the host port, not the PostgreSQL service port `5432`.
 
 ```bash
 docker compose -f apps/marketing-saas-api/compose.qa.yml config
@@ -25,7 +34,7 @@ docker compose -f apps/marketing-saas-api/compose.qa.yml exec -T postgres \
 Expect `marketing_saas_qa|marketing_qa` (spacing can vary). Future **SaaS-only** connection string (for a future server process, not CITYWALK):
 
 ```text
-postgresql://marketing_qa:local_marketing_qa_only@127.0.0.1:55433/marketing_saas_qa
+postgresql://marketing_qa:local_marketing_qa_only@127.0.0.1:55434/marketing_saas_qa
 ```
 
 To stop the isolated test DB while keeping its contents:
