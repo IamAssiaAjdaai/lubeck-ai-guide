@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: local_marketing_qa_only
       POSTGRES_DB: marketing_saas_qa
     ports:
-      - "127.0.0.1:55433:5432"
+      - "127.0.0.1:${MARKETING_SAAS_QA_PG_PORT:-55434}:5432"
     volumes:
       - marketing_saas_qa_pgdata:/var/lib/postgresql/data
     healthcheck:
