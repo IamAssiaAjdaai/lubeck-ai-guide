@@ -72,6 +72,10 @@ export default async function PrivacyPage() {
           Location is processed to provide a feature you explicitly request (Article 6(1)(b) GDPR). Device-level permission and any consent required for access to information on your device are handled through the relevant platform controls.
         </p>
 
+        <p>
+          Displaying a map retrieves map styles, tiles and related resources from the configured map service, currently OpenFreeMap by default. Those requests disclose technical connection information such as your IP address and the requested map area to the map service. Opening external directions transfers the selected destination to Apple Maps or Google Maps under that provider’s terms and privacy information.
+        </p>
+
         <h3>Ask CITYWALK / AI Guide</h3>
         <p>
           When you ask the AI Guide a question, CITYWALK sends the question, a limited amount of recent conversation history and relevant city/place/tour/walk context to the configured model provider, currently Groq. The service also processes usage counters needed to enforce daily allowances. We process this data to answer the question and provide the requested AI feature (Article 6(1)(b) GDPR).
@@ -89,6 +93,9 @@ export default async function PrivacyPage() {
         <p>
           CITYWALK uses Resend to send operational emails such as email verification, password reset and account-deletion confirmation. The recipient address and message delivery data needed for that purpose are sent to the email provider. These messages are necessary to provide and secure the account lifecycle you requested (Article 6(1)(b) GDPR) and, where applicable, to protect accounts (Article 6(1)(f) GDPR).
         </p>
+
+        <h3>Support and feedback</h3>
+        <p>When you contact support, the mailbox provider processes the message, contact details and attachments you supply to handle your request. Native walk feedback is stored locally in the reviewed app. Avoid including sensitive personal data in support messages or AI questions.</p>
 
         <h3>Technical and security data</h3>
         <p>
@@ -128,13 +135,14 @@ export default async function PrivacyPage() {
         <p>
           Optional browser analytics is fail-closed: CITYWALK does not initialize the browser PostHog SDK, create its pseudonymous analytics visitor/session identifiers or capture those browser events until you explicitly allow analytics. You can decline or later withdraw that choice below. Native Marketing analytics is also fail-closed: the app does not persist Marketing attribution or send native <code>walk_started</code> / <code>walk_completed</code> funnel events unless you explicitly allow analytics in the Legal & Support screen in the app. Declining analytics in the app, including after a previous grant, clears the stored native Marketing attribution and stops further native funnel capture. Browser and native analytics choices are stored locally in their own runtime/device context and are not assumed to transfer automatically between web and app. Provider-side event retention still depends on the final PostHog project configuration. CITYWALK does not use the reviewed PostHog integration as advertising tracking.
         </p>
+        <p>Optional analytics processing relies on your consent (Article 6(1)(a) GDPR). Withdrawing consent does not affect the lawfulness of processing before withdrawal.</p>
         <AnalyticsConsentPreferences />
       </section>
 
       <section>
         <h2>5. How long data is kept</h2>
         <p>
-          CITYWALK does not publish invented fixed retention periods. Account and traveler data is kept only for as long as needed to provide the account/service, handle security and disputes, or satisfy applicable legal obligations. Data that is no longer required is deleted or anonymized according to the relevant lifecycle.
+          Account and traveler data supports the lifetime of your account and the features you request. Much of the device-local walk, preference and conversation data has no automatic time expiry in the current app and remains until it is removed through the relevant controls or local cleanup. Expiry of a session or verification token prevents its use; it does not by itself promise immediate physical deletion of the database record.
         </p>
         <p>
           When an eligible account is deleted, server-side account-owned authentication and traveler data is removed under the implemented deletion flow. Store order or subscription reconciliation records can remain detached from the deleted user where they must be retained for accounting, reconciliation or other legal purposes. Deletion also queues supported external customer/token erasure work for configured providers. A deletion started from the public website cannot directly erase data that exists only on a device that is offline or no longer connected to the account.
@@ -161,6 +169,9 @@ export default async function PrivacyPage() {
         </ul>
         <p>
           If you are signed in on the CITYWALK app, the account controls provide a machine-readable JSON export of server-held account data. The export intentionally excludes password hashes, OAuth and session tokens, internal security/audit records and traveler state that exists only on your device and was never uploaded.
+        </p>
+        <p>
+          Providing account information is necessary to create an account; you can explore guest features without creating one. Optional analytics consent can be refused without losing core exploration. The reviewed AI Guide does not make decisions producing legal or similarly significant effects about you.
         </p>
         <p>
           You also have the right to lodge a complaint with a competent data-protection supervisory authority. To request access beyond the self-service export, exercise another privacy right or ask a question, email <a href={`mailto:${CITYWALK_SUPPORT_EMAIL}`}>{CITYWALK_SUPPORT_EMAIL}</a>.

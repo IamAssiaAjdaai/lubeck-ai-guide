@@ -38,17 +38,17 @@ export function LegalPage({
         <h1 className="mt-3 text-4xl font-bold tracking-[-0.045em] sm:text-5xl">{title}</h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">{intro}</p>
 
-        {!operator.isConfigured ? (
+        {!operator.isConfigured || !operator.publicationApproved ? (
           <aside className="mt-8 rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-6 text-amber-950" role="note">
             <strong className="block">Pre-launch legal configuration is incomplete.</strong>
             <span>
-              This build must not be released publicly until the legal operator identity is configured. Missing: {operator.missingRequiredFields.join(", ")}.
+              The legal notice is awaiting operator and legal approval. Contact support for assistance.
             </span>
           </aside>
         ) : null}
 
         <div className="mt-10 space-y-10 [&_a]:font-medium [&_a]:text-blue-700 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:tracking-[-0.025em] [&_h3]:text-lg [&_h3]:font-semibold [&_li]:leading-7 [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-6 [&_p]:leading-7 [&_p]:text-slate-700 [&_section]:space-y-3 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6">
-          {children}
+          {operator.isConfigured && operator.publicationApproved ? children : null}
         </div>
       </article>
 

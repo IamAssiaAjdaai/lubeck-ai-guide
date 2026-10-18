@@ -69,6 +69,10 @@
     }
   },
   "reviewedAdditions": {
+    "CITYWALK_LEGAL_PUBLICATION_APPROVED": {
+      "type": "text",
+      "value": "0"
+    },
     "CITYWALK_RUNTIME_ENV": {
       "type": "text",
       "value": "production"

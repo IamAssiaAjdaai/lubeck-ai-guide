@@ -70,7 +70,7 @@ export default async function TermsPage() {
       <section>
         <h2>4. Free and paid access</h2>
         <p>
-          CITYWALK can offer free features, time-limited city passes and recurring premium plans. The Lübeck City Pass is currently configured as 72 hours with a recommended launch price of €4.99. Premium and other store prices are the prices displayed to you in the relevant checkout or app store at the time of purchase; taxes and localized store pricing may affect the displayed amount.
+          CITYWALK can offer free features, time-limited city passes and recurring premium plans. An internal price configuration is not a public offer. A separately approved 28-day launch access period, if activated, requires no purchase or subscription enrollment and creates no automatic charge or paid subscription when it ends. Existing purchases retain their verified rights. Premium and other store prices are the prices displayed to you in the relevant checkout or app store at the time of purchase; taxes and localized store pricing may affect the displayed amount.
         </p>
         <p>
           Paid access begins and ends according to the product shown at purchase. Access can depend on successful provider confirmation and entitlement reconciliation. A purchase does not transfer ownership of CITYWALK software, content or intellectual-property rights.

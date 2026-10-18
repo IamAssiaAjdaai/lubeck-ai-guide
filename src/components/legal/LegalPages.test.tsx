@@ -9,6 +9,7 @@ import ImprintPage, { generateMetadata as imprintMetadata } from "@/app/imprint/
 import sitemap from "@/app/sitemap";
 
 const identity = {
+  CITYWALK_LEGAL_PUBLICATION_APPROVED: "1",
   CITYWALK_LEGAL_ENTITY_TYPE: "individual",
   CITYWALK_LEGAL_OPERATOR_NAME: "Synthetic Public Operator",
   CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS: "Synthetic Street 1",

@@ -40,7 +40,8 @@ describe("legal operator configuration", () => {
 
     expect(operator.isConfigured).toBe(true);
     expect(operator.missingRequiredFields).toEqual([]);
-    expect(legalRobots(operator)).toEqual({ index: true, follow: true });
+    expect(legalRobots(operator)).toEqual({ index: false, follow: false });
+    expect(operator.publicationApproved).toBe(false);
   });
 
   it("requires a representative for a company operator", () => {

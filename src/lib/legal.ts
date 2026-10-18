@@ -1,5 +1,5 @@
 export const CITYWALK_SUPPORT_EMAIL = "support@getcitywalk.com" as const;
-export const LEGAL_LAST_UPDATED = "14 October 2026" as const;
+export const LEGAL_LAST_UPDATED = "18 October 2026" as const;
 
 export type LegalEntityType = "individual" | "company";
 
@@ -15,6 +15,7 @@ export type LegalOperator = Readonly<{
   vatId?: string;
   supportEmail: typeof CITYWALK_SUPPORT_EMAIL;
   isConfigured: boolean;
+  publicationApproved: boolean;
   missingRequiredFields: readonly string[];
 }>;
 
@@ -72,12 +73,13 @@ export function getLegalOperator(
       : {}),
     supportEmail: CITYWALK_SUPPORT_EMAIL,
     isConfigured: missingRequiredFields.length === 0,
+    publicationApproved: environment.CITYWALK_LEGAL_PUBLICATION_APPROVED === "1",
     missingRequiredFields,
   });
 }
 
 export function legalRobots(operator: LegalOperator) {
-  return operator.isConfigured
+  return operator.isConfigured && operator.publicationApproved
     ? { index: true, follow: true }
     : { index: false, follow: false };
 }
