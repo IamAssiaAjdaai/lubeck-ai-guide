@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-const { createCompletion, enforceAllowance, rateLimit, globalBudget } = vi.hoisted(() => ({
+const { createCompletion, enforceAllowance, rateLimit, globalBudget, groqOptions } = vi.hoisted(() => ({
+  groqOptions: vi.fn(),
   createCompletion: vi.fn(),
   enforceAllowance: vi.fn(),
   rateLimit: vi.fn(),
@@ -11,6 +12,10 @@ const { createCompletion, enforceAllowance, rateLimit, globalBudget } = vi.hoist
 
 vi.mock("groq-sdk", () => {
   class MockGroq {
+    constructor(options: { apiKey: string; maxRetries?: number }) {
+      groqOptions(options);
+    }
+
     chat = {
       completions: {
         create: createCompletion,
@@ -103,6 +108,27 @@ describe("POST /api/guide", () => {
 
       usage: {},
     });
+  });
+
+  it("disables implicit Groq transport retries to preserve one HTTP attempt per budget slot", async () => {
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question: "What is this?",
+        citySlug: "lubeck",
+        placeSlug: "holstentor",
+        locale: "en",
+      }),
+    }));
+
+    expect(response.status).toBe(200);
+    expect(groqOptions).toHaveBeenCalledWith({
+      apiKey: "test-key",
+      maxRetries: 0,
+    });
+    expect(globalBudget).toHaveBeenCalledOnce();
+    expect(createCompletion).toHaveBeenCalledOnce();
   });
 
   it("rejects global provider budget exhaustion before calling Groq", async () => {
