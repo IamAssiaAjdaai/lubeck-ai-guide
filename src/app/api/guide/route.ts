@@ -231,7 +231,9 @@ export async function POST(request: Request) {
       "CURRENT QUESTION:",
       question,
     ].join("\n");
-    const groq = new Groq({ apiKey });
+    // Global budget reserves one slot per HTTP attempt. Disable the SDK's
+    // implicit transport retries so a reserved slot cannot fan out to more calls.
+    const groq = new Groq({ apiKey, maxRetries: 0 });
     let guideAnswer: ReturnType<typeof parseGuideStructuredAnswer> | undefined;
 
     for (let attempt = 0; attempt < MAX_COMPLETION_ATTEMPTS; attempt += 1) {
