@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import Groq from "groq-sdk";
 import { describe, expect, it, vi } from "vitest";
 
