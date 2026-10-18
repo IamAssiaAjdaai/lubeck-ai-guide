@@ -31,6 +31,13 @@ vi.mock("@/lib/guideAllowance.server", () => ({
   enforceGuideDailyAllowance: enforceAllowance,
 }));
 
+vi.mock("@/lib/guideSafety.server", async importOriginal => ({
+  ...await importOriginal<typeof import("@/lib/guideSafety.server")>(),
+  reserveGuideCompletion: vi.fn().mockResolvedValue(true),
+}));
+
+import { reserveGuideCompletion } from "@/lib/guideSafety.server";
+
 import { POST } from "@/app/api/guide/route";
 
 import {
@@ -60,6 +67,8 @@ function modelAnswer({
 
 describe("POST /api/guide", () => {
   beforeEach(() => {
+    vi.stubEnv("CITYWALK_AI_GUIDE_ENABLED", "true");
+    vi.stubEnv("CITYWALK_AI_DAILY_COMPLETION_LIMIT", "100");
     vi.clearAllMocks();
 
     process.env.GROQ_API_KEY = "test-key";
@@ -101,6 +110,29 @@ describe("POST /api/guide", () => {
 
       usage: {},
     });
+  });
+
+  it("keeps public AI off until runtime approval and capacity are both supplied", async () => {
+    vi.stubEnv("CITYWALK_AI_GUIDE_ENABLED", "false");
+    expect((await POST(new Request("http://localhost/api/guide", { method: "POST", body: "{}" }))).status).toBe(503);
+    expect(createCompletion).not.toHaveBeenCalled();
+    expect(rateLimit).not.toHaveBeenCalled();
+  });
+
+  it("rejects cross-origin and oversized requests before provider use", async () => {
+    const foreign = new Request("http://localhost/api/guide", { method: "POST", headers: { Origin: "https://other.test" }, body: "{}" });
+    expect((await POST(foreign)).status).toBe(403);
+    expect((await POST(new Request("http://localhost/api/guide", { method: "POST", body: "x".repeat(16385) }))).status).toBe(413);
+    expect(createCompletion).not.toHaveBeenCalled();
+  });
+
+  it("does not call Groq when global completion capacity is exhausted", async () => {
+    vi.mocked(reserveGuideCompletion).mockResolvedValueOnce(false);
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST", body: JSON.stringify({ question: "When was this built?", citySlug: "lubeck", placeSlug: "holstentor", locale: "en" }),
+    }));
+    expect(response.status).toBe(503);
+    expect(createCompletion).not.toHaveBeenCalled();
   });
 
   it("returns authoritative daily allowance metadata separately from abuse limits", async () => {

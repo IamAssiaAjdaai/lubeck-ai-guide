@@ -9,7 +9,7 @@ export class NativeBillingError extends Error {
   constructor(readonly code: "UNAVAILABLE" | "GOOGLE_BILLING_DISABLED" | "INVALID_PURCHASE" | "ACCOUNT_CONFLICT" | "PURCHASE_PENDING" | "PURCHASE_REVOKED" | "RATE_LIMITED", readonly status = 503) { super(code); }
 }
 export function requireSandbox() {
-  if (process.env.CITYWALK_NATIVE_BILLING_MODE !== "sandbox" || process.env.VERCEL_ENV === "production") throw new NativeBillingError("UNAVAILABLE");
+  if (process.env.CITYWALK_NATIVE_BILLING_MODE !== "sandbox" || (process.env.VERCEL_ENV === "production" || process.env.CITYWALK_RUNTIME_ENV === "production")) throw new NativeBillingError("UNAVAILABLE");
   if (!process.env.CITYWALK_NATIVE_ACCOUNT_SECRET || process.env.CITYWALK_NATIVE_ACCOUNT_SECRET.length < 32) throw new NativeBillingError("UNAVAILABLE");
 }
 export function accountBinding(userId: string): string {

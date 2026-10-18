@@ -26,6 +26,10 @@ function stripeEvent(
 }
 
 describe("Stripe payment provider", () => {
+  it("blocks live checkout before making a provider request during Public Beta", async () => {
+    const provider = createStripeProvider({ STRIPE_SECRET_KEY: "sk_live_synthetic_never_real" });
+    await expect(provider.createCheckout({} as Parameters<typeof provider.createCheckout>[0])).rejects.toThrow(/Live checkout is disabled/);
+  });
   it("normalizes a paid hosted Checkout Session without card data", () => {
     expect(
       normalizeStripeEvent(

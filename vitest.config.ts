@@ -7,8 +7,11 @@ export default defineConfig({
 
   test: {
     environment: "jsdom",
+    include: ["src", "packages", "scripts", "tests"].flatMap(root =>
+      configDefaults.include.map(pattern => `${root}/${pattern}`),
+    ),
     maxWorkers: 4,
-    exclude: [...configDefaults.exclude, "mobile/**", "lubeck-ai-guide/**"],
+    exclude: [...configDefaults.exclude, "mobile/**", "lubeck-ai-guide/**", "**/citywalk-preview-review/**"],
 
     coverage: {
       provider: "v8",

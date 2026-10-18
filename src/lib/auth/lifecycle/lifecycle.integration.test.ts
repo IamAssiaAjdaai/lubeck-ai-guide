@@ -13,7 +13,7 @@ vi.mock("./rateLimit.server", async importOriginal => ({ ...await importOriginal
 import { createCitywalkAuth } from "../factory.server";
 import { getDb, closeDb } from "@/db/client";
 import { user, account, session, verification, staffMemberships, externalAccountErasureJobs } from "@/db/authSchema";
-import { travelerProfiles, travelerGuestLinks, accountSavedWalks } from "@/db/travelerSchema";
+import { travelerProfiles, travelerGuestLinks, accountSavedWalks, sharedWalkLinks } from "@/db/travelerSchema";
 import { commerceCustomers, commerceProducts, commerceSubscriptions } from "@/db/commerceSchema";
 import { contentWorkflowEventsTable } from "@/db/schema";
 import { POST as deleteAccount } from "@/app/api/account/delete/route";
@@ -193,11 +193,14 @@ describe.runIf(process.env.LIFECYCLE_DB_INTEGRATION === "1")("isolated real Bett
     await getDb().insert(travelerGuestLinks).values({ userId: owner.id, visitorId: randomUUID(), sessionId: randomUUID() });
     const route = { citySlug: "lubeck", stopSlugs: ["holstentor"], settings: { minutes: 120, interests: ["history" as const], walking: "balanced" as const, start: { lat: 53.8, lng: 10.6 } } };
     await getDb().insert(accountSavedWalks).values([owner, other].map(item => ({ userId: item.id, citySlug: "lubeck", route, fingerprint: randomUUID() })));
+    await getDb().insert(sharedWalkLinks).values([owner, other].map(item => ({ ownerId: item.id, citySlug: "lubeck", route })));
     const token = await tokenFor(owner.email);
     const result = await deleteAccount(req("/api/account/delete", { confirm: true, password, userId: other.id }, owner.cookie, owner.id));
     expect(result.status).toBe(200); expect(await result.json()).toEqual({ deleted: true });
     expect(await getDb().select().from(user).where(eq(user.id, owner.id))).toHaveLength(0);
     for (const table of [account, session, travelerProfiles, travelerGuestLinks, accountSavedWalks]) expect(await getDb().select().from(table).where(eq(table.userId, owner.id))).toHaveLength(0);
+    expect(await getDb().select().from(sharedWalkLinks).where(eq(sharedWalkLinks.ownerId, owner.id))).toHaveLength(0);
+    expect(await getDb().select().from(sharedWalkLinks).where(eq(sharedWalkLinks.ownerId, other.id))).toHaveLength(1);
     expect(await getDb().select().from(verification).where(eq(verification.value, owner.id))).toHaveLength(0);
     expect(await getDb().select().from(accountSavedWalks).where(eq(accountSavedWalks.userId, other.id))).toHaveLength(1);
     expect(await getDb().select().from(externalAccountErasureJobs).where(eq(externalAccountErasureJobs.externalCustomerId, owner.id))).toMatchObject([{ provider: "revenuecat", attempts: 0, completedAt: null }]);

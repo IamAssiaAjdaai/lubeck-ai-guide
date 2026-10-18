@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => ({ google: vi.fn(), apple: vi.fn(), push: vi.fn()
 vi.mock("./providers.server", async original => ({ ...await original<typeof import("./providers.server")>(), verifyGoogle: mocks.google, verifyApple: mocks.apple, verifyGooglePushAuthorization: mocks.push }));
 vi.mock("@/lib/auth/server", () => ({ getAuth: () => ({ api: { getSession: mocks.session } }) }));
 import { getDb, closeDb } from "@/db/client";
-import { user, account, session } from "@/db/authSchema";
+import { user, account, session, externalAccountErasureJobs } from "@/db/authSchema";
 import { accountSavedWalks } from "@/db/travelerSchema";
 import { commerceOrders, commerceEntitlements, commerceProviderEvents, commerceProducts, commerceProductGrants, commercePrices } from "@/db/commerceSchema";
 import { accountBinding, type VerifiedNativePurchase } from "./config.server";
@@ -158,12 +158,20 @@ describe.runIf(process.env.NATIVE_BILLING_DB_INTEGRATION === "1")("Phase 3B real
     expect(await getDb().select().from(accountSavedWalks).where(eq(accountSavedWalks.userId,"upgrade-active"))).toEqual(before);
   });
 
-  it.each(["apple_sandbox","google_test"] as const)("native %s ownership blocks account deletion without losing account/session/order/grant",async provider=>{
+  it.each(["apple_sandbox","google_test"] as const)("native %s deletion erases identity and grants while retaining detached financial evidence",async provider=>{
     const id=randomUUID(),sid=randomUUID();await getDb().insert(user).values({id,name:"Retention test",email:`${id}@example.test`});
     await getDb().insert(account).values({id:randomUUID(),accountId:id,providerId:"credential",userId:id,password:"synthetic-test-hash"});
     await getDb().insert(session).values({id:sid,userId:id,token:randomUUID(),expiresAt:new Date(Date.now()+3600000)});
     const p={...evidence(provider),binding:accountBinding(id)};await deliverNativePurchase(p,id);
-    const before=await snapshot();await expect(deleteTravelerAccount({userId:id,sessionId:sid,password:"synthetic",verify:async()=>true})).rejects.toMatchObject({code:"RETENTION_REVIEW_REQUIRED",status:409});
-    expect(await snapshot()).toEqual(before);expect(await getDb().select().from(user).where(eq(user.id,id))).toHaveLength(1);expect(await getDb().select().from(session).where(eq(session.id,sid))).toHaveLength(1);
+    const [order] = await orders(p);
+    const otherBefore = await getDb().select().from(user).where(eq(user.id, other));
+    await deleteTravelerAccount({userId:id,sessionId:sid,password:"synthetic",verify:async()=>true});
+    expect(await getDb().select().from(user).where(eq(user.id,id))).toHaveLength(0);
+    expect(await getDb().select().from(session).where(eq(session.id,sid))).toHaveLength(0);
+    expect(await getDb().select().from(account).where(eq(account.userId,id))).toHaveLength(0);
+    expect(await getDb().select().from(commerceEntitlements).where(eq(commerceEntitlements.userId,id))).toHaveLength(0);
+    expect(await orders(p)).toEqual([{ ...order, userId: null }]);
+    expect(await getDb().select().from(user).where(eq(user.id,other))).toEqual(otherBefore);
+    expect(await getDb().select().from(externalAccountErasureJobs).where(eq(externalAccountErasureJobs.externalCustomerId,id))).toMatchObject([{provider:"revenuecat",completedAt:null}]);
   });
 });

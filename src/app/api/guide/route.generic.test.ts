@@ -39,6 +39,11 @@ vi.mock("@/lib/verifiedKnowledge.server", () => ({
   }),
 }));
 
+vi.mock("@/lib/guideSafety.server", async importOriginal => ({
+  ...await importOriginal<typeof import("@/lib/guideSafety.server")>(),
+  reserveGuideCompletion: vi.fn().mockResolvedValue(true),
+}));
+
 import { POST } from "@/app/api/guide/route";
 import type { KnowledgeChunk } from "@/lib/knowledge";
 
@@ -60,6 +65,8 @@ const chunk: KnowledgeChunk = {
 
 describe("POST /api/guide generic CMS place", () => {
   beforeEach(() => {
+    vi.stubEnv("CITYWALK_AI_GUIDE_ENABLED", "true");
+    vi.stubEnv("CITYWALK_AI_DAILY_COMPLETION_LIMIT", "100");
     vi.clearAllMocks();
     process.env.GROQ_API_KEY = "test-key";
     mocks.rateLimit.mockResolvedValue({
