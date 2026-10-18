@@ -50,6 +50,7 @@ import { getGuideEligibility } from "@/lib/guideEligibility.server";
 import { getPublicSession } from "@/lib/auth/publicSession.server";
 import { isApplicationMediaPath } from "@/lib/media/imageDelivery";
 import { MediaAttribution } from "@/components/travel/MediaAttribution";
+import { getLaunchPolicy } from "@/lib/commerce/launchPolicy.server";
 import { CityPassPaywall } from "@/components/commerce/CityPassPaywall";
 import { getCityPassCopy } from "@/lib/commerce/cityPassCopy";
 import {
@@ -416,7 +417,7 @@ export default async function LandmarkPage({
               </div>
             </section>
           ) : (
-            <CityPassPaywall
+            getLaunchPolicy().purchasesAllowed ? <CityPassPaywall
               locale={currentLocale}
               copy={premiumCopy}
               pass={getCityPassPaywallContext(LUBECK_CITY_PASS)}
@@ -428,7 +429,7 @@ export default async function LandmarkPage({
               signedIn={premiumState?.signedIn ?? false}
               offer={premiumState?.offer}
               initiallyOpen={premiumRequested}
-            />
+            /> : null
           )
         ) : null}
 
@@ -525,11 +526,11 @@ async function resolvePremiumState(
   configuration: CityPassConfiguration,
 ) {
   const session = await getPublicSession(await headers());
-  const access = await getCityPassAccessState({
+  const access = getLaunchPolicy().active ? { status: "active" as const, active: true } : await getCityPassAccessState({
     userId: session?.user.id,
     citySlug: configuration.citySlug,
   });
-  const offer = access.active
+  const offer = access.active || !getLaunchPolicy().purchasesAllowed
     ? undefined
     : await getActiveCityPassOffer(configuration.citySlug);
   return {

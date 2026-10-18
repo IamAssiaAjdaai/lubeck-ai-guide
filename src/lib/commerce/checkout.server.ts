@@ -1,3 +1,4 @@
+import { getLaunchPolicy } from "./launchPolicy.server";
 import { randomUUID } from "node:crypto";
 
 import { and, eq, gt, isNull, or, sql } from "drizzle-orm";
@@ -46,6 +47,7 @@ type CheckoutDependencies = Readonly<{
 export class CommerceCheckoutError extends Error {
   constructor(
     readonly code:
+      | "PURCHASES_DISABLED"
       | "INVALID_INPUT"
       | "PRICE_NOT_AVAILABLE"
       | "ALREADY_ENTITLED"
@@ -230,6 +232,7 @@ export async function startCommerceCheckout(
     throw new CommerceCheckoutError("INVALID_INPUT");
   }
 
+  if (!getLaunchPolicy().purchasesAllowed) throw new CommerceCheckoutError("PURCHASES_DISABLED");
   const price = await dependencies.loadPrice(input.priceId);
   if (!price) {
     throw new CommerceCheckoutError("PRICE_NOT_AVAILABLE");

@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
+vi.mock("server-only", () => ({}));
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   parseCommerceCheckoutInput,
@@ -42,6 +43,8 @@ function dependencies(
 }
 
 describe("commerce checkout", () => {
+  beforeEach(() => { vi.stubEnv("CITYWALK_PUBLIC_PURCHASES_APPROVED", "1"); });
+  afterEach(() => { vi.unstubAllEnvs(); });
   it("strictly accepts only a positive numeric CITYWALK price identifier", () => {
     expect(parseCommerceCheckoutInput({ priceId: 7, locale: "en" })).toEqual({
       priceId: 7,
@@ -135,6 +138,18 @@ describe("commerce checkout", () => {
         deps,
       ),
     ).rejects.toMatchObject({ code: "ALREADY_ENTITLED" });
+    expect(deps.createPendingOrder).not.toHaveBeenCalled();
+    expect(deps.getProvider).not.toHaveBeenCalled();
+  });
+
+  it("blocks disabled and active launch purchases before any order/provider work", async () => {
+    const deps = dependencies();
+    for (const launch of ["0", "1"]) {
+      vi.stubEnv("CITYWALK_LAUNCH_FREE_ENABLED", launch);
+      vi.stubEnv("CITYWALK_PUBLIC_PURCHASES_APPROVED", launch === "1" ? "1" : "0");
+      await expect(startCommerceCheckout({ user: { id: "user-1", email: "synthetic@example.invalid" }, priceId: 7, locale: "en" }, deps)).rejects.toMatchObject({code:"PURCHASES_DISABLED"});
+    }
+    expect(deps.loadPrice).not.toHaveBeenCalled();
     expect(deps.createPendingOrder).not.toHaveBeenCalled();
     expect(deps.getProvider).not.toHaveBeenCalled();
   });

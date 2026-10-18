@@ -1,3 +1,4 @@
+import { usePublicPurchases } from "../hooks/usePublicPurchases";
 import { t } from "@citywalk/i18n";
 import { router, Stack } from "expo-router";
 import { StyleSheet, View } from "react-native";
@@ -18,6 +19,7 @@ import { useNativeLocale } from "../localization/LocaleProvider";
 export default function PremiumScreen() {
   const { data: session, isPending } = nativeAuthClient.useSession();
   const { locale } = useNativeLocale();
+  const purchasesAllowed = usePublicPurchases();
 
   return (
     <Screen>
@@ -49,7 +51,7 @@ export default function PremiumScreen() {
         <Benefit text={t(locale, "premium.benefitAudioAi")} />
       </View>
 
-      {!premiumEnabled() ? (
+      {!purchasesAllowed || !premiumEnabled() ? (
         <>
           <AppText variant="metadata" style={styles.secondary}>
             {t(locale, "premium.subscriptionsDisabled")}

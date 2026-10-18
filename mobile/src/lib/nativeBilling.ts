@@ -1,3 +1,4 @@
+import { requirePublicPurchases } from "./launchPolicy";
 import type { Purchase } from "expo-iap";
 import { getCityUnlockProduct } from "@citywalk/traveler-core";
 import type { PurchaseResult, StoreProduct } from "./cityUnlock";
@@ -86,6 +87,7 @@ export class NativeBilling {
     return [...new Set(purchases.map(p => this.remember(p)).filter((p): p is string => Boolean(p)))];
   }
   async purchase(id: string, account: string): Promise<PurchaseResult> {
+    await requirePublicPurchases();
     if (this.purchaseBusy) throw new BillingFailure();
     this.purchaseBusy = true;
     try { return await this.requestPurchase(id, account); } finally { this.purchaseBusy = false; }

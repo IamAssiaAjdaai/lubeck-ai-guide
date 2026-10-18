@@ -1,4 +1,5 @@
 import "server-only";
+import { hasLaunchCityAccess } from "./launchPolicy.server";
 
 import {
   CITYWALK_PREMIUM_ENTITLEMENT,
@@ -96,6 +97,7 @@ export async function canUsePaidCityFeature(
   dependencies: CitywalkPaidAccessDependencies = defaultDependencies,
 ): Promise<boolean> {
   if (!input.feature.trim()) return false;
+  if (input.feature === "premium_audio" && hasLaunchCityAccess(input.citySlug, input.now)) return true;
   return (
     await resolveCitywalkPaidAccess(
       {
@@ -123,6 +125,7 @@ export async function requirePaidCityAccess(
   }>,
   dependencies: CitywalkPaidAccessDependencies = defaultDependencies,
 ): Promise<void> {
+  if (hasLaunchCityAccess(input.citySlug, input.now)) return;
   const access = await resolveCitywalkPaidAccess(input, dependencies);
   if (access.tier === "free") {
     throw new PaidCityAccessRequiredError(input.citySlug);

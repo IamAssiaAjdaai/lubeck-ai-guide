@@ -124,3 +124,5 @@ describe("RevenueCat Premium billing", () => {
     await expect(f.billing.restore("user-1")).resolves.toEqual({ status: "active" });
   });
 });
+
+vi.mock("./launchPolicy", () => ({ requirePublicPurchases: vi.fn().mockResolvedValue(undefined) }));

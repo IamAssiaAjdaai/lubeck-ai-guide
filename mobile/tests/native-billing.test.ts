@@ -1,3 +1,4 @@
+vi.mock("../src/lib/launchPolicy", () => ({ requirePublicPurchases: vi.fn().mockResolvedValue(undefined) }));
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Purchase, PurchaseError } from "expo-iap";
 import { NativeBilling, type BillingSDK } from "../src/lib/nativeBilling";

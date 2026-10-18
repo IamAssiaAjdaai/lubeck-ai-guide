@@ -2,6 +2,7 @@ import {
   resolveWalkGuideContext,
   toWalkGuidePromptContext,
 } from "@/lib/walk/guideContext";
+import { reserveLaunchAiCall } from "@/lib/commerce/launchBudget.server";
 import Groq from "groq-sdk";
 import { NextResponse } from "next/server";
 
@@ -231,10 +232,14 @@ export async function POST(request: Request) {
       "CURRENT QUESTION:",
       question,
     ].join("\n");
-    const groq = new Groq({ apiKey });
+    if (process.env.CITYWALK_LAUNCH_FREE_ENABLED === "1" && Buffer.byteLength(systemPrompt + currentTurnQuestion + JSON.stringify(history), "utf8") > 32000) {
+      return NextResponse.json({ error: "AI context exceeds launch budget." }, { status: 503 });
+    }
+    const groq = new Groq({ apiKey, ...(process.env.CITYWALK_LAUNCH_FREE_ENABLED === "1" ? { maxRetries: 0 } : {}) });
     let guideAnswer: ReturnType<typeof parseGuideStructuredAnswer> | undefined;
 
     for (let attempt = 0; attempt < MAX_COMPLETION_ATTEMPTS; attempt += 1) {
+      await reserveLaunchAiCall();
       const completion = await groq.chat.completions.create({
         model: "openai/gpt-oss-20b",
         temperature: 0.2,

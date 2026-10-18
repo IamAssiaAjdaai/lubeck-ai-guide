@@ -2,7 +2,7 @@ import { CITYWALK_CITY_PASS_72H } from "@citywalk/traveler-core";
 import { citywalkApi } from "./api/instance";
 import { nativeAuthClient } from "./auth/client";
 
-export type CityUnlockTier = "free" | "city_pass" | "premium";
+export type CityUnlockTier = "free" | "city_pass" | "premium" | "launch_free";
 
 export type CityUnlockAccess = Readonly<{
   active: boolean;
@@ -17,9 +17,8 @@ export async function readCityUnlockAccess(
   if (!cityPass) return { active: false, tier: "free" };
   const before = await nativeAuthClient.getSession();
   if (before.error || before.data?.user.id !== expectedAccount) throw new Error("account-changed");
-  if (!expectedAccount) return { active: false, tier: "free" };
   const response = await citywalkApi.fetchAuthenticated(`/api/commerce/city-unlock/${encodeURIComponent(citySlug)}`, {
-    headers: { "X-Citywalk-Account": expectedAccount },
+    headers: expectedAccount ? { "X-Citywalk-Account": expectedAccount } : {},
   });
   if (!response.ok) throw new Error("access-unavailable");
   const value = await response.json();
@@ -29,7 +28,7 @@ export async function readCityUnlockAccess(
     value.citySlug !== citySlug ||
     value.scopeType !== cityPass.scopeType ||
     value.scopeKey !== cityPass.scopeKey ||
-    !["free", "city_pass", "premium"].includes(value.tier) ||
+    !["free", "city_pass", "premium", "launch_free"].includes(value.tier) ||
     typeof value.active !== "boolean"
   ) throw new Error("access-unavailable");
   return { active: value.active, tier: value.tier as CityUnlockTier };

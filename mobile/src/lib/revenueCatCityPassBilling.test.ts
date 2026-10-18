@@ -136,3 +136,5 @@ describe("RevenueCat City Pass billing", () => {
     expect(f.dependencies.access).not.toHaveBeenCalled();
   });
 });
+
+vi.mock("./launchPolicy", () => ({ requirePublicPurchases: vi.fn().mockResolvedValue(undefined) }));

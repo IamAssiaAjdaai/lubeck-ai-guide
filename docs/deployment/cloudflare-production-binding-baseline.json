@@ -89,6 +89,34 @@
     },
     "CITYWALK_LEGAL_OPERATOR_POSTAL_CITY": {
       "type": "secret"
+    },
+    "CITYWALK_LAUNCH_FREE_ENABLED": {
+      "type": "text",
+      "value": "0"
+    },
+    "CITYWALK_PUBLIC_PURCHASES_APPROVED": {
+      "type": "text",
+      "value": "0"
+    },
+    "CITYWALK_LAUNCH_START_UTC": {
+      "type": "text",
+      "value": ""
+    },
+    "CITYWALK_LAUNCH_APPROVED_AT_UTC": {
+      "type": "text",
+      "value": ""
+    },
+    "CITYWALK_LAUNCH_VERIFIED_PUBLIC_AT_UTC": {
+      "type": "text",
+      "value": ""
+    },
+    "CITYWALK_LAUNCH_APPROVAL_REFERENCE": {
+      "type": "text",
+      "value": ""
+    },
+    "CITYWALK_LAUNCH_AI_CALLS_PER_24H": {
+      "type": "text",
+      "value": ""
     }
   }
 }

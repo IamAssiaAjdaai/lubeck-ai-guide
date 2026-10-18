@@ -1,3 +1,4 @@
+import { requirePublicPurchases } from "./launchPolicy";
 import Purchases from "react-native-purchases";
 
 import { getCityUnlockProduct } from "@citywalk/traveler-core";
@@ -110,6 +111,7 @@ export class RevenueCatCityPassBilling {
   }
 
   async purchase(id: string, account: string): Promise<PurchaseResult> {
+    await requirePublicPurchases();
     if (this.busy) throw new RevenueCatBillingFailure();
     const logicalProduct = getCityUnlockProduct(this.citySlug);
     if (!logicalProduct || id !== logicalProduct.productId) throw new RevenueCatBillingFailure();

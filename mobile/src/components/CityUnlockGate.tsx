@@ -1,3 +1,4 @@
+import { usePublicPurchases } from "../hooks/usePublicPurchases";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Modal, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
@@ -35,6 +36,7 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
   const { data: session, isPending } = nativeAuthClient.useSession();
   const account = session?.user.id;
   const useRevenueCat = revenueCatCityPassEnabled();
+  const purchasesAllowed = usePublicPurchases();
   const [visible, setVisible] = useState(false);
   const [authenticating, setAuthenticating] = useState(false);
   const [checking, setChecking] = useState(false);
@@ -56,7 +58,7 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
     return nativeBilling.subscribe(outcome => { if (visible) void controller.storeChanged(outcome); });
   }, [controller, visible, useRevenueCat]);
   useEffect(() => () => { pending.current?.(false); pending.current = undefined; }, []);
-  useEffect(() => { if (visible && !isPending) void controller.load(); }, [controller, visible, isPending]);
+  useEffect(() => { if (visible && !isPending && purchasesAllowed) void controller.load(); }, [controller, visible, isPending, purchasesAllowed]);
   useFocusEffect(useCallback(() => { setAuthenticating(false); }, []));
   function close(allowed = false) {
     controller.dispose(); setVisible(false); pending.current?.(allowed); pending.current = undefined;
@@ -87,6 +89,7 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
   const owned = ["unlocked", "already_owned", "restore_success"].includes(state.state);
   return <><AuthorizedContent authorize={authorize}>{children}</AuthorizedContent><Modal visible={visible && !authenticating} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => close()}>
     <Screen navigation={false} onBack={() => close()}>
+      {purchasesAllowed ? <>
       <ImageOverlayHero title={copy("unlock.title")} subtitle={copy("unlock.subtitle")} />
       <AppText>{copy("unlock.description")}</AppText>
       <View style={{ gap: 12 }}>
@@ -108,6 +111,11 @@ export function PreviewCityUnlockGate({ citySlug, cityName, children }: { citySl
         ) : null}
         <PrimaryButton label={copy("unlock.restore")} tone="secondary" disabled={busy} onPress={() => void controller.run("restore")} />
         <PrimaryButton label={copy("unlock.retry")} tone="secondary" disabled={busy} onPress={() => void controller.load()} />
+      </>}
+      </> : <>
+        <StatusMessage><AppText>{copy("unlock.states.access_unavailable")}</AppText></StatusMessage>
+        <PrimaryButton label={copy("unlock.retry")} onPress={() => void continueWalk()} />
+        {account ? <PrimaryButton label={copy("unlock.restore")} onPress={() => void controller.run("restore")} /> : null}
       </>}
       <PrimaryButton label={copy("unlock.notNow")} tone="secondary" onPress={() => close()} />
     </Screen>

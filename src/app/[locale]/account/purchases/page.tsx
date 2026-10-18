@@ -3,6 +3,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
+import { getLaunchPolicy } from "@/lib/commerce/launchPolicy.server";
 import { CommerceCheckoutButton } from "@/components/commerce/CommerceCheckoutButton";
 import { CheckoutReturnTracker } from "@/components/commerce/CheckoutReturnTracker";
 import { getAuth } from "@/lib/auth/server";
@@ -65,7 +66,7 @@ export default async function PurchasesPage({
   const activeCityPassProducts = new Set(
     activeCityPasses.map(({ configuration }) => configuration.productSlug),
   );
-  const offers = allOffers.filter(
+  const offers = (getLaunchPolicy().purchasesAllowed ? allOffers : []).filter(
     ({ productSlug }) => !activeCityPassProducts.has(productSlug),
   );
   const defaultCityPassCopy = cityPassConfigurations[0]

@@ -1,3 +1,4 @@
+vi.mock("server-only", () => ({}));
 import {
   cleanup,
   render,
@@ -177,6 +178,7 @@ describe("LandmarkPage audio", () => {
 
   afterEach(() => {
     cleanup();
+    vi.unstubAllEnvs();
     vi.clearAllMocks();
   });
 
@@ -474,7 +476,8 @@ describe("LandmarkPage audio", () => {
     });
   });
 
-  it("shows a configured exact-locale premium trigger while keeping the free place open", async () => {
+  it("shows a configured exact-locale premium trigger only with separate purchase approval", async () => {
+    vi.stubEnv("CITYWALK_PUBLIC_PURCHASES_APPROVED", "1");
     getContentSource.mockReturnValue("database");
     getPremiumPlaceAudio.mockResolvedValue({
       assetKey: "123e4567-e89b-42d3-a456-426614174000",

@@ -1,3 +1,4 @@
+import { usePublicPurchases } from "../hooks/usePublicPurchases";
 import { t, type TranslationKey } from "@citywalk/i18n";
 import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -46,7 +47,8 @@ function savingsPercent(
 }
 
 export function RevenueCatPremiumCard({ account }: { account: string }) {
-  const enabled = premiumEnabled();
+  const purchasesAllowed = usePublicPurchases();
+  const enabled = purchasesAllowed && premiumEnabled();
   const { locale } = useNativeLocale();
   const [state, setState] = useState<State>({ status: "loading" });
   const [busy, setBusy] = useState<PremiumPlanKind | "restore">();

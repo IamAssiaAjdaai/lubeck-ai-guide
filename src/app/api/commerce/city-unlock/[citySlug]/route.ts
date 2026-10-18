@@ -1,4 +1,5 @@
 import { CITYWALK_CITY_PASS_72H } from "@citywalk/traveler-core";
+import { hasLaunchCityAccess } from "@/lib/commerce/launchPolicy.server";
 import { getAuth } from "@/lib/auth/server";
 import { resolveCitywalkPaidAccess } from "@/lib/commerce/premiumAccess.server";
 import { NativeBillingError } from "@/lib/commerce/native/config.server";
@@ -14,13 +15,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ city
     const session = await getAuth().api.getSession({ headers: request.headers });
     // Expected account is a race guard, never authority for ownership.
     if (request.headers.get("X-Citywalk-Account") !== (session?.user.id ?? null)) return json({ error: "ACCOUNT_CHANGED" }, 401);
-    const access = await resolveCitywalkPaidAccess({ userId: session?.user.id, citySlug });
+    const launchFree = hasLaunchCityAccess(citySlug);
+    const access = launchFree ? { tier: "free", premium: false, cityPass: false } : await resolveCitywalkPaidAccess({ userId: session?.user.id, citySlug });
     return json({
       citySlug,
       scopeType: cityPass.scopeType,
       scopeKey: cityPass.scopeKey,
-      tier: access.tier,
-      active: access.tier !== "free",
+      tier: launchFree && access.tier === "free" ? "launch_free" : access.tier,
+      active: launchFree || access.tier !== "free",
     });
   } catch { return json({ error: "ACCESS_UNAVAILABLE" }, 503); }
 }

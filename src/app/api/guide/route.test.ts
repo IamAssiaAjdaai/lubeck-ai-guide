@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-const { createCompletion, enforceAllowance, rateLimit } = vi.hoisted(() => ({
+const { createCompletion, enforceAllowance, rateLimit, budget } = vi.hoisted(() => ({
+  budget: vi.fn().mockResolvedValue(undefined),
   createCompletion: vi.fn(),
   enforceAllowance: vi.fn(),
   rateLimit: vi.fn(),
@@ -30,6 +31,8 @@ vi.mock("@/lib/rateLimit", () => ({
 vi.mock("@/lib/guideAllowance.server", () => ({
   enforceGuideDailyAllowance: enforceAllowance,
 }));
+
+vi.mock("@/lib/commerce/launchBudget.server", () => ({ reserveLaunchAiCall: budget }));
 
 import { POST } from "@/app/api/guide/route";
 
@@ -768,4 +771,12 @@ describe("POST /api/guide", () => {
 
     expect(systemMessage.content).toContain("hospital-foundation");
   });
+});
+
+it.each(["LAUNCH_AI_BUDGET_EXHAUSTED", "RATE_LIMIT_UNAVAILABLE"])("blocks model calls when shared budget fails: %s", async reason => {
+  budget.mockRejectedValueOnce(new Error(reason));
+  createCompletion.mockClear();
+  const response = await POST(new Request("http://localhost/api/guide", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:"When was this built?",citySlug:"lubeck",placeSlug:"holstentor",locale:"en"})}));
+  expect(response.status).toBeGreaterThanOrEqual(500);
+  expect(createCompletion).not.toHaveBeenCalled();
 });

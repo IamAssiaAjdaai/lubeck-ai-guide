@@ -1,3 +1,4 @@
+import { requirePublicPurchases } from "./launchPolicy";
 export const CITYWALK_PREMIUM_PRODUCTS = Object.freeze({
   monthly: {
     kind: "monthly" as const,
@@ -90,6 +91,7 @@ export class RevenueCatPremiumBilling {
 
   async purchase(kind: PremiumPlanKind, account: string): Promise<PremiumActionResult> {
     try {
+      await requirePublicPurchases();
       await this.dependencies.purchasePackage(await this.pkg(kind, account));
     } catch (error) {
       if (cancelled(error)) return { status: "cancelled" };

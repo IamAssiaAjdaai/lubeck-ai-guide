@@ -1,10 +1,11 @@
+vi.mock("../src/hooks/usePublicPurchases", () => ({ usePublicPurchases: () => mocks.purchasesAllowed }));
 // @vitest-environment jsdom
 import React, { useEffect } from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { sharedLocales, t } from "@citywalk/i18n";
 
-const mocks = vi.hoisted(() => ({ account: undefined as string | undefined, locale: "en", access: vi.fn(), push: vi.fn(), rcProduct: vi.fn() }));
+const mocks = vi.hoisted(() => ({ purchasesAllowed: true, account: undefined as string | undefined, locale: "en", access: vi.fn(), push: vi.fn(), rcProduct: vi.fn() }));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { useSession: () => ({ data: mocks.account ? { user: { id: mocks.account } } : null, isPending: false }) } }));
 vi.mock("../src/lib/cityUnlockAccess", () => ({ readCityUnlock: mocks.access }));
 vi.mock("../src/lib/nativeBillingRuntime", () => ({nativeBilling:{product: async()=>undefined,purchase:vi.fn(),restore:vi.fn(),verify:vi.fn(),subscribe:()=>()=>{}}}));
@@ -21,7 +22,7 @@ vi.mock("../src/components/ui", () => ({
 }));
 import { CityUnlockGate, PreviewCityUnlockGate } from "../src/components/CityUnlockGate";
 
-beforeEach(() => { vi.clearAllMocks(); mocks.account = undefined; mocks.locale = "en"; mocks.access.mockResolvedValue(false); mocks.rcProduct.mockResolvedValue(undefined); });
+beforeEach(() => { vi.clearAllMocks(); mocks.purchasesAllowed = true; mocks.account = undefined; mocks.locale = "en"; mocks.access.mockResolvedValue(false); mocks.rcProduct.mockResolvedValue(undefined); });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 function fixture() {
   const completed = vi.fn();
@@ -80,4 +81,22 @@ it("can opt into the RevenueCat City Pass gate without enabling legacy sandbox b
   await waitFor(() => expect(mocks.rcProduct).toHaveBeenCalledWith("com.citywalk.lubeck.pass72h"));
   expect(screen.getByRole("button", { name: /4,99/ })).toBeTruthy();
   expect(completed).not.toHaveBeenCalled();
+});
+
+it("does not render offers or require enrollment when purchases are disabled", async () => {
+  mocks.purchasesAllowed = false;
+  const h = fixture();
+  await screen.findByRole("dialog");
+  expect(screen.queryByRole("button", {name:t("en", "profile.signUp")})).toBeNull();
+  expect(screen.queryByText(t("en", "unlock.title", {city:"Lübeck"}))).toBeNull();
+  expect(mocks.rcProduct).not.toHaveBeenCalled();
+  h.unmount();
+});
+it("allows a guest with server launch access without opening a paywall", async () => {
+  mocks.purchasesAllowed = false; mocks.access.mockResolvedValue(true);
+  const completed = vi.fn();
+  render(<PreviewCityUnlockGate citySlug="lubeck" cityName="Lübeck">{authorize => <button onClick={() => void authorize().then(completed)}>Launch Start</button>}</PreviewCityUnlockGate>);
+  fireEvent.click(screen.getByText("Launch Start"));
+  await waitFor(()=>expect(completed).toHaveBeenCalledWith(true));
+  expect(screen.queryByRole("dialog")).toBeNull();
 });

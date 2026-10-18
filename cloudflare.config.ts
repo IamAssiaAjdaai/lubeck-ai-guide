@@ -8,6 +8,13 @@ export default defineConfig({
     compatibilityFlags: ["nodejs_compat"],
     assets: { notFoundHandling: "none" },
     env: {
+      CITYWALK_LAUNCH_FREE_ENABLED: bindings.text("0"),
+      CITYWALK_PUBLIC_PURCHASES_APPROVED: bindings.text("0"),
+      CITYWALK_LAUNCH_START_UTC: bindings.text(""),
+      CITYWALK_LAUNCH_APPROVED_AT_UTC: bindings.text(""),
+      CITYWALK_LAUNCH_VERIFIED_PUBLIC_AT_UTC: bindings.text(""),
+      CITYWALK_LAUNCH_APPROVAL_REFERENCE: bindings.text(""),
+      CITYWALK_LAUNCH_AI_CALLS_PER_24H: bindings.text(""),
       ASSETS: bindings.assets(),
       CITYWALK_CONTENT_SOURCE: bindings.text("database"),
       CITYWALK_MEDIA_STORAGE: bindings.text("s3"),

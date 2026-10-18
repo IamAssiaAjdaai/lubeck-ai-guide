@@ -1,3 +1,4 @@
+import { getLaunchPolicy } from "@/lib/commerce/launchPolicy.server";
 import { getAuth } from "@/lib/auth/server";
 import { requirePaidCityAccess } from "@/lib/commerce/premiumAccess.server";
 import { getPremiumMediaDeliveryAsset } from "@/lib/commerce/premiumMedia.server";
@@ -14,7 +15,8 @@ export async function GET(
   { params }: Readonly<{ params: Promise<{ assetKey: string }> }>,
 ): Promise<Response> {
   const session = await getAuth().api.getSession({ headers: request.headers });
-  if (!session) return mediaUnavailableResponse();
+
+  if (!session && !getLaunchPolicy().active) return mediaUnavailableResponse();
 
   const { assetKey } = await params;
   const asset = await getPremiumMediaDeliveryAsset(assetKey);
@@ -22,7 +24,7 @@ export async function GET(
 
   try {
     await requirePaidCityAccess({
-      userId: session.user.id,
+      userId: session?.user.id,
       citySlug: asset.requiredEntitlement.scopeKey,
     });
   } catch {
