@@ -1,39 +1,37 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  ANALYTICS_CONSENT_STORAGE_KEY,
-  clearAnalyticsConsent,
-  getAnalyticsConsent,
-  setAnalyticsConsent,
-} from "@/lib/analyticsConsent";
+let consent: typeof import("./analyticsConsent");
 
 describe("analytics consent", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    vi.resetModules();
     localStorage.clear();
+    sessionStorage.clear();
+    consent = await import("./analyticsConsent");
   });
 
   it("is fail-closed until the user makes an explicit choice", () => {
-    expect(getAnalyticsConsent(localStorage)).toBe("unset");
-    localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, "not-json");
-    expect(getAnalyticsConsent(localStorage)).toBe("unset");
+    expect(consent.getAnalyticsConsent(localStorage)).toBe("unset");
+    localStorage.setItem(consent.ANALYTICS_CONSENT_STORAGE_KEY, "not-json");
+    expect(consent.getAnalyticsConsent(localStorage)).toBe("unset");
     localStorage.setItem(
-      ANALYTICS_CONSENT_STORAGE_KEY,
+      consent.ANALYTICS_CONSENT_STORAGE_KEY,
       JSON.stringify({ version: 999, decision: "granted" }),
     );
-    expect(getAnalyticsConsent(localStorage)).toBe("unset");
+    expect(consent.getAnalyticsConsent(localStorage)).toBe("unset");
   });
 
   it("persists explicit allow and decline choices", () => {
-    setAnalyticsConsent("granted", localStorage);
-    expect(getAnalyticsConsent(localStorage)).toBe("granted");
+    consent.setAnalyticsConsent("granted", localStorage);
+    expect(consent.getAnalyticsConsent(localStorage)).toBe("granted");
 
-    setAnalyticsConsent("denied", localStorage);
-    expect(getAnalyticsConsent(localStorage)).toBe("denied");
+    consent.setAnalyticsConsent("denied", localStorage);
+    expect(consent.getAnalyticsConsent(localStorage)).toBe("denied");
   });
 
   it("can clear the stored preference without granting analytics", () => {
-    setAnalyticsConsent("granted", localStorage);
-    clearAnalyticsConsent(localStorage);
-    expect(getAnalyticsConsent(localStorage)).toBe("unset");
+    consent.setAnalyticsConsent("granted", localStorage);
+    consent.clearAnalyticsConsent(localStorage);
+    expect(consent.getAnalyticsConsent(localStorage)).toBe("unset");
   });
 });

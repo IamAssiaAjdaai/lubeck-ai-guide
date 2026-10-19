@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
-import posthog from "posthog-js";
 
 import {
   getAnalyticsConsent,
+  getAnalyticsConsentPersistenceFailed,
+  subscribeAnalyticsConsent,
   setAnalyticsConsent,
   type AnalyticsConsent,
 } from "@/lib/analyticsConsent";
-import { clearBrowserVisitorSessionIdentity } from "@/lib/visitorSession";
 
 function browserAnalyticsConfigured() {
   return Boolean(
@@ -21,15 +21,15 @@ function browserAnalyticsConfigured() {
 
 function applyDecision(decision: Exclude<AnalyticsConsent, "unset">) {
   setAnalyticsConsent(decision);
-  if (decision === "denied") {
-    clearBrowserVisitorSessionIdentity();
-    try {
-      posthog.opt_out_capturing();
-    } catch {
-      // The SDK may never have initialized; first-party consent still gates it.
-    }
-  }
-  window.location.reload();
+  // Subscribers update the SDK and UI in place. Never reload a failed write.
+}
+
+function PersistenceWarning() {
+  return <p role="alert" className="mt-3 text-sm leading-6 text-amber-900">
+    Analytics is off in this tab, but we could not save your choice. An older
+    choice may still apply in other tabs or after restarting the browser. Keep this
+    page open and retry Decline when storage is available. No reload is needed.
+  </p>;
 }
 
 const subscribeConsentSnapshot = () => () => {};
@@ -41,20 +41,25 @@ function useDecision() {
     () => false,
   );
   const decision = useSyncExternalStore(
-    subscribeConsentSnapshot,
+    subscribeAnalyticsConsent,
     getAnalyticsConsent,
     () => "unset",
   );
-  return { decision, ready };
+  const persistenceFailed = useSyncExternalStore(
+    subscribeAnalyticsConsent,
+    getAnalyticsConsentPersistenceFailed,
+    () => false,
+  );
+  return { decision, ready, persistenceFailed };
 }
 
 export function AnalyticsConsentBanner() {
   const pathname = usePathname();
-  const { decision, ready } = useDecision();
+  const { decision, ready, persistenceFailed } = useDecision();
   if (
     !ready ||
     !browserAnalyticsConfigured() ||
-    decision !== "unset" ||
+    (decision !== "unset" && !persistenceFailed) ||
     pathname === "/account/reset-password"
   ) {
     return null;
@@ -71,6 +76,7 @@ export function AnalyticsConsentBanner() {
         and Marketing features are useful. Analytics stays off until you allow it.
         You can change this choice later on the Privacy page.
       </p>
+      {persistenceFailed ? <PersistenceWarning /> : null}
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
           type="button"
@@ -98,7 +104,7 @@ export function AnalyticsConsentBanner() {
 }
 
 export function AnalyticsConsentPreferences() {
-  const { decision, ready } = useDecision();
+  const { decision, ready, persistenceFailed } = useDecision();
   if (!ready) return null;
 
   if (!browserAnalyticsConfigured()) {
@@ -112,8 +118,9 @@ export function AnalyticsConsentPreferences() {
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
       <p className="text-sm text-slate-700">
-        Current choice: <strong>{decision === "granted" ? "allowed" : decision === "denied" ? "declined" : "not decided"}</strong>.
+        Current choice: <strong>{persistenceFailed ? "off in this tab; not saved" : decision === "granted" ? "allowed" : decision === "denied" ? "declined" : "not decided"}</strong>.
       </p>
+      {persistenceFailed ? <PersistenceWarning /> : null}
       <div className="mt-4 flex flex-wrap gap-3">
         <button
           type="button"

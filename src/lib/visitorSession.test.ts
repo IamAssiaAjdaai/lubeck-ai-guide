@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   ANONYMOUS_VISITOR_RETENTION_MS,
@@ -154,4 +154,20 @@ describe("anonymous visitor sessions", () => {
     expect(sessionStorage.getItem(VISITOR_SESSION_STORAGE_KEY)).toBeNull();
   });
 
+});
+
+// Product continuity may use an in-memory identity without analytics consent.
+it("does not create persistent analytics identity before consent or after withdrawal", async () => {
+  vi.resetModules(); localStorage.clear(); sessionStorage.clear();
+  const consent = await import("./analyticsConsent");
+  const identity = await import("./visitorSession");
+  identity.getBrowserVisitorSessionIdentity();
+  expect(localStorage.getItem(ANONYMOUS_VISITOR_STORAGE_KEY)).toBeNull();
+  consent.setAnalyticsConsent("granted");
+  identity.getBrowserVisitorSessionIdentity();
+  expect(localStorage.getItem(ANONYMOUS_VISITOR_STORAGE_KEY)).not.toBeNull();
+  consent.setAnalyticsConsent("denied");
+  identity.clearBrowserVisitorSessionIdentity();
+  identity.getBrowserVisitorSessionIdentity();
+  expect(localStorage.getItem(ANONYMOUS_VISITOR_STORAGE_KEY)).toBeNull();
 });
