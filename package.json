@@ -132,5 +132,8 @@
   "workspaces": [
     "packages/*"
   ],
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "sharp": "0.35.5"
+  }
 }
