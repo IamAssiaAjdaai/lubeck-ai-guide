@@ -6,6 +6,10 @@ Branch: `codex/public-beta-readiness`, based on freshly fetched `develop` at `68
 
 Surface classification follows [ARCH-01 #136](https://github.com/IamAssiaAjdaai/lubeck-ai-guide/issues/136): Mobile Core required for shared API/auth/entitlement safety; Public Web required; Admin Web not applicable for new UI (existing CMS/staff behavior preserved). No iOS or Android client UI was changed. Device acceptance is **NOT TESTED**, separately for both platforms.
 
+## Legal gap review — 19 October 2026
+
+**BLOCKED for legal launch acceptance.** An owner-reported private structural configuration pass does not close identity/contact applicability, GDPR disclosures, retention/AVV/transfers, German copy, consent failure paths or Free Beta consumer-law questions. The [prioritized legal gap report](./LEGAL-GAP-REVIEW-2026-10-19.md) records verified implementation separately from **OWNER DECISION** and **LEGAL REVIEW** requirements. Public copy now reflects disabled payments and AI; no production or provider setting changed. Prior runtime results below belong to their recorded SHAs and are not new acceptance of the edited copy.
+
 ## Isolated Vinext runtime follow-up — 19 October 2026
 
 **READY for tested local runtime / BLOCKED for launch.** Exact HEAD `c9b9273b8f44743ce25fb2cc6de0c1606bcff6ad` passed built Vinext/Vite-preview execution on local workerd with a disposable loopback PostgreSQL database and local Hyperdrive binding. All seven requested public routes, both legal states, responsive reflow, robots/sitemap, anonymous APIs, account-bound export, synthetic authentication and disabled-feature checks passed. No provider credentials, production data or real operator identity were used. Rehearsal databases were removed. This adds local Cloudflare-runtime evidence to the historical Next.js evidence below; remote Preview, production and device acceptance remain separate.

@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const operator = getLegalOperator();
   return {
     title: "Privacy | CITYWALK",
-    description: "How CITYWALK processes personal data when you use the website, app, AI Guide, account and paid features.",
+    description: "How CITYWALK processes personal data in the free Public Beta and in conditional account, analytics and provider integrations.",
     alternates: { canonical: citywalkPublicUrl("/privacy") },
     robots: legalRobots(operator),
   };
@@ -34,6 +34,13 @@ export default async function PrivacyPage() {
       intro="This notice explains what personal data CITYWALK processes, why it is needed, which service providers may receive it, and the choices and rights available to you."
       operator={operator}
     >
+      <section>
+        <h2>Current Public Beta</h2>
+        <p>
+          The current Public Beta is free. Public AI Guide access, live payments and paid subscriptions are disabled. Descriptions below of AI or purchase processing apply only if the relevant feature is separately made available, or to any existing provider records that still need to be handled. An installed integration alone does not mean that it is collecting data from your Beta visit.
+        </p>
+      </section>
+
       <section>
         <h2>1. Controller</h2>
         {operator.isConfigured ? (
@@ -74,7 +81,7 @@ export default async function PrivacyPage() {
 
         <h3>Ask CITYWALK / AI Guide</h3>
         <p>
-          When you ask the AI Guide a question, CITYWALK sends the question, a limited amount of recent conversation history and relevant city/place/tour/walk context to the configured model provider, currently Groq. The service also processes usage counters needed to enforce daily allowances. We process this data to answer the question and provide the requested AI feature (Article 6(1)(b) GDPR).
+          The public AI Guide is disabled in this Beta. If it is made available in a later release and you ask a question, CITYWALK sends the question, a limited amount of recent conversation history and relevant city/place/tour/walk context to the configured model provider, currently Groq. The service also processes usage counters needed to enforce daily allowances. We process this data to answer the question and provide the requested AI feature (Article 6(1)(b) GDPR).
         </p>
 
         <h3>Payments and paid access</h3>
@@ -102,22 +109,23 @@ export default async function PrivacyPage() {
         <ul>
           <li>hosting, content delivery, security and infrastructure providers, including Cloudflare where CITYWALK is deployed there;</li>
           <li>Neon for the production PostgreSQL database, and IONOS for the support mailbox;</li>
-          <li>Groq for Ask CITYWALK model processing;</li>
+          <li>Groq for Ask CITYWALK model processing if the AI feature is made available;</li>
           <li>Resend for transactional account email;</li>
+          <li>map style and tile services when you open a map, by default OpenFreeMap; your browser or app contacts the selected service to load map resources, exposing technical request data such as your IP address and the requested map area;</li>
           <li>PostHog for optional product and Marketing analytics when configured;</li>
           <li>Stripe for web checkout where offered;</li>
           <li>RevenueCat plus Apple and/or Google for native purchase and entitlement handling where applicable; and</li>
           <li>Google and Apple if you choose their supported social sign-in method.</li>
         </ul>
         <p>
-          Some providers may process data outside the European Economic Area. Where required, CITYWALK relies on an applicable transfer mechanism and provider safeguards. The exact transfer position depends on the provider and service configuration in use at the time.
+          Some providers may process data outside the European Economic Area. Such transfers require an applicable legal transfer mechanism and safeguards. The relevant countries, recipients and safeguards depend on the service configuration. You can ask Support for information about applicable safeguards and how to obtain a copy.
         </p>
       </section>
 
       <section>
         <h2>4. Storage on your device and analytics</h2>
         <p>
-          CITYWALK uses device/browser storage where it is needed for requested product functions such as authentication/session state, traveler preferences, saved or active-walk state and similar app continuity. For pseudonymous web analytics, CITYWALK creates a random visitor identifier in local storage for up to 180 days and a random browser-session identifier for up to 24 hours. These identifiers are not derived from your email address, IP address, browser fingerprint or GPS coordinates.
+          CITYWALK uses device/browser storage where it is needed for requested product functions such as authentication/session state, traveler preferences, saved or active-walk state and similar app continuity. After analytics consent, CITYWALK creates a random visitor identifier in local storage, valid for up to 180 days, and a random browser-session identifier, valid for up to 24 hours. Expired identifiers are replaced when used again; an expired storage record can remain on an unused device until the storage is cleared. These identifiers are not derived from your email address, IP address, browser fingerprint or GPS coordinates.
         </p>
         <p>
           A Marketing handoff into the native app can store campaign attribution such as source, medium, campaign, content, landing variant and city in app storage. The reviewed native attribution store does not currently define an automatic expiry.
@@ -126,7 +134,10 @@ export default async function PrivacyPage() {
           When the public PostHog project token and host are configured, CITYWALK can record product and Marketing analytics. The web integration can record events such as city or place views, published Marketing landing views and CTA clicks together with pseudonymous visitor/session identifiers and relevant city/campaign attribution, and it enables client exception capture while automatic interaction capture, automatic pageview/pageleave capture and session recording are disabled. A Marketing-attributed native walk can also send <code>walk_started</code> and <code>walk_completed</code> with city/campaign attribution to a first-party CITYWALK analytics endpoint, which can forward those validated fields to PostHog using a fixed aggregate identifier. The reviewed event contracts do not intentionally attach raw latitude/longitude, GPS trails, account email addresses, CITYWALK user IDs or authentication tokens.
         </p>
         <p>
-          Optional browser analytics is fail-closed: CITYWALK does not initialize the browser PostHog SDK, create its pseudonymous analytics visitor/session identifiers or capture those browser events until you explicitly allow analytics. You can decline or later withdraw that choice below. Native Marketing analytics is also fail-closed: the app does not persist Marketing attribution or send native <code>walk_started</code> / <code>walk_completed</code> funnel events unless you explicitly allow analytics in the Legal & Support screen in the app. Declining analytics in the app, including after a previous grant, clears the stored native Marketing attribution and stops further native funnel capture. Browser and native analytics choices are stored locally in their own runtime/device context and are not assumed to transfer automatically between web and app. Provider-side event retention still depends on the final PostHog project configuration. CITYWALK does not use the reviewed PostHog integration as advertising tracking.
+          Optional browser analytics stays off before your first consent: CITYWALK does not initialize the browser PostHog SDK, create its pseudonymous analytics visitor/session identifiers or capture those browser events until you explicitly allow analytics. You can decline or later withdraw that choice below. Native Marketing analytics is also fail-closed: the app does not persist Marketing attribution or send native <code>walk_started</code> / <code>walk_completed</code> funnel events unless you explicitly allow analytics in the Legal & Support screen in the app. Declining analytics in the app, including after a previous grant, clears the stored native Marketing attribution and stops further native funnel capture. Browser and native analytics choices are stored locally in their own runtime/device context and are not assumed to transfer automatically between web and app. Provider-side event retention still depends on the final PostHog project configuration. CITYWALK does not use the reviewed PostHog integration as advertising tracking.
+        </p>
+        <p>
+          Optional analytics relies on your consent (Article 6(1)(a) GDPR and, for storing or accessing information on your device, § 25(1) TDDDG). You can use the core service without allowing optional analytics. The browser and app store your choice locally so that they can remember it. If saving a changed choice fails, a previous choice can remain after a browser reload or app restart. Contact Support if your choice cannot be saved.
         </p>
         <AnalyticsConsentPreferences />
       </section>
@@ -134,10 +145,10 @@ export default async function PrivacyPage() {
       <section>
         <h2>5. How long data is kept</h2>
         <p>
-          CITYWALK does not publish invented fixed retention periods. Account and traveler data is kept only for as long as needed to provide the account/service, handle security and disputes, or satisfy applicable legal obligations. Data that is no longer required is deleted or anonymized according to the relevant lifecycle.
+          Retention depends on the data category and purpose. Account sessions have a seven-day validity with renewal during use; email verification tokens are valid for one hour, and password-reset and public web deletion tokens for 30 minutes. Validity limits do not by themselves guarantee physical deletion of expired records. Account and traveler data follows the account and feature lifecycle; support correspondence, infrastructure logs, backups and provider records have separate retention requirements.
         </p>
         <p>
-          When an eligible account is deleted, server-side account-owned authentication and traveler data is removed under the implemented deletion flow. Store order or subscription reconciliation records can remain detached from the deleted user where they must be retained for accounting, reconciliation or other legal purposes. Deletion also queues supported external customer/token erasure work for configured providers. A deletion started from the public website cannot directly erase data that exists only on a device that is offline or no longer connected to the account.
+          When an eligible account is deleted, server-side account-owned authentication and traveler data is removed under the implemented deletion flow. Store order or subscription reconciliation records can remain detached from the deleted user where they must be retained for accounting, reconciliation or other legal purposes. Deletion also queues supported external customer/token erasure work. This processing is asynchronous: removing the CITYWALK account does not by itself confirm completion at an external provider. Contact Support if you need the status of a deletion request. A deletion started from the public website cannot directly erase data that exists only on a device that is offline or no longer connected to the account.
         </p>
       </section>
 

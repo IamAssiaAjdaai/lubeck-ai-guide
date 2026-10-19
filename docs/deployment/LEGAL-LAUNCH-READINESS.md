@@ -2,6 +2,12 @@
 
 Audit date: 14 October 2026. Source of truth: [#187](https://github.com/IamAssiaAjdaai/lubeck-ai-guide/issues/187). This document prepares a separately approved release; it does not authorize deployment, migrations, DNS, billing or store submission.
 
+## Current legal review — 19 October 2026
+
+**BLOCKED for legal launch acceptance.** The owner reports that `legal:check` passed structurally using a private owner-managed file. That file was not opened, printed, copied or validated again in this review. The pass supersedes “missing configuration” as a statement about that private local file; it does not establish public runtime configuration, lawful address/contact details, identifier applicability or complete disclosures.
+
+The [prioritized legal gap report](./LEGAL-GAP-REVIEW-2026-10-19.md) separates **READY**, **OWNER DECISION**, **LEGAL REVIEW** and **BLOCKED**. It includes Wirtschafts-ID coverage, rapid contact, GDPR notice completeness, retention/transfer evidence, browser withdrawal persistence, German copy, Free Beta consumer-contract assessment and business-registration questions. No production configuration, billing or cron change is authorized. PR #393 remains Draft.
+
 ## Existing functionality reused
 
 - Homepage cutover and `/explore`: #231 / #230. `src/app/page.tsx` uses the existing `LandingPreview`, `LandingClosing` and scoped CSS; localized traveler, account, walk and pass routes remain.
@@ -62,9 +68,10 @@ Use `.env.example` as the empty contract, not as a release secrets file. Keep ow
 | `CITYWALK_LEGAL_OPERATOR_COUNTRY` | Germany, declared by launch configuration |
 | `CITYWALK_LEGAL_REPRESENTATIVE` | Not required for this individual contract; required by code for company configuration |
 | `CITYWALK_LEGAL_REGISTER_NAME` / `CITYWALK_LEGAL_REGISTER_NUMBER` | Only if applicable; supply both together |
-| `CITYWALK_LEGAL_VAT_ID` | Only if actually applicable |
+| `CITYWALK_LEGAL_VAT_ID` | Only if actually applicable; publication obligation must be reviewed independently of the structural pass |
+| Wirtschafts-Identifikationsnummer | No dedicated field/rendering exists yet. Privately determine applicability under DDG §5(1) no. 6, including the relationship to an existing USt-IdNr.; do not insert a personal tax ID or infer a number |
 
-Contact is the fixed, confirmed `support@getcitywalk.com`. Country/type do not prove that an address is legally usable. Structural validation cannot certify identity, registrations or legal adequacy.
+Contact is the fixed, confirmed `support@getcitywalk.com`. Country/type do not prove that an address is legally usable. Structural validation cannot certify identity, registrations or legal adequacy. Only email is implemented as a rapid contact channel; assess the additional communication route and any applicable consumer telephone disclosure before accepting launch. Do not treat `individual` as a determination of Gewerbe/Freiberufler status.
 
 Run `npm run legal:check -- /absolute/path/to/owner-managed-legal.env` locally before release; output contains only status/missing field names. Required production runtime values must be configured through the separately approved release process. Optional applicable registration/VAT fields also require explicit Worker bindings in a reviewed configuration before deploying; do not guess them or require invented registrations for an individual.
 
