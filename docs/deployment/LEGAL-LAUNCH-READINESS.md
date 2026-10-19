@@ -107,3 +107,7 @@ Keep `https://getcitywalk.com` as the public landing/legal surface and stable pr
 ## Primary references
 
 Operator facts require human review under [DDG §5](https://www.gesetze-im-internet.de/ddg/__5.html). Privacy structure must be reviewed against [GDPR](https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng); no compliance certification is provided. Native changes follow the installed stack and [Expo SDK 57 reference](https://docs.expo.dev/versions/v57.0.0/). Store references remain in the existing controlled privacy draft.
+
+## Local Vinext legal acceptance — 19 October 2026
+
+Exact HEAD `c9b9273b8f44743ce25fb2cc6de0c1606bcff6ad` passed both incomplete and synthetic-complete legal configuration on the built Worker using local workerd and disposable loopback PostgreSQL/Hyperdrive. Legal content, warning/indexing transitions, canonical URLs and sitemap inclusion passed without using real operator identity. See [isolated acceptance evidence](./PUBLIC-BETA-VINEXT-ACCEPTANCE.md). This closes the local Vinext legal-runtime gap only; reviewed real identity, remote Preview and separately approved production release remain required. Production was not changed.

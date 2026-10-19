@@ -6,6 +6,12 @@ Branch: `codex/public-beta-readiness`, based on freshly fetched `develop` at `68
 
 Surface classification follows [ARCH-01 #136](https://github.com/IamAssiaAjdaai/lubeck-ai-guide/issues/136): Mobile Core required for shared API/auth/entitlement safety; Public Web required; Admin Web not applicable for new UI (existing CMS/staff behavior preserved). No iOS or Android client UI was changed. Device acceptance is **NOT TESTED**, separately for both platforms.
 
+## Isolated Vinext runtime follow-up — 19 October 2026
+
+**READY for tested local runtime / BLOCKED for launch.** Exact HEAD `c9b9273b8f44743ce25fb2cc6de0c1606bcff6ad` passed built Vinext/Vite-preview execution on local workerd with a disposable loopback PostgreSQL database and local Hyperdrive binding. All seven requested public routes, both legal states, responsive reflow, robots/sitemap, anonymous APIs, account-bound export, synthetic authentication and disabled-feature checks passed. No provider credentials, production data or real operator identity were used. Rehearsal databases were removed. This adds local Cloudflare-runtime evidence to the historical Next.js evidence below; remote Preview, production and device acceptance remain separate.
+
+See [full acceptance and remaining gates](./PUBLIC-BETA-VINEXT-ACCEPTANCE.md) and [sanitized runtime evidence](./PUBLIC-BETA-VINEXT-ACCEPTANCE.json). Application source, existing migrations, Sharp 0.35.5 and `citywalk-preview-review/` were preserved. Production remains unchanged.
+
 ## External erasure follow-up — 19 October 2026
 
 **READY for code review / BLOCKED for operational completion.** This follow-up is restricted to external-erasure configuration, orchestration, worker isolation, observability and tests. The original release evidence below is the historical `e980467` baseline; it is not a new full production-readiness assessment.
