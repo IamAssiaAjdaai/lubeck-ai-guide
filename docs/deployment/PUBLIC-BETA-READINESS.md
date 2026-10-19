@@ -6,6 +6,31 @@ Branch: `codex/public-beta-readiness`, based on freshly fetched `develop` at `68
 
 Surface classification follows [ARCH-01 #136](https://github.com/IamAssiaAjdaai/lubeck-ai-guide/issues/136): Mobile Core required for shared API/auth/entitlement safety; Public Web required; Admin Web not applicable for new UI (existing CMS/staff behavior preserved). No iOS or Android client UI was changed. Device acceptance is **NOT TESTED**, separately for both platforms.
 
+## External erasure follow-up — 19 October 2026
+
+**READY for code review / BLOCKED for operational completion.** This follow-up is restricted to external-erasure configuration, orchestration, worker isolation, observability and tests. The original release evidence below is the historical `e980467` baseline; it is not a new full production-readiness assessment.
+
+Changes: Apple and RevenueCat configuration are independent; no configuration means no DB work. Provider-filtered SQL leaves unconfigured/unknown rows, including historical payloads and retry fields, unchanged. Separate ten-job batches prevent one provider's failures consuming the other's allowance. Apple signing is deferred to the per-job boundary; unrelated partial Google configuration cannot block it. Only recognized terminal outcomes complete jobs. New failure storage uses fixed codes; RevenueCat transport and scheduled DB connection establishment have ten-second bounds. Structured provider/configuration/lease/cleanup failures and heartbeat/counters contain no account IDs, payloads, raw exceptions, credentials or provider bodies. The manual worker shares orchestration and fixed error handling; it was not executed.
+
+| Current follow-up check | Actual result |
+| --- | --- |
+| Focused unit acceptance | **READY** — six files / 42 passing tests: configuration, direct mocked orchestration, scheduled entrypoint, Apple/RevenueCat adapters and privacy-safe events. No provider networking. |
+| Isolated lifecycle acceptance | **READY** — four files / 34 passing tests, zero skipped. Disposable loopback database; all provider transports mocked. Nine new DB cases cover untouched historical/unknown rows, mixed-provider failures, encrypted Apple revocation, retry cap/timing, invalid payloads, expired/live leases, stale-worker fencing and unknown outcomes. |
+| Full core regression | **READY** — 235 files / 1,483 tests passed; 143 database tests skipped in the normal run. The 34 lifecycle tests pass separately; other DB subsystems retain the earlier baseline evidence and were not rerun in this scoped follow-up. |
+| Lint / TypeScript | **READY** — zero lint errors, eight existing warnings; full app and Cloudflare typechecks pass. After Vinext generates its route types, regenerate with `next typegen` before the full app check. |
+| Next / Cloudflare build | **READY locally** — Next build succeeds; Cloudflare build, nine-page/seven-handler/SSR/landing bundle check and existing binding contract pass. Scheduled-handler markers are present in the Worker bundle. No deployment or cron activation. |
+| Migration safety | **READY locally** — no schema or migration edits; existing committed migrations apply to the disposable lifecycle database. Drizzle consistency check passes. No existing local or production queue was processed or reset. |
+| Preserved local changes | **READY** — `package.json`/`package-lock.json` match their intake SHA-256 hashes, including the local Sharp 0.35.5 override; `npm ls sharp` confirms that installed version. Those user changes stay uncommitted and outside the erasure commit. `citywalk-preview-review/` remains untouched/untracked. Builds are working-tree evidence with that local override, not a clean dependency artifact for the pushed PR. |
+| Live provider permissions, production backlog, scheduled runtime/alerts | **NOT TESTED** — no live Apple/RevenueCat calls, production DB access, manual processing, alert delivery or production schedule rehearsal. |
+
+Lifecycle files now run serially within their single disposable database: the erasure fixture clears its synthetic outbox and must not race another file's deletion fixtures. Initial typechecking identified and fixed a weak environment-object type and a test callback annotation; a later check needed regenerated Next route types after Vinext. Completed typechecks pass; these earlier attempts are not counted as passing evidence.
+
+The full audit and proposed cadence, aggregate SQL monitoring, alert thresholds, retry/recovery and activation gates are in [External erasure operations](./EXTERNAL-ACCOUNT-ERASURE-OPERATIONS.md). Account deletion still captures one selected Apple auth row; multi-record Apple linkage/token capture remains unverified and was not changed in this scheduling-focused task.
+
+**Remaining operational blockers:** the production cron is deliberately absent and no provider bindings were added; actual historical backlog and credential/key provenance need separately authorized read-only inventory; the correct provider project/permissions and encrypted Apple payload compatibility need isolated provider acceptance; alert destination, retention, cadence and recovery ownership need approval/rehearsal. Historical RevenueCat jobs must not be assumed unnecessary merely because Beta is free. No paid GitHub Actions requirement or workflow was added. Prior GitHub billing-blocked checks remain historical evidence, not a request to enable paid Actions. All unrelated legal/dependency/Preview/native release blockers remain open; advisory totals below are the prior audit snapshot and were not refreshed here.
+
+**Production remains unchanged. Public Beta remains NO-GO.**
+
 ## 1. Files changed and root causes
 
 | Files | Purpose |
@@ -26,7 +51,7 @@ Surface classification follows [ARCH-01 #136](https://github.com/IamAssiaAjdaai/
 
 Earlier lifecycle session-token duplication did not reproduce with review copies excluded: all four lifecycle files pass. Duplicate discovery and native file concurrency were test-harness problems; authentication was not loosened. CMS/content tests require the canonical CMS import, not the legacy seed that leaves records unpublished.
 
-## 2. Validation evidence
+## 2. Original baseline validation evidence (`e980467`)
 
 | Check | Status / actual result |
 | --- | --- |

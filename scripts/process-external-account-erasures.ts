@@ -3,40 +3,35 @@ import { loadDatabaseEnvironment } from "@/db/loadEnvironment";
 loadDatabaseEnvironment();
 
 async function main(): Promise<void> {
-  if (!process.env.COMMERCE_REVENUECAT_SECRET_API_KEY?.trim()) {
-    throw new Error("COMMERCE_REVENUECAT_SECRET_API_KEY is required.");
-  }
-
   const [
     { closeDb },
-    { processExternalAccountErasureJobs },
-    { createAppleTokenRevocationEraser },
-    { createRevenueCatCustomerEraser },
+    { runScheduledAccountErasures },
   ] = await Promise.all([
     import("@/db/client"),
-    import("@/lib/auth/lifecycle/externalAccountErasureWorker.server"),
-    import("@/lib/auth/lifecycle/appleTokenRevocation.server"),
-    import("@/lib/commerce/revenueCatCustomerErasure.server"),
+    import("@/cloudflare/accountErasureSchedule"),
   ]);
 
   try {
-    const result = await processExternalAccountErasureJobs({
-      erasers: [
-        createRevenueCatCustomerEraser(),
-        createAppleTokenRevocationEraser(),
-      ],
+    const result = await runScheduledAccountErasures({
+      BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+      COMMERCE_REVENUECAT_SECRET_API_KEY: process.env.COMMERCE_REVENUECAT_SECRET_API_KEY,
+      CITYWALK_APPLE_OAUTH_CLIENT_ID: process.env.CITYWALK_APPLE_OAUTH_CLIENT_ID,
+      CITYWALK_APPLE_TEAM_ID: process.env.CITYWALK_APPLE_TEAM_ID,
+      CITYWALK_APPLE_KEY_ID: process.env.CITYWALK_APPLE_KEY_ID,
+      CITYWALK_APPLE_PRIVATE_KEY: process.env.CITYWALK_APPLE_PRIVATE_KEY,
+      CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER: process.env.CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER,
     });
+    if (result.status === "processed" && Object.keys(result.providers).length < 2) {
+      console.warn("ACCOUNT_ERASURE_PROVIDERS_UNAVAILABLE");
+    }
     console.log(JSON.stringify(result));
+    if (result.status === "skipped_not_configured" || result.failed || result.lostLeases) process.exitCode = 1;
   } finally {
     await closeDb();
   }
 }
 
-void main().catch((error) => {
-  console.error(
-    error instanceof Error
-      ? error.message
-      : "External account erasure worker failed.",
-  );
+void main().catch(() => {
+  console.error("ACCOUNT_ERASURE_SCHEDULE_FAILED");
   process.exitCode = 1;
 });

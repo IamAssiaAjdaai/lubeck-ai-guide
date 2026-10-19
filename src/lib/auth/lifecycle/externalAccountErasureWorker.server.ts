@@ -11,7 +11,6 @@ import {
 
 const DEFAULT_BATCH_SIZE = 10;
 const DEFAULT_LEASE_MS = 5 * 60 * 1000;
-const MAX_ERROR_LENGTH = 500;
 
 export type ExternalAccountErasureWorkerResult = Readonly<{
   claimed: number;
@@ -34,13 +33,19 @@ export function externalAccountErasureRetryDelayMs(attempt: number): number {
 }
 
 function normalizedError(error: unknown): string {
-  const message = error instanceof Error ? error.message : String(error);
-  return message.slice(0, MAX_ERROR_LENGTH);
+  // Provider/network exceptions can contain URLs, identifiers or credentials.
+  // Persist only allowlisted codes; never message, stack, body or String(error).
+  if (error && typeof error === "object" && "code" in error &&
+      (error.code === "NOT_CONFIGURED" || error.code === "INVALID_PAYLOAD" || error.code === "REQUEST_FAILED")) {
+    return error.code;
+  }
+  return "ERASURE_FAILED";
 }
 
 async function claimNextJob(input: Readonly<{
   now: Date;
   leaseMs: number;
+  providers: readonly string[];
 }>): Promise<ClaimedErasureJob | undefined> {
   const leaseExpiresAt = new Date(input.now.getTime() + input.leaseMs);
   const result = await getDb().execute(sql`
@@ -48,6 +53,7 @@ async function claimNextJob(input: Readonly<{
       SELECT id
       FROM external_account_erasure_jobs
       WHERE completed_at IS NULL
+        AND provider IN (${sql.join(input.providers.map(provider => sql`${provider}`), sql`, `)})
         AND next_attempt_at <= ${input.now}
         AND (lease_expires_at IS NULL OR lease_expires_at <= ${input.now})
       ORDER BY next_attempt_at ASC, id ASC
@@ -87,6 +93,9 @@ export async function processExternalAccountErasureJobs(input: Readonly<{
   const batchSize = Math.max(1, Math.min(input.batchSize ?? DEFAULT_BATCH_SIZE, 100));
   const leaseMs = Math.max(1_000, input.leaseMs ?? DEFAULT_LEASE_MS);
   const now = input.now ?? (() => new Date());
+  const providers = [...new Set(input.erasers.map(eraser => eraser.provider))];
+  // Unconfigured/unknown provider rows stay exactly as they were, including retries.
+  if (!providers.length) return { claimed: 0, completed: 0, failed: 0, lostLeases: 0 };
   const db = getDb();
   let claimed = 0;
   let completed = 0;
@@ -94,13 +103,14 @@ export async function processExternalAccountErasureJobs(input: Readonly<{
   let lostLeases = 0;
 
   for (let index = 0; index < batchSize; index += 1) {
-    const job = await claimNextJob({ now: now(), leaseMs });
+    const job = await claimNextJob({ now: now(), leaseMs, providers });
     if (!job) break;
     claimed += 1;
 
     try {
       const eraser = findExternalAccountEraser(input.erasers, job.provider);
-      await eraser.erase({ userId: job.externalCustomerId });
+      const outcome = await eraser.erase({ userId: job.externalCustomerId });
+      if (outcome !== "erased" && outcome !== "not_found") throw new Error("ERASURE_FAILED");
       const completedAt = now();
       const rows = await db
         .update(externalAccountErasureJobs)

@@ -8,9 +8,11 @@ export type AccountErasureScheduleEnvironment = Readonly<{
   CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER?: string;
 }>;
 
-const REQUIRED_ENV_KEYS = [
+export const ACCOUNT_ERASURE_PROVIDERS = ["apple", "revenuecat"] as const;
+export type AccountErasureProvider = typeof ACCOUNT_ERASURE_PROVIDERS[number];
+
+const APPLE_REQUIRED_ENV_KEYS = [
   "BETTER_AUTH_SECRET",
-  "COMMERCE_REVENUECAT_SECRET_API_KEY",
   "CITYWALK_APPLE_OAUTH_CLIENT_ID",
   "CITYWALK_APPLE_TEAM_ID",
   "CITYWALK_APPLE_KEY_ID",
@@ -18,8 +20,16 @@ const REQUIRED_ENV_KEYS = [
   "CITYWALK_APPLE_APP_BUNDLE_IDENTIFIER",
 ] as const;
 
+export function configuredAccountErasureProviders(
+  env: AccountErasureScheduleEnvironment,
+): readonly AccountErasureProvider[] {
+  return ACCOUNT_ERASURE_PROVIDERS.filter(provider => provider === "apple"
+    ? APPLE_REQUIRED_ENV_KEYS.every(key => Boolean(env[key]?.trim()))
+    : Boolean(env.COMMERCE_REVENUECAT_SECRET_API_KEY?.trim()));
+}
+
 export function isAccountErasureScheduleConfigured(
   env: AccountErasureScheduleEnvironment,
 ): boolean {
-  return REQUIRED_ENV_KEYS.every((key) => Boolean(env[key]?.trim()));
+  return configuredAccountErasureProviders(env).length > 0;
 }

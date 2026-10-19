@@ -5,6 +5,9 @@ export default defineConfig({
   ...base,
   test: {
     ...base.test,
+    // These files share one disposable outbox; the worker's fixture cleanup must
+    // not race with account deletion fixtures created by another file.
+    fileParallelism: false,
     include: [
       "src/lib/auth/lifecycle/lifecycle.integration.test.ts",
       "src/lib/auth/lifecycle/externalAccountErasureWorker.integration.test.ts",
