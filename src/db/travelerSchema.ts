@@ -1,4 +1,5 @@
 import {
+  check,
   index,
   uuid,
   jsonb,
@@ -8,6 +9,8 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+
+import { sql } from "drizzle-orm";
 
 import { user } from "@/db/authSchema";
 
@@ -73,4 +76,5 @@ export const sharedWalkLinks = pgTable("shared_walk_links", {
   ...createTimestamps(),
 }, table => [
   index("shared_walk_links_owner_idx").on(table.ownerId),
+  check("shared_walk_links_route_object_chk", sql`jsonb_typeof(${table.route}) = 'object'`),
 ]);

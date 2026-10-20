@@ -26,6 +26,13 @@ describe("public walk snapshot", () => {
     expect(serialized).not.toContain("visited");
     expect(serialized).not.toContain("deadline");
   });
+  it("withholds precise start and finish even when decorated with private data", () => {
+    const result = toPublicWalk({ ...route, finish: { lat: 53.871234, lng: 10.691234 } });
+    expect(result?.route.settings).not.toHaveProperty("start");
+    expect(result?.route.settings).not.toHaveProperty("finish");
+    expect(result?.route).not.toHaveProperty("finish");
+    expect(JSON.stringify(result)).not.toMatch(/53\.866|53\.871234|10\.691234/);
+  });
   it("rejects invalid and empty public routes", () => {
     expect(toPublicWalk({ ...route, stopSlugs: [] })).toBeNull();
     expect(toPublicWalk({ ...route, stopSlugs: ["../../secret"] })).toBeNull();

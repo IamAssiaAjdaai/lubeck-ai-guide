@@ -1,3 +1,5 @@
+import { getAnalyticsConsent } from "./analyticsConsent";
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const ANONYMOUS_VISITOR_RETENTION_MS = 180 * DAY_MS;
@@ -210,9 +212,10 @@ function getBrowserStorage(
 }
 
 export function getBrowserVisitorSessionIdentity(): AnonymousVisitorSessionIdentity {
+  const allowed = getAnalyticsConsent() === "granted";
   return resolveVisitorSessionIdentity({
-    persistentStorage: getBrowserStorage("localStorage", fallbackPersistentStorage),
-    sessionStorage: getBrowserStorage("sessionStorage", fallbackSessionStorage),
+    persistentStorage: allowed ? getBrowserStorage("localStorage", fallbackPersistentStorage) : fallbackPersistentStorage,
+    sessionStorage: allowed ? getBrowserStorage("sessionStorage", fallbackSessionStorage) : fallbackSessionStorage,
   });
 }
 
@@ -226,6 +229,8 @@ export function getVisitorAnalyticsProperties(
 }
 
 export function clearBrowserVisitorSessionIdentity(): void {
+  fallbackPersistentStorage.removeItem(ANONYMOUS_VISITOR_STORAGE_KEY);
+  fallbackSessionStorage.removeItem(VISITOR_SESSION_STORAGE_KEY);
   const persistentStorage = getBrowserStorage("localStorage", fallbackPersistentStorage);
   const sessionStorage = getBrowserStorage("sessionStorage", fallbackSessionStorage);
   try {

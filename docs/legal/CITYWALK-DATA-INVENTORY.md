@@ -14,18 +14,24 @@ It is deliberately conservative:
 - it distinguishes configured/optional integrations from always-on product behavior;
 - an item marked **OPEN** is a launch decision or operational policy that is not defined by the repository today.
 
-## 1. High-confidence retention values encoded in CITYWALK
+## Legal review follow-up — 19 October 2026
+
+The owner reports a private structural `legal:check` pass; that file was not accessed by this review. The historical baseline below describes implemented flows, not proof that every optional provider is active in the free Public Beta. Public AI and live commerce remain disabled in the reviewed release configuration. See [prioritized legal gap report](../deployment/LEGAL-GAP-REVIEW-2026-10-19.md).
+
+**Retention precision:** token/identifier validity is not a guaranteed physical purge deadline. Visitor identity rotation is lazy; database rate-limit cleanup needs a later transaction. Existing order/subscription detachment is not necessarily anonymization because external transaction/customer identifiers can remain. No provider retention, accounting obligation, legal hold, tax status or registration has been inferred. Confirm approved duration/criteria, actual deletion mechanism, exceptions and backup recovery handling per category before publication.
+
+## 1. High-confidence validity and cleanup values encoded in CITYWALK
 
 | Data | Retention encoded in code | Source |
 | --- | --- | --- |
-| Web anonymous visitor UUID | 180 days maximum in browser `localStorage` | `src/lib/visitorSession.ts` |
-| Web visitor session UUID | 24 hours maximum; normally shorter because it uses `sessionStorage` | `src/lib/visitorSession.ts` |
-| Native anonymous visitor UUID | 180 days maximum in AsyncStorage | `mobile/src/lib/visitorIdentity.ts` |
+| Web anonymous visitor UUID | 180-day logical validity in browser `localStorage`; replaced on later use, not a background deletion guarantee | `src/lib/visitorSession.ts` |
+| Web visitor session UUID | 24-hour logical validity; `sessionStorage` may clear sooner with the browser session | `src/lib/visitorSession.ts` |
+| Native anonymous visitor UUID | 180-day logical validity in AsyncStorage; replaced on later use | `mobile/src/lib/visitorIdentity.ts` |
 | Better Auth session | 7 days, with 24-hour update age | `src/lib/auth/factory.server.ts` |
 | Email verification token | 1 hour | `src/lib/auth/factory.server.ts` |
 | Password-reset token | 30 minutes | `src/lib/auth/factory.server.ts` |
 | Public web account-deletion token | 30 minutes | `src/lib/auth/lifecycle/webDeletionRequest.server.ts` |
-| PostgreSQL rate-limit events | 48 hours maximum; old rows are deleted during rate-limit transactions | `src/lib/databaseRateLimit.server.ts` |
+| PostgreSQL rate-limit events | 48-hour cutoff; older rows are deleted during a subsequent rate-limit transaction, not by a guaranteed timed purge | `src/lib/databaseRateLimit.server.ts` |
 | AI Guide request history sent to the model | At most the last 6 accepted messages in one request, each truncated to 2,000 characters | `src/app/api/guide/route.ts` |
 | Native persisted AI Guide conversation | At most 20 completed user/assistant turns per city/place; no time TTL | `mobile/src/lib/guideConversationStorage.ts` |
 
@@ -35,8 +41,8 @@ Everything else below either follows a user/account lifecycle or still needs an 
 
 | Category | Examples actually implemented | Stored / processed where | Purpose | Retention / deletion behavior |
 | --- | --- | --- | --- | --- |
-| Anonymous web identity | Random `visitorId`, random `sessionId` | Browser localStorage/sessionStorage; optionally registered with PostHog | Guest continuity and pseudonymous product analytics | Visitor 180d; session 24h. Not derived from email, IP, fingerprint or GPS. |
-| Anonymous native identity | Random visitor UUID | Native AsyncStorage; sent as AI allowance identity | Guest AI allowance and continuity | 180d. Cleared by the native account-deletion local purge on the device where deletion completes. |
+| Anonymous web identity | Random `visitorId`, random `sessionId` | Browser localStorage/sessionStorage; optionally registered with PostHog | Guest continuity and pseudonymous product analytics | Visitor validity 180d; session validity 24h; stale storage can remain until later use or cleanup. Not derived from email, IP, fingerprint or GPS. |
+| Anonymous native identity | Random visitor UUID | Native AsyncStorage; sent as AI allowance identity | Guest AI allowance and continuity | 180-day logical validity; stale data can remain until later use/cleanup. Cleared by the native account-deletion local purge on the device where deletion completes. |
 | Account profile | User ID, display name, email, email-verification state, optional image | PostgreSQL Better Auth tables | Account creation, login and profile | User row is hard-deleted when self-service deletion succeeds, subject to retention-review blockers. |
 | Authentication/session data | Session token, expiry, IP address, user agent | PostgreSQL Better Auth `session` table | Authentication and account security | Session expiry is 7d. Sessions cascade on user deletion. |
 | Native auth client state | Better Auth Expo auth cookie/session cache | Native Expo SecureStore via `@better-auth/expo` | Keep the native app authenticated between requests | Better Auth Expo manages the device-side auth cache. After a successful server account deletion, CITYWALK runs device-local traveler cleanup and then best-effort `nativeAuthClient.signOut()`; the lifecycle code relies on the Expo integration to clear its SecureStore auth cookies/session cache. No separate CITYWALK device TTL is encoded; the server session policy remains 7d. |
@@ -47,12 +53,13 @@ Everything else below either follows a user/account lifecycle or still needs an 
 | Account saved walks | City, route, route fingerprint and timestamps | PostgreSQL `account_saved_walks` | Cross-session/account saved walks | Cascades on user deletion. No independent TTL is defined. |
 | Device-local saved/product state | Saved places, active/current walk, local trips, local feedback, traveler style, guide history | Native AsyncStorage and web local/session storage depending on feature | Guest-first product continuity and personalization | Most records have no time TTL. Users can remove individual items; native account deletion purges CITYWALK traveler prefixes, guide history, local trips, live-walk state, user-scoped traveler style and the native visitor ID. A web deletion cannot erase storage on a disconnected device. |
 | Live Walk location state | Current/last published point, stop/finish coordinates, route/proximity state | Native AsyncStorage `citywalk:live-walk:v1` plus in-memory location APIs | Live Walk progress, proximity and Live Activity behavior | No time TTL in storage code; cleared with Live Walk cleanup or native account-deletion local purge. |
+| Map style/tile requests | IP/network metadata, requested tile/style URLs and map area | Browser/native map renderer → configured map service; default OpenFreeMap (`src/lib/mapProvider.ts`, `mobile/src/lib/mapStyle.ts`) | Display the requested map | No CITYWALK TTL for provider logs/cache is established. **OPEN:** confirm deployed style/resource hosts, recipient role, terms, transfers and storage behavior. Public provider policy is not account-specific acceptance. |
 | Browser location | Latitude, longitude, accuracy, timestamp | Browser memory while location feature is active | Nearby/current-location features | No PostgreSQL persistence in the reviewed web location path. Browser watch stops when the feature unmounts/stops. |
 | Native foreground location | Latitude/longitude from foreground location adapter | In memory; selected Live Walk state can persist locally as described above | Nearby/Live Walk features | Not intentionally attached to analytics. |
 | AI Guide input | Question, limited recent conversation history, city/place context, verified knowledge and privacy-minimized walk/tour context | CITYWALK server request, then Groq model API | Answer a requested AI Guide question | CITYWALK does not write prompt/answer content to PostgreSQL in the reviewed route. Groq provider retention is **OPEN** and must be confirmed from the production provider configuration/terms. |
 | AI Guide local history | Completed user/assistant messages and source metadata | Native AsyncStorage, per city/place | Conversation continuity | Maximum 20 completed turns; no time TTL. Purged by native account-deletion local cleanup. |
-| AI/security rate limits | HMAC/SHA-derived identifier hashes for IP/user/visitor identities + timestamp/scope | PostgreSQL `rate_limit_events` | Abuse prevention and daily AI allowance | 48h maximum in CITYWALK database code. Raw identity is not stored in this table. |
-| PostHog analytics identity | Pseudonymous CITYWALK visitor/session UUIDs | Browser storage and PostHog when configured **and explicitly allowed** | Product/journey analytics | Browser UUID TTLs are 180d/24h after consent. Declining/withdrawing consent clears the CITYWALK analytics UUIDs. PostHog event retention is not defined in this repo and is **OPEN**. |
+| AI/security rate limits | HMAC/SHA-derived identifier hashes for IP/user/visitor identities + timestamp/scope | PostgreSQL `rate_limit_events` | Abuse prevention and daily AI allowance | 48h cleanup cutoff applied on later rate-limit transactions; rows may survive longer while traffic is absent. Raw identity is not stored in this table. |
+| PostHog analytics identity | Pseudonymous CITYWALK visitor/session UUIDs | Browser storage and PostHog when configured **and explicitly allowed** | Product/journey analytics | Browser UUID logical validity is 180d/24h after consent, with lazy replacement as above. Declining/withdrawing consent clears the CITYWALK analytics UUIDs. PostHog event retention is not defined in this repo and is **OPEN**. |
 | PostHog events | Examples: `city_opened`, `place_viewed`, Marketing `landing_view` / `build_walk_clicked`, native-attributed `walk_started` / `walk_completed`, aggregate `entitlement_granted`; client exception capture is enabled in PostHog initialization | Browser PostHog SDK and server-side PostHog capture when `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` and host are configured | Product analytics and funnel measurement | Provider/project retention is **OPEN**. The native funnel uses a fixed aggregate `distinct_id` (`citywalk-marketing-funnel`) and sends city + campaign attribution only; raw GPS, account email, CITYWALK user ID and auth tokens are not intentionally added to the reviewed event contracts. |
 | Marketing attribution | UTM source/medium/campaign/content, landing variant, city | URL/query; PostHog event properties when configured; native AsyncStorage after app handoff; first-party `/api/analytics/marketing-funnel` forwarding for matching-city native walk events | Acquisition attribution and attributed walk-funnel measurement | Native attribution is persisted only after explicit native analytics consent. Declining analytics, or changing a previous choice to declined, clears the native attribution and blocks native funnel forwarding. No time TTL is defined while consent remains granted. The first-party funnel endpoint does not persist the payload in CITYWALK PostgreSQL; it forwards validated fields to PostHog when configured. **OPEN:** define the maximum attribution lifetime before production analytics is finalized. |
 | Commerce customer mapping | User ID ↔ Stripe/native provider customer ID | PostgreSQL `commerce_customers` | Reconcile purchases | Cascades on user deletion. |
@@ -108,7 +115,7 @@ The reviewed route does **not** insert the question, prompt or model answer into
 
 The repository now contains an active **optional** PostHog integration:
 
-- `instrumentation-client.ts` calls `posthog.init(...)` when both public PostHog environment values are configured;
+- `instrumentation-client.ts` calls `posthog.init(...)` only after explicit first-party consent and when both public PostHog environment values are configured;
 - it enables `capture_exceptions: true` while automatic interaction capture, automatic pageview/pageleave capture and session recording are disabled;
 - `VisitorJourneyTracker` captures city/place journey events;
 - published Marketing pages capture landing and CTA events;
@@ -125,6 +132,8 @@ This means the older statement that "the current public web code does not activa
 **Implemented native gate:** native Marketing analytics is also fail-closed. When the native analytics choice is unset or denied, CITYWALK does not persist Marketing attribution and does not send `walk_started` / `walk_completed` funnel requests. The Legal & Support screen exposes explicit Allow / Decline controls. Declining after a previous grant clears the native Marketing attribution. Browser and native choices are stored locally in their own runtime/device context; CITYWALK does not assume that a browser choice automatically transfers to the app.
 
 Still confirm the production PostHog project's provider-side retention and final operational configuration before launch.
+
+19 October code review limitation: browser `setAnalyticsConsent` swallows persistence failures without an in-memory withdrawal block. A failed decline write can leave a prior grant readable after reload; initialization can call `opt_in_capturing` when that grant remains. Existing browser source/normal-path tests do not establish fail-closed withdrawal under this failure. Keep browser analytics activation blocked pending a dedicated runtime fix/acceptance or evidence it remains unconfigured. Native persistence has a separate runtime block and the restart limitation below. Server entitlement analytics (`src/lib/commerce/analytics.server.ts`) is configuration-gated but not browser-consent-gated; assess its aggregate payload, recipient processing and legal basis separately before enabling commerce analytics.
 
 14 October release audit: native clients recheck consent immediately before sending and assert `X-Citywalk-Analytics-Consent: granted`; the endpoint drops requests without that assertion, including older clients, with no provider forwarding. This assertion is not verified proof of a human decision. Native preference writes are serialized and storage failures fail closed in the running app; if both storage write and cleanup fail, withdrawal cannot be guaranteed after process restart. Already-sent/in-flight analytics cannot be recalled. Provider retention and consent/deletion device acceptance remain open; see `docs/deployment/LEGAL-LAUNCH-READINESS.md`.
 

@@ -22,6 +22,13 @@ describe("RevenueCat customer erasure", () => {
     );
   });
 
+  it("bounds provider requests and replaces network/timeout details with a fixed code", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue(new Error("Bearer secret-key user/123 private-provider-body"));
+    const eraser = createRevenueCatCustomerEraser({ apiKey: "secret-key", fetchImpl });
+    await expect(eraser.erase({ userId: "user/123" })).rejects.toMatchObject({ code: "REQUEST_FAILED", message: "REQUEST_FAILED" });
+    expect(fetchImpl.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal);
+  });
+
   it("treats not-found as terminal success for retry-safe deletion", async () => {
     const fetchImpl = vi.fn().mockResolvedValue(new Response(null, { status: 404 }));
     const eraser = createRevenueCatCustomerEraser({ apiKey: "secret-key", fetchImpl });

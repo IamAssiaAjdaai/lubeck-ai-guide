@@ -115,6 +115,10 @@ export function createStripeProvider(
   return {
     id: "stripe",
     async createCheckout(input: HostedCheckoutInput): Promise<HostedCheckoutResult> {
+      // Public Beta permits sandbox checkout only. Existing webhook/refund handling stays available.
+      if (!secretKey.startsWith("sk_test_")) {
+        throw new StripeProviderError("Live checkout is disabled during Public Beta.");
+      }
       const session = await stripe.checkout.sessions.create(
         {
           mode: "payment",

@@ -25,16 +25,22 @@ export function createRevenueCatCustomerEraser(input: Readonly<{
         throw new RevenueCatCustomerErasureError("NOT_CONFIGURED");
       }
 
-      const response = await fetchImpl(
-        `${REVENUECAT_API_BASE_URL}/subscribers/${encodeURIComponent(userId)}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            Accept: "application/json",
+      let response: Response;
+      try {
+        response = await fetchImpl(
+          `${REVENUECAT_API_BASE_URL}/subscribers/${encodeURIComponent(userId)}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              Accept: "application/json",
+            },
+            signal: AbortSignal.timeout(10_000),
           },
-        },
-      );
+        );
+      } catch {
+        throw new RevenueCatCustomerErasureError("REQUEST_FAILED");
+      }
 
       if (response.status === 200) return "erased" as const;
       if (response.status === 404) return "not_found" as const;

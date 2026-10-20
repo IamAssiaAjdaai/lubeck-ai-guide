@@ -1,11 +1,13 @@
 // @vitest-environment node
 import { beforeAll, afterAll, afterEach, describe, expect, it, vi } from "vitest";
+import { eq } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 vi.mock("server-only", () => ({}));
 const auth = vi.hoisted(() => ({ userId: "", resolve: undefined as undefined | ((input: { headers: Headers }) => Promise<unknown>) }));
 vi.mock("@/lib/auth/server", () => ({ getAuth: () => ({ api: { getSession: async (input: { headers: Headers }) => auth.resolve ? auth.resolve(input) : auth.userId ? { user: { id: auth.userId } } : null } }) }));
 import { getDb, closeDb } from "@/db/client";
 import { user } from "@/db/authSchema";
+import { sharedWalkLinks } from "@/db/travelerSchema";
 import { GET, POST, DELETE } from "@/app/api/account/saved-walks/route";
 import { saveAccountWalk, listAccountWalks } from "./savedWalks.server";
 import { savedRouteFromJourney } from "@citywalk/traveler-core";
@@ -22,6 +24,11 @@ describe.runIf(process.env.SAVED_WALK_DB_INTEGRATION === "1")("isolated authenti
   });
   afterAll(closeDb);
   afterEach(() => { auth.resolve = undefined; vi.unstubAllEnvs(); });
+  it("enforces the shared route-object constraint in PostgreSQL", async () => {
+    await expect(getDb().insert(sharedWalkLinks).values({
+      ownerId: owner, citySlug: "lubeck", route: [] as never,
+    })).rejects.toMatchObject({ cause: { code: "23514", constraint: "shared_walk_links_route_object_chk" } });
+  });
   it("rejects anonymous create and list without mutation", async () => {
     auth.userId = "";
     expect((await GET(request("GET"))).status).toBe(401);
@@ -113,6 +120,10 @@ describe.runIf(process.env.SAVED_WALK_DB_INTEGRATION === "1")("isolated authenti
     const email = `${randomUUID()}@example.test`, password = randomUUID() + randomUUID();
     const signup = await instance.api.signUpEmail({ body: { name: "Cookie test", email, password }, asResponse: true });
     expect(signup.status).toBe(200);
+    // This session test starts from a verified account, like the lifecycle fixtures.
+    // Keep the production email-verification requirement enabled.
+    const signupAccount = (await signup.clone().json()).user.id as string;
+    await getDb().update(user).set({ emailVerified: true }).where(eq(user.id, signupAccount));
     const signin = await instance.api.signInEmail({ body: { email, password }, asResponse: true });
     expect(signin.status).toBe(200);
     const accountId = (await signin.json()).user.id as string;

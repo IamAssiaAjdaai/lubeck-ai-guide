@@ -25,6 +25,8 @@ import { enforceGuideDailyAllowance } from "@/lib/guideAllowance.server";
 import { resolveTourContext } from "@/lib/tourContext.server";
 import { getVerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
 import { emitOperationalFailure } from "@/lib/operations/operationalEvent";
+import { guideCompletionBudget, reserveGuideCompletion, readGuideBody, GuideBodyError } from "@/lib/guideSafety.server";
+import { externalRequestOrigin } from "@/lib/auth/lifecycle/requestOrigin";
 
 type GuideMessage = Readonly<{
   role: "user" | "assistant";
@@ -58,11 +60,19 @@ ATTRIBUTION CORRECTION:
 
 export async function POST(request: Request) {
   try {
+    const completionBudget = guideCompletionBudget();
+    if (completionBudget === undefined) {
+      return NextResponse.json({ error: "AI Guide is temporarily unavailable." }, { status: 503 });
+    }
+    const origin = request.headers.get("origin");
+    if ((origin && origin !== externalRequestOrigin(request)) || request.headers.get("sec-fetch-site") === "cross-site") {
+      return NextResponse.json({ error: "Request not allowed." }, { status: 403 });
+    }
     let body: GuideRequest;
     try {
-      body = await request.json() as GuideRequest;
-    } catch {
-      return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+      body = await readGuideBody(request);
+    } catch (error) {
+      return NextResponse.json({ error: "Invalid request." }, { status: error instanceof GuideBodyError ? error.status : 400 });
     }
 
     const question = typeof body.question === "string"
@@ -231,10 +241,14 @@ export async function POST(request: Request) {
       "CURRENT QUESTION:",
       question,
     ].join("\n");
-    const groq = new Groq({ apiKey });
+    // Each attempt reserves global capacity; SDK retries must not bypass it.
+    const groq = new Groq({ apiKey, maxRetries: 0, timeout: 15000 });
     let guideAnswer: ReturnType<typeof parseGuideStructuredAnswer> | undefined;
 
     for (let attempt = 0; attempt < MAX_COMPLETION_ATTEMPTS; attempt += 1) {
+      if (!await reserveGuideCompletion(completionBudget)) {
+        return NextResponse.json({ error: "AI Guide is temporarily unavailable." }, { status: 503 });
+      }
       const completion = await groq.chat.completions.create({
         model: "openai/gpt-oss-20b",
         temperature: 0.2,

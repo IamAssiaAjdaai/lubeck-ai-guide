@@ -8,7 +8,7 @@ vi.mock("google-auth-library", () => ({
 }));
 vi.mock("@/lib/auth/server", () => ({ getAuth: () => ({ api: { getSession: mocks.session } }) }));
 vi.mock("@/lib/databaseRateLimit.server", () => ({ consumeDatabaseRateLimit: mocks.rateLimit }));
-import { accountBinding, googleBillingEnabled, sandboxContext, type VerifiedNativePurchase } from "./config.server";
+import { requireSandbox, accountBinding, googleBillingEnabled, sandboxContext, type VerifiedNativePurchase } from "./config.server";
 import { verifyAndDeliver } from "./service.server";
 import { deliverNativePurchase } from "./ledger.server";
 import { acknowledgeGoogle, normalizeGoogle, verifyGoogle, verifyGooglePushAuthorization } from "./providers.server";
@@ -49,6 +49,12 @@ function noExternalWork() {
 }
 
 describe("Google disabled policy at every internal boundary", () => {
+  it("blocks sandbox billing in Cloudflare production even without VERCEL_ENV", () => {
+    vi.stubEnv("VERCEL_ENV", undefined);
+    vi.stubEnv("CITYWALK_RUNTIME_ENV", "production");
+    expect(() => requireSandbox()).toThrow("UNAVAILABLE");
+    expect(googleBillingEnabled()).toBe(false);
+  });
   it.each([undefined, "", "0", "false", "true", " 1", "1 ", "garbage"])("rejects flag %s before verification, restore, ack or ledger access", async flag => {
     const { evidence, ports } = fixture();
     vi.stubEnv("CITYWALK_GOOGLE_TEST_PURCHASES", flag);

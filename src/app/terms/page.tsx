@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const operator = getLegalOperator();
   return {
     title: "Terms | CITYWALK",
-    description: "Terms for using CITYWALK, including accounts, paid access, subscriptions, AI Guide and walking features.",
+    description: "Terms for the free CITYWALK Public Beta, accounts and walking features.",
     alternates: { canonical: citywalkPublicUrl("/terms") },
     robots: legalRobots(operator),
   };
@@ -30,7 +30,7 @@ export default async function TermsPage() {
     <LegalPage
       eyebrow="Terms"
       title="Terms of use"
-      intro="These terms govern use of CITYWALK’s website, app, city content, AI Guide and paid access. Mandatory consumer rights remain unaffected."
+      intro="These terms govern use of CITYWALK’s website, app and city content during the free Public Beta. Mandatory consumer rights remain unaffected."
       operator={operator}
     >
       <section>
@@ -50,7 +50,7 @@ export default async function TermsPage() {
       <section>
         <h2>2. What CITYWALK provides</h2>
         <p>
-          CITYWALK helps you discover places, plan and follow city walks, access city content and, where available, ask an AI-powered guide questions. Feature availability varies by city, device, language, connection and release stage.
+          CITYWALK helps you discover places, plan and follow city walks and access city content. Public AI Guide access is disabled during this Public Beta. Feature availability varies by city, device, language, connection and release stage.
         </p>
         <p>
           The service is designed for leisure and informational use. It is not an emergency service, professional safety service or guaranteed turn-by-turn navigation system.
@@ -60,7 +60,7 @@ export default async function TermsPage() {
       <section>
         <h2>3. Accounts</h2>
         <p>
-          Some functions can be used without an account, while saving or synchronizing certain data and accessing account-linked purchases may require sign-in. You must provide accurate account information, protect your sign-in credentials and not give another person unauthorized access to your account.
+          Some functions can be used without an account, while saving or synchronizing certain data may require sign-in. You must provide accurate account information, protect your sign-in credentials and not give another person unauthorized access to your account.
         </p>
         <p>
           We may restrict an account where reasonably necessary to protect users or the service, investigate misuse, comply with law or address a serious breach of these terms. Any mandatory rights to notice, remedy or access are not excluded.
@@ -68,25 +68,25 @@ export default async function TermsPage() {
       </section>
 
       <section>
-        <h2>4. Free and paid access</h2>
+        <h2>4. Free Public Beta</h2>
         <p>
-          CITYWALK can offer free features, time-limited city passes and recurring premium plans. The Lübeck City Pass is currently configured as 72 hours with a recommended launch price of €4.99. Premium and other store prices are the prices displayed to you in the relevant checkout or app store at the time of purchase; taxes and localized store pricing may affect the displayed amount.
+          The current Public Beta is free. Live payments, paid city passes and recurring paid plans are disabled. Creating or using a Beta account does not authorize a payment or automatically start a paid subscription.
         </p>
         <p>
-          Paid access begins and ends according to the product shown at purchase. Access can depend on successful provider confirmation and entitlement reconciliation. A purchase does not transfer ownership of CITYWALK software, content or intellectual-property rights.
+          Any future paid offer would require separate product information and a purchase decision. No future price, launch date, paid entitlement or permanent free availability is promised here.
         </p>
       </section>
 
       <section>
-        <h2>5. Subscriptions, cancellation and refunds</h2>
+        <h2>5. Existing purchases and consumer rights</h2>
         <p>
-          If you buy a recurring subscription through Apple or Google, renewal, cancellation and store refunds are handled under the rules and account controls of that store. Where CITYWALK offers web checkout, the checkout may be processed by Stripe and the purchase terms shown there also apply.
+          No new purchases or subscriptions are offered in the current Public Beta. If you already hold a store subscription from an earlier offering, if applicable, its management remains available through the relevant store account controls; these Beta terms do not change any existing statutory rights.
         </p>
         <p>
           Deleting a CITYWALK account does not itself cancel a store subscription and does not automatically create a refund. You should separately manage an active Apple or Google subscription in the relevant store account.
         </p>
         <p>
-          Nothing in these terms removes mandatory withdrawal, refund, warranty or other consumer-protection rights that apply to you. Where a platform is responsible for the payment or refund process, the request may need to be made through that platform.
+          Nothing in these terms removes mandatory withdrawal, refund, warranty or other consumer-protection rights that apply to you, including where a digital service is provided without a monetary price. Store procedures do not replace those rights.
         </p>
       </section>
 
@@ -96,7 +96,7 @@ export default async function TermsPage() {
           AI-generated answers can be incomplete, outdated or wrong even when CITYWALK uses curated source material and grounding checks. Do not rely on an AI answer as the sole source for safety-critical, legal, medical, accessibility, opening-hours, transport or emergency decisions.
         </p>
         <p>
-          Usage limits can apply. The current product policy provides a limited daily Ask CITYWALK allowance for free users and a higher limited allowance for paid users; paid access is not represented as unlimited AI use.
+          Ask CITYWALK is unavailable in the current Public Beta. The information above describes risks of generated answers if that feature is offered in a later release; it does not promise an AI allowance or access date.
         </p>
       </section>
 
@@ -132,7 +132,7 @@ export default async function TermsPage() {
       <section>
         <h2>10. Availability and changes</h2>
         <p>
-          We may maintain, improve, add, remove or replace features and city content. We do not promise uninterrupted availability. For paid services, changes will not remove mandatory contractual or consumer rights, and material changes will be handled in accordance with applicable law.
+          We may maintain, improve, add, remove or replace features and city content. We do not promise uninterrupted availability. Changes will not remove mandatory contractual or consumer rights, including rights that may apply to a free digital service.
         </p>
       </section>
 

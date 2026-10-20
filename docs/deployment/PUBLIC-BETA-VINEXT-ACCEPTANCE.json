@@ -1,0 +1,407 @@
+{
+  "commit": "c9b9273b8f44743ce25fb2cc6de0c1606bcff6ad",
+  "runtime": "built Vinext via Vite preview / local workerd + Hyperdrive",
+  "states": [
+    {
+      "configured": false,
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "A better wayto walk a city."
+          ]
+        },
+        {
+          "path": "/explore",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Welche Stadt m\u00f6chtest du entdecken?"
+          ]
+        },
+        {
+          "path": "/privacy",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Privacy notice"
+          ]
+        },
+        {
+          "path": "/terms",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Terms of use"
+          ]
+        },
+        {
+          "path": "/imprint",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Imprint"
+          ]
+        },
+        {
+          "path": "/support",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Need help with CITYWALK?"
+          ]
+        },
+        {
+          "path": "/account-deletion",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Delete your CITYWALK account"
+          ]
+        }
+      ],
+      "apis": [
+        {
+          "path": "/api/content/cities?locale=en",
+          "status": 200
+        },
+        {
+          "path": "/api/content/cities/lubeck?locale=en",
+          "status": 200
+        },
+        {
+          "path": "/api/auth/get-session",
+          "status": 200
+        },
+        {
+          "path": "/api/account/export",
+          "status": 401
+        },
+        {
+          "path": "/api/commerce/native/context",
+          "status": 503
+        },
+        {
+          "path": "/api/shared-walks/synthetic",
+          "status": 404
+        },
+        {
+          "path": "/share/synthetic",
+          "status": 404
+        },
+        {
+          "path": "/api/guide",
+          "status": 503
+        },
+        {
+          "path": "/api/commerce/checkout",
+          "status": 401
+        },
+        {
+          "path": "/api/analytics/marketing-funnel",
+          "status": 204
+        },
+        {
+          "path": "native context authenticated disabled",
+          "status": 503
+        }
+      ],
+      "auth": [
+        {
+          "operation": "wrong password rejected",
+          "status": 401
+        },
+        {
+          "operation": "unverified rejected",
+          "status": 403
+        },
+        {
+          "operation": "verified sign in",
+          "status": 200
+        },
+        {
+          "operation": "own account export",
+          "status": 200
+        },
+        {
+          "operation": "sign out and export denied",
+          "status": 401
+        }
+      ],
+      "screenshots": [],
+      "browserErrors": [],
+      "robotsAndSitemap": true
+    },
+    {
+      "configured": true,
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "A better wayto walk a city."
+          ]
+        },
+        {
+          "path": "/explore",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Welche Stadt m\u00f6chtest du entdecken?"
+          ]
+        },
+        {
+          "path": "/privacy",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Privacy notice"
+          ]
+        },
+        {
+          "path": "/terms",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Terms of use"
+          ]
+        },
+        {
+          "path": "/imprint",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Imprint"
+          ]
+        },
+        {
+          "path": "/support",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Need help with CITYWALK?"
+          ]
+        },
+        {
+          "path": "/account-deletion",
+          "status": 200,
+          "reflow": [
+            320,
+            390,
+            1440
+          ],
+          "h1Count": 1,
+          "headings": [
+            "Delete your CITYWALK account"
+          ]
+        }
+      ],
+      "apis": [
+        {
+          "path": "/api/content/cities?locale=en",
+          "status": 200
+        },
+        {
+          "path": "/api/content/cities/lubeck?locale=en",
+          "status": 200
+        },
+        {
+          "path": "/api/auth/get-session",
+          "status": 200
+        },
+        {
+          "path": "/api/account/export",
+          "status": 401
+        },
+        {
+          "path": "/api/commerce/native/context",
+          "status": 503
+        },
+        {
+          "path": "/api/shared-walks/synthetic",
+          "status": 404
+        },
+        {
+          "path": "/share/synthetic",
+          "status": 404
+        },
+        {
+          "path": "/api/guide",
+          "status": 503
+        },
+        {
+          "path": "/api/commerce/checkout",
+          "status": 401
+        },
+        {
+          "path": "/api/analytics/marketing-funnel",
+          "status": 204
+        },
+        {
+          "path": "native context authenticated disabled",
+          "status": 503
+        }
+      ],
+      "auth": [
+        {
+          "operation": "wrong password rejected",
+          "status": 401
+        },
+        {
+          "operation": "unverified rejected",
+          "status": 403
+        },
+        {
+          "operation": "verified sign in",
+          "status": 200
+        },
+        {
+          "operation": "own account export",
+          "status": 200
+        },
+        {
+          "operation": "sign out and export denied",
+          "status": 401
+        }
+      ],
+      "screenshots": [
+        "landing-390.png",
+        "explore-390.png",
+        "imprint-390.png"
+      ],
+      "browserErrors": [],
+      "robotsAndSitemap": true
+    }
+  ],
+  "externalBrowserRequestsBlocked": 0,
+  "runtimeBundleSha256": "ea0c9bdd58bf900a2f0f82c69b92b10cee866e906c5cfaee961b2165a4076f74",
+  "databaseCleanup": "All rehearsal databases dropped in finally blocks",
+  "providerCredentials": "Absent",
+  "remoteBindings": false,
+  "productionChanged": false,
+  "exportAdditionalChecks": [
+    "missing account binding: 401",
+    "other account binding: 401",
+    "foreign origin: 403",
+    "own account with binding: 200, private/no-store, no password hash/test secret"
+  ],
+  "acceptanceDate": "2026-10-19",
+  "limitations": [
+    "Local runtime only; not remote Preview or production acceptance",
+    "No real email, Apple, RevenueCat, Stripe or AI provider calls",
+    "No iOS or Android device acceptance",
+    "No authenticated checkout session or paid product activation",
+    "Full-page screenshot capture was not accepted as visual evidence; single DOM tree and fixed viewport checked"
+  ],
+  "regressionChecks": [
+    {
+      "command": "npm run test:run",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run lifecycle:test:integration",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0
+    },
+    {
+      "command": "npx next typegen",
+      "exitCode": 0
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck:cloudflare",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build:vinext",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:cloudflare-build",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:cloudflare-bindings",
+      "exitCode": 0
+    }
+  ],
+  "cleanupVerification": {
+    "remainingRehearsalDatabases": 0,
+    "previewListenerStopped": true
+  },
+  "screenshotsScope": "Temporary local artifacts; fixed-viewport imprint reviewed, full-page captures not accepted as visual evidence"
+}

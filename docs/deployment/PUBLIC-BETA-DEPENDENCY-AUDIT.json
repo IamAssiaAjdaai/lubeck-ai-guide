@@ -1,0 +1,247 @@
+{
+  "checkedOn": "2026-10-19",
+  "command": "npm audit --omit=dev --json",
+  "note": "Counts are npm affected-package totals, including inherited/transitive findings; no exploitability clearance. Production was not modified.",
+  "vulnerabilities": {
+    "info": 0,
+    "low": 0,
+    "moderate": 8,
+    "high": 11,
+    "critical": 0,
+    "total": 19
+  },
+  "packages": [
+    {
+      "name": "@cloudflare/runtime-types",
+      "severity": "high",
+      "direct": false,
+      "range": "0.1.0 - 0.1.8",
+      "fixAvailable": true,
+      "advisories": []
+    },
+    {
+      "name": "@cloudflare/vite-plugin",
+      "severity": "high",
+      "direct": true,
+      "range": "<=0.0.0-fff677e35 || 1.2.3 - 1.63.0 || 2.0.0-beta.sha-238e489d5 - 2.0.0-beta.sha-c82c3efb3",
+      "fixAvailable": true,
+      "advisories": []
+    },
+    {
+      "name": "@esbuild-kit/core-utils",
+      "severity": "moderate",
+      "direct": false,
+      "range": "*",
+      "fixAvailable": {
+        "name": "drizzle-kit",
+        "version": "0.18.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "@esbuild-kit/esm-loader",
+      "severity": "moderate",
+      "direct": false,
+      "range": "*",
+      "fixAvailable": {
+        "name": "drizzle-kit",
+        "version": "0.18.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "@vercel/og",
+      "severity": "moderate",
+      "direct": false,
+      "range": ">=1.0.2",
+      "fixAvailable": {
+        "name": "vinext",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "@vinext/cloudflare",
+      "severity": "moderate",
+      "direct": true,
+      "range": ">=1.0.0-beta.0",
+      "fixAvailable": {
+        "name": "@vinext/cloudflare",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "braces",
+      "severity": "high",
+      "direct": false,
+      "range": "*",
+      "fixAvailable": {
+        "name": "vinext",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": [
+        {
+          "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+          "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+          "range": "<=3.0.3"
+        }
+      ]
+    },
+    {
+      "name": "cf",
+      "severity": "high",
+      "direct": true,
+      "range": "0.9.0 - 1.0.0-beta.13",
+      "fixAvailable": true,
+      "advisories": []
+    },
+    {
+      "name": "drizzle-kit",
+      "severity": "moderate",
+      "direct": true,
+      "range": "0.19.0 - 1.0.0-beta.1-fd8bfcc",
+      "fixAvailable": {
+        "name": "drizzle-kit",
+        "version": "0.18.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "esbuild",
+      "severity": "moderate",
+      "direct": false,
+      "range": "<=0.24.2",
+      "fixAvailable": {
+        "name": "drizzle-kit",
+        "version": "0.18.1",
+        "isSemVerMajor": true
+      },
+      "advisories": [
+        {
+          "title": "esbuild enables any website to send any requests to the development server and read the response",
+          "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99",
+          "range": "<=0.24.2"
+        }
+      ]
+    },
+    {
+      "name": "fast-glob",
+      "severity": "high",
+      "direct": false,
+      "range": "*",
+      "fixAvailable": {
+        "name": "vinext",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "fflate",
+      "severity": "moderate",
+      "direct": false,
+      "range": "0.7.0 - 0.7.4",
+      "fixAvailable": {
+        "name": "vinext",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": [
+        {
+          "title": "fflate unzipSync can enter an infinite loop when parsing malformed ZIP64 archives",
+          "url": "https://github.com/advisories/GHSA-px8p-9vwx-vf98",
+          "range": ">=0.7.0 <0.7.5"
+        }
+      ]
+    },
+    {
+      "name": "micromatch",
+      "severity": "high",
+      "direct": false,
+      "range": ">=0.2.0",
+      "fixAvailable": {
+        "name": "vinext",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "miniflare",
+      "severity": "high",
+      "direct": false,
+      "range": "<=0.0.0-fec45ed61 || 4.20250508.3 - 5.20261006.0-alpha",
+      "fixAvailable": true,
+      "advisories": []
+    },
+    {
+      "name": "satori",
+      "severity": "moderate",
+      "direct": false,
+      "range": ">=0.33.0",
+      "fixAvailable": {
+        "name": "vinext",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "sharp",
+      "severity": "high",
+      "direct": false,
+      "range": "<0.35.5",
+      "fixAvailable": true,
+      "advisories": [
+        {
+          "title": "sharp : Vulnerability in librsvg dependency CVE-2026-96889",
+          "url": "https://github.com/advisories/GHSA-wq5f-xc86-pv6w",
+          "range": "<0.35.5"
+        }
+      ]
+    },
+    {
+      "name": "vinext",
+      "severity": "high",
+      "direct": true,
+      "range": ">=0.0.16",
+      "fixAvailable": {
+        "name": "vinext",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "vite-plugin-commonjs",
+      "severity": "high",
+      "direct": false,
+      "range": "0.5.0 - 0.5.2 || >=0.7.0",
+      "fixAvailable": {
+        "name": "vinext",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    },
+    {
+      "name": "vite-plugin-dynamic-import",
+      "severity": "high",
+      "direct": false,
+      "range": ">=0.2.0",
+      "fixAvailable": {
+        "name": "vinext",
+        "version": "0.2.1",
+        "isSemVerMajor": true
+      },
+      "advisories": []
+    }
+  ]
+}

@@ -19,8 +19,9 @@ export async function verifyNativeBillingUpgrade(pool) {
   const baseline = JSON.parse(committed("drizzle/meta/_journal.json"));
   const journal = JSON.parse(await readFile("drizzle/meta/_journal.json", "utf8"));
   assert.equal(baseline.entries.at(-1).tag, "0014_orange_vision");
-  assert.equal(journal.entries.at(-1).tag, "0015_majestic_lake");
-  assert.deepEqual(journal.entries.slice(0, -1), baseline.entries);
+  const upgradeJournal = { ...journal, entries: journal.entries.slice(0, 16) };
+  assert.equal(upgradeJournal.entries.at(-1).tag, "0015_majestic_lake");
+  assert.deepEqual(upgradeJournal.entries.slice(0, -1), baseline.entries);
   const folder = await mkdtemp(join(tmpdir(), "citywalk-billing-baseline-"));
   try {
     await mkdir(join(folder, "meta"));
@@ -61,7 +62,9 @@ export async function verifyNativeBillingUpgrade(pool) {
     const before = await snapshot();
     assert.equal(before.commerce_orders.length,4);assert.equal(before.commerce_entitlements.length,3);assert.equal(before.account_saved_walks.length,1);
     assert.equal(before.account.length,1);assert.equal(before.session.length,1);
-    await migrate(drizzle(pool), { migrationsFolder: "drizzle" });
+    await writeFile(join(folder, "meta/_journal.json"), JSON.stringify(upgradeJournal));
+    await writeFile(join(folder, "0015_majestic_lake.sql"), await readFile("drizzle/0015_majestic_lake.sql", "utf8"));
+    await migrate(drizzle(pool), { migrationsFolder: folder });
     assert.deepEqual(await snapshot(),before);
     const afterColumns=await columns();
     assert.deepEqual(afterColumns,beforeColumns.map(c=>["price_id","currency","amount_total"].includes(c.column_name)?{...c,is_nullable:"YES"}:c));
@@ -72,11 +75,15 @@ export async function verifyNativeBillingUpgrade(pool) {
     const migrationHash=createHash('sha256').update(await readFile('drizzle/0015_majestic_lake.sql','utf8')).digest('hex');
     const recorded=(await pool.query('select hash,created_at from drizzle.__drizzle_migrations order by id')).rows;
     assert.equal(recorded.length,16);assert.equal(recorded.filter(r=>r.hash===migrationHash).length,1);
-    assert.equal(Number(recorded.at(-1).created_at),journal.entries.at(-1).when);
-    await migrate(drizzle(pool), { migrationsFolder: "drizzle" });
+    assert.equal(Number(recorded.at(-1).created_at),upgradeJournal.entries.at(-1).when);
+    await migrate(drizzle(pool), { migrationsFolder: folder });
     assert.deepEqual((await pool.query('select hash,created_at from drizzle.__drizzle_migrations order by id')).rows,recorded);
     assert.deepEqual(await constraints(),afterConstraints);assert.deepEqual(await indexes(),beforeIndexes);assert.deepEqual(await snapshot(),before);
     console.log("Upgrade 0000–0014 -> 0015 PASS: 11 synthetic table snapshots preserved; 4 orders, 3 entitlements, auth account/session and Saved Walk unchanged.");
     console.log("Rerun PASS: journal 16 entries, exact 0015 hash recorded once; one financial-evidence constraint, indexes/defaults unchanged, no data loss.");
+    // Validate the historical upgrade in isolation, then apply all later additive migrations.
+    await migrate(drizzle(pool), { migrationsFolder: "drizzle" });
+    assert.equal((await pool.query('select count(*)::int as n from drizzle.__drizzle_migrations')).rows[0].n, journal.entries.length);
+    console.log(`Current migration chain PASS: ${journal.entries.length} entries applied after the verified 0015 upgrade.`);
   } finally { await rm(folder,{recursive:true,force:true}); }
 }

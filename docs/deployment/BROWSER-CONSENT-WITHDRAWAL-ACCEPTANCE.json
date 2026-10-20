@@ -1,0 +1,33 @@
+{
+  "runtime": "built Vinext / local workerd and loopback Hyperdrive",
+  "checks": [
+    "first visit off; explicit opt-in; positive mocked city capture; failing withdrawal stays off with no reload",
+    "manual reload protected; retry persists denial; explicit reauthorization resumes mocked capture",
+    "BroadcastChannel withdrawal reaches active peer; peer can persist denial; peer grant cannot release original tab latch",
+    "cross-tab storage-event withdrawal without BroadcastChannel"
+  ],
+  "mockCaptureRequests": 11,
+  "blockedExternalRequests": 0,
+  "databaseDropped": true,
+  "date": "2026-10-19",
+  "baseline": "459e4c7313bf41e4a5511de162940115034b8b5a",
+  "sourceSha256": {
+    "instrumentation-client.ts": "8333deb21f664c35d3a55113da52ffa6940c1d826cd72d416d1351b9e5c073ef",
+    "src/lib/analyticsConsent.ts": "b4d8e9b48313d9048aebd6472ac945b65d752eb089f853d24c8b7e64c6c2c909",
+    "src/lib/visitorSession.ts": "6a0aae5947818e1a940fe1f6346dcb9f1545df14e475838e880b56412e1b3fdd",
+    "src/components/AnalyticsConsentControl.tsx": "dd28fb344a3735cde64114bd46618bbb00980719bdb525b3ce2deaf761281d19"
+  },
+  "productionChanged": false,
+  "providers": "No real providers: loopback endpoints intercepted with synthetic responses",
+  "browser": "Installed Chrome via Playwright; synthetic normal-browser navigator metadata to exercise SDK capture despite its bot filter",
+  "focusedTests": {
+    "files": 7,
+    "passed": 33
+  },
+  "coreTests": {
+    "filesPassed": 238,
+    "passed": 1500,
+    "integrationFilesSkipped": 19,
+    "skipped": 143
+  }
+}

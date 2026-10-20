@@ -31,6 +31,7 @@
     "content:test:integration": "tsx scripts/run-city-content-integration-tests.ts",
     "media:test:integration": "tsx scripts/run-media-integration-tests.ts",
     "commerce:test:integration": "tsx scripts/run-commerce-integration-tests.ts",
+    "beta:test:integration": "tsx scripts/run-beta-integration-tests.ts",
     "lifecycle:test:integration": "tsx scripts/run-lifecycle-integration-tests.ts",
     "account-erasure:process": "tsx scripts/process-external-account-erasures.ts",
     "media:backfill-audio-duration": "node --conditions=react-server --import tsx scripts/backfill-audio-duration.ts",
@@ -131,5 +132,8 @@
   "workspaces": [
     "packages/*"
   ],
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "sharp": "0.35.5"
+  }
 }

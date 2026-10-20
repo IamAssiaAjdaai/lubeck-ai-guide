@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
     ".cloudflare/**",
     ".vinext/**",
     "mobile/**",
+    "**/citywalk-preview-review/**",
     "lubeck-ai-guide/**", // Separate local checkout, not this application.
   ]),
 ]);

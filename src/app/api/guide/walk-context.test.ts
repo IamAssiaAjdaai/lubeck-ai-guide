@@ -12,6 +12,11 @@ vi.mock("groq-sdk", () => ({
 vi.mock("@/lib/rateLimit", () => ({ aiGuideRateLimit: { limit: rateLimit } }));
 vi.mock("@/lib/guideAllowance.server", () => ({ enforceGuideDailyAllowance: enforceAllowance }));
 
+vi.mock("@/lib/guideSafety.server", async importOriginal => ({
+  ...await importOriginal<typeof import("@/lib/guideSafety.server")>(),
+  reserveGuideCompletion: vi.fn().mockResolvedValue(true),
+}));
+
 import { POST } from "./route";
 import { LUBECK_HISTORIC_TOUR_ID, TOUR_CONTEXT_VERSION } from "@/lib/tourContext";
 
@@ -27,6 +32,8 @@ const walk = {
 };
 
 beforeEach(() => {
+    vi.stubEnv("CITYWALK_AI_GUIDE_ENABLED", "true");
+    vi.stubEnv("CITYWALK_AI_DAILY_COMPLETION_LIMIT", "100");
   vi.clearAllMocks();
   vi.stubEnv("GROQ_API_KEY", "test-key");
   rateLimit.mockResolvedValue({ success: true, limit: 10, remaining: 9, reset: 1_800_000_000_000 });
