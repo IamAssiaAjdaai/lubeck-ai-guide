@@ -16,7 +16,7 @@ try {
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   for (const [route, heading] of [
-    ["/", /A better way to walk a city/i], ["/explore", /.+/],
+    ["/", /Make every city your own\./i], ["/explore", /.+/],
     ["/en/lubeck", /.+/], ["/en/account", /.+/],
     ["/privacy", "Privacy notice"], ["/terms", "Terms of use"],
     ["/imprint", "Imprint"], ["/support", "Need help with CITYWALK?"],
