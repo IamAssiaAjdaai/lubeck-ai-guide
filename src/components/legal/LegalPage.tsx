@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
 
 import type { LegalOperator } from "@/lib/legal";
+
+import { PublicInfoLayout } from "./PublicInfoLayout";
 
 export function LegalPage({
   title,
@@ -17,33 +18,21 @@ export function LegalPage({
   children: ReactNode;
 }) {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-950 [overflow-wrap:anywhere]">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-5">
-          <Link href="/" className="font-extrabold tracking-[-0.04em] text-blue-700">
-            CITYWALK
-          </Link>
-          <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600" aria-label="Legal navigation">
-            <Link href="/privacy" className="hover:text-blue-700">Privacy</Link>
-            <Link href="/terms" className="hover:text-blue-700">Terms</Link>
-            <Link href="/imprint" className="hover:text-blue-700">Imprint</Link>
-            <Link href="/account-deletion" className="hover:text-blue-700">Account deletion</Link>
-            <Link href="/support" className="hover:text-blue-700">Support</Link>
-          </nav>
-        </div>
-      </header>
-
-      <article className="mx-auto max-w-3xl px-6 py-12 sm:py-16">
+    <PublicInfoLayout>
+      <article>
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-700">{eyebrow}</p>
         <h1 className="mt-3 text-4xl font-bold tracking-[-0.045em] sm:text-5xl">{title}</h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">{intro}</p>
 
         {!operator.isConfigured || !operator.publicationApproved ? (
           <aside className="mt-8 rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-6 text-amber-950" role="note">
-            <strong className="block">Pre-launch legal configuration is incomplete.</strong>
+            <strong className="block">{operator.isConfigured ? "Legal publication approval is pending." : "Pre-launch legal configuration is incomplete."}</strong>
             <span>
-              The legal notice is awaiting operator and legal approval. Contact support for assistance.
+              {operator.isConfigured
+                ? "This legal notice will be available after publication approval. Contact support for assistance."
+                : "This legal notice is not yet ready for publication. Contact support for assistance."}
             </span>
+            <a className="mt-2 block underline underline-offset-4" href={`mailto:${operator.supportEmail}`}>{operator.supportEmail}</a>
           </aside>
         ) : null}
 
@@ -51,13 +40,6 @@ export function LegalPage({
           {operator.isConfigured && operator.publicationApproved ? children : null}
         </div>
       </article>
-
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl flex-wrap justify-between gap-3 px-6 py-6 text-sm text-slate-600">
-          <span>© 2026 CITYWALK</span>
-          <a href={`mailto:${operator.supportEmail}`} className="hover:text-blue-700">{operator.supportEmail}</a>
-        </div>
-      </footer>
-    </main>
+    </PublicInfoLayout>
   );
 }

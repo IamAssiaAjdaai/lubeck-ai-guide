@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
 
 vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
 vi.mock("@/components/AnalyticsConsentControl", () => ({ AnalyticsConsentPreferences: () => <div>Analytics preferences</div> }));
@@ -25,6 +26,36 @@ const pages = [
 afterEach(() => { cleanup(); vi.unstubAllEnvs(); });
 
 describe.each(pages)("$path public legal route", ({ path, page, metadata, heading }) => {
+  it.each(["", "0", "true"])("withholds identity and legal body when approval is %j", async approval => {
+    for (const [key, value] of Object.entries(identity)) vi.stubEnv(key, value);
+    vi.stubEnv("CITYWALK_LEGAL_PUBLICATION_APPROVED", approval);
+    vi.stubEnv("CITYWALK_LEGAL_REPRESENTATIVE", "Synthetic Representative");
+    vi.stubEnv("CITYWALK_LEGAL_REGISTER_NAME", "Synthetic Register");
+    vi.stubEnv("CITYWALK_LEGAL_REGISTER_NUMBER", "Synthetic Registration 123");
+    vi.stubEnv("CITYWALK_LEGAL_VAT_ID", "Synthetic VAT 123");
+    const element = await page();
+    const html = renderToStaticMarkup(element);
+    render(element);
+    expect(screen.getByRole("note").textContent).toContain("Legal publication approval is pending.");
+    expect(screen.getByRole("note").textContent).not.toMatch(/incomplete|missing/i);
+    expect(html).not.toContain("Synthetic");
+    expect(screen.queryByRole("heading", { level: 2 })).toBeNull();
+    expect((await metadata()).robots).toEqual({ index: false, follow: false });
+    expect((await sitemap()).some(item => item.url.endsWith(path))).toBe(false);
+  });
+
+  it("keeps incomplete identity private even with approval enabled", async () => {
+    for (const [key, value] of Object.entries(identity)) vi.stubEnv(key, value);
+    vi.stubEnv("CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS", "");
+    const element = await page();
+    expect(renderToStaticMarkup(element)).not.toContain("Synthetic");
+    render(element);
+    expect(screen.getByRole("note").textContent).toContain("configuration is incomplete");
+    expect(screen.queryByRole("heading", { level: 2 })).toBeNull();
+    expect((await metadata()).robots).toEqual({ index: false, follow: false });
+    expect((await sitemap()).some(item => item.url.endsWith(path))).toBe(false);
+  });
+
   it("renders an explicit noindex launch blocker without identity", async () => {
     for (const key of Object.keys(identity)) vi.stubEnv(key, "");
     render(await page());

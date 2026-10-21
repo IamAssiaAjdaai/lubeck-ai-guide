@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
+import { PublicInfoLayout } from "@/components/legal/PublicInfoLayout";
 import { AccountDeletionRequestPanel } from "@/components/account/AccountDeletionRequestPanel";
 import { citywalkPublicUrl } from "@/lib/site";
 
@@ -13,11 +13,7 @@ export const metadata: Metadata = {
 
 export default function AccountDeletionPage() {
   return (
-    <main className="mx-auto min-h-screen max-w-3xl px-6 py-16 sm:px-8 sm:py-24 [overflow-wrap:anywhere]">
-      <Link href="/" className="text-sm font-semibold text-blue-700 hover:underline">
-        CITYWALK
-      </Link>
-
+    <PublicInfoLayout>
       <h1 className="mt-8 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
         Delete your CITYWALK account
       </h1>
@@ -81,12 +77,6 @@ export default function AccountDeletionPage() {
       <p className="mt-14 border-t border-slate-200 pt-8 text-sm leading-6 text-slate-600">
         Need help with an account-deletion request? Contact <a className="font-semibold text-blue-700 hover:underline" href="mailto:support@getcitywalk.com">support@getcitywalk.com</a>.
       </p>
-      <nav aria-label="Legal navigation" className="mt-6 flex flex-wrap gap-5 text-sm text-blue-700 underline">
-        <Link href="/privacy">Privacy</Link>
-        <Link href="/terms">Terms</Link>
-        <Link href="/imprint">Imprint</Link>
-        <Link href="/support">Support</Link>
-      </nav>
-    </main>
+    </PublicInfoLayout>
   );
 }

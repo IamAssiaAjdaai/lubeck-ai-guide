@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { PublicInfoLayout } from "@/components/legal/PublicInfoLayout";
+
 import { CITYWALK_SUPPORT_EMAIL } from "@/lib/legal";
 import { citywalkPublicUrl } from "@/lib/site";
 
@@ -32,20 +34,8 @@ const supportTopics = [
 
 export default function SupportPage() {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-950 [overflow-wrap:anywhere]">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-5">
-          <Link href="/" className="font-extrabold tracking-[-0.04em] text-blue-700">CITYWALK</Link>
-          <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600" aria-label="Support navigation">
-            <Link href="/privacy" className="hover:text-blue-700">Privacy</Link>
-            <Link href="/terms" className="hover:text-blue-700">Terms</Link>
-            <Link href="/imprint" className="hover:text-blue-700">Imprint</Link>
-            <Link href="/account-deletion" className="hover:text-blue-700">Account deletion</Link>
-          </nav>
-        </div>
-      </header>
-
-      <article className="mx-auto max-w-3xl px-6 py-12 sm:py-16">
+    <PublicInfoLayout>
+      <article>
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-700">Support</p>
         <h1 className="mt-3 text-4xl font-bold tracking-[-0.045em] sm:text-5xl">Need help with CITYWALK?</h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">
@@ -84,12 +74,6 @@ export default function SupportPage() {
         </aside>
       </article>
 
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl flex-wrap justify-between gap-3 px-6 py-6 text-sm text-slate-600">
-          <span>© 2026 CITYWALK</span>
-          <Link href="/">Back to CITYWALK</Link>
-        </div>
-      </footer>
-    </main>
+    </PublicInfoLayout>
   );
 }

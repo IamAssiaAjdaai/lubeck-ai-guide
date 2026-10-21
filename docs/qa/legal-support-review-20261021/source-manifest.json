@@ -1,0 +1,20 @@
+{
+  "integrationBase": "aec0919c2112942beaf11fd7c069acaeabb21e6c",
+  "unchangedSha256": {
+    "src/app/page.tsx": "e77f4632440e2c99b6007a780b49fe91f02e5b20925adc36605687806cf84f99",
+    "src/app/privacy/page.tsx": "6c6847581ee1b1f643e3e6e4f1bf1001652a41de13312538d8a528a2fff421cd",
+    "src/app/terms/page.tsx": "e38b652f4f1bd869548f669fb728d8bbf68e0801880b5a13aa552f574a33e746",
+    "src/app/imprint/page.tsx": "e3f04f74d5ee764b2df732d419e767430ab432585edfb2e9367cf06b9f1c2368",
+    "src/components/account/AccountDeletionRequestPanel.tsx": "1391eb1f81a29f038f5ad943a690cb62fc4f518bbb8ffa93b5af54acd5157093",
+    "src/lib/legal.ts": "38422249c7c3b32195552122ca1ab86dc745144b5e973e34a8e74171c10a4c42",
+    "src/app/robots.ts": "ed462ad51240a24782a8894ab6b5d95970f796c7ca4da337f5d01d55f1bc88d5",
+    "src/app/sitemap.ts": "1e42542128eacbda2f44e303e1faf4f47ebffc36b98e62d02e290235265d98e7",
+    "cloudflare.config.ts": "548404dc34c07226f5eddac850f571ecc098184f12f45e9ea04988a45ac391f5",
+    "src/components/landing-next/Navbar.tsx": "c0d6fbe5367e9faec0f3e4c3da416760c9ead4b8dbf5632846f294381bcdcea3",
+    "src/components/landing-next/landing-next.module.css": "314da2f7766ad0f9b62d6edcc84f8af8e59737043b4a68db5acab6f0da9ce984",
+    "src/components/landing-next/LandingNext.tsx": "bd683a01cc0f387aeb7b411b0ef364c97d938c5cf373f6599a58e7f16b7ade85",
+    "src/components/landing-next/cities.tsx": "2c6204ce6d539231271087794e958618e5ec2d9e0c6833e294c95ccdc68a49b9",
+    "src/components/landing-next/sections.tsx": "d20f7921202d40992991a463d599ee4742481ecf594de577709f01439c50428c",
+    "src/components/landing-next/Footer.tsx": "0503b066ac45fd568cc8ed18f1fff482889fbfff173de0953288b6137747bc48"
+  }
+}

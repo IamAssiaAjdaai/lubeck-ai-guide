@@ -1,0 +1,343 @@
+{
+  "layouts": [
+    {
+      "route": "/privacy",
+      "width": 320,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/privacy",
+      "width": 390,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/privacy",
+      "width": 768,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/privacy",
+      "width": 1024,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/privacy",
+      "width": 1440,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/privacy",
+      "width": 1920,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/privacy",
+      "width": 320,
+      "textZoom": 200,
+      "overflow": false
+    },
+    {
+      "route": "/privacy",
+      "width": 390,
+      "textZoom": 200,
+      "overflow": false
+    },
+    {
+      "route": "/terms",
+      "width": 320,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/terms",
+      "width": 390,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/terms",
+      "width": 768,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/terms",
+      "width": 1024,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/terms",
+      "width": 1440,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/terms",
+      "width": 1920,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/terms",
+      "width": 320,
+      "textZoom": 200,
+      "overflow": false
+    },
+    {
+      "route": "/terms",
+      "width": 390,
+      "textZoom": 200,
+      "overflow": false
+    },
+    {
+      "route": "/imprint",
+      "width": 320,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/imprint",
+      "width": 390,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/imprint",
+      "width": 768,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/imprint",
+      "width": 1024,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/imprint",
+      "width": 1440,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/imprint",
+      "width": 1920,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/imprint",
+      "width": 320,
+      "textZoom": 200,
+      "overflow": false
+    },
+    {
+      "route": "/imprint",
+      "width": 390,
+      "textZoom": 200,
+      "overflow": false
+    },
+    {
+      "route": "/support",
+      "width": 320,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/support",
+      "width": 390,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/support",
+      "width": 768,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/support",
+      "width": 1024,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/support",
+      "width": 1440,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/support",
+      "width": 1920,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/support",
+      "width": 320,
+      "textZoom": 200,
+      "overflow": false
+    },
+    {
+      "route": "/support",
+      "width": 390,
+      "textZoom": 200,
+      "overflow": false
+    },
+    {
+      "route": "/account-deletion",
+      "width": 320,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/account-deletion",
+      "width": 390,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/account-deletion",
+      "width": 768,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/account-deletion",
+      "width": 1024,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/account-deletion",
+      "width": 1440,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/account-deletion",
+      "width": 1920,
+      "textZoom": 100,
+      "overflow": false
+    },
+    {
+      "route": "/account-deletion",
+      "width": 320,
+      "textZoom": 200,
+      "overflow": false
+    },
+    {
+      "route": "/account-deletion",
+      "width": 390,
+      "textZoom": 200,
+      "overflow": false
+    }
+  ],
+  "navigation": [
+    {
+      "route": "/privacy",
+      "clientLink": true
+    },
+    {
+      "route": "/terms",
+      "clientLink": true
+    },
+    {
+      "route": "/imprint",
+      "clientLink": true
+    },
+    {
+      "route": "/support",
+      "clientLink": true
+    },
+    {
+      "route": "/account-deletion",
+      "clientLink": true
+    }
+  ],
+  "accessibility": [
+    {
+      "route": "/privacy",
+      "singleMainAndH1": true,
+      "landmarks": true,
+      "keyboardSkip": true,
+      "axeViolations": []
+    },
+    {
+      "route": "/terms",
+      "singleMainAndH1": true,
+      "landmarks": true,
+      "keyboardSkip": true,
+      "axeViolations": []
+    },
+    {
+      "route": "/imprint",
+      "singleMainAndH1": true,
+      "landmarks": true,
+      "keyboardSkip": true,
+      "axeViolations": []
+    },
+    {
+      "route": "/support",
+      "singleMainAndH1": true,
+      "landmarks": true,
+      "keyboardSkip": true,
+      "axeViolations": []
+    },
+    {
+      "route": "/account-deletion",
+      "singleMainAndH1": true,
+      "landmarks": true,
+      "keyboardSkip": true,
+      "axeViolations": []
+    }
+  ],
+  "legal": [
+    {
+      "route": "/privacy",
+      "hiddenIdentity": true,
+      "hiddenBody": true,
+      "noindex": true
+    },
+    {
+      "route": "/terms",
+      "hiddenIdentity": true,
+      "hiddenBody": true,
+      "noindex": true
+    },
+    {
+      "route": "/imprint",
+      "hiddenIdentity": true,
+      "hiddenBody": true,
+      "noindex": true
+    },
+    {
+      "sitemapLegalExcluded": true,
+      "supportAndDeletionIncluded": true
+    },
+    {
+      "robotsUnchanged": true
+    }
+  ],
+  "deletion": [
+    {
+      "requestMock": true,
+      "confirmationNotice": true
+    },
+    {
+      "explicitConfirmation": true,
+      "expiredTokenError": true,
+      "fragmentRemoved": true
+    }
+  ],
+  "pageErrors": [],
+  "external": []
+}
