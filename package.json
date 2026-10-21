@@ -90,7 +90,9 @@
     "@vinext/cloudflare": "1.0.1",
     "react-server-dom-webpack": "19.2.8",
     "vinext": "1.0.1",
-    "@marketing/core": "file:packages/marketing-core"
+    "@marketing/core": "file:packages/marketing-core",
+    "ipaddr.js": "^2.5.0",
+    "parse5": "^8.0.1"
   },
   "devDependencies": {
     "@google-cloud/text-to-speech": "^7.0.0",
