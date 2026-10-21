@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight, Bike, BookOpen, Clock3, Compass, Headphones, 
 
 import { CitywalkLogo, CitywalkMark } from "@/components/brand/CitywalkLogo";
 import { cityLaunches } from "@/data/cityAvailability";
+import { getApprovedStoreLinks } from "./storeLinks";
 import styles from "./landing-next.module.css";
 
 /**
@@ -31,7 +32,7 @@ const features = [
 
 const faq = [
   { question: "Can I explore without paying?", answer: "CITYWALK includes a free discovery experience. Any paid City Pass features will be shown clearly in the native app when available." },
-  { question: "Is CITYWALK available on iPhone and Android?", answer: "We're preparing native iPhone and Android releases. Verified store links will appear here only when their listings are live." },
+  { question: "Is CITYWALK available on iPhone and Android?", answer: "Genuine App Store and Google Play buttons appear only when their listings are published and approved. Platform availability can vary by country." },
   { question: "Which city comes first?", answer: "Lübeck is our first city. Other destinations will be announced separately as their content and apps become ready." },
   { question: "Can I use audio and the AI Guide everywhere?", answer: "Not everywhere. Story, audio and Guide availability depends on the place, published content, your selected language and eligibility." },
   { question: "Will a route always finish on time?", answer: "CITYWALK can estimate your return time; walking and arrival estimates are not guarantees. Check local conditions and signs." },
@@ -70,6 +71,7 @@ function IllustrativePhone() {
 }
 
 export default function LandingNextPreviewPage() {
+  const storeLinks = getApprovedStoreLinks();
   return (
     <div className={styles.page} id="top">
       <a className={styles.skip} href="#content">Skip to content</a>
@@ -94,7 +96,7 @@ export default function LandingNextPreviewPage() {
               <div className={styles.eyebrow}><span className={styles.eyebrowDot} /> THE CITY IS YOURS TO DISCOVER</div>
               <h1 id="main-title">Your city.<br /><em>Your way.</em></h1>
               <p className={styles.heroLead}>Turn a little free time into a memorable walk. Find your route, follow local stories and make every stop count with CITYWALK.</p>
-              <p className={styles.launchPill}><MapPin size={16} /> Starting in Lübeck · iPhone &amp; Android in preparation</p>
+              <p className={styles.launchPill}><MapPin size={16} /> Starting in Lübeck · {storeLinks.ios || storeLinks.android ? "Native listings opening in stages" : "iPhone & Android in preparation"}</p>
               <div className={styles.heroActions}>
                 <Link className={styles.primary} href="/explore">Start exploring <ArrowUpRight size={19} /></Link>
                 <a className={styles.outline} href="#how-it-works">See how it works <ArrowRight size={18} /></a>
@@ -162,8 +164,11 @@ export default function LandingNextPreviewPage() {
 
         <section id="download" className={styles.download} aria-labelledby="download-title">
           <div className={styles.downloadInner}>
-            <div><p className={styles.kicker}>YOUR NEXT CITY WALK</p><h2 id="download-title">Adventure is<br /><em>closer than you think.</em></h2><p>CITYWALK is being prepared for iPhone and Android. We'll add verified download links when the native app listings are live.</p>
-              <div className={styles.platforms}><span>iPhone · In preparation</span><span>Android · In preparation</span></div>
+            <div><p className={styles.kicker}>YOUR NEXT CITY WALK</p><h2 id="download-title">Adventure is<br /><em>closer than you think.</em></h2><p>{storeLinks.ios || storeLinks.android ? "Download CITYWALK from the verified store listings below. Availability may vary by country and device." : "CITYWALK is being prepared for iPhone and Android. Verified app-store links will appear here only when the listings are live."}</p>
+              <div className={styles.platforms}>
+                {storeLinks.ios ? <a href={storeLinks.ios} target="_blank" rel="noopener noreferrer">App Store — iPhone <ArrowUpRight size={14} /></a> : <span>iPhone · In preparation</span>}
+                {storeLinks.android ? <a href={storeLinks.android} target="_blank" rel="noopener noreferrer">Google Play — Android <ArrowUpRight size={14} /></a> : <span>Android · In preparation</span>}
+              </div>
               <div className={styles.downloadActions}><Link className={styles.primary} href="/explore">Explore the city <ArrowUpRight size={18} /></Link><Link className={styles.outline} href="/support">Get in touch <ArrowRight size={17} /></Link></div>
             </div>
             <div className={styles.downloadArt} aria-hidden="true"><CitywalkMark /><strong>CITYWALK</strong><span>Walk the city your way.</span></div>
