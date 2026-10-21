@@ -66,7 +66,9 @@
     "typecheck": "tsc --noEmit",
     "config:validate": "expo config --type public",
     "i18n:check": "node ../packages/i18n/scripts/check.mjs",
-    "local:check": "node scripts/check-local-build-readiness.mjs"
+    "local:check": "node scripts/check-local-build-readiness.mjs",
+    "beta:preflight": "node scripts/check-beta-environment.mjs",
+    "beta:test": "node --test scripts/check-beta-environment.test.mjs"
   },
   "private": true
 }
