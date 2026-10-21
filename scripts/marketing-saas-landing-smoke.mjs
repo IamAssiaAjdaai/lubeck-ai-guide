@@ -5,6 +5,10 @@ const require = createRequire(import.meta.url);
 const { chromium } = await import(
   process.env.MARKETING_PLAYWRIGHT_MODULE ?? "playwright"
 );
+const origin = process.env.MARKETING_BROWSER_ORIGIN ?? "http://127.0.0.1:3108";
+const evidenceRoot =
+  process.env.MARKETING_EVIDENCE_ROOT ?? "docs/qa/marketing-saas";
+await mkdir(evidenceRoot, { recursive: true });
 const browser = await chromium.launch({
   ...(process.env.MARKETING_BROWSER_CHANNEL === "bundled"
     ? {}
@@ -28,7 +32,7 @@ await context.route("**/*", (r) =>
     ? r.continue()
     : r.abort(),
 );
-const folder = "docs/qa/marketing-saas/ux-411-refinement";
+const folder = `${evidenceRoot}/ux-411-refinement`;
 await mkdir(folder, { recursive: true });
 async function screenshot(name) {
   await page.screenshot({ path: `${folder}/${name}.png` });
@@ -84,7 +88,7 @@ async function axe(name) {
   );
 }
 try {
-  await page.goto("http://127.0.0.1:3108/");
+  await page.goto(origin + "/");
   await page
     .getByRole("heading", {
       name: "Deine Website. Dein nächster Marketingplan.",
@@ -269,10 +273,10 @@ try {
     await page.locator("#faq details").first().getAttribute("open"),
     "",
   );
-  await page.goto("http://127.0.0.1:3108/rechtliches#datenschutz");
+  await page.goto(origin + "/rechtliches#datenschutz");
   await axe("legal");
   await noOverflow();
-  await page.goto("http://127.0.0.1:3108/auth");
+  await page.goto(origin + "/auth");
   await page.getByRole("heading", { name: "Willkommen zurück" }).waitFor();
   await axe("auth");
   for (const width of [1440, 390]) {

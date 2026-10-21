@@ -6,6 +6,14 @@ import { randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
+const origin = process.env.MARKETING_BROWSER_ORIGIN ?? "http://127.0.0.1:3108";
+const evidenceRoot =
+  process.env.MARKETING_EVIDENCE_ROOT ?? "docs/qa/marketing-saas";
+const productRoot =
+  process.env.MARKETING_PRODUCT_EVIDENCE_ROOT ??
+  "apps/marketing-saas/public/product";
+await mkdir(evidenceRoot, { recursive: true });
+await mkdir(productRoot, { recursive: true });
 const browser = await chromium.launch({
   ...(process.env.MARKETING_BROWSER_CHANNEL === "bundled"
     ? {}
@@ -25,11 +33,11 @@ await context.route("**/*", (route) =>
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
-await mkdir("docs/qa/marketing-saas/ux-411-refinement", { recursive: true });
+await mkdir(`${evidenceRoot}/ux-411-refinement`, { recursive: true });
 const email = `browser-${randomUUID()}@example.test`;
 const password = "Synthetic-browser-password-2026!";
 try {
-  await page.goto("http://127.0.0.1:3108/auth");
+  await page.goto(origin + "/auth");
   await page.getByRole("button", { name: "Neues Konto erstellen" }).click();
   await page.getByLabel("Dein Name").fill("QA Unternehmen");
   await page.getByLabel("E-Mail-Adresse").fill(email);
@@ -48,7 +56,7 @@ try {
   }
   if (!mail) throw new Error("QA verification sink missing");
   await page.goto(mail.url);
-  await page.goto("http://127.0.0.1:3108/auth");
+  await page.goto(origin + "/auth");
   await page.getByLabel("E-Mail-Adresse").fill(email);
   await page.getByLabel("Passwort", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Anmelden", exact: true }).click();
@@ -100,7 +108,7 @@ try {
   await sharp(await page.screenshot())
     .resize({ width: 1000 })
     .webp({ quality: 85 })
-    .toFile("apps/marketing-saas/public/product/facts.webp");
+    .toFile(`${productRoot}/facts.webp`);
   await page.reload();
   await page
     .getByRole("button", { name: "Glanz Browser QA", exact: true })
@@ -145,7 +153,7 @@ try {
     await sharp(await page.screenshot())
       .resize({ width: 1000 })
       .webp({ quality: 85 })
-      .toFile("apps/marketing-saas/public/product/editor.webp");
+      .toFile(`${productRoot}/editor.webp`);
     await editor.fill(
       (await editor.inputValue()) + "\n\nLass uns deinen Bedarf besprechen.",
     );
@@ -197,11 +205,8 @@ try {
       .getByRole("button", { name: "Als Markdown herunterladen", exact: true })
       .click();
     const download = await pending;
-    await download.saveAs("docs/qa/marketing-saas/synthetic-pack.md");
-    const content = await readFile(
-      "docs/qa/marketing-saas/synthetic-pack.md",
-      "utf8",
-    );
+    await download.saveAs(`${evidenceRoot}/synthetic-pack.md`);
+    const content = await readFile(`${evidenceRoot}/synthetic-pack.md`, "utf8");
     if (
       !content.includes("DEMO") ||
       !content.includes("Lass uns deinen Bedarf besprechen.") ||
@@ -232,7 +237,7 @@ try {
       .click();
     await page.getByText("2 von 4 Packs verfügbar", { exact: true }).waitFor();
   }
-  await mkdir("docs/qa/marketing-saas/screenshots", { recursive: true });
+  await mkdir(`${evidenceRoot}/screenshots`, { recursive: true });
   if (full) {
     await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
     const accessibility = await page.evaluate(() =>
@@ -246,7 +251,7 @@ try {
     await (
       await import("node:fs/promises")
     ).writeFile(
-      "docs/qa/marketing-saas/ux-411-refinement/axe-workspace.json",
+      `${evidenceRoot}/ux-411-refinement/axe-workspace.json`,
       JSON.stringify(
         {
           violations: accessibility.violations,
@@ -293,13 +298,13 @@ try {
           .locator(".pack-result")
           .evaluate((el) => el.scrollIntoView({ block: "start" }));
         await page.screenshot({
-          path: `docs/qa/marketing-saas/ux-411-refinement/${name}-${width}.png`,
+          path: `${evidenceRoot}/ux-411-refinement/${name}-${width}.png`,
         });
       }
       await page.getByRole("tab", { name: "3 Posts", exact: true }).click();
     }
     await page.screenshot({
-      path: `docs/qa/marketing-saas/screenshots/${full ? "complete-journey" : "auth-facts"}-${width}.png`,
+      path: `${evidenceRoot}/screenshots/${full ? "complete-journey" : "auth-facts"}-${width}.png`,
       fullPage: false,
     });
     const overflow = await page.evaluate(

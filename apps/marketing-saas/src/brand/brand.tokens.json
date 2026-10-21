@@ -1,0 +1,75 @@
+{
+  "status": "provisional-owner-selection-required",
+  "scope": "design-review-routes-only",
+  "shared": {
+    "uiFont": "Brand Manrope",
+    "contentMaxWidthPx": 1280,
+    "pageGuttersPx": { "desktop": 48, "tablet": 30, "mobile": 20 },
+    "breakpointsPx": { "mobile": 600, "tablet": 900, "compactDesktop": 1150 },
+    "motion": {
+      "copyEnterMs": 600,
+      "productEnterMs": 650,
+      "buttonMs": 180,
+      "easing": "ease-out",
+      "copyTravelPx": 12,
+      "productTravelPx": 18,
+      "reducedMotion": "no-animation-no-transition"
+    },
+    "product": {
+      "postBodyMobilePx": 14,
+      "postBodyDesktopPx": 14,
+      "demoPostBodyDesktopPx": 15,
+      "demoPostBodyMobilePx": 14
+    }
+  },
+  "kernmut": {
+    "ink": "#342044",
+    "paper": "#FFF8EE",
+    "accent": "#FC6B45",
+    "secondary": "#F2D46B",
+    "muted": "#6E5D73",
+    "line": "#DCD0D9",
+    "featureField": "#F0DED5",
+    "displayFont": "Brand Bricolage",
+    "displayWeight": 700,
+    "displayTrackingEm": -0.065,
+    "heroDesktopMaxPx": 91,
+    "heroMobileMinPx": 45,
+    "heroMobileMaxPx": 67,
+    "buttonRadiusPx": 6,
+    "productRadiusPx": 9,
+    "logoConcept": "stepped-core-and-open-next-module",
+    "wordmark": "lowercase-Bricolage-750-tight-tracking"
+  },
+  "wirkfaden": {
+    "ink": "#162D2C",
+    "paper": "#F0F3EC",
+    "accent": "#D0EB8D",
+    "secondary": "#C8BCEE",
+    "muted": "#546462",
+    "line": "#CED7CC",
+    "featureField": "#D5C9EB",
+    "featureText": "#3A4E48",
+    "displayFont": "Brand Fraunces",
+    "displayWeight": 500,
+    "displayTrackingEm": -0.055,
+    "displayAccentStyle": "real-italic-font",
+    "heroDesktopMaxPx": 105,
+    "heroMobileMinPx": 49,
+    "heroMobileMaxPx": 75,
+    "buttonRadiusPx": 6,
+    "productRadiusPx": 2,
+    "logoConcept": "continuous-three-loop-context-thread",
+    "wordmark": "lowercase-Manrope-650"
+  },
+  "taktbriefNamingOnly": {
+    "ink": "#1E3A5F",
+    "paper": "#F5F0E6",
+    "accent": "#C35D35",
+    "secondary": "#DCE7E3",
+    "displayFontRecommendation": "Bricolage Grotesque 600",
+    "uiFontRecommendation": "Manrope 400-700",
+    "logoConcept": "seven-step-editorial-cadence",
+    "implementationStatus": "not-a-third-visual-prototype"
+  }
+}
