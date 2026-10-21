@@ -4,6 +4,9 @@ import { createRoot } from "react-dom/client";
 import App from "./PilotApp";
 import AuthPreview from "./auth/AuthPreview";
 import LandingPage, { LegalStatus } from "./marketing/LandingPage";
+import "./brand/system.css";
+import { brandIdentity } from "./brand/identity";
+document.title = `${brandIdentity.name} · Name in Prüfung · lokale Vorschau`;
 
 const BrandConcepts = lazy(() => import("./brand/BrandConcepts"));
 const isBrandConcept = /^\/design\/brand(?:\/(?:kernmut|wirkfaden))?\/?$/.test(

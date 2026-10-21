@@ -1,0 +1,13 @@
+{
+  "violations": [],
+  "incomplete": [
+    {
+      "id": "aria-prohibited-attr",
+      "nodes": 1
+    },
+    {
+      "id": "color-contrast",
+      "nodes": 2
+    }
+  ]
+}

@@ -317,7 +317,7 @@ try {
   await page.goto(origin);
   await page
     .getByRole("heading", {
-      name: "Deine Website. Dein nächster Marketingplan.",
+      name: "Dein Unternehmen kennt sich aus. Dein Marketing jetzt auch.",
     })
     .waitFor();
   assert.equal(await page.locator(".brand-concept").count(), 0);

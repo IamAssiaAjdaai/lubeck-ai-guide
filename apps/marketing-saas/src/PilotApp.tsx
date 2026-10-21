@@ -4,6 +4,7 @@ import { api } from "./api";
 import PackWorkspace from "./PackWorkspace";
 import AuthForm from "./auth/AuthForm";
 import "./pilot.css";
+import BrandIdentity from "./brand/BrandIdentity";
 type Project = { id: string; name: string; revision: number; role?: string };
 type Detail = Project & {
   context: BrandContext | null;
@@ -152,13 +153,7 @@ export default function PilotApp() {
     <div className="shell">
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand-mark" aria-hidden="true">
-            ✦
-          </span>
-          <div>
-            <strong>Marketing Workspace</strong>
-            <span>Dein Unternehmen im Fokus</span>
-          </div>
+          <BrandIdentity />
         </div>
         <nav className="side-nav" aria-label="Arbeitsbereich">
           {[
@@ -191,7 +186,7 @@ export default function PilotApp() {
             href="/"
             aria-label="Zur Produktübersicht"
           >
-            ✦ Marketing Workspace
+            <BrandIdentity linked={false} />
           </a>
           <strong>{session.user.name}</strong>
           <span className="preview-pill">LOKALER PILOT</span>

@@ -91,7 +91,7 @@ try {
   await page.goto(origin + "/");
   await page
     .getByRole("heading", {
-      name: "Deine Website. Dein nächster Marketingplan.",
+      name: "Dein Unternehmen kennt sich aus. Dein Marketing jetzt auch.",
     })
     .waitFor();
   for (const img of await page.locator("img").all()) {
@@ -112,7 +112,7 @@ try {
     await screenshot(`landing-${width}`);
     assert.ok(
       (await page
-        .locator(".preview-post p")
+        .locator("#hero-pack textarea")
         .first()
         .evaluate((el) => parseFloat(getComputedStyle(el).fontSize))) >= 14,
     );
@@ -167,6 +167,7 @@ try {
   assert.equal(await page.locator(".sample-plan li").count(), 7);
   assert.equal(await page.locator(".sample-posts textarea").count(), 3);
   await page
+    .locator("#beispiel")
     .getByRole("tab", { name: "Prüfen & exportieren", exact: true })
     .click();
   assert.equal(
@@ -175,17 +176,30 @@ try {
       .isEnabled(),
     false,
   );
-  await page.getByRole("tab", { name: "3 Posts", exact: true }).click();
+  await page
+    .locator("#beispiel")
+    .getByRole("tab", { name: "3 Posts", exact: true })
+    .click();
   assert.equal(await page.locator("#sample-pack-posts").isVisible(), true);
   assert.equal(await page.locator("#sample-pack-plan").isVisible(), false);
-  await page.getByRole("tab", { name: "Hooks & CTA", exact: true }).click();
   await page
+    .locator("#beispiel")
+    .getByRole("tab", { name: "Hooks & CTA", exact: true })
+    .click();
+  await page
+    .locator("#beispiel")
     .getByLabel("Hook 1", { exact: true })
     .fill("Synthetischer Hook zur Prüfung.");
-  await page.getByRole("tab", { name: "7-Tage-Plan", exact: true }).click();
+  await page
+    .locator("#beispiel")
+    .getByRole("tab", { name: "7-Tage-Plan", exact: true })
+    .click();
   assert.equal(await page.locator(".sample-plan li:visible").count(), 7);
   await page.keyboard.press("Home");
-  await page.getByRole("tab", { name: "3 Posts", exact: true }).click();
+  await page
+    .locator("#beispiel")
+    .getByRole("tab", { name: "3 Posts", exact: true })
+    .click();
   assert.equal(await page.locator("#sample-pack-posts").isVisible(), true);
   const editor = page.locator(".sample-posts textarea").first();
   const original = await editor.inputValue();
@@ -202,6 +216,7 @@ try {
   await page.getByLabel("Beispielversion", { exact: true }).selectOption("1");
   assert.match(await editor.inputValue(), /redaktionelle Ergänzung/);
   await page
+    .locator("#beispiel")
     .getByRole("tab", { name: "Prüfen & exportieren", exact: true })
     .click();
   await page
@@ -232,11 +247,18 @@ try {
     await page.setViewportSize({ width, height: 1000 });
     await page.locator(".sample-result-title").scrollIntoViewIfNeeded();
     await noOverflow();
-    await page.getByRole("tab", { name: "3 Posts", exact: true }).click();
+    await page
+      .locator("#beispiel")
+      .getByRole("tab", { name: "3 Posts", exact: true })
+      .click();
     await screenshot(`sample-${width}`);
-    await page.getByRole("tab", { name: "Hooks & CTA", exact: true }).click();
+    await page
+      .locator("#beispiel")
+      .getByRole("tab", { name: "Hooks & CTA", exact: true })
+      .click();
     await screenshot(`hooks-${width}`);
     await page
+      .locator("#beispiel")
       .getByRole("tab", { name: "Prüfen & exportieren", exact: true })
       .click();
     await screenshot(`export-${width}`);

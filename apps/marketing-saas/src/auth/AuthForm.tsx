@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { api } from "../api";
 import "./auth.css";
+import BrandIdentity, { BrandMark } from "../brand/BrandIdentity";
+import { brandIdentity } from "../brand/identity";
 export default function AuthForm({
   onSignedIn,
 }: {
@@ -72,10 +74,12 @@ export default function AuthForm({
       </a>
       <div className="auth-card">
         <section className="auth-story">
-          <div className="auth-story-brand">✦ Marketing Workspace</div>
+          <div className="auth-story-brand">
+            <BrandIdentity />
+          </div>
           <div className="auth-story-center">
             <p>DEIN MARKETING. DEIN UNTERNEHMEN.</p>
-            <h2>Deine Website. Dein nächster Marketingplan.</h2>
+            <h2>{brandIdentity.headline}</h2>
             <p>
               Du prüfst die Fakten, bearbeitest die Inhalte und entscheidest,
               was du veröffentlichst.
@@ -87,7 +91,7 @@ export default function AuthForm({
         </section>
         <section className="auth-card-form">
           <div className="auth-glyph" aria-hidden="true">
-            ✦
+            <BrandMark />
           </div>
           <h1>
             {view === "signup"

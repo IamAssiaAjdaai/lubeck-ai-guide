@@ -1,6 +1,9 @@
 /* eslint-disable @next/next/no-img-element -- Standalone Vite app with optimized local product screenshots. */
 import { useState } from "react";
 import PackPreview from "./PackPreview";
+import BrandContextStory from "./BrandContextStory";
+import BrandIdentity from "../brand/BrandIdentity";
+import { brandIdentity } from "../brand/identity";
 import SampleCampaign from "./SampleCampaign";
 import "./marketing.css";
 const links = [
@@ -53,15 +56,7 @@ const faq = [
   ],
 ];
 function Brand() {
-  return (
-    <a className="m-brand" href="/" aria-label="Marketing Workspace Startseite">
-      <span aria-hidden="true">✦</span>
-      <span>
-        Marketing<span className="brand-light"> Workspace</span>
-        <small>PRODUKTNAME IN PRÜFUNG</small>
-      </span>
-    </a>
-  );
+  return <BrandIdentity />;
 }
 export default function LandingPage() {
   const [menu, setMenu] = useState(false);
@@ -137,17 +132,15 @@ export default function LandingPage() {
         <section className="m-hero m-container">
           <div className="hero-copy">
             <span className="m-kicker">
-              <i /> FÜR KLEINE UNTERNEHMEN MIT VIEL VOR
+              <i /> DEIN WISSEN. EINE WOCHE MIT PLAN.
             </span>
             <h1>
-              Deine Website.
-              <br />
-              Dein nächster <em>Marketingplan.</em>
+              Dein Unternehmen kennt sich aus.{" "}
+              <em>Dein Marketing jetzt auch.</em>
             </h1>
             <p className="m-lead">
-              Dein Betrieb verdient gute Inhalte. Auch ohne Marketingteam. Plane
-              sieben Tage, bearbeite drei deutsche Social-Posts und zeig, was
-              dein Unternehmen ausmacht.
+              Drei deutsche Posts. Sieben Tage mit Plan. Aus deinen bestätigten
+              Fakten. Du prüfst und veröffentlichst.
             </p>
             <div className="m-actions">
               <a className="m-button primary" href="#beispiel">
@@ -165,9 +158,10 @@ export default function LandingPage() {
               <span>✓ Du veröffentlichst selbst</span>
             </div>
           </div>
-          <div className="hero-product">
+          <div className="hero-product" id="hero-pack">
             <div className="hero-annotation">
-              Nicht nur ein Text. Dein nächster Schritt. <span>↙</span>
+              <span>DEIN MARKETING-PACK</span>
+              <span>Direkt ausprobieren ↙</span>
             </div>
             <PackPreview />
             <p className="m-caption">
@@ -239,6 +233,7 @@ export default function LandingPage() {
             ))}
           </div>
         </section>
+        <BrandContextStory />
         <section id="ablauf" className="m-section m-soft">
           <div className="m-container">
             <div className="m-section-heading">
@@ -340,7 +335,9 @@ export default function LandingPage() {
                 <p>
                   Eine Website kann veraltet sein. Deshalb siehst du
                   vorgeschlagene Aussagen mit Quellenhinweisen und bestätigst
-                  sie selbst. Änderungen erfordern eine neue Prüfung.
+                  sie selbst. Dein bestätigter Brand Context verbindet diese
+                  Angaben mit deinem Kampagnenziel. Die KI erhält eine klare
+                  Grundlage; Änderungen erfordern eine neue Prüfung.
                 </p>
                 <ul className="m-checklist">
                   <li>Ungeprüfte Vorschläge klar gekennzeichnet</li>
@@ -367,6 +364,10 @@ export default function LandingPage() {
                 </figcaption>
               </figure>
             </div>
+          </div>
+        </section>
+        <section className="m-section m-soft">
+          <div className="m-container">
             <div className="m-feature reverse">
               <div>
                 <span className="m-kicker">02 / DEIN PACK, DEINE WORTE</span>
@@ -681,8 +682,8 @@ export default function LandingPage() {
           </div>
           <div className="footer-bottom">
             <span>
-              © {new Date().getFullYear()} Marketing Workspace · Produktname in
-              Prüfung
+              © {new Date().getFullYear()} {brandIdentity.name} ·{" "}
+              {brandIdentity.status}
             </span>
             <span>
               Synthetische Beispiele. Keine Kunden- oder Leistungsversprechen.

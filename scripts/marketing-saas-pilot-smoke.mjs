@@ -312,12 +312,24 @@ try {
     );
     if (overflow) throw new Error(`Horizontal overflow ${width}`);
   }
+  if (process.env.MARKETING_AUTH_STATE_PATH) {
+    await context.storageState({ path: process.env.MARKETING_AUTH_STATE_PATH });
+    await (
+      await import("node:fs/promises")
+    ).chmod(process.env.MARKETING_AUTH_STATE_PATH, 0o600);
+  }
   if (errors.length) throw new Error(errors.join("\n"));
   console.log(
     full
       ? "MARKETING_SAAS_COMPLETE_DEMO_JOURNEY_PASS"
       : "MARKETING_SAAS_AUTH_FACTS_BROWSER_PASS",
   );
+} catch (error) {
+  console.error(
+    "Visible application errors:",
+    await page.getByRole("alert").allTextContents(),
+  );
+  throw error;
 } finally {
   await browser.close();
 }

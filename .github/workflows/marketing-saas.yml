@@ -33,6 +33,7 @@ jobs:
       MARKETING_DEMO_MODE: 'true'
       MARKETING_FULL_JOURNEY: 'true'
       MARKETING_BROWSER_CHANNEL: bundled
+      MARKETING_AUTH_STATE_PATH: /tmp/marketing-green-session.json
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -56,7 +57,8 @@ jobs:
           done
           node scripts/marketing-saas-pilot-smoke.mjs
           node scripts/marketing-saas-landing-smoke.mjs
-          MARKETING_BRAND_ORIGIN=http://127.0.0.1:3108 node scripts/marketing-saas-brand-smoke.mjs
+          node scripts/marketing-saas-green-smoke.mjs
+          MARKETING_BRAND_ORIGIN=http://127.0.0.1:3108 MARKETING_BRAND_EVIDENCE_ROOT=docs/design/marketing-saas/brand-02/qa/concept-regression node scripts/marketing-saas-brand-smoke.mjs
       - run: npm run marketing:db:verify
       - uses: actions/upload-artifact@v4
         if: success()
@@ -68,3 +70,4 @@ jobs:
             docs/qa/marketing-saas/ux-410/**
             docs/qa/marketing-saas/ux-411-refinement/**
             docs/design/marketing-saas/brand-01/qa/**
+            docs/design/marketing-saas/brand-02/qa/**
