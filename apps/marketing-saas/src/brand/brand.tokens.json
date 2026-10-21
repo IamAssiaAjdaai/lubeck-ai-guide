@@ -1,11 +1,19 @@
 {
-  "status": "provisional-owner-selection-required",
+  "status": "concept-b-visual-direction-selected-name-provisional",
   "scope": "design-review-routes-only",
   "shared": {
     "uiFont": "Brand Manrope",
     "contentMaxWidthPx": 1280,
-    "pageGuttersPx": { "desktop": 48, "tablet": 30, "mobile": 20 },
-    "breakpointsPx": { "mobile": 600, "tablet": 900, "compactDesktop": 1150 },
+    "pageGuttersPx": {
+      "desktop": 48,
+      "tablet": 30,
+      "mobile": 20
+    },
+    "breakpointsPx": {
+      "mobile": 600,
+      "tablet": 900,
+      "compactDesktop": 1150
+    },
     "motion": {
       "copyEnterMs": 600,
       "productEnterMs": 650,
@@ -54,13 +62,15 @@
     "displayWeight": 500,
     "displayTrackingEm": -0.055,
     "displayAccentStyle": "real-italic-font",
-    "heroDesktopMaxPx": 105,
-    "heroMobileMinPx": 49,
-    "heroMobileMaxPx": 75,
+    "heroDesktopMaxPx": 66,
+    "heroMobileMinPx": 35,
+    "heroMobileMaxPx": 41,
     "buttonRadiusPx": 6,
-    "productRadiusPx": 2,
+    "productRadiusPx": 12,
     "logoConcept": "continuous-three-loop-context-thread",
-    "wordmark": "lowercase-Manrope-650"
+    "wordmark": "lowercase-Manrope-650",
+    "heroPostBodyMobilePx": 16,
+    "heroLayout": "copy-and-interactive-pack-desktop-pack-immediately-after-copy-mobile"
   },
   "taktbriefNamingOnly": {
     "ink": "#1E3A5F",

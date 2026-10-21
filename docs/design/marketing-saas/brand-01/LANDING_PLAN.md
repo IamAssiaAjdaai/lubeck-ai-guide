@@ -1,6 +1,6 @@
 # Geplante Landing-Architektur und deutsches Messaging
 
-**Plan zur Freigabe, nicht die bereits implementierte neue Gesamtwebsite.** Phase 6 beginnt erst nach Auswahl einer visuellen Richtung. Bestehende funktionale Abschnitte von #411 werden anschließend gezielt übernommen; keine neue Backend- oder Auth-Implementierung. Die Vorschau-Routen zeigen Hero, Kontext-Feature, Ablauf, funktionales synthetisches Pack und echte bestehende Produktansicht.
+**Plan zur Freigabe, nicht die bereits implementierte neue Gesamtwebsite.** Die visuelle Richtung B ist gewählt. Zuerst wird die verfeinerte B-Vorschau geprüft; die Übernahme in die bestehende Landing ist weiterhin nicht freigegeben. Bestehende funktionale Abschnitte von #411 werden anschließend gezielt übernommen; keine neue Backend- oder Auth-Implementierung. Die Vorschau-Routen zeigen Hero, Kontext-Feature, Ablauf, funktionales synthetisches Pack und echte bestehende Produktansicht.
 
 | Kapitel | Entwurf für die nächste vollständige Landing | Funktion / Wahrheitsgrenze |
 | --- | --- | --- |

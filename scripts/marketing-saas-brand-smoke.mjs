@@ -6,7 +6,9 @@ const { chromium } = await import(
   process.env.MARKETING_PLAYWRIGHT_MODULE ?? "playwright"
 );
 const origin = process.env.MARKETING_BRAND_ORIGIN ?? "http://127.0.0.1:3128";
-const folder = "docs/design/marketing-saas/brand-01/qa";
+const folder =
+  process.env.MARKETING_BRAND_EVIDENCE_ROOT ??
+  "docs/design/marketing-saas/brand-01/qa";
 await mkdir(folder, { recursive: true });
 const browser = await chromium.launch({
   ...(process.env.MARKETING_BROWSER_CHANNEL === "bundled"
@@ -181,6 +183,107 @@ try {
     assert.equal(await page.evaluate(() => location.hash), "#concept-main");
     await page.emulateMedia({ reducedMotion: "no-preference" });
   }
+  const firstScreens = [];
+  for (const [width, height] of [
+    [1440, 900],
+    [768, 1024],
+    [390, 844],
+    [375, 812],
+  ]) {
+    await page.setViewportSize({ width, height });
+    await page.goto(`${origin}/design/brand/wirkfaden`);
+    await page.locator(".bc-b-copy").waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await overflow();
+    const tabs = await page.locator("#hero-pack [role=tablist]").boundingBox();
+    const editor = await page.locator("#b-hero-posts textarea").boundingBox();
+    assert.ok(
+      tabs && tabs.y + tabs.height <= height,
+      `All Pack tabs above fold at ${width}`,
+    );
+    assert.ok(
+      editor && editor.y + 80 <= height,
+      `At least 80px of editable post above fold at ${width}`,
+    );
+    firstScreens.push({ width, height, tabs, editor });
+    await screenshot(`wirkfaden-first-screen-${width}`);
+    const hero = page.locator("#hero-pack");
+    await hero.getByRole("button", { name: "Post 02" }).click();
+    await hero
+      .getByLabel("Beitrag 2")
+      .fill("Synthetischer Hero-Entwurf zur Prüfung.");
+    await hero.getByRole("tab", { name: "Hooks & CTA" }).click();
+    await hero
+      .getByLabel("Hook 1", { exact: true })
+      .fill("Synthetischer Hero-Hook.");
+    await hero.getByRole("tab", { name: "3 Posts" }).click();
+    assert.equal(
+      await hero.getByLabel("Beitrag 2").inputValue(),
+      "Synthetischer Hero-Entwurf zur Prüfung.",
+    );
+    await hero.getByRole("tab", { name: "Prüfen & exportieren" }).click();
+    assert.equal(
+      await hero
+        .getByRole("button", { name: "Beispiel als Markdown herunterladen" })
+        .isEnabled(),
+      false,
+    );
+    await hero.getByRole("checkbox").check();
+    assert.equal(
+      await hero
+        .getByRole("button", { name: "Beispiel als Markdown herunterladen" })
+        .isEnabled(),
+      true,
+    );
+    if (width === 375) {
+      const pendingHero = page.waitForEvent("download");
+      await hero
+        .getByRole("button", { name: "Beispiel als Markdown herunterladen" })
+        .click();
+      const heroDownload = await pendingHero;
+      await heroDownload.saveAs(`${folder}/wirkfaden-hero-export.md`);
+      const heroText = await readFile(
+        `${folder}/wirkfaden-hero-export.md`,
+        "utf8",
+      );
+      assert.match(heroText, /FIKTIVES DESIGNBEISPIEL/);
+      assert.match(heroText, /Synthetischer Hero-Entwurf/);
+      assert.match(heroText, /Synthetischer Hero-Hook/);
+      await page
+        .getByRole("button", { name: "Nächste Designansicht →" })
+        .click();
+      await page
+        .getByRole("heading", { name: "Du weißt, was stimmt." })
+        .waitFor();
+      await page
+        .getByRole("button", { name: "Beispiel-Pack ansehen →", exact: true })
+        .click();
+      await page.locator("#b-workspace-tab-posts").waitFor();
+    }
+    for (const [i, name] of [
+      "Anmeldung",
+      "Unternehmensprofil",
+      "Marketing-Pack",
+    ].entries()) {
+      await page
+        .getByRole("group", { name: "Produktansicht wählen" })
+        .getByRole("button", {
+          name: `${String(i + 1).padStart(2, "0")} · ${name}`,
+          exact: true,
+        })
+        .click();
+      await page.locator(".bc-product-shell").scrollIntoViewIfNeeded();
+      await overflow();
+      await screenshot(`wirkfaden-product-${i + 1}-${width}`);
+      await axe(`wirkfaden-product-${i + 1}-${width}`);
+    }
+  }
+  await writeFile(
+    `${folder}/first-screen-measurements.json`,
+    JSON.stringify(firstScreens, null, 2),
+  );
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   assert.deepEqual(apiRequests, []);
   assert.deepEqual(external, []);
   await page.goto(`${origin}/design/brand`);

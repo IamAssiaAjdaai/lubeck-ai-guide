@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- Standalone Vite concept review. */
 import { useEffect, useRef, useState } from "react";
 import ConceptPack from "./ConceptPack";
+import ProductContinuity from "./ProductContinuity";
 import "./brand-concepts.css";
 type Direction = "kernmut" | "wirkfaden";
 const names = { kernmut: "Kernmut", wirkfaden: "Wirkfaden" };
@@ -26,7 +27,7 @@ function ReviewBar({ direction }: { direction?: Direction }) {
   return (
     <div className="brand-review-bar">
       <a href="/design/brand">MKT-BRAND-01 · Designreview</a>
-      <span>Name & Identität nicht freigegeben</span>
+      <span>B visuell gewählt · Name offen</span>
       <nav aria-label="Konzept wechseln">
         <a
           aria-current={direction === "kernmut" ? "page" : undefined}
@@ -149,7 +150,7 @@ export function ConceptPage({ direction }: { direction: Direction }) {
         <a className="bc-wordmark" href={`/design/brand/${direction}`}>
           <Mark direction={direction} />
           {names[direction].toLowerCase()}
-          <span>Konzept {a ? "A" : "B"}</span>
+          <span>{a ? "Konzept A" : "Namensvorschlag"}</span>
         </a>
         <button
           className="bc-menu"
@@ -238,55 +239,42 @@ export function ConceptPage({ direction }: { direction: Direction }) {
           </section>
         ) : (
           <section className="bc-b-hero">
-            <div className="bc-wrap">
-              <span className="bc-label">DEIN BETRIEB HAT ETWAS ZU SAGEN.</span>
-              <h1>
-                Gute Inhalte
-                <br />
-                beginnen <em>bei dir.</em>
-              </h1>
-              <p>
-                Aus deinem bestätigten Unternehmenswissen wird ein Marketingplan
-                mit rotem Faden. Für eine Woche, drei deutsche Posts und deinen
-                nächsten Schritt.
-              </p>
-              <div className="bc-actions">
-                <a className="bc-button" href="#pack">
-                  Beispiel-Pack entdecken <span>↘</span>
-                </a>
-                <span className="bc-small">
-                  Fiktive Daten. Kein Konto. Keine KI-Kosten.
+            <div className="bc-wrap bc-b-hero-grid">
+              <div className="bc-b-copy">
+                <span className="bc-label">
+                  DEIN WISSEN. EINE WOCHE MIT PLAN.
                 </span>
+                <h1>
+                  Dein Unternehmen kennt sich aus.{" "}
+                  <em>Dein Marketing jetzt auch.</em>
+                </h1>
+                <p>
+                  Drei deutsche Posts. Sieben Tage mit Plan. Aus deinen
+                  bestätigten Fakten. Du prüfst und veröffentlichst.
+                </p>
+                <div className="bc-actions">
+                  <a className="bc-button" href="#hero-pack">
+                    Beispiel selbst bearbeiten <span>↗</span>
+                  </a>
+                  <span className="bc-small">
+                    Fiktive Daten · ohne Konto · ohne KI-Aufruf
+                  </span>
+                </div>
+                <div className="bc-b-source">
+                  <span>WISSEN → ZIEL → PACK</span>
+                  <p>
+                    Deine Erfahrung ist die Grundlage.
+                    <br />
+                    Die Entscheidung bleibt bei dir.
+                  </p>
+                </div>
               </div>
-              <div className="bc-b-stage">
-                <div className="bc-b-brief">
-                  <span className="bc-label">DIE GRUNDLAGE</span>
-                  <div className="bc-thread-mark">
-                    <Mark direction={direction} />
-                  </div>
-                  <h2>
-                    Du kennst
-                    <br />
-                    deinen Betrieb.
-                    <br />
-                    <em>Das zählt.</em>
-                  </h2>
-                  <div className="bc-b-fact">
-                    <span>01 · LEISTUNG</span>
-                    <p>Wir reinigen Büros in Düsseldorf.</p>
-                    <small>Im Beispiel von einem Menschen bestätigt.</small>
-                  </div>
-                  <div className="bc-b-connection">
-                    <span>Kontext</span>
-                    <i aria-hidden="true" />
-                    <span>Ziel</span>
-                    <i aria-hidden="true" />
-                    <span>Pack</span>
-                  </div>
+              <div className="bc-b-live-preview" id="hero-pack">
+                <div className="bc-b-preview-caption">
+                  <span>DEIN MARKETING-PACK</span>
+                  <span>Direkt ausprobieren ↙</span>
                 </div>
-                <div className="bc-b-product">
-                  <ConceptPack prefix="b-hero" />
-                </div>
+                <ConceptPack prefix="b-hero" compact />
               </div>
             </div>
           </section>
@@ -318,6 +306,7 @@ export function ConceptPage({ direction }: { direction: Direction }) {
           </div>
         </section>
         <ContextFeature direction={direction} />
+        {!a && <ProductContinuity />}
         <section className="bc-workflow bc-wrap" id="ablauf">
           <div className="bc-section-heading">
             <span className="bc-label">02 / VOM WISSEN ZUR WOCHE</span>
@@ -451,14 +440,26 @@ export function ConceptPage({ direction }: { direction: Direction }) {
             {names[direction].toLowerCase()}
           </div>
           <h2>
-            Eine Richtung.
-            <br />
-            Noch <em>deine Entscheidung.</em>
+            {a ? (
+              <>
+                Eine Richtung.
+                <br />
+                Noch <em>deine Entscheidung.</em>
+              </>
+            ) : (
+              <>
+                Die Richtung steht.
+                <br />
+                <em>Der Pilot bleibt geschlossen.</em>
+              </>
+            )}
           </h2>
           <p>
-            Provisorisches Designkonzept. Name und Identität benötigen deine
-            Freigabe. Der Pilot bleibt geschlossen; es werden keine Kontakte
-            erfasst.
+            {a
+              ? "Archiviertes Vergleichskonzept. "
+              : "Grüne Richtung gewählt. "}
+            Der Name ist nicht freigegeben. Diese Gestaltungsstudie erfasst
+            keine Kontakte. Ein öffentlicher Start ist noch nicht freigegeben.
           </p>
           <nav aria-label="Designreview und Freigabestatus">
             <a className="bc-button" href="/design/brand">
@@ -555,9 +556,7 @@ export default function BrandConcepts() {
                     {i === 0 ? "Mutiges Editorial" : "Ruhiges Kontext-Atelier"}
                   </small>
                 </h2>
-                <a href={`/design/brand/${d}`}>
-                  Interaktives Konzept öffnen ↗
-                </a>
+                <a href={`/design/brand/${d}`}>Interaktives Konzept öffnen ↗</a>
               </div>
               <MiniBrowser direction={d} mobile={mobile} />
               <div className="bc-review-palette">
@@ -575,19 +574,19 @@ export default function BrandConcepts() {
           ))}
         </div>
         <section className="bc-review-recommendation">
-          <span>EMPFEHLUNG ZUR DISKUSSION</span>
+          <span>ENTSCHEIDUNG DER INHABERIN</span>
           <h2>
-            A für mehr Eigenständigkeit.
-            <br />B für mehr Ruhe.
+            B ist die visuelle Richtung.
+            <br />
+            Der Name bleibt offen.
           </h2>
           <p>
-            Ich empfehle, Richtung A weiterzuentwickeln: Die Verbindung aus
-            eigenständigem Wortbild, kräftiger Editorial-Typografie und
-            sichtbarem Produkt schafft mehr Kontrast zur üblichen
-            KI-SaaS-Kategorie. Richtung B erklärt die Herkunft der Inhalte
-            besonders ruhig und wäre die Alternative für eine stärker beratende
-            Tonalität. Name und visuelles System können unabhängig gewählt
-            werden.
+            Die grüne Richtung mit Fraunces und Manrope wird weiterentwickelt:
+            ruhiger Charakter, ein sichtbares Marketing-Pack und das Wissen des
+            Betriebs als Ausgangspunkt. A bleibt als Vergleich archiviert.
+            „Wirkfaden“ ist ausschließlich ein Namensvorschlag, ohne rechtliche
+            Freigabe oder endgültige Entscheidung. Die akzeptierte #411-Landing
+            bleibt bestehen.
           </p>
           <p>
             Dritter Namensvorschlag: <strong>Taktbrief</strong> – die Woche in

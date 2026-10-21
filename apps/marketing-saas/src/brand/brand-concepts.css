@@ -2419,3 +2419,518 @@
     font-size: 14px;
   }
 }
+
+/* Selected B refinement. Scoped to the isolated prototype; #411 stays unchanged. */
+.bc-wirkfaden .bc-header {
+  padding-top: 22px;
+  padding-bottom: 22px;
+}
+.bc-wirkfaden .bc-wordmark > span {
+  font-size: 10px;
+  letter-spacing: 0;
+}
+.bc-wirkfaden .bc-b-hero {
+  text-align: left;
+  padding: 46px 0 64px;
+}
+.bc-wirkfaden .bc-b-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  gap: 64px;
+  align-items: center;
+}
+.bc-b-copy > .bc-label {
+  color: var(--bc-accent);
+  font-size: 11px;
+}
+.bc-wirkfaden .bc-b-hero h1 {
+  font-size: clamp(44px, 4.6vw, 66px);
+  line-height: 1.09;
+  letter-spacing: -0.045em;
+  margin: 24px 0;
+  max-width: 600px;
+}
+.bc-wirkfaden .bc-b-hero h1 em {
+  display: block;
+}
+.bc-b-copy > p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--bc-paper);
+  max-width: 460px;
+}
+.bc-wirkfaden .bc-b-hero .bc-actions {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 14px;
+  margin: 28px 0 0;
+}
+.bc-wirkfaden .bc-b-hero .bc-small {
+  font-size: 11px;
+  color: var(--bc-paper);
+}
+.bc-b-source {
+  border-top: 1px solid #50625a;
+  margin-top: 34px;
+  padding-top: 22px;
+  color: var(--bc-paper);
+}
+.bc-b-source > span {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--bc-secondary);
+}
+.bc-b-source p {
+  font-size: 13px;
+  line-height: 1.65;
+  margin-top: 10px;
+}
+.bc-b-live-preview {
+  min-width: 0;
+  scroll-margin-top: 18px;
+}
+.bc-b-preview-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--bc-paper);
+  margin-bottom: 12px;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+.bc-b-preview-caption > span:last-child {
+  color: var(--bc-accent);
+}
+.bc-wirkfaden .cp-compact {
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 20px 60px #091a1933;
+}
+.bc-wirkfaden .cp-compact .cp-top {
+  margin-bottom: 15px;
+  font-size: 10px;
+}
+.bc-wirkfaden .cp-compact .cp-top small {
+  font-size: 10px;
+}
+.bc-wirkfaden .cp-compact .cp-title h2 {
+  font-family:
+    Brand Manrope,
+    sans-serif;
+  font-size: 25px;
+  letter-spacing: -0.045em;
+  line-height: 1.22;
+}
+.bc-wirkfaden .cp-compact .cp-goal {
+  font-size: 11px;
+  margin: 10px 0;
+}
+.bc-wirkfaden .cp-compact .pack-section-nav {
+  margin: 14px 0;
+}
+.bc-wirkfaden .cp-compact .pack-section-nav button {
+  font-size: 11px;
+}
+.bc-wirkfaden .cp-compact .cp-editor textarea {
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 128px;
+}
+.bc-wirkfaden .cp-compact .cp-reference {
+  font-size: 10px;
+  line-height: 1.6;
+}
+.bc-continuity {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+.bc-screen-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 32px 0 22px;
+}
+.bc-screen-switch button {
+  font:
+    600 13px Brand Manrope,
+    sans-serif;
+  min-height: 46px;
+  padding: 10px 18px;
+  border: 1px solid var(--bc-line);
+  border-radius: 6px;
+  color: var(--bc-ink);
+  background: transparent;
+  cursor: pointer;
+}
+.bc-screen-switch button[aria-pressed="true"] {
+  background: var(--bc-ink);
+  color: var(--bc-paper);
+  border-color: var(--bc-ink);
+}
+.bc-product-shell {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  min-height: 620px;
+  border: 1px solid var(--bc-line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 24px 64px #162d2c0b;
+}
+.bc-product-rail {
+  background: var(--bc-ink);
+  color: var(--bc-paper);
+  display: flex;
+  flex-direction: column;
+  padding: 34px 26px;
+}
+.bc-product-rail strong {
+  font-size: 26px;
+  font-weight: 600;
+}
+.bc-product-rail strong span {
+  font-size: 11px;
+  font-weight: 500;
+}
+.bc-product-rail p {
+  font:
+    400 25px/1.25 Brand Fraunces,
+    serif;
+  margin: 54px 0;
+  color: var(--bc-accent);
+}
+.bc-product-rail > span,
+.bc-product-rail small {
+  font-size: 11px;
+  line-height: 1.8;
+}
+.bc-product-rail small {
+  margin-top: auto;
+  padding-top: 50px;
+  color: var(--bc-secondary);
+}
+.bc-product-screen {
+  padding: 38px;
+  min-width: 0;
+  background: var(--bc-paper);
+}
+.bc-product-screen > .bc-label {
+  font-size: 10px;
+}
+.bc-auth-study,
+.bc-onboarding-study {
+  max-width: 480px;
+  margin: 32px auto;
+}
+.bc-study-chip {
+  display: inline-block;
+  background: var(--bc-secondary);
+  color: var(--bc-ink);
+  border-radius: 30px;
+  padding: 7px 12px;
+  font-size: 11px;
+}
+.bc-product-screen h3 {
+  font:
+    500 42px/1.12 Brand Fraunces,
+    serif;
+  letter-spacing: -0.04em;
+  margin: 22px 0;
+}
+.bc-product-screen h3 em {
+  font-weight: 400;
+}
+.bc-product-screen p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.bc-auth-study dl {
+  margin: 24px 0;
+}
+.bc-auth-study dl div {
+  margin: 14px 0;
+}
+.bc-auth-study dt {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.bc-auth-study dd {
+  margin: 0;
+  padding: 13px 15px;
+  background: #fff;
+  border: 1px solid var(--bc-line);
+  border-radius: 6px;
+  font-size: 14px;
+}
+.bc-onboarding-study article {
+  margin: 24px 0;
+  padding: 24px;
+  background: #fff;
+  border-left: 4px solid var(--bc-accent);
+}
+.bc-onboarding-study article > span {
+  font-size: 10px;
+  font-weight: 650;
+}
+.bc-onboarding-study h4 {
+  font-size: 20px;
+  line-height: 1.45;
+  margin: 12px 0;
+}
+.bc-product-screen .bc-study-note {
+  font-size: 11px;
+  color: var(--bc-muted);
+  margin: 20px 0;
+}
+.bc-continuity-note {
+  max-width: 680px;
+  color: var(--bc-muted);
+  font-size: 12px;
+  line-height: 1.8;
+  margin-top: 24px;
+}
+.bc-wirkfaden .bc-product-screen .concept-pack {
+  border-radius: 10px;
+  margin-top: 20px;
+}
+@media (max-width: 1150px) {
+  .bc-wirkfaden .bc-b-hero-grid {
+    gap: 30px;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+  .bc-wirkfaden .cp-compact {
+    padding: 20px;
+  }
+}
+@media (max-width: 900px) {
+  .bc-wirkfaden .bc-b-hero {
+    padding-top: 28px;
+  }
+  .bc-wirkfaden .bc-b-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .bc-wirkfaden .bc-b-hero h1 {
+    max-width: 680px;
+    font-size: 48px;
+    margin: 16px 0;
+  }
+  .bc-b-copy > p {
+    max-width: 640px;
+    font-size: 14px;
+  }
+  .bc-b-source {
+    display: none;
+  }
+  .bc-wirkfaden .bc-b-hero .bc-actions {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 18px;
+  }
+  .bc-product-shell {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+  .bc-product-rail {
+    padding: 26px 20px;
+  }
+  .bc-product-screen {
+    padding: 28px;
+  }
+}
+@media (max-width: 600px) {
+  .bc-wirkfaden .brand-review-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 16px;
+    min-height: 32px;
+    font-size: 9px;
+  }
+  .bc-wirkfaden .brand-review-bar > a {
+    font-size: 0;
+  }
+  .bc-wirkfaden .brand-review-bar > a::after {
+    content: "B · Designreview ↗";
+    font-size: 9px;
+  }
+  .bc-wirkfaden .brand-review-bar > span {
+    display: inline;
+    font-size: 9px;
+  }
+  .bc-wirkfaden .brand-review-bar nav {
+    display: none;
+  }
+  .bc-wirkfaden .bc-header {
+    padding: 16px 20px;
+    min-height: 64px;
+  }
+  .bc-wirkfaden .bc-wordmark {
+    font-size: 23px;
+  }
+  .bc-wirkfaden .bc-wordmark > span {
+    font-size: 8px;
+  }
+  .bc-wirkfaden .bc-b-hero {
+    padding: 20px 0 32px;
+  }
+  .bc-b-copy > .bc-label {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+  .bc-wirkfaden .bc-b-hero h1 {
+    font-size: clamp(35px, 9.6vw, 41px);
+    line-height: 1.1;
+    margin: 13px 0;
+  }
+  .bc-b-copy > p {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .bc-wirkfaden .bc-b-hero .bc-actions {
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .bc-wirkfaden .bc-b-hero .bc-button {
+    font-size: 12px;
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+  .bc-wirkfaden .bc-b-hero .bc-small {
+    font-size: 10px;
+  }
+  .bc-wirkfaden .bc-b-hero-grid {
+    gap: 24px;
+  }
+  .bc-b-preview-caption {
+    font-size: 9px;
+    margin-bottom: 10px;
+  }
+  .bc-wirkfaden .cp-compact {
+    padding: 16px;
+    border-radius: 10px;
+  }
+  .bc-wirkfaden .cp-compact .cp-top {
+    margin-bottom: 10px;
+    font-size: 9px;
+  }
+  .bc-wirkfaden .cp-compact .cp-top small {
+    font-size: 10px;
+  }
+  .bc-wirkfaden .cp-compact .cp-title h2 {
+    font-size: 21px;
+  }
+  .bc-wirkfaden .cp-compact .cp-goal {
+    font-size: 10px;
+    margin: 8px 0;
+  }
+  .bc-wirkfaden .cp-compact .pack-section-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 12px 0;
+  }
+  .bc-wirkfaden .cp-compact .pack-section-nav button {
+    min-height: 44px;
+    font-size: 11px;
+  }
+  .bc-wirkfaden .cp-compact .cp-editor textarea {
+    font-size: 14px;
+    min-height: 130px;
+  }
+  .bc-continuity {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+  .bc-screen-switch {
+    gap: 6px;
+  }
+  .bc-screen-switch button {
+    font-size: 11px;
+    padding: 10px;
+  }
+  .bc-product-shell {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    border-radius: 10px;
+  }
+  .bc-product-rail {
+    padding: 18px 20px;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  .bc-product-rail p,
+  .bc-product-rail > span {
+    display: none;
+  }
+  .bc-product-rail small {
+    margin: 0 0 0 auto;
+    padding: 0;
+    font-size: 9px;
+  }
+  .bc-product-screen {
+    padding: 24px 18px;
+  }
+  .bc-product-screen h3 {
+    font-size: 35px;
+  }
+  .bc-auth-study,
+  .bc-onboarding-study {
+    margin-top: 24px;
+  }
+  .bc-product-screen .bc-button {
+    font-size: 12px;
+  }
+  .bc-wirkfaden .bc-product-screen .concept-pack {
+    padding: 16px;
+  }
+  .bc-continuity-note {
+    font-size: 11px;
+  }
+}
+.bc-wirkfaden .brand-review-bar {
+  background: #102321;
+}
+@media (max-width: 600px) {
+  /* The Pack is the mobile interaction; its tabs replace a redundant jump CTA. */
+  .bc-wirkfaden .bc-b-hero .bc-actions {
+    display: none;
+  }
+  .bc-wirkfaden .bc-b-hero-grid {
+    gap: 20px;
+  }
+  .bc-wirkfaden .cp-compact .cp-title h2 {
+    font-size: 19px;
+  }
+  .bc-wirkfaden .cp-compact .cp-top small {
+    display: inline;
+    margin-left: 6px;
+    font-size: 9px;
+  }
+  .bc-wirkfaden .cp-compact .cp-top {
+    align-items: center;
+  }
+  .bc-wirkfaden .cp-compact .pack-section-nav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .bc-wirkfaden .cp-compact .pack-section-nav button {
+    font-size: 10px;
+    line-height: 1.35;
+    min-height: 54px;
+    padding: 6px 3px;
+  }
+}
+@media (max-width: 600px) {
+  .bc-wirkfaden .bc-header {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .bc-wirkfaden .bc-b-copy > p {
+    margin-bottom: 0;
+    font-size: 14px;
+  }
+  .bc-wirkfaden .cp-compact .cp-editor textarea {
+    font-size: 16px;
+  }
+}

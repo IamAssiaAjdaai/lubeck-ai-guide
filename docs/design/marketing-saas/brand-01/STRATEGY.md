@@ -1,6 +1,6 @@
 # MKT-BRAND-01 — Markenstrategie und drei Namensrichtungen
 
-**Entscheidungsstand: Vorschläge, keine Freigabe.** Zwei browserbasierte Identitätskonzepte sind implementiert. Die finale Auswahl, Namensentscheidung, vollständige neue Landing und Anpassung des Arbeitsbereichs folgen erst nach Owner-Freigabe. Die akzeptierte #411-Baseline `f1986fdb4018966616ce8fd5fbdd9abcdff6604d` bleibt unverändert. [Designreview](README.md).
+**Entscheidungsstand: Owner hat visuelle Richtung B gewählt. Naming bleibt offen.** Zwei browserbasierte Identitätskonzepte sind implementiert. Die visuelle Richtung ist ausgewählt; Namensentscheidung, vollständige neue Landing und Anpassung des bestehenden Arbeitsbereichs benötigen weiterhin Owner-Freigabe. Die akzeptierte #411-Baseline `f1986fdb4018966616ce8fd5fbdd9abcdff6604d` bleibt unverändert. [Designreview](README.md).
 
 ## Positionierung
 
@@ -76,8 +76,8 @@ Direkte **Namecheap-Connector-Prüfung** zum Zeitpunkt dieser Recherche:
 
 Keine Domain gekauft, reserviert oder konfiguriert. Momentaufnahme; Preise/Verfügbarkeit können sich ändern. Verlängerung, Steuern und Markenrechte daraus nicht abgeleitet. Vor Namensfreigabe: passende Register-/Ähnlichkeitsprüfung, Zielgruppen-Sprachtest und aktuelle Registrarprüfung, insbesondere `.de`.
 
-## Empfehlung
+## Gewählte Richtung
 
-**Visuelle Richtung A weiterentwickeln.** Sie schafft stärkere Kategorie-Distanz durch Typografie, Farbe und die greifbare Verbindung von fachlichem Kern zu Kampagne. Die Mehrzahl kleiner Dienstleister soll ein zugängliches Werkzeug erkennen, keine abstrakte KI-Plattform. B ist die starke Alternative für eine ruhigere, beratende Positionierung mit besonderer Betonung des Zusammenhangs von Quellen und Inhalten.
+**Visuelle Richtung B weiterentwickeln — Owner-Entscheidung vom 21.10.2026.** Waldtinte, Salbei, Limette und Flieder mit Fraunces/Manrope bleiben gesetzt. Die erste Verfeinerung priorisiert ein interaktives Pack im ersten Bildschirm und die gestalterische Kontinuität durch den Produktweg. A bleibt nur als archivierter Vergleich. Der Vorschlag Wirkfaden ist damit ausdrücklich nicht als Name freigegeben.
 
-Das ist eine Designempfehlung, keine gemessene Conversion-Prognose. **Name und Identität sind unabhängig wählbar.** Kernmut darf nicht automatisch final werden, wenn A gefällt. Erst die Owner-Auswahl und spätere Namensprüfung erlauben die vollständige Umsetzung. Bis dahin bleibt „Marketing Workspace“ im bestehenden Produkt bestehen.
+Die visuelle Auswahl ist eine Owner-Entscheidung, keine gemessene Conversion-Prognose. **Name und Identität sind unabhängig wählbar.** Wirkfaden wird durch die Auswahl von B nicht automatisch zum finalen Namen. Die verfeinerte B-Vorschau wird zuerst visuell geprüft; vollständige Umsetzung und Namensentscheidung bleiben getrennte Freigaben. Bis dahin bleibt „Marketing Workspace“ im bestehenden Produkt bestehen.

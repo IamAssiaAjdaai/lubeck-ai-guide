@@ -2,7 +2,13 @@ import { useState } from "react";
 import PackSectionNav, { type PackSection } from "../PackSectionNav";
 import { samplePack, packMarkdown, downloadText } from "../marketing/sample";
 const fixture = samplePack();
-export default function ConceptPack({ prefix }: { prefix: string }) {
+export default function ConceptPack({
+  prefix,
+  compact = false,
+}: {
+  prefix: string;
+  compact?: boolean;
+}) {
   const [section, setSection] = useState<PackSection>("posts"),
     [post, setPost] = useState(0),
     [pack, setPack] = useState(fixture),
@@ -15,7 +21,7 @@ export default function ConceptPack({ prefix }: { prefix: string }) {
   return (
     <div
       role="group"
-      className="concept-pack"
+      className={`concept-pack${compact ? " cp-compact" : ""}`}
       aria-label="Marketing-Pack mit synthetischen Beispieldaten"
     >
       <div className="cp-top">
@@ -26,9 +32,15 @@ export default function ConceptPack({ prefix }: { prefix: string }) {
       </div>
       <div className="cp-title">
         <h2>
-          Deine nächste Woche.
-          <br />
-          Mit einem klaren Ziel.
+          {compact ? (
+            "Dein 7-Tage-Marketing-Pack."
+          ) : (
+            <>
+              Deine nächste Woche.
+              <br />
+              Mit einem klaren Ziel.
+            </>
+          )}
         </h2>
         <span className="cp-seal">
           7<span>TAGE</span>
@@ -66,7 +78,7 @@ export default function ConceptPack({ prefix }: { prefix: string }) {
           <textarea
             value={pack.posts[post].text}
             maxLength={3000}
-            rows={7}
+            rows={compact ? 4 : 7}
             onChange={(e) => {
               setPack({
                 ...pack,

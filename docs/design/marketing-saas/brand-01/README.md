@@ -1,3 +1,7 @@
+# Aktueller Stand: Richtung B gewählt, Name offen
+
+Die Owner-Entscheidung ersetzt die frühere Empfehlung für A. Nur die isolierte B-Vorschau wird verfeinert; #411 bleibt unverändert. [Verfeinerung, Vorher/Nachher und aktuelle Prüfungen](refined-b/README.md). Die folgenden Vergleichs- und Prüfergebnisse dokumentieren die erste Zwei-Konzept-Version bei `2b0ae47`.
+
 # MKT-BRAND-01 — zwei provisorische Markenrichtungen zur Auswahl
 
 **Status: Owner-Review. Keine finale Marke. Keine ersetzte Landing.** Umsetzung der Forschungs-/Strategie- und Prototypenphase des beigefügten Briefings. Vollständige neue Landing und Angleichung des Arbeitsbereichs erst nach Auswahl. [Strategie und drei Namen](STRATEGY.md) · [Landing-Architektur / deutsches Messaging](LANDING_PLAN.md) · [Exakte Basistoken](../../../../apps/marketing-saas/src/brand/brand.tokens.json).
