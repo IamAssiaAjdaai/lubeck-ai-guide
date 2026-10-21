@@ -206,3 +206,307 @@
 @media (prefers-reduced-motion: reduce) {
   .page * { transition: none !important; animation: none !important; }
 }
+
+
+/* ---------------------------------------------------------------
+   LANDING-NEXT / Header + hero refinement (Planta-inspired, original
+   CITYWALK design). Scoped to this preview; no global CSS changes.
+   --------------------------------------------------------------- */
+.header {
+  position: relative;
+  z-index: 12;
+  background: transparent;
+  border: 0;
+  margin-bottom: -110px;
+  padding: 22px 24px 0;
+}
+.headerInner {
+  position: relative;
+  width: min(100%, 1330px);
+  max-width: 1330px;
+  min-height: 86px;
+  margin: 0 auto;
+  padding: 12px 18px 12px 32px;
+  border: 1px solid rgb(29 59 51 / 5%);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 14px 33px rgb(18 49 43 / 13%);
+  gap: 25px;
+}
+.brand { color: #193e34; }
+.brand svg { max-width: 175px; }
+.headerNav { margin-right: auto; gap: clamp(15px, 2vw, 27px); }
+.headerNav a { color: #1d3f33; font-size: 14px; font-weight: 560; }
+.headerNav a:hover { color: #1f5aaf; }
+.headerActions { display: flex; align-items: center; gap: 22px; }
+.headerSignIn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  font-weight: 650;
+  font-size: 14px;
+  white-space: nowrap;
+  color: #1b4539;
+}
+.headerSignIn:hover { color: var(--blue); }
+.headerCta {
+  min-height: 53px;
+  padding: 13px 23px;
+  border-radius: 999px;
+  background: #1c4835;
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 730;
+}
+.headerCta:hover { background: #113527; transform: none; }
+.mobileMenu { display: none; }
+
+.hero {
+  background: #e8f0e3;
+  isolation: isolate;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -24px;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgb(240 245 234 / 96%) 0%, rgb(240 245 234 / 86%) 47%, rgb(235 242 228 / 75%) 100%),
+    url('/images/citywalk-waterfront.webp') center 44% / cover no-repeat;
+  filter: blur(9px);
+  transform: scale(1.05);
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 96% 14%, rgb(255 255 255 / 45%), transparent 36%);
+  pointer-events: none;
+}
+.heroInner {
+  position: relative;
+  z-index: 1;
+  max-width: 1460px;
+  min-height: 820px;
+  grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr);
+  align-items: center;
+  gap: 10px;
+  padding: 160px max(36px, calc((100% - 1270px) / 2)) 0;
+}
+.heroCopy {
+  padding-bottom: 100px;
+  align-self: center;
+}
+.eyebrow { color: #315c4d; font-size: 11px; letter-spacing: .14em; }
+.eyebrowDot { background: #245aa5; }
+.hero h1 {
+  max-width: 900px;
+  margin-top: 30px;
+  color: #1c4736;
+  font-size: clamp(66px, 6.9vw, 106px);
+  line-height: .99;
+  font-weight: 750;
+  letter-spacing: -.071em;
+}
+.hero h1 em {
+  color: #1c4736;
+  font-family: inherit;
+  font-style: normal;
+  font-weight: inherit;
+  letter-spacing: inherit;
+}
+.heroLead {
+  max-width: 575px;
+  margin-top: 31px !important;
+  color: #274b3d;
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.65;
+}
+.heroActions { margin-top: 28px; gap: 12px; }
+.heroActions .primary,
+.heroActions .outline {
+  min-width: 178px;
+  min-height: 56px;
+  border-radius: 999px;
+  padding-inline: 24px;
+  font-size: 14px;
+}
+.heroActions .primary { background: #1c4835; }
+.heroActions .primary:hover { background: #113527; }
+.heroActions .outline {
+  background: #f4c959;
+  border-color: #f4c959;
+  color: #1a422f;
+}
+.heroActions .outline:hover { background: #f6d476; }
+.launchPill { margin-top: 24px !important; color: #335e4a; font-size: 12px; }
+.heroBenefits {
+  max-width: 640px;
+  border-top: 1px solid rgb(40 72 48 / 22%);
+  margin-top: 33px;
+  padding-top: 21px;
+  gap: clamp(12px, 2vw, 29px);
+  color: #284d3e;
+  font-size: 12px;
+}
+.heroBenefits svg { color: #1e543d; }
+.heroVisual {
+  min-height: 660px;
+  align-self: end;
+  justify-content: flex-end;
+  margin-right: -40px;
+  padding: 0 12px 0 0;
+}
+.heroVisual::before {
+  width: min(115%, 580px);
+  top: 15%;
+  right: -15%;
+  border-radius: 50%;
+  background: rgb(223 235 214 / 54%);
+}
+.photoBackdrop {
+  width: 78%;
+  height: 72%;
+  right: 7%;
+  bottom: 0;
+  transform: rotate(7deg);
+  opacity: .58;
+  border-radius: 35% 45% 14px 14px;
+  background: linear-gradient(0deg, rgb(49 79 58 / 32%), transparent), url('/images/citywalk-waterfront.webp') center / cover;
+}
+.heroBadge {
+  position: absolute;
+  z-index: 5;
+  top: 25%;
+  left: 2%;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 19px;
+  border: 1px solid #e7e9cf;
+  border-radius: 99px;
+  background: #fff0bd;
+  box-shadow: 0 7px 17px rgb(32 49 39 / 11%);
+  color: #244532;
+  font-size: 13px;
+  white-space: nowrap;
+  transform: rotate(-3deg);
+}
+.heroBadge svg { color: #22533a; }
+.phoneFigure {
+  width: 330px;
+  transform: rotate(10deg) translate(10px, 45px);
+}
+.phoneGlass { min-height: 565px; }
+.phoneWelcome { font-size: 19px; }
+.phoneMap { height: 285px; }
+.phoneTrip { margin-top: -30px; padding: 17px; }
+.phoneTrip strong { font-size: 15px; }
+.phoneFigure figcaption {
+  color: #1c4736;
+  font-size: 11px;
+  transform: rotate(-10deg);
+}
+
+@media (max-width: 1170px) {
+  .headerInner { gap: 18px; padding-left: 26px; }
+  .headerNav { gap: 16px; }
+  .headerActions { gap: 14px; }
+  .heroInner { padding-left: 48px; padding-right: 35px; }
+  .hero h1 { font-size: clamp(65px, 7.1vw, 92px); }
+  .heroVisual { margin-right: -30px; }
+  .phoneFigure { width: 305px; }
+}
+@media (max-width: 920px) {
+  .header { padding: 17px 22px 0; margin-bottom: -100px; }
+  .headerInner { min-height: 78px; padding: 11px 18px 11px 23px; }
+  .headerNav { display: none; }
+  .headerActions { margin-left: auto; }
+  .mobileMenu { display: block; position: relative; order: 4; }
+  .mobileMenu summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 12px 9px;
+    font-size: 14px;
+    font-weight: 650;
+    color: #1d4938;
+    list-style: none;
+  }
+  .mobileMenu summary::-webkit-details-marker { display: none; }
+  .mobileMenu nav {
+    position: absolute;
+    right: -16px;
+    top: calc(100% + 15px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: min(320px, 75vw);
+    padding: 12px;
+    border: 1px solid #e1e9df;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 17px 32px rgb(21 50 40 / 17%);
+  }
+  .mobileMenu nav a {
+    display: flex;
+    align-items: center;
+    min-height: 46px;
+    padding: 10px 13px;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .mobileMenu nav a:hover { background: #edf4eb; }
+  .heroInner {
+    min-height: 0;
+    padding: 158px 38px 46px;
+    gap: 0;
+    grid-template-columns: 1fr;
+  }
+  .heroCopy { align-self: auto; padding-bottom: 0; max-width: 700px; }
+  .hero h1 { font-size: clamp(66px, 9.8vw, 92px); }
+  .heroVisual { min-height: 605px; width: min(100%, 640px); justify-content: center; margin: 0 auto; }
+  .heroBadge { left: 12%; }
+  .phoneFigure { width: 325px; transform: rotate(8deg) translate(15px,20px); }
+}
+@media (max-width: 570px) {
+  .header { padding: 12px 12px 0; margin-bottom: -90px; }
+  .headerInner { min-height: 72px; padding: 8px 10px 8px 15px; gap: 6px; }
+  .brand svg { max-width: 137px; }
+  .headerSignIn { display: none; }
+  .headerCta { min-height: 44px; padding: 10px 15px; font-size: 12px; white-space: nowrap; }
+  .headerCta svg { width: 14px; height: 14px; }
+  .mobileMenu summary { gap: 5px; padding: 10px 7px; font-size: 12px; }
+  .heroInner { padding: 134px 21px 25px; }
+  .eyebrow { font-size: 10px; }
+  .hero h1 { margin-top: 24px; font-size: clamp(49px, 11.6vw, 69px); letter-spacing: -.069em; }
+  .heroLead { margin-top: 24px !important; font-size: 15px; }
+  .heroActions { margin-top: 22px; }
+  .heroActions .primary, .heroActions .outline { flex: 1 1 155px; min-width: 0; min-height: 50px; padding: 12px; }
+  .launchPill { margin-top: 19px !important; font-size: 11px; }
+  .heroBenefits { gap: 12px 18px; font-size: 11px; padding-top: 15px; }
+  .heroBenefits svg { width: 16px; }
+  .heroVisual { min-height: 530px; margin-top: 4px; }
+  .heroBadge { top: 22%; left: 0; padding: 10px 13px; font-size: 11px; }
+  .photoBackdrop { width: 77%; height: 75%; }
+  .phoneFigure { width: 254px; transform: rotate(9deg) translate(15px, 12px); }
+  .phoneGlass { min-height: 490px; }
+  .phoneMap { height: 232px; }
+  .phoneTrip { margin-top: -19px; }
+}
+@media (max-width: 360px) {
+  .brand svg { max-width: 105px; }
+  .headerCta { padding: 10px 11px; font-size: 11px; }
+  .mobileMenu summary { font-size: 11px; }
+  .hero h1 { font-size: 45px; }
+  .heroVisual { min-height: 490px; }
+  .phoneFigure { width: 230px; }
+  .phoneGlass { min-height: 460px; }
+  .phoneMap { height: 206px; }
+}
