@@ -1,11 +1,24 @@
+import "./styles.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./PilotApp";
 import AuthPreview from "./auth/AuthPreview";
-import "./styles.css";
+import LandingPage, { LegalStatus } from "./marketing/LandingPage";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Marketing onboarding root is missing");
 // This is a local UI preview route, NOT an authenticated private route.
 const isAuthPreview = window.location.pathname === "/design/auth";
-createRoot(root).render(<StrictMode>{isAuthPreview ? <AuthPreview /> : <App />}</StrictMode>);
+createRoot(root).render(
+  <StrictMode>
+    {isAuthPreview ? (
+      <AuthPreview />
+    ) : location.pathname === "/" ? (
+      <LandingPage />
+    ) : location.pathname === "/rechtliches" ? (
+      <LegalStatus />
+    ) : (
+      <App />
+    )}
+  </StrictMode>,
+);

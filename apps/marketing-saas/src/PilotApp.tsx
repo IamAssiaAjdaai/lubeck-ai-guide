@@ -29,6 +29,17 @@ export default function PilotApp() {
   const [projects, setProjects] = useState<Project[]>([]),
     [detail, setDetail] = useState<Detail | null>(null),
     [tab, setTab] = useState("projects");
+  const [packDirty, setPackDirty] = useState(false);
+  function navigateTab(next: string) {
+    if (packDirty && next !== tab) {
+      setError(
+        "Bitte speichere oder verwirf deine Änderungen im Marketing-Pack, bevor du den Bereich wechselst.",
+      );
+      return;
+    }
+    setError("");
+    setTab(next);
+  }
   const [name, setName] = useState(""),
     [website, setWebsite] = useState(""),
     [summary, setSummary] = useState(""),
@@ -135,25 +146,6 @@ export default function PilotApp() {
       </main>
     );
   if (!session) {
-    if (location.pathname === "/")
-      return (
-        <main className="pilot-landing">
-          <div className="eyebrow">MARKETING WORKSPACE · LOKALER PILOT</div>
-          <h1>Aus deiner Website wird dein nächster Marketingplan.</h1>
-          <p>
-            Fakten prüfen. Ein Ziel wählen. Deutsche Inhalte bearbeiten und
-            selbst veröffentlichen.
-          </p>
-          <a className="button primary" href="/auth">
-            Arbeitsbereich öffnen →
-          </a>
-          {error && <p role="alert">{error}</p>}
-          <p className="quiet">
-            Kein öffentliches Angebot. Rechtliche und operative Freigabe stehen
-            aus.
-          </p>
-        </main>
-      );
     return <AuthForm onSignedIn={refreshSession} />;
   }
   return (
@@ -176,8 +168,9 @@ export default function PilotApp() {
           ].map(([key, label]) => (
             <button
               key={key}
+              aria-current={tab === key ? "page" : undefined}
               className={tab === key ? "active" : ""}
-              onClick={() => setTab(key)}
+              onClick={() => navigateTab(key)}
             >
               <span aria-hidden="true">
                 {key === "projects" ? "▣" : key === "campaigns" ? "✦" : "◔"}
@@ -193,11 +186,18 @@ export default function PilotApp() {
       </aside>
       <div className="main">
         <header className="topbar">
+          <a
+            className="workspace-home"
+            href="/"
+            aria-label="Zur Produktübersicht"
+          >
+            ✦ Marketing Workspace
+          </a>
           <strong>{session.user.name}</strong>
           <span className="preview-pill">LOKALER PILOT</span>
           <button
             className="button secondary"
-            disabled={busy}
+            disabled={busy || packDirty}
             onClick={() =>
               void perform(async () => {
                 await api("/api/auth/sign-out", {});
@@ -224,12 +224,42 @@ export default function PilotApp() {
                 ? "Deine Marketing-Packs"
                 : "Nutzung & Plan"}
           </h1>
+          <p className="workspace-intro">
+            {tab === "projects"
+              ? "Die Grundlage für Inhalte, die zu deinem Betrieb passen. Prüfe deine Angaben, bevor du eine Kampagne planst."
+              : tab === "campaigns"
+                ? "Ein Ziel. Eine Woche. Deine Worte. Erstelle, prüfe und exportiere deinen nächsten Marketingplan."
+                : "Dein monatlicher Rahmen – transparent und ohne automatische Buchung."}
+          </p>
           {error && (
             <div role="alert" className="pilot-error">
               {error}
             </div>
           )}
           {busy && <p role="status">Wird gespeichert …</p>}
+          {tab === "projects" && (
+            <ol
+              className="workspace-steps"
+              aria-label="Dein Weg zum Marketing-Pack"
+            >
+              <li aria-current={!detail?.context ? "step" : undefined}>
+                <span>01</span> Unternehmen
+              </li>
+              <li
+                aria-current={
+                  detail?.context &&
+                  !detail.context.facts.some((f) => f.confirmation)
+                    ? "step"
+                    : undefined
+                }
+              >
+                <span>02</span> Fakten prüfen
+              </li>
+              <li>
+                <span>03</span> Kampagne planen
+              </li>
+            </ol>
+          )}
           {tab === "projects" && (
             <>
               <div className="pilot-projects">
@@ -357,6 +387,22 @@ export default function PilotApp() {
                       </form>
                     </details>
                   </Panel>
+                  {detail.context?.facts.some((f) => f.confirmation) && (
+                    <div className="workspace-next">
+                      <div>
+                        <strong>Deine Grundlage steht.</strong>
+                        <p>
+                          Plane jetzt deine Woche mit den bestätigten Fakten.
+                        </p>
+                      </div>
+                      <button
+                        className="button primary"
+                        onClick={() => navigateTab("campaigns")}
+                      >
+                        Weiter zum Marketing-Pack →
+                      </button>
+                    </div>
+                  )}
                   {detail.context && (
                     <Panel title="2. Fakten prüfen und bestätigen">
                       <p className="muted">
@@ -504,6 +550,7 @@ export default function PilotApp() {
               projects={projects}
               initialProjectId={detail?.id}
               usageOnly={tab === "usage"}
+              onDirtyChange={setPackDirty}
             />
           )}
         </main>
@@ -514,7 +561,11 @@ export default function PilotApp() {
           ["campaigns", "Packs"],
           ["usage", "Nutzung"],
         ].map(([key, label]) => (
-          <button key={key} onClick={() => setTab(key)}>
+          <button
+            key={key}
+            aria-current={tab === key ? "page" : undefined}
+            onClick={() => navigateTab(key)}
+          >
             {label}
           </button>
         ))}

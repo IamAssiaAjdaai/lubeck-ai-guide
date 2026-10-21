@@ -3,6 +3,9 @@ const { chromium } = await import(
 );
 import { readdir, readFile, mkdir } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
+import sharp from "sharp";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
 const browser = await chromium.launch({
   ...(process.env.MARKETING_BROWSER_CHANNEL === "bundled"
     ? {}
@@ -22,6 +25,7 @@ await context.route("**/*", (route) =>
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
+await mkdir("docs/qa/marketing-saas/ux-410", { recursive: true });
 const email = `browser-${randomUUID()}@example.test`;
 const password = "Synthetic-browser-password-2026!";
 try {
@@ -90,6 +94,13 @@ try {
     .getByRole("button", { name: "Ausgewählte Fakten bestätigen" })
     .click();
   await page.getByText("Von dir bestätigt", { exact: true }).waitFor();
+  await page
+    .getByRole("heading", { name: "2. Fakten prüfen und bestätigen" })
+    .scrollIntoViewIfNeeded();
+  await sharp(await page.screenshot())
+    .resize({ width: 1000 })
+    .webp({ quality: 85 })
+    .toFile("apps/marketing-saas/public/product/facts.webp");
   await page.reload();
   await page
     .getByRole("button", { name: "Glanz Browser QA", exact: true })
@@ -111,10 +122,33 @@ try {
       })
       .waitFor();
     await page.getByText("3 von 4 Packs verfügbar", { exact: true }).waitFor();
+    await page
+      .getByRole("heading", {
+        name: "Prüfen, bearbeiten, selbst veröffentlichen",
+      })
+      .scrollIntoViewIfNeeded();
     const editor = page.getByRole("textbox", { name: /^Beitrag 1/ });
+    await editor.scrollIntoViewIfNeeded();
+    await sharp(await page.screenshot())
+      .resize({ width: 1000 })
+      .webp({ quality: 85 })
+      .toFile("apps/marketing-saas/public/product/editor.webp");
     await editor.fill(
       (await editor.inputValue()) + "\n\nLass uns deinen Bedarf besprechen.",
     );
+    await page
+      .getByRole("button", { name: "Nutzung & Plan", exact: true })
+      .click();
+    await page
+      .getByRole("alert")
+      .filter({ hasText: "Bitte speichere" })
+      .waitFor();
+    if (
+      !(await editor.inputValue()).includes(
+        "Lass uns deinen Bedarf besprechen.",
+      )
+    )
+      throw new Error("Unsaved editor lost during navigation");
     await page
       .getByRole("button", { name: "Änderungen speichern", exact: true })
       .click();
@@ -183,6 +217,45 @@ try {
     await page.getByText("2 von 4 Packs verfügbar", { exact: true }).waitFor();
   }
   await mkdir("docs/qa/marketing-saas/screenshots", { recursive: true });
+  if (full) {
+    await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
+    const accessibility = await page.evaluate(() =>
+      window.axe.run(document, {
+        runOnly: {
+          type: "tag",
+          values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"],
+        },
+      }),
+    );
+    await (
+      await import("node:fs/promises")
+    ).writeFile(
+      "docs/qa/marketing-saas/ux-410/axe-workspace.json",
+      JSON.stringify(
+        {
+          violations: accessibility.violations,
+          incomplete: accessibility.incomplete.map((v) => ({
+            id: v.id,
+            nodes: v.nodes.length,
+          })),
+        },
+        null,
+        2,
+      ),
+    );
+    if (accessibility.violations.length)
+      throw new Error(
+        JSON.stringify(
+          accessibility.violations.map((v) => ({
+            id: v.id,
+            nodes: v.nodes.map((n) => ({
+              target: n.target,
+              summary: n.failureSummary,
+            })),
+          })),
+        ),
+      );
+  }
   for (const width of [1440, 768, 390, 375]) {
     await page.setViewportSize({ width, height: 1000 });
     await page

@@ -67,12 +67,15 @@ export default function AuthForm({
   }
   return (
     <main className="pilot-auth">
+      <a className="auth-back-link" href="/">
+        ← Zur Produktübersicht
+      </a>
       <div className="auth-card">
         <section className="auth-story">
           <div className="auth-story-brand">✦ Marketing Workspace</div>
           <div className="auth-story-center">
             <p>DEIN MARKETING. DEIN UNTERNEHMEN.</p>
-            <h2>Aus deiner Website wird dein nächster Marketingplan.</h2>
+            <h2>Deine Website. Dein nächster Marketingplan.</h2>
             <p>
               Du prüfst die Fakten, bearbeitest die Inhalte und entscheidest,
               was du veröffentlichst.
@@ -96,7 +99,7 @@ export default function AuthForm({
                   : "Willkommen zurück"}
           </h1>
           <p className="auth-description">
-            Dein eigener, geschützter Marketing-Arbeitsbereich.
+            Lokaler Testzugang. Öffentlicher Pilot noch nicht freigegeben.
           </p>
           <form className="auth-form" onSubmit={submit} key={view}>
             {view === "signup" && (

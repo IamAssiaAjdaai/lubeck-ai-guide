@@ -55,6 +55,7 @@ jobs:
             sleep 1
           done
           node scripts/marketing-saas-pilot-smoke.mjs
+          node scripts/marketing-saas-landing-smoke.mjs
       - run: npm run marketing:db:verify
       - uses: actions/upload-artifact@v4
         if: success()
@@ -63,3 +64,4 @@ jobs:
           path: |
             docs/qa/marketing-saas/screenshots/complete-journey-*.png
             docs/qa/marketing-saas/synthetic-pack.md
+            docs/qa/marketing-saas/ux-410/**

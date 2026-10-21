@@ -34,10 +34,12 @@ export default function PackWorkspace({
   projects,
   initialProjectId,
   usageOnly = false,
+  onDirtyChange,
 }: {
   projects: Project[];
   initialProjectId?: string;
   usageOnly?: boolean;
+  onDirtyChange?: (dirty: boolean) => void;
 }) {
   const [projectId, setProjectId] = useState(
       initialProjectId ?? projects[0]?.id ?? "",
@@ -60,6 +62,15 @@ export default function PackWorkspace({
     [error, setError] = useState(""),
     [notice, setNotice] = useState("");
   const requestKey = useRef<string | null>(null);
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+    if (!dirty) return;
+    const preventLoss = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+    window.addEventListener("beforeunload", preventLoss);
+    return () => window.removeEventListener("beforeunload", preventLoss);
+  }, [dirty, onDirtyChange]);
   useEffect(() => {
     let active = true;
     if (!projectId) return;
@@ -206,12 +217,27 @@ export default function PackWorkspace({
         {notice && <p role="status">{notice}</p>}
         {usage && (
           <>
-            <p className="pilot-allowance">
-              <strong>
-                {usage.remaining} von {usage.allocation} Packs verfügbar
-              </strong>{" "}
-              · {usage.month} (UTC)
-            </p>
+            <div className="usage-overview">
+              <span className="usage-icon" aria-hidden="true">
+                ◔
+              </span>
+              <div>
+                <p className="pilot-allowance">
+                  <strong>
+                    {usage.remaining} von {usage.allocation} Packs verfügbar
+                  </strong>{" "}
+                  · {usage.month} (UTC)
+                </p>
+                <meter
+                  aria-label="Verbrauchte Generierungsversuche"
+                  min={0}
+                  max={usage.allocation}
+                  value={usage.used}
+                >
+                  {usage.used} von {usage.allocation}
+                </meter>
+              </div>
+            </div>
             <p className="muted">
               {usage.plan === "starter" ? "Starter" : "Growth"} · Preishypothese{" "}
               {usage.priceHypothesisExVat} €/Monat zzgl. USt. · Kein aktiver
@@ -342,8 +368,29 @@ export default function PackWorkspace({
             )}
           </section>
           {job && current && (
-            <section className="panel">
+            <section className="panel pack-result">
+              <div className="eyebrow">
+                DEIN MARKETING-PACK · ZUR MENSCHLICHEN PRÜFUNG
+              </div>
               <h2>Prüfen, bearbeiten, selbst veröffentlichen</h2>
+              <div className="pack-deliverables">
+                <div>
+                  <strong>07</strong>
+                  <span>Tage mit Plan</span>
+                </div>
+                <div>
+                  <strong>03</strong>
+                  <span>Social-Posts</span>
+                </div>
+                <div>
+                  <strong>03</strong>
+                  <span>Hooks</span>
+                </div>
+                <div>
+                  <strong>01</strong>
+                  <span>CTA</span>
+                </div>
+              </div>
               <p className="muted">
                 {job.provider}/{job.model} ·{" "}
                 {current.editorialStatus === "human_edited"
@@ -436,6 +483,12 @@ export default function PackWorkspace({
                   />
                 </label>
               </div>
+              {dirty && (
+                <p className="unsaved-notice" role="status">
+                  Ungespeicherte Änderungen – bitte als neue Version speichern
+                  oder verwerfen.
+                </p>
+              )}
               <p className="quiet">
                 Manuelle Änderungen werden nicht automatisch auf Fakten geprüft.
                 Quellenreferenzen beziehen sich auf die Generierungsgrundlage.
