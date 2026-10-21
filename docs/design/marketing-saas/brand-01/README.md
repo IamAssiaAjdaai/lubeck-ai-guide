@@ -43,7 +43,7 @@ Das sind Design-Beobachtungen und gestalterische Schlussfolgerungen, kein Conver
 
 - Eigene SVG-Markenkonzepte, Wortbilder, Editorial-Kompositionen und kontextbezogene Linien-/Belegsprache. Keine awork-Assets oder kopierten Claims.
 - Grafiken sind code-/vektorbasiert, keine Stockbilder oder KI-Bitmaps. Sie zeigen Beziehungen von Quelle, menschlicher Prüfung und Pack, keine Fake-Metriken.
-- Bricolage Grotesque, Fraunces (normal und echte Kursive) und Manrope werden als lokale Latin-WOFF2-Variablenfonts geladen. Keine Browseranfragen an Google Fonts. Unveränderte OFL-Lizenzen liegen neben den Dateien in `public/brand/fonts/`.
+- Bricolage Grotesque, Fraunces (normal und echte Kursive) und Manrope werden als lokale Latin-WOFF2-Variablenfonts geladen. Keine Browseranfragen an Google Fonts. Vollständige OFL-Lizenztexte (nur Endleerzeichen normalisiert) liegen neben den Dateien in `public/brand/fonts/`.
 - Primärquellen: [Bricolage](https://github.com/google/fonts/tree/main/ofl/bricolagegrotesque), [Fraunces](https://github.com/google/fonts/tree/main/ofl/fraunces), [Manrope](https://github.com/google/fonts/tree/main/ofl/manrope). Fontdateien kamen aus dem offiziellen Google-Fonts-CSS/CDN, Lizenzdateien aus dem offiziellen Repository. Keine Schrift des Benchmarks übernommen.
 - Das echte Produktbild bleibt der vorhandene synthetische #411-Editor. Es ist ausdrücklich als bestehende Identität beschriftet.
 
