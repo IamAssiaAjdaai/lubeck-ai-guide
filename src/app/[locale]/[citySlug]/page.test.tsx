@@ -33,7 +33,7 @@ vi.mock("@/lib/content/publicRepository.server", async () => {
   };
 });
 
-import { GenericCityContent } from "@/app/[locale]/[citySlug]/page";
+import { GenericCityContent } from "@/app/[locale]/[citySlug]/CityPageContent";
 import {
   resolveCityPlannerOrigin,
 } from "@/components/travel/CityExperience";
