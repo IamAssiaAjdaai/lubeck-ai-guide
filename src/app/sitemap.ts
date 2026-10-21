@@ -25,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  if (operator.isConfigured) {
+  if (operator.isConfigured && operator.publicationApproved) {
     routes.push(
       {
         url: citywalkPublicUrl("/privacy"),

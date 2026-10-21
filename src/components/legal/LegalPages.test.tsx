@@ -9,6 +9,7 @@ import ImprintPage, { generateMetadata as imprintMetadata } from "@/app/imprint/
 import sitemap from "@/app/sitemap";
 
 const identity = {
+  CITYWALK_LEGAL_PUBLICATION_APPROVED: "1",
   CITYWALK_LEGAL_ENTITY_TYPE: "individual",
   CITYWALK_LEGAL_OPERATOR_NAME: "Synthetic Public Operator",
   CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS: "Synthetic Street 1",
@@ -47,4 +48,13 @@ describe.each(pages)("$path public legal route", ({ path, page, metadata, headin
     expect(result.robots).toEqual({ index: true, follow: true });
     expect((await sitemap()).some(item => item.url.endsWith(path))).toBe(true);
   });
+});
+
+it("keeps the approved native-only purchase policy in public Terms", async () => {
+  for (const [key, value] of Object.entries(identity)) vi.stubEnv(key, value);
+  render(await TermsPage());
+  expect(screen.getByText(/through supported native iOS and Android apps/i)).toBeDefined();
+  expect(screen.getByText(/There is no website checkout for City Passes or subscriptions/i)).toBeDefined();
+  expect(screen.queryByText(/28-day launch access/i)).toBeNull();
+  expect(screen.queryByText(/Stripe/i)).toBeNull();
 });
