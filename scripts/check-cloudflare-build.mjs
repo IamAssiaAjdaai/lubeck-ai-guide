@@ -14,7 +14,7 @@ for (const route of pages) assert.ok(source.includes(`page:${route}\``) || sourc
 for (const route of handlers) assert.ok(source.includes(`route-handler:${route}\``) || source.includes(`route-handler:${route}"`), `Missing bundled API: ${route}`);
 const modules = await readdir(path.join(worker, "bundle"), { recursive: true });
 const bundledText = (await Promise.all(modules.filter(file => file.endsWith(".js")).map(file => readFile(path.join(worker, "bundle", file), "utf8")))).join("\n");
-assert.ok(bundledText.includes("A better way to") && bundledText.includes("walk a city"), "Missing marketing landing content");
+assert.ok(bundledText.includes("Make every city your own."), "Missing marketing landing content");
 const config = JSON.parse(await readFile(path.join(worker, "worker.config.json"), "utf8"));
 assert.equal(config.assets.notFoundHandling, "none", "Do not replace missing API/page routes with a static SPA fallback");
 for (const field of ["NAME", "STREET_ADDRESS", "POSTAL_CITY"]) {
