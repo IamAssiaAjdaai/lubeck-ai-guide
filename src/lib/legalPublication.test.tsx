@@ -15,7 +15,7 @@ describe("legal publication gate", () => {
     const operator = getLegalOperator(environment);
     const html = renderToStaticMarkup(<LegalPage title="Privacy" eyebrow="Legal" intro="Notice" operator={operator}><p>Sensitive draft identity</p></LegalPage>);
     expect(html).not.toContain("Sensitive draft identity");
-    expect(html).toContain("awaiting operator and legal approval");
+    expect(html).toContain(operator.isConfigured ? "Legal publication approval is pending." : "Pre-launch legal configuration is incomplete.");
     expect(legalRobots(operator).index).toBe(false);
   });
   it("renders only after complete identity and explicit publication approval", () => {
