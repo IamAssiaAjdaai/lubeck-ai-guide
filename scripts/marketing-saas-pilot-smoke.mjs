@@ -25,7 +25,7 @@ await context.route("**/*", (route) =>
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
-await mkdir("docs/qa/marketing-saas/ux-410", { recursive: true });
+await mkdir("docs/qa/marketing-saas/ux-411-refinement", { recursive: true });
 const email = `browser-${randomUUID()}@example.test`;
 const password = "Synthetic-browser-password-2026!";
 try {
@@ -127,6 +127,19 @@ try {
         name: "Prüfen, bearbeiten, selbst veröffentlichen",
       })
       .scrollIntoViewIfNeeded();
+    if (
+      !(await page.locator("#workspace-pack-posts").isVisible()) ||
+      (await page.locator("#workspace-pack-plan").isVisible())
+    )
+      throw new Error("Posts must be the default Pack view");
+    await page.getByRole("tab", { name: "Hooks & CTA", exact: true }).click();
+    await page
+      .getByLabel("Einstieg 1", { exact: true })
+      .fill("Ein synthetischer Einstieg für unseren Betrieb.");
+    await page.getByRole("tab", { name: "7-Tage-Plan", exact: true }).click();
+    if ((await page.locator(".pilot-plan li:visible").count()) !== 7)
+      throw new Error("Plan missing");
+    await page.keyboard.press("Home");
     const editor = page.getByRole("textbox", { name: /^Beitrag 1/ });
     await editor.scrollIntoViewIfNeeded();
     await sharp(await page.screenshot())
@@ -171,6 +184,9 @@ try {
       )
     )
       throw new Error("Edited version missing");
+    await page
+      .getByRole("tab", { name: "Prüfen & exportieren", exact: true })
+      .click();
     await page
       .getByRole("checkbox", {
         name: "Ich habe diese gespeicherte Version geprüft.",
@@ -230,7 +246,7 @@ try {
     await (
       await import("node:fs/promises")
     ).writeFile(
-      "docs/qa/marketing-saas/ux-410/axe-workspace.json",
+      "docs/qa/marketing-saas/ux-411-refinement/axe-workspace.json",
       JSON.stringify(
         {
           violations: accessibility.violations,
@@ -260,10 +276,28 @@ try {
     await page.setViewportSize({ width, height: 1000 });
     await page
       .getByRole("heading", {
-        name: full ? "Dein 7-Tage-Plan" : "2. Fakten prüfen und bestätigen",
+        name: full
+          ? "Prüfen, bearbeiten, selbst veröffentlichen"
+          : "2. Fakten prüfen und bestätigen",
         exact: true,
       })
       .scrollIntoViewIfNeeded();
+    if (full) {
+      for (const [tab, name] of [
+        ["3 Posts", "workspace"],
+        ["Hooks & CTA", "workspace-hooks"],
+        ["Prüfen & exportieren", "workspace-export"],
+      ]) {
+        await page.getByRole("tab", { name: tab, exact: true }).click();
+        await page
+          .locator(".pack-result")
+          .evaluate((el) => el.scrollIntoView({ block: "start" }));
+        await page.screenshot({
+          path: `docs/qa/marketing-saas/ux-411-refinement/${name}-${width}.png`,
+        });
+      }
+      await page.getByRole("tab", { name: "3 Posts", exact: true }).click();
+    }
     await page.screenshot({
       path: `docs/qa/marketing-saas/screenshots/${full ? "complete-journey" : "auth-facts"}-${width}.png`,
       fullPage: false,

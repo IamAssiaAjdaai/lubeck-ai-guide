@@ -65,3 +65,4 @@ jobs:
             docs/qa/marketing-saas/screenshots/complete-journey-*.png
             docs/qa/marketing-saas/synthetic-pack.md
             docs/qa/marketing-saas/ux-410/**
+            docs/qa/marketing-saas/ux-411-refinement/**

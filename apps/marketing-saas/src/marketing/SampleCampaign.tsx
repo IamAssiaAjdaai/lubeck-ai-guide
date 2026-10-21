@@ -1,3 +1,4 @@
+import PackSectionNav, { type PackSection } from "../PackSectionNav";
 import { useState } from "react";
 import { sampleFacts, samplePack, packMarkdown, downloadText } from "./sample";
 import type { Pack } from "../../../marketing-saas-api/src/pack.contract";
@@ -8,6 +9,7 @@ const steps = [
   "Bearbeiten & exportieren",
 ];
 export default function SampleCampaign() {
+  const [section, setSection] = useState<PackSection>("posts");
   const [step, setStep] = useState(0),
     [selected, setSelected] = useState<string[]>([]),
     [confirmed, setConfirmed] = useState(false),
@@ -47,6 +49,7 @@ export default function SampleCampaign() {
     setVersions([pack]);
     setVersion(0);
     setDraft(pack);
+    setSection("posts");
     setStep(3);
     setReviewed(false);
     setNotice("Beispiel-Pack geladen. Keine KI-Anfrage, keine Kosten.");
@@ -275,45 +278,75 @@ export default function SampleCampaign() {
               . Zeitangaben sind Vorschläge, keine terminierten
               Veröffentlichungen.
             </p>
-            <ol className="sample-plan">
-              {draft.days.map((d) => (
-                <li key={d.day}>
-                  <span>
-                    TAG {d.day}
-                    <small>{d.time} · LinkedIn</small>
-                  </span>
-                  <p>{d.task}</p>
-                </li>
-              ))}
-            </ol>
-            <div className="sample-posts">
-              {draft.posts.map((p, i) => (
-                <label className="m-field" key={i}>
-                  <span className="editor-label">
-                    POST 0{i + 1}
-                    <small>LinkedIn · {p.factIds.join(", ")}</small>
-                  </span>
-                  <textarea
-                    rows={7}
-                    maxLength={3000}
-                    value={p.text}
-                    readOnly={version !== versions.length - 1}
-                    onChange={(e) =>
-                      edit({
-                        ...draft,
-                        posts: draft.posts.map((item, index) =>
-                          index === i
-                            ? { ...item, text: e.target.value }
-                            : item,
-                        ),
-                      })
-                    }
-                  />
-                </label>
-              ))}
+            <PackSectionNav
+              prefix="sample-pack"
+              value={section}
+              onChange={setSection}
+            />
+            <div
+              className="pack-tab-panel"
+              role="tabpanel"
+              id="sample-pack-plan"
+              aria-labelledby="sample-pack-tab-plan"
+              hidden={section !== "plan"}
+              tabIndex={0}
+            >
+              <ol className="sample-plan">
+                {draft.days.map((d) => (
+                  <li key={d.day}>
+                    <span>
+                      TAG {d.day}
+                      <small>{d.time} · LinkedIn</small>
+                    </span>
+                    <p>{d.task}</p>
+                  </li>
+                ))}
+              </ol>
             </div>
-            <details className="sample-hooks">
-              <summary>Drei Hooks & Handlungsaufforderung bearbeiten</summary>
+            <div
+              className="pack-tab-panel"
+              role="tabpanel"
+              id="sample-pack-posts"
+              aria-labelledby="sample-pack-tab-posts"
+              hidden={section !== "posts"}
+              tabIndex={0}
+            >
+              <div className="sample-posts">
+                {draft.posts.map((p, i) => (
+                  <label className="m-field" key={i}>
+                    <span className="editor-label">
+                      POST 0{i + 1}
+                      <small>LinkedIn · {p.factIds.join(", ")}</small>
+                    </span>
+                    <textarea
+                      rows={7}
+                      maxLength={3000}
+                      value={p.text}
+                      readOnly={version !== versions.length - 1}
+                      onChange={(e) =>
+                        edit({
+                          ...draft,
+                          posts: draft.posts.map((item, index) =>
+                            index === i
+                              ? { ...item, text: e.target.value }
+                              : item,
+                          ),
+                        })
+                      }
+                    />
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div
+              className="pack-tab-panel"
+              role="tabpanel"
+              id="sample-pack-hooks"
+              aria-labelledby="sample-pack-tab-hooks"
+              hidden={section !== "hooks"}
+              tabIndex={0}
+            >
+              <h4>Drei Hooks & Handlungsaufforderung</h4>
               {draft.hooks.map((hook, i) => (
                 <label key={i} className="m-field">
                   Hook {i + 1}
@@ -341,79 +374,101 @@ export default function SampleCampaign() {
                   onChange={(e) => edit({ ...draft, cta: e.target.value })}
                 />
               </label>
-            </details>
-            <details className="sample-hooks">
-              <summary>Bestätigte Beispiel-Fakten der Grundlage</summary>
-              <ul>
-                {draft.facts.map((f) => (
-                  <li key={f.id}>
-                    [{f.id}] {f.statement}
-                  </li>
-                ))}
-              </ul>
-            </details>
+            </div>
             <p className="m-caption">
               {dirty ? "Ungespeicherte Änderungen. " : ""}Manuelle Änderungen
               sind nicht automatisch faktengeprüft. Beispielversionen bleiben
               nur bis zum Neuladen dieser Seite erhalten. Im angemeldeten
               Arbeitsbereich werden Versionen dauerhaft gespeichert.
             </p>
-            <div className="m-actions">
-              <button
-                className="m-button primary"
-                disabled={
-                  !dirty ||
-                  draft.posts.some((p) => !p.text.trim()) ||
-                  draft.hooks.some((h) => !h.trim()) ||
-                  !draft.cta.trim()
-                }
-                onClick={() => {
-                  setVersions([...versions, draft]);
-                  setVersion(versions.length);
-                  setNotice(
-                    "Neue Beispielversion gespeichert – nur in dieser Sitzung.",
-                  );
-                }}
-              >
-                Beispielversion speichern
-              </button>
-              {dirty && (
+            {dirty && (
+              <div className="m-actions">
                 <button
-                  className="m-button secondary"
+                  className="m-button primary"
+                  disabled={
+                    !dirty ||
+                    draft.posts.some((p) => !p.text.trim()) ||
+                    draft.hooks.some((h) => !h.trim()) ||
+                    !draft.cta.trim()
+                  }
                   onClick={() => {
-                    setDraft(saved);
-                    setReviewed(false);
-                    setNotice("Änderungen verworfen.");
+                    setVersions([...versions, draft]);
+                    setVersion(versions.length);
+                    setNotice(
+                      "Neue Beispielversion gespeichert – nur in dieser Sitzung.",
+                    );
                   }}
                 >
-                  Änderungen verwerfen
+                  Beispielversion speichern
                 </button>
-              )}
-            </div>
-            <label className="m-check">
-              <input
-                type="checkbox"
-                disabled={dirty || version !== versions.length - 1}
-                checked={reviewed}
-                onChange={(e) => setReviewed(e.target.checked)}
-              />
-              Ich habe diese Beispielversion geprüft. Ich veröffentliche selbst.
-            </label>
-            <div className="m-actions">
-              <button
-                className="m-button primary"
-                disabled={dirty || !reviewed || version !== versions.length - 1}
-                onClick={() => void exportExample()}
-              >
-                Beispiel als Markdown exportieren ↓
-              </button>
-              <button
-                className="m-button secondary"
-                disabled={dirty || !reviewed || version !== versions.length - 1}
-                onClick={() => void exportExample(true)}
-              >
-                Inhalte kopieren
-              </button>
+                {dirty && (
+                  <button
+                    className="m-button secondary"
+                    onClick={() => {
+                      setDraft(saved);
+                      setReviewed(false);
+                      setNotice("Änderungen verworfen.");
+                    }}
+                  >
+                    Änderungen verwerfen
+                  </button>
+                )}
+              </div>
+            )}
+            <div
+              className="pack-tab-panel"
+              role="tabpanel"
+              id="sample-pack-export"
+              aria-labelledby="sample-pack-tab-export"
+              hidden={section !== "export"}
+              tabIndex={0}
+            >
+              <h4>Prüfen und manuell exportieren</h4>
+              <p className="m-caption">
+                Prüfe deine gespeicherte Beispielversion. Der Export bleibt bis
+                zu deiner Bestätigung gesperrt; es wird nichts automatisch
+                veröffentlicht.
+              </p>
+              <details className="sample-hooks">
+                <summary>Bestätigte Beispiel-Fakten der Grundlage</summary>
+                <ul>
+                  {draft.facts.map((f) => (
+                    <li key={f.id}>
+                      [{f.id}] {f.statement}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+              <label className="m-check">
+                <input
+                  type="checkbox"
+                  disabled={dirty || version !== versions.length - 1}
+                  checked={reviewed}
+                  onChange={(e) => setReviewed(e.target.checked)}
+                />
+                Ich habe diese Beispielversion geprüft. Ich veröffentliche
+                selbst.
+              </label>
+              <div className="m-actions">
+                <button
+                  className="m-button primary"
+                  disabled={
+                    dirty || !reviewed || version !== versions.length - 1
+                  }
+                  onClick={() => void exportExample()}
+                >
+                  Beispiel als Markdown exportieren ↓
+                </button>
+                <button
+                  className="m-button secondary"
+                  disabled={
+                    dirty || !reviewed || version !== versions.length - 1
+                  }
+                  onClick={() => void exportExample(true)}
+                >
+                  Inhalte kopieren
+                </button>
+              </div>
             </div>
           </>
         )}

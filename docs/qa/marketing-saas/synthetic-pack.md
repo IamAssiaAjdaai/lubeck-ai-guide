@@ -52,7 +52,7 @@ Faktenreferenzen der Ursprungsversion: web-1-2
 
 ## Alternative Einstiege
 
-- Ein klarer Blick auf dein nächstes Projekt.
+- Ein synthetischer Einstieg für unseren Betrieb.
 
 - Was ist dir bei deinem Dienstleister wichtig?
 

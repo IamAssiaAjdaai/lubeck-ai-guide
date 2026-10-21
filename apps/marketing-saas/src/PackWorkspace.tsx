@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { api } from "./api";
+import PackSectionNav, { type PackSection } from "./PackSectionNav";
 import type { Pack } from "../../marketing-saas-api/src/pack.contract";
 import type { BrandContext } from "@marketing/core";
 type Project = { id: string; name: string };
@@ -61,6 +62,11 @@ export default function PackWorkspace({
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [notice, setNotice] = useState("");
+  const [section, setSection] = useState<PackSection>("posts");
+  const resultRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (job?.id) resultRef.current?.scrollIntoView({ block: "start" });
+  }, [job?.id]);
   const requestKey = useRef<string | null>(null);
   useEffect(() => {
     onDirtyChange?.(dirty);
@@ -122,6 +128,7 @@ export default function PackWorkspace({
     }
   }
   function display(value: Job, selected = value.output_revision) {
+    if (value.id !== job?.id) setSection("posts");
     setJob(value);
     setVersion(selected);
     const content = value.versions.find((v) => v.version === selected)?.content;
@@ -368,7 +375,7 @@ export default function PackWorkspace({
             )}
           </section>
           {job && current && (
-            <section className="panel pack-result">
+            <section className="panel pack-result" ref={resultRef}>
               <div className="eyebrow">
                 DEIN MARKETING-PACK · ZUR MENSCHLICHEN PRÜFUNG
               </div>
@@ -414,74 +421,108 @@ export default function PackWorkspace({
                   ))}
                 </select>
               </label>
-              <h3 className="pilot-section-heading">Dein 7-Tage-Plan</h3>
-              <ol className="pilot-plan">
-                {current.days.map((day) => (
-                  <li key={day.day}>
-                    <strong>
-                      Tag {day.day} · {day.channel} · {day.time}
-                    </strong>
-                    <p>{day.task}</p>
-                    <small>Fakten: {day.factIds.join(", ")}</small>
-                  </li>
-                ))}
-              </ol>
-              <h3>Deine drei Social-Media-Posts</h3>
-              <div className="pilot-editor">
-                {posts.map((text, i) => (
-                  <label key={i}>
-                    Beitrag {i + 1} ({current.posts[i].channel})
-                    <textarea
-                      aria-label={`Beitrag ${i + 1} (${current.posts[i].channel})`}
-                      rows={7}
-                      value={text}
-                      maxLength={3000}
-                      readOnly={version !== job.output_revision}
-                      onChange={(e) => {
-                        setPosts((previous) =>
-                          previous.map((v, index) =>
-                            index === i ? e.target.value : v,
-                          ),
-                        );
-                        setDirty(true);
-                        setReviewed(false);
-                      }}
-                    />
-                  </label>
-                ))}
+              <PackSectionNav
+                prefix="workspace-pack"
+                value={section}
+                onChange={setSection}
+              />
+              <div
+                className="pack-tab-panel"
+                role="tabpanel"
+                id="workspace-pack-plan"
+                aria-labelledby="workspace-pack-tab-plan"
+                hidden={section !== "plan"}
+                tabIndex={0}
+              >
+                <h3 className="pilot-section-heading">Dein 7-Tage-Plan</h3>
+                <ol className="pilot-plan">
+                  {current.days.map((day) => (
+                    <li key={day.day}>
+                      <strong>
+                        Tag {day.day} · {day.channel} · {day.time}
+                      </strong>
+                      <p>{day.task}</p>
+                      <small>Fakten: {day.factIds.join(", ")}</small>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div
+                className="pack-tab-panel"
+                role="tabpanel"
+                id="workspace-pack-posts"
+                aria-labelledby="workspace-pack-tab-posts"
+                hidden={section !== "posts"}
+                tabIndex={0}
+              >
+                <h3>Deine drei Social-Media-Posts</h3>
+                <div className="pilot-editor">
+                  {posts.map((text, i) => (
+                    <label key={i}>
+                      Beitrag {i + 1} ({current.posts[i].channel})
+                      <textarea
+                        aria-label={`Beitrag ${i + 1} (${current.posts[i].channel})`}
+                        rows={7}
+                        value={text}
+                        maxLength={3000}
+                        readOnly={version !== job.output_revision}
+                        onChange={(e) => {
+                          setPosts((previous) =>
+                            previous.map((v, index) =>
+                              index === i ? e.target.value : v,
+                            ),
+                          );
+                          setDirty(true);
+                          setReviewed(false);
+                        }}
+                      />
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div
+                className="pack-tab-panel"
+                role="tabpanel"
+                id="workspace-pack-hooks"
+                aria-labelledby="workspace-pack-tab-hooks"
+                hidden={section !== "hooks"}
+                tabIndex={0}
+              >
                 <h3>Drei alternative Einstiege</h3>
-                {hooks.map((text, i) => (
-                  <label key={i}>
-                    Einstieg {i + 1}
-                    <input
-                      value={text}
-                      maxLength={300}
+                <div className="pilot-editor">
+                  {hooks.map((text, i) => (
+                    <label key={i}>
+                      Einstieg {i + 1}
+                      <input
+                        value={text}
+                        maxLength={300}
+                        readOnly={version !== job.output_revision}
+                        onChange={(e) => {
+                          setHooks((previous) =>
+                            previous.map((v, index) =>
+                              index === i ? e.target.value : v,
+                            ),
+                          );
+                          setDirty(true);
+                          setReviewed(false);
+                        }}
+                      />
+                    </label>
+                  ))}
+                  <label>
+                    Handlungsaufforderung
+                    <textarea
+                      value={cta}
+                      maxLength={500}
                       readOnly={version !== job.output_revision}
                       onChange={(e) => {
-                        setHooks((previous) =>
-                          previous.map((v, index) =>
-                            index === i ? e.target.value : v,
-                          ),
-                        );
+                        setCta(e.target.value);
                         setDirty(true);
                         setReviewed(false);
                       }}
                     />
                   </label>
-                ))}
-                <label>
-                  Handlungsaufforderung
-                  <textarea
-                    value={cta}
-                    maxLength={500}
-                    readOnly={version !== job.output_revision}
-                    onChange={(e) => {
-                      setCta(e.target.value);
-                      setDirty(true);
-                      setReviewed(false);
-                    }}
-                  />
-                </label>
+                </div>
               </div>
               {dirty && (
                 <p className="unsaved-notice" role="status">
@@ -489,96 +530,116 @@ export default function PackWorkspace({
                   oder verwerfen.
                 </p>
               )}
-              <p className="quiet">
-                Manuelle Änderungen werden nicht automatisch auf Fakten geprüft.
-                Quellenreferenzen beziehen sich auf die Generierungsgrundlage.
-              </p>
-              <div className="buttons">
-                <button
-                  className="button primary"
-                  disabled={busy || !dirty || version !== job.output_revision}
-                  onClick={() =>
-                    void perform(async () => {
-                      display(
-                        await api<Job>(
-                          `/api/projects/${projectId}/packs/${job.id}/edit`,
-                          {
-                            expectedVersion: job.output_revision,
-                            posts,
-                            hooks,
-                            cta,
-                          },
-                        ),
-                      );
-                      setNotice("Änderungen als neue Version gespeichert.");
-                    })
-                  }
-                >
-                  Änderungen speichern
-                </button>
-                {dirty && (
+              {(section === "posts" || section === "hooks") && (
+                <p className="quiet">
+                  Manuelle Änderungen werden nicht automatisch auf Fakten
+                  geprüft. Quellenreferenzen beziehen sich auf die
+                  Generierungsgrundlage.
+                </p>
+              )}
+              {dirty && (
+                <div className="buttons">
+                  <button
+                    className="button primary"
+                    disabled={busy || !dirty || version !== job.output_revision}
+                    onClick={() =>
+                      void perform(async () => {
+                        display(
+                          await api<Job>(
+                            `/api/projects/${projectId}/packs/${job.id}/edit`,
+                            {
+                              expectedVersion: job.output_revision,
+                              posts,
+                              hooks,
+                              cta,
+                            },
+                          ),
+                        );
+                        setNotice("Änderungen als neue Version gespeichert.");
+                      })
+                    }
+                  >
+                    Änderungen speichern
+                  </button>
+                  {dirty && (
+                    <button
+                      className="button secondary"
+                      onClick={() => display(job)}
+                    >
+                      Änderungen verwerfen
+                    </button>
+                  )}
+                </div>
+              )}
+              <div
+                className="pack-tab-panel"
+                role="tabpanel"
+                id="workspace-pack-export"
+                aria-labelledby="workspace-pack-tab-export"
+                hidden={section !== "export"}
+                tabIndex={0}
+              >
+                <h3>Prüfen und manuell exportieren</h3>
+                <p className="muted">
+                  Speichere deine Änderungen und prüfe diese Version. Erst
+                  danach kannst du sie herunterladen oder kopieren. Es wird
+                  nichts automatisch veröffentlicht.
+                </p>
+                <details>
+                  <summary>
+                    Bestätigte Fakten und Quellen der Generierungsgrundlage
+                  </summary>
+                  <ul>
+                    {current.facts.map((f) => (
+                      <li key={f.id}>
+                        <strong>{f.statement}</strong> [{f.id}]
+                        {f.sourceUrls.map((url) => (
+                          <p key={url}>
+                            <a href={url} target="_blank" rel="noreferrer">
+                              Quelle ansehen ↗
+                            </a>
+                          </p>
+                        ))}
+                      </li>
+                    ))}
+                  </ul>
+                  <p>Unbestätigte Vorschläge wurden ausgeschlossen.</p>
+                </details>
+                <label className="pilot-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={reviewed}
+                    onChange={(e) => setReviewed(e.target.checked)}
+                  />
+                  Ich habe diese gespeicherte Version geprüft. Ich
+                  veröffentliche selbst.
+                </label>
+                <div className="buttons">
+                  <button
+                    className="button primary"
+                    disabled={
+                      busy ||
+                      dirty ||
+                      !reviewed ||
+                      version !== job.output_revision
+                    }
+                    onClick={() => void exportPack(true)}
+                  >
+                    Als Markdown herunterladen
+                  </button>
                   <button
                     className="button secondary"
-                    onClick={() => display(job)}
+                    disabled={
+                      busy ||
+                      dirty ||
+                      !reviewed ||
+                      version !== job.output_revision
+                    }
+                    onClick={() => void exportPack(false)}
                   >
-                    Änderungen verwerfen
+                    Inhalte kopieren
                   </button>
-                )}
-              </div>
-              <details>
-                <summary>
-                  Bestätigte Fakten und Quellen der Generierungsgrundlage
-                </summary>
-                <ul>
-                  {current.facts.map((f) => (
-                    <li key={f.id}>
-                      <strong>{f.statement}</strong> [{f.id}]
-                      {f.sourceUrls.map((url) => (
-                        <p key={url}>
-                          <a href={url} target="_blank" rel="noreferrer">
-                            Quelle ansehen ↗
-                          </a>
-                        </p>
-                      ))}
-                    </li>
-                  ))}
-                </ul>
-                <p>Unbestätigte Vorschläge wurden ausgeschlossen.</p>
-              </details>
-              <label className="pilot-checkbox">
-                <input
-                  type="checkbox"
-                  checked={reviewed}
-                  onChange={(e) => setReviewed(e.target.checked)}
-                />
-                Ich habe diese gespeicherte Version geprüft. Ich veröffentliche
-                selbst.
-              </label>
-              <div className="buttons">
-                <button
-                  className="button primary"
-                  disabled={
-                    busy ||
-                    dirty ||
-                    !reviewed ||
-                    version !== job.output_revision
-                  }
-                  onClick={() => void exportPack(true)}
-                >
-                  Als Markdown herunterladen
-                </button>
-                <button
-                  className="button secondary"
-                  disabled={
-                    busy ||
-                    dirty ||
-                    !reviewed ||
-                    version !== job.output_revision
-                  }
-                  onClick={() => void exportPack(false)}
-                >
-                  Inhalte kopieren
-                </button>
+                </div>
               </div>
             </section>
           )}

@@ -1,0 +1,48 @@
+.pack-section-nav {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  padding: 6px;
+  background: #f3f0f7;
+  border: 1px solid #e0d9e9;
+  border-radius: 10px;
+  margin: 24px 0;
+}
+.pack-section-nav button {
+  min-height: 48px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: 10px 8px;
+  background: transparent;
+  color: #645471;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.pack-section-nav button[aria-selected="true"] {
+  background: #fff;
+  color: #58418b;
+  border-color: #d9cde9;
+  box-shadow: 0 2px 5px #38254e08;
+}
+.pack-section-nav button:focus-visible {
+  outline: 3px solid #9380d8;
+  outline-offset: 2px;
+}
+.pack-tab-panel {
+  scroll-margin-top: 100px;
+}
+.pack-tab-panel[hidden] {
+  display: none;
+}
+@media (max-width: 850px) {
+  .pack-section-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+  .pack-section-nav button {
+    font-size: 12px;
+  }
+}

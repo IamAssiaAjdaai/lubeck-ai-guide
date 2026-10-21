@@ -598,16 +598,46 @@ export default function LandingPage() {
             <a className="m-button primary" href="#beispiel">
               Beispiel-Kampagne ansehen →
             </a>
-            <div className="pilot-status">
-              <strong>Pilot-Zugang: noch nicht freigegeben</strong>
-              <p>
-                Die Kontaktaufnahme ist hier deaktiviert. Wir sammeln keine
-                Interessenten-Daten, solange rechtliche und operative Freigaben
-                ausstehen.
+            <div className="pilot-status" aria-labelledby="pilot-heading">
+              <span className="m-badge">
+                Vorschau verfügbar · Pilot geschlossen
+              </span>
+              <h3 id="pilot-heading">
+                Für deinen Betrieb? Der Pilot ist noch in Vorbereitung.
+              </h3>
+              <div className="pilot-options">
+                <div>
+                  <strong>Jetzt entdecken</strong>
+                  <p>
+                    Die fiktive Beispiel-Kampagne funktioniert ohne Anmeldung.
+                    Du kannst Inhalte bearbeiten und manuell exportieren.
+                  </p>
+                </div>
+                <div>
+                  <strong>Erst nach Freigabe</strong>
+                  <p>
+                    Ein kontrollierter Pilot für echte Betriebe. Rechtliche
+                    Angaben, sicherer Betrieb und Pilot-Konditionen müssen
+                    vorher freigegeben sein. Ein Starttermin steht noch nicht
+                    fest.
+                  </p>
+                </div>
+              </div>
+              <p id="pilot-reason">
+                Anfragen sind derzeit deaktiviert. Wir erfassen hier keine
+                Kontaktdaten. Keine Registrierung, keine Buchung und keine
+                Wartelisten-Anmeldung.
               </p>
-              <button className="m-button secondary" disabled>
-                Pilot-Anfragen derzeit geschlossen
+              <button
+                className="m-button secondary"
+                disabled
+                aria-describedby="pilot-reason"
+              >
+                Pilot-Zugang anfragen · noch nicht verfügbar
               </button>
+              <a className="pilot-legal-link" href="/rechtliches">
+                Freigabestatus ansehen →
+              </a>
             </div>
           </div>
         </section>

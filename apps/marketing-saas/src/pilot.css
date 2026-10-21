@@ -759,3 +759,13 @@ meter::-webkit-meter-optimum-value {
 .pack-deliverables span {
   color: #6c6078;
 }
+.pack-result {
+  scroll-margin-top: 24px;
+}
+.pack-result .pack-section-nav button {
+  justify-self: stretch;
+}
+.pack-tab-panel > h3,
+.pack-tab-panel > h4 {
+  margin-top: 20px;
+}
