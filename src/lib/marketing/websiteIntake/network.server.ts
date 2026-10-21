@@ -64,7 +64,7 @@ export const pinnedHttpsNetwork: WebsiteNetwork = {
     req.end();
   }),
 };
-export async function safeRead(url: URL, network: WebsiteNetwork, signal: AbortSignal, maxBytes = 262_144, allowed = (_url: URL) => true): Promise<ResponseData & { sourceUrl: string }> {
+export async function safeRead(url: URL, network: WebsiteNetwork, signal: AbortSignal, maxBytes = 262_144, allowed: (url: URL) => boolean = () => true): Promise<ResponseData & { sourceUrl: string }> {
   const origin = url.origin;
   for (let redirects = 0; redirects <= 2; redirects++) {
     signal.throwIfAborted();

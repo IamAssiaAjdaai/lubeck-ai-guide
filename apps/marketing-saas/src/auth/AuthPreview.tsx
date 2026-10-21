@@ -198,7 +198,7 @@ export default function AuthPreview() {
               <div className="auth-story-center">
                 <p>YOUR AI MARKETING TEAM</p>
                 <h2>Make your business impossible to overlook.</h2>
-                <div className="auth-story-sub">A thoughtful workspace for your marketing — from business facts to strategy and content. You're always in control.</div>
+                <div className="auth-story-sub">A thoughtful workspace for your marketing — from business facts to strategy and content. You&apos;re always in control.</div>
                 <ul>
                   <li>Verify your business facts</li>
                   <li>Approve content before publishing</li>

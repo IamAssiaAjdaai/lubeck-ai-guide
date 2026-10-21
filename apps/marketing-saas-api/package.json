@@ -1,0 +1,8 @@
+{
+ "name":"@marketing/saas-api", "private":true, "type":"module",
+ "scripts":{
+  "dev":"node --conditions=react-server --import tsx src/server.ts",
+  "db:migrate":"node --conditions=react-server --import tsx src/migrate.ts",
+  "typecheck":"tsc --noEmit -p tsconfig.json"
+ }
+}

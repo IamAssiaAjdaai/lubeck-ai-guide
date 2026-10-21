@@ -138,7 +138,7 @@ export default function App() {
             <>
               <div className="eyebrow">YOUR WORKSPACE / GET STARTED</div>
               <div className="pageheading">
-                <div><h1>Create your project</h1><p className="muted">Tell us about your business. We'll guide you through the rest.</p></div>
+                <div><h1>Create your project</h1><p className="muted">Tell us about your business. We&apos;ll guide you through the rest.</p></div>
               </div>
               <div className="wizard">
                 <ol className="steps" aria-label="Onboarding steps">
@@ -207,7 +207,7 @@ export default function App() {
                       <p className="muted">Your submitted brief is formatted locally. Automated analysis is not connected yet.</p>
                       <div className="analysis-banner" role="status"><span aria-hidden="true">◌</span><div>
                         <strong>No external analysis performed</strong>
-                        <small>We haven't fetched your website, checked competitors, or called an AI provider.</small>
+                        <small>We haven&apos;t fetched your website, checked competitors, or called an AI provider.</small>
                       </div></div>
                       <Panel title="Details provided by you">
                         <p className="summary-row"><span>Project</span><strong>{current?.identity.name ?? draft.name}</strong></p>
@@ -275,7 +275,7 @@ export default function App() {
                   <button className="button secondary" onClick={() => { setStage(1); setScreen("setup"); }} type="button">Edit brief</button>
                 </Panel>
                 <Panel title="Your AI Marketing Team (coming later)">
-                  <p className="muted">We'll turn confirmed business facts into marketing plans after source analysis, secure project storage, and editorial review are ready.</p>
+                  <p className="muted">We&apos;ll turn confirmed business facts into marketing plans after source analysis, secure project storage, and editorial review are ready.</p>
                   <div className="soft-note">No paid AI requests, publishing or scheduling take place in this preview.</div>
                 </Panel>
               </div>
