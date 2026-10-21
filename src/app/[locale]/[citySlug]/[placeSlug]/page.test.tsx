@@ -44,7 +44,7 @@ vi.mock("@/lib/content/publicRepository.server", async () => {
   };
 });
 
-import { GenericPlaceContent } from "@/app/[locale]/[citySlug]/[placeSlug]/page";
+import { GenericPlaceContent } from "@/app/[locale]/[citySlug]/[placeSlug]/content";
 
 describe("generic public place detail", () => {
   beforeEach(() => {
