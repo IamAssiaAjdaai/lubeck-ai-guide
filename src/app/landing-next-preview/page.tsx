@@ -77,15 +77,28 @@ export default function LandingNextPreviewPage() {
       <a className={styles.skip} href="#content">Skip to content</a>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <a className={styles.brand} href="#top" aria-label="CITYWALK, back to the top"><CitywalkLogo /></a>
+          <a className={styles.brand} href="#top" aria-label="CITYWALK — back to top"><CitywalkLogo /></a>
           <nav className={styles.headerNav} aria-label="Main navigation">
             <a href="#how-it-works">How it works</a>
-            <a href="#features">Features</a>
+            <a href="#features">The app</a>
             <a href="#cities">Cities</a>
-            <a href="#faq">FAQ</a>
             <Link href="/support">Support</Link>
           </nav>
-          <Link className={styles.headerCta} href="/explore">Explore CITYWALK <ArrowUpRight size={17} /></Link>
+          <div className={styles.headerActions}>
+            <Link className={styles.headerSignIn} href="/explore">Explore</Link>
+            <a className={styles.headerCta} href="#download">Get the app <ArrowUpRight size={18} /></a>
+          </div>
+          <details className={styles.mobileMenu}>
+            <summary aria-label="Open navigation menu">Menu <span aria-hidden="true">☰</span></summary>
+            <nav aria-label="Mobile navigation">
+              <a href="#how-it-works">How it works</a>
+              <a href="#features">The app</a>
+              <a href="#cities">Cities</a>
+              <a href="#faq">FAQ</a>
+              <Link href="/support">Support</Link>
+              <Link href="/explore">Explore</Link>
+            </nav>
+          </details>
         </div>
       </header>
 
@@ -93,23 +106,25 @@ export default function LandingNextPreviewPage() {
         <section className={styles.hero} aria-labelledby="main-title">
           <div className={styles.heroInner}>
             <div className={styles.heroCopy}>
-              <div className={styles.eyebrow}><span className={styles.eyebrowDot} /> THE CITY IS YOURS TO DISCOVER</div>
-              <h1 id="main-title">Your city.<br /><em>Your way.</em></h1>
-              <p className={styles.heroLead}>Turn a little free time into a memorable walk. Find your route, follow local stories and make every stop count with CITYWALK.</p>
-              <p className={styles.launchPill}><MapPin size={16} /> Starting in Lübeck · {storeLinks.ios || storeLinks.android ? "Native listings opening in stages" : "iPhone & Android in preparation"}</p>
+              <p className={styles.eyebrow}><span className={styles.eyebrowDot} /> DISCOVER CITIES DIFFERENTLY</p>
+              <h1 id="main-title">Make every city<br /><em>your own.</em></h1>
+              <p className={styles.heroLead}>
+                Discover remarkable places at your pace. CITYWALK helps you find a personal route, explore local stories and make the most of your time.
+              </p>
               <div className={styles.heroActions}>
                 <Link className={styles.primary} href="/explore">Start exploring <ArrowUpRight size={19} /></Link>
-                <a className={styles.outline} href="#how-it-works">See how it works <ArrowRight size={18} /></a>
+                <a className={styles.outline} href="#download">Get the app <ArrowRight size={18} /></a>
               </div>
-              <div className={styles.heroBenefits} aria-label="CITYWALK highlights">
-                <span><Clock3 size={18} /> Your schedule</span>
-                <span><Route size={18} /> Personal walks</span>
-                <span><Headphones size={18} /> Local stories</span>
+              <p className={styles.launchPill}><MapPin size={16} /> Lübeck first · {storeLinks.ios || storeLinks.android ? "Official store listings available where published" : "Native iPhone & Android app coming soon"}</p>
+              <div className={styles.heroBenefits} aria-label="CITYWALK benefits">
+                <span><Clock3 size={19} /> At your pace</span>
+                <span><Route size={19} /> Personal routes</span>
+                <span><Headphones size={19} /> Stories & audio</span>
               </div>
             </div>
             <div className={styles.heroVisual}>
               <div className={styles.photoBackdrop} aria-hidden="true" />
-              <div className={styles.photoCaption} aria-hidden="true">A little more<br /><em>discovery.</em></div>
+              <div className={styles.heroBadge}><MapPin size={18} strokeWidth={2} /><span>Starting in <strong>Lübeck</strong></span></div>
               <IllustrativePhone />
             </div>
           </div>
