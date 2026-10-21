@@ -70,7 +70,7 @@ export default async function TermsPage() {
       <section>
         <h2>4. Free and paid access</h2>
         <p>
-          CITYWALK can offer free features, time-limited city passes and recurring premium plans. An internal price configuration is not a public offer. A separately approved 28-day launch access period, if activated, requires no purchase or subscription enrollment and creates no automatic charge or paid subscription when it ends. Existing purchases retain their verified rights. Premium and other store prices are the prices displayed to you in the relevant checkout or app store at the time of purchase; taxes and localized store pricing may affect the displayed amount.
+          CITYWALK offers free features and may offer time-limited city passes or recurring premium plans through supported native iOS and Android apps when enabled. An internal price configuration is not a public offer. There is no website checkout for City Passes or subscriptions. Existing verified purchases retain their rights. Prices, taxes, product duration and renewal terms (where applicable) are shown in the relevant Apple or Google in-app purchase flow before purchase.
         </p>
         <p>
           Paid access begins and ends according to the product shown at purchase. Access can depend on successful provider confirmation and entitlement reconciliation. A purchase does not transfer ownership of CITYWALK software, content or intellectual-property rights.
@@ -80,7 +80,7 @@ export default async function TermsPage() {
       <section>
         <h2>5. Subscriptions, cancellation and refunds</h2>
         <p>
-          If you buy a recurring subscription through Apple or Google, renewal, cancellation and store refunds are handled under the rules and account controls of that store. Where CITYWALK offers web checkout, the checkout may be processed by Stripe and the purchase terms shown there also apply.
+          If you buy a recurring subscription in the native app through Apple or Google, renewal, cancellation and store-managed refunds follow the rules and account controls of that store, subject to mandatory consumer rights. CITYWALK does not sell City Passes or subscriptions through its website.
         </p>
         <p>
           Deleting a CITYWALK account does not itself cancel a store subscription and does not automatically create a refund. You should separately manage an active Apple or Google subscription in the relevant store account.
