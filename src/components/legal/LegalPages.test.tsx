@@ -49,3 +49,12 @@ describe.each(pages)("$path public legal route", ({ path, page, metadata, headin
     expect((await sitemap()).some(item => item.url.endsWith(path))).toBe(true);
   });
 });
+
+it("keeps the approved native-only purchase policy in public Terms", async () => {
+  for (const [key, value] of Object.entries(identity)) vi.stubEnv(key, value);
+  render(await TermsPage());
+  expect(screen.getByText(/through supported native iOS and Android apps/i)).toBeDefined();
+  expect(screen.getByText(/There is no website checkout for City Passes or subscriptions/i)).toBeDefined();
+  expect(screen.queryByText(/28-day launch access/i)).toBeNull();
+  expect(screen.queryByText(/Stripe/i)).toBeNull();
+});
