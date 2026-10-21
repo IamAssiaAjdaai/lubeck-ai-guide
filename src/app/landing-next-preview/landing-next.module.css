@@ -113,6 +113,8 @@
 .download p:not(.kicker) { max-width: 520px; margin-top: 18px; line-height: 1.75; color: #425e58; }
 .platforms { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 21px; }
 .platforms span { padding: 10px 14px; background: #f7faf5; border: 1px solid #cadccc; border-radius: 9px; font-size: 12px; font-weight: 720; }
+.platforms a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 14px; border-radius: 9px; background: var(--blue); color: #fff; font-size: 12px; font-weight: 750; }
+.platforms a:hover { background: var(--blue-deep); }
 .downloadArt { display: flex; align-items: center; flex-direction: column; justify-content: center; gap: 8px; min-height: 310px; padding: 20px; border-radius: 32px; color: #fff; background: #1b4550; transform: rotate(5deg); box-shadow: 0 22px 50px #152f3522; }
 .downloadArt svg { width: 94px; height: 82px; }
 .downloadArt strong { font-size: 28px; letter-spacing: -.055em; }
