@@ -1,0 +1,30 @@
+name: Native Preview locked contract
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/native-preview-locked.yml'
+      - 'src/cloudflare/**'
+      - 'tools/native-api-preview/**'
+      - 'tools/cloudflare-preview/**'
+      - 'package-lock.json'
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node node_modules/vitest/vitest.mjs run --config tools/native-api-preview/vitest.config.ts
+      - run: node node_modules/vitest/vitest.mjs run --config tools/cloudflare-preview/vitest.config.ts
+      - run: node node_modules/typescript/bin/tsc --noEmit -p tools/native-api-preview/tsconfig.json
+      - run: node node_modules/eslint/bin/eslint.js src/cloudflare/nativePreview* tools/native-api-preview/
+      - run: git diff --exit-code && git diff --check
