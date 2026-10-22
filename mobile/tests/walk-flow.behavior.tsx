@@ -670,6 +670,7 @@ describe("rendered native V2 flow (native bridges mocked, not device acceptance)
   });
   it("clears a mounted route when its current walk finishes elsewhere", async () => {
     setup(); await preview();
+    await waitFor(() => expect(mocks.changed).toBeTypeOf("function"));
     act(() => mocks.changed?.(undefined));
     expect(screen.queryByRole("button", { name: walkCopy("en").startWalk })).toBeNull();
     expect(screen.getByRole("button", { name: walkCopy("en").buildAction })).toBeTruthy();
