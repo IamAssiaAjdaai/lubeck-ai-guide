@@ -17,7 +17,7 @@ describe("Preview target selection", () => {
       assert.throws(() => fetch('https://example.test'), /FETCH_DENIED/);
     `;
     expect(() => execFileSync(process.execPath, ["--import", "./tools/cloudflare-preview/network-guard.mjs", "--input-type=module", "--eval", source], {
-      env: { PATH: process.env.PATH ?? "", HOME: "/tmp" }, stdio: "pipe", timeout: 10_000,
+      env: { PATH: process.env.PATH ?? "", HOME: "/tmp", NODE_ENV: "test" }, stdio: "pipe", timeout: 10_000,
     })).not.toThrow();
   });
 
@@ -36,7 +36,7 @@ describe("Preview target selection", () => {
   });
 
   it.each([undefined, "390958927c2946be8571ec5282b35ce6"])("stops before a build without an acceptable independently supplied Hyperdrive ID", id => {
-    const env: Record<string, string> = { PATH: process.env.PATH ?? "", HOME: "/tmp" };
+    const env: NodeJS.ProcessEnv = { PATH: process.env.PATH ?? "", HOME: "/tmp", NODE_ENV: "test" };
     if (id) env.CITYWALK_PREVIEW_HYPERDRIVE_ID = id;
     const result = spawnSync(process.execPath, ["tools/cloudflare-preview/prepare.mjs"], {
       env, encoding: "utf8", timeout: 2_000,
