@@ -64,8 +64,11 @@
     "mobile:local-check": "npm --prefix mobile run local:check",
     "marketing:demo": "node scripts/marketing-saas-local.mjs demo",
     "marketing:db:migrate": "node scripts/marketing-saas-local.mjs migrate",
-    "marketing:test:integration": "vitest run apps/marketing-saas-api/src/auth.integration.test.ts apps/marketing-saas-api/src/packs.integration.test.ts",
-    "marketing:db:verify": "node scripts/marketing-saas-local.mjs verify"
+    "marketing:test:integration": "vitest run --no-file-parallelism apps/marketing-saas-api/src/auth.integration.test.ts apps/marketing-saas-api/src/packs.integration.test.ts apps/marketing-saas-api/qa/service.integration.test.ts",
+    "marketing:db:verify": "node scripts/marketing-saas-local.mjs verify",
+    "marketing:ai:offline": "node --conditions=react-server --import tsx scripts/marketing-saas-ai-eval.mjs",
+    "marketing:ai:test": "vitest run apps/marketing-saas-api/qa",
+    "marketing:ai:typecheck": "tsc --noEmit -p apps/marketing-saas-api/qa/tsconfig.json"
   },
   "dependencies": {
     "@apple/app-store-server-library": "3.1.0",

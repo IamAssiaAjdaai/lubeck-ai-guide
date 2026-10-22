@@ -1,0 +1,71 @@
+OFFLINE · SYNTHETISCH · KEINE MODELLANFRAGE · KEINE VERÖFFENTLICHUNG
+
+# Marketing-Pack: Fiktiv Kontur Steuerbüro
+
+Version 1 · demo/deterministic-local-v1 · Entwurf zur Prüfung
+
+DEMO — deterministische lokale Vorlage, keine echte KI-Generierung.
+
+Ziel: sichtbarkeit · Zielgruppe (deine Vorgabe): Kleine Unternehmen in Hamburg, die Abläufe einer Steuerberatung kennenlernen möchten
+
+## 7-Tage-Plan (Europe/Berlin; Vorschläge, nicht terminiert)
+
+1. linkedin · 09:00: Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor. [s03-service]
+
+2. linkedin · 09:00: Erkläre eine bestätigte Leistung und lade zu Fragen ein. [s03-process]
+
+3. linkedin · 09:00: Frage deine Zielgruppe, welche Unterstützung sie gerade braucht. [s03-service]
+
+4. linkedin · 09:00: Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit. [s03-process]
+
+5. linkedin · 09:00: Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal. [s03-service]
+
+6. linkedin · 09:00: Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich. [s03-process]
+
+7. linkedin · 09:00: Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest. [s03-service]
+
+## Drei Social-Media-Entwürfe
+
+### Beitrag 1 (linkedin)
+Ein klarer Blick auf dein nächstes Projekt.
+
+Unser Steuerbüro in Hamburg bietet die Vorbereitung von Buchhaltungsunterlagen an.
+
+Du möchtest mehr erfahren? Schreib uns eine Nachricht.
+Faktenreferenzen der Ursprungsversion: s03-service
+
+### Beitrag 2 (linkedin)
+Was ist dir bei deinem Dienstleister wichtig?
+
+Wir besprechen mit Unternehmen, welche Unterlagen für die Zusammenarbeit benötigt werden.
+
+Du möchtest mehr erfahren? Schreib uns eine Nachricht.
+Faktenreferenzen der Ursprungsversion: s03-process
+
+### Beitrag 3 (linkedin)
+Was brauchst du für deinen nächsten Schritt?
+
+Unser Steuerbüro in Hamburg bietet die Vorbereitung von Buchhaltungsunterlagen an.
+
+Du möchtest mehr erfahren? Schreib uns eine Nachricht.
+Faktenreferenzen der Ursprungsversion: s03-service
+
+## Alternative Einstiege
+
+- Ein klarer Blick auf dein nächstes Projekt.
+
+- Was ist dir bei deinem Dienstleister wichtig?
+
+- Was brauchst du für deinen nächsten Schritt?
+
+## Handlungsaufforderung
+
+Du möchtest mehr erfahren? Schreib uns eine Nachricht.
+
+## Bestätigte Fakten der Generierungsgrundlage
+
+- [s03-service] Unser Steuerbüro in Hamburg bietet die Vorbereitung von Buchhaltungsunterlagen an. — https://s03.example/leistungen
+
+- [s03-process] Wir besprechen mit Unternehmen, welche Unterlagen für die Zusammenarbeit benötigt werden. — https://s03.example/leistungen
+
+Unbestätigte Vorschläge und unbekannte Angaben wurden nicht zur Generierung verwendet. Manuelle Änderungen werden nicht automatisch auf Fakten geprüft. Vor Veröffentlichung prüfen.

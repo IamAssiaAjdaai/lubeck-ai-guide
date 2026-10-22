@@ -90,11 +90,19 @@ export function createPackProvider(
         max_output_tokens: maxOutputTokens,
         store: false,
       });
+      // Missing partial usage is unknown cost, never a known zero-token charge.
+      // Throw before returning so PackService retains the reservation and attempt.
+      const usage = response.usage;
+      if (
+        !usage ||
+        !Number.isSafeInteger(usage.input_tokens) || usage.input_tokens <= 0 ||
+        !Number.isSafeInteger(usage.output_tokens) || usage.output_tokens < 0
+      ) throw new Error("MISSING_PROVIDER_USAGE");
       return {
         selection: response.output_parsed,
         model: response.model,
-        inputTokens: response.usage?.input_tokens ?? 0,
-        outputTokens: response.usage?.output_tokens ?? 0,
+        inputTokens: usage.input_tokens,
+        outputTokens: usage.output_tokens,
       };
     },
   };

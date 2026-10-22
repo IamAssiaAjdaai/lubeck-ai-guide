@@ -1,0 +1,73 @@
+OFFLINE · SYNTHETISCH · KEINE MODELLANFRAGE · KEINE VERÖFFENTLICHUNG
+
+# Marketing-Pack: Fiktiv Speichenzeit Werkstatt
+
+Version 1 · offline-mock/synthetic-selection-v1 · Entwurf zur Prüfung
+
+KI-gestützter Entwurf. Keine Veröffentlichung erfolgt.
+
+Ziel: mehr_anfragen · Zielgruppe (deine Vorgabe): Fahrradbesitzer in Freiburg vor der nächsten Fahrradsaison
+
+## 7-Tage-Plan (Europe/Berlin; Vorschläge, nicht terminiert)
+
+1. instagram · 09:00: Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest. [s07-service]
+
+2. instagram · 12:00: Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor. [s07-check]
+
+3. instagram · 18:00: Erkläre eine bestätigte Leistung und lade zu Fragen ein. [s07-process]
+
+4. instagram · 09:00: Frage deine Zielgruppe, welche Unterstützung sie gerade braucht. [s07-service]
+
+5. instagram · 12:00: Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit. [s07-check]
+
+6. instagram · 18:00: Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal. [s07-process]
+
+7. instagram · 09:00: Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich. [s07-service]
+
+## Drei Social-Media-Entwürfe
+
+### Beitrag 1 (instagram)
+Ein klarer Blick auf dein nächstes Projekt.
+
+Wir reparieren Fahrräder in Freiburg.
+
+Du möchtest mehr erfahren? Schreib uns eine Nachricht.
+Faktenreferenzen der Ursprungsversion: s07-service
+
+### Beitrag 2 (instagram)
+Was ist dir bei deinem Dienstleister wichtig?
+
+Wir prüfen Bremsen und Beleuchtung am Fahrrad.
+
+Du möchtest mehr erfahren? Schreib uns eine Nachricht.
+Faktenreferenzen der Ursprungsversion: s07-check
+
+### Beitrag 3 (instagram)
+Was brauchst du für deinen nächsten Schritt?
+
+Den Reparaturumfang stimmen wir vor Arbeitsbeginn mit Fahrradbesitzern ab.
+
+Du möchtest mehr erfahren? Schreib uns eine Nachricht.
+Faktenreferenzen der Ursprungsversion: s07-process
+
+## Alternative Einstiege
+
+- Ein klarer Blick auf dein nächstes Projekt.
+
+- Was brauchst du für deinen nächsten Schritt?
+
+- Gut informiert entscheiden.
+
+## Handlungsaufforderung
+
+Du möchtest mehr erfahren? Schreib uns eine Nachricht.
+
+## Bestätigte Fakten der Generierungsgrundlage
+
+- [s07-service] Wir reparieren Fahrräder in Freiburg. — https://s07.example/leistungen
+
+- [s07-check] Wir prüfen Bremsen und Beleuchtung am Fahrrad. — https://s07.example/leistungen
+
+- [s07-process] Den Reparaturumfang stimmen wir vor Arbeitsbeginn mit Fahrradbesitzern ab. — https://s07.example/leistungen
+
+Unbestätigte Vorschläge und unbekannte Angaben wurden nicht zur Generierung verwendet. Manuelle Änderungen werden nicht automatisch auf Fakten geprüft. Vor Veröffentlichung prüfen.

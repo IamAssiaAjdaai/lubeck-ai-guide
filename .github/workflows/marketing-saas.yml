@@ -6,6 +6,7 @@ on:
       - 'src/lib/marketing/websiteIntake/**'
       - 'packages/marketing-core/**'
       - 'scripts/marketing-saas-*.mjs'
+      - 'scripts/marketing-saas-offline/**'
       - 'package*.json'
       - '.github/workflows/marketing-saas.yml'
 permissions:
@@ -42,6 +43,12 @@ jobs:
       - run: npm run marketing:db:migrate
       - run: npm run marketing:db:migrate
       - run: npm run test:run -- src/lib/marketing/websiteIntake apps/marketing-saas-api/src/pack.provider.test.ts
+      - name: Hermetic offline AI acceptance
+        run: |
+          npm run marketing:ai:offline -- --check
+          npm run marketing:ai:offline -- --guard-probe
+          npm run marketing:ai:test
+          npm run marketing:ai:typecheck
       - run: npm run marketing:test:integration
       - run: npm run marketing:db:verify
       - run: npm --prefix apps/marketing-saas-api run typecheck
@@ -71,3 +78,4 @@ jobs:
             docs/qa/marketing-saas/ux-411-refinement/**
             docs/design/marketing-saas/brand-01/qa/**
             docs/design/marketing-saas/brand-02/qa/**
+            docs/qa/marketing-saas/ai-416/**

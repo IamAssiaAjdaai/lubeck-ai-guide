@@ -1,0 +1,117 @@
+{
+  "issue": 416,
+  "date": "2026-10-22",
+  "timezone": "Europe/Berlin",
+  "baselineCommit": "684aa76ff871e4b0f825aa053849ad2c70a86860",
+  "branch": "codex/mkt-ai-qa-01-offline-acceptance",
+  "recommendation": "NO_GO_EXTERNAL_PAID_PILOT",
+  "offlineEvidence": {
+    "scenarios": 10,
+    "outputs": 20,
+    "realModelCalls": 0,
+    "realCostEur": 0,
+    "humanGraded": 0,
+    "humanPending": 20,
+    "guardProbeDenied": 6
+  },
+  "checks": [
+    {
+      "command": "npm run test:run",
+      "passed": 1546,
+      "skipped": 161,
+      "filesPassed": 239,
+      "filesSkipped": 22
+    },
+    {
+      "command": "npm run marketing:ai:test",
+      "passed": 30,
+      "skipped": 19,
+      "note": "DB cases separately executed"
+    },
+    {
+      "command": "MARKETING_TEST_DATABASE_URL=<isolated local QA DB> npm run marketing:test:integration",
+      "passed": 28,
+      "skipped": 0,
+      "existing": 9,
+      "new": 19
+    },
+    {
+      "command": "npm run marketing:ai:offline -- --check",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run marketing:ai:offline -- --guard-probe",
+      "result": "PASS",
+      "blocked": 6
+    },
+    {
+      "command": "npm run marketing:ai:offline -- --check --require-go",
+      "expectedExit": 2,
+      "result": "PASS as asserted in CLI tests"
+    },
+    {
+      "command": "npm run marketing:ai:typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm --prefix apps/marketing-saas-api run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm --prefix apps/marketing-saas run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run lint",
+      "errors": 0,
+      "existingWarnings": 8
+    },
+    {
+      "command": "npm --prefix apps/marketing-saas run build",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build -- --webpack",
+      "result": "PASS",
+      "settings": "synthetic build-only; no production DB"
+    },
+    {
+      "command": "npm run marketing:db:migrate / marketing:db:verify",
+      "result": "PASS",
+      "database": "marketing_ai_qa_416",
+      "migrations": 4
+    },
+    {
+      "command": "npm run db:generate",
+      "result": "PASS: no drift"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "beforeFixRegression": {
+    "case": "partial output usage coerced to zero",
+    "failed": 1,
+    "passed": 4,
+    "transport": "fully mocked SDK"
+  },
+  "runtimeChange": "Reject absent/invalid partial token usage; no selector/schema/UI/DB contract change",
+  "notExecuted": [
+    "live model evaluation",
+    "paid API calls",
+    "human grading",
+    "standard Turbopack build (known worktree dependency symlink constraint)",
+    "CITYWALK DB migrate/verify",
+    "deployment",
+    "merge"
+  ],
+  "sourceDocumentation": [
+    "https://developers.openai.com/api/docs/models/gpt-5.4-mini",
+    "https://developers.openai.com/api/docs/pricing"
+  ]
+}
