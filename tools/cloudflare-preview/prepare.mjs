@@ -8,7 +8,7 @@ import { FIXTURE_HYPERDRIVE, requirePreviewHyperdrive, validatePreviewArtifact, 
 
 const root = path.resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const args = process.argv.slice(2);
-assert.ok(args.length === 0 || args.length === 1 && args[0] === "--fixture", "Usage: node --import tsx tools/cloudflare-preview/prepare.mjs [--fixture]");
+assert.ok(args.length === 0 || args.length === 1 && args[0] === "--fixture", "Usage: node tools/cloudflare-preview/prepare.mjs [--fixture]");
 const fixture = args[0] === "--fixture";
 const id = requirePreviewHyperdrive(fixture ? FIXTURE_HYPERDRIVE : process.env.CITYWALK_PREVIEW_HYPERDRIVE_ID, fixture);
 const revision = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();

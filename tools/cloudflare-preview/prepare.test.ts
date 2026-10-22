@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { loadAndParseConfig } from "@cloudflare/config";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { FIXTURE_HYPERDRIVE } from "./contract.mjs";
@@ -38,8 +38,11 @@ describe("Preview target selection", () => {
   it.each([undefined, "390958927c2946be8571ec5282b35ce6"])("stops before a build without an acceptable independently supplied Hyperdrive ID", id => {
     const env: Record<string, string> = { PATH: process.env.PATH ?? "", HOME: "/tmp" };
     if (id) env.CITYWALK_PREVIEW_HYPERDRIVE_ID = id;
-    expect(() => execFileSync(process.execPath, ["--import", "tsx", "tools/cloudflare-preview/prepare.mjs"], {
-      env, stdio: "pipe", timeout: 10_000,
-    })).toThrow();
+    const result = spawnSync(process.execPath, ["tools/cloudflare-preview/prepare.mjs"], {
+      env, encoding: "utf8", timeout: 2_000,
+    });
+    expect(result.error).toBeUndefined();
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain(id ? "Production Hyperdrive is forbidden" : "An independently verified Preview Hyperdrive ID is required");
   });
 });

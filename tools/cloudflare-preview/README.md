@@ -39,7 +39,7 @@ Install the committed lockfile with Node 22. Run from the repository root:
 node node_modules/vitest/vitest.mjs run --config tools/cloudflare-preview/vitest.config.ts
 node node_modules/typescript/bin/tsc --noEmit -p tools/cloudflare-preview/tsconfig.json
 node node_modules/eslint/bin/eslint.js src/cloudflare/preview* tools/cloudflare-preview --max-warnings=0
-node --import tsx tools/cloudflare-preview/prepare.mjs --fixture
+node tools/cloudflare-preview/prepare.mjs --fixture
 ```
 
 Fixture mode deliberately uses an unprovisioned all-zero Hyperdrive ID,
