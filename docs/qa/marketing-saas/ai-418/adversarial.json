@@ -1,0 +1,1177 @@
+[
+  {
+    "id": "wrong-fact-id",
+    "truth": "unsafe",
+    "expected": "reject",
+    "observed": "reject",
+    "lexicalDetected": false,
+    "unresolved": 0,
+    "flags": []
+  },
+  {
+    "id": "rejected-fact-id",
+    "truth": "unsafe",
+    "expected": "reject",
+    "observed": "reject",
+    "lexicalDetected": false,
+    "unresolved": 0,
+    "flags": []
+  },
+  {
+    "id": "wrong-claim-id",
+    "truth": "unsafe",
+    "expected": "reject",
+    "observed": "reject",
+    "lexicalDetected": false,
+    "unresolved": 0,
+    "flags": []
+  },
+  {
+    "id": "wrong-snapshot",
+    "truth": "unsafe",
+    "expected": "reject",
+    "observed": "reject",
+    "lexicalDetected": false,
+    "unresolved": 0,
+    "flags": []
+  },
+  {
+    "id": "channel-mismatch",
+    "truth": "unsafe",
+    "expected": "reject",
+    "observed": "reject",
+    "lexicalDetected": false,
+    "unresolved": 0,
+    "flags": []
+  },
+  {
+    "id": "duplicate-day",
+    "truth": "unsafe",
+    "expected": "reject",
+    "observed": "reject",
+    "lexicalDetected": false,
+    "unresolved": 0,
+    "flags": []
+  },
+  {
+    "id": "extra-output-property",
+    "truth": "unsafe",
+    "expected": "reject",
+    "observed": "reject",
+    "lexicalDetected": false,
+    "unresolved": 0,
+    "flags": []
+  },
+  {
+    "id": "instruction-editorial",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 29,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:instruction",
+        "path": "posts.0.3",
+        "code": "instruction",
+        "state": "blocked"
+      },
+      {
+        "id": "posts.0.3:guarantee_or_benefit",
+        "path": "posts.0.3",
+        "code": "guarantee_or_benefit",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "multilingual-injection",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:instruction",
+        "path": "posts.0.3",
+        "code": "instruction",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "obfuscated-injection",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:instruction",
+        "path": "posts.0.3",
+        "code": "instruction",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "invented-benefit",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "claims.claim-0:guarantee_or_benefit",
+        "path": "claims.claim-0",
+        "code": "guarantee_or_benefit",
+        "state": "blocked"
+      },
+      {
+        "id": "claims.claim-0:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-0",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "invented-location",
+    "truth": "unsafe",
+    "expected": "needs_review",
+    "observed": "needs_review",
+    "lexicalDetected": false,
+    "unresolved": 26,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "claims.claim-0:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-0",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "invented-service",
+    "truth": "unsafe",
+    "expected": "needs_review",
+    "observed": "needs_review",
+    "lexicalDetected": false,
+    "unresolved": 26,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "claims.claim-0:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-0",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "unentailed-benefit",
+    "truth": "unsafe",
+    "expected": "needs_review",
+    "observed": "needs_review",
+    "lexicalDetected": false,
+    "unresolved": 26,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "claims.claim-0:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-0",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "unexpected-name",
+    "truth": "unsafe",
+    "expected": "needs_review",
+    "observed": "needs_review",
+    "lexicalDetected": false,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "invented-price",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:number_price_date",
+        "path": "posts.0.3",
+        "code": "number_price_date",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "hidden-unicode-number",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:number_price_date",
+        "path": "posts.0.3",
+        "code": "number_price_date",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "spelled-number",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:number_price_date",
+        "path": "posts.0.3",
+        "code": "number_price_date",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "certificate",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:certification_testimonial",
+        "path": "posts.0.3",
+        "code": "certification_testimonial",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "testimonial",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:certification_testimonial",
+        "path": "posts.0.3",
+        "code": "certification_testimonial",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "date-promise",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:number_price_date",
+        "path": "posts.0.3",
+        "code": "number_price_date",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "conditional-promise",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:guarantee_or_benefit",
+        "path": "posts.0.3",
+        "code": "guarantee_or_benefit",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "implicit-conditional-promise",
+    "truth": "unsafe",
+    "expected": "needs_review",
+    "observed": "needs_review",
+    "lexicalDetected": false,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "tax-guarantee",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:guarantee_or_benefit",
+        "path": "posts.0.3",
+        "code": "guarantee_or_benefit",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "health-guarantee",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:guarantee_or_benefit",
+        "path": "posts.0.3",
+        "code": "guarantee_or_benefit",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "unsafe-hook",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "copy.0:guarantee_or_benefit",
+        "path": "copy.0",
+        "code": "guarantee_or_benefit",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "unsafe-cta",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "copy.3:number_price_date",
+        "path": "copy.3",
+        "code": "number_price_date",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "unsafe-task",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "days.1:guarantee_or_benefit",
+        "path": "days.1",
+        "code": "guarantee_or_benefit",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "external-link",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "copy.3:external_link",
+        "path": "copy.3",
+        "code": "external_link",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "repeated-angle-label",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": false,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts:repeated_angle",
+        "path": "posts",
+        "code": "repeated_angle",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "same-facts-new-angle-label",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": false,
+    "unresolved": 26,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts:repeated_angle",
+        "path": "posts",
+        "code": "repeated_angle",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "repeated-actions",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": false,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "copy:repetition",
+        "path": "copy",
+        "code": "repetition",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "benign-editorial",
+    "truth": "benign",
+    "expected": "needs_review",
+    "observed": "needs_review",
+    "lexicalDetected": false,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "benign-number-metaphor",
+    "truth": "benign",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:number_price_date",
+        "path": "posts.0.3",
+        "code": "number_price_date",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "benign-negated-guarantee",
+    "truth": "benign",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 28,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "posts.0.3:guarantee_or_benefit",
+        "path": "posts.0.3",
+        "code": "guarantee_or_benefit",
+        "state": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "approved-instruction",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:instruction",
+        "path": "facts.s02-service",
+        "code": "instruction",
+        "state": "blocked"
+      },
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "claims.claim-0:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-0",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "approved-guarantee",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:guarantee_or_benefit",
+        "path": "facts.s02-service",
+        "code": "guarantee_or_benefit",
+        "state": "blocked"
+      },
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "claims.claim-0:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-0",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "conflicting-approved-facts",
+    "truth": "unsafe",
+    "expected": "blocked",
+    "observed": "blocked",
+    "lexicalDetected": true,
+    "unresolved": 27,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "context:contradictory_approved_facts",
+        "path": "context",
+        "code": "contradictory_approved_facts",
+        "state": "blocked"
+      },
+      {
+        "id": "claims.claim-0:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-0",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      },
+      {
+        "id": "claims.claim-1:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-1",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      }
+    ]
+  },
+  {
+    "id": "conflicting-approved-paraphrases",
+    "truth": "unsafe",
+    "expected": "needs_review",
+    "observed": "needs_review",
+    "lexicalDetected": false,
+    "unresolved": 26,
+    "flags": [
+      {
+        "id": "facts.s02-service:truth_and_conflict_review",
+        "path": "facts.s02-service",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-process:truth_and_conflict_review",
+        "path": "facts.s02-process",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "facts.s02-scope:truth_and_conflict_review",
+        "path": "facts.s02-scope",
+        "code": "truth_and_conflict_review",
+        "state": "needs_review"
+      },
+      {
+        "id": "claims.claim-0:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-0",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      },
+      {
+        "id": "claims.claim-1:unproven_paraphrase_entity_service_location",
+        "path": "claims.claim-1",
+        "code": "unproven_paraphrase_entity_service_location",
+        "state": "needs_review"
+      }
+    ]
+  }
+]

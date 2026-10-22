@@ -49,6 +49,11 @@ jobs:
           npm run marketing:ai:offline -- --guard-probe
           npm run marketing:ai:test
           npm run marketing:ai:typecheck
+      - name: Offline v2 claim-ledger spike
+        run: |
+          npm run marketing:ai:v2:offline -- --check
+          npm run marketing:ai:v2:test
+          npm run marketing:ai:v2:typecheck
       - run: npm run marketing:test:integration
       - run: npm run marketing:db:verify
       - run: npm --prefix apps/marketing-saas-api run typecheck
@@ -79,3 +84,4 @@ jobs:
             docs/design/marketing-saas/brand-01/qa/**
             docs/design/marketing-saas/brand-02/qa/**
             docs/qa/marketing-saas/ai-416/**
+            docs/qa/marketing-saas/ai-418/**

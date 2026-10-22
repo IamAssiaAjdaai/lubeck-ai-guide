@@ -1,0 +1,5167 @@
+{
+  "summary": {
+    "baseCommit": "7e67061362762020f97d707898927a82c21b2994",
+    "sourceHashes": {
+      "apps/marketing-saas-api/qa-v2/engine.ts": "8e81a21f011993d6d97ec3c83f587899d9c0deb1e7cb405dbd29553aec4a4374",
+      "apps/marketing-saas-api/qa-v2/fixtures.ts": "530601d69a6ecfdfc452dd58a81911ca0378ace8d414316b30dbfd871f87f5c9",
+      "apps/marketing-saas-api/qa-v2/adversarial.ts": "b627cd1228efdfb44ecd51351d88811ca462cad5dba113cc67d037cb46513a29",
+      "apps/marketing-saas-api/qa-v2/evaluate.ts": "92d00d9e553d8a70d03ad4e4cb0bde0b600cfee64281bcb405aa607ff8074c7d",
+      "apps/marketing-saas-api/qa/scenarios.ts": "b4239393b7972fe3288cd9459815f332a6ae30d935440a79b32b136be1eeba02",
+      "apps/marketing-saas-api/src/pack.contract.ts": "137f49485d4180ece5f51a2298972337431d02bcb47d81a93972e9ba40416807",
+      "scripts/marketing-saas-ai-v2-eval.mjs": "5af4878cdc321fcc80fa88b8276b8f9e312c9306f913715c786bd0c14471cdf6",
+      "scripts/marketing-saas-offline/guard.mjs": "a38254c87ceafefaa6d4d28a8f3ec7b5686509b4b137544430e3413b2a3b502e"
+    },
+    "sourceHashAlgorithm": "SHA-256 of canonical JSON string",
+    "origin": "HUMAN_AUTHORED_OFFLINE_MOCK_NOT_MODEL_OUTPUT",
+    "requests": 0,
+    "actualSpendEur": 0,
+    "scenarios": 10,
+    "v2Posts": 24,
+    "humanScoresCompleted": 0,
+    "commercial": "NO-GO",
+    "feasibility": "GO for further offline research only",
+    "semanticSafety": "NOT PROVEN",
+    "lexicalAdversarialUnsafe": 26,
+    "lexicalFalseNegatives": [
+      "invented-location",
+      "invented-service",
+      "unentailed-benefit",
+      "unexpected-name",
+      "implicit-conditional-promise",
+      "conflicting-approved-paraphrases"
+    ],
+    "falsePositivePolicyBlocks": [
+      "benign-number-metaphor",
+      "benign-negated-guarantee"
+    ],
+    "benignReviewBurden": 3,
+    "unsafeAutoApproved": 0,
+    "pendingReviews": 248,
+    "goldLimit": "Known unsupported=0 is authored fixture annotation, not independently verified semantic accuracy.",
+    "v1TaskWordings": 7,
+    "v2TaskWordings": 70
+  },
+  "rows": [
+    {
+      "id": "s01",
+      "business": "Fiktiv Rheinbüro Service",
+      "goal": "mehr_anfragen",
+      "channel": "linkedin",
+      "risk": "ordinary",
+      "approvedFacts": 2,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Rheinbüro Service",
+          "goal": "mehr_anfragen",
+          "audience": "Büroleitungen kleiner Unternehmen in Düsseldorf",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "linkedin",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s01-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "linkedin",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s01-scope"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "linkedin",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s01-service"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "linkedin",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s01-scope"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "linkedin",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s01-service"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "linkedin",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s01-scope"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "linkedin",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s01-service"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "linkedin",
+              "factIds": [
+                "s01-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nWir reinigen Büros in Düsseldorf.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "linkedin",
+              "factIds": [
+                "s01-scope"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nUnser Angebot umfasst die Reinigung von Besprechungsräumen.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "linkedin",
+              "factIds": [
+                "s01-service"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nWir reinigen Büros in Düsseldorf.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s01-service",
+              "statement": "Wir reinigen Büros in Düsseldorf.",
+              "sourceUrls": [
+                "https://s01.example/leistungen"
+              ]
+            },
+            {
+              "id": "s01-scope",
+              "statement": "Unser Angebot umfasst die Reinigung von Besprechungsräumen.",
+              "sourceUrls": [
+                "https://s01.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 2,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "965220835591a7e6acfc3a8d4a6985dcb1364fe499ae9e63e9b2b6d73c2e1bbe",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Wir reinigen Büros in Düsseldorf.",
+                "factIds": [
+                  "s01-service"
+                ],
+                "snapshotHash": "965220835591a7e6acfc3a8d4a6985dcb1364fe499ae9e63e9b2b6d73c2e1bbe"
+              },
+              {
+                "id": "claim-1",
+                "text": "Unser Angebot umfasst die Reinigung von Besprechungsräumen.",
+                "factIds": [
+                  "s01-scope"
+                ],
+                "snapshotHash": "965220835591a7e6acfc3a8d4a6985dcb1364fe499ae9e63e9b2b6d73c2e1bbe"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Büroreinigung",
+                "channel": "linkedin",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Wenn das Büro zum Thema wird."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Bereiche möchtet ihr für eine Anfrage festhalten?"
+                  }
+                ]
+              },
+              {
+                "angle": "Besprechungsräume",
+                "channel": "linkedin",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Der Besprechungsraum gehört dazu."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-1"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Auch der Raum für eure Gespräche darf Teil der Anfrage sein. Was möchtet ihr dazu wissen?"
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "Wenn das Büro zum Thema wird.",
+              "Der Besprechungsraum gehört dazu.",
+              "Welche Räume stehen bei euch im Fokus?"
+            ],
+            "cta": "Beschreibe dein Anliegen in einer persönlichen Nachricht. Welche Frage möchtest du zuerst klären?",
+            "days": [
+              {
+                "day": 1,
+                "channel": "linkedin",
+                "task": "Notiere, welche Fragen Büroleitungen zur Büroreinigung stellen könnten.",
+                "factIds": [
+                  "s01-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "linkedin",
+                "task": "Lege den bestätigten Umfang für Besprechungsräume neben den Entwurf.",
+                "factIds": [
+                  "s01-scope"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "linkedin",
+                "task": "Wähle ein eigenes freigegebenes Foto eines leeren Besprechungsraums.",
+                "factIds": [
+                  "s01-service"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "linkedin",
+                "task": "Prüfe, ob die beiden Texte unterschiedliche Fragen von Büroleitungen aufgreifen.",
+                "factIds": [
+                  "s01-scope"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "linkedin",
+                "task": "Entscheide nach Faktenprüfung manuell, ob du den Büro-Beitrag auf LinkedIn teilen möchtest.",
+                "factIds": [
+                  "s01-service"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "linkedin",
+                "task": "Sammle eingegangene Anfragen und notiere die angesprochenen Räume.",
+                "factIds": [
+                  "s01-scope"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "linkedin",
+                "task": "Vergleiche die Raumfragen aus Anfragen und wähle das nächste Erklärungsthema.",
+                "factIds": [
+                  "s01-service"
+                ]
+              }
+            ],
+            "missingInformation": [
+              "Welche weitere eigenständige Leistung oder welcher konkrete Ablauf kann bestätigt werden?",
+              "Welchen nachvollziehbaren Nutzen dürfen wir anhand einer bestätigten Aussage beschreiben?"
+            ]
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s01",
+            "contextId": "s01-context",
+            "revision": 2,
+            "businessName": "Fiktiv Rheinbüro Service",
+            "facts": [
+              {
+                "id": "s01-service",
+                "statement": "Wir reinigen Büros in Düsseldorf.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s01-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s01.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s01-scope",
+                "statement": "Unser Angebot umfasst die Reinigung von Besprechungsräumen.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s01-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s01.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "meistprämiert",
+                "seit 30 Jahren",
+                "19 Euro"
+              ]
+            },
+            "risk": "ordinary",
+            "goal": "mehr_anfragen",
+            "audience": "Büroleitungen kleiner Unternehmen in Düsseldorf",
+            "channel": "linkedin",
+            "hash": "965220835591a7e6acfc3a8d4a6985dcb1364fe499ae9e63e9b2b6d73c2e1bbe"
+          },
+          "contentHash": "e999ac9e8492c3462dae5360bffaa8ec9d852db4582b37abe513d24c8c55124e",
+          "flags": [
+            {
+              "id": "facts.s01-service:truth_and_conflict_review",
+              "path": "facts.s01-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s01-scope:truth_and_conflict_review",
+              "path": "facts.s01-scope",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-1:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-1",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1:angle_goal_channel_review",
+              "path": "posts.1",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.0:editorial_may_contain_hidden_claim",
+              "path": "posts.1.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.2:editorial_may_contain_hidden_claim",
+              "path": "posts.1.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.4:copy_semantics",
+              "path": "copy.4",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.5:copy_semantics",
+              "path": "copy.5",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "context:insufficient_facts",
+              "path": "context",
+              "code": "insufficient_facts",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 2,
+        "distinctFactAngleProxy": 2,
+        "authoredEditorialWords": 34,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 2,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    },
+    {
+      "id": "s02",
+      "business": "Fiktiv Strombogen Elektro",
+      "goal": "mehr_anfragen",
+      "channel": "instagram",
+      "risk": "ordinary",
+      "approvedFacts": 3,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Strombogen Elektro",
+          "goal": "mehr_anfragen",
+          "audience": "Private Hauseigentümer in Köln mit Fragen zu Elektroinstallationen",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "instagram",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s02-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "instagram",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s02-process"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "instagram",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s02-scope"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "instagram",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s02-service"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "instagram",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s02-process"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "instagram",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s02-scope"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "instagram",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s02-service"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s02-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nWir führen Elektroinstallationen in Köln aus.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s02-process"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nWir besprechen den geplanten Installationsumfang vor Beginn mit Hauseigentümern.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s02-scope"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nWir installieren Steckdosen und Beleuchtung in Wohnräumen.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s02-service",
+              "statement": "Wir führen Elektroinstallationen in Köln aus.",
+              "sourceUrls": [
+                "https://s02.example/leistungen"
+              ]
+            },
+            {
+              "id": "s02-process",
+              "statement": "Wir besprechen den geplanten Installationsumfang vor Beginn mit Hauseigentümern.",
+              "sourceUrls": [
+                "https://s02.example/leistungen"
+              ]
+            },
+            {
+              "id": "s02-scope",
+              "statement": "Wir installieren Steckdosen und Beleuchtung in Wohnräumen.",
+              "sourceUrls": [
+                "https://s02.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 3,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "b0aa25ca55170275cafe8325f09291b42c16788c9fb3ffb2872177fd8322d32e",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Wir führen Elektroinstallationen in Köln aus.",
+                "factIds": [
+                  "s02-service"
+                ],
+                "snapshotHash": "b0aa25ca55170275cafe8325f09291b42c16788c9fb3ffb2872177fd8322d32e"
+              },
+              {
+                "id": "claim-1",
+                "text": "Wir besprechen den geplanten Installationsumfang vor Beginn mit Hauseigentümern.",
+                "factIds": [
+                  "s02-process"
+                ],
+                "snapshotHash": "b0aa25ca55170275cafe8325f09291b42c16788c9fb3ffb2872177fd8322d32e"
+              },
+              {
+                "id": "claim-2",
+                "text": "Wir installieren Steckdosen und Beleuchtung in Wohnräumen.",
+                "factIds": [
+                  "s02-scope"
+                ],
+                "snapshotHash": "b0aa25ca55170275cafe8325f09291b42c16788c9fb3ffb2872177fd8322d32e"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Elektroinstallation",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Eine Idee für dein Zuhause?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Was steht auf deiner Liste für das Zuhause? Beschreibe dein Vorhaben in deiner Anfrage."
+                  }
+                ]
+              },
+              {
+                "angle": "Abstimmung vor Beginn",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Erst den Umfang besprechen."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-1"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Räume und Wünsche möchtest du vorab ansprechen? Nimm deine Notizen mit ins Gespräch."
+                  }
+                ]
+              },
+              {
+                "angle": "Steckdosen und Licht",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Licht oder Steckdose: Was planst du?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-2"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Wo möchtest du ansetzen? Eine Beschreibung des Raums ist ein guter Gesprächseinstieg."
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "Eine Idee für dein Zuhause?",
+              "Erst den Umfang besprechen.",
+              "Licht oder Steckdose: Was planst du?"
+            ],
+            "cta": "Beschreibe dein Anliegen in einer persönlichen Nachricht. Welche Frage möchtest du zuerst klären?",
+            "days": [
+              {
+                "day": 1,
+                "channel": "instagram",
+                "task": "Sammle typische Fragen von Hauseigentümern zur Elektroinstallation.",
+                "factIds": [
+                  "s02-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "instagram",
+                "task": "Markiere im Entwurf die Aussage zur Abstimmung vor Beginn.",
+                "factIds": [
+                  "s02-process"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "instagram",
+                "task": "Wähle ein eigenes freigegebenes Foto von Beleuchtung ohne Personen.",
+                "factIds": [
+                  "s02-scope"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "instagram",
+                "task": "Prüfe den Licht-Beitrag auf unbelegte Sicherheits- oder Verfügbarkeitsaussagen.",
+                "factIds": [
+                  "s02-service"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "instagram",
+                "task": "Teile den freigegebenen Installations-Beitrag bei Bedarf manuell auf Instagram.",
+                "factIds": [
+                  "s02-process"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "instagram",
+                "task": "Ordne eingegangene Anfragen nach Raum und gewünschter Installation.",
+                "factIds": [
+                  "s02-scope"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "instagram",
+                "task": "Notiere, welche Angaben Hauseigentümer für das Vorgespräch ergänzen möchten.",
+                "factIds": [
+                  "s02-service"
+                ]
+              }
+            ],
+            "missingInformation": []
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s02",
+            "contextId": "s02-context",
+            "revision": 2,
+            "businessName": "Fiktiv Strombogen Elektro",
+            "facts": [
+              {
+                "id": "s02-service",
+                "statement": "Wir führen Elektroinstallationen in Köln aus.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s02-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s02.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s02-process",
+                "statement": "Wir besprechen den geplanten Installationsumfang vor Beginn mit Hauseigentümern.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s02-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s02.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s02-scope",
+                "statement": "Wir installieren Steckdosen und Beleuchtung in Wohnräumen.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s02-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s02.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "Meister",
+                "Notdienst",
+                "rund um die Uhr"
+              ]
+            },
+            "risk": "ordinary",
+            "goal": "mehr_anfragen",
+            "audience": "Private Hauseigentümer in Köln mit Fragen zu Elektroinstallationen",
+            "channel": "instagram",
+            "hash": "b0aa25ca55170275cafe8325f09291b42c16788c9fb3ffb2872177fd8322d32e"
+          },
+          "contentHash": "2adf97cb110caac7985e7d48c146927911116233091a73a578466b13ca99e6cd",
+          "flags": [
+            {
+              "id": "facts.s02-service:truth_and_conflict_review",
+              "path": "facts.s02-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s02-process:truth_and_conflict_review",
+              "path": "facts.s02-process",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s02-scope:truth_and_conflict_review",
+              "path": "facts.s02-scope",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-1:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-1",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-2:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-2",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1:angle_goal_channel_review",
+              "path": "posts.1",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.0:editorial_may_contain_hidden_claim",
+              "path": "posts.1.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.2:editorial_may_contain_hidden_claim",
+              "path": "posts.1.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2:angle_goal_channel_review",
+              "path": "posts.2",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.0:editorial_may_contain_hidden_claim",
+              "path": "posts.2.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.2:editorial_may_contain_hidden_claim",
+              "path": "posts.2.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 3,
+        "distinctFactAngleProxy": 3,
+        "authoredEditorialWords": 55,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 3,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    },
+    {
+      "id": "s03",
+      "business": "Fiktiv Kontur Steuerbüro",
+      "goal": "sichtbarkeit",
+      "channel": "linkedin",
+      "risk": "tax",
+      "approvedFacts": 2,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Kontur Steuerbüro",
+          "goal": "sichtbarkeit",
+          "audience": "Kleine Unternehmen in Hamburg, die Abläufe einer Steuerberatung kennenlernen möchten",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "linkedin",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s03-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "linkedin",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s03-process"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "linkedin",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s03-service"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "linkedin",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s03-process"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "linkedin",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s03-service"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "linkedin",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s03-process"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "linkedin",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s03-service"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "linkedin",
+              "factIds": [
+                "s03-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nUnser Steuerbüro in Hamburg bietet die Vorbereitung von Buchhaltungsunterlagen an.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "linkedin",
+              "factIds": [
+                "s03-process"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nWir besprechen mit Unternehmen, welche Unterlagen für die Zusammenarbeit benötigt werden.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "linkedin",
+              "factIds": [
+                "s03-service"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nUnser Steuerbüro in Hamburg bietet die Vorbereitung von Buchhaltungsunterlagen an.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s03-service",
+              "statement": "Unser Steuerbüro in Hamburg bietet die Vorbereitung von Buchhaltungsunterlagen an.",
+              "sourceUrls": [
+                "https://s03.example/leistungen"
+              ]
+            },
+            {
+              "id": "s03-process",
+              "statement": "Wir besprechen mit Unternehmen, welche Unterlagen für die Zusammenarbeit benötigt werden.",
+              "sourceUrls": [
+                "https://s03.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 2,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "f332a0555f875ce6c5da1cbb49d9d4d5d9a96ecc12824a35838502db5103985d",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Unser Steuerbüro in Hamburg bietet die Vorbereitung von Buchhaltungsunterlagen an.",
+                "factIds": [
+                  "s03-service"
+                ],
+                "snapshotHash": "f332a0555f875ce6c5da1cbb49d9d4d5d9a96ecc12824a35838502db5103985d"
+              },
+              {
+                "id": "claim-1",
+                "text": "Wir besprechen mit Unternehmen, welche Unterlagen für die Zusammenarbeit benötigt werden.",
+                "factIds": [
+                  "s03-process"
+                ],
+                "snapshotHash": "f332a0555f875ce6c5da1cbb49d9d4d5d9a96ecc12824a35838502db5103985d"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Unterlagen vorbereiten",
+                "channel": "linkedin",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Buchhaltungsunterlagen: Wo beginnt das Gespräch?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Fragen möchtest du zur Vorbereitung stellen? Sammle sie für ein persönliches Gespräch."
+                  }
+                ]
+              },
+              {
+                "angle": "Zusammenarbeit verstehen",
+                "channel": "linkedin",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Zusammenarbeit beginnt mit Fragen."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-1"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Unterlagen sind für dein Unternehmen relevant? Frage nach dem Ablauf, statt Annahmen zu treffen."
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "Buchhaltungsunterlagen: Wo beginnt das Gespräch?",
+              "Zusammenarbeit beginnt mit Fragen.",
+              "Was möchtest du über den Ablauf wissen?"
+            ],
+            "cta": "Welche Frage möchtest du zum Angebot stellen? Teile sie im persönlichen Gespräch.",
+            "days": [
+              {
+                "day": 1,
+                "channel": "linkedin",
+                "task": "Sammle Fragen kleiner Unternehmen zur Vorbereitung von Buchhaltungsunterlagen.",
+                "factIds": [
+                  "s03-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "linkedin",
+                "task": "Ordne dem Ablauf-Beitrag die bestätigte Unterlagen-Aussage zu.",
+                "factIds": [
+                  "s03-process"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "linkedin",
+                "task": "Wähle eine eigene freigegebene Grafik ohne Mandantendaten.",
+                "factIds": [
+                  "s03-service"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "linkedin",
+                "task": "Lass beide Entwürfe fachlich auf unbelegte steuerliche Vorteile prüfen.",
+                "factIds": [
+                  "s03-process"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "linkedin",
+                "task": "Entscheide erst nach Fachfreigabe manuell über den Informationsbeitrag auf LinkedIn.",
+                "factIds": [
+                  "s03-service"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "linkedin",
+                "task": "Notiere, welche Ablauf-Fragen in Kommentaren auftauchen; beantworte Einzelfälle persönlich.",
+                "factIds": [
+                  "s03-process"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "linkedin",
+                "task": "Vergleiche die Rückfragen und wähle das nächste reine Informationsthema.",
+                "factIds": [
+                  "s03-service"
+                ]
+              }
+            ],
+            "missingInformation": [
+              "Welche weitere eigenständige Leistung oder welcher konkrete Ablauf kann bestätigt werden?",
+              "Welchen nachvollziehbaren Nutzen dürfen wir anhand einer bestätigten Aussage beschreiben?"
+            ]
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s03",
+            "contextId": "s03-context",
+            "revision": 2,
+            "businessName": "Fiktiv Kontur Steuerbüro",
+            "facts": [
+              {
+                "id": "s03-service",
+                "statement": "Unser Steuerbüro in Hamburg bietet die Vorbereitung von Buchhaltungsunterlagen an.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s03-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s03.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s03-process",
+                "statement": "Wir besprechen mit Unternehmen, welche Unterlagen für die Zusammenarbeit benötigt werden.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s03-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s03.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "garantiert weniger Steuern",
+                "Steuern sparen garantiert",
+                "rechtssicher garantiert"
+              ]
+            },
+            "risk": "tax",
+            "goal": "sichtbarkeit",
+            "audience": "Kleine Unternehmen in Hamburg, die Abläufe einer Steuerberatung kennenlernen möchten",
+            "channel": "linkedin",
+            "hash": "f332a0555f875ce6c5da1cbb49d9d4d5d9a96ecc12824a35838502db5103985d"
+          },
+          "contentHash": "d0a8359d3922c155cdbd93167f4b72b0fa3d2d0aac53e8675997a5828462293b",
+          "flags": [
+            {
+              "id": "facts.s03-service:truth_and_conflict_review",
+              "path": "facts.s03-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s03-process:truth_and_conflict_review",
+              "path": "facts.s03-process",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-1:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-1",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1:angle_goal_channel_review",
+              "path": "posts.1",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.0:editorial_may_contain_hidden_claim",
+              "path": "posts.1.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.2:editorial_may_contain_hidden_claim",
+              "path": "posts.1.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.4:copy_semantics",
+              "path": "copy.4",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.5:copy_semantics",
+              "path": "copy.5",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "context:insufficient_facts",
+              "path": "context",
+              "code": "insufficient_facts",
+              "state": "needs_review"
+            },
+            {
+              "id": "context:regulated_specialist_review",
+              "path": "context",
+              "code": "regulated_specialist_review",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 2,
+        "distinctFactAngleProxy": 2,
+        "authoredEditorialWords": 37,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 2,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    },
+    {
+      "id": "s04",
+      "business": "Fiktiv Bewegungsraum Praxis",
+      "goal": "sichtbarkeit",
+      "channel": "instagram",
+      "risk": "medical",
+      "approvedFacts": 2,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Bewegungsraum Praxis",
+          "goal": "sichtbarkeit",
+          "audience": "Menschen in München, die Informationen zum Praxisangebot suchen",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "instagram",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s04-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "instagram",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s04-process"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "instagram",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s04-service"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "instagram",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s04-process"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "instagram",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s04-service"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "instagram",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s04-process"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "instagram",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s04-service"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s04-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nUnsere Physiotherapiepraxis befindet sich in München.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s04-process"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nInformationen zum Ablauf des ersten Praxisbesuchs geben wir auf Anfrage.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s04-service"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nUnsere Physiotherapiepraxis befindet sich in München.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s04-service",
+              "statement": "Unsere Physiotherapiepraxis befindet sich in München.",
+              "sourceUrls": [
+                "https://s04.example/leistungen"
+              ]
+            },
+            {
+              "id": "s04-process",
+              "statement": "Informationen zum Ablauf des ersten Praxisbesuchs geben wir auf Anfrage.",
+              "sourceUrls": [
+                "https://s04.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 2,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "71a010a6b97dd269ba3e2ff42a425afb43a0e21bbf7fe178e33e8220ebe2f3fa",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Unsere Physiotherapiepraxis befindet sich in München.",
+                "factIds": [
+                  "s04-service"
+                ],
+                "snapshotHash": "71a010a6b97dd269ba3e2ff42a425afb43a0e21bbf7fe178e33e8220ebe2f3fa"
+              },
+              {
+                "id": "claim-1",
+                "text": "Informationen zum Ablauf des ersten Praxisbesuchs geben wir auf Anfrage.",
+                "factIds": [
+                  "s04-process"
+                ],
+                "snapshotHash": "71a010a6b97dd269ba3e2ff42a425afb43a0e21bbf7fe178e33e8220ebe2f3fa"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Praxisort",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Die Praxis kennenlernen."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Du möchtest dir vorab ein Bild machen? Welche Informationen fehlen dir für deinen Besuch?"
+                  }
+                ]
+              },
+              {
+                "angle": "Erster Besuch",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Vor dem ersten Besuch."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-1"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Was möchtest du zum Ablauf wissen? Notiere deine Frage und frage persönlich nach."
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "Die Praxis kennenlernen.",
+              "Vor dem ersten Besuch.",
+              "Welche Frage möchtest du mitbringen?"
+            ],
+            "cta": "Welche Frage möchtest du zum Angebot stellen? Teile sie im persönlichen Gespräch.",
+            "days": [
+              {
+                "day": 1,
+                "channel": "instagram",
+                "task": "Sammle organisatorische Fragen zum ersten Praxisbesuch ohne Gesundheitsdaten.",
+                "factIds": [
+                  "s04-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "instagram",
+                "task": "Vergleiche den Ablauf-Entwurf mit der bestätigten Auskunft auf Anfrage.",
+                "factIds": [
+                  "s04-process"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "instagram",
+                "task": "Wähle ein eigenes freigegebenes Praxisfoto ohne Patienten.",
+                "factIds": [
+                  "s04-service"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "instagram",
+                "task": "Lass die Texte fachlich auf Wirkversprechen und individuelle Gesundheitstipps prüfen.",
+                "factIds": [
+                  "s04-process"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "instagram",
+                "task": "Entscheide nach Fachfreigabe manuell über den Praxis-Beitrag auf Instagram.",
+                "factIds": [
+                  "s04-service"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "instagram",
+                "task": "Sammle nur allgemeine organisatorische Rückfragen; verweise persönliche Anliegen ins direkte Gespräch.",
+                "factIds": [
+                  "s04-process"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "instagram",
+                "task": "Wähle anhand der Rückfragen ein weiteres organisatorisches Informationsthema.",
+                "factIds": [
+                  "s04-service"
+                ]
+              }
+            ],
+            "missingInformation": [
+              "Welche weitere eigenständige Leistung oder welcher konkrete Ablauf kann bestätigt werden?",
+              "Welchen nachvollziehbaren Nutzen dürfen wir anhand einer bestätigten Aussage beschreiben?"
+            ]
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s04",
+            "contextId": "s04-context",
+            "revision": 2,
+            "businessName": "Fiktiv Bewegungsraum Praxis",
+            "facts": [
+              {
+                "id": "s04-service",
+                "statement": "Unsere Physiotherapiepraxis befindet sich in München.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s04-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s04.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s04-process",
+                "statement": "Informationen zum Ablauf des ersten Praxisbesuchs geben wir auf Anfrage.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s04-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s04.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "beseitigt Rückenschmerzen",
+                "garantiert nach einer Sitzung",
+                "Heilung"
+              ]
+            },
+            "risk": "medical",
+            "goal": "sichtbarkeit",
+            "audience": "Menschen in München, die Informationen zum Praxisangebot suchen",
+            "channel": "instagram",
+            "hash": "71a010a6b97dd269ba3e2ff42a425afb43a0e21bbf7fe178e33e8220ebe2f3fa"
+          },
+          "contentHash": "01f0b1522d6a275b8ba7f57c96463af5ea699720b2c171bd7059bbe13ade12f2",
+          "flags": [
+            {
+              "id": "facts.s04-service:truth_and_conflict_review",
+              "path": "facts.s04-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s04-process:truth_and_conflict_review",
+              "path": "facts.s04-process",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-1:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-1",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1:angle_goal_channel_review",
+              "path": "posts.1",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.0:editorial_may_contain_hidden_claim",
+              "path": "posts.1.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.2:editorial_may_contain_hidden_claim",
+              "path": "posts.1.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.4:copy_semantics",
+              "path": "copy.4",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.5:copy_semantics",
+              "path": "copy.5",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "context:insufficient_facts",
+              "path": "context",
+              "code": "insufficient_facts",
+              "state": "needs_review"
+            },
+            {
+              "id": "context:regulated_specialist_review",
+              "path": "context",
+              "code": "regulated_specialist_review",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 2,
+        "distinctFactAngleProxy": 2,
+        "authoredEditorialWords": 34,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 2,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    },
+    {
+      "id": "s05",
+      "business": "Fiktiv Netzform IT",
+      "goal": "mehr_anfragen",
+      "channel": "linkedin",
+      "risk": "ordinary",
+      "approvedFacts": 4,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Netzform IT",
+          "goal": "mehr_anfragen",
+          "audience": "IT-Verantwortliche kleiner B2B-Unternehmen in Berlin",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "linkedin",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s05-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "linkedin",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s05-inventory"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "linkedin",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s05-process"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "linkedin",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s05-scope"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "linkedin",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s05-service"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "linkedin",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s05-inventory"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "linkedin",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s05-process"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "linkedin",
+              "factIds": [
+                "s05-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nWir unterstützen kleine Unternehmen in Berlin bei ihrer IT-Infrastruktur.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "linkedin",
+              "factIds": [
+                "s05-inventory"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nWir dokumentieren vorhandene IT-Geräte für den internen Überblick.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "linkedin",
+              "factIds": [
+                "s05-process"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nWir besprechen geplante Infrastrukturänderungen mit den IT-Verantwortlichen.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s05-service",
+              "statement": "Wir unterstützen kleine Unternehmen in Berlin bei ihrer IT-Infrastruktur.",
+              "sourceUrls": [
+                "https://s05.example/leistungen"
+              ]
+            },
+            {
+              "id": "s05-inventory",
+              "statement": "Wir dokumentieren vorhandene IT-Geräte für den internen Überblick.",
+              "sourceUrls": [
+                "https://s05.example/leistungen"
+              ]
+            },
+            {
+              "id": "s05-process",
+              "statement": "Wir besprechen geplante Infrastrukturänderungen mit den IT-Verantwortlichen.",
+              "sourceUrls": [
+                "https://s05.example/leistungen"
+              ]
+            },
+            {
+              "id": "s05-scope",
+              "statement": "Unser Angebot umfasst die Einrichtung von Arbeitsplatzrechnern.",
+              "sourceUrls": [
+                "https://s05.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 3,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "7e2c3c0c69ca848db5e660bbb7cd2e865ea81033dd196cb0a4ca086825c5a91e",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Wir unterstützen kleine Unternehmen in Berlin bei ihrer IT-Infrastruktur.",
+                "factIds": [
+                  "s05-service"
+                ],
+                "snapshotHash": "7e2c3c0c69ca848db5e660bbb7cd2e865ea81033dd196cb0a4ca086825c5a91e"
+              },
+              {
+                "id": "claim-1",
+                "text": "Wir dokumentieren vorhandene IT-Geräte für den internen Überblick.",
+                "factIds": [
+                  "s05-inventory"
+                ],
+                "snapshotHash": "7e2c3c0c69ca848db5e660bbb7cd2e865ea81033dd196cb0a4ca086825c5a91e"
+              },
+              {
+                "id": "claim-2",
+                "text": "Wir besprechen geplante Infrastrukturänderungen mit den IT-Verantwortlichen.",
+                "factIds": [
+                  "s05-process"
+                ],
+                "snapshotHash": "7e2c3c0c69ca848db5e660bbb7cd2e865ea81033dd196cb0a4ca086825c5a91e"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Infrastrukturbedarf",
+                "channel": "linkedin",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "IT im kleinen Unternehmen: Wo setzt ihr an?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welches Infrastrukturthema steht bei euch an? Beschreibt den Ausgangspunkt für ein Gespräch."
+                  }
+                ]
+              },
+              {
+                "angle": "Geräteüberblick",
+                "channel": "linkedin",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Was gehört zu eurer Geräteübersicht?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-1"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Geräte möchtet ihr im internen Überblick erfassen? Bringt eure Fragen dazu mit."
+                  }
+                ]
+              },
+              {
+                "angle": "Änderungen abstimmen",
+                "channel": "linkedin",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Änderungen an der Infrastruktur besprechen."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-2"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Was möchten eure IT-Verantwortlichen vorab klären? Legt die offenen Punkte für das Gespräch zusammen."
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "IT im kleinen Unternehmen: Wo setzt ihr an?",
+              "Was gehört zu eurer Geräteübersicht?",
+              "Änderungen an der Infrastruktur besprechen."
+            ],
+            "cta": "Beschreibe dein Anliegen in einer persönlichen Nachricht. Welche Frage möchtest du zuerst klären?",
+            "days": [
+              {
+                "day": 1,
+                "channel": "linkedin",
+                "task": "Sammle Infrastrukturfragen kleiner B2B-Unternehmen für LinkedIn.",
+                "factIds": [
+                  "s05-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "linkedin",
+                "task": "Ordne dem Geräte-Beitrag die bestätigte Dokumentationsleistung zu.",
+                "factIds": [
+                  "s05-inventory"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "linkedin",
+                "task": "Erstelle eine freigegebene Skizze ohne reale Gerätedaten oder Zugangsdaten.",
+                "factIds": [
+                  "s05-process"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "linkedin",
+                "task": "Gleiche die Abstimmungs-Aussage mit der bestätigten Beschreibung des Gesprächs ab.",
+                "factIds": [
+                  "s05-service"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "linkedin",
+                "task": "Teile einen geprüften Entwurf bei Bedarf manuell mit IT-Verantwortlichen auf LinkedIn.",
+                "factIds": [
+                  "s05-inventory"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "linkedin",
+                "task": "Notiere eingegangene Anfragen getrennt nach Bestandsaufnahme und geplanter Änderung.",
+                "factIds": [
+                  "s05-process"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "linkedin",
+                "task": "Vergleiche die Themen der Anfragen und wähle die nächste fachliche Erklärung.",
+                "factIds": [
+                  "s05-service"
+                ]
+              }
+            ],
+            "missingInformation": []
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s05",
+            "contextId": "s05-context",
+            "revision": 2,
+            "businessName": "Fiktiv Netzform IT",
+            "facts": [
+              {
+                "id": "s05-service",
+                "statement": "Wir unterstützen kleine Unternehmen in Berlin bei ihrer IT-Infrastruktur.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s05-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s05.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s05-inventory",
+                "statement": "Wir dokumentieren vorhandene IT-Geräte für den internen Überblick.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s05-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s05.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s05-process",
+                "statement": "Wir besprechen geplante Infrastrukturänderungen mit den IT-Verantwortlichen.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s05-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s05.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s05-scope",
+                "statement": "Unser Angebot umfasst die Einrichtung von Arbeitsplatzrechnern.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s05-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s05.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "ISO-27001",
+                "99,99",
+                "SLA"
+              ]
+            },
+            "risk": "ordinary",
+            "goal": "mehr_anfragen",
+            "audience": "IT-Verantwortliche kleiner B2B-Unternehmen in Berlin",
+            "channel": "linkedin",
+            "hash": "7e2c3c0c69ca848db5e660bbb7cd2e865ea81033dd196cb0a4ca086825c5a91e"
+          },
+          "contentHash": "bdbdf8e61aa5bc969ec7957312e1a298fdd4d942c054f2bca3e6af9f0f0d00fa",
+          "flags": [
+            {
+              "id": "facts.s05-service:truth_and_conflict_review",
+              "path": "facts.s05-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s05-inventory:truth_and_conflict_review",
+              "path": "facts.s05-inventory",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s05-process:truth_and_conflict_review",
+              "path": "facts.s05-process",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s05-scope:truth_and_conflict_review",
+              "path": "facts.s05-scope",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-1:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-1",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-2:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-2",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1:angle_goal_channel_review",
+              "path": "posts.1",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.0:editorial_may_contain_hidden_claim",
+              "path": "posts.1.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.2:editorial_may_contain_hidden_claim",
+              "path": "posts.1.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2:angle_goal_channel_review",
+              "path": "posts.2",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.0:editorial_may_contain_hidden_claim",
+              "path": "posts.2.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.2:editorial_may_contain_hidden_claim",
+              "path": "posts.2.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 3,
+        "distinctFactAngleProxy": 3,
+        "authoredEditorialWords": 57,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 3,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    },
+    {
+      "id": "s06",
+      "business": "Fiktiv Treppenlicht Service",
+      "goal": "kundenbindung",
+      "channel": "facebook",
+      "risk": "ordinary",
+      "approvedFacts": 3,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Treppenlicht Service",
+          "goal": "kundenbindung",
+          "audience": "Bestehende Hausverwaltungs-Kunden in Leipzig",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "facebook",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s06-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "facebook",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s06-process"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "facebook",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s06-scope"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "facebook",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s06-service"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "facebook",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s06-process"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "facebook",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s06-scope"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "facebook",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s06-service"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "facebook",
+              "factIds": [
+                "s06-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nWir reinigen Treppenhäuser in Leipzig.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "facebook",
+              "factIds": [
+                "s06-process"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nBestehende Hausverwaltungs-Kunden können Hinweise zur Reinigung direkt mit uns besprechen.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "facebook",
+              "factIds": [
+                "s06-scope"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nUnser Angebot umfasst die Reinigung gemeinschaftlicher Eingangsbereiche.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s06-service",
+              "statement": "Wir reinigen Treppenhäuser in Leipzig.",
+              "sourceUrls": [
+                "https://s06.example/leistungen"
+              ]
+            },
+            {
+              "id": "s06-process",
+              "statement": "Bestehende Hausverwaltungs-Kunden können Hinweise zur Reinigung direkt mit uns besprechen.",
+              "sourceUrls": [
+                "https://s06.example/leistungen"
+              ]
+            },
+            {
+              "id": "s06-scope",
+              "statement": "Unser Angebot umfasst die Reinigung gemeinschaftlicher Eingangsbereiche.",
+              "sourceUrls": [
+                "https://s06.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 3,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "ee03a681de42136f9c179f07260005b3d464e28f2034870d750ff1524d5f4afc",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Wir reinigen Treppenhäuser in Leipzig.",
+                "factIds": [
+                  "s06-service"
+                ],
+                "snapshotHash": "ee03a681de42136f9c179f07260005b3d464e28f2034870d750ff1524d5f4afc"
+              },
+              {
+                "id": "claim-1",
+                "text": "Bestehende Hausverwaltungs-Kunden können Hinweise zur Reinigung direkt mit uns besprechen.",
+                "factIds": [
+                  "s06-process"
+                ],
+                "snapshotHash": "ee03a681de42136f9c179f07260005b3d464e28f2034870d750ff1524d5f4afc"
+              },
+              {
+                "id": "claim-2",
+                "text": "Unser Angebot umfasst die Reinigung gemeinschaftlicher Eingangsbereiche.",
+                "factIds": [
+                  "s06-scope"
+                ],
+                "snapshotHash": "ee03a681de42136f9c179f07260005b3d464e28f2034870d750ff1524d5f4afc"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Treppenhaus",
+                "channel": "facebook",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Was beschäftigt euch im Treppenhaus?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welcher Punkt aus eurem Objekt soll im Gespräch nicht fehlen?"
+                  }
+                ]
+              },
+              {
+                "angle": "Bestandskunden im Gespräch",
+                "channel": "facebook",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Ein Hinweis aus eurem Objekt?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-1"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Ihr betreut das Objekt und habt eine Rückfrage? Haltet den konkreten Hinweis für das Gespräch fest."
+                  }
+                ]
+              },
+              {
+                "angle": "Gemeinsamer Eingang",
+                "channel": "facebook",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Auch der Eingang ist ein Thema."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-2"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Frage habt ihr zum gemeinschaftlichen Eingangsbereich? Gebt sie gern weiter."
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "Was beschäftigt euch im Treppenhaus?",
+              "Ein Hinweis aus eurem Objekt?",
+              "Auch der Eingang ist ein Thema."
+            ],
+            "cta": "Welchen Hinweis aus eurem Objekt möchtet ihr besprechen? Meldet euch mit eurer Rückfrage.",
+            "days": [
+              {
+                "day": 1,
+                "channel": "facebook",
+                "task": "Sammle allgemeine Rückfragen bestehender Hausverwaltungs-Kunden zur Treppenhausreinigung.",
+                "factIds": [
+                  "s06-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "facebook",
+                "task": "Ordne dem Dialog-Beitrag den bestätigten direkten Gesprächsweg zu.",
+                "factIds": [
+                  "s06-process"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "facebook",
+                "task": "Wähle ein eigenes freigegebenes Eingangsbild ohne Namen oder Klingelschilder.",
+                "factIds": [
+                  "s06-scope"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "facebook",
+                "task": "Prüfe die Texte auf einen wertschätzenden Ton für bestehende Kunden.",
+                "factIds": [
+                  "s06-service"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "facebook",
+                "task": "Teile den geprüften Dialog-Beitrag bei Bedarf manuell auf Facebook.",
+                "factIds": [
+                  "s06-process"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "facebook",
+                "task": "Bündele eingegangene Hinweise objektbezogen im persönlichen Gespräch.",
+                "factIds": [
+                  "s06-scope"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "facebook",
+                "task": "Notiere wiederkehrende Rückfragen und plane dazu die nächste Kundeninformation.",
+                "factIds": [
+                  "s06-service"
+                ]
+              }
+            ],
+            "missingInformation": []
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s06",
+            "contextId": "s06-context",
+            "revision": 2,
+            "businessName": "Fiktiv Treppenlicht Service",
+            "facts": [
+              {
+                "id": "s06-service",
+                "statement": "Wir reinigen Treppenhäuser in Leipzig.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s06-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s06.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s06-process",
+                "statement": "Bestehende Hausverwaltungs-Kunden können Hinweise zur Reinigung direkt mit uns besprechen.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s06-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s06.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s06-scope",
+                "statement": "Unser Angebot umfasst die Reinigung gemeinschaftlicher Eingangsbereiche.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s06-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s06.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "Testsieger",
+                "kostenlos"
+              ]
+            },
+            "risk": "ordinary",
+            "goal": "kundenbindung",
+            "audience": "Bestehende Hausverwaltungs-Kunden in Leipzig",
+            "channel": "facebook",
+            "hash": "ee03a681de42136f9c179f07260005b3d464e28f2034870d750ff1524d5f4afc"
+          },
+          "contentHash": "49cea47ad6bd95354aebc3670e6de42d9052a175045aaf74c48a141e6f75508c",
+          "flags": [
+            {
+              "id": "facts.s06-service:truth_and_conflict_review",
+              "path": "facts.s06-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s06-process:truth_and_conflict_review",
+              "path": "facts.s06-process",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s06-scope:truth_and_conflict_review",
+              "path": "facts.s06-scope",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-1:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-1",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-2:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-2",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1:angle_goal_channel_review",
+              "path": "posts.1",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.0:editorial_may_contain_hidden_claim",
+              "path": "posts.1.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.2:editorial_may_contain_hidden_claim",
+              "path": "posts.1.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2:angle_goal_channel_review",
+              "path": "posts.2",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.0:editorial_may_contain_hidden_claim",
+              "path": "posts.2.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.2:editorial_may_contain_hidden_claim",
+              "path": "posts.2.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 3,
+        "distinctFactAngleProxy": 3,
+        "authoredEditorialWords": 53,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 3,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    },
+    {
+      "id": "s07",
+      "business": "Fiktiv Speichenzeit Werkstatt",
+      "goal": "mehr_anfragen",
+      "channel": "instagram",
+      "risk": "ordinary",
+      "approvedFacts": 3,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Speichenzeit Werkstatt",
+          "goal": "mehr_anfragen",
+          "audience": "Fahrradbesitzer in Freiburg vor der nächsten Fahrradsaison",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "instagram",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s07-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "instagram",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s07-check"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "instagram",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s07-process"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "instagram",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s07-service"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "instagram",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s07-check"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "instagram",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s07-process"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "instagram",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s07-service"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s07-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nWir reparieren Fahrräder in Freiburg.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s07-check"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nWir prüfen Bremsen und Beleuchtung am Fahrrad.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s07-process"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nDen Reparaturumfang stimmen wir vor Arbeitsbeginn mit Fahrradbesitzern ab.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s07-service",
+              "statement": "Wir reparieren Fahrräder in Freiburg.",
+              "sourceUrls": [
+                "https://s07.example/leistungen"
+              ]
+            },
+            {
+              "id": "s07-check",
+              "statement": "Wir prüfen Bremsen und Beleuchtung am Fahrrad.",
+              "sourceUrls": [
+                "https://s07.example/leistungen"
+              ]
+            },
+            {
+              "id": "s07-process",
+              "statement": "Den Reparaturumfang stimmen wir vor Arbeitsbeginn mit Fahrradbesitzern ab.",
+              "sourceUrls": [
+                "https://s07.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 3,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "1120446397f4267a6252ee50f886023f2f5eb3650c9071bd9331586ec80768ea",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Wir reparieren Fahrräder in Freiburg.",
+                "factIds": [
+                  "s07-service"
+                ],
+                "snapshotHash": "1120446397f4267a6252ee50f886023f2f5eb3650c9071bd9331586ec80768ea"
+              },
+              {
+                "id": "claim-1",
+                "text": "Wir prüfen Bremsen und Beleuchtung am Fahrrad.",
+                "factIds": [
+                  "s07-check"
+                ],
+                "snapshotHash": "1120446397f4267a6252ee50f886023f2f5eb3650c9071bd9331586ec80768ea"
+              },
+              {
+                "id": "claim-2",
+                "text": "Den Reparaturumfang stimmen wir vor Arbeitsbeginn mit Fahrradbesitzern ab.",
+                "factIds": [
+                  "s07-process"
+                ],
+                "snapshotHash": "1120446397f4267a6252ee50f886023f2f5eb3650c9071bd9331586ec80768ea"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Reparaturanfrage",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Was steht an deinem Fahrrad an?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Beobachtung möchtest du der Werkstatt beschreiben? Notiere sie für deine Anfrage."
+                  }
+                ]
+              },
+              {
+                "angle": "Prüfung am Rad",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Bremsen und Licht im Blick."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-1"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Was möchtest du zu Bremsen oder Beleuchtung fragen? Beschreibe dein Anliegen, statt eine Diagnose zu vermuten."
+                  }
+                ]
+              },
+              {
+                "angle": "Umfang abstimmen",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Vor der Reparatur miteinander sprechen."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-2"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Arbeiten möchtest du vorab ansprechen? Halte deine Fragen für die Abstimmung fest."
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "Was steht an deinem Fahrrad an?",
+              "Bremsen und Licht im Blick.",
+              "Vor der Reparatur miteinander sprechen."
+            ],
+            "cta": "Beschreibe dein Anliegen in einer persönlichen Nachricht. Welche Frage möchtest du zuerst klären?",
+            "days": [
+              {
+                "day": 1,
+                "channel": "instagram",
+                "task": "Sammle Fragen von Fahrradbesitzern zu Reparaturen vor der Saison.",
+                "factIds": [
+                  "s07-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "instagram",
+                "task": "Markiere im Prüf-Beitrag die bestätigte Aussage zu Bremsen und Beleuchtung.",
+                "factIds": [
+                  "s07-check"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "instagram",
+                "task": "Wähle ein eigenes freigegebenes Fahrradfoto ohne Kundendaten.",
+                "factIds": [
+                  "s07-process"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "instagram",
+                "task": "Prüfe alle Texte auf unbelegte Termin- oder Sicherheitsversprechen.",
+                "factIds": [
+                  "s07-service"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "instagram",
+                "task": "Teile den geprüften Reparatur-Beitrag bei Bedarf manuell auf Instagram.",
+                "factIds": [
+                  "s07-check"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "instagram",
+                "task": "Ordne Rückfragen nach Reparaturthema und gewünschter Abstimmung.",
+                "factIds": [
+                  "s07-process"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "instagram",
+                "task": "Wähle anhand der Anfragen das nächste Werkstatt-Erklärungsthema.",
+                "factIds": [
+                  "s07-service"
+                ]
+              }
+            ],
+            "missingInformation": []
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s07",
+            "contextId": "s07-context",
+            "revision": 2,
+            "businessName": "Fiktiv Speichenzeit Werkstatt",
+            "facts": [
+              {
+                "id": "s07-service",
+                "statement": "Wir reparieren Fahrräder in Freiburg.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s07-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s07.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s07-check",
+                "statement": "Wir prüfen Bremsen und Beleuchtung am Fahrrad.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s07-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s07.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s07-process",
+                "statement": "Den Reparaturumfang stimmen wir vor Arbeitsbeginn mit Fahrradbesitzern ab.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s07-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s07.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "50 Prozent",
+                "sofort freie Termine",
+                "Rabatt"
+              ]
+            },
+            "risk": "ordinary",
+            "goal": "mehr_anfragen",
+            "audience": "Fahrradbesitzer in Freiburg vor der nächsten Fahrradsaison",
+            "channel": "instagram",
+            "hash": "1120446397f4267a6252ee50f886023f2f5eb3650c9071bd9331586ec80768ea"
+          },
+          "contentHash": "226af7cc5222e9021c4528a486dab8c96807509bacad8fa0ddcd7b2f7417e46f",
+          "flags": [
+            {
+              "id": "facts.s07-service:truth_and_conflict_review",
+              "path": "facts.s07-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s07-check:truth_and_conflict_review",
+              "path": "facts.s07-check",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s07-process:truth_and_conflict_review",
+              "path": "facts.s07-process",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-1:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-1",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-2:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-2",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1:angle_goal_channel_review",
+              "path": "posts.1",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.0:editorial_may_contain_hidden_claim",
+              "path": "posts.1.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.2:editorial_may_contain_hidden_claim",
+              "path": "posts.1.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2:angle_goal_channel_review",
+              "path": "posts.2",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.0:editorial_may_contain_hidden_claim",
+              "path": "posts.2.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.2:editorial_may_contain_hidden_claim",
+              "path": "posts.2.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 3,
+        "distinctFactAngleProxy": 3,
+        "authoredEditorialWords": 57,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 3,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    },
+    {
+      "id": "s08",
+      "business": "Fiktiv Wortfenster Sprachschule",
+      "goal": "mehr_anfragen",
+      "channel": "facebook",
+      "risk": "ordinary",
+      "approvedFacts": 2,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Wortfenster Sprachschule",
+          "goal": "mehr_anfragen",
+          "audience": "Erwachsene in Nürnberg, die Deutschkurse vergleichen",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "facebook",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s08-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "facebook",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s08-format"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "facebook",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s08-service"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "facebook",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s08-format"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "facebook",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s08-service"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "facebook",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s08-format"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "facebook",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s08-service"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "facebook",
+              "factIds": [
+                "s08-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nUnsere Sprachschule in Nürnberg bietet Deutschkurse für Erwachsene an.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "facebook",
+              "factIds": [
+                "s08-format"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nWir erklären Interessierten auf Anfrage die Unterrichtsformen.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "facebook",
+              "factIds": [
+                "s08-service"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nUnsere Sprachschule in Nürnberg bietet Deutschkurse für Erwachsene an.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s08-service",
+              "statement": "Unsere Sprachschule in Nürnberg bietet Deutschkurse für Erwachsene an.",
+              "sourceUrls": [
+                "https://s08.example/leistungen"
+              ]
+            },
+            {
+              "id": "s08-format",
+              "statement": "Wir erklären Interessierten auf Anfrage die Unterrichtsformen.",
+              "sourceUrls": [
+                "https://s08.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 2,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "a689e25bf425497c6684a212e8e968bd664d48edae26f6b082c05c187a06fce7",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Unsere Sprachschule in Nürnberg bietet Deutschkurse für Erwachsene an.",
+                "factIds": [
+                  "s08-service"
+                ],
+                "snapshotHash": "a689e25bf425497c6684a212e8e968bd664d48edae26f6b082c05c187a06fce7"
+              },
+              {
+                "id": "claim-1",
+                "text": "Wir erklären Interessierten auf Anfrage die Unterrichtsformen.",
+                "factIds": [
+                  "s08-format"
+                ],
+                "snapshotHash": "a689e25bf425497c6684a212e8e968bd664d48edae26f6b082c05c187a06fce7"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Kursangebot",
+                "channel": "facebook",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Deutsch lernen als Erwachsener?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Was möchtest du über einen Kurs wissen? Sammle deine Fragen, bevor du verschiedene Angebote vergleichst."
+                  }
+                ]
+              },
+              {
+                "angle": "Unterrichtsformen klären",
+                "channel": "facebook",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Unterrichtsform passt zu deinen Fragen?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-1"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Du vergleichst Kurse? Frage nach der Unterrichtsform und halte fest, was du noch klären möchtest."
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "Deutsch lernen als Erwachsener?",
+              "Welche Unterrichtsform passt zu deinen Fragen?",
+              "Was möchtest du vor einer Anfrage wissen?"
+            ],
+            "cta": "Beschreibe dein Anliegen in einer persönlichen Nachricht. Welche Frage möchtest du zuerst klären?",
+            "days": [
+              {
+                "day": 1,
+                "channel": "facebook",
+                "task": "Sammle Fragen Erwachsener zum Vergleich von Deutschkursen.",
+                "factIds": [
+                  "s08-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "facebook",
+                "task": "Ordne dem Format-Beitrag die bestätigte Erklärung auf Anfrage zu.",
+                "factIds": [
+                  "s08-format"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "facebook",
+                "task": "Wähle eine eigene freigegebene Kursgrafik ohne Teilnehmerdaten.",
+                "factIds": [
+                  "s08-service"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "facebook",
+                "task": "Prüfe die Texte auf unbelegte Abschluss-, Niveau- oder Zeitversprechen.",
+                "factIds": [
+                  "s08-format"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "facebook",
+                "task": "Teile den geprüften Kurs-Beitrag bei Bedarf manuell auf Facebook.",
+                "factIds": [
+                  "s08-service"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "facebook",
+                "task": "Ordne Anfragen nach Fragen zu Angebot und Unterrichtsformen.",
+                "factIds": [
+                  "s08-format"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "facebook",
+                "task": "Notiere offene Formatfragen und wähle das nächste Kursthema.",
+                "factIds": [
+                  "s08-service"
+                ]
+              }
+            ],
+            "missingInformation": [
+              "Welche weitere eigenständige Leistung oder welcher konkrete Ablauf kann bestätigt werden?",
+              "Welchen nachvollziehbaren Nutzen dürfen wir anhand einer bestätigten Aussage beschreiben?"
+            ]
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s08",
+            "contextId": "s08-context",
+            "revision": 2,
+            "businessName": "Fiktiv Wortfenster Sprachschule",
+            "facts": [
+              {
+                "id": "s08-service",
+                "statement": "Unsere Sprachschule in Nürnberg bietet Deutschkurse für Erwachsene an.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s08-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s08.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s08-format",
+                "statement": "Wir erklären Interessierten auf Anfrage die Unterrichtsformen.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s08-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s08.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "C1-Zertifikat",
+                "vier Wochen",
+                "100 Prozent"
+              ]
+            },
+            "risk": "ordinary",
+            "goal": "mehr_anfragen",
+            "audience": "Erwachsene in Nürnberg, die Deutschkurse vergleichen",
+            "channel": "facebook",
+            "hash": "a689e25bf425497c6684a212e8e968bd664d48edae26f6b082c05c187a06fce7"
+          },
+          "contentHash": "5d727cc608d757654747698edbbd80a6f6d47618bc9bc94ce99d4895c1f0d364",
+          "flags": [
+            {
+              "id": "facts.s08-service:truth_and_conflict_review",
+              "path": "facts.s08-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s08-format:truth_and_conflict_review",
+              "path": "facts.s08-format",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-1:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-1",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1:angle_goal_channel_review",
+              "path": "posts.1",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.0:editorial_may_contain_hidden_claim",
+              "path": "posts.1.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.2:editorial_may_contain_hidden_claim",
+              "path": "posts.1.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.4:copy_semantics",
+              "path": "copy.4",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.5:copy_semantics",
+              "path": "copy.5",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "context:insufficient_facts",
+              "path": "context",
+              "code": "insufficient_facts",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 2,
+        "distinctFactAngleProxy": 2,
+        "authoredEditorialWords": 40,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 2,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    },
+    {
+      "id": "s09",
+      "business": "Fiktiv Holzlinie Schreinerei",
+      "goal": "sichtbarkeit",
+      "channel": "instagram",
+      "risk": "ordinary",
+      "approvedFacts": 3,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Holzlinie Schreinerei",
+          "goal": "sichtbarkeit",
+          "audience": "Menschen in Bremen mit Ideen für individuelle Wohnmöbel",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "instagram",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s09-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "instagram",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s09-process"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "instagram",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s09-scope"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "instagram",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s09-service"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "instagram",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s09-process"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "instagram",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s09-scope"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "instagram",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s09-service"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s09-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nWir fertigen individuelle Wohnmöbel in Bremen.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s09-process"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nMaße und gewünschte Nutzung besprechen wir vor der Planung mit unseren Kunden.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "instagram",
+              "factIds": [
+                "s09-scope"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nZu unserem Angebot gehören Regale und Einbauschränke.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s09-service",
+              "statement": "Wir fertigen individuelle Wohnmöbel in Bremen.",
+              "sourceUrls": [
+                "https://s09.example/leistungen"
+              ]
+            },
+            {
+              "id": "s09-process",
+              "statement": "Maße und gewünschte Nutzung besprechen wir vor der Planung mit unseren Kunden.",
+              "sourceUrls": [
+                "https://s09.example/leistungen"
+              ]
+            },
+            {
+              "id": "s09-scope",
+              "statement": "Zu unserem Angebot gehören Regale und Einbauschränke.",
+              "sourceUrls": [
+                "https://s09.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 3,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "12818e4de6aa84b4b7f03a50cde8e5912a1500c813cb79b93ceac914bb0eac4d",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Wir fertigen individuelle Wohnmöbel in Bremen.",
+                "factIds": [
+                  "s09-service"
+                ],
+                "snapshotHash": "12818e4de6aa84b4b7f03a50cde8e5912a1500c813cb79b93ceac914bb0eac4d"
+              },
+              {
+                "id": "claim-1",
+                "text": "Maße und gewünschte Nutzung besprechen wir vor der Planung mit unseren Kunden.",
+                "factIds": [
+                  "s09-process"
+                ],
+                "snapshotHash": "12818e4de6aa84b4b7f03a50cde8e5912a1500c813cb79b93ceac914bb0eac4d"
+              },
+              {
+                "id": "claim-2",
+                "text": "Zu unserem Angebot gehören Regale und Einbauschränke.",
+                "factIds": [
+                  "s09-scope"
+                ],
+                "snapshotHash": "12818e4de6aa84b4b7f03a50cde8e5912a1500c813cb79b93ceac914bb0eac4d"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Individuelle Möbelidee",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Eine Möbelidee für deinen Wohnraum?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Idee möchtest du für deinen Wohnraum mitbringen? Sammle deine Gedanken für das Gespräch."
+                  }
+                ]
+              },
+              {
+                "angle": "Planungsgespräch",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Maße und Nutzung zuerst besprechen."
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-1"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Wie möchtest du dein Möbel nutzen? Halte deine Wünsche und vorhandene Maße für die Planung fest."
+                  }
+                ]
+              },
+              {
+                "angle": "Regal und Einbauschrank",
+                "channel": "instagram",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Ein Regal oder ein Einbauschrank?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-2"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Was möchtest du unterbringen? Beschreibe den Platz und deine Fragen für ein Gespräch."
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "Eine Möbelidee für deinen Wohnraum?",
+              "Maße und Nutzung zuerst besprechen.",
+              "Ein Regal oder ein Einbauschrank?"
+            ],
+            "cta": "Welche Frage möchtest du zum Angebot stellen? Teile sie im persönlichen Gespräch.",
+            "days": [
+              {
+                "day": 1,
+                "channel": "instagram",
+                "task": "Sammle Fragen zu individuellen Wohnmöbeln in Bremen.",
+                "factIds": [
+                  "s09-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "instagram",
+                "task": "Ordne dem Planungs-Beitrag die bestätigte Abstimmung zu Maßen und Nutzung zu.",
+                "factIds": [
+                  "s09-process"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "instagram",
+                "task": "Wähle ein eigenes freigegebenes Möbelbild ohne unbelegte Materialkennzeichnung.",
+                "factIds": [
+                  "s09-scope"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "instagram",
+                "task": "Gleiche jeden Satz im Möbel-Entwurf mit den bestätigten Fakten ab.",
+                "factIds": [
+                  "s09-service"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "instagram",
+                "task": "Teile den geprüften Möbel-Beitrag bei Bedarf manuell auf Instagram.",
+                "factIds": [
+                  "s09-process"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "instagram",
+                "task": "Sammle allgemeine Rückfragen zu Möbelideen ohne fremde Wohnungsfotos zu veröffentlichen.",
+                "factIds": [
+                  "s09-scope"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "instagram",
+                "task": "Vergleiche die Rückfragen und wähle das nächste Planungsthema.",
+                "factIds": [
+                  "s09-service"
+                ]
+              }
+            ],
+            "missingInformation": []
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s09",
+            "contextId": "s09-context",
+            "revision": 2,
+            "businessName": "Fiktiv Holzlinie Schreinerei",
+            "facts": [
+              {
+                "id": "s09-service",
+                "statement": "Wir fertigen individuelle Wohnmöbel in Bremen.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s09-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s09.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s09-process",
+                "statement": "Maße und gewünschte Nutzung besprechen wir vor der Planung mit unseren Kunden.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s09-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s09.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              },
+              {
+                "id": "s09-scope",
+                "statement": "Zu unserem Angebot gehören Regale und Einbauschränke.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s09-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s09.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "FSC",
+                "sieben Tagen",
+                "Liefergarantie"
+              ]
+            },
+            "risk": "ordinary",
+            "goal": "sichtbarkeit",
+            "audience": "Menschen in Bremen mit Ideen für individuelle Wohnmöbel",
+            "channel": "instagram",
+            "hash": "12818e4de6aa84b4b7f03a50cde8e5912a1500c813cb79b93ceac914bb0eac4d"
+          },
+          "contentHash": "36cf8458a90a23888eb8c46c117b34e2b7b0c63efd2b2d43c11114ae919f233a",
+          "flags": [
+            {
+              "id": "facts.s09-service:truth_and_conflict_review",
+              "path": "facts.s09-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s09-process:truth_and_conflict_review",
+              "path": "facts.s09-process",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "facts.s09-scope:truth_and_conflict_review",
+              "path": "facts.s09-scope",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-1:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-1",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-2:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-2",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1:angle_goal_channel_review",
+              "path": "posts.1",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.0:editorial_may_contain_hidden_claim",
+              "path": "posts.1.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.1.2:editorial_may_contain_hidden_claim",
+              "path": "posts.1.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2:angle_goal_channel_review",
+              "path": "posts.2",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.0:editorial_may_contain_hidden_claim",
+              "path": "posts.2.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.2.2:editorial_may_contain_hidden_claim",
+              "path": "posts.2.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 3,
+        "distinctFactAngleProxy": 3,
+        "authoredEditorialWords": 58,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 3,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    },
+    {
+      "id": "s10",
+      "business": "Fiktiv Nachbarsgrün Gartenservice",
+      "goal": "sichtbarkeit",
+      "channel": "facebook",
+      "risk": "ordinary",
+      "approvedFacts": 1,
+      "v1": {
+        "pack": {
+          "schemaVersion": 1,
+          "businessName": "Fiktiv Nachbarsgrün Gartenservice",
+          "goal": "sichtbarkeit",
+          "audience": "Gartenbesitzer in Lübecker Nachbarschaften mit saisonalen Gartenaufgaben",
+          "language": "de-DE",
+          "days": [
+            {
+              "day": 1,
+              "channel": "facebook",
+              "action": "unternehmen_vorstellen",
+              "time": "09:00",
+              "factIds": [
+                "s10-service"
+              ],
+              "task": "Stelle dein Unternehmen mit einer bestätigten Aussage kurz vor."
+            },
+            {
+              "day": 2,
+              "channel": "facebook",
+              "action": "leistung_erklaeren",
+              "time": "09:00",
+              "factIds": [
+                "s10-service"
+              ],
+              "task": "Erkläre eine bestätigte Leistung und lade zu Fragen ein."
+            },
+            {
+              "day": 3,
+              "channel": "facebook",
+              "action": "frage_stellen",
+              "time": "09:00",
+              "factIds": [
+                "s10-service"
+              ],
+              "task": "Frage deine Zielgruppe, welche Unterstützung sie gerade braucht."
+            },
+            {
+              "day": 4,
+              "channel": "facebook",
+              "action": "einblick_planen",
+              "time": "09:00",
+              "factIds": [
+                "s10-service"
+              ],
+              "task": "Wähle ein eigenes, zur Veröffentlichung freigegebenes Foto für einen Einblick in deine Arbeit."
+            },
+            {
+              "day": 5,
+              "channel": "facebook",
+              "action": "post_veroeffentlichen",
+              "time": "09:00",
+              "factIds": [
+                "s10-service"
+              ],
+              "task": "Prüfe einen Entwurf und veröffentliche ihn bei Bedarf manuell auf deinem Kanal."
+            },
+            {
+              "day": 6,
+              "channel": "facebook",
+              "action": "antworten_pruefen",
+              "time": "09:00",
+              "factIds": [
+                "s10-service"
+              ],
+              "task": "Lies eingegangene Kommentare und beantworte konkrete Fragen persönlich."
+            },
+            {
+              "day": 7,
+              "channel": "facebook",
+              "action": "woche_auswerten",
+              "time": "09:00",
+              "factIds": [
+                "s10-service"
+              ],
+              "task": "Notiere Rückmeldungen und entscheide, welches Thema du nächste Woche vertiefen möchtest."
+            }
+          ],
+          "posts": [
+            {
+              "channel": "facebook",
+              "factIds": [
+                "s10-service"
+              ],
+              "text": "Ein klarer Blick auf dein nächstes Projekt.\n\nWir unterstützen bei Gartenarbeiten in Lübeck.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "facebook",
+              "factIds": [
+                "s10-service"
+              ],
+              "text": "Was ist dir bei deinem Dienstleister wichtig?\n\nWir unterstützen bei Gartenarbeiten in Lübeck.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            },
+            {
+              "channel": "facebook",
+              "factIds": [
+                "s10-service"
+              ],
+              "text": "Was brauchst du für deinen nächsten Schritt?\n\nWir unterstützen bei Gartenarbeiten in Lübeck.\n\nDu möchtest mehr erfahren? Schreib uns eine Nachricht."
+            }
+          ],
+          "hooks": [
+            "Ein klarer Blick auf dein nächstes Projekt.",
+            "Was ist dir bei deinem Dienstleister wichtig?",
+            "Was brauchst du für deinen nächsten Schritt?"
+          ],
+          "cta": "Du möchtest mehr erfahren? Schreib uns eine Nachricht.",
+          "facts": [
+            {
+              "id": "s10-service",
+              "statement": "Wir unterstützen bei Gartenarbeiten in Lübeck.",
+              "sourceUrls": [
+                "https://s10.example/leistungen"
+              ]
+            }
+          ],
+          "editorialStatus": "draft"
+        },
+        "distinctFactAngleProxy": 1,
+        "originalEditorialWords": 0,
+        "distinctTasks": 7
+      },
+      "v2": {
+        "proposal": {
+          "schemaVersion": 2,
+          "draft": {
+            "schemaVersion": 2,
+            "origin": "authored-offline-mock",
+            "snapshotHash": "c3d3cd8ad7b5fc2e32a1c836f4d9e5c47d4d36a74cdf54f84f5a8c1eda838900",
+            "claims": [
+              {
+                "id": "claim-0",
+                "text": "Wir unterstützen bei Gartenarbeiten in Lübeck.",
+                "factIds": [
+                  "s10-service"
+                ],
+                "snapshotHash": "c3d3cd8ad7b5fc2e32a1c836f4d9e5c47d4d36a74cdf54f84f5a8c1eda838900"
+              }
+            ],
+            "posts": [
+              {
+                "angle": "Angebot zunächst klären",
+                "channel": "facebook",
+                "segments": [
+                  {
+                    "kind": "editorial",
+                    "text": "Was beschäftigt dich im Garten?"
+                  },
+                  {
+                    "kind": "claim",
+                    "claimId": "claim-0"
+                  },
+                  {
+                    "kind": "editorial",
+                    "text": "Welche Gartenaufgabe möchtest du ansprechen? Frage zunächst nach, ob sie zum Angebot gehört."
+                  }
+                ]
+              }
+            ],
+            "hooks": [
+              "Was beschäftigt dich im Garten?",
+              "Eine Frage für dein Gartengespräch.",
+              "Welche Gartenaufgabe möchtest du klären?"
+            ],
+            "cta": "Welche Frage möchtest du zum Angebot stellen? Teile sie im persönlichen Gespräch.",
+            "days": [
+              {
+                "day": 1,
+                "channel": "facebook",
+                "task": "Notiere, dass bislang nur allgemeine Gartenunterstützung in Lübeck bestätigt ist.",
+                "factIds": [
+                  "s10-service"
+                ]
+              },
+              {
+                "day": 2,
+                "channel": "facebook",
+                "task": "Frage den Betrieb, welche konkreten Gartenarbeiten zum Angebot gehören.",
+                "factIds": [
+                  "s10-service"
+                ]
+              },
+              {
+                "day": 3,
+                "channel": "facebook",
+                "task": "Bitte um eine bestätigte Beschreibung des Ablaufs einer Anfrage.",
+                "factIds": [
+                  "s10-service"
+                ]
+              },
+              {
+                "day": 4,
+                "channel": "facebook",
+                "task": "Ergänze keine saisonalen Leistungen oder Konditionen ohne Bestätigung.",
+                "factIds": [
+                  "s10-service"
+                ]
+              },
+              {
+                "day": 5,
+                "channel": "facebook",
+                "task": "Prüfe den einzelnen Entwurf und entscheide erst danach über manuelles Teilen auf Facebook.",
+                "factIds": [
+                  "s10-service"
+                ]
+              },
+              {
+                "day": 6,
+                "channel": "facebook",
+                "task": "Sammle Rückfragen von Gartenbesitzern als offene Fragen, nicht als Leistungszusagen.",
+                "factIds": [
+                  "s10-service"
+                ]
+              },
+              {
+                "day": 7,
+                "channel": "facebook",
+                "task": "Ergänze bestätigte Fakten und plane erst dann weitere eigenständige Beiträge.",
+                "factIds": [
+                  "s10-service"
+                ]
+              }
+            ],
+            "missingInformation": [
+              "Welche weitere eigenständige Leistung oder welcher konkrete Ablauf kann bestätigt werden?",
+              "Welchen nachvollziehbaren Nutzen dürfen wir anhand einer bestätigten Aussage beschreiben?"
+            ]
+          },
+          "source": {
+            "tenantId": "synthetic-tenant",
+            "projectId": "s10",
+            "contextId": "s10-context",
+            "revision": 2,
+            "businessName": "Fiktiv Nachbarsgrün Gartenservice",
+            "facts": [
+              {
+                "id": "s10-service",
+                "statement": "Wir unterstützen bei Gartenarbeiten in Lübeck.",
+                "basis": "source_backed",
+                "provenance": [
+                  {
+                    "id": "s10-website",
+                    "kind": "website",
+                    "label": "Fiktive Website",
+                    "locator": "https://s10.example/leistungen",
+                    "observedAt": "2026-10-22T00:00:00Z"
+                  }
+                ],
+                "confirmedBy": "offline-human",
+                "confirmedAt": "2026-10-22T00:01:00Z"
+              }
+            ],
+            "tone": {
+              "voice": [
+                "klar",
+                "sachlich"
+              ],
+              "avoid": [],
+              "forbiddenClaims": [
+                "Baumgutachter",
+                "am selben Tag",
+                "festen Preisen"
+              ]
+            },
+            "risk": "ordinary",
+            "goal": "sichtbarkeit",
+            "audience": "Gartenbesitzer in Lübecker Nachbarschaften mit saisonalen Gartenaufgaben",
+            "channel": "facebook",
+            "hash": "c3d3cd8ad7b5fc2e32a1c836f4d9e5c47d4d36a74cdf54f84f5a8c1eda838900"
+          },
+          "contentHash": "bd01b73399a3a6357d152a2a911b3d9b11d61fe77468d1bdc82d61d04fd939d4",
+          "flags": [
+            {
+              "id": "facts.s10-service:truth_and_conflict_review",
+              "path": "facts.s10-service",
+              "code": "truth_and_conflict_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "claims.claim-0:exact_snapshot_quote_not_truth",
+              "path": "claims.claim-0",
+              "code": "exact_snapshot_quote_not_truth",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0:angle_goal_channel_review",
+              "path": "posts.0",
+              "code": "angle_goal_channel_review",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.0:editorial_may_contain_hidden_claim",
+              "path": "posts.0.0",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "posts.0.2:editorial_may_contain_hidden_claim",
+              "path": "posts.0.2",
+              "code": "editorial_may_contain_hidden_claim",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.0:copy_semantics",
+              "path": "copy.0",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.1:copy_semantics",
+              "path": "copy.1",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.2:copy_semantics",
+              "path": "copy.2",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.3:copy_semantics",
+              "path": "copy.3",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.4:copy_semantics",
+              "path": "copy.4",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "copy.5:copy_semantics",
+              "path": "copy.5",
+              "code": "copy_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.1:owner_task_semantics",
+              "path": "days.1",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.2:owner_task_semantics",
+              "path": "days.2",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.3:owner_task_semantics",
+              "path": "days.3",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.4:owner_task_semantics",
+              "path": "days.4",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.5:owner_task_semantics",
+              "path": "days.5",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.6:owner_task_semantics",
+              "path": "days.6",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "days.7:owner_task_semantics",
+              "path": "days.7",
+              "code": "owner_task_semantics",
+              "state": "needs_review"
+            },
+            {
+              "id": "context:insufficient_facts",
+              "path": "context",
+              "code": "insufficient_facts",
+              "state": "needs_review"
+            }
+          ],
+          "state": "needs_review"
+        },
+        "posts": 1,
+        "distinctFactAngleProxy": 1,
+        "authoredEditorialWords": 18,
+        "distinctTasks": 7,
+        "knownUnsupportedClaimsInAuthoredGold": 0,
+        "specificityFactRefs": 1,
+        "actionabilityHumanScore": null,
+        "germanHumanScore": null,
+        "humanScores": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "issue": 418,
+  "baseCommit": "7e67061362762020f97d707898927a82c21b2994",
+  "branch": "codex/mkt-ai-02-offline-v2",
+  "baseBranch": "codex/mkt-ai-qa-01-offline-acceptance",
+  "date": "2026-10-22",
+  "execution": "local synthetic offline QA; remote CI reported separately on PR exact head",
+  "checks": [
+    {
+      "command": "npm run test:run",
+      "result": "PASS",
+      "testsPassed": 1615,
+      "testsSkipped": 161,
+      "filesPassed": 240,
+      "filesSkipped": 22,
+      "baselinePassed": 1546,
+      "addedPassed": 69
+    },
+    {
+      "command": "npm run marketing:ai:v2:test",
+      "result": "PASS",
+      "testsPassed": 69
+    },
+    {
+      "command": "npm run marketing:ai:test",
+      "result": "PASS",
+      "testsPassed": 98,
+      "dbTestsSkipped": 19,
+      "note": "Before the last approval-immutability regression; final full suite includes that extra passing test. PostgreSQL cases separately executed."
+    },
+    {
+      "command": "npm run marketing:ai:v2:offline; npm run marketing:ai:v2:offline -- --check",
+      "result": "PASS",
+      "artifacts": 24,
+      "description": "10 v1 samples, 10 v2 samples, report/results/adversarial/blank scorecard; exact byte reproduction"
+    },
+    {
+      "command": "npm run marketing:ai:offline -- --check",
+      "result": "PASS",
+      "previousOutputs": 20,
+      "note": "Previous #417 evidence remains byte-identical."
+    },
+    {
+      "command": "npm run marketing:ai:offline -- --guard-probe",
+      "result": "PASS",
+      "deniedAttempts": 6
+    },
+    {
+      "command": "v2 runner --check with synthetic ambient key and MARKETING_AI_ENABLED=true; --live; --require-go",
+      "result": "PASS",
+      "expectedExitCodes": [
+        0,
+        1,
+        2
+      ],
+      "note": "Automated regression; fake credential only; no provider requests."
+    },
+    {
+      "command": "npm run marketing:ai:v2:typecheck; npm run marketing:ai:typecheck; npm --prefix apps/marketing-saas-api run typecheck; npm --prefix apps/marketing-saas run typecheck; npx tsc --noEmit",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run lint",
+      "result": "PASS",
+      "errors": 0,
+      "existingWarnings": 8,
+      "newWarnings": 0
+    },
+    {
+      "command": "npm --prefix apps/marketing-saas run build",
+      "result": "PASS",
+      "tool": "Vite 8.3.5"
+    },
+    {
+      "command": "BETTER_AUTH_SECRET=<synthetic build-only value> BETTER_AUTH_URL=http://localhost:3000 DATABASE_URL=postgresql://build_only:synthetic@127.0.0.1:55999/citywalk_build npm run build -- --webpack",
+      "result": "PASS",
+      "note": "No real database at build-only port; supported webpack path. Default Turbopack not run because of inherited external dependency-symlink limitation."
+    },
+    {
+      "command": "npm run db:generate",
+      "result": "PASS",
+      "tables": 56,
+      "schemaDrift": false
+    },
+    {
+      "command": "MARKETING_DATABASE_URL=<isolated loopback QA URL> npm run marketing:db:migrate",
+      "result": "PASS",
+      "database": "marketing_ai_qa_418",
+      "host": "127.0.0.1:55498",
+      "unchangedMigrations": 4
+    },
+    {
+      "command": "MARKETING_TEST_DATABASE_URL=<isolated loopback QA URL> MARKETING_AI_ENABLED=false MARKETING_DEMO_MODE=true npm run marketing:test:integration",
+      "result": "PASS",
+      "testsPassed": 28,
+      "filesPassed": 3,
+      "existingBaseline": 28,
+      "provider": "mocked only; TCP restricted to loopback QA DB"
+    },
+    {
+      "command": "MARKETING_DATABASE_URL=<isolated loopback QA URL> npm run marketing:db:verify",
+      "result": "PASS",
+      "migrations": 4,
+      "syntheticContexts": 64
+    },
+    {
+      "command": "git diff --check; git diff --name-only <exact-base> -- apps/marketing-saas apps/marketing-saas-api/src packages src docs/qa/marketing-saas/ai-416 package-lock.json",
+      "result": "PASS",
+      "productionAndPriorEvidenceFilesChanged": 0
+    }
+  ],
+  "findings": {
+    "syntheticBusinesses": 10,
+    "comparisonArtifacts": 20,
+    "authoredV2Posts": 24,
+    "threePostCases": 5,
+    "twoPostCases": 4,
+    "onePostCases": 1,
+    "authoredV2DistinctDailyTasks": 70,
+    "v1DistinctDailyTasks": 7,
+    "lexicalUnsafeProbes": 26,
+    "lexicalMissesQueuedForHumanReview": 6,
+    "policyFalsePositives": 2,
+    "benignProbes": 3,
+    "humanScoresCompleted": 0,
+    "pendingV2ReviewItems": 248,
+    "knownUnsupportedClaimsInCuratedGold": 0,
+    "goldLimit": "Author annotation, not independent semantic validation. Authored copy is not model performance.",
+    "commercial": "NO-GO",
+    "feasibility": "Continue offline research only"
+  },
+  "notExecuted": [
+    "Live model requests or credential setup",
+    "Actual vendor token/cost/latency measurements",
+    "Human scoring",
+    "Local browser journeys (UI unchanged; existing CI browser gates retained)",
+    "Preview or production deployment",
+    "CITYWALK database migrate/verify; no schema change",
+    "Merge/public signup/pilot/billing/email/publication"
+  ],
+  "actualAIRequests": 0,
+  "actualSpendEur": 0,
+  "uiChanged": false,
+  "v1ContractsChanged": false,
+  "productionBehaviorChanged": false
+}

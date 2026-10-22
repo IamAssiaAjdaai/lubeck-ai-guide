@@ -68,7 +68,10 @@
     "marketing:db:verify": "node scripts/marketing-saas-local.mjs verify",
     "marketing:ai:offline": "node --conditions=react-server --import tsx scripts/marketing-saas-ai-eval.mjs",
     "marketing:ai:test": "vitest run apps/marketing-saas-api/qa",
-    "marketing:ai:typecheck": "tsc --noEmit -p apps/marketing-saas-api/qa/tsconfig.json"
+    "marketing:ai:typecheck": "tsc --noEmit -p apps/marketing-saas-api/qa/tsconfig.json",
+    "marketing:ai:v2:offline": "node --conditions=react-server --import tsx scripts/marketing-saas-ai-v2-eval.mjs",
+    "marketing:ai:v2:test": "vitest run apps/marketing-saas-api/qa-v2",
+    "marketing:ai:v2:typecheck": "tsc --noEmit -p apps/marketing-saas-api/qa-v2/tsconfig.json"
   },
   "dependencies": {
     "@apple/app-store-server-library": "3.1.0",
