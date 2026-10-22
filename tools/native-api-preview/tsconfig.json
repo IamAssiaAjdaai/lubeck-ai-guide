@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.cloudflare.json",
+  "include": [
+    "../../src/cloudflare/**/*.ts",
+    "./cloudflare.config.ts",
+    "./vite.config.mts",
+    "./*.test.ts"
+  ],
+  "exclude": ["../../node_modules", "../../src/cloudflare/previewPolicy.test.ts", "../../src/cloudflare/accountErasureSchedule.test.ts", "../../src/cloudflare/accountErasureScheduleConfig.test.ts"]
+}
