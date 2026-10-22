@@ -1,0 +1,102 @@
+[
+  {
+    "reviewId": "0254588b8c",
+    "scenario": "s01",
+    "mode": "demo"
+  },
+  {
+    "reviewId": "17ec45d82b",
+    "scenario": "s09",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "2db3a57bb8",
+    "scenario": "s10",
+    "mode": "demo"
+  },
+  {
+    "reviewId": "321322cf30",
+    "scenario": "s07",
+    "mode": "demo"
+  },
+  {
+    "reviewId": "3fc3f0993b",
+    "scenario": "s08",
+    "mode": "demo"
+  },
+  {
+    "reviewId": "5be8d37542",
+    "scenario": "s02",
+    "mode": "demo"
+  },
+  {
+    "reviewId": "66d1bff772",
+    "scenario": "s05",
+    "mode": "demo"
+  },
+  {
+    "reviewId": "75077b4b3a",
+    "scenario": "s01",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "848bb12eb2",
+    "scenario": "s03",
+    "mode": "demo"
+  },
+  {
+    "reviewId": "a2a2764501",
+    "scenario": "s02",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "a6c0231772",
+    "scenario": "s05",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "a7faa37485",
+    "scenario": "s06",
+    "mode": "demo"
+  },
+  {
+    "reviewId": "ab1a0628a7",
+    "scenario": "s07",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "c7dd63d42e",
+    "scenario": "s08",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "c83c35d1aa",
+    "scenario": "s09",
+    "mode": "demo"
+  },
+  {
+    "reviewId": "d3c919c2e1",
+    "scenario": "s04",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "d3d593945d",
+    "scenario": "s03",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "dfa87d5011",
+    "scenario": "s06",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "e7d76ecf1e",
+    "scenario": "s10",
+    "mode": "mock"
+  },
+  {
+    "reviewId": "f399a09299",
+    "scenario": "s04",
+    "mode": "demo"
+  }
+]

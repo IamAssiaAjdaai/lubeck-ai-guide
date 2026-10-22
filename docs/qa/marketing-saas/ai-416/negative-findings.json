@@ -1,0 +1,30 @@
+[
+  {
+    "id": "approved-instruction",
+    "classification": "TRUST_BOUNDARY_LIMITATION",
+    "blockedByCurrentEngine": false,
+    "detected": true,
+    "severity": "CRITICAL_REQUIRES_REVIEW"
+  },
+  {
+    "id": "approved-guarantee",
+    "classification": "SEMANTIC_POLICY_LIMITATION",
+    "blockedByCurrentEngine": false,
+    "detected": true,
+    "severity": "CRITICAL_REQUIRES_REVIEW"
+  },
+  {
+    "id": "duplicate-post-hooks",
+    "classification": "SCHEMA_VALID_QUALITY_LIMITATION",
+    "blockedByCurrentEngine": false,
+    "detected": true,
+    "severity": "QUALITY_FAIL"
+  },
+  {
+    "id": "repeated-actions",
+    "classification": "SCHEMA_VALID_QUALITY_LIMITATION",
+    "blockedByCurrentEngine": false,
+    "detected": true,
+    "severity": "QUALITY_FAIL"
+  }
+]
