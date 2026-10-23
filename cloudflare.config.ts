@@ -15,6 +15,7 @@ export default defineConfig({
       CITYWALK_RUNTIME_ENV: bindings.text("production"),
       CITYWALK_LEGAL_ENTITY_TYPE: bindings.text("individual"),
       CITYWALK_LEGAL_OPERATOR_COUNTRY: bindings.text("Germany"),
+      CITYWALK_LEGAL_PUBLICATION_APPROVED: bindings.text("0"),
       // Owner-supplied public identity, kept out of source and build artifacts.
       CITYWALK_LEGAL_OPERATOR_NAME: bindings.secret(),
       CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS: bindings.secret(),

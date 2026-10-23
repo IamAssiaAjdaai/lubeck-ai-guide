@@ -78,6 +78,7 @@ jobs:
             CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS="Synthetic Street 1" \
             CITYWALK_LEGAL_OPERATOR_POSTAL_CITY="12345 Synthetic City" \
             CITYWALK_LEGAL_OPERATOR_COUNTRY=Germany \
+            CITYWALK_LEGAL_PUBLICATION_APPROVED=1 \
             ./node_modules/.bin/next start --hostname 127.0.0.1 --port 3100 > "$RUNNER_TEMP/citywalk-next-configured.log" 2>&1 &
           SERVER_PID=$!
           for i in {1..30}; do

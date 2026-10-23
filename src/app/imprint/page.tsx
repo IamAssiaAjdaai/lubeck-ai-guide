@@ -79,7 +79,7 @@ export default async function ImprintPage() {
       <section>
         <h2>Content note</h2>
         <p>
-          CITYWALK provides travel and city information for general informational and leisure purposes. External links are checked when added, but third-party content remains the responsibility of the relevant provider where applicable.
+          CITYWALK provides travel and city information for general informational and leisure purposes. Third-party content is supplied by the relevant provider. Mandatory legal responsibilities remain unaffected.
         </p>
       </section>
 

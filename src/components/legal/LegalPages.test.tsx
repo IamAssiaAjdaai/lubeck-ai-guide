@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
 
 vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
 vi.mock("@/components/AnalyticsConsentControl", () => ({ AnalyticsConsentPreferences: () => <div>Analytics preferences</div> }));
@@ -9,6 +10,7 @@ import ImprintPage, { generateMetadata as imprintMetadata } from "@/app/imprint/
 import sitemap from "@/app/sitemap";
 
 const identity = {
+  CITYWALK_LEGAL_PUBLICATION_APPROVED: "1",
   CITYWALK_LEGAL_ENTITY_TYPE: "individual",
   CITYWALK_LEGAL_OPERATOR_NAME: "Synthetic Public Operator",
   CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS: "Synthetic Street 1",
@@ -24,6 +26,36 @@ const pages = [
 afterEach(() => { cleanup(); vi.unstubAllEnvs(); });
 
 describe.each(pages)("$path public legal route", ({ path, page, metadata, heading }) => {
+  it.each(["", "0", "true"])("withholds identity and legal body when approval is %j", async approval => {
+    for (const [key, value] of Object.entries(identity)) vi.stubEnv(key, value);
+    vi.stubEnv("CITYWALK_LEGAL_PUBLICATION_APPROVED", approval);
+    vi.stubEnv("CITYWALK_LEGAL_REPRESENTATIVE", "Synthetic Representative");
+    vi.stubEnv("CITYWALK_LEGAL_REGISTER_NAME", "Synthetic Register");
+    vi.stubEnv("CITYWALK_LEGAL_REGISTER_NUMBER", "Synthetic Registration 123");
+    vi.stubEnv("CITYWALK_LEGAL_VAT_ID", "Synthetic VAT 123");
+    const element = await page();
+    const html = renderToStaticMarkup(element);
+    render(element);
+    expect(screen.getByRole("note").textContent).toContain("Legal publication approval is pending.");
+    expect(screen.getByRole("note").textContent).not.toMatch(/incomplete|missing/i);
+    expect(html).not.toContain("Synthetic");
+    expect(screen.queryByRole("heading", { level: 2 })).toBeNull();
+    expect((await metadata()).robots).toEqual({ index: false, follow: false });
+    expect((await sitemap()).some(item => item.url.endsWith(path))).toBe(false);
+  });
+
+  it("keeps incomplete identity private even with approval enabled", async () => {
+    for (const [key, value] of Object.entries(identity)) vi.stubEnv(key, value);
+    vi.stubEnv("CITYWALK_LEGAL_OPERATOR_STREET_ADDRESS", "");
+    const element = await page();
+    expect(renderToStaticMarkup(element)).not.toContain("Synthetic");
+    render(element);
+    expect(screen.getByRole("note").textContent).toContain("configuration is incomplete");
+    expect(screen.queryByRole("heading", { level: 2 })).toBeNull();
+    expect((await metadata()).robots).toEqual({ index: false, follow: false });
+    expect((await sitemap()).some(item => item.url.endsWith(path))).toBe(false);
+  });
+
   it("renders an explicit noindex launch blocker without identity", async () => {
     for (const key of Object.keys(identity)) vi.stubEnv(key, "");
     render(await page());
@@ -47,4 +79,13 @@ describe.each(pages)("$path public legal route", ({ path, page, metadata, headin
     expect(result.robots).toEqual({ index: true, follow: true });
     expect((await sitemap()).some(item => item.url.endsWith(path))).toBe(true);
   });
+});
+
+it("keeps the approved native-only purchase policy in public Terms", async () => {
+  for (const [key, value] of Object.entries(identity)) vi.stubEnv(key, value);
+  render(await TermsPage());
+  expect(screen.getByText(/through supported native iOS and Android apps/i)).toBeDefined();
+  expect(screen.getByText(/There is no website checkout for City Passes or subscriptions/i)).toBeDefined();
+  expect(screen.queryByText(/28-day launch access/i)).toBeNull();
+  expect(screen.queryByText(/Stripe/i)).toBeNull();
 });
