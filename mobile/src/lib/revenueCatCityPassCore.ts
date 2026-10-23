@@ -1,4 +1,7 @@
-import { CITYWALK_CITY_PASS_72H } from "@citywalk/traveler-core";
+import {
+  CITYWALK_CITY_PASS_72H,
+  matchesCitywalkRevenueCatProduct,
+} from "@citywalk/traveler-core";
 
 import type { PurchaseResult, RestoreResult, StoreProduct } from "./cityUnlock";
 
@@ -35,7 +38,10 @@ function isCancelled(error: unknown): boolean {
 }
 
 export class RevenueCatCityPassBilling {
-  constructor(private dependencies: RevenueCatCityPassDependencies) {}
+  constructor(
+    private dependencies: RevenueCatCityPassDependencies,
+    private platform: "ios" | "android" = "ios",
+  ) {}
 
   subscribe(): () => void {
     return () => undefined;
@@ -46,10 +52,10 @@ export class RevenueCatCityPassBilling {
     if (!await this.dependencies.ensureConfigured()) return undefined;
     const plan = (await this.dependencies.loadPlans()).find(
       (candidate) => candidate.packageIdentifier === cityPass.packageIdentifier &&
-        candidate.productIdentifier === cityPass.productIdentifier,
+        matchesCitywalkRevenueCatProduct(cityPass.productIdentifier, candidate.productIdentifier, this.platform),
     );
     return plan?.localizedPrice
-      ? { id: plan.productIdentifier, localizedPrice: plan.localizedPrice }
+      ? { id, localizedPrice: plan.localizedPrice }
       : undefined;
   }
 
@@ -58,7 +64,7 @@ export class RevenueCatCityPassBilling {
     const offerings = await this.dependencies.getOfferings();
     const pkg = offerings.current?.availablePackages.find(
       (candidate) => candidate.identifier === cityPass.packageIdentifier &&
-        candidate.product.identifier === cityPass.productIdentifier,
+        matchesCitywalkRevenueCatProduct(cityPass.productIdentifier, candidate.product.identifier, this.platform),
     );
     if (!pkg) throw new Error("CITY_PASS_PACKAGE_UNAVAILABLE");
     return pkg;

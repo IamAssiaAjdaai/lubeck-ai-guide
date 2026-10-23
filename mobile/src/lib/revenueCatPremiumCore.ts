@@ -1,13 +1,19 @@
+import {
+  CITYWALK_REVENUECAT_PACKAGE_IDS,
+  CITYWALK_REVENUECAT_PRODUCT_IDS,
+  matchesCitywalkRevenueCatProduct,
+} from "@citywalk/traveler-core";
+
 export const CITYWALK_PREMIUM_PRODUCTS = Object.freeze({
   monthly: {
     kind: "monthly" as const,
-    packageIdentifier: "$rc_monthly",
-    productIdentifier: "com.citywalk.premium.monthly",
+    packageIdentifier: CITYWALK_REVENUECAT_PACKAGE_IDS.monthly,
+    productIdentifier: CITYWALK_REVENUECAT_PRODUCT_IDS.monthly,
   },
   annual: {
     kind: "annual" as const,
-    packageIdentifier: "$rc_annual",
-    productIdentifier: "com.citywalk.premium.yearly",
+    packageIdentifier: CITYWALK_REVENUECAT_PACKAGE_IDS.annual,
+    productIdentifier: CITYWALK_REVENUECAT_PRODUCT_IDS.annual,
   },
 });
 
@@ -54,7 +60,10 @@ export function premiumEnabled(): boolean {
 }
 
 export class RevenueCatPremiumBilling {
-  constructor(private dependencies: RevenueCatPremiumDependencies) {}
+  constructor(
+    private dependencies: RevenueCatPremiumDependencies,
+    private platform: "ios" | "android" = "ios",
+  ) {}
 
   async plans(): Promise<readonly PremiumPlan[]> {
     if (!await this.dependencies.ensureConfigured()) return [];
@@ -63,7 +72,7 @@ export class RevenueCatPremiumBilling {
       const expected = CITYWALK_PREMIUM_PRODUCTS[plan.kind];
       return expected &&
         plan.packageIdentifier === expected.packageIdentifier &&
-        plan.productIdentifier === expected.productIdentifier &&
+        matchesCitywalkRevenueCatProduct(expected.productIdentifier, plan.productIdentifier, this.platform) &&
         Boolean(plan.localizedPrice.trim());
     });
   }
@@ -74,7 +83,7 @@ export class RevenueCatPremiumBilling {
     const offerings = await this.dependencies.getOfferings();
     const pkg = offerings.current?.availablePackages.find((candidate) =>
       candidate.identifier === expected.packageIdentifier &&
-      candidate.product.identifier === expected.productIdentifier,
+      matchesCitywalkRevenueCatProduct(expected.productIdentifier, candidate.product.identifier, this.platform),
     );
     if (!pkg) throw new Error("PREMIUM_PACKAGE_UNAVAILABLE");
     return pkg;
