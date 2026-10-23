@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from "react";
-import { api } from "../api";
+import { api, ApiFailure } from "../api";
+import { expiredAuthCode, validateAuthForm, type AuthView } from "./formValidation";
+import type { AuthField } from "./validation";
 import "./auth.css";
 import BrandIdentity, { BrandMark } from "../brand/BrandIdentity";
 import { brandIdentity } from "../brand/identity";
@@ -10,17 +12,29 @@ export default function AuthForm({
   onSignedIn: () => Promise<void>;
   localRegistration?: boolean;
 }) {
-  const token = new URLSearchParams(location.search).get("token");
-  const [view, setView] = useState<"signup" | "signin" | "forgot" | "reset">(
-    token ? "reset" : "signin",
+  const params = new URLSearchParams(location.search);
+  const token = params.get("token");
+  const [view, setView] = useState<AuthView>(
+    expiredAuthCode(params.get("error")) ? "expired" : token ? "reset" : "signin",
   );
   const [busy, setBusy] = useState(false),
     [notice, setNotice] = useState(""),
     [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<AuthField, string>>>({});
+  const fieldError = (field: AuthField) => fieldErrors[field] ? <span className="auth-error" id={`auth-${field}-error`} role="alert">{fieldErrors[field]}</span> : null;
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const fields = new FormData(form);
+    const errors = validateAuthForm(view, fields);
+    setFieldErrors(errors);
+    setError("");
+    setNotice("");
+    if (Object.keys(errors).length) {
+      form.querySelector<HTMLInputElement>(`[name="${Object.keys(errors)[0]}"]`)?.focus();
+      return;
+    }
     setBusy(true);
     setError("");
     setNotice("");
@@ -57,15 +71,23 @@ export default function AuthForm({
         await api("/api/auth/reset-password", { token, newPassword: password });
         history.replaceState(null, "", "/auth");
         setView("signin");
+        setShowPassword(false);
+        setFieldErrors({});
         setNotice("Dein Passwort wurde geändert. Bitte neu anmelden.");
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Anmeldung fehlgeschlagen.");
+      if (e instanceof ApiFailure && expiredAuthCode(e.code)) {
+        history.replaceState(null, "", "/auth");
+        form.reset(); setShowPassword(false); setView("expired");
+      } else setError(e instanceof Error ? e.message : "Anmeldung fehlgeschlagen.");
     } finally {
       setBusy(false);
     }
   }
-  function go(next: typeof view) {
+  function go(next: AuthView) {
+    if (view === "expired" || view === "reset") history.replaceState(null, "", "/auth");
+    setShowPassword(false);
+    setFieldErrors({});
     setView(next);
     setError("");
     setNotice("");
@@ -103,50 +125,61 @@ export default function AuthForm({
                 ? "Passwort vergessen?"
                 : view === "reset"
                   ? "Neues Passwort"
-                  : "Willkommen zurück"}
+                  : view === "expired" ? "Dieser Link ist nicht mehr gültig." : "Willkommen zurück"}
           </h1>
           <p className="auth-description">
             {localRegistration ? "Nur lokale synthetische Testkonten. Öffentlicher Pilot geschlossen." : "Anmeldung für bestehende Testkonten. Öffentliche Registrierung und Pilot sind geschlossen."}
           </p>
-          <form className="auth-form" onSubmit={submit} key={view}>
+          {view === "expired" ? <div className="auth-message-screen">
+            <p role="status">Der Link ist abgelaufen, ungültig oder wurde bereits verwendet. Es wurde keine Anmeldung durchgeführt.</p>
+            <p>Für dein Passwort kannst du einen neuen Link anfordern. Zur E-Mail-Bestätigung melde dich erneut an; für ein unbestätigtes Konto wird ein neuer Bestätigungslink im lokalen QA-Mailordner abgelegt.</p>
+            <button type="button" className="auth-primary" onClick={() => go("forgot")}>Neuen Passwort-Link anfordern</button>
+          </div> : <form className="auth-form" onSubmit={submit} key={view} noValidate onChange={event => {
+            const name = event.target instanceof HTMLInputElement ? event.target.name as AuthField : undefined;
+            if (name) setFieldErrors(old => ({ ...old, [name]: undefined }));
+          }}>
             {view === "signup" && (
-              <label className="auth-field">
-                Dein Name
+              <div className="auth-field">
+                <label htmlFor="auth-name">Dein Name</label>
                 <input
-                  name="name"
+                  id="auth-name" name="name"
+                  aria-invalid={!!fieldErrors.name} aria-describedby={fieldErrors.name ? "auth-name-error" : undefined}
                   required
                   minLength={2}
                   maxLength={100}
                   autoComplete="name"
                 />
-              </label>
+                {fieldError("name")}
+              </div>
             )}
             {view !== "reset" && (
-              <label className="auth-field">
-                E-Mail-Adresse
+              <div className="auth-field">
+                <label htmlFor="auth-email">E-Mail-Adresse</label>
                 <input
-                  name="email"
+                  id="auth-email" name="email"
+                  aria-invalid={!!fieldErrors.email} aria-describedby={fieldErrors.email ? "auth-email-error" : undefined}
                   type="email"
                   required
                   maxLength={254}
                   autoComplete="email"
                 />
-              </label>
+                {fieldError("email")}
+              </div>
             )}
             {view !== "forgot" && (
-              <label className="auth-field">
-                Passwort
-                <input
-                  name="password"
-                  type="password"
-                  required
-                  minLength={view === "signin" ? 1 : 12}
-                  maxLength={128}
-                  autoComplete={
-                    view === "signin" ? "current-password" : "new-password"
-                  }
-                />
-              </label>
+              <div className="auth-field">
+                <label htmlFor="auth-password">Passwort</label>
+                <div className="auth-input-wrap">
+                  <input id="auth-password" name="password" type={showPassword ? "text" : "password"} required
+                    minLength={view === "signin" ? 1 : 12} maxLength={128}
+                    aria-invalid={!!fieldErrors.password} aria-describedby={fieldErrors.password ? "auth-password-error" : undefined}
+                    autoComplete={view === "signin" ? "current-password" : "new-password"}/>
+                  <button type="button" className="password-toggle" aria-controls="auth-password" aria-pressed={showPassword}
+                    aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                    onClick={() => setShowPassword(value => !value)}>{showPassword ? "Verbergen" : "Anzeigen"}</button>
+                </div>
+                {fieldError("password")}
+              </div>
             )}
             {view === "signup" && (
               <p className="quiet">
@@ -175,7 +208,7 @@ export default function AuthForm({
                       ? "Passwort speichern"
                       : "Anmelden"}
             </button>
-          </form>
+          </form>}
           <div className="auth-foot">
             {view !== "signin" && (
               <button onClick={() => go("signin")}>Zur Anmeldung</button>

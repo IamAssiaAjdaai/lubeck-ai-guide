@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import type { BrandContext } from "@marketing/core";
 import { api } from "./api";
+import { serviceCity, serviceCitySchema, withServiceCity } from "./businessProfile";
 import { safeWorkspaceDestination, workspaceView } from "./routes";
 import PackWorkspace from "./PackWorkspace";
 import WorkspaceOverview from "./WorkspaceOverview";
@@ -60,6 +61,8 @@ export default function PilotApp() {
   const [name, setName] = useState(""),
     [website, setWebsite] = useState(""),
     [summary, setSummary] = useState(""),
+    [city, setCity] = useState(""),
+    [cityError, setCityError] = useState(""),
     [claims, setClaims] = useState("");
   const [selected, setSelected] = useState<string[]>([]),
     [ack, setAck] = useState(false);
@@ -126,6 +129,8 @@ export default function PilotApp() {
       setName(value.name);
       setWebsite(value.context?.identity.website ?? "");
       setSummary(value.context?.identity.summary ?? "");
+      setCity(serviceCity(value.context));
+      setCityError("");
       setClaims(value.context?.facts.map((f) => f.statement).join("\n") ?? "");
     }
     setSelected([]);
@@ -142,6 +147,9 @@ export default function PilotApp() {
   async function save(event: FormEvent) {
     event.preventDefault();
     if (!detail) return;
+    const parsedCity = serviceCitySchema.safeParse(city);
+    if (!parsedCity.success) { setCityError(parsedCity.error.issues[0].message); return; }
+    setCityError("");
     await perform(async () => {
       const facts = claims
         .split("\n")
@@ -162,6 +170,7 @@ export default function PilotApp() {
             ...(website ? { website } : {}),
           },
           facts,
+          markets: withServiceCity(detail.context, parsedCity.data),
         },
       });
       await open(detail.id);
@@ -332,6 +341,14 @@ export default function PilotApp() {
                             onChange={(e) => setName(e.target.value)}
                           />
                         </label>
+                        <label htmlFor="service-city">Einsatzort / Stadt (optional)</label>
+                        <input id="service-city" name="serviceCity" value={city} maxLength={160}
+                          disabled={busy || detail.role === "viewer"}
+                          aria-invalid={cityError ? true : undefined}
+                          aria-describedby={cityError ? "service-city-help service-city-error" : "service-city-help"}
+                          onChange={e => { setCity(e.target.value); setCityError(""); }} placeholder="Zum Beispiel: Düsseldorf" />
+                        <small id="service-city-help">Deine eigene Angabe, kein geprüfter Standortnachweis. Wird mit diesem Unternehmensprofil gespeichert.</small>
+                        {cityError && <p id="service-city-error" role="alert">{cityError}</p>}
                         <label>
                           Was bietest du an?
                           <textarea

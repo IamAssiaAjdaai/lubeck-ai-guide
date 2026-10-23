@@ -541,3 +541,7 @@
     padding: 6px 7px;
   }
 }
+
+/* Active form only: keep the existing control accessible without changing previews. */
+.pilot-auth .password-toggle { min-height: 44px; min-width: 44px; }
+.pilot-auth .auth-input-wrap input[name="password"] { padding-right: 96px; }

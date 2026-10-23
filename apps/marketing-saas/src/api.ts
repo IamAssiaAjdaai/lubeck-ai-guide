@@ -82,6 +82,9 @@ export const messages: Record<string, string> = {
   PROVIDER_NOT_CONFIGURED:
     "KI ist noch nicht konfiguriert. Bitte den Betreiber kontaktieren.",
 };
+export class ApiFailure extends Error {
+  constructor(message: string, readonly code: string | undefined) { super(message); }
+}
 export async function api<T>(path: string, data?: unknown): Promise<T> {
   const response = await fetch(path, {
     method: data === undefined ? "GET" : "POST",
@@ -91,11 +94,12 @@ export async function api<T>(path: string, data?: unknown): Promise<T> {
   });
   const body = await response.json();
   if (!response.ok)
-    throw new Error(
+    throw new ApiFailure(
       messages[body.code] ??
         messages[body.error] ??
         body.message ??
         `Anfrage fehlgeschlagen (${response.status}). Bitte erneut versuchen.`,
+      typeof body.code === "string" ? body.code : typeof body.error === "string" ? body.error : undefined,
     );
   return body as T;
 }

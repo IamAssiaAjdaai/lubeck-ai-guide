@@ -225,6 +225,31 @@ describe.skipIf(!enabled)(
       ).toBe(200);
       expect((await call(path, "GET", undefined, a.cookie)).status).toBe(401);
     }, 30000);
+    it("persists, edits and clears optional service city with tenant and revision protection", async () => {
+      const owner = await account(), other = await account();
+      const project = await call("/api/projects", "POST", {name: "Fiktiver Ortsservice"}, owner.cookie);
+      const path = `/api/projects/${project.body.id}`;
+      const brief = {rawText:"Fiktiver manueller Kurzbrief",identity:{name:"Fiktiver Ortsservice"},markets:[{id:"owner-service-city",name:"Düsseldorf"}],facts:[{id:"service",statement:"Wir reinigen Büros.",basis:"user_supplied"}]};
+      expect((await call(path+"/brief","POST",{expectedRevision:0,brief:{...brief,markets:[{id:"owner-service-city",name:"x".repeat(161)}]}},owner.cookie)).status).toBe(400);
+      expect((await call(path,"GET",undefined,owner.cookie)).body.revision).toBe(0);
+      expect((await call(path+"/brief","POST",{expectedRevision:0,brief},other.cookie)).status).toBe(404);
+      expect((await call(path+"/brief","POST",{expectedRevision:0,brief},owner.cookie)).status).toBe(200);
+      const saved=await call(path,"GET",undefined,owner.cookie);
+      expect(saved.body.context.markets).toEqual(brief.markets);
+      expect(saved.body.context.facts[0].basis).toBe("user_supplied");
+      expect(saved.body.context.facts[0].confirmation).toBeNull();
+      expect((await call(path,"GET",undefined,other.cookie)).status).toBe(404);
+      await call(path+"/confirm","POST",{expectedRevision:1,factIds:["service"],acknowledged:true},owner.cookie);
+      const changed={...brief,markets:[{id:"owner-service-city",name:"Hamburg"}]};
+      expect((await call(path+"/brief","POST",{expectedRevision:1,brief:changed},owner.cookie)).status).toBe(409);
+      expect((await call(path+"/brief","POST",{expectedRevision:2,brief:changed},owner.cookie)).status).toBe(200);
+      const edited=await call(path,"GET",undefined,owner.cookie);
+      expect(edited.body.context.markets[0].name).toBe("Hamburg");
+      expect(edited.body.context.facts[0].confirmation).toBeNull();
+      expect(edited.body.history).toEqual([3,2,1]);
+      expect((await call(path+"/brief","POST",{expectedRevision:3,brief:{...brief,markets:[]}},owner.cookie)).status).toBe(200);
+      expect((await call(path,"GET",undefined,owner.cookie)).body.context.markets).toEqual([]);
+    }, 30000);
     it("supports reset without account enumeration and revokes old sessions", async () => {
       const a = await account();
       const existing = await call("/api/auth/request-password-reset", "POST", {
