@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createHash, randomUUID } from "node:crypto";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, sql } from "drizzle-orm";
 import { confirmBrandFacts, createBrandContext, type BrandContext } from "@marketing/core";
 
 import { getDb, type Database } from "@/db/client";
@@ -9,6 +9,8 @@ import { staffCityAccess, staffMemberships, user } from "@/db/authSchema";
 import { brandContextAudit, brandContextRevisions, brandContexts, brandProjects } from "@/db/brandContextSchema";
 import { citywalkBrandProjects, citywalkBrandProjectCampaigns, citywalkBrandReviewers } from "@/db/citywalkBrandContextSchema";
 import { marketingCampaignsTable } from "@/db/marketingSchema";
+import { citiesTable } from "@/db/schema";
+import { z } from "zod";
 import { AdminAuthorizationError, requireAdminCapability, type AdminContext } from "@/lib/admin/authorization.server";
 import { hasCityCapability, type AdminCapability } from "@/lib/admin/permissions";
 import { associateRequest, canonicalJson, confirmRequest, correctRequest, createRequest, purgeRequest, readRequest, validateStoredContext } from "./validation";
@@ -73,6 +75,60 @@ export function createBrandContextService(db: Database, authenticate: (capabilit
     if (!rows.length) throw new BrandContextPersistenceError("STALE_REVISION");
   }
   return {
+    async list(input: unknown = {}) {
+      const auth = await authenticate("marketing:view");
+      const request = z.strictObject({ after: z.uuid().optional() }).parse(input);
+      return db.transaction(async tx => {
+        await tx.execute(sql`SET LOCAL lock_timeout = '3s'`);
+        const [account] = await tx.select().from(user).where(eq(user.id, auth.user.id)).for("share");
+        const [member] = await tx.select().from(staffMemberships).where(eq(staffMemberships.userId, auth.user.id)).for("share");
+        if (!account || !member || !member.active) throw new AdminAuthorizationError(403, "FORBIDDEN");
+        const cityAccess = await tx.select().from(staffCityAccess).where(eq(staffCityAccess.staffMembershipId, member.id)).for("share");
+        const access = { ...member, membershipId: member.id, cityIds: cityAccess.map(s => s.cityId) };
+        const global = member.role === "super_admin" || member.globalAccess;
+        const allowed = cityAccess.filter(s => hasCityCapability(access, s.cityId, "marketing:view")).map(s => s.cityId);
+        if (!hasCityCapability(access, allowed[0] ?? 0, "marketing:view") && !allowed.length) return { items: [], next: null };
+        const boundary = global ? sql`true` : allowed.length ? sql`NOT EXISTS (SELECT 1 FROM citywalk_brand_projects s WHERE s.project_id = ${brandProjects.id} AND s.city_id NOT IN (${sql.join(allowed.map(id => sql`${id}`), sql`, `)}))` : sql`false`;
+        // Filter ALL scopes in SQL before even selecting context IDs. Never fetch private JSON first.
+        const candidates = await tx.select({ projectId: brandProjects.id, contextId: brandContexts.id }).from(brandProjects)
+          .innerJoin(brandContexts, eq(brandContexts.projectId, brandProjects.id))
+          .where(and(sql`EXISTS (SELECT 1 FROM citywalk_brand_projects s WHERE s.project_id = ${brandProjects.id})`, boundary, request.after ? gt(brandProjects.id, request.after) : undefined))
+          .orderBy(asc(brandProjects.id)).limit(21);
+        const items: { projectId: string; contextId: string; name: string; revision: number }[] = [];
+        for (const row of candidates) {
+          try { await scope(tx, row.projectId, auth, "marketing:view"); }
+          catch (error) { if (error instanceof AdminAuthorizationError || error instanceof BrandContextPersistenceError && error.code === "NOT_FOUND") continue; throw error; }
+          const context = await current(tx, row.projectId, row.contextId);
+          items.push({ ...row, name: context.identity.name, revision: context.revision });
+        }
+        return { items: items.slice(0, 20), next: items.length > 20 ? items[19].projectId : null };
+      });
+    },
+    async workspace(input: unknown) {
+      const auth = await authenticate("marketing:view"), request = readRequest.parse(input);
+      return db.transaction(async tx => {
+        await tx.execute(sql`SET LOCAL lock_timeout = '3s'`);
+        await scope(tx, request.projectId, auth, "marketing:view");
+        const context = await current(tx, request.projectId, request.contextId);
+        const scopes = await tx.select({ cityId: citiesTable.id, name: citiesTable.name }).from(citywalkBrandProjects)
+          .innerJoin(citiesTable, eq(citiesTable.id, citywalkBrandProjects.cityId)).where(eq(citywalkBrandProjects.projectId, request.projectId)).orderBy(asc(citiesTable.id));
+        const campaigns = await tx.select({ id: marketingCampaignsTable.id, name: marketingCampaignsTable.name, cityId: marketingCampaignsTable.cityId }).from(citywalkBrandProjectCampaigns)
+          .innerJoin(marketingCampaignsTable, eq(marketingCampaignsTable.id, citywalkBrandProjectCampaigns.campaignId)).where(eq(citywalkBrandProjectCampaigns.projectId, request.projectId));
+        const [member] = await tx.select().from(staffMemberships).where(eq(staffMemberships.userId, auth.user.id));
+        const cityAccess = await tx.select().from(staffCityAccess).where(eq(staffCityAccess.staffMembershipId, member.id));
+        const access = { ...member, membershipId: member.id, cityIds: cityAccess.map(s => s.cityId) };
+        const rows = await tx.select({ revision: brandContextRevisions, audit: brandContextAudit }).from(brandContextRevisions)
+          .innerJoin(brandContextAudit, and(eq(brandContextAudit.contextId, brandContextRevisions.contextId), eq(brandContextAudit.revision, brandContextRevisions.revision)))
+          .where(eq(brandContextRevisions.contextId, request.contextId)).orderBy(desc(brandContextRevisions.revision)).limit(20);
+        const history = rows.reverse().map(row => {
+          const snapshot = validate(row.revision);
+          return { revision: snapshot.revision, event: row.audit.event, actorId: row.audit.actorId, occurredAt: row.audit.occurredAt.toISOString(), facts: row.audit.factIds.map(id => snapshot.facts.find(f => f.id === id)!.statement) };
+        });
+        return { context, scopes, campaigns, history, historyTruncated: context.revision > 20,
+          canManage: scopes.every(s => hasCityCapability(access, s.cityId, "marketing:manage")),
+          canConfirm: scopes.every(s => hasCityCapability(access, s.cityId, "publishing:review")) };
+      });
+    },
     async create(input: unknown) {
       const auth = await authenticate("marketing:manage");
       const request = createRequest.parse(input);
@@ -180,3 +236,6 @@ export const correctPersistedBrandContext = (input: unknown) => createBrandConte
 export const purgeBrandProject = (input: unknown) => createBrandContextService(getDb(), requireAdminCapability).purge(input);
 
 export const associateBrandProjectCampaign = (input: unknown) => createBrandContextService(getDb(), requireAdminCapability).associateCampaign(input);
+
+export const listBrandProjects = (input: unknown = {}) => createBrandContextService(getDb(), requireAdminCapability).list(input);
+export const getBrandWorkspace = (input: unknown) => createBrandContextService(getDb(), requireAdminCapability).workspace(input);

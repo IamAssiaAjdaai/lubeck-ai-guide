@@ -48,7 +48,7 @@ export function AdminShell({
   context,
 }: Readonly<{ children: ReactNode; context: AdminContext }>) {
   const sections = getVisibleAdminSections(context.staff);
-  const primarySections = sections.filter(({ id }) => ["dashboard", "cities", "commerce", "staff"].includes(id));
+  const primarySections = sections.filter(({ id }) => ["dashboard", "cities", "commerce", "staff", "marketing"].includes(id));
 
   return (
     <div className="min-h-screen bg-[#f6f7fb] text-text-primary">
@@ -69,8 +69,8 @@ export function AdminShell({
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:px-8">
-        <aside className="surface-card h-fit p-3">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:px-8">
+        <aside className="surface-card min-w-0 h-fit p-3">
           <div className="border-b border-border px-3 pb-4 pt-2">
             <p className="truncate text-sm font-semibold">{context.user.name}</p>
             <p className="truncate text-xs text-text-secondary">

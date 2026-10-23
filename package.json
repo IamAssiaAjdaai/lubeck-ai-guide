@@ -26,6 +26,7 @@
     "city:import": "node --conditions=react-server --import tsx scripts/import-city-cms.ts",
     "content:readiness": "node --conditions=react-server --import tsx scripts/report-city-readiness.ts",
     "performance:measure": "tsx scripts/measure-public-performance.ts",
+    "brand-context:test:smoke": "node scripts/brand-workspace-smoke.mjs",
     "brand-context:test:integration": "tsx scripts/run-brand-context-integration-tests.ts",
     "cms:test:integration": "tsx scripts/run-cms-integration-tests.ts",
     "content:test:integration": "tsx scripts/run-city-content-integration-tests.ts",

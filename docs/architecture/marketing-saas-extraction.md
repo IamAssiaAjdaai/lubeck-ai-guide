@@ -166,3 +166,11 @@ associations never own generic context. Campaign deletion unlinks only the campa
 Explicit all-city admin purge erases the whole project, and city deletion is
 restricted while retained project scopes exist. See the persistence document for
 upgrade limits and historical-scope policy.
+
+Sprint 03 provides an internal host-owned onboarding/review UI, bounded authorized
+listing and private audit summaries. Core contracts and migrations are unchanged.
+The BrandAction interface separates form results from persistence; extraction must
+replace CITYWALK campaign selection, auth and retained-city views with independent
+project membership adapters. No public intake or generation trust is implied.
+See [Brand Workspace acceptance](../reviews/brand-workspace.md) for local UI evidence
+and the separately unverified persistent Preview migration prerequisite.

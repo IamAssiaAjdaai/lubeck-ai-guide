@@ -1,0 +1,2 @@
+"use client";
+export default function BrandError({ reset }: { reset: () => void }) { return <section role="alert" className="surface-card space-y-4 p-6"><h1 className="text-xl font-bold">Markenbereich derzeit nicht verfügbar</h1><p>Bitte später erneut versuchen oder die zuständige Administration kontaktieren. Private Projektdaten werden hier nicht angezeigt.</p><button className="button-secondary min-h-11 px-5" onClick={reset}>Erneut laden</button></section>; }
