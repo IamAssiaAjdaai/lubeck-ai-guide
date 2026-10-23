@@ -2,8 +2,8 @@ import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-const origin='http://127.0.0.1:3208',out=process.env.MARKETING_BROWSER_EVIDENCE_ROOT??'docs/qa/marketing-saas/consolidate-01/demo';await fs.mkdir(out,{recursive:true});
-const browser=await chromium.launch({channel:'chrome',headless:true});const checks=[],errors=[],external=[],api=[],pixels=[];
+const origin=process.env.MARKETING_BROWSER_ORIGIN??'http://127.0.0.1:3208',out=process.env.MARKETING_BROWSER_EVIDENCE_ROOT??'docs/qa/marketing-saas/consolidate-01/demo';await fs.mkdir(out,{recursive:true});
+const browser=await chromium.launch({channel:process.env.MARKETING_BROWSER_CHANNEL==='bundled'?undefined:'chrome',headless:true});const checks=[],errors=[],external=[],api=[],pixels=[];
 function check(v,m){assert.ok(v,m);checks.push(m);console.log('PASS',m)}
 async function axe(page,label,width){await page.addScriptTag({path:path.resolve('node_modules/axe-core/axe.min.js')});const r=await page.evaluate(()=>window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}));await fs.writeFile(`${out}/${label}-axe-${width}.json`,JSON.stringify({violations:r.violations,incomplete:r.incomplete},null,2));check(r.violations.length===0,`${label}: axe ${width}`)}
 try{

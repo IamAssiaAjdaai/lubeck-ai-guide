@@ -1,0 +1,65 @@
+name: Independent Marketing SaaS
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - 'apps/marketing-saas*/**'
+      - 'packages/marketing-core/**'
+      - 'scripts/marketing-consolidate*'
+      - 'scripts/marketing-creative-offline-guard.mjs'
+      - 'scripts/marketing-image-live-experiment.mjs'
+      - 'docs/qa/marketing-saas/creative-04/live-experiment.proposed.json'
+      - 'package*.json'
+      - 'eslint.config.mjs'
+      - 'vitest.config.ts'
+      - '.github/workflows/marketing-saas.yml'
+permissions:
+  contents: read
+concurrency:
+  group: marketing-saas-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  canonical-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: marketing_qa
+          POSTGRES_DB: marketing_ci
+          # Ephemeral runner-only service, loopback-bound, no shared/customer DB.
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['127.0.0.1:55498:5432']
+        options: >-
+          --health-cmd "pg_isready -U marketing_qa -d marketing_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      MARKETING_DATABASE_URL: postgresql://marketing_qa@127.0.0.1:55498/marketing_ci
+      MARKETING_ORIGIN: http://127.0.0.1:3208
+      MARKETING_API_PORT: '3209'
+      MARKETING_BROWSER_CHANNEL: bundled
+      MARKETING_CI_EVIDENCE_ROOT: ${{ runner.temp }}/marketing-ci-evidence
+      MARKETING_AI_ENABLED: 'false'
+      MARKETING_REAL_IMAGE_TRANSPORT_ENABLED: 'false'
+      MARKETING_REAL_IMAGE_SPEND_APPROVED: 'false'
+      MARKETING_LOCAL_REGISTRATION_ENABLED: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: npm}
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Canonical auth, tenant, Pack, Creative, review, export and D2 acceptance
+        run: node scripts/marketing-consolidate-ci.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: marketing-canonical-offline-evidence
+          if-no-files-found: warn
+          # Never upload mail, session state, login files, ZIPs or raw private logs.
+          path: |
+            ${{ runner.temp }}/marketing-ci-evidence/summary.json
+            ${{ runner.temp }}/marketing-ci-evidence/demo/*.png
+            ${{ runner.temp }}/marketing-ci-evidence/closed/*.png
+            ${{ runner.temp }}/marketing-ci-evidence/workspace/screenshots/*.png
