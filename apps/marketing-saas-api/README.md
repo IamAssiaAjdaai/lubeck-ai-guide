@@ -1,28 +1,39 @@
-# Independent Marketing SaaS — local pilot backend
+# Independent Marketing SaaS — local closed pilot
 
-Working local Better Auth + tenant/project persistence, isolated from CITYWALK. See [acceptance evidence](../../docs/qa/marketing-saas/auth-persistence.md). Real outbound email is deliberately unavailable; verification/reset links go to the ignored `.qa-mail` sink. Synthetic data only. No external paid-pilot readiness is claimed.
+The actual application uses independent Better Auth, tenant-scoped projects and versioned business contexts. D2 is the public landing and Concept A the workspace. Public registration, external email, billing and live AI remain disabled. Synthetic local data only.
 
-From repository root, create a **dedicated** disposable PostgreSQL database, then export the values in this folder's `.env.example` (placeholders must be replaced). Never reuse CITYWALK DATABASE_URL or its migrations. The default test container/port used during implementation is `marketing-mvp-qa-20261021`, loopback 55498, database `marketing_mvp_local`; this is distinct from the older draft compose port 55434, which was occupied by an unrelated project.
+## Local configuration
 
-```
+Use the existing [configuration contract](src/config.ts) and [canonical local runner](../../scripts/marketing-consolidate-local.mjs). There is no committed environment template or fixed QA password. Supply these variables privately in the process environment:
+
+- `MARKETING_DATABASE_URL`: dedicated `marketing_*` PostgreSQL database on `127.0.0.1`, a verified free non-default port, with its own local credentials. Never use CITYWALK databases or root migrations.
+- `MARKETING_AUTH_SECRET`: a separate random secret of at least 32 characters, never committed or printed.
+- `MARKETING_ORIGIN`: loopback UI origin, for example `http://127.0.0.1:3208`.
+- `MARKETING_API_PORT`: a separate free loopback port, for example `3209`.
+- `MARKETING_MAIL_DIRECTORY`: private local directory for verification/reset links. Files contain sensitive test tokens and must stay outside screenshots, logs and distributable artifacts.
+- `MARKETING_LOCAL_REGISTRATION_ENABLED=false`: keep signup closed. Synthetic registration is enabled only inside isolated acceptance setup, never as public access.
+
+The canonical runner forces mock-only gates and strips provider-key variables. It does not create a PostgreSQL service. After supplying the private configuration, run from the repository root:
+
+```sh
 npm ci
-npm --prefix apps/marketing-saas-api run db:migrate
-npm --prefix apps/marketing-saas-api run dev
+node scripts/marketing-consolidate-local.mjs migrate
+node scripts/marketing-consolidate-local.mjs verify
+node scripts/marketing-consolidate-local.mjs start
 ```
 
-In another terminal:
-```
-npm --prefix apps/marketing-saas run dev
+Open the configured origin. Use an existing verified synthetic test account. Stop only the runner you started with Ctrl+C; retain databases and volumes. Migrations are explicit, additive, checksum-verified and replay-safe. Startup does not migrate the database. Never run root CITYWALK migration commands for this application.
+
+## Canonical offline acceptance
+
+[CI workflow](../../.github/workflows/marketing-saas.yml) executes [the canonical acceptance runner](../../scripts/marketing-consolidate-ci.mjs): Marketing units/security, isolated PostgreSQL integrations, typechecks, lint, build, authenticated Pack/Creative/review/export, closed signup and the unauthenticated D2 demo. [CI readiness evidence](../../docs/qa/marketing-saas/consolidate-04/CI-READINESS.md) records its scope and limitations; historical counts describe their recorded revision.
+
+For local repetition, use a **disposable** `marketing_*` database on a non-default loopback port and a database user allowed to create a separate synthetic journey database. Set `MARKETING_DATABASE_URL`, `MARKETING_ORIGIN` and `MARKETING_API_PORT` to isolated CI-owned resources, then:
+
+```sh
+node scripts/marketing-consolidate-ci.mjs
 ```
 
-Open http://127.0.0.1:3108/auth. New accounts require email verification; open the link in the mode-0600 JSON file in the configured local mail directory. Do not commit these files or expose a mailbox endpoint. `.env.marketing.local` is ignored and separate from CITYWALK configuration. Migrations are explicit, checksum-verified, additive and transaction-safe; run twice to verify replay. Server startup never mutates schemas. A failed migration rolls back. Roll back application code while retaining the additive DB schema/history; no destructive rollback script.
+Local Chrome is the default; CI installs bundled Chromium and sets `MARKETING_BROWSER_CHANNEL=bundled`. Evidence defaults to private temporary storage. The workflow uploads only synthetic screenshots and aggregate summary; mail, credentials and session state are excluded. Tests preserve uncertain cost holds and honor authentication rate limits. Local setup briefly enables synthetic registration, then restarts with signup closed. No production or external provider calls are authorized.
 
-Test with MARKETING_TEST_DATABASE_URL pointing to a dedicated synthetic database already migrated:
-```
-npm run test:run -- apps/marketing-saas-api/src/auth.integration.test.ts
-npm --prefix apps/marketing-saas-api run typecheck
-npm --prefix apps/marketing-saas run typecheck
-npm --prefix apps/marketing-saas run build
-```
-
-Browser QA requires Playwright/Chrome. Set MARKETING_PLAYWRIGHT_MODULE to the absolute installed Playwright `index.mjs` if it is not installed in the root. Run `node scripts/marketing-saas-pilot-smoke.mjs`. No provider requests, real emails, billing, production operations or deployments are performed by these tests.
+Service city is optional owner-declared context stored through the existing `markets` schema and revision/tenant authorization. It is not automatically a confirmed location claim. Human fact confirmation, exact-version editorial review and manual publication remain separate controls. Production cookies, legal/privacy approvals, external mail and live-provider authorization remain separate release gates.
