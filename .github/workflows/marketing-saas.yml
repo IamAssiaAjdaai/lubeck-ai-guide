@@ -39,12 +39,15 @@ jobs:
       MARKETING_ORIGIN: http://127.0.0.1:3208
       MARKETING_API_PORT: '3209'
       MARKETING_BROWSER_CHANNEL: bundled
-      MARKETING_CI_EVIDENCE_ROOT: ${{ runner.temp }}/marketing-ci-evidence
       MARKETING_AI_ENABLED: 'false'
       MARKETING_REAL_IMAGE_TRANSPORT_ENABLED: 'false'
       MARKETING_REAL_IMAGE_SPEND_APPROVED: 'false'
       MARKETING_LOCAL_REGISTRATION_ENABLED: 'false'
     steps:
+      - name: Initialize temporary evidence directory
+        shell: bash
+        run: |
+          printf 'MARKETING_CI_EVIDENCE_ROOT=%s/marketing-ci-evidence\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: {node-version: 22, cache: npm}
