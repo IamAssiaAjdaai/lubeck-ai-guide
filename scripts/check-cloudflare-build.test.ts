@@ -16,7 +16,7 @@ function fixture() {
   const handlers = ["/api/auth/:all+", "/api/content/cities", "/api/account/export", "/api/account/delete-request", "/api/account/delete-confirm", "/api/guide", "/api/analytics/marketing-funnel"];
   const source = pages.map(route => `"page:${route}"`).concat(handlers.map(route => `"route-handler:${route}"`)).join("\n");
   writeFileSync(path.join(worker, "bundle/index.js"), source);
-  writeFileSync(path.join(worker, "bundle/ssr/index.js"), '"A better way to"; "walk a city";');
+  writeFileSync(path.join(worker, "bundle/ssr/index.js"), '"Make every city your own.";');
   writeFileSync(path.join(worker, "worker.config.json"), JSON.stringify({ name: "synthetic-worker", assets: { notFoundHandling: "none" }, env: Object.fromEntries(["NAME", "STREET_ADDRESS", "POSTAL_CITY"].map(field => [`CITYWALK_LEGAL_OPERATOR_${field}`, { type: "secret" }])) }));
   const run = () => execFileSync(process.execPath, [script], { cwd: root, env: { ...process.env, CITYWALK_BUILD_REVISION: "a".repeat(40), GITHUB_SHA: "" }, stdio: "pipe", encoding: "utf8" });
   return { root, worker, source, run };

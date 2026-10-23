@@ -33,6 +33,7 @@ vi.mock("@/components/LanguageSelector", () => ({
 vi.mock("next/image", () => ({ default: ({src, alt}: {src:string;alt:string}) => <span data-image={src} role="img" aria-label={alt}/> }));
 
 import HomePage, { metadata as homeMetadata } from "@/app/page";
+import LandingNextPreviewPage, { metadata as previewMetadata } from "@/app/landing-next-preview/page";
 import ExplorePage from "@/app/explore/page";
 import { cities } from "@/data/cities";
 import { getTranslations, locales } from "@/lib/i18n";
@@ -44,10 +45,20 @@ const heroMedia: PublicMedia = { assetKey: "hero", kind: "image", purpose: "hero
 describe("Homepage cutover", () => {
   afterEach(cleanup);
 
+  it("shares the approved component with the noindex preview", () => {
+    expect(HomePage().type).toBe(LandingNextPreviewPage().type);
+    expect(HomePage().props).toEqual(LandingNextPreviewPage().props);
+    expect(previewMetadata.robots).toEqual({ index: false, follow: false });
+    expect(previewMetadata.alternates).toEqual({ canonical: "https://getcitywalk.com/" });
+  });
+
   it("renders the reviewed CITYWALK landing at root with indexable metadata", () => {
     render(<HomePage />);
     const heading = screen.getByRole("heading", { level: 1 });
-    expect(heading.textContent?.replace(/\s+/g, " ").replace("wayto", "way to")).toMatch(/A better way to walk a city/i);
+    expect(heading.textContent).toBe("Make every city your own.");
+    expect(document.querySelectorAll("main > section")).toHaveLength(9);
+    expect(screen.getByRole("link", { name: "Start exploring" }).getAttribute("href")).toBe("/explore");
+    expect(document.querySelectorAll('a[href*="apps.apple.com"],a[href*="play.google.com"]')).toHaveLength(0);
     expect(homeMetadata.robots).toEqual({ index: true, follow: true });
   });
 });

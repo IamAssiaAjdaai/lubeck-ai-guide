@@ -14,14 +14,23 @@ describe("production landing shell", () => {
   });
 
   it("publishes canonical and social metadata for the homepage", () => {
-    expect(homeMetadata.alternates).toEqual({ canonical: "/" });
+    expect(homeMetadata.alternates).toEqual({ canonical: "https://getcitywalk.com/" });
     expect(homeMetadata.robots).toEqual({ index: true, follow: true });
     expect(homeMetadata.openGraph).toMatchObject({
       type: "website",
-      url: CITYWALK_PUBLIC_ORIGIN,
+      url: "https://getcitywalk.com/",
       siteName: "CITYWALK",
     });
-    expect(homeMetadata.twitter).toMatchObject({ card: "summary_large_image" });
+    expect(homeMetadata.title).toBe("CITYWALK — Make every city your own");
+    expect(homeMetadata.openGraph).toMatchObject({
+      title: homeMetadata.title,
+      description: homeMetadata.description,
+      images: [{ url: "https://getcitywalk.com/brand/citywalk-home-og.png", width: 1200, height: 630, alt: homeMetadata.title }],
+    });
+    expect(homeMetadata.twitter).toMatchObject({
+      card: "summary_large_image",
+      images: [{ url: "https://getcitywalk.com/brand/citywalk-home-og.png", alt: homeMetadata.title }],
+    });
   });
 
   it("keeps internal and preview surfaces out of crawler access", () => {
@@ -31,7 +40,7 @@ describe("production landing shell", () => {
     expect(config.rules).toEqual({
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin/", "/api/", "/account/", "/landing-preview"],
+      disallow: ["/admin/", "/api/", "/account/", "/landing-preview", "/landing-next-preview"],
     });
   });
 

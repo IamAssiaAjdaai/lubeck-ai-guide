@@ -117,7 +117,7 @@ try {
   const homepage = await browser.newPage({ viewport: { width: 390, height: 1000 } });
   const homepageResponse = await homepage.goto(`${origin}/`, { waitUntil: "networkidle" });
   assert.equal(homepageResponse?.status(), 200);
-  assert.equal(await homepage.getByRole("heading", { level: 1, name: /A better way to walk a city/i }).count(), 1);
+  assert.equal(await homepage.getByRole("heading", { level: 1, name: /Make every city your own\./i }).count(), 1);
   const rootRobots = await homepage.locator('meta[name="robots"]').getAttribute("content");
   assert.ok(!rootRobots || !/noindex/i.test(rootRobots), "Homepage must not inherit preview noindex metadata");
   await homepage.screenshot({ path: path.join(output, "homepage-390.png"), fullPage: true });

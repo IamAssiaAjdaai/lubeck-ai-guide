@@ -1,0 +1,65 @@
+{
+  "baseHead": "4a2586aab5a440254be6cfd57945d677481d4264",
+  "branch": "codex/landing-homepage-402-20261021",
+  "presentationMoves": {
+    "src/app/landing-next-preview/Navbar.tsx": {
+      "newPath": "src/components/landing-next/Navbar.tsx",
+      "sha256": "c0d6fbe5367e9faec0f3e4c3da416760c9ead4b8dbf5632846f294381bcdcea3"
+    },
+    "src/app/landing-next-preview/Footer.tsx": {
+      "newPath": "src/components/landing-next/Footer.tsx",
+      "sha256": "0503b066ac45fd568cc8ed18f1fff482889fbfff173de0953288b6137747bc48"
+    },
+    "src/app/landing-next-preview/cities.tsx": {
+      "newPath": "src/components/landing-next/cities.tsx",
+      "sha256": "2c6204ce6d539231271087794e958618e5ec2d9e0c6833e294c95ccdc68a49b9"
+    },
+    "src/app/landing-next-preview/sections.tsx": {
+      "newPath": "src/components/landing-next/sections.tsx",
+      "sha256": "d20f7921202d40992991a463d599ee4742481ecf594de577709f01439c50428c"
+    },
+    "src/app/landing-next-preview/landing-next.module.css": {
+      "newPath": "src/components/landing-next/landing-next.module.css",
+      "sha256": "314da2f7766ad0f9b62d6edcc84f8af8e59737043b4a68db5acab6f0da9ce984"
+    }
+  },
+  "sourceSha256": {
+    "src/app/page.tsx": "e77f4632440e2c99b6007a780b49fe91f02e5b20925adc36605687806cf84f99",
+    "src/app/page.test.tsx": "40b5360aef41d917a6ca7f0914b7738237ee1d9e718ba446bbac59dbe099a861",
+    "src/app/productionShell.test.ts": "24cfe67ec653503e88766de54d5890981aa8a7f15d205dfd56acbd390ba7314c",
+    "src/app/robots.ts": "ed462ad51240a24782a8894ab6b5d95970f796c7ca4da337f5d01d55f1bc88d5",
+    "src/app/landing-next-preview/page.tsx": "9f3874b06fbd2048c76bd7b5f1e20b482d104a9295fea8ff603f2f9301c2b5e7",
+    "scripts/check-launch-routes.mjs": "867f8f26196fbc03051ba1b20a9b083f8bead159702c99e0a6fdd86b5ed45266",
+    "scripts/check-landing-preview.mjs": "9bcff2397e8ca47cd75fb462e3ad56e450fe00c9cf310b8f2b90cdeaab2c3cf0",
+    "public/brand/citywalk-home-og.png": "3cf16250dea37d091c14f2d17eef8b27f7e1592e1cd81ce317d23a13119993e0",
+    "src/components/landing-next/Navbar.tsx": "c0d6fbe5367e9faec0f3e4c3da416760c9ead4b8dbf5632846f294381bcdcea3",
+    "src/components/landing-next/landing-next.module.css": "314da2f7766ad0f9b62d6edcc84f8af8e59737043b4a68db5acab6f0da9ce984",
+    "src/components/landing-next/LandingNext.tsx": "bd683a01cc0f387aeb7b411b0ef364c97d938c5cf373f6599a58e7f16b7ade85",
+    "src/components/landing-next/cities.tsx": "2c6204ce6d539231271087794e958618e5ec2d9e0c6833e294c95ccdc68a49b9",
+    "src/components/landing-next/sections.tsx": "d20f7921202d40992991a463d599ee4742481ecf594de577709f01439c50428c",
+    "src/components/landing-next/Footer.tsx": "0503b066ac45fd568cc8ed18f1fff482889fbfff173de0953288b6137747bc48"
+  },
+  "unchangedPrefixes": [
+    "src/app/explore",
+    "src/app/privacy",
+    "src/app/terms",
+    "src/app/imprint",
+    "src/app/support",
+    "src/app/account-deletion",
+    "src/app/open",
+    "src/app/.well-known",
+    "src/app/api",
+    "src/lib/auth",
+    "src/cloudflare",
+    "src/db",
+    "cloudflare.config.ts",
+    "src/components/landing"
+  ],
+  "evidence": {
+    "homepage-1440.webp": "5a9728be9f06bd2aba49c0043ceedd205a4bd06d65cef0f147afc0fc4f2e8a84",
+    "REPORT.md": "cc1e9f5d765b70317ffe6c31562144afa19d8568658fb587e0927d8edb195b2b",
+    "results.json": "4a7b4092d2c14109b25870b11f71eda52ab72bb7bae9c043af4ccf8e163273ab",
+    "homepage-390.webp": "ee812b37cd8b3e6c6e5b68f9c0cdc8414efeca629d2e6cb4d366fced07bc6d51"
+  },
+  "status": "Preparation only; production NO-GO"
+}
