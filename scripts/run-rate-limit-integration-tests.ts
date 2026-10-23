@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import assert from "node:assert/strict";
 
 import { eq } from "drizzle-orm";
 
@@ -13,7 +14,7 @@ async function main(): Promise<void> {
   const [
     { closeDb, getDb },
     { rateLimitEventsTable },
-    { consumeDatabaseRateLimit },
+    { consumeDatabaseRateLimit, DatabaseRateLimitUnavailableError },
   ] = await Promise.all([
     import("@/db/client"),
     import("@/db/rateLimitSchema"),
@@ -24,6 +25,9 @@ async function main(): Promise<void> {
   const runId = randomUUID();
   const sequentialScope = `integration-rate-limit-sequential-${runId}`;
   const concurrentScope = `integration-rate-limit-concurrent-${runId}`;
+  const rollingScope = `integration-rate-limit-rolling-${runId}`;
+  const isolatedScope = `integration-rate-limit-isolated-${runId}`;
+  const testScopes = [sequentialScope, concurrentScope, rollingScope, isolatedScope];
   const identity = "private@example.test";
 
   try {
@@ -81,17 +85,67 @@ async function main(): Promise<void> {
       throw new Error("Concurrent PostgreSQL rate limiting is not atomic.");
     }
 
+    // Keep one recent event while aging out the other. A rolling window must
+    // release exactly one slot, without resetting the entire allowance.
+    const windowMs = 24 * 60 * 60 * 1_000;
+    const rollingInput = {
+      scope: rollingScope,
+      identifier: "all-visitors",
+      maxRequests: 2,
+      windowMs,
+    };
+    await consumeDatabaseRateLimit(rollingInput);
+    const recent = new Date();
+    await db.update(rateLimitEventsTable)
+      .set({ createdAt: recent })
+      .where(eq(rateLimitEventsTable.scope, rollingScope));
+    const [event] = await db.select({ identifierHash: rateLimitEventsTable.identifierHash })
+      .from(rateLimitEventsTable)
+      .where(eq(rateLimitEventsTable.scope, rollingScope));
+    assert.ok(event);
+    await db.insert(rateLimitEventsTable).values({
+      scope: rollingScope,
+      identifierHash: event.identifierHash,
+      createdAt: new Date(recent.getTime() - windowMs - 60_000),
+    });
+    const contenders = await Promise.all(Array.from({ length: 5 }, () =>
+      consumeDatabaseRateLimit(rollingInput),
+    ));
+    assert.equal(contenders.filter(({ success }) => success).length, 1,
+      "Only one concurrent caller may reserve the last rolling-window slot");
+    for (const result of contenders) {
+      assert.equal(result.remaining, 0);
+      assert.equal(result.reset, recent.getTime() + windowMs);
+    }
+    const isolated = await consumeDatabaseRateLimit({ ...rollingInput, scope: isolatedScope });
+    assert.equal(isolated.success, true, "An exhausted scope must not consume another scope");
+    assert.equal(isolated.remaining, 1);
+
+    // Missing signing material must reject rather than silently admit a call.
+    const originalSecret = process.env.BETTER_AUTH_SECRET;
+    try {
+      delete process.env.BETTER_AUTH_SECRET;
+      await assert.rejects(() => consumeDatabaseRateLimit(rollingInput),
+        DatabaseRateLimitUnavailableError);
+    } finally {
+      process.env.BETTER_AUTH_SECRET = originalSecret;
+    }
+    const rollingEvents = await db.select().from(rateLimitEventsTable)
+      .where(eq(rateLimitEventsTable.scope, rollingScope));
+    assert.equal(rollingEvents.length, 3,
+      "Expired events remain within retention; denied calls must not insert events");
+
     console.log(
-      "Verified PostgreSQL rate limits: sliding windows, keyed identifiers, and concurrent atomicity passed.",
+      "Verified PostgreSQL rate limits: rolling expiry, last-slot concurrency, scope isolation, keyed identifiers, and fail-closed missing secret passed.",
     );
   } finally {
-    await db
-      .delete(rateLimitEventsTable)
-      .where(eq(rateLimitEventsTable.scope, sequentialScope));
-    await db
-      .delete(rateLimitEventsTable)
-      .where(eq(rateLimitEventsTable.scope, concurrentScope));
-    await closeDb();
+    try {
+      for (const scope of testScopes) {
+        await db.delete(rateLimitEventsTable).where(eq(rateLimitEventsTable.scope, scope));
+      }
+    } finally {
+      await closeDb();
+    }
   }
 }
 
