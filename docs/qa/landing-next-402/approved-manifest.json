@@ -1,0 +1,98 @@
+{
+  "date": "2026-10-21",
+  "branch": "feat/landing-next-planta-20261021",
+  "testedBaseHead": "383aa82d565cd281ffffb9ea8c4ce9db24acdcf7",
+  "founderVisualApproval": "explicitly authorized in this conversation",
+  "sourceSha256": {
+    "src/app/landing-next-preview/Navbar.tsx": "c0d6fbe5367e9faec0f3e4c3da416760c9ead4b8dbf5632846f294381bcdcea3",
+    "src/app/landing-next-preview/cities.tsx": "2c6204ce6d539231271087794e958618e5ec2d9e0c6833e294c95ccdc68a49b9",
+    "src/app/landing-next-preview/sections.tsx": "d20f7921202d40992991a463d599ee4742481ecf594de577709f01439c50428c",
+    "src/app/landing-next-preview/Footer.tsx": "0503b066ac45fd568cc8ed18f1fff482889fbfff173de0953288b6137747bc48",
+    "src/app/landing-next-preview/page.tsx": "17c1f497272bad6c809e9a46cea6b924524b4052fe5939bb3dc304f9719c6908",
+    "src/app/landing-next-preview/storeLinks.ts": "c194997446b7433173b0bc89ad8e77745a04d0113cffc7de7ef94dedfe0e68a7",
+    "src/app/landing-next-preview/storeLinks.test.ts": "9d3ce578090d3584697cbb6cc9ac24f5aae162ebfe423923e3c26c27482076ff",
+    "src/app/landing-next-preview/landing-next.module.css": "314da2f7766ad0f9b62d6edcc84f8af8e59737043b4a68db5acab6f0da9ce984",
+    "public/images/landing-next/citywalk-app-illustration.webp": "702cbc8ba8462e225ce20b2d7030cb25cd5c6e379709a0f99d0e49c1163b5fd9",
+    "src/app/[locale]/[citySlug]/page.tsx": "acd702bf49ce3471a1b5ff243666d62c0446fd1d68ca798c15cf70c817ccf408",
+    "src/app/[locale]/[citySlug]/page.test.tsx": "4f7e32e44fbe09ab33d4d3a259d8280870bb0227c038cbd558e2af23d751e90f",
+    "src/app/[locale]/[citySlug]/CityPageContent.tsx": "93e9bf1f93e2ee401d94258781dc121d8bd295906d59089b2f849b70898b169c",
+    "src/app/[locale]/[citySlug]/[placeSlug]/page.tsx": "b29f5fbd63000fa7bc4cf131f8136285391d42ec821976746fbdfd87ba70a0c2",
+    "src/app/[locale]/[citySlug]/[placeSlug]/page.test.tsx": "6de0f9624c68da6541dc6288889327a7afdb9222fb0f5aeab850c83328f6df7d",
+    "src/app/[locale]/[citySlug]/[placeSlug]/PlacePageContent.tsx": "b75d57c70c9bed57f97bf192fcbdb2daf470382d465c583cc2cf6303e4df2c68"
+  },
+  "protectedProductionSource": {
+    "src/app/page.tsx": {
+      "sha256": "eebd44aa8dc6197798993a17450d50ed6c3d95393dff53243bfaebf505652a77",
+      "bytes": 776
+    },
+    "src/components/landing/LandingPreview.tsx": {
+      "sha256": "e0a4c993dc77f386896dbd55934afe8de2c9ebb6d54d36f5d5930776d83f1def",
+      "bytes": 17155
+    },
+    "src/components/landing/landing.module.css": {
+      "sha256": "c43b98448a3bbd4e5bef65def49d5a7596204e031fe8f3061f3a525caffc591e",
+      "bytes": 20336
+    }
+  },
+  "evidence": {
+    "APPROVED-HANDOFF.md": {
+      "sha256": "feaf43630f885f72b04cdabcc8dd4fa940e9b9d9c1d998b90eb5fbb028c347ac",
+      "bytes": 7242
+    },
+    "approved-results.json": {
+      "sha256": "34445f6530e828aa8acfa82bfde77a82bc644e6f9ed3ad87defddd4675efa5f0",
+      "bytes": 12882
+    },
+    "approved-screenshots/landing-1024.webp": {
+      "sha256": "6c707d7dc8f3494ac183101a6b3ebfeabc386bee9278ae63133c148ed35cae20",
+      "bytes": 527688
+    },
+    "approved-screenshots/landing-1440-hero.webp": {
+      "sha256": "c5b3e1a46e47c84b57db15722b5aaa173560f3240a95d02e94194be94c10ee03",
+      "bytes": 89694
+    },
+    "approved-screenshots/landing-1440.webp": {
+      "sha256": "5a9728be9f06bd2aba49c0043ceedd205a4bd06d65cef0f147afc0fc4f2e8a84",
+      "bytes": 548358
+    },
+    "approved-screenshots/landing-1920.webp": {
+      "sha256": "926ef59d3cfe930cc424a1feadf50e4a82c63ab1a8be939538e9cf13c6f41419",
+      "bytes": 567728
+    },
+    "approved-screenshots/landing-320-text-200-viewport.webp": {
+      "sha256": "2e67952fcdfe7b3597dc48233a336828b3b91268c2f89748f360e4de05e4e1e3",
+      "bytes": 40224
+    },
+    "approved-screenshots/landing-320.webp": {
+      "sha256": "dcb116639ec58cea01257c62754019ecc45e6a7b2a1410e9363b4b84add4520a",
+      "bytes": 422442
+    },
+    "approved-screenshots/landing-390-text-200-viewport.webp": {
+      "sha256": "42c049730f1c09187149ced1fd08412c633a0ecaf8c9b9e56dc168c6150d9e24",
+      "bytes": 41618
+    },
+    "approved-screenshots/landing-390.webp": {
+      "sha256": "ee812b37cd8b3e6c6e5b68f9c0cdc8414efeca629d2e6cb4d366fced07bc6d51",
+      "bytes": 429910
+    },
+    "approved-screenshots/landing-768.webp": {
+      "sha256": "7094be64c9055ce2e4cee68eef1a9911c0a2efd8e09952c2cdaf53ed7007623e",
+      "bytes": 488308
+    }
+  },
+  "isolatedGeneratedLanding": {
+    "landing-next-preview.rsc": {
+      "sha256": "5bebc63ef3577cf5c7fddfb996aa98858521839854e750fca3c1f004ccbdff16",
+      "bytes": 32354
+    },
+    "landing-next-preview.meta": {
+      "sha256": "e93449a54ec54ca1859a204fc1adbaf63da2e5dec22c383eed1855d2a6ef4dcb",
+      "bytes": 809
+    },
+    "landing-next-preview.html": {
+      "sha256": "e72c66ebe8341cce0a2251fc3f9149a831d72febc56facb90fa5a9878e37efa2",
+      "bytes": 60853
+    }
+  },
+  "status": "Local checks PASS; Draft PR only; production #395 NO-GO."
+}

@@ -1,0 +1,616 @@
+{
+  "testedAt": "2026-10-21",
+  "baseHead": "383aa82d565cd281ffffb9ea8c4ce9db24acdcf7",
+  "branch": "feat/landing-next-planta-20261021",
+  "browser": {
+    "layouts": [
+      {
+        "width": 320,
+        "zoom": 100,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 160,
+        "navBottom": 82,
+        "headingClear": true,
+        "scroll": 320,
+        "body": 320,
+        "overflow": []
+      },
+      {
+        "width": 320,
+        "zoom": 200,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 160,
+        "navBottom": 151.21875,
+        "headingClear": true,
+        "scroll": 320,
+        "body": 320,
+        "overflow": []
+      },
+      {
+        "width": 390,
+        "zoom": 100,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 160,
+        "navBottom": 82,
+        "headingClear": true,
+        "scroll": 390,
+        "body": 390,
+        "overflow": []
+      },
+      {
+        "width": 390,
+        "zoom": 200,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 160,
+        "navBottom": 93.609375,
+        "headingClear": true,
+        "scroll": 390,
+        "body": 390,
+        "overflow": []
+      },
+      {
+        "width": 768,
+        "zoom": 100,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 140,
+        "navBottom": 82,
+        "headingClear": true,
+        "scroll": 768,
+        "body": 768,
+        "overflow": []
+      },
+      {
+        "width": 768,
+        "zoom": 200,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 140,
+        "navBottom": 103.1875,
+        "headingClear": true,
+        "scroll": 768,
+        "body": 768,
+        "overflow": []
+      },
+      {
+        "width": 1024,
+        "zoom": 100,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 140,
+        "navBottom": 82,
+        "headingClear": true,
+        "scroll": 1024,
+        "body": 1024,
+        "overflow": []
+      },
+      {
+        "width": 1024,
+        "zoom": 200,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 140,
+        "navBottom": 103.1875,
+        "headingClear": true,
+        "scroll": 1024,
+        "body": 1024,
+        "overflow": []
+      },
+      {
+        "width": 1440,
+        "zoom": 100,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 289.625,
+        "navBottom": 98.671875,
+        "headingClear": true,
+        "scroll": 1440,
+        "body": 1440,
+        "overflow": []
+      },
+      {
+        "width": 1440,
+        "zoom": 200,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 209.359375,
+        "navBottom": 178.375,
+        "headingClear": true,
+        "scroll": 1440,
+        "body": 1440,
+        "overflow": []
+      },
+      {
+        "width": 1920,
+        "zoom": 100,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 289.625,
+        "navBottom": 98.671875,
+        "headingClear": true,
+        "scroll": 1920,
+        "body": 1920,
+        "overflow": []
+      },
+      {
+        "width": 1920,
+        "zoom": 200,
+        "pass": true,
+        "navFits": true,
+        "scrollY": 0,
+        "headingTop": 192,
+        "navBottom": 178.375,
+        "headingClear": true,
+        "scroll": 1920,
+        "body": 1920,
+        "overflow": []
+      }
+    ],
+    "accessibility": [
+      {
+        "width": 320,
+        "zoom": 100,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 320,
+        "zoom": 200,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "zoom": 100,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "zoom": 200,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 768,
+        "zoom": 100,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 768,
+        "zoom": 200,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 1024,
+        "zoom": 100,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 1024,
+        "zoom": 200,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 1440,
+        "zoom": 100,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 1440,
+        "zoom": 200,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 1920,
+        "zoom": 100,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 1920,
+        "zoom": 200,
+        "scheme": "light",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "zoom": 100,
+        "scheme": "dark",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      },
+      {
+        "width": 1440,
+        "zoom": 100,
+        "scheme": "dark",
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 39
+          }
+        ]
+      }
+    ],
+    "interactions": [
+      {
+        "name": "reference section copy 1",
+        "pass": true
+      },
+      {
+        "name": "reference section copy 2",
+        "pass": true
+      },
+      {
+        "name": "reference section copy 3",
+        "pass": true
+      },
+      {
+        "name": "reference section copy 4",
+        "pass": true
+      },
+      {
+        "name": "reference section copy 5",
+        "pass": true
+      },
+      {
+        "name": "reference section copy 6",
+        "pass": true
+      },
+      {
+        "name": "reference section copy 7",
+        "pass": true
+      },
+      {
+        "name": "reference section copy 8",
+        "pass": true
+      },
+      {
+        "name": "reference section copy 9",
+        "pass": true
+      },
+      {
+        "name": "approved hero paragraph: navy on transparent",
+        "pass": true
+      },
+      {
+        "name": "approved CTA and trust backgrounds transparent",
+        "pass": true
+      },
+      {
+        "name": "nine sections",
+        "pass": true
+      },
+      {
+        "name": "nine native FAQ disclosures",
+        "pass": true
+      },
+      {
+        "name": "noindex",
+        "pass": true
+      },
+      {
+        "name": "prelaunch store links disabled",
+        "pass": true
+      },
+      {
+        "name": "first-party image decoded",
+        "pass": true
+      },
+      {
+        "name": "anchor exists: main",
+        "pass": true
+      },
+      {
+        "name": "anchor exists: top",
+        "pass": true
+      },
+      {
+        "name": "anchor exists: how",
+        "pass": true
+      },
+      {
+        "name": "anchor exists: features",
+        "pass": true
+      },
+      {
+        "name": "anchor exists: cities",
+        "pass": true
+      },
+      {
+        "name": "anchor exists: faq",
+        "pass": true
+      },
+      {
+        "name": "anchor exists: download",
+        "pass": true
+      },
+      {
+        "name": "menu opens",
+        "pass": true
+      },
+      {
+        "name": "escape closes and restores focus",
+        "pass": true
+      },
+      {
+        "name": "menu anchor navigates and closes",
+        "pass": true
+      },
+      {
+        "name": "first keyboard target is skip link",
+        "pass": true
+      },
+      {
+        "name": "skip link moves focus to main",
+        "pass": true
+      },
+      {
+        "name": "FAQ opens with keyboard",
+        "pass": true
+      },
+      {
+        "name": "FAQ exclusive disclosure",
+        "pass": true
+      },
+      {
+        "name": "outside click closes menu",
+        "pass": true
+      },
+      {
+        "name": "desktop resize clears mobile menu",
+        "pass": true
+      },
+      {
+        "name": "section link navigates: top",
+        "pass": true
+      },
+      {
+        "name": "section link navigates: how",
+        "pass": true
+      },
+      {
+        "name": "section link navigates: features",
+        "pass": true
+      },
+      {
+        "name": "section link navigates: cities",
+        "pass": true
+      },
+      {
+        "name": "section link navigates: faq",
+        "pass": true
+      },
+      {
+        "name": "section link navigates: download",
+        "pass": true
+      },
+      {
+        "name": "200% mobile menu remains reachable: 320",
+        "pass": true,
+        "detail": {
+          "top": 539.203125,
+          "bottom": 624,
+          "viewport": 640
+        }
+      },
+      {
+        "name": "200% mobile menu remains reachable: 390",
+        "pass": true,
+        "detail": {
+          "top": 526.59375,
+          "bottom": 611.390625,
+          "viewport": 640
+        }
+      }
+    ],
+    "links": [
+      {
+        "href": "/support",
+        "actualPath": "/support",
+        "status": 200,
+        "pass": true,
+        "title": "Support | CITYWALK"
+      },
+      {
+        "href": "/explore",
+        "actualPath": "/explore",
+        "status": 200,
+        "pass": true,
+        "title": "CITYWALK"
+      },
+      {
+        "href": "/account-deletion",
+        "actualPath": "/account-deletion",
+        "status": 200,
+        "pass": true,
+        "title": "Delete your CITYWALK account"
+      },
+      {
+        "href": "/privacy",
+        "actualPath": "/privacy",
+        "status": 200,
+        "pass": true,
+        "title": "Privacy | CITYWALK"
+      },
+      {
+        "href": "/terms",
+        "actualPath": "/terms",
+        "status": 200,
+        "pass": true,
+        "title": "Terms | CITYWALK"
+      },
+      {
+        "href": "/imprint",
+        "actualPath": "/imprint",
+        "status": 200,
+        "pass": true,
+        "title": ""
+      }
+    ],
+    "consoleErrors": [],
+    "externalRequests": [],
+    "browser": "153.0.8010.12"
+  },
+  "faqKeyboard": [
+    {
+      "question": "What is CITYWALK?",
+      "pass": true
+    },
+    {
+      "question": "Is CITYWALK free?",
+      "pass": true
+    },
+    {
+      "question": "How do personalized walks work?",
+      "pass": true
+    },
+    {
+      "question": "Which cities are supported?",
+      "pass": true
+    },
+    {
+      "question": "Is CITYWALK available on iPhone and Android?",
+      "pass": true
+    },
+    {
+      "question": "Does CITYWALK work offline?",
+      "pass": true
+    },
+    {
+      "question": "Are Stories, Audio and the AI Guide available everywhere?",
+      "pass": true
+    },
+    {
+      "question": "What is a City Pass?",
+      "pass": true
+    },
+    {
+      "question": "Do I need an account?",
+      "pass": true
+    }
+  ],
+  "checks": {
+    "build": {
+      "check": "build",
+      "exitCode": 0
+    },
+    "test": {
+      "check": "test",
+      "exitCode": 0
+    },
+    "typecheck": {
+      "check": "typecheck",
+      "exitCode": 0
+    },
+    "lint": {
+      "check": "lint",
+      "exitCode": 0
+    }
+  },
+  "unitCounts": {
+    "route": 25,
+    "storeLinks": 8
+  },
+  "staticPagesGenerated": 785,
+  "scope": "Isolated local curated-code environment; no production resources; ephemeral synthetic auth and unreachable database placeholder with outbound connections blocked."
+}
