@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "status": "PROPOSED_NOT_AUTHORIZED",
+  "model": "gpt-image-2.5-flare-2026-09-08",
+  "maximumRequests": 1,
+  "maximumConcurrent": 1,
+  "maximumSpendMicroEur": 100000,
+  "quality": "low",
+  "size": "1024x1024",
+  "outputFormat": "png",
+  "ownerApproval": null,
+  "expiresAt": null,
+  "providerBoundEvidence": null,
+  "modelAccessEvidence": null,
+  "projectId": null,
+  "generationId": null,
+  "expectedVersion": 1,
+  "reviewedBriefHash": null,
+  "idempotencyKey": "046c0404-0000-4000-8000-000000000001"
+}

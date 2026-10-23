@@ -56,3 +56,10 @@ next-env.d.ts
 /dist/
 .vinext/
 .cloudflare/
+
+# Independent local SaaS verification/reset sink (contains one-time links).
+/.qa-mail/
+/apps/**/node_modules/
+
+# Private local creative QA assets; never public or versioned.
+/.qa-creative-media/

@@ -5,10 +5,13 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  { files: ["apps/marketing-saas/**/*.{ts,tsx}"], rules: { "@next/next/no-html-link-for-pages": "off" } },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    "apps/**/dist/**",
+    "apps/**/node_modules/**",
     "out/**",
     "build/**",
     "coverage/**",

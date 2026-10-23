@@ -1,0 +1,12 @@
+{
+  "name": "@marketing/saas-onboarding-preview",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Local-only customer onboarding UI slice. Not a deployed or authenticated SaaS.",
+  "scripts": {
+    "dev": "vite --config vite.config.ts",
+    "build": "vite build --config vite.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}
