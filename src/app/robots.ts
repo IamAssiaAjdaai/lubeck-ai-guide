@@ -12,6 +12,7 @@ export default function robots(): MetadataRoute.Robots {
         "/api/",
         "/account/",
         "/landing-preview",
+        "/landing-next-preview",
       ],
     },
     sitemap: `${CITYWALK_PUBLIC_ORIGIN}/sitemap.xml`,

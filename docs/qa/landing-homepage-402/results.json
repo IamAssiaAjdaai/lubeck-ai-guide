@@ -1,0 +1,246 @@
+{
+  "date": "2026-10-21",
+  "baseHead": "4a2586aab5a440254be6cfd57945d677481d4264",
+  "checks": {
+    "build": {
+      "check": "build",
+      "exitCode": 0
+    },
+    "test": {
+      "check": "test",
+      "exitCode": 0
+    },
+    "typecheck": {
+      "check": "typecheck",
+      "exitCode": 0
+    },
+    "lint": {
+      "check": "lint",
+      "exitCode": 0
+    },
+    "handoff": {
+      "check": "handoff",
+      "exitCode": 0
+    }
+  },
+  "unitTests": 38,
+  "staticPages": 785,
+  "browser": {
+    "visual": [
+      {
+        "width": 320,
+        "route": "/",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 320,
+        "route": "/landing-next-preview",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 390,
+        "route": "/",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 390,
+        "route": "/landing-next-preview",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 768,
+        "route": "/",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 768,
+        "route": "/landing-next-preview",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 1024,
+        "route": "/",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 1024,
+        "route": "/landing-next-preview",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 1440,
+        "route": "/",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 1440,
+        "route": "/landing-next-preview",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 1920,
+        "route": "/",
+        "sameDimensions": true,
+        "differentPixels": 0
+      },
+      {
+        "width": 1920,
+        "route": "/landing-next-preview",
+        "sameDimensions": true,
+        "differentPixels": 0
+      }
+    ],
+    "seo": [
+      {
+        "route": "/",
+        "title": "CITYWALK \u2014 Make every city your own",
+        "canonical": "https://getcitywalk.com/",
+        "robots": "index, follow",
+        "ogUrl": "https://getcitywalk.com",
+        "ogImage": "https://getcitywalk.com/brand/citywalk-home-og.png",
+        "twitterImage": "https://getcitywalk.com/brand/citywalk-home-og.png",
+        "sections": 9,
+        "storeLinks": 0
+      },
+      {
+        "route": "/landing-next-preview",
+        "title": "CITYWALK \u2014 Make every city your own | Design preview",
+        "canonical": "https://getcitywalk.com/",
+        "robots": "noindex, nofollow",
+        "sections": 9,
+        "storeLinks": 0
+      }
+    ],
+    "routes": [
+      {
+        "route": "/explore",
+        "status": 200
+      },
+      {
+        "route": "/support",
+        "status": 200
+      },
+      {
+        "route": "/privacy",
+        "status": 200
+      },
+      {
+        "route": "/terms",
+        "status": 200
+      },
+      {
+        "route": "/imprint",
+        "status": 200
+      },
+      {
+        "route": "/account-deletion",
+        "status": 200
+      },
+      {
+        "route": "/robots.txt",
+        "status": 200
+      },
+      {
+        "route": "/sitemap.xml",
+        "status": 200
+      },
+      {
+        "route": "/.well-known/apple-app-site-association",
+        "status": 503,
+        "expected": 503
+      },
+      {
+        "route": "/.well-known/assetlinks.json",
+        "status": 503,
+        "expected": 503
+      },
+      {
+        "route": "/open/lubeck/not-a-published-share",
+        "status": 200,
+        "expected": 200,
+        "baselineStatus": 200,
+        "nativeSchemePreserved": true
+      }
+    ],
+    "errors": [],
+    "external": [],
+    "handoff": [
+      {
+        "port": 3195,
+        "status": 200,
+        "href": "citywalk://open/lubeck/not-a-published-share?intent=build_walk"
+      },
+      {
+        "port": 3198,
+        "status": 200,
+        "href": "citywalk://open/lubeck/not-a-published-share?intent=build_walk"
+      }
+    ],
+    "robotsVerified": true
+  },
+  "launchRoutes": {
+    "configured": false,
+    "results": [
+      {
+        "route": "/",
+        "status": 200
+      },
+      {
+        "route": "/explore",
+        "status": 200
+      },
+      {
+        "route": "/en/lubeck",
+        "status": 200
+      },
+      {
+        "route": "/en/account",
+        "status": 200
+      },
+      {
+        "route": "/privacy",
+        "status": 200
+      },
+      {
+        "route": "/terms",
+        "status": 200
+      },
+      {
+        "route": "/imprint",
+        "status": 200
+      },
+      {
+        "route": "/support",
+        "status": 200
+      },
+      {
+        "route": "/account-deletion",
+        "status": 200
+      },
+      {
+        "route": "/api/content/cities?locale=en",
+        "status": 200
+      },
+      {
+        "route": "/api/auth/get-session",
+        "status": 200
+      },
+      {
+        "route": "/api/account/export",
+        "status": 401
+      }
+    ],
+    "legalReflow": true,
+    "unauthenticatedFunnelDropped": true
+  }
+}
