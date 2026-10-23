@@ -564,11 +564,10 @@ describe("rendered native V2 flow (native bridges mocked, not device acceptance)
     expect(mocks.persist.mock.lastCall![0].visited).toEqual(["place-0"]);
     expect(mocks.persist.mock.lastCall![0].takeBack).toBe(true);
     expect(screen.getByRole("heading", { name: t.tripStart })).toBeTruthy();
-    expect(
-      screen.getByRole("button", {
-        name: translate("en", "liveWalk.continueWalk"),
-      }),
-    ).toBeTruthy();
+    expect(screen.queryByRole("button", {
+      name: translate("en", "liveWalk.continueWalk"),
+    })).toBeNull();
+    expect(screen.getByRole("button", { name: t.finish })).toBeTruthy();
   });
   it.each(["en", "de"])("offers a closable Add stop sheet and confirms one addition in %s", async (locale) => {
     mocks.locale = locale;
