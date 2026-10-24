@@ -49,7 +49,7 @@ export function previewConfigurationIsReady(env: Environment): boolean {
 export function initialPreviewRoute(request: Request): boolean {
   if (!["GET", "HEAD", "OPTIONS"].includes(request.method)) return false;
   const path = new URL(request.url).pathname;
-  return ["/api/health", "/api/auth/get-session", "/api/content/cities"].includes(path) ||
+  return ["/api/health", "/api/content/cities"].includes(path) ||
     /^\/api\/content\/cities\/[a-z0-9-]+(?:\/summary|\/places\/[a-z0-9-]+)?$/.test(path);
 }
 
