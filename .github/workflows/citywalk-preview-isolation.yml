@@ -1,0 +1,46 @@
+name: CITYWALK locked API Preview checks
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - "src/cloudflare/preview*"
+      - "src/cloudflare/accountErasureSchedule.test.ts"
+      - "tools/cloudflare-preview/**"
+      - ".github/workflows/citywalk-preview-isolation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  preview-isolation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CI: "true"
+      CITYWALK_PREVIEW_FIXTURE: "1"
+      CITYWALK_PREVIEW_HYPERDRIVE_ID: "00000000000000000000000000000000"
+    steps:
+      - name: Checkout exact pull request commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Verify Preview isolation and deny-by-default tests
+        run: node node_modules/vitest/vitest.mjs run --config tools/cloudflare-preview/vitest.config.ts
+      - name: Typecheck isolated Preview tools
+        run: node node_modules/typescript/bin/tsc --noEmit -p tools/cloudflare-preview/tsconfig.json
+      - name: Lint isolated Preview source
+        run: node node_modules/eslint/bin/eslint.js src/cloudflare/previewBindings.mjs src/cloudflare/previewEntrypoint.ts src/cloudflare/previewPolicy.ts src/cloudflare/previewPolicy.test.ts tools/cloudflare-preview --max-warnings=0
+      - name: Verify production config unchanged relative to develop
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin develop
+          git diff --exit-code FETCH_HEAD HEAD -- cloudflare.config.ts
