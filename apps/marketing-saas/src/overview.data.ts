@@ -1,25 +1,25 @@
 import { api } from './api';
 
 export type OverviewProject = { id: string; name: string; revision?: number };
-type Context = { identity: { name: string }; facts: { confirmation?: unknown }[] } | null;
+type Context = { identity: { name: string; summary?: string }; markets?: { id: string; name: string }[]; facts: { statement?: string; confirmation?: unknown }[] } | null;
 type Gate = { ready: boolean; reason: string; revision: number; questions: string[] };
 type Draft = { goal: string; channel: string; savedAt: string };
 type Generation = { id: string; status: string; goal: string; created_at: string; output_revision: number; provider?:string };
 type Version = { version: number; created_at: string; content: { posts: { channel: string; text?: string }[]; days?: {day:number;time:string;task:string}[] } };
 export type OverviewReview = { postIndex: number; version: number; approved: boolean; image?: {kind:'asset'|'job';id:string}|null };
-export type OverviewMedia = { erasure?: unknown; assets: {id:string;status:string;alt:string}[] };
+export type OverviewMedia = { erasure?: unknown; assets: {id:string;status:string;alt:string;role?:string}[] };
 export function approvedThumbnail(root:string,version:number,reviews:OverviewReview[],media:OverviewMedia|null) {
   if(!media || !Array.isArray(media.assets) || media.erasure) return undefined;
   const review=reviews.find(r=>[0,1,2].includes(r.postIndex)&&r.version===version&&r.approved&&r.image?.kind==='asset'&&media.assets.some(a=>a.id===r.image!.id&&a.status==='approved'));
   const asset=media.assets.find(a=>a.id===review?.image?.id);
-  return asset?{url:`${root}/creative/assets/${encodeURIComponent(asset.id)}`,alt:asset.alt||'Freigegebene eigene Bildquelle',postIndex:review!.postIndex}:undefined;
+  return asset?{url:`${root}/creative/assets/${encodeURIComponent(asset.id)}`,alt:asset.alt||'Freigegebene eigene Bildquelle',role:asset.role,postIndex:review!.postIndex}:undefined;
 }
 export type OverviewEntry = {
   id: string; projectId: string; business: string; goal: string; channel?: string;
   date: string; dateLabel: string; generationId?: string; kind: 'draft' | 'pack';
   statusLabel: string; pendingReview: boolean; originLabel?:string;
-  posts?: {channel:string;text:string}[]; version?:number; approvedCount?:number;
-  days?: {day:number;time:string;task:string}[]; thumbnail?: {url:string;alt:string;postIndex:number};
+  posts?: {channel:string;text:string}[]; version?:number; approvedCount?:number; approvedPostIndices?:number[];
+  days?: {day:number;time:string;task:string}[]; thumbnail?: {url:string;alt:string;postIndex:number;role?:string};
 };
 export type ProjectOverview = { project: OverviewProject; context: Context; gate: Gate; draft: Draft | null; packs: Generation[]; media?: OverviewMedia|null };
 export type OverviewData = { projects: ProjectOverview[]; entries: OverviewEntry[]; draftCount: number; packCount: number; capped: boolean };
@@ -61,7 +61,7 @@ export async function loadOverview(projects: OverviewProject[]): Promise<Overvie
     if (!version || version.content.posts.length !== 3) throw Error('CURRENT_VERSION_UNAVAILABLE');
     const reviews = await api<OverviewReview[]>(`${root}/workspace/reviews/${encodeURIComponent(pack.id)}?version=${job.output_revision}`);
     const approved = [0,1,2].filter(i=>reviews.some(r=>r.postIndex===i && r.version===job.output_revision && r.approved===true)).length;
-    return {...entry, generationId:pack.id, version:job.output_revision, approvedCount:approved, posts:version.content.posts.map(p=>({...p,text:p.text??''})), days:version.content.days, thumbnail:approvedThumbnail(root,job.output_revision,reviews,summary.media??null), date:version.created_at, dateLabel:job.output_revision>1?'Zuletzt bearbeitet':'Erstellt',
+    return {...entry, generationId:pack.id, version:job.output_revision, approvedCount:approved, approvedPostIndices:[0,1,2].filter(i=>reviews.some(r=>r.postIndex===i&&r.version===job.output_revision&&r.approved===true)), posts:version.content.posts.map(p=>({...p,text:p.text??''})), days:version.content.days, thumbnail:approvedThumbnail(root,job.output_revision,reviews,summary.media??null), date:version.created_at, dateLabel:job.output_revision>1?'Zuletzt bearbeitet':'Erstellt',
       channel:[...new Set(version.content.posts.map(p=>channelLabel(p.channel)))].join(', '),
       statusLabel:approved===3?'Aktuelle Version geprüft':`Prüfung offen · ${3-approved} von 3 Beiträgen`, pendingReview:approved<3};
   });
