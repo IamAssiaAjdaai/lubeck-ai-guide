@@ -131,7 +131,15 @@ After this change is committed and the tracked tree is clean:
 node tools/native-api-preview/prepare.mjs --fixture
 ```
 
-This accepts **only offline fixture mode**. It refuses real-resource builds.
+This supports the original offline fixture mode. A second **offline, locked, reviewed-ID dry run** can bind a non-production, non-fixture Hyperdrive ID into the generated artifact. It does not query Cloudflare or Neon, does not read credentials, cannot prove that the resource exists or is correctly configured and **never uploads or deploys**. The target still has no routes/domains and deployment lock 1. Only after verifying the specific ID independently in Cloudflare and obtaining approval, run locally (not in GitHub logs):
+
+```sh
+CITYWALK_PREVIEW_HYPERDRIVE_ID='<verified-preview-hyperdrive-id>' \\
+  node tools/native-api-preview/prepare.mjs --reviewed-preview-id-dry-run
+```
+
+Keep the full manifest local, review generated config and require separate gated implementation/approval for real upload. This is **not** a real-resource deployment or acceptance test. Never include secrets or a connection string in the environment variable.
+
 It reads full HEAD/tree from Git, rejects tracked drift and materializes only
 Git blob bytes (no working-tree/untracked injection, symlinks or submodules).
 It hashes production config without copying or executing it; `.env.example` is
