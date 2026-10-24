@@ -31,7 +31,6 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
-  twoFactorEnabled: boolean("two_factor_enabled").default(false),
   ...createTimestamps(),
 });
 
@@ -117,50 +116,6 @@ export const externalAccountErasureJobs = pgTable(
   ],
 );
 
-export const passkey = pgTable(
-  "passkey",
-  {
-    id: text("id").primaryKey(),
-    name: text("name"),
-    publicKey: text("public_key").notNull(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    credentialID: text("credential_id").notNull(),
-    counter: integer("counter").notNull(),
-    deviceType: text("device_type").notNull(),
-    backedUp: boolean("backed_up").notNull(),
-    transports: text("transports"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    aaguid: text("aaguid"),
-  },
-  (table) => [
-    index("passkey_user_id_idx").on(table.userId),
-    index("passkey_credential_id_idx").on(table.credentialID),
-  ],
-);
-
-export const twoFactor = pgTable(
-  "twoFactor",
-  {
-    id: text("id").primaryKey(),
-    secret: text("secret").notNull(),
-    backupCodes: text("backup_codes").notNull(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    verified: boolean("verified").default(true),
-    failedVerificationCount: integer("failed_verification_count").default(0),
-    lockedUntil: timestamp("locked_until", { withTimezone: true }),
-  },
-  (table) => [
-    index("two_factor_secret_idx").on(table.secret),
-    index("two_factor_user_id_idx").on(table.userId),
-  ],
-);
-
 export const staffRoleEnum = pgEnum("staff_role", [
   "super_admin",
   "admin",
@@ -209,7 +164,5 @@ export const staffCityAccess = pgTable(
 );
 
 export type AuthUserRow = typeof user.$inferSelect;
-export type PasskeyRow = typeof passkey.$inferSelect;
-export type TwoFactorRow = typeof twoFactor.$inferSelect;
 export type StaffMembershipRow = typeof staffMemberships.$inferSelect;
 export type StaffCityAccessRow = typeof staffCityAccess.$inferSelect;
