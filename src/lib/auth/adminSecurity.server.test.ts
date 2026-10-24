@@ -28,4 +28,16 @@ describe("admin passkey relying party", () => {
       origin: "https://citywalk-preview.vercel.app",
     });
   });
+  it("rejects an untrusted fallback host", () => {
+    expect(() => getAdminPasskeyRelyingParty({
+      allowedHosts: ["citywalk-preview.vercel.app"],
+      protocol: "https",
+      fallback: "https://evil.example",
+    })).toThrow("allowed host");
+  });
+
+  it("rejects insecure non-localhost relying-party origins", () => {
+    expect(() => getAdminPasskeyRelyingParty("http://example.com")).toThrow("HTTPS");
+  });
+
 });
