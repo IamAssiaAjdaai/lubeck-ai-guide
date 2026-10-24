@@ -1,0 +1,69 @@
+name: Admin auth 0027 migration generator (isolated)
+on:
+  push:
+    branches:
+      - feat/admin-auth-0027-migration-20261024
+
+permissions:
+  contents: write
+
+concurrency:
+  group: admin-auth-0027-generator
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: github.repository == 'IamAssiaAjdaai/lubeck-ai-guide'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Resolve dependencies (no production DB)
+        run: npm ci
+      - name: Generate 0027 using pinned Drizzle Kit
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f drizzle/meta/0027_snapshot.json ]; then
+            echo "0027 already committed; no regeneration"; exit 0
+          fi
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const j = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json','utf8'));
+          if(j.entries.at(-1)?.tag !== '0026_shared_walk_links') throw Error('Drizzle head moved: stop');
+          NODE
+          npm run db:generate
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const j = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json','utf8'));
+          const entry = j.entries.at(-1);
+          if(j.entries.length !== 28 || entry.idx !== 27 || !entry.tag.startsWith('0027_')) throw Error('Expected one generated 0027 entry');
+          const sql = fs.readFileSync('drizzle/' + entry.tag + '.sql','utf8');
+          if(/\\b(DROP|TRUNCATE)\\s+(TABLE|COLUMN|SCHEMA|DATABASE)\\b/i.test(sql)) throw Error('Destructive DDL: abort');
+          if(!sql.includes('CREATE TABLE "public"."passkey"') && !sql.includes('CREATE TABLE "passkey"')) throw Error('Missing passkey table');
+          if(!sql.includes('twoFactor')) throw Error('Missing twoFactor table');
+          if(!sql.includes('two_factor_enabled')) throw Error('Missing user two_factor_enabled');
+          const snapshot = JSON.parse(fs.readFileSync('drizzle/meta/0027_snapshot.json','utf8'));
+          if(!snapshot.tables?.['public.passkey'] || !snapshot.tables?.['public.twoFactor']) throw Error('Missing generated snapshot tables');
+          console.log('Generated additive migration:',entry.tag);
+          NODE
+      - name: Commit generated migration only
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f drizzle/meta/0027_snapshot.json ] && [ -n "$(git status --porcelain)" ]; then
+            git status --short
+            test "$(git status --porcelain | grep -Ev '^(\\?\\?| M| A|A ) drizzle/' | wc -l)" -eq 0
+            git add drizzle/
+            git diff --cached --name-only | grep -q '^drizzle/meta/0027_snapshot.json$'
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "db(admin): generate additive 0027 migration and Drizzle metadata"
+            git push origin HEAD:feat/admin-auth-0027-migration-20261024
+          fi
