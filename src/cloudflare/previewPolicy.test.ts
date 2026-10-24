@@ -71,6 +71,11 @@ describe("Preview runtime boundary", () => {
     expect(await authorizePreview(new Request(origin + "/api/health"), env)).toBe(401);
     expect(await authorizePreview(new Request("https://getcitywalk.com/api/health"), env)).toBe(403);
   });
+  it("blocks get-session because preview runtime cannot read session tables", async () => {
+    const env = environment();
+    expect(initialPreviewRoute(request(env, "/api/auth/get-session"))).toBe(false);
+    expect(await authorizePreview(request(env, "/api/auth/get-session"), env)).toBe(503);
+  });
   it.each(["/api/guide", "/api/commerce/checkout", "/api/commerce/native/notifications/apple", "/api/commerce/native/notifications/google", "/api/commerce/webhooks/revenuecat", "/api/commerce/webhooks/stripe", "/api/account/delete-request", "/api/auth/sign-up/email", "/api/auth/sign-in/email", "/api/auth/sign-in/social", "/api/admin/generate", "/api/content/image"])("blocks provider, email or unreviewed route %s", async route => {
     const env = environment();
     expect(await authorizePreview(request(env, route), env)).toBe(503);
