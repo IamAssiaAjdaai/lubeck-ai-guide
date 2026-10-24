@@ -3,13 +3,23 @@ import { APIError } from "better-auth/api";
 
 import { staffMemberships } from "@/db/authSchema";
 import { getDb } from "@/db/client";
-import type { BetterAuthEnvironment } from "@/lib/auth/env";
 
-export function getAdminPasskeyRelyingParty(
-  baseURL: BetterAuthEnvironment["baseURL"],
-) {
+type AdminPasskeyOrigin = string | Readonly<{
+  fallback: string;
+  allowedHosts: readonly string[];
+  protocol: string;
+}>;
+
+export function getAdminPasskeyRelyingParty(baseURL: AdminPasskeyOrigin) {
   const origin = typeof baseURL === "string" ? baseURL : baseURL.fallback;
   const url = new URL(origin);
+  if (url.protocol !== "https:" && !(url.protocol === "http:" && url.hostname === "localhost")) {
+    throw new Error("Admin passkey origin must use HTTPS (except localhost).");
+  }
+  if (typeof baseURL !== "string" &&
+      (!baseURL.allowedHosts.includes(url.hostname) || baseURL.protocol + ":" !== url.protocol)) {
+    throw new Error("Admin passkey fallback must match an allowed host and protocol.");
+  }
 
   return {
     rpID: url.hostname,
