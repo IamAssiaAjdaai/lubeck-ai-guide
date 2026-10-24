@@ -1,0 +1,385 @@
+{
+  "phase": "after",
+  "checks": [
+    "no overflow 1440",
+    "editorial reference heading 1440",
+    "three real text previews 1440",
+    "honest decorative image 1440",
+    "reference sidebar width 240px",
+    "reference three-column post arrangement",
+    "reference two-column direction and weekly tasks",
+    "next action reachable above bottom navigation 1440",
+    "account action readable 1440",
+    "account action touch target 1440",
+    "older draft remains visible 1440",
+    "one contextual primary action 1440",
+    "exact-version review status 1440",
+    "no tiny visible workspace text 1440: []",
+    "body readable 1440",
+    "sidebar type 1440",
+    "automated axe 1440",
+    "no overflow 1024",
+    "editorial reference heading 1024",
+    "three real text previews 1024",
+    "honest decorative image 1024",
+    "next action reachable above bottom navigation 1024",
+    "account action readable 1024",
+    "account action touch target 1024",
+    "older draft remains visible 1024",
+    "one contextual primary action 1024",
+    "exact-version review status 1024",
+    "no tiny visible workspace text 1024: []",
+    "body readable 1024",
+    "sidebar type 1024",
+    "automated axe 1024",
+    "no overflow 768",
+    "editorial reference heading 768",
+    "three real text previews 768",
+    "honest decorative image 768",
+    "next action reachable above bottom navigation 768",
+    "account action readable 768",
+    "account action touch target 768",
+    "older draft remains visible 768",
+    "one contextual primary action 768",
+    "exact-version review status 768",
+    "no tiny visible workspace text 768: []",
+    "body readable 768",
+    "navigation touch target 768",
+    "navigation type 768",
+    "navigation touch target 768",
+    "navigation type 768",
+    "navigation touch target 768",
+    "navigation type 768",
+    "navigation touch target 768",
+    "navigation type 768",
+    "navigation touch target 768",
+    "navigation type 768",
+    "navigation touch target 768",
+    "navigation type 768",
+    "automated axe 768",
+    "no overflow 390",
+    "editorial reference heading 390",
+    "three real text previews 390",
+    "honest decorative image 390",
+    "next action reachable above bottom navigation 390",
+    "account action readable 390",
+    "account action touch target 390",
+    "older draft remains visible 390",
+    "one contextual primary action 390",
+    "exact-version review status 390",
+    "no tiny visible workspace text 390: []",
+    "body readable 390",
+    "navigation touch target 390",
+    "navigation type 390",
+    "navigation touch target 390",
+    "navigation type 390",
+    "navigation touch target 390",
+    "navigation type 390",
+    "navigation touch target 390",
+    "navigation type 390",
+    "navigation touch target 390",
+    "navigation type 390",
+    "navigation touch target 390",
+    "navigation type 390",
+    "automated axe 390",
+    "no overflow 375",
+    "editorial reference heading 375",
+    "three real text previews 375",
+    "honest decorative image 375",
+    "next action reachable above bottom navigation 375",
+    "account action readable 375",
+    "account action touch target 375",
+    "older draft remains visible 375",
+    "one contextual primary action 375",
+    "exact-version review status 375",
+    "no tiny visible workspace text 375: []",
+    "body readable 375",
+    "navigation touch target 375",
+    "navigation type 375",
+    "navigation touch target 375",
+    "navigation type 375",
+    "navigation touch target 375",
+    "navigation type 375",
+    "navigation touch target 375",
+    "navigation type 375",
+    "navigation touch target 375",
+    "navigation type 375",
+    "navigation touch target 375",
+    "navigation type 375",
+    "automated axe 375",
+    "approved hero stays on selected project asset endpoint",
+    "approved-source no overflow 1440",
+    "approved-source hero frame stays reserved 1440",
+    "approved-source axe 1440",
+    "approved-source no overflow 1024",
+    "approved-source hero frame stays reserved 1024",
+    "approved-source axe 1024",
+    "approved-source no overflow 768",
+    "approved-source hero frame stays reserved 768",
+    "approved-source axe 768",
+    "approved-source no overflow 390",
+    "approved-source hero frame stays reserved 390",
+    "approved-source axe 390",
+    "approved-source no overflow 375",
+    "approved-source hero frame stays reserved 375",
+    "approved-source axe 375",
+    "denied/deleted source becomes illustration",
+    "denied-source no overflow 1440",
+    "denied-source hero frame stays reserved 1440",
+    "denied-source axe 1440",
+    "denied-source no overflow 1024",
+    "denied-source hero frame stays reserved 1024",
+    "denied-source axe 1024",
+    "denied-source no overflow 768",
+    "denied-source hero frame stays reserved 768",
+    "denied-source axe 768",
+    "denied-source no overflow 390",
+    "denied-source hero frame stays reserved 390",
+    "denied-source axe 390",
+    "denied-source no overflow 375",
+    "denied-source hero frame stays reserved 375",
+    "denied-source axe 375",
+    "logo cannot become hero photo",
+    "strategy and calendar explicitly marked planned",
+    "planned areas have no dead active navigation",
+    "next action precedes plan disclosure in keyboard order",
+    "keyboard reveals all seven tasks",
+    "predictable keyboard order",
+    "visible keyboard focus",
+    "keyboard opens complete saved list",
+    "old-version review cannot approve current pack",
+    "loading never presents fabricated counts 1440",
+    "loading never presents fabricated counts 390",
+    "API error never masquerades as zero KPIs",
+    "error recovery retains real status",
+    "selected project owns contextual action and profile",
+    "selected company overview never presents another company pack as its own",
+    "honest empty state",
+    "empty company uses illustration 1440",
+    "empty axe 1440",
+    "empty company uses illustration 1024",
+    "empty axe 1024",
+    "empty company uses illustration 768",
+    "empty axe 768",
+    "empty company uses illustration 390",
+    "empty axe 390",
+    "empty company uses illustration 375",
+    "empty axe 375",
+    "six mobile destinations 390",
+    "keyboard mobile destination Übersicht 390",
+    "keyboard mobile destination Inhalte erstellen 390",
+    "keyboard mobile destination Content Packs 390",
+    "keyboard mobile destination Marke & Wissen 390",
+    "keyboard mobile destination Medien 390",
+    "keyboard mobile destination Einstellungen 390",
+    "mobile scroll clearance 390",
+    "six mobile destinations 375",
+    "keyboard mobile destination Übersicht 375",
+    "keyboard mobile destination Inhalte erstellen 375",
+    "keyboard mobile destination Content Packs 375",
+    "keyboard mobile destination Marke & Wissen 375",
+    "keyboard mobile destination Medien 375",
+    "keyboard mobile destination Einstellungen 375",
+    "mobile scroll clearance 375",
+    "keyboard create-company action opens real onboarding",
+    "planned areas expose no fake working navigation",
+    "reduced motion respected",
+    "no external browser requests",
+    "no JavaScript errors"
+  ],
+  "external": [],
+  "errors": [],
+  "axe": [
+    {
+      "width": 1440,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "width": 1024,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "approved-source",
+      "width": 1440,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "state": "approved-source",
+      "width": 1024,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "state": "approved-source",
+      "width": 768,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "state": "approved-source",
+      "width": 390,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "state": "approved-source",
+      "width": 375,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "state": "denied-source",
+      "width": 1440,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "state": "denied-source",
+      "width": 1024,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "state": "denied-source",
+      "width": 768,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "denied-source",
+      "width": 390,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "denied-source",
+      "width": 375,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "empty",
+      "width": 1440,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "state": "empty",
+      "width": 1024,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "state": "empty",
+      "width": 768,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "state": "empty",
+      "width": 390,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "empty",
+      "width": 375,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    }
+  ],
+  "fixture": "synthetic intercepted API; no real session"
+}

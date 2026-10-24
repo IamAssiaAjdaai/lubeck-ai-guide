@@ -1,0 +1,76 @@
+{
+  "parent": "8f078c03487f675138bc5a43bfa54b43f48a7686",
+  "fullUnit": {
+    "numPassedTests": 1716,
+    "numFailedTests": 0,
+    "numPendingTests": 239
+  },
+  "marketingUnit": {
+    "passed": 245,
+    "failed": 0,
+    "skipped": 87
+  },
+  "database": {
+    "passed": 118,
+    "failed": 0,
+    "skipped": 0
+  },
+  "authenticated": {
+    "checks": 2148,
+    "status": "PASS"
+  },
+  "closed": {
+    "checks": 30,
+    "status": "PASS"
+  },
+  "d2": {
+    "checks": 271,
+    "status": "PASS"
+  },
+  "keyboardChecks": 51,
+  "axe": {
+    "authenticated": {
+      "pairs": 150,
+      "violations": 0
+    },
+    "closed": {
+      "pairs": 5,
+      "violations": 0
+    },
+    "d2": {
+      "pairs": 20,
+      "violations": 0
+    }
+  },
+  "types": [
+    "UI PASS",
+    "API PASS",
+    "Core PASS"
+  ],
+  "lint": {
+    "errors": 0,
+    "nativeImageWarnings": 5
+  },
+  "build": "PASS",
+  "scope": "frontend only; no backend/schema/contracts/D2/CITYWALK changes",
+  "iterations": [
+    "Corrected unsupported exact property in new Testing Library test selector",
+    "Fixed real CSS specificity override caught by auth readability assertion; final pipeline PASS",
+    "Manual tablet screenshot inspection caught identity overlap and headline clipping; corrected scoped auth CSS and added executable geometry checks"
+  ],
+  "warnings": [
+    "Vite logged 10 ResizeObserver loop notifications during the public demo; the retained FINAL-05 run also logged 10. Browser pageerror arrays are empty and all 271 checks passed. No D2 changes made.",
+    "Existing vite-tsconfig-paths deprecation notice",
+    "Skipped tests are not counted as passing; isolated integration results reported separately"
+  ],
+  "limits": [
+    "Headless Chrome only, no physical devices or screen reader",
+    "No owner visual acceptance inferred",
+    "No live AI, spending, external email, production or deployment evidence"
+  ],
+  "focusedAfterFinalTestRefinement": {
+    "authAndHistory": 16,
+    "uiTypes": "PASS",
+    "newTestAndKeyboardHarnessLint": "PASS"
+  }
+}

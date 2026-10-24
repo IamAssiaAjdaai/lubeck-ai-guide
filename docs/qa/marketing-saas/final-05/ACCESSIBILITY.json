@@ -1,0 +1,987 @@
+{
+  "review-text-only-axe-1440.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "auth-verification-sent-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "onboarding-empty-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-token_expired-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "overview-returning-axe-390.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "settings-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "create-ready-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      }
+    ]
+  },
+  "auth-inline-errors-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "auth-recovery-sent-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-new-password-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "auth-inline-errors-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "create-ready-axe-375.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      }
+    ]
+  },
+  "insufficient-facts-axe-1440.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 5
+      }
+    ]
+  },
+  "auth-verification-sent-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "brand-kit-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "settings-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-token_expired-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "overview-returning-axe-1440.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 2
+      }
+    ]
+  },
+  "review-text-only-axe-390.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 3
+      }
+    ]
+  },
+  "auth-new-password-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-login-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "auth-recovery-success-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "history-readonly-axe-390.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 3
+      }
+    ]
+  },
+  "media-empty-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "media-empty-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "facts-confirmed-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-signup-local-only-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "create-goal-axe-390.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 5
+      }
+    ]
+  },
+  "review-with-image-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "settings-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "media-library-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "insufficient-facts-axe-375.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      }
+    ]
+  },
+  "history-readonly-axe-1440.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "insufficient-facts-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      }
+    ]
+  },
+  "create-ready-axe-1440.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 5
+      }
+    ]
+  },
+  "review-with-image-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "auth-signup-local-only-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "media-empty-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "review-with-image-axe-375.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 3
+      }
+    ]
+  },
+  "auth-verification-sent-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "service-city-profile-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "settings-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "overview-returning-axe-375.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "content-library-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "media-library-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "create-goal-axe-1440.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "auth-signup-local-only-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "brand-knowledge-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "review-text-only-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "auth-token_expired-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "create-ready-axe-390.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      }
+    ]
+  },
+  "auth-inline-errors-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "content-library-approved-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-token_expired-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "overview-returning-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 2
+      }
+    ]
+  },
+  "auth-verification-sent-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "review-text-only-axe-375.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 3
+      }
+    ]
+  },
+  "auth-new-password-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "history-readonly-axe-375.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 3
+      }
+    ]
+  },
+  "auth-recovery-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-signup-local-only-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-new-password-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "create-goal-axe-375.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 5
+      }
+    ]
+  },
+  "auth-inline-errors-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "insufficient-facts-axe-390.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      }
+    ]
+  },
+  "media-library-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "history-readonly-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 5
+      }
+    ]
+  },
+  "overview-new-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 2
+      }
+    ]
+  },
+  "auth-invalid_token-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "media-library-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "creative-studio-mock-ready-axe-1440.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "media-empty-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "review-with-image-axe-390.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 3
+      }
+    ]
+  },
+  "create-goal-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 5
+      }
+    ]
+  },
+  "onboarding-empty-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "content-library-approved-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "content-library-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-token_expired-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "creative-studio-mock-ready-axe-375.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 3
+      }
+    ]
+  },
+  "auth-recovery-sent-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "brand-knowledge-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-recovery-success-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "auth-verification-sent-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "auth-login-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "creative-studio-mock-ready-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "facts-confirmed-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-recovery-sent-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "content-library-approved-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "create-goal-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "onboarding-empty-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "service-city-profile-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-invalid_token-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "brand-kit-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "content-library-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "content-library-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "media-library-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-recovery-success-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-signup-local-only-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "brand-knowledge-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "brand-knowledge-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-recovery-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "overview-new-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 2
+      }
+    ]
+  },
+  "service-city-profile-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "overview-new-axe-1440.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 2
+      }
+    ]
+  },
+  "auth-invalid_token-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "creative-studio-mock-ready-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "auth-recovery-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "overview-new-axe-375.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "auth-recovery-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "service-city-profile-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-new-password-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-inline-errors-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "onboarding-empty-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-invalid_token-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "brand-kit-axe-1024.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "content-library-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "brand-kit-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "creative-studio-mock-ready-axe-390.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 3
+      }
+    ]
+  },
+  "auth-login-axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "facts-confirmed-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "insufficient-facts-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 5
+      }
+    ]
+  },
+  "content-library-approved-axe-768.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "overview-returning-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 2
+      }
+    ]
+  },
+  "auth-login-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "content-library-approved-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-recovery-sent-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "facts-confirmed-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-recovery-sent-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "review-text-only-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "auth-invalid_token-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "onboarding-empty-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "brand-kit-axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-recovery-success-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "brand-knowledge-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-recovery-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "create-ready-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 5
+      }
+    ]
+  },
+  "review-with-image-axe-1440.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ]
+  },
+  "overview-new-axe-390.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "media-empty-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-login-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "auth-recovery-success-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "settings-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "history-readonly-axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 5
+      }
+    ]
+  },
+  "facts-confirmed-axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "service-city-profile-axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  }
+}

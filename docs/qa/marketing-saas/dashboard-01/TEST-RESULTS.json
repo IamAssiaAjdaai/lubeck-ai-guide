@@ -1,0 +1,31 @@
+{
+  "fullUnit": {
+    "passed": 1692,
+    "failed": 0,
+    "skipped": 239
+  },
+  "newOverviewTests": 9,
+  "focusedBrowserChecks": 74,
+  "viewports": [
+    1440,
+    1024,
+    768,
+    390,
+    375
+  ],
+  "automatedAxeViolations": 0,
+  "changedSourceLint": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "marketingLint": {
+    "errors": 0,
+    "existingImageWarnings": 3
+  },
+  "uiApiCoreTypes": "PASS",
+  "marketingBuild": "PASS",
+  "diffCheck": "PASS",
+  "realDeviceAndScreenReaderAcceptance": "NOT_PERFORMED",
+  "liveAIRequests": 0,
+  "pushed": false
+}

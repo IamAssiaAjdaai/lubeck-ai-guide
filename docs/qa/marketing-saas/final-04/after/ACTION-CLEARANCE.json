@@ -1,0 +1,38 @@
+[
+  {
+    "screen": "editor",
+    "width": 390,
+    "action": "Beitrag prüfen & freigeben",
+    "clearOfNavigation": true
+  },
+  {
+    "screen": "editor",
+    "width": 390,
+    "action": "Texte herunterladen",
+    "clearOfNavigation": true
+  },
+  {
+    "screen": "editor",
+    "width": 390,
+    "action": "Kampagne herunterladen",
+    "clearOfNavigation": true
+  },
+  {
+    "screen": "editor",
+    "width": 375,
+    "action": "Beitrag prüfen & freigeben",
+    "clearOfNavigation": true
+  },
+  {
+    "screen": "editor",
+    "width": 375,
+    "action": "Texte herunterladen",
+    "clearOfNavigation": true
+  },
+  {
+    "screen": "editor",
+    "width": 375,
+    "action": "Kampagne herunterladen",
+    "clearOfNavigation": true
+  }
+]

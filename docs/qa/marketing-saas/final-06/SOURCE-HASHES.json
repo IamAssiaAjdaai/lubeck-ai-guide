@@ -1,0 +1,7 @@
+{
+  "apps/marketing-saas/src/PackWorkspace.tsx": "ccdcfdbb24f3b01cb7511a9865f14db5e09ed2fec212006327b4e0650f6b06c4",
+  "apps/marketing-saas/src/auth/auth.css": "fd94e1a1a5fcc0a966f2fc41b50add760aa3140507c51765dd01ce3b57ada1e7",
+  "apps/marketing-saas/src/history-review.test.tsx": "f3443069acd1a416fcb7d256a937f4c2a8614b10ebd2e87621a05b6e53a0c623",
+  "scripts/marketing-consolidate-browser.mjs": "8195ded128699cdb3e050a64ccee16969ffb38a8c9038e900d4a6897cb0abfd4",
+  "scripts/marketing-auth-acceptance-browser.mjs": "6c64b61decaf15c0a075408c606d1d56d33d6ef73a06ec89140575a9c90fe0c5"
+}

@@ -1,0 +1,95 @@
+{
+  "status": "PASS",
+  "provider": "mock-only",
+  "liveRequests": 0,
+  "billing": "disabled",
+  "stages": [
+    {
+      "name": "migrations",
+      "status": "PASS"
+    },
+    {
+      "name": "migration-idempotency",
+      "status": "PASS"
+    },
+    {
+      "name": "marketing-unit-security",
+      "status": "PASS"
+    },
+    {
+      "name": "marketing-database",
+      "status": "PASS"
+    },
+    {
+      "name": "api-types",
+      "status": "PASS"
+    },
+    {
+      "name": "ui-types",
+      "status": "PASS"
+    },
+    {
+      "name": "marketing-lint",
+      "status": "PASS"
+    },
+    {
+      "name": "core-types",
+      "status": "PASS"
+    },
+    {
+      "name": "marketing-build",
+      "status": "PASS"
+    },
+    {
+      "name": "test-database-integrity",
+      "status": "PASS"
+    },
+    {
+      "name": "browser-database-migrations",
+      "status": "PASS"
+    },
+    {
+      "name": "authenticated-journey",
+      "status": "PASS"
+    },
+    {
+      "name": "auth-rate-window-retained",
+      "status": "PASS"
+    },
+    {
+      "name": "closed-registration",
+      "status": "PASS"
+    },
+    {
+      "name": "public-d2-demo",
+      "status": "PASS"
+    },
+    {
+      "name": "database-integrity",
+      "status": "PASS"
+    }
+  ],
+  "unit": {
+    "passed": 242,
+    "failed": 0,
+    "skipped": 87
+  },
+  "database": {
+    "passed": 118,
+    "failed": 0,
+    "skipped": 0
+  },
+  "browserDatabaseIsolatedFromQuotaFixtures": true,
+  "authenticated": {
+    "checks": 1323,
+    "status": "PASS"
+  },
+  "closed": {
+    "checks": 30,
+    "status": "PASS"
+  },
+  "demo": {
+    "checks": 271,
+    "status": "PASS"
+  }
+}

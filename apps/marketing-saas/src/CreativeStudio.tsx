@@ -74,6 +74,7 @@ export default function CreativeStudio({
   locked,
   fixedPostIndex,
   libraryOnly = false,
+  librarySection = "all",
   onChanged,
 }: {
   projectId: string;
@@ -82,23 +83,24 @@ export default function CreativeStudio({
   locked: boolean;
   fixedPostIndex?: number;
   libraryOnly?: boolean;
+  librarySection?: "all"|"kit"|"media";
   onChanged?: () => void;
 }) {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState<boolean|null>(null);
   useEffect(() => {
     let live = true;
     void api<{ enabled: boolean }>("/api/creative-capabilities")
       .then((r) => {
         if (live) setEnabled(r.enabled);
       })
-      .catch(() => {});
+      .catch(() => { if(live) setEnabled(false); });
     return () => {
       live = false;
     };
   }, []);
   return enabled ? (
-    <Studio key={projectId} {...{ projectId, generationId, version, locked, fixedPostIndex, libraryOnly, onChanged }} />
-  ) : null;
+    <Studio key={projectId} {...{ projectId, generationId, version, locked, fixedPostIndex, libraryOnly, librarySection, onChanged }} />
+  ) : libraryOnly ? <section className="panel"><h2>{enabled===null?"Medienwerkzeuge werden geladen …":"Medienwerkzeuge derzeit deaktiviert"}</h2><p>Brand Kit und private Mediathek sind nur in der kontrollierten lokalen Creative-Umgebung verfügbar.</p></section> : null;
 }
 function Studio({
   projectId,
@@ -107,6 +109,7 @@ function Studio({
   locked,
   fixedPostIndex,
   libraryOnly = false,
+  librarySection = "all",
   onChanged,
 }: {
   projectId: string;
@@ -115,6 +118,7 @@ function Studio({
   locked: boolean;
   fixedPostIndex?: number;
   libraryOnly?: boolean;
+  librarySection?: "all"|"kit"|"media";
   onChanged?: () => void;
 }) {
   const root = `/api/projects/${projectId}/creative`;
@@ -265,7 +269,7 @@ function Studio({
       ) : (
         <>
           <div className="creative-setup">
-            <details className="creative-card">
+            <details className="creative-card creative-kit-card" open={libraryOnly&&librarySection==="kit"?true:undefined}>
               <summary>Brand Kit · Version {kit.revision}</summary>
               <form
                 onSubmit={(e) => {
@@ -391,7 +395,7 @@ function Studio({
                 </button>
               </form>
             </details>
-            <details className="creative-card">
+            <details className="creative-card creative-media-card" open={libraryOnly&&librarySection==="media"?true:undefined}>
               <summary>Private Mediathek · {view.assets.length} Bilder</summary>
               <p>
                 Nur eigene synthetische QA-Bilder hochladen. PNG, JPEG oder
@@ -440,7 +444,7 @@ function Studio({
               </div>
             </details>
           </div>
-          <details className="creative-card">
+          <details className="creative-card creative-facts-card">
             <summary>
               Bestätigte Bildgrundlage · Revision {view.contextRevision}
             </summary>
@@ -912,7 +916,7 @@ function Studio({
               )}
             </>
           )}
-          <details className="creative-card">
+          <details className="creative-card creative-erasure-card">
             <summary>Datenschutz & lokale Löschung</summary>
             <p>
               Entfernt Brand Kit, Quellen, Bildaufträge und historische

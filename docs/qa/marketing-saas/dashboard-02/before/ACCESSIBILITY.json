@@ -1,0 +1,460 @@
+{
+  "scans": [
+    {
+      "state": "review-text-only-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "state": "auth-token_expired-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "brand-media-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "overview-returning-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "settings-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "auth-inline-errors-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "auth-inline-errors-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "insufficient-facts-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "state": "settings-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "auth-token_expired-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "overview-returning-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "review-text-only-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "state": "create-goal-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "state": "review-with-image-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "state": "settings-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "insufficient-facts-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "state": "insufficient-facts-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "state": "review-with-image-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "state": "review-with-image-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "state": "service-city-profile-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "settings-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "overview-returning-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "content-library-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "create-goal-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 7
+        }
+      ]
+    },
+    {
+      "state": "review-text-only-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "state": "auth-token_expired-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "auth-inline-errors-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "auth-token_expired-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "overview-returning-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "review-text-only-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "state": "create-goal-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "state": "auth-inline-errors-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "insufficient-facts-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "state": "overview-new-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "auth-invalid_token-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "review-with-image-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "state": "create-goal-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "state": "content-library-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "auth-token_expired-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "create-goal-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 7
+        }
+      ]
+    },
+    {
+      "state": "service-city-profile-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "auth-invalid_token-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "content-library-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "content-library-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "brand-media-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "overview-new-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "service-city-profile-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "overview-new-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "auth-invalid_token-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "overview-new-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "service-city-profile-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "auth-inline-errors-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "auth-invalid_token-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "state": "content-library-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "insufficient-facts-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "state": "brand-media-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "overview-returning-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "review-text-only-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "state": "auth-invalid_token-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "brand-media-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "brand-media-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "review-with-image-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "state": "overview-new-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "settings-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "state": "service-city-profile-axe-390",
+      "violations": 0,
+      "incomplete": []
+    }
+  ],
+  "limitation": "Automated checks only; real assistive technology acceptance remains manual."
+}

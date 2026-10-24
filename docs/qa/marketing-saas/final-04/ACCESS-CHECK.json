@@ -1,0 +1,10 @@
+{
+  "health": {
+    "demo": true,
+    "localRegistration": false
+  },
+  "existingAsset": true,
+  "anonymousDirectAsset": 401,
+  "wrongProjectAsset": 404,
+  "scope": "Read-only existing synthetic account. Wrong/nonexistent project denied; no second-tenant DB fixture was created."
+}
