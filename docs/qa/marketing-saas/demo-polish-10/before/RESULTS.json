@@ -1,0 +1,219 @@
+{
+  "status": "PASS",
+  "checks": [
+    "keyboard disclosure 1440",
+    "keyboard disclosure 1440",
+    "keyboard disclosure 1440",
+    "Escape closes 1440",
+    "focus restored to opener 1440",
+    "keyboard disclosure 1024",
+    "keyboard disclosure 1024",
+    "keyboard disclosure 1024",
+    "Escape closes 1024",
+    "focus restored to opener 1024",
+    "keyboard disclosure 768",
+    "keyboard disclosure 768",
+    "keyboard disclosure 768",
+    "Escape closes 768",
+    "focus restored to opener 768",
+    "keyboard disclosure 390",
+    "keyboard disclosure 390",
+    "keyboard disclosure 390",
+    "Escape closes 390",
+    "focus restored to opener 390",
+    "keyboard disclosure 375",
+    "keyboard disclosure 375",
+    "keyboard disclosure 375",
+    "Escape closes 375",
+    "focus restored to opener 375",
+    "zero page errors",
+    "zero external requests"
+  ],
+  "metrics": [
+    {
+      "width": 1440,
+      "sizes": {
+        ".demo01 details>p": [
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01 details li": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01-source": [
+          10
+        ],
+        ".demo01-reset small": [
+          9
+        ],
+        ".demo01 summary": [
+          12,
+          12,
+          12
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "sizes": {
+        ".demo01 details>p": [
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01 details li": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01-source": [
+          10
+        ],
+        ".demo01-reset small": [
+          9
+        ],
+        ".demo01 summary": [
+          12,
+          12,
+          12
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "sizes": {
+        ".demo01 details>p": [
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01 details li": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01-source": [
+          10
+        ],
+        ".demo01-reset small": [
+          9
+        ],
+        ".demo01 summary": [
+          12,
+          12,
+          12
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "sizes": {
+        ".demo01 details>p": [
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01 details li": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01-source": [
+          10
+        ],
+        ".demo01-reset small": [
+          9
+        ],
+        ".demo01 summary": [
+          11,
+          11,
+          11
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "sizes": {
+        ".demo01 details>p": [
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01 details li": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        ".demo01-source": [
+          10
+        ],
+        ".demo01-reset small": [
+          9
+        ],
+        ".demo01 summary": [
+          11,
+          11,
+          11
+        ]
+      }
+    }
+  ]
+}

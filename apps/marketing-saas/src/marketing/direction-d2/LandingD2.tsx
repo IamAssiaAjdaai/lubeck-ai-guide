@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight, Play, FileText, Image as ImageIcon, CalendarD
 import { brandIdentity } from '../../brand/identity';
 import CuratedDemo from './CuratedDemo';
 import { useD2Motion } from './useD2Motion';
+import { useDemoDialog } from './useDemoDialog';
 import './polish09.css';
 
 const nav = [['Funktionen','funktionen'],['So funktioniert’s','ablauf'],['Beispiele','beispiele'],['FAQ','faq']];
@@ -32,7 +33,7 @@ export default function LandingD2() {
   const dialog = useRef<HTMLDialogElement>(null);
   const page = useRef<HTMLDivElement>(null);
   const motion = useD2Motion(page);
-  function openDemo() { dialog.current?.showModal(); }
+  const openDemo = useDemoDialog(dialog);
 
   return <div className="d2-page" ref={page}>
     <a className="d2-skip" href="#d2-inhalt">Zum Inhalt</a>
@@ -85,6 +86,6 @@ export default function LandingD2() {
         <div className="d2-footer-bottom"><p>Arbeitsname · Name in Prüfung.<br/>Keine automatische Veröffentlichung · keine Live-KI.</p><button type="button" className="d2-motion-control" disabled={motion.reduced} aria-pressed={motion.paused || motion.reduced} onClick={motion.toggle}>{motion.reduced ? 'Bewegung reduziert' : motion.paused ? 'Bewegung aktivieren' : 'Bewegung pausieren'}</button></div>
       </div>
     </footer>
-    <dialog ref={dialog} className="d2-demo-dialog" aria-labelledby="d2-demo-title"><button className="d2-demo-close" aria-label="Demo schließen" onClick={()=>dialog.current?.close()}><X/></button><CuratedDemo/></dialog>
+    <dialog ref={dialog} className="d2-demo-dialog" aria-labelledby="d2-demo-title"><div className="d2-demo-toolbar"><button className="d2-demo-close" aria-label="Demo schließen" onClick={()=>dialog.current?.close()}><X/></button></div><div className="d2-demo-scroll" role="region" aria-label="Demo-Inhalt" tabIndex={0}><CuratedDemo/></div></dialog>
   </div>;
 }

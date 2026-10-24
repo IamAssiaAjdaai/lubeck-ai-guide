@@ -36,3 +36,50 @@
  .demo01-conversion { padding:22px 18px;border-radius:13px;margin-top:20px; }.d2-page .demo01-conversion h3 { font-size:23px; }.demo01-conversion>p { font-size:13px; }.demo01-conversion .demo01-explain { font-size:11px; }.demo01-notice { font-size:10px; }
 }
 @media(prefers-reduced-motion:reduce) { .demo01 * { transition:none!important;scroll-behavior:auto!important; } }
+
+/* MKT-DEMO-POLISH-10: one scroll pane, separate always-visible close toolbar. */
+.d2-page .d2-demo-dialog:has(.demo01)[open] { display:flex;flex-direction:column;padding:0;max-height:94dvh;overflow:hidden; }
+.d2-demo-toolbar { display:flex;justify-content:flex-end;flex:0 0 auto;padding:10px 18px 6px;background:#f9faf5;border-bottom:1px solid #e4e9dd; }
+.d2-page .d2-demo-dialog:has(.demo01) .d2-demo-toolbar>.d2-demo-close { position:static;float:none;margin:0;flex:0 0 44px; }
+.d2-demo-scroll { min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;flex:1 1 auto;padding:20px 30px 26px; }
+.demo01 { font-size:16px;line-height:1.6; }
+.demo01-header { padding-right:0; }
+.demo01 :is(.demo01-label,.demo01-business,.demo01-tabs button span,.demo01-editor-heading>span,.demo01-editor-foot p,.demo01-editor-foot>span,.demo01-source,.demo01-action>div>span,.demo01-reset>small,.demo01-notice,.demo01-review-note,.demo01-file-note,.demo01-conversion .demo01-explain) { font-size:14px;line-height:1.6; }
+.demo01 :is(.demo01-header>p:last-child,.demo01-tabs button strong,.demo01-editor-heading label,.demo01-action>div>strong,.demo01 summary,.demo01 details>p,.demo01 details li,.demo01-review-list pre,.demo01-conversion>p,.demo01-check) { font-size:16px;line-height:1.6; }
+.demo01 .demo01-primary { font-size:16px!important; }
+.demo01 .demo01-quiet { font-size:14px!important; }
+.demo01 .demo01-tabs button { padding:10px;min-height:80px; }
+.demo01 .demo01-editor-heading { margin-bottom:12px; }
+.demo01 textarea { font-size:16px;line-height:1.6;overflow:hidden;resize:none; }
+.demo01 .demo01-editor-foot { flex-wrap:wrap;gap:4px 16px; }
+.demo01 .demo01-editor-foot p { max-width:none; }
+.demo01 .demo01-source { margin-top:14px!important;padding-top:14px; }
+.demo01 .demo01-action { position:static;box-shadow:none;gap:16px; }
+.demo01 summary { padding-block:16px;min-height:56px; }
+.demo01 details>p { margin:0 0 16px!important;max-width:66ch; }
+.demo01 details ol { padding-left:24px;margin:8px 0 20px; }
+.demo01 details li { padding:8px 0; }
+.demo01 details li p { margin:6px 0; }
+.demo01 .demo01-review-list h3 { font-size:16px;line-height:1.5; }
+.demo01 .demo01-review-action { flex-wrap:wrap; }
+.demo01 .demo01-review-action>.demo01-quiet { flex:0 1 auto; }
+.demo01 .demo01-review-action>.demo01-primary { flex:1 1 200px;font-size:16px!important; }
+/* Progressive disclosure fades only: no animated height or focus clipping. */
+@keyframes demo01-disclosure { from { opacity:0; } to { opacity:1; } }
+@media(prefers-reduced-motion:no-preference) {
+ .demo01 details[open]>*:not(summary) { animation:demo01-disclosure 160ms ease-out; }
+}
+@media(max-width:600px) {
+ .d2-demo-toolbar { padding:8px 12px 5px; }
+ .d2-demo-scroll { padding:16px 16px 20px; }
+ .demo01 .demo01-header>p:last-child { margin-right:0; }
+ .demo01 .demo01-tabs { gap:6px;margin:16px 0; }
+ .demo01 .demo01-tabs button { padding:9px 7px;min-height:94px; }
+ .demo01 .demo01-tabs button span { font-size:14px;line-height:1.45; }
+ .demo01 .demo01-reset { gap:6px; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .demo01 *, .demo01 *::before, .demo01 *::after { animation:none!important;transition:none!important;scroll-behavior:auto!important; }
+}
+
+.demo01 details>summary + p { padding-top:8px; }
