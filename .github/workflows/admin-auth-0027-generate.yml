@@ -57,28 +57,30 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -f drizzle/meta/0027_snapshot.json ] && [ -n "$(git status --porcelain)" ]; then
-            git status --short
-            node - <<'NODE'
-            const cp = require('node:child_process');
-            const files = cp.execFileSync('git',['status','--porcelain','--untracked-files=all'],{encoding:'utf8'}).trimEnd().split('\n').filter(Boolean);
-            const allowed = new Set([
-              'drizzle/meta/_journal.json',
-              'drizzle/meta/0027_snapshot.json',
-              'drizzle/0027_colossal_tiger_shark.sql',
-            ]);
-            for(const line of files) {
-              const path = line.slice(3);
-              if(!allowed.has(path)) throw Error('Unexpected generated file: ' + path);
-            }
-            for(const required of allowed) {
-              if(!files.some(line => line.slice(3) === required)) throw Error('Missing generated file: ' + required);
-            }
-            NODE
-            git add drizzle/
-            git diff --cached --name-only | grep -q '^drizzle/meta/0027_snapshot.json$'
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -m "db(admin): generate additive 0027 migration and Drizzle metadata"
-            git push origin HEAD:feat/admin-auth-0027-migration-20261024
+          if [ ! -f drizzle/meta/0027_snapshot.json ] || [ -z "$(git status --porcelain)" ]; then
+            echo "No generated migration changes to commit"
+            exit 0
           fi
+          git status --short
+          node - <<'NODE'
+          const cp = require('node:child_process');
+          const files = cp.execFileSync('git',['status','--porcelain','--untracked-files=all'],{encoding:'utf8'}).trimEnd().split('\n').filter(Boolean);
+          const allowed = new Set([
+            'drizzle/meta/_journal.json',
+            'drizzle/meta/0027_snapshot.json',
+            'drizzle/0027_colossal_tiger_shark.sql',
+          ]);
+          for(const line of files) {
+            const path = line.slice(3);
+            if(!allowed.has(path)) throw Error('Unexpected generated file: ' + path);
+          }
+          for(const required of allowed) {
+            if(!files.some(line => line.slice(3) === required)) throw Error('Missing generated file: ' + required);
+          }
+          NODE
+          git add drizzle/
+          git diff --cached --name-only | grep -q '^drizzle/meta/0027_snapshot.json$'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "db(admin): generate additive 0027 migration and Drizzle metadata"
+          git push origin HEAD:feat/admin-auth-0027-migration-20261024
