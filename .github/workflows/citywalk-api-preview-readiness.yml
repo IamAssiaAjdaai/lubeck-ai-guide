@@ -46,7 +46,9 @@ jobs:
           assert.match(cfg, /domains:\s*\[\],\s*triggers:\s*\[\]/);
           assert.match(cfg, /requirePreviewHyperdrive\(process\.env\.CITYWALK_PREVIEW_HYPERDRIVE_ID\)/);
           assert.match(cfg, /CITYWALK_PREVIEW_BOUND_HYPERDRIVE/);
-          assert.match(prep, /Only offline locked fixture preparation is implemented/);
+          assert.match(prep, /Only offline fixture or reviewed-ID dry-run preparation is supported/);
+          assert.match(prep, /--reviewed-preview-id-dry-run/);
+          assert.match(prep, /live deployment is forbidden/);
           assert.match(prep, /"--dry-run"/);
           assert.doesNotMatch(policy, /"\/api\/auth\/get-session"/);
           // Deployment is excluded structurally: this job has contents:read
