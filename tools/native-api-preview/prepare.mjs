@@ -9,7 +9,15 @@ import { validateNativeArtifact } from "./contract.mjs";
 import { materializeCommit, requireRevision, sha256 } from "./provenance.mjs";
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
-assert.deepEqual(process.argv.slice(2), ["--fixture"], "Only offline locked fixture preparation is implemented; real resource acceptance requires owner approval");
+const mode = process.argv[2];
+assert.ok(["--fixture", "--reviewed-preview-id-dry-run"].includes(mode) && process.argv.length === 3,
+  "Only offline fixture or reviewed-ID dry-run preparation is supported; live deployment is forbidden");
+const isFixture = mode === "--fixture";
+// This accepts a real Cloudflare *public resource identifier*, never a password or DB URL.
+// It does not query Cloudflare, assert real connectivity or authorize deployment.
+const requestedId = isFixture ? FIXTURE_HYPERDRIVE : process.env.CITYWALK_PREVIEW_HYPERDRIVE_ID;
+const id = requirePreviewHyperdrive(requestedId, isFixture);
+assert.ok(isFixture || id !== FIXTURE_HYPERDRIVE, "Reviewed-ID dry run must not use fixture Hyperdrive");
 const revision = requireRevision(execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim());
 const parent = path.join(root, ".citywalk/native-api-preview");
 await mkdir(parent, { recursive: true });
@@ -19,11 +27,10 @@ const provenance = await materializeCommit(root, workspace, revision);
 const productionHash = sha256(await readFile(path.join(root, "cloudflare.config.ts")));
 await writeFile(path.join(workspace, "cloudflare.config.ts"), 'export { default } from "./tools/native-api-preview/cloudflare.config.ts";\n');
 await mkdir(path.join(directory, "home"));
-const id = requirePreviewHyperdrive(FIXTURE_HYPERDRIVE, true);
 const env = {
   PATH: path.dirname(process.execPath) + path.delimiter + "/usr/bin:/bin", HOME: path.join(directory, "home"),
   CI: "1", NODE_ENV: "production", CF_TELEMETRY_DISABLED: "1", CLOUDFLARE_TELEMETRY_DISABLED: "1", WRANGLER_SEND_METRICS: "false",
-  CLOUDFLARE_VITE_FORCE_LOCAL: "true", CITYWALK_PREVIEW_HYPERDRIVE_ID: id, CITYWALK_PREVIEW_FIXTURE: "1", CITYWALK_BUILD_REVISION: revision,
+  CLOUDFLARE_VITE_FORCE_LOCAL: "true", CITYWALK_PREVIEW_HYPERDRIVE_ID: id, ...(isFixture ? { CITYWALK_PREVIEW_FIXTURE: "1" } : {}), CITYWALK_BUILD_REVISION: revision,
   NODE_OPTIONS: `--import=${pathToFileURL(path.join(workspace, "tools/cloudflare-preview/network-guard.mjs")).href}`,
 };
 async function run(name, executable, args, timeout = 180_000) {
@@ -69,7 +76,7 @@ assert.equal(execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "
 await writeFile(path.join(directory, "manifest.json"), JSON.stringify({ ...provenance, productionConfigSha256: productionHash,
   fontManifest, artifactManifest: before, artifactManifestSha256: sha256(JSON.stringify(before)),
   workerBundleSha256: before["workers/default/bundle/index.js"],
-  locked: true, fixture: true, dryRun: "PASS", deployed: false,
-  limitation: "Offline fixture only. Fonts are external build inputs hashed here; no remote identity, resource, IdP or device acceptance.",
+  locked: true, fixture: isFixture, reviewedIdDryRun: !isFixture, dryRun: "PASS", deployed: false,
+  limitation: "Offline locked build and dry run only. Reviewed-ID mode checks ID shape/denylist, not remote identity, TLS, origin, secrets, synthetic data, IdP or device acceptance.",
 }, null, 2) + "\n");
-console.log(`Locked commit-only native Preview artifact PASS: ${path.relative(root, directory)}`);
+console.log(`Locked commit-only native Preview ${isFixture ? "fixture" : "reviewed-ID"} dry-run PASS: ${path.relative(root, directory)}`);
