@@ -45,7 +45,7 @@ jobs:
           const entry = j.entries.at(-1);
           if(j.entries.length !== 28 || entry.idx !== 27 || !entry.tag.startsWith('0027_')) throw Error('Expected one generated 0027 entry');
           const sql = fs.readFileSync('drizzle/' + entry.tag + '.sql','utf8');
-          if(/\\b(DROP|TRUNCATE)\\s+(TABLE|COLUMN|SCHEMA|DATABASE)\\b/i.test(sql)) throw Error('Destructive DDL: abort');
+          if(/\b(DROP|TRUNCATE)\s+(TABLE|COLUMN|SCHEMA|DATABASE)\b/i.test(sql)) throw Error('Destructive DDL: abort');
           if(!sql.includes('CREATE TABLE "public"."passkey"') && !sql.includes('CREATE TABLE "passkey"')) throw Error('Missing passkey table');
           if(!sql.includes('twoFactor')) throw Error('Missing twoFactor table');
           if(!sql.includes('two_factor_enabled')) throw Error('Missing user two_factor_enabled');
