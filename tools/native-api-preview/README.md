@@ -1,5 +1,13 @@
 # Native API Preview proposal — LOCKED / owner review required
 
+## Private Hyperdrive connection diagnostic — code-only, OFF
+
+`hyperdriveProbe.ts` defines a read-only `SELECT 1 AS probe` check against a future verified **Preview-only** Hyperdrive binding. It returns only pass/fail, has short timeouts and closes the client. Its default HTTP handler always returns 503. There is no worker configuration, domain, route, schedule, script, CI action or deployed instance that invokes the real probe.
+
+The accompanying tests use mocked clients exclusively; passing them does NOT establish an actual Neon connection or verify TLS. A separate, explicitly approved private invocation plan must verify Hyperdrive config ID, runtime DB role, direct Neon origin, TLS and no production binding before any Cloudflare-side diagnostic. Keep it inaccessible via public worker.dev and domain. The operator must still prove actual Cloudflare Query >0 and accurate result before calling connectivity PASS.
+
+
+
 This is a separate design/implementation change stacked on PR #419 at
 `c490437a426864df3442ef8df0b4f4fafcb69eb3`. Its branch/configuration/entrypoint
 remain unchanged. This alternative target would eventually serve
