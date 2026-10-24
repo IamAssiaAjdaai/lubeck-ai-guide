@@ -1,0 +1,36 @@
+{
+  "head": "80a212c2dbcf6850ad347e0da9c5f2a16771b695",
+  "changes": "uncommitted",
+  "focusedUnit": {
+    "numPassedTests": 28,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "browserChecks": 173,
+  "fixtureAxePairs": 20,
+  "fixtureAxeViolations": 0,
+  "actualAxePairs": 40,
+  "actualAxeViolations": 0,
+  "actualActionClearanceChecks": 6,
+  "typecheck": "PASS",
+  "lint": {
+    "errors": 0,
+    "nativeImageWarnings": 5
+  },
+  "build": "PASS",
+  "database": "No migration/seed/DB fixture writes; existing isolated database retained",
+  "provider": "Existing live AI/image transport/spend gates remain false",
+  "externalRequests": [],
+  "browserErrors": [],
+  "notClaimed": [
+    "Full product Design Freeze",
+    "Human semantic approval of a real business photo",
+    "Physical device safe-area / screen reader acceptance",
+    "New DB-backed two-tenant integration run"
+  ],
+  "frontendUnit": {
+    "numPassedTests": 87,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  }
+}

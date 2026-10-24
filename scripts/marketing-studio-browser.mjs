@@ -11,7 +11,8 @@ const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const context = await browser.newContext();
 const page = await context.newPage();
 const checks = [], external = [], errors = [], axe = [];
-let apiFailure=false, empty=false, stale=false, multi=false;
+const heroFrames={};let holdPackReads=false;const pendingPackReads=[];
+let apiFailure=false, empty=false, stale=false, multi=false, heroRole='none', heroDenied=false;
 const assert = (ok, label) => { if (!ok) throw Error(label); checks.push(label); };
 const company = { id: 'project-a', name: 'Glanz Büroservice · Beispiel', revision: 2 };
 const companyB={id:'project-b',name:'Atelier Nord · Beispiel',revision:0};
@@ -19,7 +20,7 @@ const facts = ['Büroreinigung für Unternehmen in Düsseldorf.', 'Eine Anfrage 
 const detail = { ...company, context: { identity: { name: company.name, summary: 'Fiktiver Büroservice', website: '' }, facts: facts.map((statement, i) => ({ id: 'f'+i, statement, confirmation: { actorId: 'synthetic' } })), markets: [] }, evidence: [], history: [1,2] };
 const packs = [{ id: 'pack-a', status: 'completed', created_at: '2026-10-23T12:00:00Z', goal: 'sichtbarkeit', output_revision: 2, context_revision: 2 }];
 const pack = { ...packs[0], versions: [{ version: 2, created_at: '2026-10-24T09:00:00Z', content: { campaign: { goal: 'sichtbarkeit' }, days: ['Angaben prüfen','Ersten Beitrag überarbeiten','Erstgespräch erklären','Eigene Bilder prüfen','Dritten Beitrag lesen','Alle Texte freigeben','Inhalte manuell herunterladen'].map((task,i)=>({day:i+1,time:'Dein Zeitpunkt',task})), posts: [{channel:'linkedin',text:'Büroreinigung in Düsseldorf.\nGlanz Büroservice bietet Büroreinigung für Unternehmen in Düsseldorf.'},{channel:'linkedin',text:'Ein persönliches Erstgespräch.\nSo beginnt eine Anfrage bei unserem fiktiven Büroservice.'},{channel:'linkedin',text:'Gut vorbereitet ins Gespräch.\nHalte deine Bürofläche für die Besprechung bereit.'}] } }] };
-await context.route('**/*', route => {
+await context.route('**/*', async route => {
  const url = new URL(route.request().url());
  if (url.origin !== origin) { external.push(url.origin); return route.abort(); }
  if (!url.pathname.startsWith('/api/')) return route.continue();
@@ -27,6 +28,8 @@ await context.route('**/*', route => {
   const body=url.pathname.endsWith('/packs')?[]:url.pathname.endsWith('/draft')?null:url.pathname.endsWith('/readiness')?{ready:false,reason:'missing_themes',revision:0,questions:['Welche Leistung bietest du an?']}:{...companyB,context:null,evidence:[],history:[]};
   return route.fulfill({json:body});
  }
+ if(url.pathname.endsWith('/creative/assets/hero-source'))return heroDenied?route.fulfill({status:403,json:{code:'SOURCE_DENIED'}}):route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="600" height="360"><rect width="600" height="360" fill="#F0F3EC"/><text x="30" y="180" fill="#162D2C" font-size="24">Synthetische QA-Bildquelle</text></svg>'});
+ if(holdPackReads&&url.pathname.endsWith('/packs'))await new Promise(resolve=>pendingPackReads.push(resolve));
  if(apiFailure && url.pathname.endsWith('/packs'))return route.fulfill({status:503,json:{code:'TEST_FAILURE'}});
  let body;
  if (url.pathname === '/api/health') body = { demo: true, localRegistration: false };
@@ -34,7 +37,8 @@ await context.route('**/*', route => {
  else if (url.pathname === '/api/projects') body = empty?[]:multi?[company,companyB]:[company];
  else if (url.pathname.endsWith('/workspace/draft')) body = { goal:'mehr_anfragen',channel:'linkedin',savedAt:'2026-10-22T10:00:00Z',themesReviewed:false };
  else if (url.pathname.endsWith('/workspace/readiness')) body = {ready:true,reason:'ready',revision:2,themes:[],questions:[]};
- else if (url.pathname.includes('/workspace/reviews/')) body = [0,1,2].map(postIndex=>({postIndex,version:stale?1:2,approved:postIndex===0,textApproved:postIndex===0,image:null}));
+ else if (url.pathname.includes('/workspace/reviews/')) body = [0,1,2].map(postIndex=>({postIndex,version:stale?1:2,approved:postIndex===0,textApproved:postIndex===0,image:heroRole!=='none'&&postIndex===0?{kind:'asset',id:'hero-source'}:null}));
+ else if (url.pathname.endsWith('/creative')) body={assets:heroRole==='none'?[]:[{id:'hero-source',role:heroRole,status:'approved',alt:'Synthetische QA-Bildquelle'}]};
  else if (url.pathname.endsWith('/packs/pack-a')) body=pack;
  else if (url.pathname.endsWith('/packs')) body=packs;
  else if (url.pathname.endsWith('/project-a')) body=detail;
@@ -49,10 +53,10 @@ try {
  for(const width of [1440,1024,768,390,375]) {
   await page.setViewportSize({width,height:1000});await page.evaluate(()=>document.fonts.ready);
   await page.screenshot({path:`${root}/overview-${width}.png`,fullPage:true});
-  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`no overflow ${width}`);
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`no overflow ${width}`);heroFrames[width]=await page.locator('.reference-hero-photo').boundingBox();
   assert(await page.locator('#overview-title').evaluate(e=>getComputedStyle(e).fontFamily.includes('Fraunces')&&parseFloat(getComputedStyle(e).fontSize)>=36),`editorial reference heading ${width}`);
   assert(await page.locator('.reference-post-card').count()===3,`three real text previews ${width}`);
-  assert(await page.getByText('Symbolbild · synthetisch · kein Kundenfoto',{exact:true}).isVisible(),`honest decorative image ${width}`);
+  assert(await page.getByText('Markenillustration · kein Unternehmensfoto',{exact:true}).isVisible(),`honest decorative image ${width}`);
   if(width===1440){
    const sidebar=await page.locator('.sidebar').boundingBox();assert(sidebar.width===240,'reference sidebar width 240px');
    const cards=await page.locator('.reference-post-card').all();const boxes=await Promise.all(cards.map(e=>e.boundingBox()));assert(boxes.every(b=>b.y===boxes[0].y),'reference three-column post arrangement');
@@ -74,7 +78,7 @@ try {
    if(width<=768){
     for(const button of await page.locator('.mobile-nav button').all()){
      const box=await button.boundingBox();assert(box.width>=44&&box.height>=44,`navigation touch target ${width}`);
-     assert(await button.locator('span').evaluate(e=>parseFloat(getComputedStyle(e).fontSize))>=13,`navigation type ${width}`);
+     assert(await button.locator('span').evaluate(e=>parseFloat(getComputedStyle(e).fontSize))>=(width<=390?14:13),`navigation type ${width}`);
     }
    } else assert(await page.locator('.side-nav button').first().evaluate(e=>parseFloat(getComputedStyle(e).fontSize))>=14,`sidebar type ${width}`);
    await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});
@@ -83,6 +87,23 @@ try {
    await writeFile(root+`/axe-${width}.json`,JSON.stringify(axe.at(-1),null,2));
    assert(scan.violations.length===0,`automated axe ${width}`);
   }
+ }
+ if(phase==='after'){
+  async function captureHeroState(name){
+   for(const width of [1440,1024,768,390,375]){
+    await page.setViewportSize({width,height:1000});await page.evaluate(()=>document.fonts.ready);await page.screenshot({path:`${root}/${name}-${width}.png`,fullPage:true});
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${name} no overflow ${width}`);const frame=await page.locator('.reference-hero-photo').boundingBox();assert(Math.abs(frame.width-heroFrames[width].width)<1&&Math.abs(frame.height-heroFrames[width].height)<1,`${name} hero frame stays reserved ${width}`);
+    await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});
+    const scan=await page.evaluate(()=>window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));
+    axe.push({state:name,width,violations:scan.violations,incomplete:scan.incomplete.map(x=>({id:x.id,nodes:x.nodes.length}))});assert(!scan.violations.length,`${name} axe ${width}`);
+   }
+  }
+  heroRole='business_photo';await page.reload();await page.locator('.reference-hero-photo img').waitFor();
+  assert((await page.locator('.reference-hero-photo img').getAttribute('src')).startsWith('/api/projects/project-a/creative/assets/'),'approved hero stays on selected project asset endpoint');await captureHeroState('approved-source');
+  heroDenied=true;await page.reload();await page.getByText('Bild nicht verfügbar · Markenillustration',{exact:true}).waitFor();
+  assert(await page.locator('.reference-hero-photo img').count()===0,'denied/deleted source becomes illustration');await captureHeroState('denied-source');
+  heroDenied=false;heroRole='logo';await page.reload();await page.getByText('Markenillustration · kein Unternehmensfoto',{exact:true}).waitFor();assert(await page.locator('.reference-hero-photo img').count()===0,'logo cannot become hero photo');
+  heroRole='none';await page.reload();await page.getByRole('button',{name:'Inhalte prüfen',exact:true}).waitFor();
  }
  if(phase==='after'){
   await page.setViewportSize({width:1440,height:1000});
@@ -95,13 +116,31 @@ try {
   await page.getByRole('navigation',{name:'Arbeitsbereich',exact:true}).getByRole('button',{name:'Content Packs',exact:true}).focus();await page.keyboard.press('Enter');
   await page.getByRole('heading',{name:'Deine Content Packs',exact:true}).waitFor();assert(await page.locator('.campaign-card').count()===2,'keyboard opens complete saved list');
   stale=true;await page.reload();await page.getByText('Prüfung offen · 3 von 3 Beiträgen',{exact:true}).waitFor();assert(true,'old-version review cannot approve current pack');stale=false;
-  apiFailure=true;await page.reload();await page.getByRole('alert').waitFor();assert(await page.locator('.overview-kpis').count()===0,'API error never masquerades as zero KPIs');
+  holdPackReads=true;await page.reload({waitUntil:'domcontentloaded'});await page.getByRole('status').filter({hasText:'Deine Unternehmen und Inhalte werden geladen'}).waitFor();
+  for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await page.screenshot({path:`${root}/overview-loading-${width}.png`,fullPage:true});assert(await page.locator('.overview-kpis').count()===0,`loading never presents fabricated counts ${width}`);}
+  holdPackReads=false;for(const resolve of pendingPackReads.splice(0))resolve();await page.getByText('Prüfung offen · 2 von 3 Beiträgen',{exact:true}).waitFor();
+  apiFailure=true;await page.reload();await page.getByRole('alert').waitFor();for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await page.screenshot({path:`${root}/overview-error-${width}.png`,fullPage:true});}assert(await page.locator('.overview-kpis').count()===0,'API error never masquerades as zero KPIs');
   apiFailure=false;await page.getByRole('button',{name:'Erneut laden',exact:true}).click();await page.getByText('Prüfung offen · 2 von 3 Beiträgen',{exact:true}).waitFor();assert(true,'error recovery retains real status');
   multi=true;await page.goto(origin+'/workspace');await page.getByRole('button',{name:'Inhalte prüfen',exact:true}).waitFor();
   await page.getByLabel('Aktuelles Unternehmen',{exact:true}).selectOption('project-b');await page.getByRole('button',{name:'Unternehmensangaben ergänzen',exact:true}).waitFor();
   assert(await page.locator('.overview-brand > strong').textContent()===companyB.name,'selected project owns contextual action and profile');
   assert(await page.locator('.campaign-card').count()===0,'selected company overview never presents another company pack as its own');
   multi=false;empty=true;await page.goto(origin+'/workspace');await page.getByRole('button',{name:'Unternehmen anlegen',exact:true}).waitFor();assert(await page.getByText('Hier wird dein erster Pack sichtbar.',{exact:true}).isVisible(),'honest empty state');
+  for(const width of [1440,1024,768,390,375]){
+   await page.setViewportSize({width,height:1000});await page.screenshot({path:`${root}/empty-${width}.png`,fullPage:true});
+   assert(await page.locator('.reference-hero-photo img').count()===0,`empty company uses illustration ${width}`);
+   await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});const scan=await page.evaluate(()=>window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));axe.push({state:'empty',width,violations:scan.violations,incomplete:scan.incomplete.map(x=>({id:x.id,nodes:x.nodes.length}))});assert(!scan.violations.length,`empty axe ${width}`);
+  }
+  for(const width of [390,375]){
+   await page.setViewportSize({width,height:1000});
+   const nav=page.getByRole('navigation',{name:'Mobile Navigation'});assert(await nav.getByRole('button').count()===6,`six mobile destinations ${width}`);
+   for(const [name,view] of [['Übersicht','overview'],['Inhalte erstellen','campaigns'],['Content Packs','contents'],['Marke & Wissen','projects'],['Medien','media'],['Einstellungen','usage']]){
+    const button=nav.getByRole('button',{name,exact:true});await button.focus();await page.keyboard.press('Enter');await page.waitForURL(url=>(url.searchParams.get('view')??'overview')===view);assert(await button.getAttribute('aria-current')==='page',`keyboard mobile destination ${name} ${width}`);
+   }
+   await nav.getByRole('button',{name:'Übersicht',exact:true}).click();await page.getByRole('button',{name:'Unternehmen anlegen',exact:true}).waitFor();
+   assert(await page.locator('.workspace').evaluate(e=>parseFloat(getComputedStyle(e).paddingBottom))>=124,`mobile scroll clearance ${width}`);
+  }
+
   await page.getByRole('button',{name:'Unternehmen anlegen',exact:true}).focus();await page.keyboard.press('Enter');await page.getByLabel('Unternehmensname',{exact:true}).waitFor();assert(true,'keyboard create-company action opens real onboarding');
  }
  assert(await page.getByRole('button',{name:/Strategie|Kalender|Reel|Video/}).count()===0,'planned areas expose no fake working navigation');

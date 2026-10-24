@@ -1,0 +1,43 @@
+{
+  "status": "PASS",
+  "checks": [
+    "mock-only local runtime; registration closed",
+    "direct signup denied server-side in final runtime",
+    "protected route denied 1440",
+    "no registration control 1440",
+    "auth reflow 1440",
+    "auth automated accessibility 1440",
+    "protected route denied 1024",
+    "no registration control 1024",
+    "auth reflow 1024",
+    "auth automated accessibility 1024",
+    "protected route denied 768",
+    "no registration control 768",
+    "auth reflow 768",
+    "auth automated accessibility 768",
+    "protected route denied 390",
+    "no registration control 390",
+    "auth reflow 390",
+    "auth automated accessibility 390",
+    "protected route denied 375",
+    "no registration control 375",
+    "auth reflow 375",
+    "auth automated accessibility 375",
+    "private media route never exposes tools without a session",
+    "historical route inactive /design/brand/wirkfaden",
+    "historical route inactive /design/auth",
+    "historical route inactive /design/landing-d",
+    "historical route inactive /design/landing-d2",
+    "historical route inactive /unknown",
+    "existing verified owner session resumes after closed-runtime restart",
+    "no external browser requests"
+  ],
+  "widths": [
+    1440,
+    1024,
+    768,
+    390,
+    375
+  ],
+  "external": []
+}

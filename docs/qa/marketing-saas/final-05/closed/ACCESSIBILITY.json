@@ -1,0 +1,32 @@
+{
+  "axe-1440.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "axe-390.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "axe-768.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  },
+  "axe-375.json": {
+    "violations": [],
+    "incomplete": []
+  },
+  "axe-1024.json": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      }
+    ]
+  }
+}

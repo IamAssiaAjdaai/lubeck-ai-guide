@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import ContentLibrary, { CampaignCard, ContentThumbnail } from './ContentLibrary';
+import WorkspaceHeroVisual from './WorkspaceHeroVisual';
 import { ArrowRight, FileText, Images, FolderOpen, Layers, BookOpen, CalendarDays, Target, Sparkles, Clapperboard, Check, ShieldCheck } from 'lucide-react';
 import { goalLabel, channelLabel, loadOverview, nextAction, type OverviewData, type OverviewProject } from './overview.data';
 
@@ -46,8 +47,7 @@ export default function WorkspaceOverview({ projects, activeProjectId, listOnly,
         <p className="workspace-intro">{latest?'Prüfe deine Beiträge, verfeinere die Texte und gib frei, was zu deinem Unternehmen passt.':'Teile dein Wissen. Bereite passende Beiträge vor. Du behältst die letzte Entscheidung.'}</p>
       </div>
       <figure className="reference-hero-photo">
-        {heroPhoto?<ContentThumbnail thumbnail={heroPhoto}/>:<img src="/landing-d2/HERO-02.webp" alt="Florales Atelier als synthetisches redaktionelles Symbolbild"/>}
-        <figcaption>{heroPhoto?'Freigegebene eigene Bildquelle':'Symbolbild · synthetisch · kein Kundenfoto'}</figcaption>
+        <WorkspaceHeroVisual photo={heroPhoto} projectId={current?.project.id}/>
         <div className="reference-photo-note"><Sparkles size={24} aria-hidden="true"/><span>Dein Wissen.<br/>Dein Marketing.</span></div>
       </figure>
       <dl className="reference-metrics overview-kpis" aria-label="Deine gespeicherten Inhalte">

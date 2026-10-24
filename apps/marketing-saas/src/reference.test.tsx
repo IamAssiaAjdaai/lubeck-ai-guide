@@ -28,7 +28,7 @@ describe('Owner reference architecture with truthful saved data',()=>{
   expect(within(pack).getAllByRole('article')).toHaveLength(3);
   expect(within(pack).getByText('B gespeicherter Text 0')).toBeTruthy();
   expect(screen.queryByText('A gespeicherter Text 0')).toBeNull();
-  expect(screen.getByText('Symbolbild · synthetisch · kein Kundenfoto')).toBeTruthy();
+  expect(screen.getByText('Markenillustration · kein Unternehmensfoto')).toBeTruthy();
   expect(within(pack).queryByRole('img')).toBeNull();
   expect(within(pack).getByText(/ohne Live-KI/)).toBeTruthy();
  });
@@ -59,8 +59,8 @@ describe('Owner reference architecture with truthful saved data',()=>{
   request.mockImplementation(async path=>path.endsWith('/creative')?{assets:[{id:'own',status:'approved',role,alt:'Freigegebene Geschäftsaufnahme'}]}:path.includes('/workspace/reviews/')?[{postIndex:1,version:2,approved:true,image:{kind:'asset',id:'own'}}]:original(path));
   const cb=callbacks();const view=render(<WorkspaceOverview projects={[projects[0]]} listOnly={false} {...cb}/>);
   await screen.findByRole('heading',{level:1});
-  expect(screen.getByText('Symbolbild · synthetisch · kein Kundenfoto')).toBeTruthy();
-  expect(document.querySelector('.reference-hero-photo img')?.getAttribute('src')).toBe('/landing-d2/HERO-02.webp');
+  expect(screen.getByText('Markenillustration · kein Unternehmensfoto')).toBeTruthy();
+  expect(document.querySelector('.reference-hero-photo img')).toBeNull();
   role='business_photo';view.unmount();render(<WorkspaceOverview projects={[projects[0]]} listOnly={false} {...cb}/>);
   await screen.findByText('Freigegebene eigene Bildquelle');
   expect(document.querySelector('.reference-hero-photo img')?.getAttribute('src')).toBe('/api/projects/a/creative/assets/own');

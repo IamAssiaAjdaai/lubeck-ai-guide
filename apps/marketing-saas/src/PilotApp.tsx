@@ -556,7 +556,7 @@ export default function PilotApp() {
         </main>
       </div>
       <nav className="mobile-nav" aria-label="Mobile Navigation">
-        {workspaceNav.map(({key,shortLabel,icon:Icon})=><button key={key} aria-current={tab===key?"page":undefined} onClick={()=>navigateTab(key)}><Icon size={19} strokeWidth={1.7} aria-hidden="true"/><span>{shortLabel}</span></button>)}
+        {workspaceNav.map(({key,label,shortLabel,icon:Icon})=><button key={key} aria-label={label} aria-current={tab===key?"page":undefined} onClick={()=>navigateTab(key)}><Icon size={19} strokeWidth={1.7} aria-hidden="true"/><span>{shortLabel}</span></button>)}
       </nav>
     </div>
   );

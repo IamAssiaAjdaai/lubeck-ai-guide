@@ -1,0 +1,11 @@
+{
+  "origin": "http://127.0.0.1:3208",
+  "phase": "after",
+  "headings": [
+    "Inhalte erstellen",
+    "Deine Inhalte sind vorbereitet."
+  ],
+  "external": [],
+  "mutations": [],
+  "fixture": "Existing synthetic account and persisted data; API writes blocked by capture"
+}
