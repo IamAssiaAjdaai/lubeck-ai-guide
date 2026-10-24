@@ -22,7 +22,7 @@ async function testerAllowed(request: Request, env: Env): Promise<boolean> {
       requiredClaims: ["sub", "iat", "exp", "jti", "client_id"],
     });
     const subjects: unknown = JSON.parse(String(env.CITYWALK_TESTER_SUBJECTS));
-    return Array.isArray(subjects) && subjects.length > 0 && subjects.length <= 100 &&
+    return Array.isArray(subjects) && subjects.length === 1 &&
       subjects.every(subject => typeof subject === "string" && subject.length > 0) && subjects.includes(payload.sub) &&
       payload.client_id === env.CITYWALK_TESTER_CLIENT_ID && payload.aud === NATIVE_PREVIEW_ORIGIN &&
       typeof payload.exp === "number" && typeof payload.iat === "number" &&
