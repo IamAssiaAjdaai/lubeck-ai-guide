@@ -82,6 +82,11 @@ describe("native tester perimeter", () => {
       expect((await responseFor(await request(), { ...environment(), ...update })).status).toBe(401);
     }
   });
+  it("fails closed when initial tester allowlist contains multiple subjects", async () => {
+    const env = environment();
+    env.CITYWALK_TESTER_SUBJECTS = '["synthetic-tester","uninvited-second"]';
+    expect((await responseFor(await request(), env)).status).toBe(401);
+  });
   it.each(["https://getcitywalk.com", "https://api-preview.getcitywalk.com.evil.test", "https://citywalk-api-preview.test.workers.dev", "http://api-preview.getcitywalk.com"])("rejects alternate host %s", async host => {
     expect((await responseFor(new Request(host + "/api/health"))).status).toBe(403);
   });
