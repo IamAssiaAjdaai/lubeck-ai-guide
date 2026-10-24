@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.cloudflare.json",
+  "include": [
+    "../../src/cloudflare/**/*.ts",
+    "./cloudflare.config.ts",
+    "./vite.config.mts"
+  ],
+  "exclude": ["../../node_modules", "../../src/cloudflare/**/*.test.ts"]
+}
