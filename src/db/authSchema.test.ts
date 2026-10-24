@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   account,
+  passkey,
+  twoFactor,
   session,
   staffCityAccess,
   staffMemberships,
@@ -12,6 +14,15 @@ import {
 } from "@/db/authSchema";
 
 describe("auth and staff database schema", () => {
+  it("adds passkey and TOTP schema without replacing the existing auth schema", () => {
+    expect([passkey, twoFactor].map((table) => getTableConfig(table).name)).toEqual(["passkey", "twoFactor"]);
+    expect(getTableConfig(passkey).foreignKeys).toHaveLength(1);
+    expect(getTableConfig(twoFactor).foreignKeys).toHaveLength(1);
+    expect(getTableConfig(passkey).columns.map((column) => column.name)).toContain("credential_id");
+    expect(getTableConfig(twoFactor).columns.map((column) => column.name)).toContain("locked_until");
+    expect(getTableConfig(user).columns.map((column) => column.name)).toContain("two_factor_enabled");
+  });
+
   it("keeps Better Auth core tables separate from catalog tables", () => {
     expect(
       [user, session, account, verification].map(
