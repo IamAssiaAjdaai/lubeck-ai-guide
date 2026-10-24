@@ -1,0 +1,2682 @@
+{
+  "authenticated": [
+    {
+      "capture": "auth-inline-errors-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-inline-errors-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-inline-errors-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-inline-errors-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-inline-errors-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-invalid_token-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-invalid_token-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-invalid_token-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-invalid_token-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-invalid_token-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-login-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-login-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-login-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-login-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-login-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-new-password-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-new-password-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-new-password-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-new-password-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-new-password-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-sent-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-sent-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-sent-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-sent-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-sent-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-success-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-success-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-success-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-success-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-recovery-success-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-signup-local-only-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-signup-local-only-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-signup-local-only-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-signup-local-only-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-signup-local-only-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-token_expired-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-token_expired-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-token_expired-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-token_expired-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-token_expired-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-verification-sent-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-verification-sent-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-verification-sent-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-verification-sent-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "auth-verification-sent-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-kit-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-kit-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-kit-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-kit-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-kit-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-knowledge-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-knowledge-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-knowledge-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-knowledge-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "brand-knowledge-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-approved-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-approved-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-approved-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-approved-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-approved-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "content-library-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "create-goal-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "create-goal-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "create-goal-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "capture": "create-goal-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "capture": "create-goal-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "capture": "create-ready-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "capture": "create-ready-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "capture": "create-ready-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "capture": "create-ready-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "capture": "create-ready-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "capture": "creative-studio-mock-ready-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "creative-studio-mock-ready-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "creative-studio-mock-ready-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "creative-studio-mock-ready-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "creative-studio-mock-ready-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "facts-confirmed-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "facts-confirmed-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "facts-confirmed-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "facts-confirmed-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "facts-confirmed-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "history-current-restored-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "history-current-restored-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "history-current-restored-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "history-current-restored-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "history-current-restored-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "history-readonly-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "capture": "history-readonly-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "history-readonly-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "history-readonly-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "history-readonly-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "capture": "insufficient-facts-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "capture": "insufficient-facts-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 5
+        }
+      ]
+    },
+    {
+      "capture": "insufficient-facts-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "capture": "insufficient-facts-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "capture": "insufficient-facts-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "capture": "media-empty-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "media-empty-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "media-empty-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "media-empty-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "media-empty-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "media-library-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "media-library-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "media-library-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "media-library-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "media-library-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "onboarding-empty-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "onboarding-empty-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "onboarding-empty-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "onboarding-empty-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "onboarding-empty-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "overview-new-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "capture": "overview-new-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "capture": "overview-new-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "capture": "overview-new-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "capture": "overview-new-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "capture": "overview-returning-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "capture": "overview-returning-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "capture": "overview-returning-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "capture": "overview-returning-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "capture": "overview-returning-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "capture": "review-text-only-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "review-text-only-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "review-text-only-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "review-text-only-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "review-text-only-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "review-with-image-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "review-with-image-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "review-with-image-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "review-with-image-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "capture": "review-with-image-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 6
+        }
+      ]
+    },
+    {
+      "capture": "service-city-profile-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "service-city-profile-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "service-city-profile-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "service-city-profile-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "service-city-profile-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "settings-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "settings-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "settings-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "settings-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "settings-axe-768",
+      "violations": 0,
+      "incomplete": []
+    }
+  ],
+  "closed": [
+    {
+      "capture": "axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "axe-768",
+      "violations": 0,
+      "incomplete": []
+    }
+  ],
+  "d2": [
+    {
+      "capture": "after-demo-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "after-demo-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "after-demo-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "after-demo-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "after-demo-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "edit-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "edit-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "edit-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "edit-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "edit-axe-768",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "landing-axe-1024",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ],
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+          "nodes": [
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "22.5pt (30px)",
+                    "fontWeight": "normal",
+                    "messageKey": "shortTextContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+                      "target": [
+                        ".d2-header > .d2-brand[href=\"#\"] > .d2-mark"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element content is too short to determine if it is actual text content"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+              "target": [
+                ".d2-header > .d2-brand[href=\"#\"] > .d2-mark"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "9.8pt (13px)",
+                    "fontWeight": "bold",
+                    "messageKey": "elmPartiallyObscuring",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it partially overlaps other elements"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<h3>Frische Blumen f\u00fcr<br>deinen Alltag.</h3>",
+              "target": [
+                ".d2-social-card > h3"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "bgOverlap",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it is overlapped by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>In Planung</span>",
+              "target": [
+                ".d2-video-poster > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p class=\"d2-eyebrow\">Dein n\u00e4chster Schritt</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > .d2-eyebrow"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "22.5pt (30px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<h2>Mach aus deinen Unternehmensinformationen<br>hilfreiche Marketing-Inhalte.</h2>",
+              "target": [
+                ".d2-closing > .d2-container > div > h2"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "12.0pt (16px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p>Probier die feste Text-Demo. Ohne Konto. Ohne Modellkosten.</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > p:nth-child(3)"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<button class=\"d2-button d2-button-light\">",
+              "target": [
+                ".d2-button-light"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "22.5pt (30px)",
+                    "fontWeight": "normal",
+                    "messageKey": "shortTextContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+                      "target": [
+                        "#d2-pilot-status > .d2-brand[href=\"#\"] > .d2-mark"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element content is too short to determine if it is actual text content"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+              "target": [
+                "#d2-pilot-status > .d2-brand[href=\"#\"] > .d2-mark"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "capture": "landing-axe-1440",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ],
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+          "nodes": [
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "22.5pt (30px)",
+                    "fontWeight": "normal",
+                    "messageKey": "shortTextContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+                      "target": [
+                        ".d2-header > .d2-brand[href=\"#\"] > .d2-mark"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element content is too short to determine if it is actual text content"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+              "target": [
+                ".d2-header > .d2-brand[href=\"#\"] > .d2-mark"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span class=\"d2-shape d2-shape-forest\"></span>",
+                      "target": [
+                        ".d2-shape-forest"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<a href=\"#funktionen\">Funktionen</a>",
+              "target": [
+                ".d2-nav > a[href$=\"#funktionen\"]"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span class=\"d2-shape d2-shape-forest\"></span>",
+                      "target": [
+                        ".d2-shape-forest"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<a href=\"#ablauf\">So funktioniert\u2019s</a>",
+              "target": [
+                ".d2-nav > a[href$=\"#ablauf\"]"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span class=\"d2-shape d2-shape-forest\"></span>",
+                      "target": [
+                        ".d2-shape-forest"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<a href=\"#beispiele\">Beispiele</a>",
+              "target": [
+                ".d2-nav > a[href$=\"#beispiele\"]"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span class=\"d2-shape d2-shape-forest\"></span>",
+                      "target": [
+                        ".d2-shape-forest"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<a href=\"#faq\">FAQ</a>",
+              "target": [
+                ".d2-nav > a[href$=\"#faq\"]"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span class=\"d2-shape d2-shape-forest\"></span>",
+                      "target": [
+                        ".d2-shape-forest"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<a href=\"/auth\">Login</a>",
+              "target": [
+                ".d2-nav > a[href$=\"auth\"]"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "bgOverlap",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it is overlapped by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>In Planung</span>",
+              "target": [
+                ".d2-video-poster > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p class=\"d2-eyebrow\">Dein n\u00e4chster Schritt</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > .d2-eyebrow"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "30.0pt (40px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<h2>Mach aus deinen Unternehmensinformationen<br>hilfreiche Marketing-Inhalte.</h2>",
+              "target": [
+                ".d2-closing > .d2-container > div > h2"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "13.5pt (18px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p>Probier die feste Text-Demo. Ohne Konto. Ohne Modellkosten.</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > p:nth-child(3)"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<button class=\"d2-button d2-button-light\">",
+              "target": [
+                ".d2-button-light"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "22.5pt (30px)",
+                    "fontWeight": "normal",
+                    "messageKey": "shortTextContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+                      "target": [
+                        "#d2-pilot-status > .d2-brand[href=\"#\"] > .d2-mark"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element content is too short to determine if it is actual text content"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+              "target": [
+                "#d2-pilot-status > .d2-brand[href=\"#\"] > .d2-mark"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "capture": "landing-axe-375",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ],
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+          "nodes": [
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "bgOverlap",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it is overlapped by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>In Planung</span>",
+              "target": [
+                ".d2-video-poster > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span>",
+                      "target": [
+                        ".d2-category-grid > button:nth-child(3) > span"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>",
+              "target": [
+                ".d2-category-grid > button:nth-child(3) > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span>",
+                      "target": [
+                        "button:nth-child(4) > span"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>",
+              "target": [
+                "button:nth-child(4) > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span>",
+                      "target": [
+                        "button:nth-child(6) > span"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>",
+              "target": [
+                "button:nth-child(6) > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p class=\"d2-eyebrow\">Dein n\u00e4chster Schritt</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > .d2-eyebrow"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "23.3pt (31px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<h2>Mach aus deinen Unternehmensinformationen<br>hilfreiche Marketing-Inhalte.</h2>",
+              "target": [
+                ".d2-closing > .d2-container > div > h2"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "12.0pt (16px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p>Probier die feste Text-Demo. Ohne Konto. Ohne Modellkosten.</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > p:nth-child(3)"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<button class=\"d2-button d2-button-light\">",
+              "target": [
+                ".d2-button-light"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "capture": "landing-axe-390",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ],
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+          "nodes": [
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "bgOverlap",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it is overlapped by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>In Planung</span>",
+              "target": [
+                ".d2-video-poster > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span>",
+                      "target": [
+                        ".d2-category-grid > button:nth-child(3) > span"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>",
+              "target": [
+                ".d2-category-grid > button:nth-child(3) > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span>",
+                      "target": [
+                        "button:nth-child(4) > span"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>",
+              "target": [
+                "button:nth-child(4) > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "elmPartiallyObscured",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span>",
+                      "target": [
+                        "button:nth-child(6) > span"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it's partially obscured by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>",
+              "target": [
+                "button:nth-child(6) > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p class=\"d2-eyebrow\">Dein n\u00e4chster Schritt</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > .d2-eyebrow"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "23.3pt (31px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<h2>Mach aus deinen Unternehmensinformationen<br>hilfreiche Marketing-Inhalte.</h2>",
+              "target": [
+                ".d2-closing > .d2-container > div > h2"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "12.0pt (16px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p>Probier die feste Text-Demo. Ohne Konto. Ohne Modellkosten.</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > p:nth-child(3)"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<button class=\"d2-button d2-button-light\">",
+              "target": [
+                ".d2-button-light"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "capture": "landing-axe-768",
+      "violations": 0,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ],
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+          "nodes": [
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "22.5pt (30px)",
+                    "fontWeight": "normal",
+                    "messageKey": "shortTextContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+                      "target": [
+                        ".d2-header > .d2-brand[href=\"#\"] > .d2-mark"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element content is too short to determine if it is actual text content"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+              "target": [
+                ".d2-header > .d2-brand[href=\"#\"] > .d2-mark"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "9.8pt (13px)",
+                    "fontWeight": "bold",
+                    "messageKey": "elmPartiallyObscuring",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it partially overlaps other elements"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<h3>Frische Blumen f\u00fcr<br>deinen Alltag.</h3>",
+              "target": [
+                ".d2-social-card > h3"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "bgOverlap",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined because it is overlapped by another element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span>In Planung</span>",
+              "target": [
+                ".d2-video-poster > span"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p class=\"d2-eyebrow\">Dein n\u00e4chster Schritt</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > .d2-eyebrow"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "26.3pt (35px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<h2>Mach aus deinen Unternehmensinformationen<br>hilfreiche Marketing-Inhalte.</h2>",
+              "target": [
+                ".d2-closing > .d2-container > div > h2"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "12.0pt (16px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<p>Probier die feste Text-Demo. Ohne Konto. Ohne Modellkosten.</p>",
+              "target": [
+                ".d2-closing > .d2-container > div > p:nth-child(3)"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "fontSize": "10.5pt (14px)",
+                    "fontWeight": "normal",
+                    "messageKey": "pseudoContent",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<section class=\"d2-closing\" data-section=\"closing\">",
+                      "target": [
+                        ".d2-closing"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element's background color could not be determined due to a pseudo element"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<button class=\"d2-button d2-button-light\">",
+              "target": [
+                ".d2-button-light"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "contrastRatio": 0,
+                    "fontSize": "22.5pt (30px)",
+                    "fontWeight": "normal",
+                    "messageKey": "shortTextContent",
+                    "expectedContrastRatio": "3:1"
+                  },
+                  "relatedNodes": [
+                    {
+                      "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+                      "target": [
+                        "#d2-pilot-status > .d2-brand[href=\"#\"] > .d2-mark"
+                      ]
+                    }
+                  ],
+                  "impact": "serious",
+                  "message": "Element content is too short to determine if it is actual text content"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span aria-hidden=\"true\" class=\"d2-mark\">m<span>\u00b7</span></span>",
+              "target": [
+                "#d2-pilot-status > .d2-brand[href=\"#\"] > .d2-mark"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "capture": "review-axe-1024",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "review-axe-1440",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "review-axe-375",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "review-axe-390",
+      "violations": 0,
+      "incomplete": []
+    },
+    {
+      "capture": "review-axe-768",
+      "violations": 0,
+      "incomplete": []
+    }
+  ]
+}

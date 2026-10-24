@@ -545,3 +545,42 @@
 /* Active form only: keep the existing control accessible without changing previews. */
 .pilot-auth .password-toggle { min-height: 44px; min-width: 44px; }
 .pilot-auth .auth-input-wrap input[name="password"] { padding-right: 96px; }
+
+/* Active Better Auth only: preserve the approved composition and preview studies. */
+.pilot-auth { font-size: 16px; line-height: 1.6; }
+.pilot-auth .auth-description,
+.pilot-auth .auth-message-screen > p { font-size: 16px; line-height: 1.6; }
+.pilot-auth .auth-field label,
+.pilot-auth .auth-error,
+.pilot-auth .password-rule,
+.pilot-auth .auth-foot,
+.pilot-auth .auth-right-link,
+.pilot-auth .auth-banner,
+.pilot-auth .auth-story > small,
+.pilot-auth .quiet,
+.pilot-auth .product-identity .identity-copy small { font-size: 14px; line-height: 1.6; }
+.pilot-auth .auth-story-center > p { font-size: 16px; line-height: 1.65; }
+.pilot-auth .auth-story-center > p:first-child { font-size: 14px; }
+.pilot-auth .auth-field input { min-height: 48px; font-size: 16px; }
+.pilot-auth .auth-primary { font-size: 16px; min-height: 48px; line-height: 1.5; }
+.pilot-auth .password-toggle { font-size: 14px; line-height: 1.5; }
+.pilot-auth .auth-foot button,
+.pilot-auth .auth-right-link button { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
+.pilot-auth .auth-back-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; }
+.pilot-auth button:focus-visible,
+.pilot-auth input:focus-visible,
+.pilot-auth a:focus-visible { outline: 3px solid var(--brand-ink); outline-offset: 3px; }
+.pilot-auth .auth-story a:focus-visible { outline-color: var(--brand-lime); }
+.pilot-auth button:not(:disabled):active { filter: brightness(.94); }
+/* The preview glyph span sizing must not constrain the real identity copy. */
+.pilot-auth .auth-story-brand .identity-copy {
+  display: flex;
+  width: auto;
+  height: auto;
+  background: transparent;
+  border-radius: 0;
+  font-size: inherit;
+}
+@media (min-width: 751px) and (max-width: 1080px) {
+  .pilot-auth .auth-story-center h2 { font-size: clamp(28px, 3.4vw, 36px); }
+}

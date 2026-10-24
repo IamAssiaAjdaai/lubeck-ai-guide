@@ -1,0 +1,22 @@
+{
+  "head": "8f078c03487f675138bc5a43bfa54b43f48a7686",
+  "branch": "codex/mkt-dashboard-01",
+  "initialWorkingTree": "clean",
+  "protected": [
+    {
+      "set": "human",
+      "count": 117,
+      "changed": 0,
+      "manifestHash": "5a861f780b49617c4af2a78dee6a822b049372e40f6185313659220434c6ebda"
+    },
+    {
+      "set": "held",
+      "count": 321,
+      "changed": 0,
+      "manifestHash": "19769e4c51185883073dbf54052ea62e7a79b1f0da7640073cefce7db8512835"
+    }
+  ],
+  "remoteDevelop": "56e091ab475f384601e4c5d50cabfcbfc94172b6",
+  "remoteMain": "88191e77e55a489804c49bccccf6307b5876b41d",
+  "remoteAction": "read-only ls-remote; no import or rebase"
+}
