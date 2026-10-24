@@ -1,0 +1,29 @@
+{
+  "baseline": "b908151e76169db120b156d9374368ad7d4f2569",
+  "rootUnit": {
+    "numPassedTests": 1917,
+    "numFailedTests": 0,
+    "numPendingTests": 244
+  },
+  "finalMarketingPostgres": {
+    "numPassedTests": 123,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "focusedFinal": {
+    "numPassedTests": 26,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "hostBuild": "PASS: synthetic build-only auth, unreachable loopback DB URL, no database contacted",
+  "hostTypes": "PASS after next typegen",
+  "rootLint": {
+    "errors": 0,
+    "warnings": 13
+  },
+  "marketingLint": {
+    "errors": 0,
+    "warnings": 5
+  },
+  "note": "Canonical summary predates final additional attachment unit and concurrency DB cases. Final root/focused/database runs verify these. Parser-only 15/15 rerun and real owner preview verify tightened read allowlist."
+}

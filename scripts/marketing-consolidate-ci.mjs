@@ -31,7 +31,7 @@ export function offlineEnvironment(input, privateDirectory) {
     MARKETING_CREATIVE_KILL_SWITCH: "false" };
 }
 export const databaseTests = [
-  "src/auth.integration.test.ts", "src/packs.integration.test.ts", "src/workspace.integration.test.ts", "src/consolidation.integration.test.ts",
+  "src/intake/pdf.integration.test.ts", "src/auth.integration.test.ts", "src/packs.integration.test.ts", "src/workspace.integration.test.ts", "src/consolidation.integration.test.ts",
   "qa/service.integration.test.ts", "src/creative/creative.test.ts", "qa-creative-acceptance/acceptance.integration.test.ts",
   "qa-creative-hardening/hardening.integration.test.ts", "qa-creative-provider/provider.integration.test.ts", "qa-creative-transport/transport.integration.test.ts",
 ].map(path => "apps/marketing-saas-api/" + path);
@@ -99,6 +99,7 @@ async function main() {
     await stage("browser-database-migrations", ["--conditions=react-server", "--import", "tsx", "apps/marketing-saas-api/src/migrate.ts"]);
     await start(true); // Synthetic local setup only; closed state is verified after restart.
     await stage("authenticated-journey", ["scripts/marketing-consolidate-browser.mjs"], { MARKETING_BROWSER_EVIDENCE_ROOT: join(evidence, "workspace") });
+    await stage("pdf-intake-journey", ["scripts/marketing-bue-browser.mjs"], { MARKETING_BUE_EVIDENCE_ROOT: join(evidence, "bue") });
     await stop();
     // The real DB-backed auth limit is 30 requests/60s and intentionally survives restart.
     // Successive synthetic journeys share loopback IP; honor the window instead of resetting/relaxing it.

@@ -12,6 +12,7 @@ import {
   intakeErrorMessages,
 } from "./intake/errors";
 import { demoWebsite } from "./demo-website";
+import { PdfIntake, PDF_MAX_BYTES } from './intake/pdf';
 import { PackService } from "./packs";
 import { WorkspacePackService } from "./workspace-packs";
 import { WorkspaceService } from "./workspace";
@@ -79,6 +80,7 @@ export function createApi(
   const workspace = new WorkspaceService(pool, creative);
   const importer = createWebsiteImporter();
   const demoImporter = createWebsiteImporter(demoWebsite);
+  const pdfIntake = new PdfIntake();
   async function principal(headers: Headers): Promise<Principal> {
     const session = await auth.api.getSession({ headers });
     if (!session?.user.emailVerified)
@@ -105,6 +107,24 @@ export function createApi(
           emailDelivery: "local_file_sink",
         });
       const actor = await principal(request.headers);
+      const documentRoute = /^\/api\/projects\/([^/]+)\/documents\/(preview|accept)$/.exec(path);
+      if (documentRoute) {
+        const projectId = id.parse(documentRoute[1]);
+        if (request.method !== 'POST') throw new ApiError(405,'METHOD_NOT_ALLOWED');
+        const project = await store.authorize(pool, actor, projectId, true);
+        if (documentRoute[2] === 'preview') {
+          const revision = z.string().regex(/^\d+$/).transform(Number).pipe(z.number().int().min(0)).parse(request.headers.get('x-context-revision'));
+          if (revision !== project.revision) throw new ApiError(409,'STALE_REVISION');
+          const label = z.string().min(1).max(1000).transform(v=>decodeURIComponent(v)).pipe(z.string().min(1).max(160)).parse(request.headers.get('x-document-label'));
+          if (Number(request.headers.get('content-length')) > PDF_MAX_BYTES) throw new ApiError(413,'PDF_SIZE_LIMIT');
+          return Response.json(await pdfIntake.preview(actor.id,projectId,revision,Buffer.from(await request.arrayBuffer()),request.headers.get('content-type')??'',label),{headers:{'Cache-Control':'no-store'}});
+        }
+        const command = z.strictObject({token:z.uuid(),expectedRevision:z.number().int().min(0),candidateIds:z.array(z.string().max(128)).min(1).max(24),acknowledged:z.literal(true)}).parse(await request.json());
+        const preview = pdfIntake.selected(actor.id,projectId,command.token,command.candidateIds);
+        const result = await store.appendDocument(actor,projectId,command.expectedRevision,preview);
+        pdfIntake.consume(command.token);
+        return Response.json(result);
+      }
       const creativeResponse = await creativeRoute(request, actor, creative);
       if (creativeResponse) return creativeResponse;
       if (path === "/api/projects") {
@@ -298,6 +318,7 @@ export function createApi(
 }
 async function body(req: IncomingMessage, creative = false) {
   const limit =
+    req.method === 'POST' && /^\/api\/projects\/[a-f0-9-]+\/documents\/preview$/.test((req.url??'').split('?')[0]) ? PDF_MAX_BYTES :
     creative &&
     req.method === "POST" &&
     /^\/api\/projects\/[a-f0-9-]+\/creative\/assets$/.test(

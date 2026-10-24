@@ -1,0 +1,23 @@
+{
+  "baseline": {
+    "info": 0,
+    "low": 0,
+    "moderate": 14,
+    "high": 8,
+    "critical": 2,
+    "total": 24
+  },
+  "parser": "pdfjs-dist@6.4.299",
+  "newParserOrCanvasFindings": [],
+  "current": {
+    "info": 0,
+    "low": 0,
+    "moderate": 14,
+    "high": 8,
+    "critical": 2,
+    "total": 24
+  },
+  "samePackageSeverities": true,
+  "scope": "npm audit --omit=dev, exact baseline lockfile and candidate lockfile; not a security certification",
+  "baselineSha": "b908151e76169db120b156d9374368ad7d4f2569"
+}

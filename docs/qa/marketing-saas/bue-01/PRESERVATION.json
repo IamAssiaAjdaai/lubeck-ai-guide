@@ -1,0 +1,10 @@
+{
+  "protectedHumanReviewFiles": 117,
+  "heldFiles": 321,
+  "unchanged": true,
+  "existingWorktrees": "No resets, cleans, switches or source changes; design branch preserved",
+  "newWorktree": "/private/tmp/mkt-bue-01",
+  "branch": "feat/marketing-business-understanding-01",
+  "base": "b908151e76169db120b156d9374368ad7d4f2569",
+  "privateMaterial": "No coordinator keys, reviewer sheets, credentials, mail, session states or private logs included"
+}

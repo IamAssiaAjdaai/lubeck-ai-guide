@@ -16,5 +16,5 @@ describe("canonical CI cannot inherit a live provider configuration", () => {
     expect(published).toHaveLength(4);expect(published.every(x=>x.endsWith("summary.json")||x.endsWith("*.png"))).toBe(true);
     expect(workflow).toContain("contents: read");expect(workflow).toContain("127.0.0.1:55498:5432");expect(workflow).not.toMatch(/workflow_dispatch|deploy:|pull_request_target|secrets\./);
   });
-  it("retains all ten required auth/persistence/Creative database suites",()=>{expect(databaseTests).toHaveLength(10);expect(databaseTests.some(x=>x.includes("consolidation.integration"))).toBe(true);expect(databaseTests.some(x=>x.includes("workspace.integration"))).toBe(true);expect(databaseTests.some(x=>x.includes("hardening.integration"))).toBe(true);});
+  it("retains the ten existing database suites and adds PDF source-preservation coverage",()=>{expect(databaseTests).toHaveLength(11);expect(databaseTests.some(x=>x.includes("consolidation.integration"))).toBe(true);expect(databaseTests.some(x=>x.includes("workspace.integration"))).toBe(true);expect(databaseTests.some(x=>x.includes("hardening.integration"))).toBe(true);});
 });

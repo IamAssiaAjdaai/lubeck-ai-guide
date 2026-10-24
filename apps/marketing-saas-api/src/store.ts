@@ -11,6 +11,7 @@ import {
   type BrandContext,
 } from "@marketing/core";
 import { ApiError } from "./errors";
+import type { PdfPreview } from "./intake/pdf";
 export type Principal = { id: string };
 export async function transaction<T>(
   pool: Pool,
@@ -164,6 +165,27 @@ export class ProjectStore {
       context.updatedAt = timestamp;
       // A correction starts a fresh evidence-bound review; no old approval survives.
       return this.append(client, actor, project, context, "revise", evidence);
+    });
+  }
+  async appendDocument(actor: Principal, projectId: string, expectedRevision: number, preview: PdfPreview) {
+    return transaction(this.pool, async client => {
+      const project = await this.authorize(client, actor, projectId, true, true);
+      if (project.revision !== expectedRevision || preview.expectedRevision !== expectedRevision) throw new ApiError(409, "STALE_REVISION");
+      const row = (await client.query("SELECT context,evidence FROM mkt_brand_versions WHERE project_id=$1 AND revision=$2", [projectId, expectedRevision])).rows[0];
+      const now = new Date().toISOString();
+      const context = row ? brandContextSchema.parse(row.context) : createBrandContext({ rawText: 'Unternehmensprofil mit geprüfter Dokumentauswahl', identity: { name: project.name } }, {contextId: projectId, projectId, briefSourceId: 'manual-brief', createdAt: now});
+      const added = preview.candidates.filter(c => !context.facts.some(f => f.id === c.id || f.statement === c.statement));
+      if (!added.length) throw new ApiError(409, 'PDF_ALREADY_SAVED');
+      if (context.facts.length + added.length > 100) throw new ApiError(422, 'PDF_CONTEXT_LIMIT');
+      const sourceId = (page: number) => `document-${preview.digest}-p${page}`;
+      const sources = [...new Set(added.map(c=>c.page))].filter(page=>!context.provenance.some(s=>s.id===sourceId(page))).map(page=>({id:sourceId(page),kind:'document' as const,label:`${preview.label} · Seite ${page}`.slice(0,200),observedAt:preview.extractedAt}));
+      if (context.provenance.length + sources.length > 100) throw new ApiError(422, 'PDF_CONTEXT_LIMIT');
+      const merged = brandContextSchema.parse({...context,revision:expectedRevision+1,updatedAt:now,
+        provenance:[...context.provenance,...sources],missingInformation:context.missingInformation.filter(g=>g.field!=='facts'),
+        facts:[...context.facts,...added.map(c=>({id:c.id,statement:c.statement,basis:'source_backed',provenanceIds:[sourceId(c.page)],confirmation:null}))]});
+      return this.append(client,actor,project,merged,'revise',[
+        ...(row?.evidence??[]),...added.map(c=>({factId:c.id,snippet:c.snippet,documentLabel:preview.label,page:c.page,documentDigest:preview.digest,extractedAt:preview.extractedAt,importStatus:'saved_unconfirmed'})),
+      ]);
     });
   }
   async confirm(

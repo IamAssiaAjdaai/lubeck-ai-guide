@@ -11,6 +11,7 @@ import AuthForm from "./auth/AuthForm";
 import "./pilot.css";
 import "./studio.css";
 import "./reference.css";
+import PdfImport from './PdfImport';
 import WorkspaceIdentity from "./WorkspaceIdentity";
 import { House, SquarePen, Files, Palette, Settings2, Images, ShieldCheck, UserRound, ChevronDown, LogOut } from "lucide-react";
 const workspaceNav = [
@@ -385,6 +386,7 @@ export default function PilotApp() {
                       </form>
                     </details>
                   </Panel>
+                  <PdfImport key={detail.id} projectId={detail.id} revision={detail.revision} readOnly={detail.role==='viewer'} onSaved={()=>open(detail.id)}/>
                   {detail.context && (
                     <Panel title="2. Fakten prüfen und bestätigen">
                       <p className="muted">Prüfe Aussage und Quelle. Bestätigte Fakten musst du nicht erneut auswählen. Neue oder geänderte Angaben sind zunächst ungeprüft.</p><details><summary>Quellenstand und Verlauf</summary><p>Stand {detail.revision} · Verlauf: {detail.history.join(", ")}. Bestätigung ist keine Veröffentlichung.</p></details>
@@ -449,7 +451,7 @@ export default function PilotApp() {
                             {f.confirmation
                               ? "Von dir bestätigt"
                               : f.basis === "source_backed"
-                                ? "Website-Vorschlag · ungeprüft"
+                                ? "Quellen-Vorschlag · ungeprüft"
                                 : "Eigene Angabe · ungeprüft"}
                           </span>
                           {f.provenanceIds.map((sourceId) => {
@@ -466,7 +468,7 @@ export default function PilotApp() {
                                   Quelle ansehen ↗
                                 </a>
                               </p>
-                            ) : null;
+                            ) : source ? <p key={sourceId} className="quiet">{source.label}</p> : null;
                           })}
                           {detail.evidence
                             .filter((e) => e.factId === f.id)

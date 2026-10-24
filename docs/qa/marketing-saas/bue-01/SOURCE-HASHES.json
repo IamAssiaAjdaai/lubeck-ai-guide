@@ -1,0 +1,19 @@
+{
+  "apps/marketing-saas-api/src/intake/pdf-guard.mjs": "cdc627492fa4ef2c6986c2bfbd89d28fed6482e844bc4d18fc0831ffd64a9d4a",
+  "apps/marketing-saas-api/src/intake/pdf-worker.mjs": "b4944a7021054ab7047bba7d842d853f9347d78d6a6844819012cf181310d791",
+  "apps/marketing-saas-api/src/intake/pdf.fixtures.ts": "46c2fa0af7458f6303707f26605f16cbddc725cb7cbd1aab7f5d4ce108bb3c4d",
+  "apps/marketing-saas-api/src/intake/pdf.integration.test.ts": "14efcaf0c86b36460f2bdc53c252fdaffa7e7c9788c39f13aa3430afb9b31f83",
+  "apps/marketing-saas-api/src/intake/pdf.test.ts": "0fdda6fd9a1f79b0d8a20ceb2f9d052c45bffc6c1b832e1c60ddc3905a25352d",
+  "apps/marketing-saas-api/src/intake/pdf.ts": "e2ef2e38a6c89c2fb4976c0958a222312ad1b652de6b0f4eb63c3df5a48f81ff",
+  "apps/marketing-saas-api/src/server.ts": "e44d887d13c680ee2b17e50d1f5ac60e04c23948a08a70fb5e6774fe066042a6",
+  "apps/marketing-saas-api/src/store.ts": "3c68ebb6a152b5d014e8a456526a2c05afa0a3f19f50d125829e643701ea6411",
+  "apps/marketing-saas/src/PdfImport.test.tsx": "b7790645f978f8701de3d972d567327c8edefd70492ce539f6b31b3600820b53",
+  "apps/marketing-saas/src/PdfImport.tsx": "5f4e574c4e69a68aa8db205d6403f142e04093a1dc304c411e381509da5291d5",
+  "apps/marketing-saas/src/PilotApp.tsx": "284a4ecdd62d04bf110e8506eab03cf9b4953552795c3ec204fab44a17cffc45",
+  "apps/marketing-saas/src/api.ts": "2925c092d130b36df2fbe23ed71328a4dddc6257edff9a80b4a872f453227078",
+  "package-lock.json": "1cbb0f9d0de3e41ac50e94bee8b5d8676590ed253d07b12a8ad33f6872e0e70e",
+  "package.json": "25b7be86613fd5bcfed86c35e9e77c7cbcdcdec95dace6da8bc8a0e59da5dd6a",
+  "scripts/marketing-bue-browser.mjs": "967fda4b32288107fb575fa686d848e5385b8bae696c90c58ccf86d8b7355f8d",
+  "scripts/marketing-consolidate-ci.mjs": "e21bda47cbd971932e386c498e0843976b55182b4742746ffc86e83bb125602c",
+  "scripts/marketing-consolidate-ci.test.mjs": "8742fb6ea05613f6a5868761091171e14adba907bc6da85b890ded676f8bd97e"
+}
