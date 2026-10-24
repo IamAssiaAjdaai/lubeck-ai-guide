@@ -1,0 +1,63 @@
+name: CITYWALK API Preview no-deploy readiness
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [develop]
+    paths:
+      - ".github/workflows/citywalk-api-preview-readiness.yml"
+      - "tools/native-api-preview/**"
+      - "src/cloudflare/nativePreview*"
+      - "src/cloudflare/preview*"
+
+permissions:
+  contents: read
+
+jobs:
+  preview-readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      CI: "true"
+    steps:
+      - name: Checkout exact revision with no persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
+      - name: Validate source lock, route isolation and no live deploy action
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          const cfg = readFileSync('tools/native-api-preview/cloudflare.config.ts', 'utf8');
+          const prep = readFileSync('tools/native-api-preview/prepare.mjs', 'utf8');
+          const policy = readFileSync('src/cloudflare/previewPolicy.ts', 'utf8');
+          assert.match(cfg, /name:\s*"citywalk-api-preview"/);
+          assert.match(cfg, /workersDev:\s*false,\s*previewUrls:\s*false/);
+          assert.match(cfg, /domains:\s*\[\],\s*triggers:\s*\[\]/);
+          assert.match(cfg, /requirePreviewHyperdrive\(process\.env\.CITYWALK_PREVIEW_HYPERDRIVE_ID\)/);
+          assert.match(cfg, /CITYWALK_PREVIEW_BOUND_HYPERDRIVE/);
+          assert.match(prep, /Only offline locked fixture preparation is implemented/);
+          assert.match(prep, /"--dry-run"/);
+          assert.doesNotMatch(policy, /"\/api\/auth\/get-session"/);
+          const workflow = readFileSync('.github/workflows/citywalk-api-preview-readiness.yml', 'utf8');
+          assert.doesNotMatch(workflow, /wrangler\s+(deploy|publish)|cf\s+deploy(?!.*--dry-run)|CLOUDFLARE_API_TOKEN|DATABASE_URL|secrets\./);
+          console.log('Locked Preview source/config audit PASS; no live deployment configured.');
+          NODE
+      - name: Test Native and Cloudflare Preview isolated security contracts
+        run: |
+          node node_modules/vitest/vitest.mjs run --config tools/native-api-preview/vitest.config.ts
+          node node_modules/vitest/vitest.mjs run --config tools/cloudflare-preview/vitest.config.ts
+      - name: Typecheck isolated Preview tools
+        run: node node_modules/typescript/bin/tsc --noEmit -p tools/native-api-preview/tsconfig.json
+      - name: Confirm no working-tree drift
+        run: git diff --exit-code && git diff --check
