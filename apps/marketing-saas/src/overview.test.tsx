@@ -46,7 +46,7 @@ describe('trustworthy Overview contract',()=>{
   expect(nextAction({...d,projects:[{...p,context:null}]}).label).toBe('Unternehmensangaben ergänzen');
   expect(nextAction({...d,projects:[{...p,context:{identity:{name:'A'},facts:[{}]}}]}).label).toBe('Unternehmensfakten prüfen');
   expect(nextAction({...d,projects:[{...p,gate:{...gate,ready:false,reason:'specialist_required',questions:['Fachprüfung nötig.']}}]}).description).toBe('Fachprüfung nötig.');
-  expect(nextAction(d,'b')).toMatchObject({projectId:'b',label:'Entwurf fortsetzen'});
+  expect(nextAction(d,'b')).toMatchObject({projectId:'b',label:'Inhalte prüfen'});
   const noDraft={...d,entries:d.entries.filter(e=>e.kind!=='draft')};
   expect(nextAction(noDraft,'a')).toMatchObject({projectId:'a',generationId:'g',label:'Inhalte prüfen'});
   expect(nextAction({...noDraft,entries:[]},'a').label).toBe('Neue Inhalte erstellen');
@@ -60,7 +60,7 @@ describe('trustworthy Overview contract',()=>{
  it('loads an honest empty state and routes create/profile through existing callbacks',async()=>{
   const cb=callbacks();render(<WorkspaceOverview projects={[]} listOnly={false} {...cb}/>);
   fireEvent.click(await screen.findByRole('button',{name:'Unternehmen anlegen'}));expect(cb.onProfile).toHaveBeenCalledWith(undefined);
-  expect(screen.getByText('Noch keine gespeicherten Inhalte.')).toBeTruthy();
+  expect(screen.getByText('Hier wird dein erster Pack sichtbar.')).toBeTruthy();
  });
  it('passes exact project and generation identity for resume; draft resume never substitutes the newest pack',async()=>{
   const cb=callbacks();render(<WorkspaceOverview projects={projects} activeProjectId="b" listOnly {...cb}/>);
