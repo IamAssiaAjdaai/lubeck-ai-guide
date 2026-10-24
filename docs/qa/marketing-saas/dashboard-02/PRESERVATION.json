@@ -1,0 +1,21 @@
+{
+  "localParent": "a06d9772ef7725413753d37f399d3dbb01f7a53a",
+  "develop": "72c87245bbb2f0332feb7fe261cee5668ca06b7e",
+  "sets": [
+    {
+      "set": "held",
+      "files": 321,
+      "unchanged": 321,
+      "changed": 0,
+      "baselineManifestSha256": "19769e4c51185883073dbf54052ea62e7a79b1f0da7640073cefce7db8512835"
+    },
+    {
+      "set": "protected-human-review",
+      "files": 117,
+      "unchanged": 117,
+      "changed": 0,
+      "baselineManifestSha256": "5a861f780b49617c4af2a78dee6a822b049372e40f6185313659220434c6ebda"
+    }
+  ],
+  "privateMaterialCopied": false
+}

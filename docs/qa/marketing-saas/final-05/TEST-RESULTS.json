@@ -1,0 +1,79 @@
+{
+  "testedParent": "80a212c2dbcf6850ad347e0da9c5f2a16771b695",
+  "fullUnit": {
+    "numPassedTests": 1713,
+    "numFailedTests": 0,
+    "numPendingTests": 239
+  },
+  "marketingUnit": {
+    "passed": 242,
+    "failed": 0,
+    "skipped": 87
+  },
+  "database": {
+    "passed": 118,
+    "failed": 0,
+    "skipped": 0
+  },
+  "authenticated": {
+    "checks": 1323,
+    "status": "PASS"
+  },
+  "closed": {
+    "checks": 30,
+    "status": "PASS"
+  },
+  "publicD2Demo": {
+    "checks": 271,
+    "status": "PASS"
+  },
+  "fixtures": {
+    "checks": 185,
+    "external": [],
+    "errors": []
+  },
+  "axe": {
+    "authenticatedPairs": 145,
+    "fixturePairs": 20,
+    "closedPairs": 5,
+    "d2Pairs": 20,
+    "violations": 0
+  },
+  "typechecks": [
+    "UI PASS",
+    "API PASS",
+    "Core PASS"
+  ],
+  "lint": {
+    "errors": 0,
+    "nativeImageWarnings": 5,
+    "extraHarness": "PASS"
+  },
+  "build": "PASS",
+  "databaseLifecycle": "7 existing migrations applied/reapplied and verified only in disposable local QA databases",
+  "ownerPreview": "3208/3209 unchanged; same existing isolated owner database",
+  "knownUXFindings": [
+    "AUTH-01 P2 auth readability gap",
+    "HISTORY-01 P2 misleading historical-version conflict banner"
+  ],
+  "freeze": "NO-GO pending material findings and owner/manual acceptance",
+  "iterations": [
+    "History sort-order test assumption corrected",
+    "One transient main-frame capture interruption; final diagnostic rerun passed without product change"
+  ],
+  "notClaimed": [
+    "Physical-device notch/touch/virtual-keyboard acceptance",
+    "Screen-reader or full WCAG conformance",
+    "Live-model quality/provider execution",
+    "Human SME scores or timings",
+    "Owner acceptance of every active screen",
+    "GitHub CI/deployment/production readiness"
+  ],
+  "commands": [
+    "node --import ./scripts/marketing-creative-offline-guard.mjs node_modules/vitest/vitest.mjs run --reporter=json --outputFile=<private path>",
+    "node scripts/marketing-consolidate-ci.mjs with isolated loopback QA env",
+    "MARKETING_STUDIO_EVIDENCE_ROOT=<new scope> MARKETING_BROWSER_ORIGIN=http://127.0.0.1:3208 node scripts/marketing-studio-browser.mjs",
+    "node node_modules/eslint/bin/eslint.js scripts/marketing-studio-browser.mjs",
+    "git diff --check"
+  ]
+}

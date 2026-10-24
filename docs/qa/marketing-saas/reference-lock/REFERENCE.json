@@ -1,0 +1,9 @@
+{
+  "reference": "Owner-supplied first attachment: Wirkfaden Marketing Dashboard.png",
+  "sha256": "38a7c819611c2a6a537158e30315c2ce56018057809923917f504d4f391dacb8",
+  "baseline": "3f3a568558a30c52db25fe587cce8a49fb9e04b4",
+  "branch": "codex/mkt-dashboard-01",
+  "developAtPreflight": "17be0aad0bae00640fe5a81df87332bf235483ea",
+  "consolidationMerge": "72c87245bbb2f0332feb7fe261cee5668ca06b7e",
+  "excludedReference": "Second purple dashboard attachment was not used."
+}

@@ -1,0 +1,10 @@
+{
+  "width": 1440,
+  "violations": [],
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "nodes": 3
+    }
+  ]
+}

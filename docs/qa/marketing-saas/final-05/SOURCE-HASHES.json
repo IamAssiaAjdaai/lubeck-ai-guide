@@ -1,0 +1,10 @@
+{
+  "apps/marketing-saas/src/PilotApp.tsx": "808caf22c7c98b47341671f02be97a22ed32d003ffa2af3ac936bf7227234f1f",
+  "apps/marketing-saas/src/WorkspaceOverview.tsx": "cb051232771bb1f0215dd3059472605d6c4056b464e6c5522c1764a94d92d14b",
+  "apps/marketing-saas/src/WorkspaceHeroVisual.tsx": "415f39feedb12960ad44467d4115d7bf86c3621fe4f3412407f1ce8c52358bd7",
+  "apps/marketing-saas/src/reference.css": "de79edb7f5006b742aabc0d1afe7760b9024b5a26537374749a619110902eb4a",
+  "apps/marketing-saas/src/reference.test.tsx": "826f9456f6da22c5e679858faadafbc736f7d2a2135714e0c56c8fbc424b082a",
+  "apps/marketing-saas/src/hero-visual.test.tsx": "5bce478fd2d53ba3a1e4f8df4016b9ab72987cc140794a9191d67f70c02e8145",
+  "scripts/marketing-consolidate-browser.mjs": "f50cff66cbeae690e99750c4d7fd093f40bfa4cca07772370dc4d06001086c5d",
+  "scripts/marketing-studio-browser.mjs": "2759f129388a7913dd0a7ccea8e563a9738f042c86f052d2e75399d191c4caaa"
+}

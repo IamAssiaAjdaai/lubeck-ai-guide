@@ -1,0 +1,164 @@
+[
+  {
+    "width": 1440,
+    "items": [
+      {
+        "tag": "SMALL",
+        "class": "",
+        "text": "Arbeitsname · Name in Prüfung",
+        "fontSize": "9px",
+        "lineHeight": "10.8px",
+        "height": 21.59375
+      },
+      {
+        "tag": "H1",
+        "class": "",
+        "text": "Willkommen zurück",
+        "fontSize": "28px",
+        "lineHeight": "35px",
+        "height": 35
+      },
+      {
+        "tag": "P",
+        "class": "auth-description",
+        "text": "Anmeldung für bestehende Testkonten. Öffentliche Registrierung und Pilot sind geschlossen.",
+        "fontSize": "14px",
+        "lineHeight": "23.8px",
+        "height": 47.59375
+      },
+      {
+        "tag": "LABEL",
+        "class": "",
+        "text": "E-Mail-Adresse",
+        "fontSize": "13px",
+        "lineHeight": "normal",
+        "height": 18
+      },
+      {
+        "tag": "INPUT",
+        "class": "",
+        "text": "Input",
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "height": 48
+      },
+      {
+        "tag": "LABEL",
+        "class": "",
+        "text": "Passwort",
+        "fontSize": "13px",
+        "lineHeight": "normal",
+        "height": 18
+      },
+      {
+        "tag": "INPUT",
+        "class": "",
+        "text": "Input",
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "height": 48
+      },
+      {
+        "tag": "BUTTON",
+        "class": "password-toggle",
+        "text": "Anzeigen",
+        "fontSize": "11px",
+        "lineHeight": "normal",
+        "height": 44
+      },
+      {
+        "tag": "BUTTON",
+        "class": "auth-primary",
+        "text": "Anmelden",
+        "fontSize": "13px",
+        "lineHeight": "normal",
+        "height": 45
+      },
+      {
+        "tag": "BUTTON",
+        "class": "",
+        "text": "Passwort vergessen?",
+        "fontSize": "11px",
+        "lineHeight": "18.7px",
+        "height": 20.6875
+      }
+    ]
+  },
+  {
+    "width": 375,
+    "items": [
+      {
+        "tag": "H1",
+        "class": "",
+        "text": "Willkommen zurück",
+        "fontSize": "28px",
+        "lineHeight": "35px",
+        "height": 35
+      },
+      {
+        "tag": "P",
+        "class": "auth-description",
+        "text": "Anmeldung für bestehende Testkonten. Öffentliche Registrierung und Pilot sind geschlossen.",
+        "fontSize": "14px",
+        "lineHeight": "23.8px",
+        "height": 71.390625
+      },
+      {
+        "tag": "LABEL",
+        "class": "",
+        "text": "E-Mail-Adresse",
+        "fontSize": "13px",
+        "lineHeight": "normal",
+        "height": 18
+      },
+      {
+        "tag": "INPUT",
+        "class": "",
+        "text": "Input",
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "height": 48
+      },
+      {
+        "tag": "LABEL",
+        "class": "",
+        "text": "Passwort",
+        "fontSize": "13px",
+        "lineHeight": "normal",
+        "height": 18
+      },
+      {
+        "tag": "INPUT",
+        "class": "",
+        "text": "Input",
+        "fontSize": "16px",
+        "lineHeight": "normal",
+        "height": 48
+      },
+      {
+        "tag": "BUTTON",
+        "class": "password-toggle",
+        "text": "Anzeigen",
+        "fontSize": "11px",
+        "lineHeight": "normal",
+        "height": 44
+      },
+      {
+        "tag": "BUTTON",
+        "class": "auth-primary",
+        "text": "Anmelden",
+        "fontSize": "13px",
+        "lineHeight": "normal",
+        "height": 45
+      },
+      {
+        "tag": "BUTTON",
+        "class": "",
+        "text": "Passwort vergessen?",
+        "fontSize": "11px",
+        "lineHeight": "18.7px",
+        "height": 20.6875
+      }
+    ]
+  }
+]

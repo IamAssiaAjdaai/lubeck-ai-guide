@@ -1,0 +1,30 @@
+{
+  "fullUnit": {
+    "passed": 1701,
+    "failed": 0,
+    "skipped": 239
+  },
+  "newTests": 9,
+  "updatedOverviewTests": 9,
+  "focusedBrowserChecks": 99,
+  "viewports": [
+    1440,
+    1024,
+    768,
+    390,
+    375
+  ],
+  "automatedAxeViolations": 0,
+  "marketingLint": {
+    "errors": 0,
+    "warnings": 4,
+    "newNativePrivateImageAdvisory": 1
+  },
+  "harnessLint": "PASS",
+  "uiApiCoreTypes": "PASS",
+  "marketingBuild": "PASS",
+  "finalMenuFontCheck": "five-width focused browser plus rebuild",
+  "realDeviceAndScreenReaderAcceptance": "NOT_PERFORMED",
+  "liveAIRequests": 0,
+  "pushed": false
+}
