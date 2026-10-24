@@ -1,50 +1,46 @@
-import { useEffect, useState } from "react";
-import { api } from "./api";
-import { ArrowRight, FileText, Images, SquarePen, ChevronRight, FolderOpen } from "lucide-react";
-type Project = {
-    id: string;
-    name: string;
-};
-type Entry = {
-    id: string;
-    projectId: string;
-    business: string;
-    goal: string;
-    created_at: string;
-    status: string;
-    updated_at?: string;
-    approved?: number;
-    channel?: string;
-    statusLabel?: string;
-    generationId?:string;
-};
-export default function WorkspaceOverview({ projects, listOnly, onCreate, onMedia, onDrafts, onResume }: {
-    projects: Project[];
-    listOnly: boolean;
-    onCreate: () => void;
-    onMedia: () => void;
-    onDrafts:()=>void;
-    onResume: (pid: string, gid?: string) => void;
+import { useEffect, useState } from 'react';
+import { ArrowRight, FileText, Images, SquarePen, ChevronRight, FolderOpen, Layers, Building2, ShieldCheck } from 'lucide-react';
+import { channelLabel, goalLabel, loadOverview, nextAction, type OverviewData, type OverviewProject } from './overview.data';
+
+export default function WorkspaceOverview({ projects, activeProjectId, listOnly, onCreate, onMedia, onProfile, onDrafts, onResume }: {
+  projects: OverviewProject[]; activeProjectId?: string; listOnly: boolean;
+  onCreate: () => void; onMedia: () => void; onProfile: (pid?: string) => void;
+  onDrafts: () => void; onResume: (pid: string, gid?: string) => void;
 }) {
-    const [items, setItems] = useState<Entry[]>([]), [error, setError] = useState("");
-    useEffect(() => { let active = true; void Promise.all(projects.map(async p=>{
-      const [packs,draft,gate]=await Promise.all([api<Omit<Entry,"projectId"|"business">[]>(`/api/projects/${p.id}/packs`),api<{goal:string;channel:string;savedAt:string;themesReviewed:boolean}|null>(`/api/projects/${p.id}/workspace/draft`),api<{ready:boolean}>(`/api/projects/${p.id}/workspace/readiness`)]);
-      const rows:Entry[]=packs.map(v=>({...v,generationId:v.id,projectId:p.id,business:p.name}));
-      if(draft?.savedAt&&(!rows.length||Date.parse(draft.savedAt)>Math.max(...rows.map(x=>Date.parse(x.updated_at??x.created_at)))))rows.push({id:'draft-'+p.id,projectId:p.id,business:p.name,goal:draft.goal,channel:draft.channel,created_at:draft.savedAt,status:'draft',statusLabel:gate.ready?'Entwurf':'Angaben fehlen'});
-      return rows;
-    })).then(groups => { if (active)
-        setItems(groups.flat().sort((a, b) => Date.parse(b.updated_at ?? b.created_at) - Date.parse(a.updated_at ?? a.created_at))); }).catch(() => { if (active)
-        setError("Deine Entwürfe konnten nicht geladen werden. Bitte neu laden."); }); return () => { active = false; }; }, [projects]);
-    const entries = listOnly ? items : items.slice(0, 1);
-    return <div className="overview-content">
-      {error&&<p role="alert">{error}</p>}
-      {!listOnly&&<>
+  const [retry, setRetry] = useState(0);
+  const requestKey=JSON.stringify([projects,retry]);
+  const [result,setResult]=useState<{key:string;data?:OverviewData;error?:boolean}|null>(null);
+  useEffect(()=>{
+    let active=true;
+    void loadOverview(projects).then(data=>{if(active)setResult({key:requestKey,data});}).catch(()=>{if(active)setResult({key:requestKey,error:true});});
+    return ()=>{active=false;};
+  },[projects,requestKey]);
+  const data=result?.key===requestKey?result.data:undefined;
+  const error=result?.key===requestKey&&result.error;
+  if(error) return <div className="overview-feedback"><p role="alert">Deine Übersicht konnte nicht vollständig geladen werden. Es werden keine unbestätigten Zahlen oder Status angezeigt.</p><button className="button secondary" onClick={()=>setRetry(n=>n+1)}>Erneut laden</button></div>;
+  if(!data) return <p className="overview-feedback" role="status">Deine Unternehmen und Inhalte werden geladen …</p>;
+  const action=nextAction(data,activeProjectId);
+  const current=data.projects.find(p=>p.project.id===activeProjectId)??data.projects[0];
+  const entries=listOnly?data.entries:data.entries.slice(0,3);
+  function continueNext() {
+    if(action.kind==='profile')onProfile(action.projectId);
+    else if(action.kind==='resume'&&action.projectId)onResume(action.projectId,action.generationId);
+    else onCreate();
+  }
+  return <div className="overview-content">
+    {!listOnly&&<>
+      <div className="overview-top">
         <section className="workspace-start panel" aria-labelledby="new-content-title">
-          <div className="start-copy"><div className="start-heading"><span className="start-symbol" aria-hidden="true"><SquarePen size={25} strokeWidth={1.6}/></span><div><p className="card-kicker">Von deiner Idee zum Beitrag</p><h2 id="new-content-title">Neue Marketing-Inhalte</h2></div></div><p>Plane drei passende Beiträge. Feile an deinen Texten und ergänze Bilder, wenn du möchtest.</p><button className="button primary" onClick={onCreate}>Inhalte erstellen <ArrowRight size={16} aria-hidden="true"/><span className="sr-only"> →</span></button></div>
-          <div className="start-composition" aria-hidden="true"><span className="composition-orbit"/><div className="composition-sheet sheet-back"><i/><i/><i/></div><div className="composition-sheet sheet-front"><span className="mini-mark"/><b>Deine nächste<br/>gute Idee.</b><span className="mini-line"/><span className="mini-line short"/><span className="mini-post-number">01 — 03</span></div><span className="composition-dot"/></div>
+          <div className="start-copy"><div className="start-heading"><span className="start-symbol" aria-hidden="true"><SquarePen size={24}/></span><div><p className="card-kicker">Dein nächster Schritt{current?` · ${current.project.name}`:''}</p><h2 id="new-content-title">{action.title}</h2></div></div><p>{action.description}</p><button className="button primary" onClick={continueNext}>{action.label}<ArrowRight size={17} aria-hidden="true"/></button></div>
         </section>
-        <div className="overview-links"><button className="panel destination-card" onClick={onDrafts}><span className="destination-icon"><FileText size={24} strokeWidth={1.5} aria-hidden="true"/></span><span className="destination-copy"><strong>Meine Entwürfe</strong><span>Gespeicherte Beiträge weiter bearbeiten.</span></span><ChevronRight size={17} aria-hidden="true"/></button><button className="panel destination-card" onClick={onMedia}><span className="destination-icon"><Images size={24} strokeWidth={1.5} aria-hidden="true"/></span><span className="destination-copy"><strong>Meine Medien</strong><span>Bilder, Logo und Markenfarben verwalten.</span></span><ChevronRight size={17} aria-hidden="true"/></button></div>
-      </>}
-      <section className="recent-content" aria-labelledby="recent-title"><div className="section-heading"><h2 id="recent-title">{listOnly?"Gespeicherte Kampagnen":"Zuletzt bearbeitet"}</h2><span>{listOnly?`${items.length} ${items.length===1?"Entwurf":"Entwürfe"}`:"Dein nächster Schritt"}</span></div>{!items.length?<div className="workspace-empty"><FolderOpen size={25} strokeWidth={1.5} aria-hidden="true"/><div><strong>Hier beginnt dein nächster Beitrag.</strong><p>Deine gespeicherten Entwürfe findest du später genau hier.</p></div></div>:<div className="draft-list">{entries.map(e=><article key={e.id}><span className="draft-thumbnail" aria-hidden="true"><FileText size={23} strokeWidth={1.5}/><span/></span><div className="draft-description"><h3>{e.business}</h3><p>{e.goal==="sichtbarkeit"?"Bekannter werden":e.goal==="kundenbindung"?"Kunden binden":e.goal==="aktion_bewerben"?"Aktion bewerben":"Mehr Anfragen"}{e.channel?` · ${e.channel}`:""}</p><small>Zuletzt geändert: {new Date(e.updated_at??e.created_at).toLocaleDateString("de-DE")} <span>·</span> {e.statusLabel??(e.status==="completed"?"Prüfung ausstehend":e.status==="failed"?"Aktualisierung erforderlich":"Entwurf")}</small></div><button className="button secondary" onClick={()=>onResume(e.projectId,e.generationId)}>Weiter bearbeiten <ArrowRight size={15} aria-hidden="true"/><span className="sr-only"> →</span></button></article>)}</div>}</section>
-    </div>;
+        <section className="overview-brand panel" aria-labelledby="overview-brand-title"><Building2 size={23} aria-hidden="true"/><h2 id="overview-brand-title">Dein Unternehmen</h2><strong>{current?.project.name??'Noch kein Unternehmen'}</strong><p>{!current?.context?'Deine Angaben machen den Unterschied.':current.gate.ready?'Bestätigte Angaben für drei Themen vorhanden.':'Deine Angaben werden vor der Erstellung geprüft.'}</p><span className="overview-control"><ShieldCheck size={17} aria-hidden="true"/>Deine Prüfung. Deine Freigabe.</span><button className="button secondary" onClick={()=>onProfile(current?.project.id)}>Profil ansehen<ArrowRight size={15} aria-hidden="true"/></button></section>
+      </div>
+      <dl className="overview-kpis" aria-label="Deine gespeicherten Inhalte"><div><dt><FileText size={20} aria-hidden="true"/>Gespeicherte Entwürfe</dt><dd>{data.draftCount}<p>Deine Kampagnenvorbereitung</p></dd></div><div><dt><Layers size={20} aria-hidden="true"/>Erstellte Pakete</dt><dd>{data.packCount}<p>Im geladenen Verlauf deiner Unternehmen</p></dd></div></dl>
+      {data.capped&&<p className="overview-limit">Der Verlauf zeigt höchstens die letzten 100 Aufträge je Unternehmen. Die Paketzahl ist keine Gesamtzahl über die gesamte Laufzeit.</p>}
+    </>}
+    <section className="recent-content" aria-labelledby="recent-title"><div className="section-heading"><h2 id="recent-title">{listOnly?'Gespeicherte Kampagnen':'Zuletzt bearbeitet'}</h2>{!listOnly&&data.entries.length>3&&<button className="overview-text-action" onClick={onDrafts}>Alle anzeigen<ArrowRight size={15} aria-hidden="true"/></button>}</div>
+      {!data.entries.length?<div className="workspace-empty"><FolderOpen size={25} aria-hidden="true"/><div><strong>Noch keine gespeicherten Inhalte.</strong><p>Deine Entwürfe und erstellten Pakete findest du später hier.</p></div></div>:<div className="draft-list">{entries.map(e=><article key={`${e.projectId}-${e.id}`}><span className="draft-thumbnail" aria-hidden="true"><FileText size={23}/><span/></span><div className="draft-description"><h3>{e.business}</h3><p>{goalLabel(e.goal)}{e.channel?` · ${channelLabel(e.channel)}`:''}</p><span className="overview-status" data-kind={e.kind}>{e.statusLabel}</span><small>{e.dateLabel}: <time dateTime={e.date}>{new Date(e.date).toLocaleDateString('de-DE')}</time></small></div>{e.kind==='draft'||e.generationId?<button className="button secondary" onClick={()=>onResume(e.projectId,e.generationId)} aria-label={`Weiter bearbeiten: ${e.business}, ${goalLabel(e.goal)}, ${e.kind==='draft'?'Entwurf':'Paket'}`}>Weiter bearbeiten<ArrowRight size={15} aria-hidden="true"/><span className="sr-only"> →</span></button>:<p className="overview-job-note">Noch kein bearbeitbares Paket. Keine automatische Wiederholung.</p>}</article>)}</div>}
+    </section>
+    {!listOnly&&<div className="overview-links"><button className="panel destination-card" onClick={onDrafts}><span className="destination-icon"><FileText size={24} aria-hidden="true"/></span><span className="destination-copy"><strong>Meine Inhalte</strong><span>Entwürfe und Pakete weiter bearbeiten.</span></span><ChevronRight size={17} aria-hidden="true"/></button><button className="panel destination-card" onClick={onMedia}><span className="destination-icon"><Images size={24} aria-hidden="true"/></span><span className="destination-copy"><strong>Marke & Medien</strong><span>Eigene Bilder, Logo und Markenfarben.</span></span><ChevronRight size={17} aria-hidden="true"/></button></div>}
+  </div>;
 }

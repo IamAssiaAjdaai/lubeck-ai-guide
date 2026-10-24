@@ -1,0 +1,15 @@
+{
+  "phase": "before",
+  "checks": [
+    "no overflow 1440",
+    "no overflow 1024",
+    "no overflow 768",
+    "no overflow 390",
+    "no overflow 375",
+    "no external browser requests",
+    "no JavaScript errors"
+  ],
+  "external": [],
+  "errors": [],
+  "fixture": "synthetic intercepted API; no real session"
+}
