@@ -13,6 +13,21 @@ device acceptance still pending; iOS separately unverified); Public Web backend
 infrastructure required; Admin Web not applicable. No mobile app behavior or
 production route is changed here.
 
+## Optional one-person offline JWT pilot (not OAuth login)
+
+For an explicitly approved, short-lived developer-only **manual API smoke test**, an offline RS256 signer is available at `tools/native-api-preview/local-tester-jwt.mjs`. This is **not** an Android/iOS login mechanism, a substitute for PKCE on distributable mobile builds, or approval to open the API publicly. There is no unattended token refresh. No private key or token may be in the repository, CI, logs, app binaries or tickets.
+
+Run **only on a trusted operator computer** with a private absolute path outside the repo; keep the generated private key in an operator-controlled secure location. Example (replace local path, issuer, client ID and subject with privately approved values):
+
+```sh
+node tools/native-api-preview/local-tester-jwt.mjs init /private/safe/location/citywalk-preview-test.pem
+node tools/native-api-preview/local-tester-jwt.mjs token /private/safe/location/citywalk-preview-test.pem https://issuer.example.test/ citywalk-preview-test-client tester-1
+```
+
+The first command exclusively creates a private 0600 RSA key and prints **only its public JWKS**. Store/pin this public JWKS as `CITYWALK_TESTER_JWKS` in the Preview environment after independently verifying it. Keep the private PEM secret off GitHub and Cloudflare. Use the same exact issuer, client ID and **one subject** for Preview-only `CITYWALK_TESTER_ISSUER`, `CITYWALK_TESTER_CLIENT_ID` and `CITYWALK_TESTER_SUBJECTS`. The second command prints a sensitive JWT valid for five minutes; never paste it in chat or shell-history parameters. Avoid screenshots containing tokens. Revocation before expiry requires disabling/removing the trusted key or subject. A manual token in a private test client grants only entry to the protected read-only route surface, never traveler authentication/entitlement.
+
+The Worker must remain deployment-locked and the custom domain disconnected until resource provenance, TLS, storage, secrets and safe traffic exposure are separately approved. Do not place the token generator or signing key on a device. For repeatable **mobile** testing, prefer an approved device identity flow (e.g. OAuth public native PKCE) rather than distributing manually signed bearer tokens.
+
 ## Tester access decision
 
 Use an independently approved Preview identity provider supporting a **public
