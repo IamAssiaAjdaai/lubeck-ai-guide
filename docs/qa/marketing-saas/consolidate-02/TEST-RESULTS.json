@@ -1,0 +1,30 @@
+{
+  "scope": "exact staged application tree for unit tests; actual unchanged local API for DB/browser checks",
+  "applicationCommit": "edc5226f8ee9096a17d129c026a5af0744419a4e",
+  "unit": {
+    "numPassedTests": 1627,
+    "numFailedTests": 0,
+    "numPendingTests": 238
+  },
+  "database": {
+    "numPassedTests": 117,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "newBrowserChecks": {
+    "curatedDemo": 271,
+    "closedAuth": 25
+  },
+  "reusedBrowserChecks": {
+    "fullAuthenticatedWorkspace": 257,
+    "source": "consolidate-01; runtime unchanged except whitespace"
+  },
+  "marketingUITypecheck": "PASS",
+  "marketingAPITypecheck": "PASS",
+  "marketingBuild": "PASS",
+  "focusedHarnessLint": "PASS 0 warnings/errors",
+  "hostGate": "BLOCKED existing Next page exports and offline Google Fonts fetch; not altered/repeated",
+  "noLiveAI": true,
+  "spendEUR": 0,
+  "registration": "CLOSED"
+}

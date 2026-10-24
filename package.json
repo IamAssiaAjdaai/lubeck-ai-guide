@@ -61,7 +61,11 @@
     "mobile:ios": "npm --prefix mobile run ios",
     "mobile:android": "npm --prefix mobile run android",
     "mobile:doctor": "npm --prefix mobile run doctor",
-    "mobile:local-check": "npm --prefix mobile run local:check"
+    "mobile:local-check": "npm --prefix mobile run local:check",
+    "marketing:demo": "node scripts/marketing-consolidate-local.mjs start",
+    "marketing:db:migrate": "node scripts/marketing-consolidate-local.mjs migrate",
+    "marketing:test:integration": "vitest run --no-file-parallelism apps/marketing-saas-api/src/auth.integration.test.ts apps/marketing-saas-api/src/packs.integration.test.ts apps/marketing-saas-api/qa/service.integration.test.ts",
+    "marketing:db:verify": "node scripts/marketing-consolidate-local.mjs verify"
   },
   "dependencies": {
     "@apple/app-store-server-library": "3.1.0",
@@ -90,7 +94,10 @@
     "@vinext/cloudflare": "1.0.1",
     "react-server-dom-webpack": "19.2.8",
     "vinext": "1.0.1",
-    "@marketing/core": "file:packages/marketing-core"
+    "@marketing/core": "file:packages/marketing-core",
+    "ipaddr.js": "^2.5.0",
+    "parse5": "^8.0.1",
+    "sharp": "0.35.4"
   },
   "devDependencies": {
     "@google-cloud/text-to-speech": "^7.0.0",
@@ -122,8 +129,9 @@
     "cf": "^1.0.0-beta.12",
     "oxc-transform-react": "^0.145.0",
     "postcss": "^8.5.28",
-    "vite": "^8.3.0",
-    "vite-css-modules": "^1.16.0"
+    "vite": "^8.3.5",
+    "vite-css-modules": "^1.16.0",
+    "playwright": "^1.64.1"
   },
   "engines": {
     "node": "22.x"

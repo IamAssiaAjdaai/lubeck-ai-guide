@@ -1,0 +1,637 @@
+{
+  "commit": "edc5226f8ee9096a17d129c026a5af0744419a4e",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "a532e20d23aa6de8f102efbcb3de48d4645cceb19b815cacb864022b7fc4a6a4"
+    },
+    {
+      "path": "apps/marketing-saas-api/.gitignore",
+      "sha256": "7ca117f4cb8bf004c1728c3133b2551f5b5d896da80e63f6ea5f603995b4c91a"
+    },
+    {
+      "path": "apps/marketing-saas-api/README.md",
+      "sha256": "da6256096f9562c33026b848f6057cb8d0a5f4c2e809ad6c85e6115abff195bc"
+    },
+    {
+      "path": "apps/marketing-saas-api/migrations/0000_auth.sql",
+      "sha256": "8dc57e1cba80991910446e0020d24932a86130e430d0272e2b01d0de2a7111b6"
+    },
+    {
+      "path": "apps/marketing-saas-api/migrations/0001_saas.sql",
+      "sha256": "9150711c88746e10fb0880676038c28d8d99927a0970b045a291f78bf97cc5cc"
+    },
+    {
+      "path": "apps/marketing-saas-api/migrations/0002_packs.sql",
+      "sha256": "9c20210705b2adef34e950ef8669bae8e335cf5ffd8a6f28c222268d2231744d"
+    },
+    {
+      "path": "apps/marketing-saas-api/migrations/0003_reservation_metadata.sql",
+      "sha256": "f3dd3cdea6ff796ad5caa161893ab99b5f845bf6a3b2b61c17cc76c0af985bdc"
+    },
+    {
+      "path": "apps/marketing-saas-api/migrations/0004_creative.sql",
+      "sha256": "1ee9d60fb837c9d5d6909659427aafb5204031956d47f2919bc96c977b07b0f9"
+    },
+    {
+      "path": "apps/marketing-saas-api/migrations/0005_creative_privacy.sql",
+      "sha256": "de92b34c83c8477ce920d32603e0f48cbb7f50fafeae208ea0cc82aec963fa8f"
+    },
+    {
+      "path": "apps/marketing-saas-api/migrations/0006_workspace.sql",
+      "sha256": "c7aee4911ca89351bea48a8a4cd420f5bf54084dd91b071ad57efaf0143926b1"
+    },
+    {
+      "path": "apps/marketing-saas-api/package.json",
+      "sha256": "ac8860f2307d1c7069e22c181fca72375233330429757b4c99412ff0aa48a1e5"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-acceptance/acceptance.integration.test.ts",
+      "sha256": "2ec8950d379a35ba3b171a9876e2072f2e28bd5e790a8cc4d0eea08b078fd133"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-acceptance/tsconfig.json",
+      "sha256": "977f190edfdf75ae76022e8414f45770ed20ba96125a980bf958816dcaf1cba6"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-hardening/hardening.integration.test.ts",
+      "sha256": "4f3f395c08bbaccaf08901892e736d26a60f39cbb58373b03b82a6f62c32a45d"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-hardening/tsconfig.json",
+      "sha256": "977f190edfdf75ae76022e8414f45770ed20ba96125a980bf958816dcaf1cba6"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-provider/contract.test.ts",
+      "sha256": "eb736b4b85c54afae8cc94554863a257b2836b5c409829b62fdc6d1697b04e50"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-provider/provider.integration.test.ts",
+      "sha256": "f0ead978c67baca4c8c3fe8eba91af09466a1420c1d7ff7e0a0eef5ca3ac0401"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-provider/tsconfig.json",
+      "sha256": "977f190edfdf75ae76022e8414f45770ed20ba96125a980bf958816dcaf1cba6"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-transport/experiment.test.mjs",
+      "sha256": "3f0ff1ee9e5a94f260e9454447f961b6d77d1195417b6176e8e39df81c9dddd4"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-transport/review-state.test.mjs",
+      "sha256": "77111c03ad5172dde8f6ee75404ff2016f2e1d141b386edf80fb613d56eaaf39"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-transport/transport.integration.test.ts",
+      "sha256": "e8bee84d5977e2b81182a65cef36a85ac1d22a4656c88e20b795c93c43be251a"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-transport/transport.test.ts",
+      "sha256": "a0fedd21753ad9ed1bd72ec8982e4401721757cfa9f1d20b0d1a921f5d92c64a"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa-creative-transport/tsconfig.json",
+      "sha256": "977f190edfdf75ae76022e8414f45770ed20ba96125a980bf958816dcaf1cba6"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa/service.integration.test.ts",
+      "sha256": "2634ea042130fa37da2c1b8eff158971f9ae8e38aa761b4287ceb4693ae6446d"
+    },
+    {
+      "path": "apps/marketing-saas-api/qa/tsconfig.json",
+      "sha256": "40188c2088931884b941f1779422aec3cbcf6cfe3ef4e6604f7da32f3a49a817"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/auth.integration.test.ts",
+      "sha256": "7c58713f3bbba4711412defd5c7c0e16e93e571b3737b89e782222e1bbb7db95"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/auth.ts",
+      "sha256": "2396e061979d24a7b72ed9b9035db4e80814b6771f059bc99d74c647e25b2892"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/config.ts",
+      "sha256": "cced0bf860b0a8f1ad0be19ce86fbad7c646568c0151374dac9f5495f84a6931"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/consolidation.integration.test.ts",
+      "sha256": "75510f0d84d21a0aa38e7a6087df8511b92aa5db42fc6020d3a8a4277efed779"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/contract.ts",
+      "sha256": "6fe14542141221d602ad8fca06dc0c7159767908d311eb3bd5825ca49055e91b"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/creative.test.ts",
+      "sha256": "ee97f562488400082debaa86e7cbca2048daaca248ca611e422c64375396be23"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/image-adapter.ts",
+      "sha256": "be6ef04027f479ca1a99038ff0e3bdcc8e2fab23b4655390015cf8ad7a366c7c"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/openai-http.ts",
+      "sha256": "366154245aa1bb07071f1949736225236458260748c4bfadf9464252ed6e5625"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/policy.ts",
+      "sha256": "32bc6e8617689cc3765e2c53b83704cf6b581e85962000437e30f3c07a0652e1"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/provider-ports.ts",
+      "sha256": "2ea0fe72f2556324e57ef36dc609097fc315dbf05dbc6ef05ab679bee800e726"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/provider.ts",
+      "sha256": "5467e3ce2514193c8cebb850910f1b0c36cfbc895e6008bd2c9b4bf01f89e990"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/reconcile.ts",
+      "sha256": "ada9c53c870bb4fa0a5a27bd9ef1226ece3f6b86179bfd032886ef294da86258"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/routes.ts",
+      "sha256": "9f40503c107ec6f277c6a11299945f76ecbf9afc5364d6b345fe70f95ba70516"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/service.ts",
+      "sha256": "27090a4e762570ee5bdad86e7e1840c3a623117b4d75705dadd5a58f8862920a"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/storage.ts",
+      "sha256": "8e26f06c6d4a575e52a837bfb28085702e6435f891c50d2037728334fb01ff6f"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/creative/sweep.ts",
+      "sha256": "39c119ad1dc84f143b1262f0eb969e9422251a349e7341e5a117a5b91a89898c"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/demo-website.ts",
+      "sha256": "c847222d068b6b42651a23596137103dcc22ae13b57980ca09417a1de6ce25d6"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/errors.ts",
+      "sha256": "af66f0c749a69ddff792ca60750d6ea85eb96f790597923bf0170781ba2f091e"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/generate-auth-migration.ts",
+      "sha256": "96d408804377cef67b265d133fa4d5e1009abbb64b5a25939c88dbedac1de38f"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/buildBrief.test.ts",
+      "sha256": "b843cb3e69d7f572d65f3e74b0f76337d9720196ef66cf710ee05785d50b3598"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/buildBrief.ts",
+      "sha256": "5836302e8e669a059b7cf1b728f17e487006902fa8776ea3662ad968f0068a41"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/contracts.ts",
+      "sha256": "da38f9a116e9e05e06c3457bc89f35deb1d206bde63bf741bff4aa200382c755"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/errors.ts",
+      "sha256": "44f613c115527e76c4256d13b62c7fda17e50fc777543dffead3c5f20b35f021"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/extract.server.ts",
+      "sha256": "666a4f0158972b11c058b55a8aeb551207fecf8f622891e8e95f2b1eff10d5df"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/ingest.server.ts",
+      "sha256": "e04d5f3f8ea2bbe4a2133d8ab9b37802eb52f9c1082b5e69d38b3b73e192754a"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/ingest.test.ts",
+      "sha256": "24bad002ab81dc436549a245be736428ff89a45aff904a5492557c2966fcd295"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/network.server.ts",
+      "sha256": "b8a2689f219271067391ddd4f61af88decb7f2224bcae7ba40d5a477ebc497bc"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/transport.test.ts",
+      "sha256": "ab9a5d62652d604c1e139b21740d280cde39c619b78479c4a69e11d9d6a97f12"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/types.ts",
+      "sha256": "30798173429b87709bbd261101de48eaff57e2ff9931c24a3ec251c58b114d96"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/intake/validateSourceUrls.ts",
+      "sha256": "b856ca52989b9642247288a56689d03a3ca1100d1b5c56d577f51e8d86c01783"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/migrate.ts",
+      "sha256": "8b9d89c43a7a244fa1c2599549f7f8487ce35a13a0c23e4f0383b2b12c0639db"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/pack.contract.ts",
+      "sha256": "e04d5d5a1a58c265e41e4c2452ff11a0076e894f9dffca422e9f6a5a62d0bcc2"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/pack.prompt.ts",
+      "sha256": "f16c17334d78c630ec5763bbafd5d7956335e0b5daafcf81a435dc4b2b678f66"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/pack.provider.test.ts",
+      "sha256": "60a682b1c1395cc5b5984e153f90e9c37ec29b1706c9c3e299814fd3da2ccfa0"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/pack.provider.ts",
+      "sha256": "5d38a75912fc2623c1b5abe42f7b6a83eedf5158d1266e289fddb0526b6f71e6"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/packs.integration.test.ts",
+      "sha256": "a18bce5105d8c49c7beb5b1352e36515bb2bfe4a19ae1488f18d7f1db13ce5d1"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/packs.ts",
+      "sha256": "4c69a89db232e8c20425c96e04ce774c5d28e96e76c3c655594ec681e270b283"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/schema.ts",
+      "sha256": "9f56ef073862265272fb514734271cf92a33e5712f07431b98f01517a1af4c45"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/server.ts",
+      "sha256": "299edab25a14bc2bc22f5faca27d8163bc77470663dd7bf5fe218bce03c63934"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/store.ts",
+      "sha256": "05b6b57f364078c186184ea737944315911fd13df84de32b5b5e8ddb1bb2973b"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/sufficiency.test.ts",
+      "sha256": "c7704acff01d32196eb513ac7ef14ab9820dbd155fd5cdb317f5504fb61b634b"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/sufficiency.ts",
+      "sha256": "ec66e5f36dda9933d76f6b47772b0ac761562e9d4ce433b81811cb60b5d11d67"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/verify.ts",
+      "sha256": "4a0ebce444c577b1b2348418218158c7a4e0e12ce7dc5a9f916f9fc6d09cc35a"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/workspace-packs.ts",
+      "sha256": "4d6ca7f8251072870d05d65b1dc6bdaf0505f79c9c8780bac2a8d15246c150de"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/workspace.integration.test.ts",
+      "sha256": "5c157ce6cb4a12d422cae5b806f3b0dc9e7471d8f5392157322bf1fcad55bc42"
+    },
+    {
+      "path": "apps/marketing-saas-api/src/workspace.ts",
+      "sha256": "9d836603c63f72c84a902f92dbd04d1bde3660c7e93a69dcbeb5f57603c381a9"
+    },
+    {
+      "path": "apps/marketing-saas-api/tsconfig.json",
+      "sha256": "0225b639f3f74347c46553de990a8ae78fa0d726108dc56eb7ebbb1fd16aceff"
+    },
+    {
+      "path": "apps/marketing-saas/.gitignore",
+      "sha256": "ae5ce9e09d8673b2cadb131c6af89462f80a5e4f44f85dec1eb1cf823500bad4"
+    },
+    {
+      "path": "apps/marketing-saas/AUTH-README.md",
+      "sha256": "70567549f5a356b884a070b7ac2f70abe9ba00c79e9cace49c0f0640ce130144"
+    },
+    {
+      "path": "apps/marketing-saas/README.md",
+      "sha256": "1aa5b07dfa7fda175308364868c849d12c49806d9d234f4595daf53dc9ec9f83"
+    },
+    {
+      "path": "apps/marketing-saas/index.html",
+      "sha256": "a107fd55e362f20578321ca74cc82b9af7b07b7c121ae63a7ca4e1ba2bf6cdde"
+    },
+    {
+      "path": "apps/marketing-saas/package.json",
+      "sha256": "834343c9ebc6b6dfcc56dfc997c24bb31d33314732b38a306c0bc6fd8228f5eb"
+    },
+    {
+      "path": "apps/marketing-saas/public/brand/fonts/bricolagegrotesque-OFL.txt",
+      "sha256": "46ba5f18ee20ea529f21d96c0ef8637a8314c1a5cfb2aa84018bc8157cbeff41"
+    },
+    {
+      "path": "apps/marketing-saas/public/brand/fonts/bricolagegrotesque.woff2",
+      "sha256": "a97804dc9fbe5fc972a08018c5eda4dab7ef2346f64c57e61419d05e6de4ea1c"
+    },
+    {
+      "path": "apps/marketing-saas/public/brand/fonts/fraunces-OFL.txt",
+      "sha256": "6732d6cc72c5d09292ff754dc1f39d9ea14918f74e87a17afa3f00a5120c3d48"
+    },
+    {
+      "path": "apps/marketing-saas/public/brand/fonts/fraunces-italic.woff2",
+      "sha256": "bceec2ef4d549efbc8df0194a8d5280b6a64c3e399244dffccd9ea1bd9ad6db7"
+    },
+    {
+      "path": "apps/marketing-saas/public/brand/fonts/fraunces.woff2",
+      "sha256": "7f9d191d999336d3b9790afa72e1358e50a13b06d4f289341e92a311967a80f9"
+    },
+    {
+      "path": "apps/marketing-saas/public/brand/fonts/manrope-OFL.txt",
+      "sha256": "d6a309fcfb963d329a93baf9df66fa5f3c23a4be2b5f67edf24d6cafecde12ac"
+    },
+    {
+      "path": "apps/marketing-saas/public/brand/fonts/manrope.woff2",
+      "sha256": "a30ddcd349703aff7464c34bef3fffdff405ee50c113440d7c8693c02d210972"
+    },
+    {
+      "path": "apps/marketing-saas/public/brand/marks/kernmut-mark.svg",
+      "sha256": "2ae8a52c3a61013ceeab88538ca44b3dc86e5466b7415ef5e8792bf2edbc4cdb"
+    },
+    {
+      "path": "apps/marketing-saas/public/brand/marks/wirkfaden-mark.svg",
+      "sha256": "9f4bcd3b8825e8830f1a8e42b23a7d2715b4ea9db26da6c65e5bdc5c22d6a267"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/CAT-01.webp",
+      "sha256": "75acd868e8380f64e1dc7f87112600c2c372e19bc8ade61263e7feed3526497e"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/CAT-02.webp",
+      "sha256": "b65938b348143600106c4cf1e0c6eebf3677e477360b6e2e6d41853148868c6c"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/CAT-03.webp",
+      "sha256": "c6d3efd2ae7abb8cbe5ae01856e42c472d3c4acf70bda8933543107e7cced259"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/CAT-04.webp",
+      "sha256": "ac7d0cb231a3192c4e9b7930ceb9250b85b81c3f15303095e209e5e0387dc61c"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/CAT-05.webp",
+      "sha256": "950027553bb759e37f126e953444eacc1615bc232daf32195c0f9acf54b198c1"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/CAT-06.webp",
+      "sha256": "79b49bccdaddf88adc7d951a4cd79370983c63465c0cf9aaa161d1c29a2daa5b"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/CTA-01.webp",
+      "sha256": "52efd3d3f5293ba4b30951d303bf4a6f1526897202bd2fa040ac9881faddc95c"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/FEAT-02.webp",
+      "sha256": "588e5e54cccfa80b92ed6880e3346bd6ea2bc8046999147a3d3bf9ac803eeaf0"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/FEAT-04.webp",
+      "sha256": "91bb2724db35f1f4b902a477f56d0b9cf689f8859e3fc0bcb57262346e4bd494"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/HERO-01.webp",
+      "sha256": "e0d916e8ee9ad9f6a23cc4b7a19e925e6a1f85d2ae4349e69af091659dfe55b1"
+    },
+    {
+      "path": "apps/marketing-saas/public/landing-d2/HERO-02.webp",
+      "sha256": "ba07686e77cc64ab59c524aaff43ce1680dc666752e3d6d7c486f029d1d7b6a8"
+    },
+    {
+      "path": "apps/marketing-saas/public/product/editor.webp",
+      "sha256": "795b3e20ccd111d2eca612e1ff932d517ca8d99f9aa26a9d63ff8826a1e18eac"
+    },
+    {
+      "path": "apps/marketing-saas/public/product/facts.webp",
+      "sha256": "d3a7789282e1f86a580ab94d986baee9726812fcfd59dc98bcd79ab39c9049e0"
+    },
+    {
+      "path": "apps/marketing-saas/src/App.tsx",
+      "sha256": "bbaaffb614a863b3c02560ff2aa3f324feafe0a27a316756b3f2bdf2efe12288"
+    },
+    {
+      "path": "apps/marketing-saas/src/CreativeStudio.tsx",
+      "sha256": "0d68711d57055afbe953ba12d0360d004c3249d777ae6178f93de6ce19478fe6"
+    },
+    {
+      "path": "apps/marketing-saas/src/PackSectionNav.css",
+      "sha256": "5839fcc8808db46ba52ba7854e26b143ba581e1a031eefa2518a223c442825b2"
+    },
+    {
+      "path": "apps/marketing-saas/src/PackSectionNav.tsx",
+      "sha256": "611b5c491a21a97ec5151dcf7804faccb3ca7f0229ea94bf4579d5c6715a2fd3"
+    },
+    {
+      "path": "apps/marketing-saas/src/PackWorkspace.tsx",
+      "sha256": "981702eb4c2462ea04dfd2d3941607933a3ec743f955305a9ca3ad6fd1822b0d"
+    },
+    {
+      "path": "apps/marketing-saas/src/PilotApp.tsx",
+      "sha256": "3037d0bef66ee18e03d8c35f960879c99efa25e083f7941d089f1a92b7ed4342"
+    },
+    {
+      "path": "apps/marketing-saas/src/WorkspaceOverview.tsx",
+      "sha256": "bb3d5b2b46f414a87dbf346adbbef497e2e36433d240fb2e783875b8b7995557"
+    },
+    {
+      "path": "apps/marketing-saas/src/api.ts",
+      "sha256": "bc566f10a700c97b58d9dcb0792e6658b2edf635cfe1550b11639c20b7888a1c"
+    },
+    {
+      "path": "apps/marketing-saas/src/auth/AuthForm.tsx",
+      "sha256": "931e5a6ab71ef3747472019d59a797f6d2333f2a8701c8d6f53457967a795d7d"
+    },
+    {
+      "path": "apps/marketing-saas/src/auth/AuthPreview.tsx",
+      "sha256": "7707254a2acef1dafefded8abbc8b2c920cab49d516937aa96b0d985d8f73109"
+    },
+    {
+      "path": "apps/marketing-saas/src/auth/auth.css",
+      "sha256": "e2028e5dddd1ca5965b1a33705c6a80c587b654870e7a95db65e428e6e8478ad"
+    },
+    {
+      "path": "apps/marketing-saas/src/auth/validation.test.ts",
+      "sha256": "4d813ff12e38cf95b6a6be2f11f13fbfb9a8cff20e7b6d16c4e73d9fdbd78676"
+    },
+    {
+      "path": "apps/marketing-saas/src/auth/validation.ts",
+      "sha256": "d934cb4120e11f846cdf0c39e6cbeafca27e5cbb199d761d8c0b6a83d501cb1c"
+    },
+    {
+      "path": "apps/marketing-saas/src/brand/BrandConcepts.tsx",
+      "sha256": "80e4b610d4ee3da163196725bc55be6e3a168ae150cbbae46e89d0337d5e9632"
+    },
+    {
+      "path": "apps/marketing-saas/src/brand/BrandIdentity.tsx",
+      "sha256": "5881275db2f97b309ecdde4729450f73f149044bf5d24932e7cff3f6074d6d69"
+    },
+    {
+      "path": "apps/marketing-saas/src/brand/ConceptPack.tsx",
+      "sha256": "d5b36db92a7bc46e8b7d94ff8cc27641b70b770762cdd2ee75010f45057e820b"
+    },
+    {
+      "path": "apps/marketing-saas/src/brand/ProductContinuity.tsx",
+      "sha256": "d25e42d2e5ebf8eda87f1c68ff2575f0c7f0a8f7d57fe50a9451617494140f90"
+    },
+    {
+      "path": "apps/marketing-saas/src/brand/brand-concepts.css",
+      "sha256": "5f7407430dafd3c7220393caf1f841a7e334ea01ec6ace96705ae45da3a68156"
+    },
+    {
+      "path": "apps/marketing-saas/src/brand/brand.tokens.json",
+      "sha256": "08aaa714a8297f367e4061adf9201056335f3520f4d61f8d68215926c00911a1"
+    },
+    {
+      "path": "apps/marketing-saas/src/brand/identity.ts",
+      "sha256": "8aae1d12eabc23b8f6ea26e840ac48e14a29d812e70d2aa60facb8d741a16cec"
+    },
+    {
+      "path": "apps/marketing-saas/src/brand/system.css",
+      "sha256": "318614064c2bbc1cbdc986123a4d44e05090f565cd3417681597922d53dafaef"
+    },
+    {
+      "path": "apps/marketing-saas/src/creative.css",
+      "sha256": "eaccfef898de6b3fcb30c9b855c50c235cbd840c588f2629d0ca9a7ff560905e"
+    },
+    {
+      "path": "apps/marketing-saas/src/customerArchive.test.ts",
+      "sha256": "d7d466375f975a67dedba3b5e61841c33c97cf300ef4ac52f9dcfd440eff21a9"
+    },
+    {
+      "path": "apps/marketing-saas/src/customerArchive.ts",
+      "sha256": "227a0766bc8af5732390b80c3a95782c968fc9470c408977cd9f525c25be3c73"
+    },
+    {
+      "path": "apps/marketing-saas/src/intake.test.ts",
+      "sha256": "b1f8037b4c9b2216783a60ca1dc00d12dc5a23e42fda7241dafe2e0d6c669a2c"
+    },
+    {
+      "path": "apps/marketing-saas/src/intake.ts",
+      "sha256": "b5441b7fa201bb597289215969c6e26c71b82961146fa08083758b288ccd68aa"
+    },
+    {
+      "path": "apps/marketing-saas/src/main.tsx",
+      "sha256": "5db770cdf2fe6eba435049e7a6455a784786e71c1b228a04c111568963fe5a5b"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/BrandContextStory.tsx",
+      "sha256": "690f5698ca7e895e6b96fc1612276813a93ce9b5e84081c012f3812e1fa69476"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/InteractivePack.tsx",
+      "sha256": "82e0ec5522cadc40b941fcf581a4ccfee716d45e0e1aa2123e01a532cec463a7"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/LandingPage.tsx",
+      "sha256": "28f819c1ea9e1cf2e6d015866e48b289591bd9b0d4beb1ccb4edf8fc2f79887a"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/LegalStatus.tsx",
+      "sha256": "964e4223e48332bc54b89992525916eb64d19e6fceb9f80c8c6060b5003db372"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/PackPreview.tsx",
+      "sha256": "d9c3fa2b079cb478dd21aa13b6ee8890816fafdcb63a1ac4e3d8821c9b43949f"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/SampleCampaign.tsx",
+      "sha256": "86602e58ef4d1e54a909797476f04fa4973b4a5109e4043c89c2cdb8cc77861e"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/direction-d2/CuratedDemo.tsx",
+      "sha256": "3ac0bdf861606bca755bb9ff0b1dee90fd9e9f621c7bf04f375bd49384e9839f"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/direction-d2/LandingD2.tsx",
+      "sha256": "c79fbf330aadc9d2a9c14d816ac6427d762d8f44b9e2f623e3ddadb2b12a0371"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/direction-d2/curated-demo.css",
+      "sha256": "fc4fc7d11a5ca48f414f9adc1d616ddfe96dc6a378d3214ff52dfbf6c30459e1"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/direction-d2/demo01.data.ts",
+      "sha256": "66fe98a6d596f50e66ce1af82133937ab0305f586d43c89bb7e2d10b4ad4304a"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/direction-d2/demo01.model.ts",
+      "sha256": "27a275d1fcf74fb5f1f796fc01a18d20d970b7039b7172adee09863592650eda"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/direction-d2/demo01.test.ts",
+      "sha256": "ca531b451cf0b8792c54c334be847ea5dd7c13c3bd922da82d440556ea2b5ba0"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/direction-d2/landing-d2.css",
+      "sha256": "e402f50eac768a5ffa756a96b5bece934df91c7889c5f9022d45d4d5599a0f20"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/marketing.css",
+      "sha256": "14cf51c541629e718930aba79e96227c2f491a9f781b32c14ab62bd6334b594c"
+    },
+    {
+      "path": "apps/marketing-saas/src/marketing/sample.ts",
+      "sha256": "cd1638141e1219e8a2460124d30a811d507f033ae4b2d7af557fd8bb180dd32e"
+    },
+    {
+      "path": "apps/marketing-saas/src/pilot.css",
+      "sha256": "ffda2911ecd49dd0a8577549cd23697eaa4a5d590e375af9da57522a66646dab"
+    },
+    {
+      "path": "apps/marketing-saas/src/routes.test.ts",
+      "sha256": "27373b25fdde8632162b809d4ae424674c0b7ed57d1f2c47d5243f4cdbe6e293"
+    },
+    {
+      "path": "apps/marketing-saas/src/routes.ts",
+      "sha256": "a7f0d5f87bbc06343cf363de97db6ecbfa9710d0dca9c78c472092f45d3f88e1"
+    },
+    {
+      "path": "apps/marketing-saas/src/styles.css",
+      "sha256": "0412adf6614324b0999dbb474d6bc26c441c0e6571fd5453bbf22a8d8fdea4b8"
+    },
+    {
+      "path": "apps/marketing-saas/src/workspace.css",
+      "sha256": "26a711756a03e1dbe90ec6ca7849ca15a62f1a98b01ac719b0ee2bf5227e0944"
+    },
+    {
+      "path": "apps/marketing-saas/tsconfig.json",
+      "sha256": "75f0634fc8b7a0059ee5f09c7a151f64a7ffbea47e4160bf52c42a60d8d97fd4"
+    },
+    {
+      "path": "apps/marketing-saas/vite.config.ts",
+      "sha256": "5dd8f9839b897a5b0140497be631e17ec8bcffae3398f8f565b3a745910f3f2a"
+    },
+    {
+      "path": "docs/qa/marketing-saas/creative-04/live-experiment.proposed.json",
+      "sha256": "324fe3c1ec9471215bf984d4935a0b83b5d2988ba7a96154946bf1c8fea7203c"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "91f29aad1554258fa2c36baf374c6cb436d7866425ee2c0e72524667de0c0308"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "3eb1badae153d2db0e38b3b745a8e21593e5c8692ef79c58b5c588e9bac78d95"
+    },
+    {
+      "path": "package.json",
+      "sha256": "a99a434f2f8700d3e68fd08f90a3a6ef198e4578d7662fe1ea311fba10858aa0"
+    },
+    {
+      "path": "scripts/marketing-consolidate-browser.mjs",
+      "sha256": "bc8f03ecf708782183ba94819853064450c526839693153eb21ebf967a9ab16c"
+    },
+    {
+      "path": "scripts/marketing-consolidate-closed-browser.mjs",
+      "sha256": "989ebc3658efb4cb0c6f5cba0f0eb9c8e620837ffc950c0c9eb79691c18f695b"
+    },
+    {
+      "path": "scripts/marketing-consolidate-demo-browser.mjs",
+      "sha256": "961ef86932c5d48aafd3e7caf19f8b6eef2d50a8f1bc91580dfb925e9fe4fea0"
+    },
+    {
+      "path": "scripts/marketing-consolidate-local.mjs",
+      "sha256": "fb51e8529038f8a2d3ca0a665140e84fbfc322723ea5b06f9b6ef8feb4066d28"
+    },
+    {
+      "path": "scripts/marketing-creative-offline-guard.mjs",
+      "sha256": "fe35bb7a3638a45844a242406c002ba995e094e84e8414e82de45e19f6572103"
+    },
+    {
+      "path": "scripts/marketing-image-live-experiment.mjs",
+      "sha256": "fb6e2b00ea2254de6ef1785a83303d7134d51a4264d9e5e9d5278455b2323189"
+    }
+  ]
+}

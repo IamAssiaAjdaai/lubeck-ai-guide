@@ -1,0 +1,292 @@
+{
+  "status": "PASS",
+  "checks": [
+    "keyboard disclosure 1440",
+    "keyboard disclosure 1440",
+    "keyboard disclosure 1440",
+    "all sampled supporting text at least 14px 1440",
+    "disclosure content 16px 1440",
+    "no horizontal modal overflow 1440",
+    "single primary scroll pane 1440",
+    "outer modal is not a second scroll pane 1440",
+    "close remains visible at bottom 1440",
+    "textarea expands without nested text scrolling 1440",
+    "background wheel cannot scroll page 1440",
+    "background lock active 1440",
+    "axe expanded demo 1440",
+    "reduced motion static 1440",
+    "Escape closes 1440",
+    "focus restored to opener 1440",
+    "page position restored 1440",
+    "background lock released 1440",
+    "footer opener also regains focus 1440",
+    "keyboard disclosure 1024",
+    "keyboard disclosure 1024",
+    "keyboard disclosure 1024",
+    "all sampled supporting text at least 14px 1024",
+    "disclosure content 16px 1024",
+    "no horizontal modal overflow 1024",
+    "single primary scroll pane 1024",
+    "outer modal is not a second scroll pane 1024",
+    "close remains visible at bottom 1024",
+    "textarea expands without nested text scrolling 1024",
+    "background wheel cannot scroll page 1024",
+    "background lock active 1024",
+    "axe expanded demo 1024",
+    "reduced motion static 1024",
+    "Escape closes 1024",
+    "focus restored to opener 1024",
+    "page position restored 1024",
+    "background lock released 1024",
+    "footer opener also regains focus 1024",
+    "keyboard disclosure 768",
+    "keyboard disclosure 768",
+    "keyboard disclosure 768",
+    "all sampled supporting text at least 14px 768",
+    "disclosure content 16px 768",
+    "no horizontal modal overflow 768",
+    "single primary scroll pane 768",
+    "outer modal is not a second scroll pane 768",
+    "close remains visible at bottom 768",
+    "textarea expands without nested text scrolling 768",
+    "background wheel cannot scroll page 768",
+    "background lock active 768",
+    "axe expanded demo 768",
+    "reduced motion static 768",
+    "Escape closes 768",
+    "focus restored to opener 768",
+    "page position restored 768",
+    "background lock released 768",
+    "footer opener also regains focus 768",
+    "keyboard disclosure 390",
+    "keyboard disclosure 390",
+    "keyboard disclosure 390",
+    "all sampled supporting text at least 14px 390",
+    "disclosure content 16px 390",
+    "no horizontal modal overflow 390",
+    "single primary scroll pane 390",
+    "outer modal is not a second scroll pane 390",
+    "close remains visible at bottom 390",
+    "textarea expands without nested text scrolling 390",
+    "background wheel cannot scroll page 390",
+    "background lock active 390",
+    "axe expanded demo 390",
+    "reduced motion static 390",
+    "Escape closes 390",
+    "focus restored to opener 390",
+    "page position restored 390",
+    "background lock released 390",
+    "footer opener also regains focus 390",
+    "keyboard disclosure 375",
+    "keyboard disclosure 375",
+    "keyboard disclosure 375",
+    "all sampled supporting text at least 14px 375",
+    "disclosure content 16px 375",
+    "no horizontal modal overflow 375",
+    "single primary scroll pane 375",
+    "outer modal is not a second scroll pane 375",
+    "close remains visible at bottom 375",
+    "textarea expands without nested text scrolling 375",
+    "background wheel cannot scroll page 375",
+    "background lock active 375",
+    "axe expanded demo 375",
+    "reduced motion static 375",
+    "Escape closes 375",
+    "focus restored to opener 375",
+    "page position restored 375",
+    "background lock released 375",
+    "footer opener also regains focus 375",
+    "native disclosure has subtle opening fade",
+    "keyboard collapse preserves focus",
+    "live reduced motion disables disclosure animation",
+    "zero page errors",
+    "zero external requests"
+  ],
+  "metrics": [
+    {
+      "width": 1440,
+      "sizes": {
+        ".demo01 details>p": [
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01 details li": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01-source": [
+          14
+        ],
+        ".demo01-reset small": [
+          14
+        ],
+        ".demo01 summary": [
+          16,
+          16,
+          16
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "sizes": {
+        ".demo01 details>p": [
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01 details li": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01-source": [
+          14
+        ],
+        ".demo01-reset small": [
+          14
+        ],
+        ".demo01 summary": [
+          16,
+          16,
+          16
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "sizes": {
+        ".demo01 details>p": [
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01 details li": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01-source": [
+          14
+        ],
+        ".demo01-reset small": [
+          14
+        ],
+        ".demo01 summary": [
+          16,
+          16,
+          16
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "sizes": {
+        ".demo01 details>p": [
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01 details li": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01-source": [
+          14
+        ],
+        ".demo01-reset small": [
+          14
+        ],
+        ".demo01 summary": [
+          16,
+          16,
+          16
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "sizes": {
+        ".demo01 details>p": [
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01 details li": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        ".demo01-source": [
+          14
+        ],
+        ".demo01-reset small": [
+          14
+        ],
+        ".demo01 summary": [
+          16,
+          16,
+          16
+        ]
+      }
+    }
+  ]
+}

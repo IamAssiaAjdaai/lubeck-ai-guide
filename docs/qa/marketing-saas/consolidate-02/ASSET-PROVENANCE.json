@@ -1,0 +1,137 @@
+{
+  "status": "Selected D2 local design; public release rights/owner approval remain separate",
+  "assets": [
+    {
+      "id": "HERO-01",
+      "localPath": "apps/marketing-saas/public/landing-d2/HERO-01.webp",
+      "dimensions": {
+        "width": 1120,
+        "height": 1400
+      },
+      "bytes": 256694,
+      "sha256": "e0d916e8ee9ad9f6a23cc4b7a19e925e6a1f85d2ae4349e69af091659dfe55b1",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "HERO-02",
+      "localPath": "apps/marketing-saas/public/landing-d2/HERO-02.webp",
+      "dimensions": {
+        "width": 800,
+        "height": 533
+      },
+      "bytes": 133484,
+      "sha256": "ba07686e77cc64ab59c524aaff43ce1680dc666752e3d6d7c486f029d1d7b6a8",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "FEAT-02",
+      "localPath": "apps/marketing-saas/public/landing-d2/FEAT-02.webp",
+      "dimensions": {
+        "width": 800,
+        "height": 533
+      },
+      "bytes": 121002,
+      "sha256": "588e5e54cccfa80b92ed6880e3346bd6ea2bc8046999147a3d3bf9ac803eeaf0",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "FEAT-04",
+      "localPath": "apps/marketing-saas/public/landing-d2/FEAT-04.webp",
+      "dimensions": {
+        "width": 800,
+        "height": 533
+      },
+      "bytes": 91172,
+      "sha256": "91bb2724db35f1f4b902a477f56d0b9cf689f8859e3fc0bcb57262346e4bd494",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "CAT-01",
+      "localPath": "apps/marketing-saas/public/landing-d2/CAT-01.webp",
+      "dimensions": {
+        "width": 640,
+        "height": 427
+      },
+      "bytes": 59302,
+      "sha256": "75acd868e8380f64e1dc7f87112600c2c372e19bc8ade61263e7feed3526497e",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "CAT-02",
+      "localPath": "apps/marketing-saas/public/landing-d2/CAT-02.webp",
+      "dimensions": {
+        "width": 640,
+        "height": 427
+      },
+      "bytes": 62060,
+      "sha256": "b65938b348143600106c4cf1e0c6eebf3677e477360b6e2e6d41853148868c6c",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "CAT-03",
+      "localPath": "apps/marketing-saas/public/landing-d2/CAT-03.webp",
+      "dimensions": {
+        "width": 640,
+        "height": 427
+      },
+      "bytes": 91000,
+      "sha256": "c6d3efd2ae7abb8cbe5ae01856e42c472d3c4acf70bda8933543107e7cced259",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "CAT-04",
+      "localPath": "apps/marketing-saas/public/landing-d2/CAT-04.webp",
+      "dimensions": {
+        "width": 640,
+        "height": 427
+      },
+      "bytes": 73494,
+      "sha256": "ac7d0cb231a3192c4e9b7930ceb9250b85b81c3f15303095e209e5e0387dc61c",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "CAT-05",
+      "localPath": "apps/marketing-saas/public/landing-d2/CAT-05.webp",
+      "dimensions": {
+        "width": 640,
+        "height": 427
+      },
+      "bytes": 69072,
+      "sha256": "950027553bb759e37f126e953444eacc1615bc232daf32195c0f9acf54b198c1",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "CAT-06",
+      "localPath": "apps/marketing-saas/public/landing-d2/CAT-06.webp",
+      "dimensions": {
+        "width": 640,
+        "height": 427
+      },
+      "bytes": 56726,
+      "sha256": "79b49bccdaddf88adc7d951a4cd79370983c63465c0cf9aaa161d1c29a2daa5b",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    },
+    {
+      "id": "CTA-01",
+      "localPath": "apps/marketing-saas/public/landing-d2/CTA-01.webp",
+      "dimensions": {
+        "width": 1600,
+        "height": 640
+      },
+      "bytes": 97750,
+      "sha256": "52efd3d3f5293ba4b30951d303bf4a6f1526897202bd2fa040ac9881faddc95c",
+      "origin": "Original synthetic design image, created with built-in image_gen; not API/CLI",
+      "usage": "Fictional illustrative landing imagery only; never customer evidence. No third-party stock license or release asserted. Owner must review publication rights and AI-image disclosure before public use."
+    }
+  ]
+}

@@ -1,0 +1,1775 @@
+{
+  "unit-final": {
+    "numPassedTests": 1726,
+    "numFailedTests": 0,
+    "numPendingTests": 238,
+    "files": [
+      {
+        "path": "scripts/check-cloudflare-build.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "scripts/cloudflare-binding-contract.test.ts",
+        "passed": 25,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "scripts/database-backup-restore.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "scripts/landmark-audio-generation.test.ts",
+        "passed": 18,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "scripts/local-development-infrastructure.test.ts",
+        "passed": 9,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "scripts/workspace-esm-imports.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "tests/app-icon-assets.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "tests/vercel-deployment-policy.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "scripts/evaluation/citywalk-guide-dry-run.test.mjs",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "scripts/evaluation/score-citywalk-guide.test.mjs",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/manifest.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/page.test.tsx",
+        "passed": 16,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/productionShell.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/data/hiddenGems.test.ts",
+        "passed": 10,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/data/landmarkAudio.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/data/landmarks.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/data/placeCategories.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/data/places.test.ts",
+        "passed": 15,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/cloudflare/accountErasureSchedule.test.ts",
+        "passed": 9,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/AskGuide.test.tsx",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/AudioPlayer.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/LanguageSelector.test.tsx",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/hooks/useUserLocation.test.tsx",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/authMigration.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/authSchema.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/brandContextMigration.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/brandContextSchema.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/client.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/cmsSchema.test.ts",
+        "passed": 11,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/commerceSchema.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/env.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/marketingGeneration.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/marketingGenerationMigration.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/marketingGenerationSchema.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/marketingSchema.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/mediaSchema.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/seed.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/seedData.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/travelerSchema.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/db/verification.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/analyticsConsent.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/analyticsConsentRuntime.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/arrival.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/brand.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/distance.test.ts",
+        "passed": 16,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/formatTime.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guideAdversarial.audit.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guideAllowance.server.test.ts",
+        "passed": 9,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guideEligibility.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guideGrounding.audit.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guideGroundingEvaluation.audit.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guideGroundingGuard.test.ts",
+        "passed": 28,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guideKnowledge.cityContext.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guideKnowledge.server.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guidePrompt.security.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/guidePrompt.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/i18n.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/knowledgeRetriever.server.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/legal.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/mapPlaces.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/mapSupport.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/marketingAttribution.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/nativeAppAssociation.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/nativeAppHandoff.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/privacyAnalyticsDisclosure.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/privacyDataExportDisclosure.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/storePrivacyDraft.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/tourBuilder.test.ts",
+        "passed": 25,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/tourContext.server.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/tourConversation.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/tourPreferences.test.ts",
+        "passed": 19,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/verifiedKnowledge.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/verifiedKnowledge.server.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/visitorJourney.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/visitorSession.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas/src/customerArchive.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas/src/intake.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas/src/routes.test.ts",
+        "passed": 12,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa/acceptance.test.ts",
+        "passed": 22,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa/provider-adapter.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa/service.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-acceptance/acceptance.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-hardening/hardening.integration.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-provider/contract.test.ts",
+        "passed": 18,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-provider/provider.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-transport/experiment.test.mjs",
+        "passed": 9,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-transport/review-state.test.mjs",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-transport/transport.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-transport/transport.test.ts",
+        "passed": 32,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-v2/engine.test.ts",
+        "passed": 69,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/auth.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/consolidation.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/pack.provider.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/packs.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/sufficiency.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/workspace.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "packages/marketing-core/tests/boundaries.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "packages/marketing-core/tests/brandContext.test.ts",
+        "passed": 16,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "packages/i18n/src/account-deletion-compliance.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "packages/i18n/src/ci-check.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "packages/i18n/src/i18n.test.ts",
+        "passed": 38,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "packages/traveler-core/src/monetization.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "packages/traveler-core/src/savedWalk.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "packages/traveler-core/src/travelerCore.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "packages/traveler-core/src/walkParity.test.ts",
+        "passed": 18,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/support/page.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/account/TravelerAccountPanel.test.tsx",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/brand/CitywalkLogo.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/admin/AdminContentForms.test.tsx",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/admin/AdminLoginForm.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/admin/ConfirmSubmitButton.test.tsx",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/admin/MarketingQaPanel.test.tsx",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/admin/MediaRightsPanel.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/admin/MediaRowActions.test.tsx",
+        "passed": 10,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/admin/MediaUploadForm.test.tsx",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/admin/TourStopEditor.test.tsx",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/commerce/CheckoutReturnTracker.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/commerce/CityPassPaywall.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/landing/LandingClosing.test.tsx",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/landing/LandingPreview.test.tsx",
+        "passed": 12,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/legal/LegalPages.test.tsx",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/travel/CityCard.test.tsx",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/travel/CustomTourPlanner.test.tsx",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/travel/MediaAttribution.test.tsx",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/travel/PlaceDiscovery.test.tsx",
+        "passed": 12,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/travel/TourBuilder.test.tsx",
+        "passed": 17,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/travel/TourPreferences.test.tsx",
+        "passed": 16,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/map/CityMap.test.tsx",
+        "passed": 11,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/map/MapLocationControl.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/walk/SavedWalks.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/components/walk/WalkJourney.test.tsx",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/account/dataExport.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/account/guestLink.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/account/savedWalks.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/authorization.server.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/bootstrap.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/navigation.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/permissions.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/authFailureTelemetry.test.ts",
+        "passed": 9,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/config.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/env.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/native-policy-contract.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/publicSession.server.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/server.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/socialProviders.server.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/contentQa/aiReview.test.ts",
+        "passed": 15,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/contentQa/deterministic.test.ts",
+        "passed": 19,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/contentQa/groqReview.server.test.ts",
+        "passed": 15,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/content/cityReadiness.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/content/homeMedia.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/content/landmarkAudio.test.ts",
+        "passed": 12,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/content/placeAudio.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/content/placeMedia.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/content/publicRepository.server.test.ts",
+        "passed": 19,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/content/source.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/adminAccess.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/analytics.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/checkout.server.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/cityPassAccess.server.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/cityPassConfig.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/cityPassCopy.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/cityPassReturn.test.ts",
+        "passed": 12,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/cityUnlock-compatibility.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/cityUnlock.server.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/entitlements.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/env.server.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/premiumAccess.server.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/queries.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/revenueCatCustomerErasure.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/revenueCatWebhook.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/revenueCatWebhook.server.test.ts",
+        "passed": 12,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/stripeProvider.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/subscriptionSource.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/webhook.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/webhook.server.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/marketing/performanceAnalytics.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/operations/health.server.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/operations/operationalEvent.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/audioMetadata.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/backfillAudioDuration.server.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/externalVideo.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/http.server.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/imageDelivery.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/imageVariants.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/media.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/policy.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/publicMedia.server.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/rights.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/service.server.test.ts",
+        "passed": 23,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/storageMigration.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/storageMigration.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/sharing/publicWalk.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/walk/guideContext.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/walk/planner.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas/src/auth/validation.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/creative/creative.test.ts",
+        "passed": 10,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/intake/buildBrief.test.ts",
+        "passed": 10,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/intake/ingest.test.ts",
+        "passed": 48,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/intake/transport.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/[locale]/[citySlug]/page.test.tsx",
+        "passed": 12,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/[locale]/lubeck/page.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/account/reset-password/ResetPasswordForm.test.tsx",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/guide/route.generic.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/guide/route.test.ts",
+        "passed": 11,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/guide/walk-context.test.ts",
+        "passed": 9,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/health/route.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/admin/(protected)/content-qa-actions.test.ts",
+        "passed": 9,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/admin/(protected)/layout.test.tsx",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/cityManifest.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/cityManifest.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/cityManifestFile.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/cms.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/contentQa.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/editorialWorkflow.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/formData.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/graphIntegrity.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/importPolicy.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/policy.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/service.server.test.ts",
+        "passed": 14,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/sources.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/content/validation.test.ts",
+        "passed": 19,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/operations/audioGeneration.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/operations/audioOperations.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/operations/service.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/operations/translationOperations.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/lifecycle/appleTokenRevocation.server.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/lifecycle/deleteReauth.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/lifecycle/email.server.test.ts",
+        "passed": 8,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/lifecycle/externalAccountErasureWorker.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/lifecycle/lifecycle.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/lifecycle/rateLimit.server.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/lifecycle/requestOrigin.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/auth/lifecycle/webDeletionRequest.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/automationPublished.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/automationReady.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/brandContextAdapter.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/contentQa.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/formData.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/n8nMockWorkflow.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/performance.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/qaEvidence.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/qaEvidence.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/validation.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/admin/marketing/workflow.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/native/google-gate.server.test.ts",
+        "passed": 35,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/native/ledger.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/native/native-billing.server.test.ts",
+        "passed": 19,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/native/notifications.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/native/phase3b.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/commerce/native/provider-boundary.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/marketing/brandContext/persistence.integration.test.ts",
+        "passed": 0,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/marketing/brandContext/validation.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/storage/environment.server.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/storage/localFilesystemObjectStore.server.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/storage/s3ObjectStore.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/lib/media/storage/storage.server.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas/src/marketing/direction-d2/demo01.test.ts",
+        "passed": 10,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/[locale]/[citySlug]/[placeSlug]/page.test.tsx",
+        "passed": 13,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/[locale]/pass/[citySlug]/page.test.tsx",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/[locale]/lubeck/[slug]/page.test.tsx",
+        "passed": 17,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/account/export/route.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/analytics/marketing-funnel/route.test.ts",
+        "passed": 10,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/content/cities/route.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/auth/[...all]/route.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/content/image/route.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/guide/eligibility/route.test.ts",
+        "passed": 5,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/media/[assetKey]/route.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/admin/(protected)/media/media-workflow.test.tsx",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/admin/(protected)/marketing/qa-actions.test.ts",
+        "passed": 12,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/admin/(protected)/operations/operationsPages.test.tsx",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/city/[citySlug]/[marketingSlug]/page.test.tsx",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/commerce/city-unlock/[citySlug]/route.test.ts",
+        "passed": 6,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/commerce/media/[assetKey]/route.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/content/cities/[citySlug]/route.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/content/cities/[citySlug]/summary/route.test.ts",
+        "passed": 3,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/admin/(protected)/preview/places/[id]/page.test.tsx",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "src/app/api/content/cities/[citySlug]/places/[placeSlug]/route.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      }
+    ]
+  },
+  "integration-final": {
+    "numPassedTests": 117,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "files": [
+      {
+        "path": "apps/marketing-saas-api/qa/service.integration.test.ts",
+        "passed": 19,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-acceptance/acceptance.integration.test.ts",
+        "passed": 4,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-hardening/hardening.integration.test.ts",
+        "passed": 16,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-provider/provider.integration.test.ts",
+        "passed": 20,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/qa-creative-transport/transport.integration.test.ts",
+        "passed": 13,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/auth.integration.test.ts",
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/consolidation.integration.test.ts",
+        "passed": 1,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/packs.integration.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/workspace.integration.test.ts",
+        "passed": 7,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas-api/src/creative/creative.test.ts",
+        "passed": 28,
+        "failed": 0,
+        "pending": 0
+      }
+    ]
+  },
+  "route-demo": {
+    "numPassedTests": 22,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "files": [
+      {
+        "path": "apps/marketing-saas/src/routes.test.ts",
+        "passed": 12,
+        "failed": 0,
+        "pending": 0
+      },
+      {
+        "path": "apps/marketing-saas/src/marketing/direction-d2/demo01.test.ts",
+        "passed": 10,
+        "failed": 0,
+        "pending": 0
+      }
+    ]
+  },
+  "workspaceBrowserChecks": 257,
+  "curatedDemoBrowserChecks": 271,
+  "closedRuntimeBrowserChecks": 25,
+  "marketingTypes": "PASS",
+  "apiTypes": "PASS",
+  "marketingBuild": "PASS",
+  "fullLint": {
+    "errors": 0,
+    "warnings": 11
+  },
+  "hostTypes": "BLOCKED: existing GenericCityContent/GenericPlaceContent Next page exports",
+  "hostBuild": "BLOCKED: existing Google Geist font fetch denied by offline guard",
+  "databaseMigrations": 7,
+  "migrationRetry": "PASS idempotent",
+  "liveAIRequests": 0,
+  "spendEUR": 0,
+  "publicRegistration": "CLOSED",
+  "remoteCIForCandidate": "NOT_RUN uncommitted/local only"
+}

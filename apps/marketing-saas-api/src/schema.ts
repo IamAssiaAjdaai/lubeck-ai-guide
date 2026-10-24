@@ -1,0 +1,58 @@
+/** Independent SaaS operational schema. Never import CITYWALK database/auth schemas. */
+import {
+  pgTable,
+  uuid,
+  text,
+  integer,
+  jsonb,
+  timestamp,
+  primaryKey,
+} from "drizzle-orm/pg-core";
+import type { BrandContext } from "@marketing/core";
+export const organizations = pgTable("mkt_organizations", {
+  id: uuid().primaryKey(),
+  name: text().notNull(),
+  plan: text().notNull().default("starter"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+export const memberships = pgTable(
+  "mkt_memberships",
+  {
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id),
+    userId: text("user_id").notNull(),
+    role: text().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.organizationId, table.userId] })],
+);
+export const projects = pgTable("mkt_projects", {
+  id: uuid().primaryKey(),
+  organizationId: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id),
+  name: text().notNull(),
+  revision: integer().notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+export const brandVersions = pgTable(
+  "mkt_brand_versions",
+  {
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id),
+    revision: integer().notNull(),
+    context: jsonb().$type<BrandContext>().notNull(),
+    evidence: jsonb().notNull().default([]),
+    actorId: text("actor_id").notNull(),
+    action: text().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.projectId, table.revision] })],
+);

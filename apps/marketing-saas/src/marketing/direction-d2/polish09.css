@@ -1,0 +1,74 @@
+/* D2 editorial polish only. Hero heading and photographic geometry are unchanged. */
+.d2-page { --d2-body-size:clamp(16px,1.25vw,18px); --d2-motion-duration:240ms; --d2-motion-ease:cubic-bezier(.2,.65,.3,1); }
+.d2-page :is(.d2-steps p,.d2-feature>p,.d2-heading-row>p,.d2-faq>div>p:not(.d2-eyebrow),.d2-faq details>p) { font-size:clamp(17px,1.25vw,18px);line-height:1.65; }
+.d2-page :is(.d2-eyebrow,.d2-inline-link,.d2-nav a,.d2-menu a,.d2-demo-status,.d2-benefit-strip small,.d2-feature-disclosure,.d2-category-caption,.d2-category-caption small,.d2-video-poster>span,.d2-feature-title h3 small) { font-size:14px!important; }
+.d2-page :is(.d2-benefit-strip strong,.d2-feature-title h3) { font-size:17px;line-height:1.4; }
+.d2-page .d2-benefit-strip>.d2-container { gap:24px; }
+.d2-page .d2-feature>p { min-height:0; }
+.d2-page .d2-feature-title { align-items:flex-start;min-height:58px; }
+.d2-page .d2-feature-title h3 { hyphens:auto;overflow-wrap:break-word; }
+.d2-page .d2-faq summary { font-size:clamp(16px,1.25vw,18px);line-height:1.55;min-height:72px; }
+.d2-page .d2-category-grid button>span { font-size:14px;white-space:normal;line-height:1.45;min-height:48px; }
+.d2-page .d2-category-caption { line-height:1.65; }
+.d2-page .d2-closing p:not(.d2-eyebrow) { font-size:var(--d2-body-size); }
+.d2-page :is(.d2-post-snippet>div,.d2-post-snippet>span,.d2-post-snippet small,.d2-plan li,.d2-plan li>span) { font-size:14px;line-height:1.5; }
+.d2-page .d2-plan { gap:12px; }
+.d2-page .d2-plan li { align-items:flex-start; }
+.d2-page .d2-button { transition:transform var(--d2-motion-duration) var(--d2-motion-ease),background var(--d2-motion-duration),box-shadow var(--d2-motion-duration); }
+.d2-page .d2-button:active { transform:translateY(0) scale(.98); }
+.d2-page :is(.d2-inline-link,.d2-category-grid button) { transition:color var(--d2-motion-duration),transform var(--d2-motion-duration); }
+.d2-page .d2-inline-link:hover { color:#246248!important; }
+.d2-page .d2-feature { transition:transform var(--d2-motion-duration) var(--d2-motion-ease),box-shadow var(--d2-motion-duration); }
+@media(hover:hover) { .d2-page .d2-feature:hover { transform:translateY(-4px);box-shadow:0 14px 30px #143f3512; }.d2-page .d2-category-grid button:hover { transform:translateY(-3px); } }
+@keyframes d2-editorial-drift { 0%,100% { translate:0 0; } 50% { translate:0 -4px; } }
+.d2-page[data-d2-motion="on"] :is(.d2-social-card,.d2-deliverables) { animation:d2-editorial-drift 8s ease-in-out 1s infinite; }
+.d2-page[data-d2-motion="on"] .d2-deliverables { animation-delay:1.8s;animation-duration:9s; }
+/* Native disclosure remains keyboard-operable, even without enhancement support. */
+@supports (interpolate-size:allow-keywords) {
+  .d2-page .d2-faq details { interpolate-size:allow-keywords; }
+  .d2-page .d2-faq details::details-content { block-size:0;opacity:0;overflow:clip;transition:block-size 240ms ease,opacity 180ms ease,content-visibility 240ms allow-discrete; }
+  .d2-page .d2-faq details[open]::details-content { block-size:auto;opacity:1; }
+}
+/* Structured footer; every destination is currently available and truthful. */
+.d2-page .d2-footer { display:block;background:var(--d2-forest);color:#f0f3ec;padding-block:64px 28px; }
+.d2-page .d2-footer-grid { display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:40px; }
+.d2-page .d2-footer .d2-brand { color:#f0f3ec!important;margin-bottom:20px; }
+.d2-page .d2-footer .d2-mark { background:#d9f0a8;color:#143f35; }
+.d2-page .d2-footer .d2-mark span { color:#35543d; }
+.d2-page .d2-footer strong { color:#f0f3ec;font-size:18px; }
+.d2-page .d2-footer p { color:#e0e8dc;font-size:16px;line-height:1.7;margin:0 0 14px; }
+.d2-page .d2-footer small { display:block;color:#d4dfce;font-size:14px;line-height:1.65; }
+.d2-page .d2-footer-status { border-left:2px solid var(--d2-lime);padding-left:12px; }
+.d2-page .d2-footer nav { display:flex;flex-direction:column;align-items:flex-start;gap:4px; }
+.d2-page .d2-footer h3 { color:var(--d2-lime);font:650 16px/1.5 'SaaS Manrope',sans-serif;letter-spacing:0;margin-bottom:14px; }
+.d2-page .d2-footer :is(a,button) { display:inline-flex;align-items:center;min-height:44px;font-size:15px;line-height:1.5; }
+.d2-page .d2-footer button { padding:0;border:0;background:none;text-align:left;color:inherit; }
+.d2-page .d2-footer :is(a,button):hover { text-decoration:underline;text-underline-offset:5px; }
+.d2-page .d2-footer :focus-visible { outline-color:var(--d2-lime); }
+.d2-page .d2-footer-bottom { display:flex;align-items:center;justify-content:space-between;gap:32px;border-top:1px solid #70867b;margin-top:44px;padding-top:25px; }
+.d2-page .d2-footer-bottom p { font-size:14px;margin:0; }
+.d2-page .d2-footer .d2-motion-control { border:1px solid #829689;border-radius:10px;padding:9px 14px;flex-shrink:0; }
+.d2-page .d2-footer .d2-motion-control:disabled { opacity:1;color:#d4dfce;cursor:default; }
+@media(max-width:1150px) {
+  .d2-page .d2-category-grid { grid-template-columns:repeat(3,minmax(0,1fr));row-gap:24px; }
+  .d2-page .d2-footer-grid { gap:28px;grid-template-columns:1.5fr 1fr 1fr; }
+  .d2-page .d2-footer-identity { grid-column:1/-1;max-width:520px; }
+}
+@media(max-width:768px) {
+  .d2-page :is(.d2-steps p,.d2-feature>p,.d2-heading-row>p,.d2-faq>div>p:not(.d2-eyebrow),.d2-faq details>p) { font-size:16px; }
+  .d2-page .d2-feature-title { flex-wrap:wrap;min-height:0; }
+  .d2-page .d2-feature-title h3 { font-size:16px; }
+  .d2-page .d2-category-caption { flex-direction:column;gap:8px; }
+  .d2-page .d2-category-caption small { max-width:none;text-align:left; }
+  .d2-page .d2-footer { padding-block:44px 24px; }
+  .d2-page .d2-footer-grid { grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 20px; }
+  .d2-page .d2-footer-bottom { align-items:flex-start;flex-direction:column;gap:18px;margin-top:30px; }
+}
+@media(max-width:450px) { .d2-page .d2-footer-grid>nav:last-child { grid-column:1/-1; } }
+@media(prefers-reduced-motion:reduce) {
+  .d2-page *, .d2-page *::before,.d2-page *::after,.d2-page details::details-content { animation:none!important;transition:none!important;scroll-behavior:auto!important; }
+}
+html[data-d2-capture] .d2-page *,html[data-d2-capture] .d2-page *::before,html[data-d2-capture] .d2-page *::after { animation:none!important;transition:none!important; }
+
+/* Remains discoverable on keyboard focus, even in long section captures. */
+.d2-page .d2-skip:not(:focus) { clip-path:inset(50%); }
