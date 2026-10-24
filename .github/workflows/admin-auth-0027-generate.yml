@@ -65,10 +65,16 @@ jobs:
           node - <<'NODE'
           const cp = require('node:child_process');
           const files = cp.execFileSync('git',['status','--porcelain','--untracked-files=all'],{encoding:'utf8'}).trimEnd().split('\n').filter(Boolean);
+          const fs = require('node:fs');
+          const journal = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8'));
+          const entry = journal.entries.at(-1);
+          if (entry?.idx !== 27 || !/^0027_[a-z0-9_]+$/.test(entry.tag)) {
+            throw Error('Expected generated 0027 journal entry');
+          }
           const allowed = new Set([
             'drizzle/meta/_journal.json',
             'drizzle/meta/0027_snapshot.json',
-            'drizzle/0027_colossal_tiger_shark.sql',
+            'drizzle/' + entry.tag + '.sql',
           ]);
           for(const line of files) {
             const path = line.slice(3);
