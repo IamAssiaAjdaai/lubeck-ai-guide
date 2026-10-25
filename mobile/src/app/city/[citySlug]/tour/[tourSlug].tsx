@@ -1,10 +1,11 @@
+import { CuratedTourControls } from "../../../../components/CuratedTourControls";
 import { ContentRecovery } from "../../../../components/ContentRecovery";
 import { nativePlaceName } from "../../../../lib/displayNames";
 import { Image } from "expo-image";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
-import { AppText, MotionView, PressableSurface, PrimaryButton, Screen, StatusMessage } from "../../../../components/ui";
+import { AppText, MotionView, PressableSurface, Screen, StatusMessage } from "../../../../components/ui";
 import { MediaAttribution } from "../../../../components/MediaAttribution";
 import { CitywalkLoading } from "../../../../components/CitywalkLoading";
 import { NativeIcon } from "../../../../components/NativeIcon";
@@ -142,21 +143,7 @@ export default function TourScreen() {
           })}
         </View>
 
-        {stops[0] ? (
-          <Link
-            href={{
-              pathname: "/city/[citySlug]/place/[placeSlug]",
-              params: createMobileTripPlaceParams(tripIdentity, 0),
-            }}
-            asChild
-          >
-            <PrimaryButton
-              haptic="medium"
-              label={messages.startTour}
-              leadingIcon={<NativeIcon ios="figure.walk" android="directions_walk" color="#FFFFFF" size={20} />}
-            />
-          </Link>
-        ) : null}
+        {stops[0] ? <CuratedTourControls citySlug={identity.citySlug} tourSlug={tour.slug} stopSlugs={tripIdentity.stopSlugs} /> : null}
       </MotionView>
     </Screen>
   );

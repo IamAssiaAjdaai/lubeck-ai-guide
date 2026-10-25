@@ -6,3 +6,5 @@ export * from "./savedWalk";
 export * from "./cityUnlock";
 
 export * from "./monetization";
+
+export * from "./curatedProgress";

@@ -1,3 +1,4 @@
+import { CuratedTourControls } from "../../../../components/CuratedTourControls";
 import { t as translate } from "@citywalk/i18n";
 import {
   nativeContentTextStyle,
@@ -590,7 +591,8 @@ function PlaceContent() {
             </PressableSurface>
           </Link>
         ) : null}
-        {trip && !tripCompleted ? (
+        {trip?.source === "published" ? <CuratedTourControls citySlug={trip.citySlug} tourSlug={trip.id.replace(/^published-/, "")} stopSlugs={trip.stopSlugs} trip={trip} /> : null}
+        {trip && trip.source !== "published" && !tripCompleted ? (
           <View style={styles.tripPanel}>
             <AppText variant="caption" style={styles.tripNextContext}>
               {nextStop ? messages.nextStop : messages.finishTrip}

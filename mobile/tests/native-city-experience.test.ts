@@ -76,7 +76,7 @@ describe("native city experience parity", () => {
   });
 
   it("uses one sequential trip model for published and personalized routes", () => {
-    expect(tourSource).toContain("createMobileTripPlaceParams(tripIdentity, 0)");
+    expect(tourSource).toContain("<CuratedTourControls");
     expect(tourSource).toContain('source: "published"');
     expect(placeSource).toContain("parseMobileTripContext(params)");
     expect(placeSource).toContain("messages.stopProgress");
