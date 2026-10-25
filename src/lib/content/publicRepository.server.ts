@@ -3,6 +3,7 @@ import { getLubeckEditorial, lubeckEditorialLocales } from "@/data/lubeckEditori
 import "server-only";
 import { isCityLaunched } from "@/data/cityAvailability";
 import { PublicContentNotFoundError } from "./errors";
+import { assertPublishedTourGraph } from "./tourIntegrity";
 
 import { and, asc, eq, inArray } from "drizzle-orm";
 
@@ -137,7 +138,11 @@ export async function getPublicCitySnapshot(
 ): Promise<PublicCitySnapshot> {
   assertContentSourceAllowed(source);
   if (!isCityLaunched(citySlug)) throw new PublicContentNotFoundError();
-  if (source === "code") return getCodeSnapshot(citySlug);
+  if (source === "code") {
+    const snapshot = getCodeSnapshot(citySlug);
+    assertCompleteSnapshot(snapshot);
+    return snapshot;
+  }
   if (source === "database") {
     const snapshot = await loadPublishedDatabaseSnapshot(citySlug);
     assertCompleteSnapshot(snapshot);
@@ -752,6 +757,13 @@ function assertCompleteSnapshot(snapshot: PublicCitySnapshot) {
     throw new Error("Published city has no traveler-visible places.");
   }
   const placeSlugs = new Set(snapshot.places.map(({ slug }) => slug));
+  assertPublishedTourGraph(
+    snapshot.tours,
+    placeSlugs,
+    snapshot.city.slug === "lubeck"
+      ? { slug: "historic-center-walk", stopSlugs: lubeckLandmarks.map(({ slug }) => slug) }
+      : undefined,
+  );
   if (
     snapshot.tours.some(
       (tour) =>
