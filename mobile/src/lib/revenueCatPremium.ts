@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { readPremiumAccess } from "./premiumAccess";
 import {
   RevenueCatPremiumBilling,
@@ -39,4 +40,7 @@ const defaultDependencies: RevenueCatPremiumDependencies = {
   wait: (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
 };
 
-export const revenueCatPremiumBilling = new RevenueCatPremiumBilling(defaultDependencies);
+export const revenueCatPremiumBilling = new RevenueCatPremiumBilling(
+  defaultDependencies,
+  Platform.OS === "android" ? "android" : "ios",
+);

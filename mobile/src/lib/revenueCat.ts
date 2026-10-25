@@ -1,11 +1,8 @@
 import { Platform } from "react-native";
 import Purchases from "react-native-purchases";
+import { CITYWALK_REVENUECAT_PACKAGE_IDS } from "@citywalk/traveler-core";
 
-export const CITYWALK_REVENUECAT_PACKAGE_IDS = Object.freeze({
-  monthly: "$rc_monthly",
-  annual: "$rc_annual",
-  cityPass72h: "city_pass_72h",
-});
+export { CITYWALK_REVENUECAT_PACKAGE_IDS };
 
 const REVENUECAT_ANONYMOUS_PREFIX = "$RCAnonymousID:";
 const REVENUECAT_SECRET_KEY_PREFIX = "sk_";

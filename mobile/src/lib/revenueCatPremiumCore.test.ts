@@ -124,3 +124,39 @@ describe("RevenueCat Premium billing", () => {
     await expect(f.billing.restore("user-1")).resolves.toEqual({ status: "active" });
   });
 });
+
+describe("Google Play RevenueCat Premium base plans", () => {
+  it("accepts valid Android base-plan IDs for display and purchase", async () => {
+    const f = fixture();
+    const monthly = "com.citywalk.premium.monthly:monthly-autorenew";
+    const yearly = "com.citywalk.premium.yearly:yearly-autorenew";
+    f.dependencies.loadPlans = vi.fn(async () => [
+      { kind: "monthly", packageIdentifier: "$rc_monthly", productIdentifier: monthly, localizedPrice: "7,99 €" },
+      { kind: "annual", packageIdentifier: "$rc_annual", productIdentifier: yearly, localizedPrice: "39,99 €" },
+    ]);
+    f.dependencies.getOfferings = vi.fn(async () => ({
+      current: { availablePackages: [
+        { identifier: "$rc_monthly", product: { identifier: monthly } },
+        { identifier: "$rc_annual", product: { identifier: yearly } },
+      ] },
+    }));
+    const android = new RevenueCatPremiumBilling(f.dependencies, "android");
+    expect(await android.plans()).toHaveLength(2);
+    expect(await new RevenueCatPremiumBilling(f.dependencies, "ios").plans()).toEqual([]);
+    f.dependencies.access = vi.fn(async () => true);
+    await expect(new RevenueCatPremiumBilling(f.dependencies, "android").purchase("annual", "user-1"))
+      .resolves.toEqual({ status: "active" });
+    expect(f.dependencies.purchasePackage).toHaveBeenCalledWith({
+      identifier: "$rc_annual", product: { identifier: yearly },
+    });
+  });
+
+  it("rejects unexpected base-plan characters or subscription IDs", async () => {
+    const f = fixture();
+    f.dependencies.loadPlans = vi.fn(async () => [
+      { kind: "monthly", packageIdentifier: "$rc_monthly", productIdentifier: "com.citywalk.premium.monthly:Bad_plan", localizedPrice: "7,99 €" },
+      { kind: "annual", packageIdentifier: "$rc_annual", productIdentifier: "com.citywalk.wrong:yearly-autorenew", localizedPrice: "39,99 €" },
+    ]);
+    await expect(new RevenueCatPremiumBilling(f.dependencies, "android").plans()).toEqual([]);
+  });
+});
