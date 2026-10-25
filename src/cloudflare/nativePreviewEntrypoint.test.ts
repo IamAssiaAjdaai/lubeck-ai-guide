@@ -119,4 +119,37 @@ describe("native tester perimeter", () => {
     const env = environment(); env.CITYWALK_PREVIEW_RESOURCE_PINS = JSON.stringify({ ...JSON.parse(String(env.CITYWALK_PREVIEW_RESOURCE_PINS)), ...update });
     expect(nativePreviewReady(env)).toBe(false);
   });
+  it("keeps real Preview data denied unless all explicit reviews and exact resources are pinned", () => {
+    const env = environment();
+    const pins = JSON.parse(String(env.CITYWALK_PREVIEW_RESOURCE_PINS));
+    Object.assign(pins, {
+      syntheticOnly: false, dataClassification: "reviewed-real-preview",
+      neonProjectId: "lively-morning-52726120",
+      branchId: "br-sweet-snow-b94c3j20",
+      hyperdriveId: "296bd4ea316b4ab88489330b858ebb34",
+      originHost: "ep-summer-bread-b9ugomnk.c-7.eu-central-1.aws.neon.tech",
+      database: "citywalk_preview_app", role: "citywalk_preview_app_runtime",
+      provenanceReviewed: true, mediaRightsReviewed: true, privacyReviewed: true,
+      reviewEvidenceSha256: "a".repeat(64),
+    });
+    env.CITYWALK_PREVIEW_DATABASE_NAME = pins.database;
+    env.CITYWALK_PREVIEW_DATABASE_USER = pins.role;
+    env.CITYWALK_PREVIEW_BOUND_HYPERDRIVE = pins.hyperdriveId;
+    env.HYPERDRIVE = { connectionString: "postgresql://citywalk_preview_app_runtime:test@hyperdrive.local/citywalk_preview_app" };
+    const ready = (changes: Record<string, unknown> = {}) => {
+      env.CITYWALK_PREVIEW_RESOURCE_PINS = JSON.stringify({ ...pins, ...changes });
+      return nativePreviewReady(env);
+    };
+    expect(ready()).toBe(true); // Synthetic test environment only, NOT deployment approval.
+    for (const changes of [
+      { provenanceReviewed: false }, { mediaRightsReviewed: false }, { privacyReviewed: false },
+      { reviewEvidenceSha256: "" }, { dataClassification: "synthetic" },
+      { neonProjectId: "noisy-dream-24060983" }, { branchId: "br-unapproved" },
+      { originHost: "ep-production.eu-central-1.aws.neon.tech" },
+      { role: "postgres" }, { syntheticOnly: undefined },
+    ]) expect(ready(changes)).toBe(false);
+    env.CITYWALK_PREVIEW_DEPLOYMENT_LOCK = "1";
+    expect(ready()).toBe(false);
+  });
+
 });
