@@ -203,6 +203,7 @@ export function NativeWalkFlow({
       "architecture",
     ]),
     [categories, setCategories] = useState<string[]>([]);
+  const [selectedPlaceSlugs, setSelectedPlaceSlugs] = useState<string[]>([]);
   const [walking, setWalking] = useState<WalkSettings["walking"]>("balanced");
   const [startSlug, setStartSlug] = useState(addSlug ?? places[0]?.slug ?? ""),
     [gps, setGps] = useState<Point>();
@@ -531,6 +532,7 @@ export function NativeWalkFlow({
         interests,
         categories,
         walking,
+        ...(selectedPlaceSlugs.length ? { selectedPlaceSlugs } : {}),
       };
       const steps = buildWalkSteps(places, settings);
       let result = steps.next();
@@ -677,6 +679,7 @@ export function NativeWalkFlow({
       setProposalMessage(""); setMessage(""); setBuildError(undefined);
       setStep(1); setMinutes(120); setReturnBy("");
       setInterests(["history", "architecture"]); setCategories([]); setWalking("balanced");
+      setSelectedPlaceSlugs(rebuildConfirmation.current?.journey.settings.selectedPlaceSlugs ?? []);
       setStartSlug(places[0]?.slug ?? ""); setEndSlug(places[0]?.slug ?? "");
       setGps(undefined); setStartMode("place"); setEndMode("loop");
       setShowMap(false); setBuildStage("matching");
@@ -1063,6 +1066,15 @@ export function NativeWalkFlow({
                   ) : null}
                 </>
               ) : null}
+              <WalkChoices
+                label={t.choosePlace}
+                multiple
+                options={options}
+                selected={selectedPlaceSlugs}
+                onSelect={(slug) => setSelectedPlaceSlugs(previous =>
+                  previous.includes(slug) ? previous.filter(value => value !== slug) : [...previous, slug],
+                )}
+              />
               <WalkChoices
                 label={t.walking}
                 variant="segment"
