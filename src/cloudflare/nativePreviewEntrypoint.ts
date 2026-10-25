@@ -45,7 +45,24 @@ export function nativePreviewReady(env: Env): boolean {
     const media = new URL(String(env.CITYWALK_MEDIA_S3_ENDPOINT));
     // Hyperdrive's runtime hostname is a proxy, NOT evidence of its Neon origin.
     // Pins must first be privately verified against the control-plane identity.
-    return pins.syntheticOnly === true && pins.originVerified === true &&
+    const synthetic = pins.syntheticOnly === true;
+    // Real-data preview is a distinct, explicitly reviewed mode. These pins are
+    // deliberately exact: a generic Neon host or a claimed "preview" role is not enough.
+    // The artifact remains deployment-locked; review evidence must be independently
+    // verified before any separate owner-approved activation.
+    const reviewedRealPreview = pins.syntheticOnly === false &&
+      pins.dataClassification === "reviewed-real-preview" &&
+      pins.neonProjectId === "lively-morning-52726120" &&
+      pins.branchId === "br-sweet-snow-b94c3j20" &&
+      pins.hyperdriveId === "296bd4ea316b4ab88489330b858ebb34" &&
+      pins.originHost === "ep-summer-bread-b9ugomnk.c-7.eu-central-1.aws.neon.tech" &&
+      pins.database === "citywalk_preview_app" &&
+      pins.role === "citywalk_preview_app_runtime" &&
+      pins.provenanceReviewed === true && pins.mediaRightsReviewed === true &&
+      pins.privacyReviewed === true &&
+      typeof pins.reviewEvidenceSha256 === "string" &&
+      /^[a-f0-9]{64}$/.test(pins.reviewEvidenceSha256);
+    return (synthetic || reviewedRealPreview) && pins.originVerified === true &&
       /^[a-f0-9]{32}$/.test(pins.hyperdriveId) && pins.hyperdriveId !== "00000000000000000000000000000000" &&
       pins.hyperdriveId === env.CITYWALK_PREVIEW_BOUND_HYPERDRIVE &&
       /^ep-[a-z0-9-]+\.[a-z0-9.-]+\.neon\.tech$/.test(pins.originHost) && !pins.originHost.includes("-pooler.") &&
