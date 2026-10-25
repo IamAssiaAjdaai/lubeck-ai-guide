@@ -1,6 +1,7 @@
 name: Validate Cloudflare vinext build
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: [develop]
     paths:
@@ -19,6 +20,10 @@ on:
       - "tsconfig.json"
       - "tsconfig.cloudflare.json"
       - ".github/workflows/cloudflare-vinext-validate.yml"
+
+concurrency:
+  group: cloudflare-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
