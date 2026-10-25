@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "purpose": "offline-native-preview-synthetic-fixture",
+  "attestation": "synthetic-content-authored-for-testing-only",
+  "city": {
+    "id": "fictional-demo-city",
+    "name": "Demo City (fictional)"
+  },
+  "places": [
+    {
+      "id": "demo-1",
+      "name": "The Blue Clock Plaza",
+      "description": "A fictional public square used to test place cards.",
+      "latitude": 0,
+      "longitude": 0
+    },
+    {
+      "id": "demo-2",
+      "name": "The Paper Bridge",
+      "description": "An invented walking stop for preview route testing.",
+      "latitude": 0.001,
+      "longitude": 0.001
+    },
+    {
+      "id": "demo-3",
+      "name": "The Lantern Garden",
+      "description": "A made-up garden used only for UI test content.",
+      "latitude": 0.002,
+      "longitude": 0.002
+    }
+  ],
+  "sourceUrls": [],
+  "media": [],
+  "users": [],
+  "sessions": [],
+  "commerce": []
+}
