@@ -21,7 +21,7 @@ beforeEach(()=>{
  });
 });
 afterEach(cleanup);
-const callbacks=()=>({onCreate:vi.fn(),onMedia:vi.fn(),onProfile:vi.fn(),onDrafts:vi.fn(),onResume:vi.fn()});
+const callbacks=()=>({onCreate:vi.fn(),onMedia:vi.fn(),onProfile:vi.fn(),onDrafts:vi.fn(),onCalendar:vi.fn(),onResume:vi.fn()});
 describe('trustworthy Overview contract',()=>{
  it('retains older saved drafts alongside newer generations, uses actual edit dates and scopes every read',async()=>{
   const d=await loadOverview(projects);expect(d.draftCount).toBe(2);expect(d.packCount).toBe(2);expect(d.entries).toHaveLength(4);
@@ -60,7 +60,7 @@ describe('trustworthy Overview contract',()=>{
  it('loads an honest empty state and routes create/profile through existing callbacks',async()=>{
   const cb=callbacks();render(<WorkspaceOverview projects={[]} listOnly={false} {...cb}/>);
   fireEvent.click(await screen.findByRole('button',{name:'Unternehmen anlegen'}));expect(cb.onProfile).toHaveBeenCalledWith(undefined);
-  expect(screen.getByText('Hier wird dein erster Pack sichtbar.')).toBeTruthy();
+  expect(screen.getByText('Noch keine gespeicherten Entwürfe oder Packs.')).toBeTruthy();
  });
  it('passes exact project and generation identity for resume; draft resume never substitutes the newest pack',async()=>{
   const cb=callbacks();render(<WorkspaceOverview projects={projects} activeProjectId="b" listOnly {...cb}/>);

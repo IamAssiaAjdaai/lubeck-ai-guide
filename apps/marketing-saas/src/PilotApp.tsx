@@ -4,6 +4,7 @@ import { api } from "./api";
 import { serviceCity, serviceCitySchema, withServiceCity } from "./businessProfile";
 import { safeWorkspaceDestination, workspaceView } from "./routes";
 import PackWorkspace from "./PackWorkspace";
+import CalendarScreen from "./CalendarScreen";
 import WorkspaceOverview from "./WorkspaceOverview";
 import CreativeStudio from "./CreativeStudio";
 import "./workspace.css";
@@ -13,14 +14,15 @@ import "./studio.css";
 import "./reference.css";
 import PdfImport from './PdfImport';
 import WorkspaceIdentity from "./WorkspaceIdentity";
-import { House, SquarePen, Files, Palette, Settings2, Images, ShieldCheck, UserRound, ChevronDown, LogOut } from "lucide-react";
+import { House, CalendarDays, SquarePen, Files, Palette, Settings2, Images, ShieldCheck, UserRound, ChevronDown, LogOut } from "lucide-react";
 const workspaceNav = [
-  {key:"overview",label:"Übersicht",shortLabel:"Start",icon:House},
-  {key:"campaigns",label:"Inhalte erstellen",shortLabel:"Erstellen",icon:SquarePen},
-  {key:"contents",label:"Content Packs",shortLabel:"Packs",icon:Files},
-  {key:"projects",label:"Marke & Wissen",shortLabel:"Wissen",icon:Palette},
-  {key:"media",label:"Medien",shortLabel:"Medien",icon:Images},
-  {key:"usage",label:"Einstellungen",shortLabel:"Konto",icon:Settings2},
+  {key:"overview",label:"Start",shortLabel:"Start",icon:House,primary:true},
+  {key:"calendar",label:"Kalender",shortLabel:"Kalender",icon:CalendarDays,primary:true},
+  {key:"campaigns",label:"Erstellen",shortLabel:"Erstellen",icon:SquarePen,primary:true},
+  {key:"contents",label:"Meine Inhalte",shortLabel:"Inhalte",icon:Files,primary:true},
+  {key:"projects",label:"Unternehmen & Wissen",shortLabel:"Wissen",icon:Palette,primary:false},
+  {key:"media",label:"Medien",shortLabel:"Medien",icon:Images,primary:false},
+  {key:"usage",label:"Einstellungen",shortLabel:"Konto",icon:Settings2,primary:false},
 ];
 type Project = { id: string; name: string; revision: number; role?: string };
 type Detail = Project & {
@@ -195,8 +197,11 @@ export default function PilotApp() {
         <div className="brand">
           <WorkspaceIdentity />
         </div>
-        <nav className="side-nav" aria-label="Arbeitsbereich">
-          {workspaceNav.map(({key,label,icon:Icon})=><button key={key} aria-current={tab===key?"page":undefined} className={tab===key?"active":""} onClick={()=>navigateTab(key)}><Icon size={18} strokeWidth={1.7} aria-hidden="true"/><span>{label}</span></button>)}
+        <nav className="side-nav" aria-label="Hauptnavigation">
+          {workspaceNav.filter(item=>item.primary).map(({key,label,icon:Icon})=><button key={key} aria-current={tab===key?"page":undefined} className={tab===key?"active":""} onClick={()=>navigateTab(key)}><Icon size={18} strokeWidth={1.7} aria-hidden="true"/><span>{label}</span></button>)}
+        </nav>
+        <nav className="side-nav w-calendar-secondary-nav" aria-label="Weitere Bereiche">
+          {workspaceNav.filter(item=>!item.primary).map(({key,label,icon:Icon})=><button key={key} aria-current={tab===key?"page":undefined} className={tab===key?"active":""} onClick={()=>navigateTab(key)}><Icon size={18} strokeWidth={1.7} aria-hidden="true"/><span>{label}</span></button>)}
         </nav>
         <p className="sidebar-note">
           <ShieldCheck size={18} strokeWidth={1.6} aria-hidden="true"/><span>Dein Inhalt. Deine Freigabe.<small>Du veröffentlichst selbst.</small></span>
@@ -216,10 +221,15 @@ export default function PilotApp() {
           <details className="account-menu"><summary aria-label="Konto öffnen"><UserRound size={18} strokeWidth={1.7} aria-hidden="true"/><span className="account-name">{session.user.name}</span><ChevronDown size={13} aria-hidden="true"/></summary><div className="account-popover"><strong>{session.user.name}</strong><p>Lokales Testkonto · keine Live-KI</p><button className="button secondary" disabled={busy||packDirty} onClick={()=>void perform(async()=>{await api("/api/auth/sign-out",{});setSession(null);setDetail(null);setProjects([]);setResumeId(undefined);setTab("overview");history.replaceState(null,"","/auth");})}><LogOut size={15} aria-hidden="true"/>Abmelden</button></div></details>
         </header>
         <main className={`workspace ${tab === "overview" ? "reference-overview" : ""}`}>
-          {tab !== "overview" && <div className="workspace-page-heading"><p className="eyebrow">{tab === "overview" ? `Willkommen zurück, ${session.user.name}.` : "Dein Marketing"}</p>
+          {tab !== "overview" && tab !== "calendar" && <div className="workspace-page-heading"><p className="eyebrow">{tab === "overview" ? `Willkommen zurück, ${session.user.name}.` : "Dein Marketing"}</p>
           <h1>{tab === "overview" ? "Dein Marketing im Überblick." : tab === "campaigns" ? "Inhalte erstellen" : tab === "contents" ? "Deine Content Packs" : tab === "projects" ? "Marke & Wissen" : tab === "media" ? "Deine Medien" : "Einstellungen"}</h1>
           <p className="workspace-intro">{tab === "overview" ? `${detail?.name??"Dein Unternehmen"} · Dein Wissen wird zu Inhalten. Du behältst die Freigabe.` : tab === "projects" ? "Dein Unternehmenswissen und deine Marke – die Grundlage für passende Inhalte." : tab === "contents" ? "Deine Kampagnen, Entwürfe und gespeicherten Beiträge. Alles unter deiner Kontrolle." : tab === "media" ? "Eigene Quellen hochladen, Rechte prüfen und für deine Beiträge freigeben." : "Einfach erstellen, prüfen und herunterladen. Du veröffentlichst selbst."}</p></div>}
-          {(tab === "overview" || tab === "contents") && <WorkspaceOverview projects={projects} activeProjectId={detail?.id} onProfile={(pid)=>{if(packDirty){navigateTab("projects");return;}void perform(async()=>{if(pid&&pid!==detail?.id)await open(pid);setBrandSection("profile");navigateTab("projects");});}} listOnly={tab === "contents"} onCreate={()=>{setResumeId(undefined); if(!detail?.context){setBrandSection("profile");navigateTab("projects");}else navigateTab("campaigns");}} onMedia={()=>navigateTab("media")} onDrafts={()=>navigateTab("contents")} onResume={(pid,gid)=>void perform(async()=>{await open(pid);setResumeId(gid);navigateTab("campaigns");})} />}
+          {(tab === "overview" || tab === "contents") && <WorkspaceOverview projects={projects} activeProjectId={detail?.id} onProfile={(pid)=>{if(packDirty){navigateTab("projects");return;}void perform(async()=>{if(pid&&pid!==detail?.id)await open(pid);setBrandSection("profile");navigateTab("projects");});}} listOnly={tab === "contents"} onCreate={()=>{setResumeId(undefined); if(!detail?.context){setBrandSection("profile");navigateTab("projects");}else navigateTab("campaigns");}} onMedia={()=>navigateTab("media")} onDrafts={()=>navigateTab("contents")} onCalendar={()=>navigateTab("calendar")} onResume={(pid,gid)=>void perform(async()=>{await open(pid);setResumeId(gid);navigateTab("campaigns");})} />}
+          {tab === "calendar" && <CalendarScreen
+            project={detail?{id:detail.id,name:detail.name,role:detail.role}:null}
+            onCreate={()=>{setResumeId(undefined);if(!detail){setBrandSection("profile");navigateTab("projects");}else navigateTab("campaigns");}}
+            onOpenPack={gid=>{setResumeId(gid);navigateTab("campaigns");}}
+          />}
           {error && (
             <div role="alert" className="pilot-error">
               {error}
@@ -558,7 +568,7 @@ export default function PilotApp() {
         </main>
       </div>
       <nav className="mobile-nav" aria-label="Mobile Navigation">
-        {workspaceNav.map(({key,label,shortLabel,icon:Icon})=><button key={key} aria-label={label} aria-current={tab===key?"page":undefined} onClick={()=>navigateTab(key)}><Icon size={19} strokeWidth={1.7} aria-hidden="true"/><span>{shortLabel}</span></button>)}
+        {workspaceNav.filter(item=>item.primary).map(({key,label,shortLabel,icon:Icon})=><button key={key} aria-label={label} aria-current={tab===key?"page":undefined} onClick={()=>navigateTab(key)}><Icon size={19} strokeWidth={1.7} aria-hidden="true"/><span>{shortLabel}</span></button>)}
       </nav>
     </div>
   );

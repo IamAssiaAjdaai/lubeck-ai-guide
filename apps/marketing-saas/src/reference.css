@@ -219,3 +219,101 @@
  .simple-workspace .mobile-nav button > span { font-size: 14px; font-weight: 600; line-height: 1.4; letter-spacing: -.015em; }
  .simple-workspace .workspace { padding-bottom: calc(124px + env(safe-area-inset-bottom)); }
 }
+.simple-workspace .calendar-preview {
+  background: #f3f6eb;
+  border: 1px solid #dce7d0;
+  border-radius: 14px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.simple-workspace .calendar-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.simple-workspace .calendar-preview-header span {
+  font-size: 12px;
+  color: #68786b;
+}
+
+.simple-workspace .calendar-preview-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.simple-workspace .calendar-preview-days span {
+  text-align: center;
+  padding: 10px 0;
+  background: white;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.simple-workspace .calendar-preview > p {
+  font-size: 13px;
+  color: #526047;
+  margin: 14px 0 0;
+}
+
+
+/* WIRKFADEN MOBILE UX POLISH 01 */
+@media (max-width: 580px) {
+  .simple-workspace .topbar {
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .simple-workspace .topbar .workspace-company {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .simple-workspace .topbar .workspace-company select {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    text-overflow: ellipsis;
+  }
+
+  .simple-workspace .workspace {
+    min-width: 0;
+  }
+
+  .simple-workspace .mobile-nav button {
+    min-width: 0;
+  }
+}
+
+/* WIRKFADEN MOBILE TOPBAR ALIGNMENT FIX */
+@media (max-width: 580px) {
+  .simple-workspace .topbar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 12px;
+    height: auto;
+    min-height: 70px;
+  }
+
+  .simple-workspace .topbar .workspace-company {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .simple-workspace .topbar .workspace-company select {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .simple-workspace .topbar > :last-child {
+    flex-shrink: 0;
+  }
+}

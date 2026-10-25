@@ -1,103 +1,366 @@
 import { useEffect, useState } from 'react';
-import ContentLibrary, { CampaignCard, ContentThumbnail } from './ContentLibrary';
-import WorkspaceHeroVisual from './WorkspaceHeroVisual';
-import { ArrowRight, FileText, Images, FolderOpen, Layers, BookOpen, CalendarDays, Target, Sparkles, Clapperboard, Check, ShieldCheck } from 'lucide-react';
-import { goalLabel, channelLabel, loadOverview, nextAction, type OverviewData, type OverviewProject } from './overview.data';
+import {
+  ArrowRight,
+  BookOpen,
+  CalendarDays,
+  CheckCircle2,
+  Circle,
+  FolderOpen,
+  Images,
+  PenLine,
+  ShieldCheck,
+  Sparkles,
+  Target,
+} from 'lucide-react';
+import ContentLibrary, { CampaignCard } from './ContentLibrary';
+import {
+  channelLabel,
+  goalLabel,
+  loadOverview,
+  nextAction,
+  type OverviewData,
+  type OverviewProject,
+} from './overview.data';
+import { loadCalendarPreview, type CalendarPreviewData } from './calendar-preview.data';
+import './workspace-start-v2.css';
 
-export default function WorkspaceOverview({ projects, activeProjectId, listOnly, onCreate, onMedia, onProfile, onDrafts, onResume }: {
-  projects: OverviewProject[]; activeProjectId?: string; listOnly: boolean;
-  onCreate: () => void; onMedia: () => void; onProfile: (pid?: string) => void;
-  onDrafts: () => void; onResume: (pid: string, gid?: string) => void;
-}) {
+type Props = {
+  projects: OverviewProject[];
+  activeProjectId?: string;
+  listOnly: boolean;
+  onCreate: () => void;
+  onMedia: () => void;
+  onProfile: (pid?: string) => void;
+  onDrafts: () => void;
+  onCalendar: () => void;
+  onResume: (pid: string, gid?: string) => void;
+};
+
+function thisWeek(reference = new Date()) {
+  const monday = new Date(reference.getFullYear(), reference.getMonth(), reference.getDate());
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  const names = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  return names.map((label, offset) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + offset);
+    return {
+      label,
+      day: date.getDate(),
+      today: date.toDateString() === reference.toDateString(),
+      dateTime: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`,
+    };
+  });
+}
+
+/** Start is read-only. All writes continue through existing, authenticated workflows. */
+export default function WorkspaceOverview({
+  projects,
+  activeProjectId,
+  listOnly,
+  onCreate,
+  onMedia,
+  onProfile,
+  onDrafts,
+  onCalendar,
+  onResume,
+}: Props) {
+  const [calendarRetry, setCalendarRetry] = useState(0);
+  const [calendarResult, setCalendarResult] = useState<{
+    projectId: string;
+    data?: CalendarPreviewData;
+    error?: boolean;
+  } | null>(null);
   const [retry, setRetry] = useState(0);
-  const requestKey=JSON.stringify([projects,retry]);
-  const [result,setResult]=useState<{key:string;data?:OverviewData;error?:boolean}|null>(null);
-  useEffect(()=>{
-    let active=true;
-    void loadOverview(projects).then(data=>{if(active)setResult({key:requestKey,data});}).catch(()=>{if(active)setResult({key:requestKey,error:true});});
-    return ()=>{active=false;};
-  },[projects,requestKey]);
-  const data=result?.key===requestKey?result.data:undefined;
-  const error=result?.key===requestKey&&result.error;
-  if(error) return <div className="overview-feedback"><p role="alert">Deine Übersicht konnte nicht vollständig geladen werden. Es werden keine unbestätigten Zahlen oder Status angezeigt.</p><button className="button secondary" onClick={()=>setRetry(n=>n+1)}>Erneut laden</button></div>;
-  if(!data) return <p className="overview-feedback" role="status">Deine Unternehmen und Inhalte werden geladen …</p>;
-  const action=nextAction(data,activeProjectId);
-  const current=data.projects.find(p=>p.project.id===activeProjectId)??data.projects[0];
-  const latest=data.entries.find(e=>e.projectId===current?.project.id&&e.kind==='pack'&&e.posts?.length);
-  const heroPhoto=latest?.thumbnail?.role==='business_photo'?latest.thumbnail:undefined;
-  const entries=data.entries.filter(e=>e.projectId===current?.project.id&&e!==latest).slice(0,3);
-  const facts=current?.context?.facts.filter(f=>f.confirmation)??[];
-  const city=current?.context?.markets?.find(m=>['owner-service-city','owner-city'].includes(m.id))?.name;
-  const selectedEntries=data.entries.filter(e=>e.projectId===current?.project.id);
-  const savedDrafts=selectedEntries.filter(e=>e.kind==='draft').length;
-  const savedPacks=current?.packs.filter(p=>p.status==='completed').length??0;
+  const requestKey = JSON.stringify([projects, retry]);
+  const [result, setResult] = useState<{
+    key: string;
+    data?: OverviewData;
+    error?: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void loadOverview(projects)
+      .then((data) => {
+        if (active) setResult({ key: requestKey, data });
+      })
+      .catch(() => {
+        if (active) setResult({ key: requestKey, error: true });
+      });
+    return () => {
+      active = false;
+    };
+  }, [projects, requestKey]);
+
+  const selectedCalendarProjectId =
+    activeProjectId && projects.some((p) => p.id === activeProjectId)
+      ? activeProjectId
+      : projects[0]?.id;
+
+  useEffect(() => {
+    if (!selectedCalendarProjectId || listOnly) return;
+    let active = true;
+
+    void loadCalendarPreview(selectedCalendarProjectId)
+      .then((data) => {
+        if (active) setCalendarResult({
+          projectId: selectedCalendarProjectId,
+          data,
+        });
+      })
+      .catch(() => {
+        if (active) setCalendarResult({
+          projectId: selectedCalendarProjectId,
+          error: true,
+        });
+      });
+
+    return () => { active = false; };
+  }, [selectedCalendarProjectId, listOnly, calendarRetry]);
+
+  const data = result?.key === requestKey ? result.data : undefined;
+  const error = result?.key === requestKey && result.error;
+
+  if (error) {
+    return (
+      <div className="overview-feedback" role="alert">
+        <p>Deine Übersicht konnte nicht vollständig geladen werden. Ungeprüfte Zahlen werden nicht angezeigt.</p>
+        <button type="button" className="button secondary" onClick={() => setRetry((n) => n + 1)}>
+          Erneut laden
+        </button>
+      </div>
+    );
+  }
+  if (!data) {
+    return <p className="overview-feedback" role="status">Deine Unternehmen und Inhalte werden geladen …</p>;
+  }
+
+  if (listOnly) {
+    return (
+      <div className="overview-content">
+        {data.capped && (
+          <p className="overview-limit">Die letzten 100 Aufträge je Unternehmen. Keine Laufzeit-Gesamtzahl.</p>
+        )}
+        {data.entries.length ? (
+          <ContentLibrary entries={data.entries} onResume={onResume} />
+        ) : (
+          <div className="workspace-empty">
+            <FolderOpen size={26} aria-hidden="true" />
+            <div>
+              <strong>Noch keine gespeicherten Inhalte.</strong>
+              <p>Dein erster Pack beginnt mit deinem Unternehmen und bestätigten Angaben.</p>
+              <button type="button" className="button primary" onClick={onCreate}>
+                Inhalte vorbereiten <ArrowRight size={16} aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const current = data.projects.find((item) => item.project.id === activeProjectId) ?? data.projects[0];
+  const projectId = current?.project.id;
+  const action = nextAction(data, activeProjectId);
+  const entries = data.entries.filter((item) => item.projectId === projectId);
+  const latestPack = entries.find((item) => item.kind === 'pack' && item.posts?.length);
+  const latestDraft = entries.find((item) => item.kind === 'draft');
+  const confirmedCount = current?.context?.facts.filter((fact) => fact.confirmation).length ?? 0;
+  const city = current?.context?.markets?.find((market) => ['owner-service-city', 'owner-city'].includes(market.id))?.name;
+  const selectedGoal = latestPack?.goal ?? current?.draft?.goal;
+  const selectedChannel = latestPack?.channel ?? current?.draft?.channel;
+  const calendarState =
+    calendarResult?.projectId === projectId && !listOnly
+      ? calendarResult : null;
+  const calendarEntries = [...(calendarState?.data?.entries ?? [])]
+    .sort((a, b) => Date.parse(a.plannedAt) - Date.parse(b.plannedAt));
+  const nextCalendarEntry = calendarEntries[0];
+  const calendarStatusLabel = {
+    draft: 'Entwurf',
+    review: 'Zur Prüfung',
+    ready: 'Bereit zum Posten',
+    published: 'Manuell veröffentlicht',
+  } as const;
+
+  const week = thisWeek();
+
   function continueNext() {
-    if(action.kind==='profile')onProfile(action.projectId);
-    else if(action.kind==='resume'&&action.projectId)onResume(action.projectId,action.generationId);
+    if (action.kind === 'profile') onProfile(action.projectId);
+    else if (action.kind === 'resume' && action.projectId) onResume(action.projectId, action.generationId);
     else onCreate();
   }
-  if(listOnly) return <div className="overview-content">
-    {data.capped&&<p className="overview-limit">Die letzten 100 Aufträge je Unternehmen. Keine Laufzeit-Gesamtzahl.</p>}
-    {data.entries.length?<ContentLibrary entries={data.entries} onResume={onResume}/>:<div className="workspace-empty"><FolderOpen size={26} aria-hidden="true"/><div><strong>Noch keine gespeicherten Inhalte.</strong><p>Dein erster Pack beginnt mit deinem Unternehmen und bestätigten Angaben.</p><button className="button primary" onClick={onCreate}>Inhalte vorbereiten<ArrowRight size={16} aria-hidden="true"/></button></div></div>}
-  </div>;
-  return <div className="overview-content reference-dashboard">
-    <section className="reference-hero" aria-labelledby="overview-title">
-      <div className="reference-hero-copy">
-        <h1 id="overview-title">{latest?'Deine Inhalte. Bereit für deine Handschrift.':'Dein Marketing beginnt mit deinem Unternehmen.'}</h1>
-        <p className="workspace-intro">{latest?'Prüfe deine Beiträge, verfeinere die Texte und gib frei, was zu deinem Unternehmen passt.':'Teile dein Wissen. Bereite passende Beiträge vor. Du behältst die letzte Entscheidung.'}</p>
-      </div>
-      <figure className="reference-hero-photo">
-        <WorkspaceHeroVisual photo={heroPhoto} projectId={current?.project.id}/>
-        <div className="reference-photo-note"><Sparkles size={24} aria-hidden="true"/><span>Dein Wissen.<br/>Dein Marketing.</span></div>
-      </figure>
-      <dl className="reference-metrics overview-kpis" aria-label="Deine gespeicherten Inhalte">
-        <div><dt><FileText aria-hidden="true"/>Beiträge</dt><dd>{latest?.posts?.length??0}<span>{latest?'Gespeicherte Texte':'Noch kein Pack'}</span></dd></div>
-        <div><dt><Layers aria-hidden="true"/>Entwürfe</dt><dd>{savedDrafts}<span>Ziel &amp; Kanal vorbereitet</span></dd></div>
-        <div><dt><FolderOpen aria-hidden="true"/>Packs</dt><dd>{savedPacks}<span>Geladener Verlauf</span></dd></div>
-        <div><dt><Clapperboard aria-hidden="true"/>Reels &amp; Stories</dt><dd className="metric-planned">Geplant<span>Noch nicht verfügbar</span></dd></div>
-      </dl>
-    </section>
-        <section className="reference-next" aria-labelledby="new-content-title"><p className="card-kicker"><Sparkles size={21} aria-hidden="true"/>Dein nächster Schritt</p><h2 id="new-content-title">{action.title}</h2><p>{action.description}</p><button className="button primary" onClick={continueNext}>{action.label}<ArrowRight size={17} aria-hidden="true"/></button></section>
-    <div className="reference-middle">
-      <section className="reference-surface reference-strategy" aria-labelledby="strategy-title">
-        <div className="section-heading"><h2 id="strategy-title"><span className="reference-icon"><Target aria-hidden="true"/></span>Deine Richtung</h2><span className="reference-meta">{latest?'Aus deinem Pack':'Noch offen'}</span></div>
-        <div className="reference-direction-grid">
-          <div><span className="reference-icon"><Target aria-hidden="true"/></span><p>Ziel</p><strong>{latest?goalLabel(latest.goal):current?.draft?goalLabel(current.draft.goal):'Dein nächster Schritt'}</strong></div>
-          <div><span className="reference-icon lilac"><FileText aria-hidden="true"/></span><p>Kanal</p><strong>{latest?.channel??(current?.draft?channelLabel(current.draft.channel):'Noch nicht gewählt')}</strong></div>
-          <div><span className="reference-icon yellow"><ShieldCheck aria-hidden="true"/></span><p>Grundlage</p><strong>{facts.length} bestätigte Angaben</strong></div>
+
+  function resumeDraft() {
+    if (projectId) onResume(projectId);
+    else onCreate();
+  }
+
+  return (
+    <div className="overview-content w-start">
+      <section className="w-start-focus" aria-labelledby="start-main-title">
+        <div className="w-start-focus-copy">
+          <p className="w-start-eyebrow"><Sparkles size={17} aria-hidden="true" /> DEIN NÄCHSTER SCHRITT</p>
+          <h1 id="start-main-title">{action.title}</h1>
+          <p className="w-start-lead">{action.description}</p>
+          <button type="button" className="button primary w-start-main-button" onClick={continueNext}>
+            {action.label} <ArrowRight size={18} aria-hidden="true" />
+          </button>
         </div>
-        <div className="reference-strategy-note"><Sparkles size={22} aria-hidden="true"/><p>Du bestimmst die Richtung. Eine übergreifende KI-Strategie ist <strong>geplant</strong>; ein Pack arbeitet mit einem Ziel und konkreten Aufgaben.</p></div>
+        <div className="w-start-progress" aria-label="Gespeicherter Stand deines Unternehmens">
+          <span className="w-start-progress-icon"><ShieldCheck size={24} aria-hidden="true" /></span>
+          <p className="w-start-small-label">Dein bisheriger Stand</p>
+          <strong>{current?.project.name ?? 'Noch kein Unternehmen angelegt'}</strong>
+          <ul>
+            <li>{current ? <CheckCircle2 size={17} aria-hidden="true" /> : <Circle size={17} aria-hidden="true" />} {current ? 'Unternehmen angelegt' : 'Unternehmen noch anlegen'}</li>
+            <li>{confirmedCount > 0 ? <CheckCircle2 size={17} aria-hidden="true" /> : <Circle size={17} aria-hidden="true" />} {confirmedCount} bestätigte Angaben</li>
+            <li><Target size={17} aria-hidden="true" /> {selectedGoal ? goalLabel(selectedGoal) : 'Marketing-Ziel noch offen'}</li>
+          </ul>
+        </div>
       </section>
-      <section className="reference-surface reference-week" aria-labelledby="week-title">
-        <div className="section-heading"><h2 id="week-title"><span className="reference-icon neutral"><CalendarDays aria-hidden="true"/></span>Dein Aktionsplan</h2></div>
-        <p className="reference-meta">{latest?.days?.length?'Gespeicherte Aufgaben · kein Versandkalender':latest?'Für diesen Pack liegt hier noch kein Aktionsplan vor.':'Ein 7-Tage-Plan gehört zu deinem ersten Pack.'}</p>
-        {latest?.days?.length?<ol className="reference-week-list">{latest.days.slice(0,3).map(day=><li key={day.day}><span>Tag <strong>{day.day}</strong></span><div><strong>{day.time}</strong><p>{day.task}</p></div></li>)}</ol>:null}{latest?.days?.length?<details className="reference-all-days"><summary>Alle {latest.days.length} Aufgaben lesen</summary><ol>{latest.days.map(day=><li key={day.day}><strong>Tag {day.day} · {day.time}</strong><p>{day.task}</p></li>)}</ol></details>:<div className="reference-plan-empty"><CalendarDays size={30} aria-hidden="true"/><p>Noch keine Aufgaben vorbereitet.</p></div>}
+
+      <section className="w-start-shortcuts" aria-labelledby="start-shortcuts-title">
+        <div className="w-start-section-heading">
+          <h2 id="start-shortcuts-title">Was möchtest du machen?</h2>
+          <p>Wähle einfach deinen nächsten Schritt.</p>
+        </div>
+        <div className="w-start-shortcut-grid">
+          <button type="button" className="w-start-shortcut" onClick={() => onProfile(projectId)}>
+            <span className="w-start-shortcut-icon green"><BookOpen aria-hidden="true" /></span>
+            <span><strong>Unternehmen &amp; Fakten</strong><small>Website, PDF und bestätigte Angaben</small></span>
+            <ArrowRight className="w-start-shortcut-arrow" size={19} aria-hidden="true" />
+          </button>
+          <button type="button" className="w-start-shortcut" onClick={onCreate}>
+            <span className="w-start-shortcut-icon lilac"><PenLine aria-hidden="true" /></span>
+            <span><strong>Inhalte erstellen</strong><small>Ein Ziel wählen und Inhalte vorbereiten</small></span>
+            <ArrowRight className="w-start-shortcut-arrow" size={19} aria-hidden="true" />
+          </button>
+          <button type="button" className="w-start-shortcut" onClick={onDrafts}>
+            <span className="w-start-shortcut-icon yellow"><FolderOpen aria-hidden="true" /></span>
+            <span><strong>Meine Inhalte</strong><small>Entwürfe und Content Packs öffnen</small></span>
+            <ArrowRight className="w-start-shortcut-arrow" size={19} aria-hidden="true" />
+          </button>
+        </div>
       </section>
-    </div>
-    <div className="reference-lower">
-      <section className="reference-surface reference-posts" aria-labelledby="current-pack-title">
-        <div className="section-heading"><h2 id="current-pack-title"><span className="reference-icon"><FileText aria-hidden="true"/></span>Dein aktueller Marketing Pack</h2><button className="overview-text-action" onClick={onDrafts}>Alle Packs<ArrowRight size={16} aria-hidden="true"/></button></div>
-        {latest?<><p className="reference-pack-context">{goalLabel(latest.goal)} · Version {latest.version} · <span>{latest.statusLabel}</span>{latest.originLabel?` · ${latest.originLabel}`:''}</p>
-          <div className="reference-post-grid">{latest.posts!.map((post,i)=><article className="reference-post-card" key={i}>
-            <header><span>{channelLabel(post.channel)} · {i+1}</span><span className="reference-post-state" data-approved={latest.approvedPostIndices?.includes(i)??false}>{latest.approvedPostIndices?.includes(i)?<><Check size={14} aria-hidden="true"/>Geprüft</>:'Prüfung offen'}</span></header>
-            <ContentThumbnail thumbnail={latest.thumbnail?.postIndex===i?latest.thumbnail:undefined}/>
-            <h3>Beitrag {i+1}</h3><p className="reference-post-text">{post.text||'Den gespeicherten Text im Pack ansehen.'}</p>
-          </article>)}</div>
-          <p className="reference-meta">{latest.dateLabel}: <time dateTime={latest.date}>{new Date(latest.date).toLocaleDateString('de-DE')}</time> · Bilder sind optional.</p><button className="overview-text-action" aria-label={`Weiter bearbeiten: ${latest.business}, ${goalLabel(latest.goal)}, Paket`} onClick={()=>onResume(latest.projectId,latest.generationId)}>Pack öffnen<ArrowRight size={16} aria-hidden="true"/></button>
-        </>:<div className="workspace-empty"><FileText size={27} aria-hidden="true"/><div><strong>Hier wird dein erster Pack sichtbar.</strong><p>Drei Beiträge. Deine bestätigten Angaben. Deine Freigabe.</p></div></div>}
-      </section>
-      <aside className="reference-knowledge-column" aria-label="Dein Unternehmen und nächster Schritt">
-        <section className="reference-surface overview-brand" aria-labelledby="overview-brand-title">
-          <div className="section-heading"><h2 id="overview-brand-title"><span className="reference-icon"><BookOpen aria-hidden="true"/></span>Marke &amp; Wissen</h2></div>
-          <strong>{current?.project.name??'Noch kein Unternehmen'}</strong>
-          <dl className="reference-knowledge"><div><dt>Stadt</dt><dd>{city??'Noch nicht hinterlegt'}</dd></div><div><dt>Fakten</dt><dd>{facts.length} bestätigt</dd></div><div><dt>Bereitschaft</dt><dd>{current?.gate.ready?'Angaben für drei Themen vorhanden':'Angaben noch zu prüfen'}</dd></div></dl>
-          <button className="overview-text-action" onClick={()=>onProfile(current?.project.id)}>Profil ansehen<ArrowRight size={16} aria-hidden="true"/></button>
+
+        <section className="w-start-card w-start-calendar w-start-calendar-wide" aria-labelledby="start-calendar-title">
+          <div className="w-start-card-title"><span className="w-start-card-icon"><CalendarDays aria-hidden="true" /></span>
+            <div><h2 id="start-calendar-title">Dein Kalender</h2><p>Die Woche auf einen Blick</p></div>
+            <span className="w-start-quiet-tag">Manuelle Planung</span>
+          </div>
+          <div className="w-start-calendar-body">
+          <div className="w-start-week" aria-label="Aktuelle Woche zur Orientierung; gespeicherte Termine im Kalender öffnen">
+            {week.map((day) => (
+              <div className={`w-start-weekday${day.today ? ' is-today' : ''}`} key={day.dateTime}>
+                <span>{day.label}</span><time dateTime={day.dateTime}>{day.day}</time>
+              </div>
+            ))}
+          </div>
+          <div className="w-start-calendar-empty" aria-live="polite">
+            <CalendarDays aria-hidden="true" size={22} />
+            <div>
+              {!projectId ? (
+                <>
+                  <strong>Noch kein Unternehmen ausgewählt.</strong>
+                  <p>Wähle zuerst ein Unternehmen aus.</p>
+                </>
+              ) : !calendarState ? (
+                <p>Deine Termine werden geladen …</p>
+              ) : calendarState.error ? (
+                <>
+                  <strong>Kalender konnte nicht geladen werden.</strong>
+                  <p>Deine Termine wurden nicht verändert.</p>
+                  <button type="button" className="w-start-text-button"
+                    onClick={() => setCalendarRetry((value) => value + 1)}>
+                    Erneut laden
+                  </button>
+                </>
+              ) : nextCalendarEntry ? (
+                <>
+                  <strong>
+                    {channelLabel(nextCalendarEntry.channel)} · Beitrag {nextCalendarEntry.postIndex + 1}
+                  </strong>
+                  <p>
+                    {new Intl.DateTimeFormat('de-DE', {
+                      weekday: 'short',
+                      day: '2-digit',
+                      month: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }).format(new Date(nextCalendarEntry.plannedAt))}
+                    {' · '}
+                    {calendarStatusLabel[nextCalendarEntry.status]}
+                  </p>
+                  <p className="w-start-calendar-excerpt">{nextCalendarEntry.excerpt}</p>
+                  {calendarState.data?.capped && (
+                    <p>Weitere Termine sind möglicherweise nicht sichtbar.</p>
+                  )}
+                  <button type="button" className="w-start-text-button"
+                    onClick={onCalendar}>
+                    Kalender öffnen <ArrowRight size={16} aria-hidden="true" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <strong>Keine Beiträge für diese Woche geplant.</strong>
+                  <p>Plane einen gespeicherten Beitrag in deinem Kalender. Kein automatisches Posten.</p>
+                  {calendarState.data?.capped && (
+                    <p>Die Kalenderergebnisse sind möglicherweise unvollständig.</p>
+                  )}
+                  <button type="button" className="w-start-text-button"
+                    onClick={onCalendar}>
+                    Kalender öffnen <ArrowRight size={16} aria-hidden="true" />
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+          </div>
         </section>
 
-      </aside>
+
+      <div className="w-start-two-col w-start-bottom">
+        <section className="w-start-card" aria-labelledby="start-content-title">
+          <div className="w-start-card-title"><span className="w-start-card-icon lilac"><FolderOpen aria-hidden="true" /></span>
+            <div><h2 id="start-content-title">Zuletzt bearbeitet</h2><p>Direkt an deiner Arbeit weitermachen</p></div>
+          </div>
+          {entries.length ? (
+            <>
+              <div className="w-start-recent-list">
+                {entries.slice(0, 2).map((item) => <CampaignCard key={`${item.projectId}-${item.id}`} entry={item} compact onResume={onResume} />)}
+              </div>
+              <button type="button" className="w-start-text-button" onClick={onDrafts}>Alle Inhalte ansehen <ArrowRight size={16} aria-hidden="true" /></button>
+            </>
+          ) : (
+            <div className="w-start-empty-detail">
+              <p>Noch keine gespeicherten Entwürfe oder Packs.</p>
+              <button type="button" className="button secondary" onClick={onCreate}>Ersten Entwurf starten <ArrowRight size={16} aria-hidden="true" /></button>
+            </div>
+          )}
+          {latestDraft && !entries.slice(0,2).includes(latestDraft) && (
+            <button type="button" className="w-start-text-button" onClick={resumeDraft}>Gespeicherten Entwurf fortsetzen <ArrowRight size={16} aria-hidden="true" /></button>
+          )}
+        </section>
+
+        <section className="w-start-card" aria-labelledby="start-knowledge-title">
+          <div className="w-start-card-title"><span className="w-start-card-icon"><BookOpen aria-hidden="true" /></span>
+            <div><h2 id="start-knowledge-title">Dein Unternehmenswissen</h2><p>Die Grundlage für passende Inhalte</p></div>
+          </div>
+          <strong className="w-start-business-name">{current?.project.name ?? 'Noch kein Unternehmen'}</strong>
+          <dl className="w-start-brand-list">
+            <div><dt>Stadt</dt><dd>{city ?? 'Noch nicht hinterlegt'}</dd></div>
+            <div><dt>Bestätigte Fakten</dt><dd>{confirmedCount}</dd></div>
+            <div><dt>Ziel</dt><dd>{selectedGoal ? goalLabel(selectedGoal) : 'Noch offen'}</dd></div>
+            <div><dt>Kanal</dt><dd>{selectedChannel ? channelLabel(selectedChannel) : 'Noch offen'}</dd></div>
+            <div><dt>Grundlage</dt><dd>{current?.gate.ready ? 'Für drei Themen ausreichend' : 'Weitere Angaben nötig'}</dd></div>
+          </dl>
+          <div className="w-start-knowledge-actions">
+            <button type="button" className="w-start-text-button" onClick={() => onProfile(projectId)}>Angaben prüfen <ArrowRight size={16} aria-hidden="true" /></button>
+            <button type="button" className="w-start-text-button" onClick={onMedia}><Images size={16} aria-hidden="true" /> Medien ansehen</button>
+          </div>
+        </section>
+      </div>
+      {data.capped && <p className="overview-limit">Es werden nur die letzten 100 Aufträge je Unternehmen geladen.</p>}
+      <p className="w-start-safety">Geschlossener Pilot · keine Live-KI · kein automatisches Publishing. Alle Freigaben erfolgen durch dich.</p>
     </div>
-    {data.capped&&<p className="overview-limit">Die letzten 100 Aufträge je Unternehmen. Keine Laufzeit-Gesamtzahl.</p>}
-    {entries.length>0&&<section className="recent-content" aria-labelledby="recent-title"><div className="section-heading"><h2 id="recent-title">Zuletzt bearbeitet</h2><button className="overview-text-action" onClick={onDrafts}>Bibliothek öffnen<ArrowRight size={15} aria-hidden="true"/></button></div><div className="draft-list studio-recent">{entries.map(e=><CampaignCard key={`${e.projectId}-${e.id}`} entry={e} compact onResume={onResume}/>)}</div></section>}
-    <section className="reference-future" aria-label="Ausblick auf dein Marketing-Team"><div><h2>Ein Team für dein Marketing. Schritt für Schritt.</h2><p>Heute: Texte, geprüfte Quellen und manueller Export. Strategie, Kalender, Reels und Stories sind geplant.</p><span className="reference-future-status">Geschlossener Pilot · keine Live-KI · kein automatisches Publishing</span></div><button className="button secondary" onClick={onMedia}><Images size={18} aria-hidden="true"/>Eigene Medien ansehen</button></section>
-  </div>;
+  );
 }

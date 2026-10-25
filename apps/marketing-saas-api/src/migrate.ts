@@ -19,7 +19,7 @@ try {
     ...(config.creative
       ? ["0004_creative.sql", "0005_creative_privacy.sql"]
       : []),
-    ...(config.workspace ? ["0006_workspace.sql"] : []),
+    ...(config.workspace ? ["0006_workspace.sql", "0007_calendar.sql"] : []),
   ]) {
     const sql = await readFile(
       new URL("../migrations/" + name, import.meta.url),

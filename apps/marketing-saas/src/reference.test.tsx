@@ -5,7 +5,7 @@ import { api } from './api';
 vi.mock('./api',()=>({api:vi.fn()}));
 const request=vi.mocked(api);
 const projects=[{id:'a',name:'Firma A'},{id:'b',name:'Firma B'}];
-const callbacks=()=>({onCreate:vi.fn(),onMedia:vi.fn(),onProfile:vi.fn(),onDrafts:vi.fn(),onResume:vi.fn()});
+const callbacks=()=>({onCreate:vi.fn(),onMedia:vi.fn(),onProfile:vi.fn(),onDrafts:vi.fn(),onCalendar:vi.fn(),onResume:vi.fn()});
 let old=false;
 beforeEach(()=>{
  old=false;request.mockReset();
@@ -21,57 +21,108 @@ beforeEach(()=>{
 });
 afterEach(cleanup);
 describe('Owner reference architecture with truthful saved data',()=>{
- it('shows three selected-company texts without leaking another selected-project overview or fake social media',async()=>{
-  render(<WorkspaceOverview projects={projects} activeProjectId="b" listOnly={false} {...callbacks()}/>);
-  await screen.findByRole('heading',{level:1,name:'Deine Inhalte. Bereit für deine Handschrift.'});
-  const pack=screen.getByRole('region',{name:'Dein aktueller Marketing Pack'});
-  expect(within(pack).getAllByRole('article')).toHaveLength(3);
-  expect(within(pack).getByText('B gespeicherter Text 0')).toBeTruthy();
-  expect(screen.queryByText('A gespeicherter Text 0')).toBeNull();
-  expect(screen.getByText('Markenillustration · kein Unternehmensfoto')).toBeTruthy();
-  expect(within(pack).queryByRole('img')).toBeNull();
-  expect(within(pack).getByText(/ohne Live-KI/)).toBeTruthy();
- });
- it('uses per-post exact-version review states, never generation completion or aggregate approval',async()=>{
-  old=true;render(<WorkspaceOverview projects={[projects[0]]} listOnly={false} {...callbacks()}/>);
-  const pack=await screen.findByRole('region',{name:'Dein aktueller Marketing Pack'});
-  expect(within(pack).queryByText('Geprüft')).toBeNull();
-  expect(within(pack).getAllByText('Prüfung offen',{exact:true})).toHaveLength(3);
- });
- it('renders all seven real tasks through a native disclosure and no scheduled date or publication',async()=>{
-  render(<WorkspaceOverview projects={[projects[0]]} listOnly={false} {...callbacks()}/>);
-  const plan=await screen.findByRole('region',{name:'Dein Aktionsplan'});
-  const summary=within(plan).getByText('Alle 7 Aufgaben lesen');expect(summary.tagName).toBe('SUMMARY');
-  fireEvent.click(summary);expect(summary.closest('details')?.hasAttribute('open')).toBe(true);
-  expect(within(plan).getByText('Gespeicherte Aufgabe 6')).toBeTruthy();
-  expect(within(plan).getByText(/kein Versandkalender/)).toBeTruthy();
- });
- it('keeps a single primary next action with exact generation identity and profile callback',async()=>{
+ it('isolates selected-company content in Start V3 without invented social output',async()=>{
+    const cb=callbacks();
+    render(<WorkspaceOverview projects={projects} activeProjectId="b" listOnly={false} {...cb}/>);
+
+    const section=await screen.findByRole('region',{name:'Zuletzt bearbeitet'});
+
+    expect(within(section).getByText(/Firma B/)).toBeTruthy();
+    expect(within(section).queryByText(/Firma A/)).toBeNull();
+
+    const packButton=within(section).getByRole('button',{
+      name:/Weiter bearbeiten: Firma B.*Paket/
+    });
+
+    fireEvent.click(packButton);
+    expect(cb.onResume).toHaveBeenCalledWith('b','g');
+
+    expect(within(section).getByText(/Prüfung offen/)).toBeTruthy();
+    expect(within(section).getByText(/Demo-Inhalte · ohne Live-KI/)).toBeTruthy();
+    expect(within(section).queryByText('A gespeicherter Text 0')).toBeNull();
+  });
+
+  it('does not treat stale-version reviews as approved in Start V3',async()=>{
+    old=true;
+    render(<WorkspaceOverview projects={[projects[0]]} listOnly={false} {...callbacks()}/>);
+
+    const section=await screen.findByRole('region',{name:'Zuletzt bearbeitet'});
+    const pack=within(section).getByRole('article');
+
+    expect(within(pack).getByText('Prüfung offen · 3 von 3 Beiträgen')).toBeTruthy();
+    expect(within(pack).queryByText('Aktuelle Version geprüft')).toBeNull();
+    expect(pack.querySelector('[data-state="pending"]')).not.toBeNull();
+  });
+
+  it('does not turn suggested pack tasks into scheduled calendar entries',async()=>{
+    render(<WorkspaceOverview projects={[projects[0]]} listOnly={false} {...callbacks()}/>);
+
+    const calendar=await screen.findByRole('region',{name:'Dein Kalender'});
+
+    expect(within(calendar).getByText('Keine Beiträge für diese Woche geplant.')).toBeTruthy();
+    expect(within(calendar).queryByText('Gespeicherte Aufgabe 6')).toBeNull();
+    expect(within(calendar).queryByText(/Manuell veröffentlicht/)).toBeNull();
+    expect(within(calendar).getByRole('button',{name:'Kalender öffnen'})).toBeTruthy();
+  });
+
+  it('keeps a single primary next action with exact generation identity and profile callback',async()=>{
   const cb=callbacks();render(<WorkspaceOverview projects={projects} activeProjectId="b" listOnly={false} {...cb}/>);
   fireEvent.click(await screen.findByRole('button',{name:'Inhalte prüfen'}));
   expect(cb.onResume).toHaveBeenCalledWith('b','g');
-  fireEvent.click(screen.getByRole('button',{name:'Profil ansehen'}));expect(cb.onProfile).toHaveBeenCalledWith('b');
+  fireEvent.click(screen.getByRole('button',{name:/Unternehmen & Fakten/}));expect(cb.onProfile).toHaveBeenCalledWith('b');
   expect(document.querySelectorAll('.button.primary')).toHaveLength(1);
  });
- it('uses a reviewed business photo in the hero, while a logo remains only a post attachment',async()=>{
-  const original=request.getMockImplementation()!;
-  let role='logo';
-  request.mockImplementation(async path=>path.endsWith('/creative')?{assets:[{id:'own',status:'approved',role,alt:'Freigegebene Geschäftsaufnahme'}]}:path.includes('/workspace/reviews/')?[{postIndex:1,version:2,approved:true,image:{kind:'asset',id:'own'}}]:original(path));
-  const cb=callbacks();const view=render(<WorkspaceOverview projects={[projects[0]]} listOnly={false} {...cb}/>);
-  await screen.findByRole('heading',{level:1});
-  expect(screen.getByText('Markenillustration · kein Unternehmensfoto')).toBeTruthy();
-  expect(document.querySelector('.reference-hero-photo img')).toBeNull();
-  role='business_photo';view.unmount();render(<WorkspaceOverview projects={[projects[0]]} listOnly={false} {...cb}/>);
-  await screen.findByText('Freigegebene eigene Bildquelle');
-  expect(document.querySelector('.reference-hero-photo img')?.getAttribute('src')).toBe('/api/projects/a/creative/assets/own');
- });
- it('marks unavailable capabilities planned without fabricated output, paid upgrades or dead controls',async()=>{
+ it('keeps Start V3 action-first without inventing a hero photo', async () => {
+    const original = request.getMockImplementation()!;
+
+    request.mockImplementation(async path =>
+      path.endsWith('/creative')
+        ? {
+            assets: [{
+              id: 'own',
+              status: 'approved',
+              role: 'business_photo',
+              alt: 'Freigegebene Geschäftsaufnahme'
+            }]
+          }
+        : original(path)
+    );
+
+    render(
+      <WorkspaceOverview
+        projects={[projects[0]]}
+        listOnly={false}
+        {...callbacks()}
+      />
+    );
+
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Deine Inhalte sind bereit zur Prüfung.'
+      })
+    ).toBeTruthy();
+
+    expect(
+      screen.getByRole('region', {name: 'Dein Unternehmenswissen'})
+    ).toBeTruthy();
+
+    expect(
+      document.querySelector('.reference-hero-photo img')
+    ).toBeNull();
+
+    expect(
+      screen.getByRole('button', {name: 'Inhalte prüfen'})
+    ).toBeTruthy();
+  });
+
+  it('marks unavailable capabilities planned without fabricated output, paid upgrades or dead controls',async()=>{
   render(<WorkspaceOverview projects={[]} listOnly={false} {...callbacks()}/>);
   await screen.findByRole('button',{name:'Unternehmen anlegen'});
-  expect(screen.getByText('Noch kein Pack')).toBeTruthy();
-  expect(screen.getByText('Noch nicht verfügbar')).toBeTruthy();
-  expect(screen.queryByRole('button',{name:/Reel|Story|Strategie|Kalender|Upgrade/})).toBeNull();
-  expect(screen.getByText('Hier wird dein erster Pack sichtbar.')).toBeTruthy();
+  expect(screen.getByText('Noch keine gespeicherten Entwürfe oder Packs.')).toBeTruthy();
+  expect(screen.getByText('Noch kein Unternehmen ausgewählt.')).toBeTruthy();
+  expect(screen.queryByRole('button',{name:/Reel|Story|Strategie|Upgrade/})).toBeNull();
+  expect(screen.queryByRole('button',{name:'Kalender öffnen'})).toBeNull();
   expect(request.mock.calls).toHaveLength(0);
  });
 });

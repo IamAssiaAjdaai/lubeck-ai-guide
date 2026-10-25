@@ -1,0 +1,282 @@
+/* WIRKFADEN Start v2 — scoped to Start only. Keeps Design v1.0 palette and fonts. */
+.simple-workspace .w-start {
+  --start-ink: #162d2c;
+  --start-muted: #566861;
+  --start-border: #e1e6da;
+  color: var(--start-ink);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+  min-width: 0;
+}
+.simple-workspace .w-start * { box-sizing: border-box; }
+.simple-workspace .w-start :is(h1,h2,p) { overflow-wrap: anywhere; }
+.simple-workspace .w-start-focus {
+  background: linear-gradient(115deg, #f1f7e8, #f9fbf6 70%);
+  border: 1px solid #dfe9d6;
+  border-radius: 20px;
+  padding: clamp(20px, 2.6vw, 32px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(220px, .8fr);
+  gap: 24px;
+  align-items: center;
+}
+.simple-workspace .w-start-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #456452;
+  letter-spacing: .07em;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.simple-workspace .w-start-focus h1 {
+  margin: 0 0 12px;
+  font: 560 clamp(31px, 3vw, 42px)/1.12 var(--font-editorial);
+  letter-spacing: -.034em;
+  max-width: 28ch;
+  text-wrap: balance;
+}
+.simple-workspace .w-start-lead {
+  font-size: 16px;
+  line-height: 1.58;
+  color: var(--start-muted);
+  margin: 0 0 19px;
+  max-width: 59ch;
+}
+.simple-workspace .w-start-main-button { display: inline-flex; justify-content: center; align-items: center; gap: 12px; min-height: 46px; }
+.simple-workspace .w-start-progress {
+  background: rgba(255,255,255,.9);
+  border: 1px solid #e1e9da;
+  border-radius: 16px;
+  padding: 20px;
+  min-width: 0;
+}
+.simple-workspace .w-start-progress-icon { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: #d0eb8d; margin-bottom: 12px; }
+.simple-workspace .w-start-small-label { color: var(--start-muted); font-size: 13px; margin: 0 0 5px; }
+.simple-workspace .w-start-progress > strong { display: block; font-size: 16px; overflow-wrap: anywhere; }
+.simple-workspace .w-start-progress ul { list-style: none; padding: 14px 0 0; margin: 12px 0 0; border-top: 1px solid #edf0e9; display: grid; gap: 11px; }
+.simple-workspace .w-start-progress li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 1.4; }
+.simple-workspace .w-start-progress li svg { flex-shrink: 0; color: #55724d; }
+.simple-workspace .w-start-section-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 12px; }
+.simple-workspace .w-start-section-heading h2,
+.simple-workspace .w-start-card-title h2 { font: 560 clamp(22px, 2vw, 26px)/1.18 var(--font-editorial); margin: 0; letter-spacing: -.03em; }
+.simple-workspace .w-start-section-heading p { margin: 0; font-size: 14px; color: var(--start-muted); }
+.simple-workspace .w-start-shortcut-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.simple-workspace .w-start-shortcut {
+  appearance: none;
+  text-align: left;
+  border: 1px solid var(--start-border);
+  background: #fff;
+  border-radius: 15px;
+  min-height: 116px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 11px;
+  cursor: pointer;
+  color: var(--start-ink);
+  position: relative;
+}
+.simple-workspace .w-start-shortcut:hover { background: #f9fcf5; border-color: #c8d9b9; }
+.simple-workspace .w-start-shortcut:focus-visible,
+.simple-workspace .w-start-text-button:focus-visible { outline: 3px solid #788e4a; outline-offset: 3px; }
+.simple-workspace .w-start-shortcut-icon,
+.simple-workspace .w-start-card-icon { display: inline-grid; place-items: center; flex-shrink: 0; border-radius: 12px; width: 39px; height: 39px; background: #ecf4db; }
+.simple-workspace .w-start-shortcut-icon svg, .simple-workspace .w-start-card-icon svg { width: 21px; height: 21px; }
+.simple-workspace .w-start-shortcut-icon.lilac, .simple-workspace .w-start-card-icon.lilac { background: #ece2f8; }
+.simple-workspace .w-start-shortcut-icon.yellow { background: #fff1c6; }
+.simple-workspace .w-start-card-icon.gray { background: #f0eee8; }
+.simple-workspace .w-start-shortcut strong { display: block; font-size: 15px; line-height: 1.35; margin-bottom: 4px; }
+.simple-workspace .w-start-shortcut small { display: block; color: var(--start-muted); font-size: 13px; line-height: 1.4; padding-right: 15px; }
+.simple-workspace .w-start-shortcut-arrow { position: absolute; right: 15px; bottom: 15px; }
+.simple-workspace .w-start-two-col { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 18px; align-items: stretch; }
+.simple-workspace .w-start-card { background: #fff; border: 1px solid var(--start-border); border-radius: 17px; padding: 20px; min-width: 0; }
+.simple-workspace .w-start-card-title { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
+.simple-workspace .w-start-card-title > div { flex: 1; min-width: 0; }
+.simple-workspace .w-start-card-title h2 { font-size: 23px; }
+.simple-workspace .w-start-card-title p { color: var(--start-muted); font-size: 13px; line-height: 1.5; margin: 4px 0 0; }
+.simple-workspace .w-start-quiet-tag { margin-left: auto; font-size: 11px; font-weight: 600; background: #f0eee8; padding: 6px 9px; border-radius: 999px; color: #59645f; }
+.simple-workspace .w-start-week { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 7px; }
+.simple-workspace .w-start-weekday { display: grid; align-content: center; justify-items: center; gap: 6px; border-radius: 11px; background: #f8faf5; border: 1px solid #edf0e7; min-height: 69px; padding: 8px 2px; }
+.simple-workspace .w-start-weekday > span { font-size: 12px; color: #5d6a61; }
+.simple-workspace .w-start-weekday time { font-size: 15px; font-weight: 650; }
+.simple-workspace .w-start-weekday.is-today { background: #e5f1cd; border-color: #b9d594; }
+.simple-workspace .w-start-calendar-empty { display: flex; gap: 12px; margin-top: 16px; background: #f5f7f0; padding: 15px; border-radius: 12px; }
+.simple-workspace .w-start-calendar-empty > svg { flex: 0 0 22px; }
+.simple-workspace .w-start-calendar-empty strong { font-size: 14px; }
+.simple-workspace .w-start-calendar-empty p { font-size: 13px; color: var(--start-muted); margin: 5px 0 0; line-height: 1.5; }
+.simple-workspace .w-start-task-empty { display: flex; gap: 11px; align-items: flex-start; padding: 12px; background: #fafbf7; border-radius: 10px; }
+.simple-workspace .w-start-task-empty > svg { flex-shrink: 0; }
+.simple-workspace .w-start-task-empty p { margin: 0; color: var(--start-muted); font-size: 14px; line-height: 1.6; }
+.simple-workspace .w-start-task-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.simple-workspace .w-start-task-list li { display: flex; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--start-border); }
+.simple-workspace .w-start-task-list li > span { flex: 0 0 auto; background: #e8efdd; padding: 5px 9px; border-radius: 8px; height: fit-content; font-size: 12px; }
+.simple-workspace .w-start-task-list li > div { min-width: 0; }
+.simple-workspace .w-start-task-list strong { display: block; font-size: 14px; }
+.simple-workspace .w-start-task-list p { font-size: 13px; line-height: 1.45; margin: 3px 0 0; }
+.simple-workspace .w-start-more-days { margin-top: 10px; }
+.simple-workspace .w-start-more-days summary { cursor: pointer; font-size: 14px; padding: 10px 0; }
+.simple-workspace .w-start-more-days li { margin: 12px 0; font-size: 14px; }
+.simple-workspace .w-start-more-days li p { margin: 3px 0; }
+.simple-workspace .w-start-recent-list { display: grid; gap: 12px; }
+.simple-workspace .w-start-recent-list .campaign-card { max-width: 100%; }
+.simple-workspace .w-start-text-button { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: var(--start-ink); text-align: left; font-size: 14px; font-weight: 600; cursor: pointer; }
+.simple-workspace .w-start-text-button:hover { text-decoration: underline; }
+.simple-workspace .w-start-empty-detail p { color: var(--start-muted); font-size: 14px; }
+.simple-workspace .w-start-business-name { display: block; margin: 0 0 14px; font-size: 16px; }
+.simple-workspace .w-start-brand-list { margin: 0; }
+.simple-workspace .w-start-brand-list > div { display: grid; grid-template-columns: minmax(105px,.65fr) minmax(0,1.35fr); gap: 10px; padding: 11px 0; border-top: 1px solid var(--start-border); font-size: 13px; line-height: 1.5; }
+.simple-workspace .w-start-brand-list dt { color: var(--start-muted); }
+.simple-workspace .w-start-brand-list dd { margin: 0; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.simple-workspace .w-start-knowledge-actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; border-top: 1px solid var(--start-border); padding-top: 12px; }
+.simple-workspace .w-start-safety { font-size: 12px; text-align: center; color: #657269; margin: 0; }
+@media(max-width:1250px) {
+  .simple-workspace .w-start-focus { grid-template-columns: 1fr; }
+  .simple-workspace .w-start-progress { display: grid; grid-template-columns: 42px 1fr; column-gap: 14px; }
+  .simple-workspace .w-start-progress-icon { grid-row: span 2; margin: 0; }
+  .simple-workspace .w-start-progress ul { grid-column: 1/-1; }
+  .simple-workspace .w-start-two-col { grid-template-columns: 1fr; }
+}
+@media(max-width:850px) {
+  .simple-workspace .w-start-shortcut-grid { grid-template-columns: 1fr; }
+  .simple-workspace .w-start-shortcut { min-height: 84px; display: grid; grid-template-columns: 40px minmax(0,1fr) 20px; align-items: center; }
+  .simple-workspace .w-start-shortcut-arrow { position: static; }
+  .simple-workspace .w-start-shortcut small { padding: 0; }
+}
+@media(max-width:580px) {
+  .simple-workspace .w-start { gap: 16px; }
+  .simple-workspace .w-start-focus { padding: 20px 18px; }
+  .simple-workspace .w-start-focus h1 { font-size: 32px; }
+  .simple-workspace .w-start-main-button { width: 100%; }
+  .simple-workspace .w-start-card { padding: 16px; }
+  .simple-workspace .w-start-week { gap: 4px; }
+  .simple-workspace .w-start-weekday { min-height: 58px; padding-inline: 0; }
+  .simple-workspace .w-start-weekday span { font-size: 10px; }
+  .simple-workspace .w-start-weekday time { font-size: 13px; }
+  .simple-workspace .w-start-brand-list > div { grid-template-columns: 90px minmax(0,1fr); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .simple-workspace .w-start *, .simple-workspace .w-start *::before, .simple-workspace .w-start *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+
+/* WIRKFADEN Start V3: standalone calendar layout, no Start 7-day plan */
+.simple-workspace .w-start-calendar-wide { grid-column: 1 / -1; }
+.simple-workspace .w-start-calendar-wide .w-start-calendar-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, .85fr);
+  align-items: stretch;
+  gap: 18px;
+}
+.simple-workspace .w-start-calendar-wide .w-start-calendar-empty {
+  margin-top: 0;
+  min-height: 100%;
+  align-items: center;
+}
+@media (max-width: 1050px) {
+  .simple-workspace .w-start-calendar-wide .w-start-calendar-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .simple-workspace .w-start-calendar-wide .w-start-calendar-empty { min-height: auto; }
+}
+
+/* Keep the calendar preview compact without changing stored content. */
+.w-start-calendar-excerpt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+
+/* WIRKFADEN MOBILE UX POLISH 01 */
+@media (max-width: 580px) {
+  .simple-workspace .w-start {
+    gap: 18px;
+    min-width: 0;
+  }
+
+  .simple-workspace .w-start-focus {
+    padding: 18px 16px;
+    gap: 18px;
+  }
+
+  .simple-workspace .w-start-focus h1 {
+    font-size: clamp(28px, 8vw, 32px);
+    line-height: 1.14;
+    margin-bottom: 10px;
+  }
+
+  .simple-workspace .w-start-lead {
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+
+  .simple-workspace .w-start-progress {
+    padding: 15px;
+    column-gap: 12px;
+  }
+
+  .simple-workspace .w-start-progress ul {
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+
+  .simple-workspace .w-start-card {
+    min-width: 0;
+    padding: 15px;
+  }
+
+  .simple-workspace .w-start-shortcut-grid {
+    gap: 10px;
+  }
+
+  .simple-workspace .w-start-shortcut {
+    min-height: 76px;
+  }
+
+  .simple-workspace .w-start-calendar-wide .w-start-calendar-body {
+    min-width: 0;
+    gap: 12px;
+  }
+
+  .simple-workspace .w-start-week {
+    min-width: 0;
+    gap: 4px;
+  }
+
+  .simple-workspace .w-start-weekday {
+    min-width: 0;
+    min-height: 55px;
+  }
+
+  .simple-workspace .w-start-recent-list {
+    gap: 10px;
+  }
+
+  .simple-workspace .w-start-recent-list .campaign-card {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .simple-workspace .w-start-card-title {
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .simple-workspace .w-start-card-title h2 {
+    font-size: 22px;
+    overflow-wrap: anywhere;
+  }
+
+  .simple-workspace .w-start-knowledge-actions {
+    gap: 8px 12px;
+  }
+}

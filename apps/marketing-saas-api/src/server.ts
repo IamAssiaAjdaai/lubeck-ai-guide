@@ -16,6 +16,7 @@ import { PdfIntake, PDF_MAX_BYTES } from './intake/pdf';
 import { PackService } from "./packs";
 import { WorkspacePackService } from "./workspace-packs";
 import { WorkspaceService } from "./workspace";
+import { CalendarService, calendarRoute } from "./calendar.server";
 import { rawBusinessBriefSchema } from "@marketing/core";
 
 import { CreativeService } from "./creative/service";
@@ -78,6 +79,7 @@ export function createApi(
     : null;
   const packs = config.workspace ? new WorkspacePackService(pool,config.demo) : new PackService(pool,config.demo);
   const workspace = new WorkspaceService(pool, creative);
+  const calendar = new CalendarService(pool, workspace);
   const importer = createWebsiteImporter();
   const demoImporter = createWebsiteImporter(demoWebsite);
   const pdfIntake = new PdfIntake();
@@ -127,6 +129,10 @@ export function createApi(
       }
       const creativeResponse = await creativeRoute(request, actor, creative);
       if (creativeResponse) return creativeResponse;
+      if (config.workspace) {
+        const calendarResponse = await calendarRoute(request, actor, calendar);
+        if (calendarResponse) return calendarResponse;
+      }
       if (path === "/api/projects") {
         if (request.method === "GET")
           return Response.json(await store.list(actor));

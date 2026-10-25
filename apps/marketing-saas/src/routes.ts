@@ -1,5 +1,5 @@
 /** Only this finite product destination can survive login. No arbitrary URL redirects. */
-export const workspaceViews = ["overview", "campaigns", "contents", "projects", "media", "usage"] as const;
+export const workspaceViews = ["overview", "calendar", "campaigns", "contents", "projects", "media", "usage"] as const;
 export function safeWorkspaceDestination(value: string | null): string {
   if (!value || /[\\\r\n]/.test(value) || !value.startsWith("/workspace") || value.startsWith("//")) return "/workspace";
   try {
