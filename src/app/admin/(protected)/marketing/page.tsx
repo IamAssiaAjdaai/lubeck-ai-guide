@@ -94,6 +94,8 @@ export default async function MarketingPage({
         title={selectedCity ? `${selectedCity.name} Marketing` : "Marketing"}
       />
 
+      <Link className="button-secondary mt-5 min-h-11 px-5" href="/admin/marketing/brands">Marken & Projekte</Link>
+
       <div className="mt-5 flex flex-wrap gap-2">
         <Link
           className={`rounded-full border px-3 py-1.5 text-xs font-bold ${

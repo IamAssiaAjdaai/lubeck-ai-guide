@@ -1,0 +1,115 @@
+// Opt-in real-browser acceptance. Never loads env files or uses non-local resources.
+import { createRequire } from "node:module";
+import { createHmac, randomUUID } from "node:crypto";
+import { mkdir } from "node:fs/promises";
+import assert from "node:assert/strict";
+import { Client } from "pg";
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.CITYWALK_PLAYWRIGHT_MODULE ?? "playwright");
+const url = new URL(process.env.DATABASE_URL ?? ""), base = new URL(process.env.BRAND_SMOKE_URL ?? "");
+if (!["localhost", "127.0.0.1"].includes(url.hostname) || !url.pathname.startsWith("/citywalk_brand_ui_") || !["localhost", "127.0.0.1"].includes(base.hostname)) throw new Error("Use a disposable citywalk_brand_ui_* local DB and local server only.");
+if (!process.env.BETTER_AUTH_SECRET || process.env.BETTER_AUTH_SECRET.length < 32) throw new Error("Explicit disposable auth secret required.");
+const output = process.env.BRAND_SMOKE_OUTPUT ?? "/tmp/brand-workspace-screenshots";
+await mkdir(output, { recursive: true });
+const db = new Client({ connectionString: url.toString() }); await db.connect();
+const key = randomUUID(), cities = [], campaigns = [], users = [], projects = [];
+let browser;
+try {
+  for (let i = 0; i < 2; i++) {
+    cities.push((await db.query("INSERT INTO cities(slug,name) VALUES($1,$2) RETURNING id", [`brand-ui-${key}-${i}`, i ? "Hamburg Test" : "Lübeck Test"])).rows[0].id);
+    campaigns.push((await db.query("INSERT INTO marketing_campaigns(city_id,slug,name,objective,audience,message,cta) VALUES($1,$2,$3,'Test','Test','Test','Test') RETURNING id", [cities[i], key, `Kampagne ${i + 1}`])).rows[0].id);
+    const id = randomUUID(), token = randomUUID();
+    await db.query('INSERT INTO "user"(id,name,email,email_verified) VALUES($1,\'Local Brand Reviewer\',$2,true)', [id, `${id}@example.test`]);
+    const member = (await db.query("INSERT INTO staff_memberships(user_id,role) VALUES($1,'admin') RETURNING id", [id])).rows[0].id;
+    await db.query("INSERT INTO staff_city_access(staff_membership_id,city_id) VALUES($1,$2)", [member, cities[i]]);
+    await db.query("INSERT INTO session(id,token,user_id,expires_at) VALUES($1,$2,$3,now()+interval '1 hour')", [randomUUID(), token, id]);
+    users.push({ id, member, cookie: encodeURIComponent(`${token}.${createHmac('sha256', process.env.BETTER_AUTH_SECRET).update(token).digest('base64')}`) });
+  }
+  browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {}) });
+  const owner = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  await owner.addCookies([{ name: "better-auth.session_token", value: users[0].cookie, url: base.origin, httpOnly: true, sameSite: "Lax" }]);
+  await owner.route("**/*", route => new URL(route.request().url()).hostname === base.hostname ? route.continue() : route.abort());
+  const page = await owner.newPage();
+  const unexpected = []; page.on("pageerror", error => unexpected.push(error.message));
+  await page.goto(`${base}/admin/marketing/brands/new`);
+  await page.getByLabel("Unternehmensname", { exact: true }).fill("CITYWALK");
+  await page.getByLabel("Beschreibung (optional)", { exact: true }).fill("Interner Designpartner für Marketing.");
+  await page.getByLabel("Business Brief", { exact: false }).fill("CITYWALK ist der interne Designpartner. Diese Angaben sind manuell erklärt.");
+  await page.getByLabel("Bestehende Kampagne").selectOption(String(campaigns[0]));
+  await page.getByRole("button", { name: "Faktenvorschläge hinzufügen" }).click();
+  await page.getByLabel("Aussage", { exact: true }).fill("CITYWALK ist interner Designpartner.");
+  await page.getByLabel("Sprachen (Codes, durch Komma getrennt)").fill("de,en");
+  await page.screenshot({ path: `${output}/onboarding-desktop.png`, fullPage: true });
+  await page.getByRole("button", { name: "Marke speichern", exact: true }).click();
+  await page.waitForURL(/brands\/[a-f0-9-]+\/[a-f0-9-]+$/, { timeout: 30000 });
+  const detailUrl = page.url(), ids = new URL(detailUrl).pathname.split("/").slice(-2); projects.push(ids[0]);
+  await page.getByText("Vorgeschlagen · unbestätigt", { exact: true }).waitFor();
+  await page.getByLabel("CITYWALK ist interner Designpartner.", { exact: true }).check();
+  await page.getByLabel(/Ich habe die ausgewählten/).check();
+  await page.getByRole("button", { name: "Ausgewählte Fakten bestätigen" }).click();
+  await page.getByText("1 von 1 Aussagen menschlich bestätigt.", { exact: false }).waitFor();
+  await page.screenshot({ path: `${output}/review-desktop.png`, fullPage: true });
+  // Real two-tab stale edit: review panel already uses database CAS.
+  const second = await owner.newPage(); await second.goto(detailUrl);
+  await page.getByText("Markenkontext korrigieren", { exact: true }).click();
+  await second.getByText("Markenkontext korrigieren", { exact: true }).click();
+  await second.getByLabel("Unternehmensname", { exact: true }).fill("CITYWALK aktuelle Revision");
+  await second.getByRole("button", { name: "Korrektur als neue Revision speichern" }).click();
+  await second.getByRole("heading", { name: "CITYWALK aktuelle Revision", exact: true }).waitFor();
+  await second.getByText("0 von 1 Aussagen menschlich bestätigt.", { exact: false }).waitFor();
+  await page.getByLabel("Unternehmensname", { exact: true }).fill("Veraltete Änderung");
+  await page.getByRole("button", { name: "Korrektur als neue Revision speichern" }).click();
+  await page.getByRole("alert").filter({ hasText: "neuere Revision" }).waitFor();
+  assert.equal(await page.getByLabel("Unternehmensname", { exact: true }).inputValue(), "Veraltete Änderung");
+  await page.screenshot({ path: `${output}/stale-desktop.png`, fullPage: true });
+  await page.getByRole("button", { name: "Aktuelle Revision neu laden" }).click();
+  await page.getByRole("heading", { name: "CITYWALK aktuelle Revision", exact: true }).waitFor();
+  await db.query("INSERT INTO staff_city_access(staff_membership_id,city_id) VALUES($1,$2)", [users[0].member, cities[1]]);
+  await page.reload();
+  await page.getByLabel("Weitere bestehende Kampagne").selectOption(String(campaigns[1]));
+  await page.getByRole("button", { name: "Kampagne zuordnen", exact: true }).click();
+  await page.getByText("Dauerhafte Stadtzugriffe: Lübeck Test, Hamburg Test", { exact: true }).waitFor();
+  const outsider = await browser.newContext();
+  await outsider.addCookies([{ name: "better-auth.session_token", value: users[1].cookie, url: base.origin, httpOnly: true, sameSite: "Lax" }]);
+  await outsider.route("**/*", route => new URL(route.request().url()).hostname === base.hostname ? route.continue() : route.abort());
+  const denied = await outsider.newPage(); await denied.goto(detailUrl);
+  await denied.getByText(/Projekt nicht verfügbar oder keine Berechtigung/).waitFor();
+  assert.match(await denied.locator("main").innerText(), /keine Berechtigung/);
+  assert.doesNotMatch(await denied.locator("main").innerText(), /aktuelle Revision|Designpartner|Prüfkennung/);
+  await denied.goto(`${base}/admin/marketing/brands`);
+  await denied.getByRole("heading", { name: "Marken & Projekte", exact: true }).waitFor();
+  assert.doesNotMatch(await denied.locator("main").innerText(), /CITYWALK aktuelle Revision/);
+  // Same intake UI for an unrelated business, scoped to the other city.
+  await denied.goto(`${base}/admin/marketing/brands/new`);
+  await denied.getByLabel("Unternehmensname", { exact: true }).fill("Nordlicht Metallbau GmbH");
+  await denied.getByLabel("Business Brief", { exact: false }).fill("Fiktiver deutscher Metallbaubetrieb. Manuell deklarierter Testbrief.");
+  await denied.getByLabel("Bestehende Kampagne").selectOption(String(campaigns[1]));
+  await denied.getByRole("button", { name: "Marke speichern", exact: true }).click();
+  await denied.waitForURL(/brands\/[a-f0-9-]+\/[a-f0-9-]+$/); projects.push(new URL(denied.url()).pathname.split("/").at(-2));
+  await denied.getByRole("heading", { name: "Nordlicht Metallbau GmbH", exact: true }).waitFor();
+  await page.setViewportSize({ width: 375, height: 812 }); await page.goto(detailUrl);
+  await page.getByRole("heading", { name: "CITYWALK aktuelle Revision", exact: true }).waitFor();
+  await page.screenshot({ path: `${output}/review-mobile.png`, fullPage: true });
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
+  await page.goto(`${base}/admin/marketing/brands/new`);
+  await page.getByRole("heading", { name: "Marke anlegen", exact: true }).waitFor();
+  await page.keyboard.press("Tab"); assert.ok(await page.evaluate(() => document.activeElement !== document.body));
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
+  // Every form input has an accessible native label; axe/assistive-device acceptance is separate.
+  const unlabelled = await page.locator("main input,main textarea,main select").evaluateAll(nodes => nodes.filter(n => !n.labels?.length && !n.getAttribute('aria-label')).length);
+  assert.equal(unlabelled, 0);
+  await page.screenshot({ path: `${output}/onboarding-mobile.png`, fullPage: true });
+  assert.deepEqual(unexpected, []);
+  console.log("PASS: two-business onboarding, explicit confirmation, correction, two-tab stale conflict, campaign association, cross-city isolation, native labels/keyboard focus and 375px/1440px overflow checks.");
+} finally {
+  if (browser) await browser.close();
+  if (projects.length) await db.query("DELETE FROM brand_projects WHERE id=ANY($1::uuid[])", [projects]);
+  // Include partially created fixture projects if a browser assertion failed.
+  await db.query("DELETE FROM brand_projects WHERE id IN (SELECT project_id FROM citywalk_brand_project_campaigns WHERE campaign_id=ANY($1::int[]))", [campaigns]);
+  const actors = (await db.query("SELECT actor_id FROM citywalk_brand_reviewers WHERE user_id=ANY($1::text[])", [users.map(u => u.id)])).rows.map(r => r.actor_id);
+  await db.query('DELETE FROM "user" WHERE id=ANY($1::text[])', [users.map(u => u.id)]);
+  await db.query("DELETE FROM citywalk_brand_reviewers WHERE actor_id=ANY($1::uuid[])", [actors]);
+  await db.query("DELETE FROM marketing_campaigns WHERE id=ANY($1::int[])", [campaigns]);
+  await db.query("DELETE FROM cities WHERE id=ANY($1::int[])", [cities]);
+  await db.end();
+}

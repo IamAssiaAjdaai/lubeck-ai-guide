@@ -20,6 +20,7 @@ describe.runIf(enabled)("Brand persistence PostgreSQL authorization, concurrency
   let a: BrandContext, b: BrandContext;
   let services: ReturnType<typeof createBrandContextService>[];
   const orphanActors: string[] = [];
+  const extraProjects: string[] = [];
   const key = randomUUID();
   const owner = (id: string): AdminContext => ({ user: { id, email: `${id}@example.test`, name: "Fixture" }, staff: { userId: id, membershipId: 0, role: "super_admin", active: true, globalAccess: true, cityIds: [] } });
   const request = (c: BrandContext) => ({ projectId: c.projectId, contextId: c.contextId });
@@ -46,8 +47,9 @@ describe.runIf(enabled)("Brand persistence PostgreSQL authorization, concurrency
     b = await services[1].create({ campaignId: campaigns[1], brief: germanSmeBrief });
   });
   afterEach(async () => {
-    await client.query("DELETE FROM brand_projects WHERE id=ANY($1::uuid[])", [[a?.projectId, b?.projectId].filter(Boolean)]);
+    await client.query("DELETE FROM brand_projects WHERE id=ANY($1::uuid[])", [[a?.projectId, b?.projectId, ...extraProjects].filter(Boolean)]);
     await client.query("DELETE FROM staff_city_access WHERE city_id=$1 AND staff_membership_id IN (SELECT id FROM staff_memberships WHERE user_id=$2)", [cities[1], users[0]]);
+    extraProjects.length = 0;
     await client.query("UPDATE staff_memberships SET role='admin',active=true WHERE user_id=ANY($1::text[])", [users]);
   });
   afterAll(async () => {
@@ -62,6 +64,31 @@ describe.runIf(enabled)("Brand persistence PostgreSQL authorization, concurrency
       await client.end();
     }
     if (pool) await pool.end();
+  });
+  it("lists only all-city-authorized project summaries with a bounded opaque cursor", async () => {
+    for (let i = 0; i < 20; i++) { const c = await services[0].create({ campaignId: campaigns[0], brief: citywalkBrief }); extraProjects.push(c.projectId); }
+    const first = await services[0].list({});
+    expect(first.items).toHaveLength(20); expect(first.next).not.toBeNull();
+    expect(first.items.every(i => i.projectId !== b.projectId && !('facts' in i))).toBe(true);
+    const second = await services[0].list({ after: first.next! });
+    expect(second.items).toHaveLength(1); expect(second.next).toBeNull();
+    expect(new Set([...first.items, ...second.items].map(i => i.projectId)).size).toBe(21);
+    await expect(services[0].list({ cityId: cities[1] })).rejects.toThrow();
+  });
+  it("protects listing and private workspace after cross-city association and access revocation", async () => {
+    const before = await services[0].workspace(request(a));
+    expect(before.history).toHaveLength(1); expect(before.canConfirm).toBe(true);
+    expect(before.history[0]).not.toHaveProperty('context');
+    await client.query("INSERT INTO staff_city_access(staff_membership_id,city_id) SELECT id,$1 FROM staff_memberships WHERE user_id=$2", [cities[1], users[0]]);
+    await services[0].associateCampaign({ ...request(a), campaignId: campaigns[1] });
+    expect((await services[0].workspace(request(a))).scopes).toHaveLength(2);
+    expect((await services[1].list({})).items.some(i => i.projectId === a.projectId)).toBe(false);
+    await expect(services[1].workspace(request(a))).rejects.toMatchObject({ code: 'FORBIDDEN' });
+    await client.query("DELETE FROM staff_city_access WHERE city_id=$1 AND staff_membership_id IN (SELECT id FROM staff_memberships WHERE user_id=$2)", [cities[1], users[0]]);
+    const hidden = await services[0].list({});
+    expect(hidden.items.some(i => i.projectId === a.projectId)).toBe(false);
+    expect(JSON.stringify(hidden)).not.toContain(a.contextId);
+    await expect(services[0].workspace(request(a))).rejects.toMatchObject({ code: 'FORBIDDEN' });
   });
   it("persists CITYWALK and an unrelated SME through identical versioned generic contracts", async () => {
     expect(await services[0].read(request(a))).toEqual(a);
