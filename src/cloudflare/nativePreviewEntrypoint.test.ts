@@ -132,6 +132,7 @@ describe("native tester perimeter", () => {
       provenanceReviewed: true, mediaRightsReviewed: true, privacyReviewed: true,
       reviewEvidenceSha256: "a".repeat(64),
     });
+    env.CITYWALK_MEDIA_S3_BUCKET = "citywalk-preview-media";
     env.CITYWALK_PREVIEW_DATABASE_NAME = pins.database;
     env.CITYWALK_PREVIEW_DATABASE_USER = pins.role;
     env.CITYWALK_PREVIEW_BOUND_HYPERDRIVE = pins.hyperdriveId;
@@ -148,6 +149,9 @@ describe("native tester perimeter", () => {
       { originHost: "ep-production.eu-central-1.aws.neon.tech" },
       { role: "postgres" }, { syntheticOnly: undefined },
     ]) expect(ready(changes)).toBe(false);
+    env.CITYWALK_MEDIA_S3_BUCKET = "citywalk-preview-synthetic";
+    expect(ready()).toBe(false);
+    env.CITYWALK_MEDIA_S3_BUCKET = "citywalk-preview-media";
     env.CITYWALK_PREVIEW_DEPLOYMENT_LOCK = "1";
     expect(ready()).toBe(false);
   });
