@@ -1,6 +1,7 @@
 import { createCuratedProgress, markCuratedStop, parseCuratedProgress, type CuratedProgress } from "@citywalk/traveler-core";
 import type { WalkStore } from "./walkStorage";
-const key = (city: string, tour: string) => `citywalk:native:v1:curated:${city}:${tour}`;
+export const CURATED_PROGRESS_STORAGE_PREFIX = "citywalk:native:v1:curated:";
+const key = (city: string, tour: string) => `${CURATED_PROGRESS_STORAGE_PREFIX}${city}:${tour}`;
 const defaultStore = async (): Promise<WalkStore> => (await import("@react-native-async-storage/async-storage")).default;
 let queue: Promise<unknown> = Promise.resolve();
 function mutate<T>(work: () => Promise<T>) { const result = queue.then(work, work); queue = result.catch(() => undefined); return result; }

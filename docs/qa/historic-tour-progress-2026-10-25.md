@@ -13,7 +13,7 @@ Mobile Core required for both iOS and Android. Shared domain implementation and 
 - Local read/write failures display localized error and Retry controls. Reload uses request-version cancellation so stale async reads cannot replace the current tour state. A failed write never claims completion or navigates.
 - The existing five Historic Tour stop identities/order and 25-place custom-walk catalog remain unchanged. Generic published tours use the same execution contract. Guest usage remains available; no traveler login is required.
 
-Changed-file boundaries: new shared module/export, new storage and controls, existing native tour/place integrations, domain/storage/rendered UI tests and the older native source-contract assertion. No dependencies, lockfiles, native projects, auth/provider, schema, API, billing, Preview lock, DNS or production configuration changed.
+Changed-file boundaries: new shared module/export, new storage and controls, existing native tour/place integrations, successful-deletion local cleanup, domain/storage/rendered UI tests and the older native source-contract assertion. No dependencies, lockfiles, native projects, auth/provider, schema, API, billing, Preview lock, DNS or production configuration changed.
 
 ## Actual validation
 
@@ -37,7 +37,7 @@ The first Doctor invocation used stale installed packages and failed seven patch
 
 ## Remaining acceptance and rollback
 
-This is guest local execution persistence, not backend or cross-device progress synchronization. Authenticated progress/favorites syncing, history/restart management and real pedestrian routing remain separate work. AsyncStorage progress is device-local; no GPS is stored in this new record. Curated-state clearing/account-deletion behavior needs a separate product decision if future account linkage is added.
+This is guest local execution persistence, not backend or cross-device progress synchronization. Authenticated progress/favorites syncing, history/restart management and real pedestrian routing remain separate work. AsyncStorage progress is device-local; no GPS is stored in this new record. The existing successful-account-deletion cleanup also removes this new local traveler-state namespace; server deletion failure continues to preserve local state. A regression covers deletion of curated progress without deleting other-account preferences.
 
 Manual iOS and Android checks remain: Start → visit → skip → terminate/relaunch → Continue → complete → relaunch; browse a different stop without altering progress; storage failure/retry; coexistence with an active custom walk; DE/EN/RTL presentation. Rendered component tests mock native bridges and do not certify device behavior.
 

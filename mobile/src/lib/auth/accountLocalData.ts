@@ -1,3 +1,4 @@
+import { CURATED_PROGRESS_STORAGE_PREFIX } from "../curatedProgressStorage";
 import { LIVE_WALK_STORAGE_KEY } from "../liveWalkStorage";
 import { LOCAL_TRIPS_STORAGE_KEY } from "../tripStorage";
 import { travelerStyleStorageKey } from "../travelerStyle";
@@ -16,6 +17,7 @@ function deletedAccountKeys(keys: readonly string[], userId: string): string[] {
   const styleKey = travelerStyleStorageKey(userId);
   return keys.filter((key) =>
     key.startsWith(NATIVE_TRAVELER_PREFIX) ||
+    key.startsWith(CURATED_PROGRESS_STORAGE_PREFIX) ||
     key.startsWith(GUIDE_HISTORY_PREFIX) ||
     key === LOCAL_TRIPS_STORAGE_KEY ||
     key === LIVE_WALK_STORAGE_KEY ||
@@ -37,6 +39,7 @@ export async function purgeDeletedAccountLocalData(userId: string, store?: Accou
 
 export const accountLocalDataContract = {
   nativeTravelerPrefix: NATIVE_TRAVELER_PREFIX,
+  curatedProgressPrefix: CURATED_PROGRESS_STORAGE_PREFIX,
   guideHistoryPrefix: GUIDE_HISTORY_PREFIX,
   localTripsKey: LOCAL_TRIPS_STORAGE_KEY,
   liveWalkKey: LIVE_WALK_STORAGE_KEY,
