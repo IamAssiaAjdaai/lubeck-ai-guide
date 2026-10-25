@@ -58,6 +58,7 @@ export function nativePreviewReady(env: Env): boolean {
       pins.originHost === "ep-summer-bread-b9ugomnk.c-7.eu-central-1.aws.neon.tech" &&
       pins.database === "citywalk_preview_app" &&
       pins.role === "citywalk_preview_app_runtime" &&
+      env.CITYWALK_MEDIA_S3_BUCKET === "citywalk-preview-media" &&
       pins.provenanceReviewed === true && pins.mediaRightsReviewed === true &&
       pins.privacyReviewed === true &&
       typeof pins.reviewEvidenceSha256 === "string" &&
