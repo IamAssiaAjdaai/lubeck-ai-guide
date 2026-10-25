@@ -19,6 +19,8 @@ export type WalkSettings = {
   finish?: Point;
   interests: Interest[];
   categories?: string[];
+  /** Explicit user-picked places must remain constraints during regeneration. */
+  selectedPlaceSlugs?: string[];
   walking: "easy" | "balanced" | "long";
 };
 export type WalkRoute<T extends TourBuilderPlace> = {
@@ -94,13 +96,23 @@ export function* buildWalkSteps<T extends TourBuilderPlace>(
     return measureWalk([], settings.start, settings.finish);
   if (!Number.isFinite(budget) || budget <= 0 || budget > 1440)
     throw new Error("Invalid time budget");
+  const selectedSlugs = settings.selectedPlaceSlugs;
+  if (selectedSlugs && (
+    selectedSlugs.length === 0 ||
+    new Set(selectedSlugs).size !== selectedSlugs.length ||
+    selectedSlugs.some(slug => typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) ||
+    selectedSlugs.some(slug => !places.some(place => place.slug === slug))
+  )) throw new Error("Invalid selected places");
+  const constrainedPlaces = selectedSlugs
+    ? places.filter(place => selectedSlugs.includes(place.slug))
+    : places;
   const legacyInterests = settings.interests.filter(
     (key): key is TourPreferences["interests"][number] =>
       ["history", "architecture", "hidden-gems", "family"].includes(key),
   );
   // Reuse the canonical eligibility and ranking algorithm; allow an exact budget
   // and reserve the finish leg before accepting each candidate.
-  const ordered = [...places].sort(
+  const ordered = [...constrainedPlaces].sort(
     (a, b) =>
       interestScore(b, settings.interests) -
       interestScore(a, settings.interests),
@@ -126,6 +138,10 @@ export function* buildWalkSteps<T extends TourBuilderPlace>(
   });
   yield "fitting";
   let selected = result.stops.map((stop) => stop.place);
+  if (selectedSlugs && (
+    selected.length !== selectedSlugs.length ||
+    selected.some(place => !selectedSlugs.includes(place.slug))
+  )) throw new Error("Selected places do not fit the available walking time or eligibility");
   if (settings.walking === "easy") {
     // A shorter walking cap is a real preference, not just a visual toggle.
     while (
@@ -141,6 +157,9 @@ export function* buildWalkSteps<T extends TourBuilderPlace>(
         budget / 2
     )
       selected = selected.slice(0, -1);
+  }
+  if (selectedSlugs && selected.length !== selectedSlugs.length) {
+    throw new Error("Selected places exceed walking preference limits");
   }
   yield "choosing";
   return measureWalk(selected, settings.start, settings.finish);
