@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   getPublicCitySnapshot: vi.fn(),
   listVerifiedChunks: vi.fn(),
   rateLimit: vi.fn(),
+  globalBudget: vi.fn(),
 }));
 
 vi.mock("groq-sdk", () => ({
@@ -16,6 +17,7 @@ vi.mock("groq-sdk", () => ({
 }));
 vi.mock("@/lib/rateLimit", () => ({
   aiGuideRateLimit: { limit: mocks.rateLimit },
+  aiGuideGlobalProviderBudget: { limit: mocks.globalBudget },
 }));
 vi.mock("@/lib/guideAllowance.server", () => ({
   enforceGuideDailyAllowance: vi.fn().mockResolvedValue({
@@ -61,6 +63,7 @@ const chunk: KnowledgeChunk = {
 describe("POST /api/guide generic CMS place", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.globalBudget.mockResolvedValue({ success: true, limit: 120, remaining: 119, reset: Date.now() + 86_400_000 });
     process.env.GROQ_API_KEY = "test-key";
     mocks.rateLimit.mockResolvedValue({
       success: true,

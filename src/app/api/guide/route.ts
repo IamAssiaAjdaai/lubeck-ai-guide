@@ -20,7 +20,8 @@ import {
 import { buildGuideSystemPrompt } from "@/lib/guidePrompt.server";
 import { hasUnsupportedYear } from "@/lib/guideGroundingGuard.server";
 import { getTranslations, isLocale } from "@/lib/i18n";
-import { aiGuideRateLimit } from "@/lib/rateLimit";
+import { aiGuideGlobalProviderBudget, aiGuideRateLimit } from "@/lib/rateLimit";
+import { getTrustedGuideAbuseIdentifier } from "@/lib/guideRequestIdentity.server";
 import { enforceGuideDailyAllowance } from "@/lib/guideAllowance.server";
 import { resolveTourContext } from "@/lib/tourContext.server";
 import { getVerifiedKnowledgeProvider } from "@/lib/verifiedKnowledge.server";
@@ -151,8 +152,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const forwardedFor = request.headers.get("x-forwarded-for");
-    const ip = forwardedFor?.split(",")[0]?.trim() ?? "unknown";
+    // Only Cloudflare edge metadata may identify a caller. Never trust X-Forwarded-For.
+    const ip = getTrustedGuideAbuseIdentifier(request.headers);
     const rateLimit = await aiGuideRateLimit.limit(ip);
     if (!rateLimit.success) {
       return NextResponse.json(
@@ -231,10 +232,29 @@ export async function POST(request: Request) {
       "CURRENT QUESTION:",
       question,
     ].join("\n");
-    const groq = new Groq({ apiKey });
+    // Global budget reserves one slot per HTTP attempt. Disable the SDK's
+    // implicit transport retries so a reserved slot cannot fan out to more calls.
+    const groq = new Groq({ apiKey, maxRetries: 0 });
     let guideAnswer: ReturnType<typeof parseGuideStructuredAnswer> | undefined;
 
     for (let attempt = 0; attempt < MAX_COMPLETION_ATTEMPTS; attempt += 1) {
+      // Reserve one globally shared provider attempt per call, including retries.
+      const globalBudget = await aiGuideGlobalProviderBudget.limit();
+      if (!globalBudget.success) {
+        return NextResponse.json(
+          {
+            error: "AI Guide is temporarily at capacity. Please try again later.",
+            code: "guide_global_budget_exhausted",
+          },
+          {
+            status: 503,
+            headers: {
+              "Cache-Control": "no-store",
+              "Retry-After": String(Math.max(1, Math.ceil((globalBudget.reset - Date.now()) / 1000))),
+            },
+          },
+        );
+      }
       const completion = await groq.chat.completions.create({
         model: "openai/gpt-oss-20b",
         temperature: 0.2,

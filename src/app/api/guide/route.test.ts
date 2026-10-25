@@ -2,14 +2,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-const { createCompletion, enforceAllowance, rateLimit } = vi.hoisted(() => ({
+const { createCompletion, enforceAllowance, rateLimit, globalBudget, groqOptions } = vi.hoisted(() => ({
+  groqOptions: vi.fn(),
   createCompletion: vi.fn(),
   enforceAllowance: vi.fn(),
   rateLimit: vi.fn(),
+  globalBudget: vi.fn(),
 }));
 
 vi.mock("groq-sdk", () => {
   class MockGroq {
+    constructor(options: { apiKey: string; maxRetries?: number }) {
+      groqOptions(options);
+    }
+
     chat = {
       completions: {
         create: createCompletion,
@@ -23,9 +29,8 @@ vi.mock("groq-sdk", () => {
 });
 
 vi.mock("@/lib/rateLimit", () => ({
-  aiGuideRateLimit: {
-    limit: rateLimit,
-  },
+  aiGuideRateLimit: { limit: rateLimit },
+  aiGuideGlobalProviderBudget: { limit: globalBudget },
 }));
 vi.mock("@/lib/guideAllowance.server", () => ({
   enforceGuideDailyAllowance: enforceAllowance,
@@ -74,6 +79,8 @@ describe("POST /api/guide", () => {
       reset: Date.now() + 60_000,
     });
 
+    globalBudget.mockResolvedValue({ success: true, limit: 120, remaining: 119, reset: Date.now() + 86_400_000 });
+
     enforceAllowance.mockResolvedValue({
       success: true,
       limit: 3,
@@ -101,6 +108,68 @@ describe("POST /api/guide", () => {
 
       usage: {},
     });
+  });
+
+  it("disables implicit Groq transport retries to preserve one HTTP attempt per budget slot", async () => {
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question: "What is this?",
+        citySlug: "lubeck",
+        placeSlug: "holstentor",
+        locale: "en",
+      }),
+    }));
+
+    expect(response.status).toBe(200);
+    expect(groqOptions).toHaveBeenCalledWith({
+      apiKey: "test-key",
+      maxRetries: 0,
+    });
+    expect(globalBudget).toHaveBeenCalledOnce();
+    expect(createCompletion).toHaveBeenCalledOnce();
+  });
+
+  it("rejects global provider budget exhaustion before calling Groq", async () => {
+    globalBudget.mockResolvedValueOnce({ success: false, limit: 120, remaining: 0, reset: Date.now() + 60_000 });
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: "What is this?", citySlug: "lubeck", placeSlug: "holstentor", locale: "en" }),
+    }));
+    expect(response.status).toBe(503);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    await expect(response.json()).resolves.toMatchObject({ code: "guide_global_budget_exhausted" });
+    expect(createCompletion).not.toHaveBeenCalled();
+    expect(globalBudget).toHaveBeenCalledOnce();
+  });
+
+  it("ignores spoofed forwarded IPs outside Cloudflare", async () => {
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-forwarded-for": "198.51.100.100, 203.0.113.25" },
+      body: JSON.stringify({ question: "What is this?", citySlug: "lubeck", placeSlug: "holstentor", locale: "en" }),
+    }));
+    expect(response.status).toBe(200);
+    expect(rateLimit).toHaveBeenCalledWith("unattributed");
+    expect(enforceAllowance).toHaveBeenCalledWith(expect.objectContaining({ fallbackIdentity: "unattributed" }));
+  });
+
+  it("counts retries independently and does not call Groq once the shared cap is hit", async () => {
+    globalBudget
+      .mockResolvedValueOnce({ success: true, limit: 120, remaining: 1, reset: Date.now() + 60_000 })
+      .mockResolvedValueOnce({ success: false, limit: 120, remaining: 0, reset: Date.now() + 60_000 });
+    createCompletion.mockResolvedValueOnce({ choices: [{ message: { content: "not a JSON answer" } }] });
+    const response = await POST(new Request("http://localhost/api/guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: "When was this built?", citySlug: "lubeck", placeSlug: "holstentor", locale: "en" }),
+    }));
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toMatchObject({ code: "guide_global_budget_exhausted" });
+    expect(globalBudget).toHaveBeenCalledTimes(2);
+    expect(createCompletion).toHaveBeenCalledTimes(1);
   });
 
   it("returns authoritative daily allowance metadata separately from abuse limits", async () => {
