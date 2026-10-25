@@ -11,6 +11,7 @@ const result = spawnSync(
     "run",
     "src/lib/admin/content/cms.integration.test.ts",
     "src/lib/content/publicTour.integration.test.ts",
+    "src/lib/admin/content/publishingQueue.integration.test.ts",
     "src/lib/admin/marketing/qaEvidence.integration.test.ts",
     "src/db/marketingGeneration.integration.test.ts",
     "--no-file-parallelism",
