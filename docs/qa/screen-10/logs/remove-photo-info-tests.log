@@ -1,0 +1,13 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/native-v2-regressions.test.tsx tests/explore-photography.test.ts
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+
+ Test Files  2 passed (2)
+      Tests  68 passed (68)
+   Start at  00:45:24
+   Duration  1.40s (transform 185ms, setup 0ms, import 270ms, tests 824ms, environment 248ms)
+

@@ -1,0 +1,17 @@
+{
+  "head": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "branch": "codex/onboarding-global-welcome",
+  "source_files_checked": 1054,
+  "unchanged_files": 1052,
+  "allowed_changed_files": [
+    "mobile/src/components/NativeWalkFlow.tsx",
+    "mobile/tests/walk-flow.behavior.tsx"
+  ],
+  "other_source_changes": [],
+  "unrelated_git_status_preserved": true,
+  "temporary_diagnostics_removed": true,
+  "bundles_have_no_diagnostic_markers": true,
+  "original_android_qa_selections_restored_to_recorded_baseline": true,
+  "screen14_and_D01_D14": "PENDING; unchanged",
+  "commit_push_merge_deploy_delete": false
+}

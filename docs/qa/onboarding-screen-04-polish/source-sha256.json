@@ -1,0 +1,6 @@
+{
+  "mobile/src/app/index.tsx": "32c23f617579eda1656ee7038fcf548c5292d25ffc844f7e6ef9807744855ada",
+  "mobile/src/components/CityPhotoCredits.tsx": "072cffe22acf3fd7d0f5629600f3e1fc8280e6e1a1c73b9dd76b8a1deea6ebaa",
+  "mobile/assets/images/selection-card-gradient.svg": "7513fe9c90ec285dec78f335a6215d173a176bd6e2c3576c1f9ac0f14fdcf8be",
+  "mobile/tests/home-presentation.test.tsx": "b2168d61ea6ef0e42e95ec6c83a7fc21a65075a253af2b5be6b0a4a248458975"
+}

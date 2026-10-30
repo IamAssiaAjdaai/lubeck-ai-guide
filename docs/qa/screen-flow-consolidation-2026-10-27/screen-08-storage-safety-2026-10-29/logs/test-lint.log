@@ -1,0 +1,12 @@
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/tests/walk-flow.behavior.tsx
+  376:1  warning  Import in body of module; reorder to top  import/first
+  377:1  warning  Import in body of module; reorder to top  import/first
+  378:1  warning  Import in body of module; reorder to top  import/first
+  379:1  warning  Import in body of module; reorder to top  import/first
+  380:1  warning  Import in body of module; reorder to top  import/first
+
+✖ 5 problems (0 errors, 5 warnings)
+  0 errors and 3 warnings potentially fixable with the `--fix` option.
+
+ESLint found too many warnings (maximum: 0).

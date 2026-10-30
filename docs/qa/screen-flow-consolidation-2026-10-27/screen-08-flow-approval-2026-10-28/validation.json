@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-28",
+  "worksheetByteExact": true,
+  "all27SelectionsAndNotesUnchanged": true,
+  "pendingDDecisions": 14,
+  "screen14": "PENDING",
+  "screen08UxFlow": "APPROVED",
+  "implementationAuthorization": "NOT AUTHORIZED",
+  "executionStatus": "NOT IMPLEMENTED",
+  "baselineTests": {
+    "filesPassed": 8,
+    "testsPassed": 117,
+    "exitCode": 0,
+    "scope": "Unchanged current implementation, mocked native/services; not approved-flow verification"
+  },
+  "newFlowTests": "NOT EXECUTED \u2014 not implemented",
+  "nativeNewLayoutAcceptance": "PENDING",
+  "productFilesChecked": 1041,
+  "productFilesChanged": [],
+  "localDocumentLinksChecked": 58,
+  "brokenLinks": [],
+  "gitDiffCheck": "PASS",
+  "previousRevisions": "Archived before documentation edits in previous-documents/"
+}

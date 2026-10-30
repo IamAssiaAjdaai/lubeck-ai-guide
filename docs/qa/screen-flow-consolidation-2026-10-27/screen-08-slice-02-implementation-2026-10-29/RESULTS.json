@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/onboarding-global-welcome",
+  "HEAD": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "ordinaryPassed": 1066,
+  "expectedFailureVariantsNotFunctionalityPasses": 1,
+  "todo": 17,
+  "unexpectedFailed": 0,
+  "total": 1084,
+  "convertedCases": [
+    "T01",
+    "T02",
+    "T05",
+    "I02",
+    "I03",
+    "I08",
+    "A01"
+  ],
+  "convertedVariants": 8,
+  "newOrdinaryTests": 19,
+  "strictRed": {
+    "ordinaryFailed": 1,
+    "case": "D03",
+    "commandExpectedExit": 1
+  },
+  "typescript": "PASS",
+  "lint": "PASS; zero warnings",
+  "localization": "PASS; seven locales, 681 shared UI keys each",
+  "iosHermes": "PASS; unsigned local bundle",
+  "androidHermes": "PASS; unsigned local bundle",
+  "nativeIOS": "PARTIAL; standard/small guest simulator checks and captures",
+  "nativeAndroid": "UNVERIFIED; adb devices returned no connected devices",
+  "spokenAssistiveTechnology": "UNVERIFIED",
+  "productionFiles": 7,
+  "testFiles": 6,
+  "Screen14": "PENDING / unchanged",
+  "D01_D14": "PENDING / unchanged"
+}

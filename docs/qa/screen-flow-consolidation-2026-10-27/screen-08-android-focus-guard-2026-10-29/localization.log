@@ -1,0 +1,11 @@
+
+> @citywalk/mobile@1.0.0 i18n:check
+> node ../packages/i18n/scripts/check.mjs
+
+de: 681 UI keys, 0 errors
+en: 681 UI keys, 0 errors
+da: 681 UI keys, 0 errors
+sv: 681 UI keys, 0 errors
+nl: 681 UI keys, 0 errors
+es: 681 UI keys, 0 errors
+ar: 681 UI keys, 0 errors

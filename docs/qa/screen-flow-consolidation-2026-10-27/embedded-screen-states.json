@@ -1,0 +1,289 @@
+[
+  {
+    "id": "N-HOME",
+    "name": "Original Home / featured cities",
+    "source": "mobile/src/app/index.tsx",
+    "route": "/ without section=cities",
+    "status": "Retained legacy; observed native"
+  },
+  {
+    "id": "N-SEARCH",
+    "name": "Search / recent / empty results",
+    "source": "mobile/src/app/city/[citySlug]/search.tsx",
+    "route": "/city/:citySlug/search",
+    "status": "Existing; Explore search opens this route"
+  },
+  {
+    "id": "N-GUIDE",
+    "name": "Place-scoped Guide / eligibility / errors",
+    "source": "mobile/src/app/city/[citySlug]/guide/[placeSlug].tsx",
+    "route": "/city/:citySlug/guide/:placeSlug",
+    "status": "Existing; backend/source/entitlement gated"
+  },
+  {
+    "id": "N-ASSISTANT",
+    "name": "City Guide fallback",
+    "source": "mobile/src/app/city/[citySlug]/assistant.tsx",
+    "route": "/city/:citySlug/assistant",
+    "status": "Unavailable city-wide answers, useful fallback; not working city-wide chat"
+  },
+  {
+    "id": "N-PLAN2",
+    "name": "Repeated interests + categories + walking pace",
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "route": "/city/:citySlug/walk; plan step 2 after 08",
+    "status": "Retained legacy form asks interests again after Screen 05; same state"
+  },
+  {
+    "id": "N-PLAN3",
+    "name": "Manual/GPS start + finish/loop/destination",
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "route": "/city/:citySlug/walk; plan step 3",
+    "status": "Retained walking return/start/finish constraints"
+  },
+  {
+    "id": "N-BUILD",
+    "name": "Build loading / no eligible results / errors",
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "route": "/city/:citySlug/walk; building / buildError",
+    "status": "Real planner states, not new routes"
+  },
+  {
+    "id": "N-PREVIEW",
+    "name": "Custom planned walk preview",
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "route": "/city/:citySlug/walk; preview",
+    "status": "Existing estimates/adaptation; not official published-route Screen 13"
+  },
+  {
+    "id": "N-ACTIVE",
+    "name": "Custom basic / premium live Active Walk",
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "route": "/city/:citySlug/walk; active",
+    "status": "Existing manual/adaptive/live system; premium claims require integration/device acceptance"
+  },
+  {
+    "id": "N-FINISH",
+    "name": "Custom finish / feedback / share / save",
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "route": "/city/:citySlug/walk; finished",
+    "status": "Existing; branch variants contain additional Finish Walk drafts"
+  },
+  {
+    "id": "N-ADAPT",
+    "name": "Add / take back / proposal / rebuild confirmation",
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "route": "/city/:citySlug/walk; panel or modal",
+    "status": "Existing shared planner adaptation; no street-routing promise"
+  },
+  {
+    "id": "N-CURATED",
+    "name": "Active Walk candidate (unapproved Screen 14)",
+    "source": "mobile/src/components/PublishedActiveWalk.tsx",
+    "route": "/city/:citySlug/place/:placeSlug + tripSource=published",
+    "status": "Local unapproved implementation; not one of approved 01–13"
+  },
+  {
+    "id": "N-SAVED",
+    "name": "Saved places and empty/error states",
+    "source": "mobile/src/app/saved.tsx",
+    "route": "/saved",
+    "status": "Existing guest local saves + account paths"
+  },
+  {
+    "id": "N-TRIPS",
+    "name": "Current / saved / completed / legacy trips",
+    "source": "mobile/src/app/saved.tsx",
+    "route": "/saved?view=trips",
+    "status": "Same component, filtered mode; curated progress not enumerated here"
+  },
+  {
+    "id": "N-PROFILE",
+    "name": "Profile summary / account/preferences links",
+    "source": "mobile/src/app/profile.tsx",
+    "route": "/profile",
+    "status": "Existing; Settings not a separate native file route"
+  },
+  {
+    "id": "N-ACCOUNT",
+    "name": "General account / authenticated management",
+    "source": "mobile/src/app/account/index.tsx",
+    "route": "/account",
+    "status": "Retained legacy presentation and lifecycle"
+  },
+  {
+    "id": "N-SIGNUP",
+    "name": "Email sign-up",
+    "source": "mobile/src/app/account/index.tsx",
+    "route": "/account?entry=sign-up; optional onboarding=1",
+    "status": "Existing Better Auth; real provider acceptance pending"
+  },
+  {
+    "id": "N-SIGNIN",
+    "name": "Email sign-in",
+    "source": "mobile/src/app/account/index.tsx",
+    "route": "/account?entry=sign-in; optional onboarding=1",
+    "status": "Existing; auth is not discovery gate"
+  },
+  {
+    "id": "N-RECOVER",
+    "name": "Recovery / verify-email resend / auth notices",
+    "source": "mobile/src/app/account/index.tsx",
+    "route": "/account; entry=reset and feedback states",
+    "status": "Existing internal modes, not separate routes"
+  },
+  {
+    "id": "N-EDIT",
+    "name": "Profile editing",
+    "source": "mobile/src/app/account/index.tsx",
+    "route": "/account; authenticated entry=edit",
+    "status": "Existing account-only"
+  },
+  {
+    "id": "N-PREF",
+    "name": "Saved traveler defaults",
+    "source": "mobile/src/app/account/index.tsx",
+    "route": "/account; authenticated entry=preferences",
+    "status": "Existing account-only defaults, not unbuilt guest draft"
+  },
+  {
+    "id": "N-PASSWORD",
+    "name": "Password management",
+    "source": "mobile/src/app/account/index.tsx",
+    "route": "/account; authenticated entry=change-password",
+    "status": "Existing protected lifecycle"
+  },
+  {
+    "id": "N-DELETE",
+    "name": "Account deletion confirmation",
+    "source": "mobile/src/app/account/index.tsx",
+    "route": "/account?entry=delete",
+    "status": "Existing consequential action; audit did not invoke"
+  },
+  {
+    "id": "N-PREMIUM",
+    "name": "Premium / native billing offering / sign-in/basic exit",
+    "source": "mobile/src/app/premium.tsx",
+    "route": "/premium + RevenueCatPremiumCard",
+    "status": "Separate native premium offering from one-time City Pass; provider/config gated"
+  },
+  {
+    "id": "N-CITYPASS",
+    "name": "City Pass entitlement / purchase status",
+    "source": "mobile/src/app/account/index.tsx",
+    "route": "/account; passState and relevant place premium eligibility",
+    "status": "No new dedicated native City Pass detail/purchase-success route identified; Web has /pass and /account/purchases"
+  },
+  {
+    "id": "N-LEGAL",
+    "name": "Legal/help destinations",
+    "source": "mobile/src/app/legal.tsx",
+    "route": "/legal",
+    "status": "Guest legal menu; external operator-publication approval still distinct"
+  },
+  {
+    "id": "N-CREDITS",
+    "name": "Photo Credits / localized license links",
+    "source": "mobile/src/app/photo-credits.tsx",
+    "route": "/photo-credits",
+    "status": "Guest central record; minimum adjacent credits remain where implemented"
+  },
+  {
+    "id": "N-OPEN",
+    "name": "Campaign/native deep-link resolver",
+    "source": "mobile/src/app/open/[citySlug]/[marketingSlug].tsx",
+    "route": "/open/:citySlug/:marketingSlug",
+    "status": "Existing city-scoped resolver; not onboarding"
+  },
+  {
+    "id": "N-AUDIO",
+    "name": "Audio playback / missing locale / failure",
+    "source": "mobile/src/components/NativeAudioPlayer.tsx",
+    "route": "Place Detail exact-locale section",
+    "status": "Reusable capability; not duplicate screen"
+  },
+  {
+    "id": "N-SAVEGATE",
+    "name": "Optional account save gate",
+    "source": "mobile/src/components/SaveAccountGate.tsx",
+    "route": "Planner save modal",
+    "status": "Guest basic discovery remains available"
+  },
+  {
+    "id": "N-LANGUAGE",
+    "name": "Language menu",
+    "source": "mobile/src/components/LocaleSelector.tsx",
+    "route": "Shared modal",
+    "status": "Shared component; not independent Settings route"
+  },
+  {
+    "id": "W-PLAN",
+    "name": "Web planner start/time/interests/start-end",
+    "source": "src/components/walk/WalkPlanner.tsx",
+    "route": "Inside localized city experience",
+    "status": "Preserved Web capability; not required native mirror"
+  },
+  {
+    "id": "W-JOURNEY",
+    "name": "Web preview / active / finish / adaptation",
+    "source": "src/components/walk/WalkJourney.tsx",
+    "route": "Inside localized city experience",
+    "status": "Existing browser state; separate native device acceptance"
+  },
+  {
+    "id": "W-OLDPLANNER",
+    "name": "Legacy custom tour planner / builder",
+    "source": "src/components/travel/CustomTourPlanner.tsx",
+    "route": "Component usage must be checked; see component-usage.json",
+    "status": "Legacy overlapping component, not independent file route"
+  },
+  {
+    "id": "W-DISCOVERY",
+    "name": "Web list/map/place category browsing",
+    "source": "src/components/travel/PlaceDiscovery.tsx",
+    "route": "Inside CityExperience",
+    "status": "Legitimate shared product presentation"
+  },
+  {
+    "id": "W-GUIDE",
+    "name": "Web place Guide",
+    "source": "src/components/AskGuide.tsx",
+    "route": "Inside place page",
+    "status": "Place-grounded content; provider acceptance unverified"
+  },
+  {
+    "id": "W-COMMERCE",
+    "name": "City Pass paywall / checkout / purchases",
+    "source": "src/components/commerce/CityPassPaywall.tsx",
+    "route": "/:locale/pass/:citySlug and /:locale/account/purchases",
+    "status": "€4.99/72h one-time rules preserved; no transaction tested"
+  },
+  {
+    "id": "W-AUTH",
+    "name": "Traveler auth / reset / account lifecycle",
+    "source": "src/components/account/TravelerAccountPanel.tsx",
+    "route": "/:locale/account + /account/reset-password",
+    "status": "Existing; separate staff identity"
+  },
+  {
+    "id": "W-LEGAL",
+    "name": "Legal unavailable / support / consent states",
+    "source": "src/components/legal/LegalPage.tsx",
+    "route": "/imprint, /privacy, /terms, /support",
+    "status": "Publication gates retained"
+  },
+  {
+    "id": "A-FORMS",
+    "name": "Admin entity editors/media/translation/marketing workflows",
+    "source": "src/components/admin/AdminContentForms.tsx",
+    "route": "See 28 Admin route rows",
+    "status": "Staff capability enforced; no runtime staff login attempted"
+  },
+  {
+    "id": "A-PLACEHOLDER",
+    "name": "Admin generic protected section",
+    "source": "src/app/admin/(protected)/[section]/page.tsx",
+    "route": "/admin/:section (configured sections only)",
+    "status": "Confirmed Protected placeholder body; do not call full CMS implementation"
+  }
+]

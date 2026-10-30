@@ -1,0 +1,107 @@
+{
+  "assets/00f333dc85c63b32.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/04-old.png",
+    "sha256": "00f333dc85c63b32597bdc488091cf0b239f051e38af42a7d63d4c318b1f9718",
+    "caption": "Fresh retained legacy presentation on current source, not an exact checkout of baseline."
+  },
+  "assets/ed97d31accd50481.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/04-new.png",
+    "sha256": "ed97d31accd504811482f9d4dc1be1bb6c5cf08a00a45a79f4a2a8236a763dcc",
+    "caption": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  "assets/90cb51a61e4997e0.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/03-old.png",
+    "sha256": "90cb51a61e4997e0069847849e9107723383d82da9b2d091a244abc543795b50",
+    "caption": "Fresh retained legacy presentation on current source, not an exact checkout of baseline."
+  },
+  "assets/15e616967ab90578.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/03-new.png",
+    "sha256": "15e616967ab905783d7c51bc060f5c4285e350a55323f053f25266b1bd2bf296",
+    "caption": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  "assets/4fcb007d6195b455.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/05-new.png",
+    "sha256": "4fcb007d6195b455e43b5431a619f9b1aca0bf27be8f10da0f0d77eb4ff9a99a",
+    "caption": "Archived approved native Screen 05; audit capture 28 Oct 2026, 402×874pt. Not a new device acceptance run."
+  },
+  "assets/2417a3b42929b1b0.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/06-new.png",
+    "sha256": "2417a3b42929b1b08aaac756e44b735b46e71b2ca9cf134db236a0eb06af0011",
+    "caption": "Archived approved native Screen 06; audit capture 28 Oct 2026, 402×874pt. Not a new device acceptance run."
+  },
+  "assets/3e88bf7d37535772.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/07-new.png",
+    "sha256": "3e88bf7d375357729de9b38068d32af4e84bb5fc7f51b3a23ac15b5adea011a0",
+    "caption": "Archived approved native Screen 07; audit capture 28 Oct 2026, 402×874pt. Not a new device acceptance run."
+  },
+  "assets/9b0fca5ec4ce3c48.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/09-new.png",
+    "sha256": "9b0fca5ec4ce3c48057176c85b469e6d32f4060cd2aa1833a860b4a49cd889ea",
+    "caption": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  "assets/d904ee993a09ae0f.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/10-new.png",
+    "sha256": "d904ee993a09ae0f018f061abca9edebe4eaf3579561c46e9fc96fb7f26815bd",
+    "caption": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  "assets/f2e391696ab566c0.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/12-new.png",
+    "sha256": "f2e391696ab566c0f056cde62ebaa1ad0a6d9c063e8de01050400325ed691ae6",
+    "caption": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  "assets/efc85714f92a1e62.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/screen-08-android-focus-guard-2026-10-29/native-built-preview.png",
+    "sha256": "efc85714f92a1e6296707f48f0ec8ce13e1a62ad89171c4ef7b6cf1209ca7162",
+    "caption": "Current custom preview from29 Oct Android QA; not a historical OLD render and not matched to the iPhone viewport."
+  },
+  "assets/2238cab27b47f388.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/13-new.png",
+    "sha256": "2238cab27b47f388c3e7bc680ebdca91424cc399cf3a59816b39d0d06cf8da0c",
+    "caption": "Archived approved native Screen 13; audit capture 28 Oct 2026, 402×874pt. Not a new device acceptance run."
+  },
+  "assets/6aa4bb663993a81b.png": {
+    "source": "docs/qa/citywalk-native-visual-parity/screenshots/web/active-390.png",
+    "sha256": "6aa4bb663993a81bedda138379177130ca9b4c62fbb66036b822d5e25630b823",
+    "caption": "Supplementary archived Web Active Walk only. Native OLD custom-active screenshot unavailable; not native parity proof."
+  },
+  "assets/a298566eb8cc8ed7.png": {
+    "source": "docs/qa/screen-14/screenshots/standard-en.png",
+    "sha256": "a298566eb8cc8ed716b3d63660499a5c51b924d6af53b7f368d69611a00b5af9",
+    "caption": "Archived published execution candidate14 on the place route; UNAPPROVED."
+  },
+  "assets/6eb253ef3802b5be.png": {
+    "source": "docs/qa/citywalk-native-visual-parity/screenshots/web/assistant-390.png",
+    "sha256": "6eb253ef3802b5be4b42868281d835c041701d8c4a183a3f3a4238f9983febc8",
+    "caption": "Supplementary archived Web Guide UI; native OLD place-Guide screenshot unavailable. Not proof of live provider responses."
+  },
+  "assets/85a6375817fc5d4a.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/screen-08-android-focus-guard-2026-10-29/native-guide-focused.png",
+    "sha256": "85a6375817fc5d4a46d1fb471d7dbb7a30483bd54af8015175fed1a70608b812",
+    "caption": "Actual Android city assistant fallback from fixed-Back QA; no working city-wide chat is implied."
+  },
+  "assets/d1e5ba1c7a481a93.png": {
+    "source": "docs/qa/citywalk-native-visual-parity/screenshots/web/saved-390.png",
+    "sha256": "d1e5ba1c7a481a93d1afaee7021d46d4d2f66cacce0be58e2d653d1b97aed6f3",
+    "caption": "Supplementary archived Web Saved only; native OLD capture unavailable."
+  },
+  "assets/8030aa65ad2d84f2.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/09-legacy-web.png",
+    "sha256": "8030aa65ad2d84f2e03c4aeb802a573997c237ef7700f3892d760991b4da5080",
+    "caption": "Supplementary archived city-experience Web image; does not identify which wrapper rendered it or prove URL/SEO parity."
+  },
+  "assets/ee812b37cd8b3e6c.webp": {
+    "source": "docs/qa/landing-next-402/approved-screenshots/landing-390.webp",
+    "sha256": "ee812b37cd8b3e6c6e5b68f9c0cdc8414efeca629d2e6cb4d366fced07bc6d51",
+    "caption": "Archived approved Web LandingNext, not a fresh homepage or preview-route runtime capture."
+  },
+  "assets/e49314be1192b35f.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/images/11-new.png",
+    "sha256": "e49314be1192b35f130e42757a9962c5a1d7ea5292f631f789405c826e725144",
+    "caption": "Archived approved native Screen 11; audit capture 28 Oct 2026, 402×874pt. Not a new device acceptance run."
+  },
+  "assets/5df0fd5f137af915.png": {
+    "source": "docs/qa/screen-flow-consolidation-2026-10-27/screen-08-slice-02-implementation-2026-10-29/screenshots/ios-standard-en-screen08.png",
+    "sha256": "5df0fd5f137af9156dd15fb2ea7848b06f453743152d890a66be01843fa907f1",
+    "caption": "Implemented S08 two-action footer; iOS standard EN from Slice02 QA. Historical audit08/contact sheet has the obsolete one-action footer."
+  }
+}

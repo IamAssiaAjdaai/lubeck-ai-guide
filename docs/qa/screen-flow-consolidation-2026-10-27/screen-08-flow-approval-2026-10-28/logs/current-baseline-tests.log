@@ -1,0 +1,13 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/first-experience.test.tsx tests/walk-flow.test.tsx tests/city-hub-actions.test.tsx tests/location-permission.test.tsx tests/select-interests.test.tsx tests/available-time.test.tsx tests/return-by-picker.test.tsx tests/walk-storage.test.ts
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+
+ Test Files  8 passed (8)
+      Tests  117 passed (117)
+   Start at  05:41:33
+   Duration  9.92s (transform 1.08s, setup 0ms, import 2.61s, tests 9.38s, environment 6.93s)
+

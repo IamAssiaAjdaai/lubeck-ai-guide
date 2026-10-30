@@ -1,0 +1,11 @@
+--- before/mobile/src/app/introduction.tsx
++++ after/mobile/src/app/introduction.tsx
+@@ -118,7 +118,7 @@
+   mainPhoto: { top: 0, left: 0, width: "68%", height: "92%" },
+   topPhoto: { top: 0, right: 0, width: "35%", height: "53%", borderRadius: 16 },
+   frontPhoto: { bottom: 0, right: 0, width: "42%", height: "58%", borderRadius: 18 },
+-  creditControl: { position: "absolute", bottom: -8, left: 4, width: 44, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: colors.background, borderRadius: radius.pill },
++  creditControl: { position: "absolute", bottom: "12%", left: 12, width: 44, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: colors.background, borderRadius: radius.pill },
+   title: { fontFamily: Platform.select({ ios: "Georgia", android: "serif" }), fontSize: 34, lineHeight: 38, fontWeight: "700", letterSpacing: -0.8, color: colors.text, marginBottom: 20 },
+   largeTitle: { fontSize: 24, lineHeight: 32, letterSpacing: 0 },
+   compactTitle: { fontSize: 30, lineHeight: 34, marginBottom: spacing.md },

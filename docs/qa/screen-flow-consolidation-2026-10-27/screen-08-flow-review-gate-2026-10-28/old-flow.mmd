@@ -1,0 +1,17 @@
+flowchart TD
+ Launch["App launch → / (Home)"] --> City["Choose city: /?section=cities or Home city card"]
+ Welcome["Optional /welcome → /introduction"] --> Account["Optional /account?onboarding=1"]
+ Welcome -->|"Explore Cities"| City
+ Account -->|"Guest exit"| City
+ City --> Hub["09 /city/:citySlug"]
+ Hub -->|"Build My Walk"| Walk["/city/:citySlug/walk — hydrate"]
+ Walk -->|"Current preview/active exists"| Resume["Restore that phase; bypass 05–08"]
+ Walk -->|"New draft"| S5["05 SelectInterests"]
+ S5 --> S6["06 AvailableTime / ReturnByTimePicker"]
+ S6 --> S7["07 LocationPermission: use location OR Not now"]
+ S7 --> S8["08 FirstExperience: no route generated"]
+ S8 -->|"Explore city"| Hub2["Push 09 Hub with returnToPlanner=1"]
+ Hub2 -->|"Build → router.back"| Repeat["Legacy plan step 2: interests AGAIN + categories/walking"]
+ Repeat --> Constraints["Legacy plan step 3: start / finish / loop"]
+ Constraints -->|"Explicit Build"| Preview["Custom preview in /walk — not Screen 13"]
+ Preview -->|"Explicit Start"| Active["Custom active in /walk"]

@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "file": "mobile/tests/walk-flow.behavior.tsx",
+      "originalAssertions": 279,
+      "currentAssertions": 333,
+      "allOriginalAssertionsPreservedInOrder": true
+    },
+    {
+      "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+      "originalAssertions": 39,
+      "currentAssertions": 39,
+      "allOriginalAssertionsPreservedInOrder": true
+    },
+    {
+      "file": "mobile/tests/screen-08-contract-pending.test.ts",
+      "originalAssertions": 0,
+      "currentAssertions": 0,
+      "allOriginalAssertionsPreservedInOrder": true
+    }
+  ],
+  "originalAssertionChains": 318,
+  "activeStartRuntimeLogicUnchanged": true,
+  "allExistingOnBackPropExpressionsUnchanged": true,
+  "screen05Through08CallbacksAndRenderingByteIdentical": true,
+  "androidBackHandlerByteIdentical": true,
+  "legacyLoadAndReplayTransformsUnchanged": true
+}

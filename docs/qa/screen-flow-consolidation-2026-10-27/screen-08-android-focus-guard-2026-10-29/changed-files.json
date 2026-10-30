@@ -1,0 +1,10 @@
+{
+  "mobile/src/components/NativeWalkFlow.tsx": {
+    "before": "0171145980c0c6ef62a5448fa5e9a6e91fcd9cdcfe9b00a9b67ca6cd7c19d866",
+    "after": "593a0047328b70f73d75e818761a054f23bdbaa0711d70826acd3cf09f82b780"
+  },
+  "mobile/tests/walk-flow.behavior.tsx": {
+    "before": "a7b92b185fc841441e15e5bd92884f64625bf3d391eb7065479f1ab3816e19b9",
+    "after": "f5400dbb751cfb288eef991da2207445534eb8c8852ab7beead0f629990d99ba"
+  }
+}

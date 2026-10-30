@@ -1,0 +1,42 @@
+
+> lubeck-ai-guide@0.1.0 lint
+> eslint
+
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/apps/marketing-saas/src/ContentLibrary.tsx
+  8:7  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/apps/marketing-saas/src/CreativeStudio.tsx
+  734:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  990:7   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/apps/marketing-saas/src/PackWorkspace.tsx
+  190:1259  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/apps/marketing-saas/src/WorkspaceHeroVisual.tsx
+  15:18  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/src/app/admin/(protected)/preview/places/[id]/page.test.tsx
+  7:19  warning  '_fill' is assigned a value but never used                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  7:36  warning  '_priority' is assigned a value but never used                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  7:60  warning  '_unoptimized' is assigned a value but never used                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  8:12  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  8:12  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/src/cloudflare/entrypoint.ts
+  31:1  warning  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/src/components/admin/MarketingQaPanel.test.tsx
+  78:33  warning  '_placeId' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/src/components/marketing/MarketingLandingTracker.tsx
+  10:151  warning  The 'properties' object makes the dependencies of useEffect Hook (at line 11) change on every render. To fix this, wrap the initialization of 'properties' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/tools/native-api-preview/hyperdriveProbe.ts
+  32:1  warning  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/tools/native-api-preview/local-tester-jwt.mjs
+  3:20  warning  'writeFile' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 15 problems (0 errors, 15 warnings)
+

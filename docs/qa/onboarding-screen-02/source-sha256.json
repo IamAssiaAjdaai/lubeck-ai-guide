@@ -1,0 +1,6 @@
+{
+  "mobile/src/app/welcome.tsx": "62060d8d9fdac224b51288d15be9651c6a3afb66b05ef640eab7cf9f84a205e3",
+  "mobile/src/app/introduction.tsx": "529e1edd610b73108274fd782ddf210b03bff55cafcb71b68811ed045d2bdd85",
+  "mobile/src/lib/introductionCopy.ts": "c8319e957126aaa815f4862fcb0369bc4b3c863b09e5906f2e5f4f07b4a755a8",
+  "mobile/tests/welcome.test.tsx": "ce51e0a6491a054e5c761562ee293ca46352eb92fe08e3530f2f005bf6853f0b"
+}

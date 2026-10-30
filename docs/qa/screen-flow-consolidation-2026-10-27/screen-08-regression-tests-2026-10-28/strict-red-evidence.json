@@ -1,0 +1,107 @@
+[
+  {
+    "caseId": "I03",
+    "test": "S08 navigation identity gaps \u2014 no lease substitute [S08 XFAIL][I03] bare returnToPlanner flag cannot authorize arbitrary Back",
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times"
+  },
+  {
+    "caseId": "I02",
+    "test": "S08 navigation identity gaps \u2014 no lease substitute [S08 XFAIL][I02] forged/mismatched mount token cannot resume a same-city draft",
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times"
+  },
+  {
+    "caseId": "I08",
+    "test": "S08 navigation identity gaps \u2014 no lease substitute [S08 XFAIL][I08] Guide entry retains the complete return envelope",
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected { citySlug: 'lubeck', \u2026(1) } to match object { plannerReturnVersion: '1', \u2026(2) }"
+  },
+  {
+    "caseId": "A01",
+    "test": "[S08 XFAIL][A01] distinct planning primary and city-browsing secondary in en",
+    "file": "mobile/tests/first-experience.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Continue planning\""
+  },
+  {
+    "caseId": "A01",
+    "test": "[S08 XFAIL][A01] distinct planning primary and city-browsing secondary in de",
+    "file": "mobile/tests/first-experience.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Planung fortsetzen\""
+  },
+  {
+    "caseId": "S07",
+    "test": "S08 persistence regression boundaries (real production contracts) [S08 XFAIL][S07] corrupt slot cannot be cleared under an absent-slot expectation",
+    "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "Error: promise resolved \"undefined\" instead of rejecting"
+  },
+  {
+    "caseId": "T01",
+    "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T01] primary continues to constraints without Hub push or repeated interests",
+    "file": "mobile/tests/walk-flow.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Continue planning\""
+  },
+  {
+    "caseId": "T02",
+    "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T02] skipped interests stay empty after direct planning handoff",
+    "file": "mobile/tests/walk-flow.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Continue planning\""
+  },
+  {
+    "caseId": "T05",
+    "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T05] constraints Back returns to confirmation rather than repeated interests",
+    "file": "mobile/tests/walk-flow.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected null not to be null"
+  },
+  {
+    "caseId": "S02",
+    "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][S02] storage I/O failure blocks fresh personalization rather than masquerading as no walk",
+    "file": "mobile/tests/walk-flow.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected <section \u2026(2)>\u2026(10)</section> to be null"
+  },
+  {
+    "caseId": "E03",
+    "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][E03] missing saved ID cannot silently become a new planning session",
+    "file": "mobile/tests/walk-flow.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected <section \u2026(2)>\u2026(11)</section> to be null"
+  },
+  {
+    "caseId": "E04",
+    "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][E04] opening saved replay cannot silently replace another unfinished current walk",
+    "file": "mobile/tests/walk-flow.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected 'walk-b72d89da-4c53-4b29-8c62-16cb954b\u2026' to be 'keep-current' // Object.is equality"
+  },
+  {
+    "caseId": "S04",
+    "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][S04] a new current walk arriving during Build must not be overwritten",
+    "file": "mobile/tests/walk-flow.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected 'walk-79819595-09a9-4b13-93ec-0a6731e6\u2026' to be 'newer-current' // Object.is equality"
+  },
+  {
+    "caseId": "S05",
+    "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][S05] same-ID concurrent edits during Customize Build must survive",
+    "file": "mobile/tests/walk-flow.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected { \u2026(9) } to deeply equal { id: 's08-existing', \u2026(8) }"
+  },
+  {
+    "caseId": "D03",
+    "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][D03] midnight cannot reinterpret an earlier-day HH:MM as a new deadline",
+    "file": "mobile/tests/walk-flow.test.tsx",
+    "actualStatus": "failed as ordinary test",
+    "firstFailure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times"
+  }
+]

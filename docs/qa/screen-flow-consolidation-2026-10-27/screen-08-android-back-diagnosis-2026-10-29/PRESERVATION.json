@@ -1,0 +1,12 @@
+{
+  "head": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "source_hashes_checked": 1054,
+  "changed_source_files": [],
+  "temporary_diagnostic_file_restored": true,
+  "unrelated_git_status_preserved": true,
+  "screen14_and_D01_D14": "PENDING; unchanged",
+  "production_fix": false,
+  "test_changes": false,
+  "navigation_trace_entries": 69,
+  "privacy": "Only names/keys, cursor/stage/focus, lease boolean and action type/source/target/count; no route params, account data, location or preference values."
+}

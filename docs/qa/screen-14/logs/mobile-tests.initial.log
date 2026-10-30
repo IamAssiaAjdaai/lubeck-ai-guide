@@ -1,0 +1,209 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+ ❯ tests/membership-screens.test.tsx (10 tests | 1 failed) 1466ms
+     × adds from Explore and immediately updates Detail in en 511ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/membership-screens.test.tsx > actual Explore and Detail share current-walk state (native bridges mocked) > adds from Explore and immediately updates Detail in en
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "Remove from walk"
+
+Here are the accessible roles:
+
+  main:
+
+  Name "":
+  [36m<main />[39m
+
+  --------------------------------------------------
+  link:
+
+  Name "Lübeck · Change city":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Lübeck · Change city"[39m
+    [33mrole[39m=[32m"link"[39m
+  [36m/>[39m
+
+  Name "HolstentorHistoric gateSee · 15 min visit":
+  [36m<button[39m
+    [33mrole[39m=[32m"link"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Build my walk":
+  [36m<button[39m
+    [33mdata-compact[39m=[32m"false"[39m
+    [33mdata-style[39m=[32m"{\"backgroundColor\":\"transparent\",\"borderRadius\":16,\"minHeight\":48}"[39m
+    [33mdata-tone[39m=[32m"primary"[39m
+  [36m/>[39m
+
+  Name "Explore places":
+  [36m<button[39m
+    [33mdata-compact[39m=[32m"true"[39m
+    [33mdata-style[39m=[32m"{\"flex\":0,\"minWidth\":0,\"minHeight\":64,\"borderRadius\":17,\"borderColor\":\"#DCE6F0\",\"paddingHorizontal\":10,\"boxShadow\":\"0px 5px 18px rgba(9,35,77,0.035)\",\"width\":108.66666666666667}"[39m
+    [33mdata-tone[39m=[32m"secondary"[39m
+  [36m/>[39m
+
+  Name "Near me":
+  [36m<button[39m
+    [33mdata-compact[39m=[32m"true"[39m
+    [33mdata-style[39m=[32m"{\"flex\":0,\"minWidth\":0,\"minHeight\":64,\"borderRadius\":17,\"borderColor\":\"#DCE6F0\",\"paddingHorizontal\":10,\"boxShadow\":\"0px 5px 18px rgba(9,35,77,0.035)\",\"width\":108.66666666666667}"[39m
+    [33mdata-tone[39m=[32m"secondary"[39m
+  [36m/>[39m
+
+  Name "Ask CITYWALK":
+  [36m<button[39m
+    [33mdata-compact[39m=[32m"true"[39m
+    [33mdata-style[39m=[32m"{\"flex\":0,\"minWidth\":0,\"minHeight\":64,\"borderRadius\":17,\"borderColor\":\"#DCE6F0\",\"paddingHorizontal\":10,\"boxShadow\":\"0px 5px 18px rgba(9,35,77,0.035)\",\"width\":108.66666666666667}"[39m
+    [33mdata-tone[39m=[32m"secondary"[39m
+  [36m/>[39m
+
+  Name "Checking your walk…":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Checking your walk…"[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mrole[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<section[39m
+  [33maria-label[39m=[32m"Explore"[39m
+[36m>[39m
+  [36m<main>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div />[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Lübeck · Change city"[39m
+              [33mrole[39m=[32m"link"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mLübeck[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<span>[39m
+            [0mExplore[0m
+            [0m
+[0m
+            [0mLübeck[0m
+          [36m</span>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<div />[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mdata-compact[39m=[32m"false"[39m
+            [33mdata-style[39m=[32m"{\"backgroundColor\":\"transparent\",\"borderRadius\":16,\"minHeight\":48}"[39m
+            [33mdata-tone[39m=[32m"primary"[39m
+          [36m>[39m
+            [0mBuild my walk[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33mdata-compact[39m=[32m"true"[39m
+          [33mdata-style[39m=[32m"{\"flex\":0,\"minWidth\":0,\"minHeight\":64,\"borderRadius\":17,\"borderColor\":\"#DCE6F0\",\"paddingHorizontal\":10,\"boxShadow\":\"0px 5px 18px rgba(9,35,77,0.035)\",\"width\":108.66666666666667}"[39m
+          [33mdata-tone[39m=[32m"secondary"[39m
+        [36m>[39m
+          [0mExplore places[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mdata-compact[39m=[32m"true"[39m
+          [33mdata-style[39m=[32m"{\"flex\":0,\"minWidth\":0,\"minHeight\":64,\"borderRadius\":17,\"borderColor\":\"#DCE6F0\",\"paddingHorizontal\":10,\"boxShadow\":\"0px 5px 18px rgba(9,35,77,0.035)\",\"width\":108.66666666666667}"[39m
+          [33mdata-tone[39m=[32m"secondary"[39m
+        [36m>[39m
+          [0mNear me[0m
+        [36m</button>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mdata-compact[39m=[32m"true"[39m
+            [33mdata-style[39m=[32m"{\"flex\":0,\"minWidth\":0,\"minHeight\":64,\"borderRadius\":17,\"borderColor\":\"#DCE6F0\",\"paddingHorizontal\":10,\"boxShadow\":\"0px 5px 18px rgba(9,35,77,0.035)\",\"width\":108.66666666666667}"[39m
+            [33mdata-tone[39m=[32m"secondary"[39m
+          [36m>[39m
+            [0mAsk CITYWALK[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<span>[39m
+          [0mPlaces[0m
+        [36m</span>[39m
+        [36m<div>[39m
+          [36m<div />[39m
+          [36m<div />[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<button[39m
+              [33mrole[39m=[32m"link"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mHolstentor[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0mHistoric gate[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0mSee[0m
+                  [0m · [0m
+                  [0m15[0m
+                  [0m [0m
+                  [0mmin visit[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<div>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"Checking your walk…"[39m
+                [33maria-pressed[39m=[32m"true"[39m
+                [33mrole[39m=[32m"button"[39m
+              [36m/>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div />[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</main>[39m
+[36m</section>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/membership-screens.test.tsx:120:35
+    118|     fireEvent.click(exploreAdd);
+    119|     await detail.findByRole("button", { name: t.remove, pressed: true …
+    120|     const exploreRemove = explore.getByRole("button", { name: t.remove…
+       |                                   ^
+    121|     expect(exploreRemove.getAttribute("aria-label")).toBe(t.remove);
+    122|     expect(exploreRemove.getAttribute("aria-pressed")).toBe("true");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 109 passed (110)
+      Tests  1 failed | 948 passed (949)
+   Start at  23:35:37
+   Duration  18.59s (transform 16.53s, setup 0ms, import 35.18s, tests 44.87s, environment 57.68s)
+

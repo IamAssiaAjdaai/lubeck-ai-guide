@@ -1,0 +1,211 @@
+[
+  {
+    "text": "",
+    "content-desc": "App Icon",
+    "class": "android.widget.ImageView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1032][179,1148]"
+  },
+  {
+    "text": "CITYWALK",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[221,1037][441,1088]"
+  },
+  {
+    "text": "Runtime version: 1.0.0",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[221,1099][574,1144]"
+  },
+  {
+    "text": "",
+    "content-desc": "Close",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[949,1070][991,1112]"
+  },
+  {
+    "text": "",
+    "content-desc": "Reload",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[105,1269][158,1322]"
+  },
+  {
+    "text": "Reload",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[179,1273][292,1318]"
+  },
+  {
+    "text": "",
+    "content-desc": "Home",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[592,1269][645,1322]"
+  },
+  {
+    "text": "Go home",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[666,1273][816,1318]"
+  },
+  {
+    "text": "TOOLS",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1463][158,1504]"
+  },
+  {
+    "text": "",
+    "content-desc": "Performance monitor",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[105,1604][158,1657]"
+  },
+  {
+    "text": "Toggle performance monitor",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[179,1608][642,1653]"
+  },
+  {
+    "text": "",
+    "content-desc": "Element inspector",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[105,1773][158,1826]"
+  },
+  {
+    "text": "Toggle element inspector",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[179,1777][591,1822]"
+  },
+  {
+    "text": "",
+    "content-desc": "DevTools",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[105,1942][158,1995]"
+  },
+  {
+    "text": "Open DevTools",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[179,1946][427,1991]"
+  },
+  {
+    "text": "",
+    "content-desc": "React Native dev menu",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[105,2111][158,2164]"
+  },
+  {
+    "text": "Open React Native dev menu",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[179,2115][653,2160]"
+  },
+  {
+    "text": "",
+    "content-desc": "Fast Refresh",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[105,2280][158,2333]"
+  },
+  {
+    "text": "Fast Refresh",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[179,2284][382,2329]"
+  }
+]

@@ -1,0 +1,5 @@
+{
+  "normalization": "Initial command output stripped the first status column; normalize leading whitespace for comparison. Source hash preservation is independently verified.",
+  "addedStatusEntries": [],
+  "removedStatusEntries": []
+}

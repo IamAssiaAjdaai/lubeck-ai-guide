@@ -1,0 +1,292 @@
+[
+  {
+    "screen": "01",
+    "kind": "fresh-current-native",
+    "path": "images/01-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-01-current-en.png",
+    "sha256": "f915f88946de95aa94c5cc06f4f152833735e4ccf9ac565ce03190033d8c8c56",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  {
+    "screen": "02",
+    "kind": "fresh-current-native",
+    "path": "images/02-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-02-current-en.png",
+    "sha256": "bb80b1cf633a117eba88be0f996a84f50b7524b84f1ea7aeb5e46183045beb01",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  {
+    "screen": "03",
+    "kind": "fresh-current-native",
+    "path": "images/03-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-03-current-en.png",
+    "sha256": "15e616967ab905783d7c51bc060f5c4285e350a55323f053f25266b1bd2bf296",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  {
+    "screen": "03",
+    "kind": "retained-legacy-native",
+    "path": "images/03-old.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-03-retained-legacy-en.png",
+    "sha256": "90cb51a61e4997e0069847849e9107723383d82da9b2d091a244abc543795b50",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh retained legacy presentation on current source, not an exact checkout of baseline."
+  },
+  {
+    "screen": "04",
+    "kind": "fresh-current-native",
+    "path": "images/04-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-04-current-en.png",
+    "sha256": "ed97d31accd504811482f9d4dc1be1bb6c5cf08a00a45a79f4a2a8236a763dcc",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  {
+    "screen": "04",
+    "kind": "retained-legacy-native",
+    "path": "images/04-old.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-04-retained-legacy-en.png",
+    "sha256": "00f333dc85c63b32597bdc488091cf0b239f051e38af42a7d63d4c318b1f9718",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh retained legacy presentation on current source, not an exact checkout of baseline."
+  },
+  {
+    "screen": "05",
+    "kind": "fresh-current-native",
+    "path": "images/05-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-05-current-de.png",
+    "sha256": "4fcb007d6195b455e43b5431a619f9b1aca0bf27be8f10da0f0d77eb4ff9a99a",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: German. Source hashes in registry."
+  },
+  {
+    "screen": "05",
+    "kind": "supplementary-web",
+    "path": "images/05-legacy-web.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/planner-interests-390.png",
+    "sha256": "7ff7dc4d1f06caa8b5eff97e7638afa7e85a5f10a77e69b8726b1bfa44d16340",
+    "width": 390,
+    "height": 844,
+    "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+  },
+  {
+    "screen": "06",
+    "kind": "fresh-current-native",
+    "path": "images/06-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-06-current-de.png",
+    "sha256": "2417a3b42929b1b08aaac756e44b735b46e71b2ca9cf134db236a0eb06af0011",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: German. Source hashes in registry."
+  },
+  {
+    "screen": "06",
+    "kind": "supplementary-web",
+    "path": "images/06-legacy-web.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/planner-time-390.png",
+    "sha256": "b00fbfe23f7987c13e181dfb3c7e40030f62ff380e0cbf34b4e423d57ff4ed8b",
+    "width": 390,
+    "height": 844,
+    "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+  },
+  {
+    "screen": "07",
+    "kind": "fresh-current-native",
+    "path": "images/07-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-07-current-de.png",
+    "sha256": "3e88bf7d375357729de9b38068d32af4e84bb5fc7f51b3a23ac15b5adea011a0",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: German. Source hashes in registry."
+  },
+  {
+    "screen": "07",
+    "kind": "supplementary-web",
+    "path": "images/07-legacy-web.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/planner-start-end-390.png",
+    "sha256": "bdf407cde34ed4ee641bf4e7da22adac8da13365781d6af0bca5f222b8d7bb12",
+    "width": 390,
+    "height": 844,
+    "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+  },
+  {
+    "screen": "08",
+    "kind": "fresh-current-native",
+    "path": "images/08-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-08-current-de.png",
+    "sha256": "f24fbfa5a518b2186f20d9e64cac0b2c19850d0e503efd2492470b932b7c60a9",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: German. Source hashes in registry."
+  },
+  {
+    "screen": "09",
+    "kind": "fresh-current-native",
+    "path": "images/09-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-09-current-en.png",
+    "sha256": "9b0fca5ec4ce3c48057176c85b469e6d32f4060cd2aa1833a860b4a49cd889ea",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  {
+    "screen": "09",
+    "kind": "supplementary-web",
+    "path": "images/09-legacy-web.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/city-hub-390.png",
+    "sha256": "8030aa65ad2d84f2e03c4aeb802a573997c237ef7700f3892d760991b4da5080",
+    "width": 390,
+    "height": 844,
+    "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+  },
+  {
+    "screen": "10",
+    "kind": "fresh-current-native",
+    "path": "images/10-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-10-current-en.png",
+    "sha256": "d904ee993a09ae0f018f061abca9edebe4eaf3579561c46e9fc96fb7f26815bd",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  {
+    "screen": "10",
+    "kind": "supplementary-web",
+    "path": "images/10-legacy-web.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/explore-map-390.png",
+    "sha256": "083221ef08c169987e79a65ee1cb5eff8ab19a02c316e1d524feb9b1fd5afc0a",
+    "width": 390,
+    "height": 844,
+    "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+  },
+  {
+    "screen": "11",
+    "kind": "fresh-current-native",
+    "path": "images/11-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-11-current-en.png",
+    "sha256": "e49314be1192b35f130e42757a9962c5a1d7ea5292f631f789405c826e725144",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  {
+    "screen": "11",
+    "kind": "archived-before-native",
+    "path": "images/11-old.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-11/screenshots/standard-before-en.png",
+    "sha256": "1ed8f055022662c49940bbc3917ed55e48027c3fb9ae7b9aaeeb5a270141c050",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Archived pre-redesign simulator capture. Language: English. Retained report identifies context; source-to-binary exact match not independently established."
+  },
+  {
+    "screen": "12",
+    "kind": "fresh-current-native",
+    "path": "images/12-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-12-current-en.png",
+    "sha256": "f2e391696ab566c0f056cde62ebaa1ad0a6d9c063e8de01050400325ed691ae6",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  {
+    "screen": "12",
+    "kind": "supplementary-web",
+    "path": "images/12-legacy-web.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/city-hub-390.png",
+    "sha256": "8030aa65ad2d84f2e03c4aeb802a573997c237ef7700f3892d760991b4da5080",
+    "width": 390,
+    "height": 844,
+    "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+  },
+  {
+    "screen": "13",
+    "kind": "fresh-current-native",
+    "path": "images/13-new.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-13-current-en.png",
+    "sha256": "2238cab27b47f388c3e7bc680ebdca91424cc399cf3a59816b39d0d06cf8da0c",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+  },
+  {
+    "screen": "13",
+    "kind": "archived-before-native",
+    "path": "images/13-old.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-13/screenshots/before-standard-de.png",
+    "sha256": "1eaec139d39652f553a8fbadbb1614675bd25cc1c800fcf0246528bf459d7dba",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Archived pre-redesign simulator capture. Language: German. Retained report identifies context; source-to-binary exact match not independently established."
+  },
+  {
+    "screen": null,
+    "kind": "archived-extra",
+    "path": "images/extra-0.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-14/screenshots/standard-en.png",
+    "sha256": "a298566eb8cc8ed716b3d63660499a5c51b924d6af53b7f368d69611a00b5af9",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Archived evidence; not recaptured or a new approval."
+  },
+  {
+    "screen": null,
+    "kind": "archived-extra",
+    "path": "images/extra-1.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/photo-credits/screenshots/credits-en.png",
+    "sha256": "1ad3c1c97f5309d9db69a6cdcdc4a396f6c0459eb4cab386de1eb4b41e8b8867",
+    "width": 1206,
+    "height": 2622,
+    "notes": "Archived evidence; not recaptured or a new approval."
+  },
+  {
+    "screen": null,
+    "kind": "archived-extra",
+    "path": "images/extra-2.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-10-refinement/screenshots/small-de.png",
+    "sha256": "33791bbd5ed13152cb59855fa86d4210c23c006ab22b4e8392dc605af30e3dc8",
+    "width": 750,
+    "height": 1334,
+    "notes": "Archived evidence; not recaptured or a new approval."
+  },
+  {
+    "screen": null,
+    "kind": "archived-extra",
+    "path": "images/extra-3.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-12/screenshots/small-de.png",
+    "sha256": "8ff4b8f43ace5d6928fbca966db4118deb07b63016c8c6f3aa579ba4036e2e71",
+    "width": 750,
+    "height": 1334,
+    "notes": "Archived evidence; not recaptured or a new approval."
+  },
+  {
+    "screen": null,
+    "kind": "archived-extra",
+    "path": "images/extra-4.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-13-refinement/screenshots/small-de.png",
+    "sha256": "cf13986e2524352d27d8fe13510388645dbc515d97be1fa25cbbed8bc187905d",
+    "width": 750,
+    "height": 1334,
+    "notes": "Archived evidence; not recaptured or a new approval."
+  },
+  {
+    "screen": null,
+    "kind": "archived-extra",
+    "path": "images/extra-5.png",
+    "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-13-refinement/screenshots/small-scroll-de.png",
+    "sha256": "448f74a620014229756e646d3ec3bce264f3f3ed5ef9789b819236fcfcd95b54",
+    "width": 750,
+    "height": 1334,
+    "notes": "Archived evidence; not recaptured or a new approval."
+  }
+]

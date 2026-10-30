@@ -1,0 +1,291 @@
+{
+  "date": "2026-10-30",
+  "originalWorksheetSha256": "c9c7ce183342f482fbb2d8a0bea98a35fa0520253fc3f6d63142351c142ece30",
+  "entries": [
+    {
+      "id": "S01",
+      "name": "Global Welcome",
+      "ownerDecision": "KEEP NEW",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "No new consolidation authorization",
+      "route": "/welcome",
+      "source": "mobile/src/app/welcome.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S02",
+      "name": "Product Value Story",
+      "ownerDecision": "KEEP NEW",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "No new consolidation authorization",
+      "route": "/introduction",
+      "source": "mobile/src/app/introduction.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S03",
+      "name": "Account / Sign-in",
+      "ownerDecision": "MERGE BEST OF BOTH",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "PENDING",
+      "route": "/account?onboarding=1",
+      "source": "mobile/src/app/account/index.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S04",
+      "name": "Choose a City",
+      "ownerDecision": "MERGE BEST OF BOTH",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "PENDING",
+      "route": "/?section=cities",
+      "source": "mobile/src/app/index.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S05",
+      "name": "Select Interests",
+      "ownerDecision": "KEEP NEW",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "No new consolidation authorization",
+      "route": "/city/:citySlug/walk — cursor=interests",
+      "source": "mobile/src/components/SelectInterests.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S06",
+      "name": "Available Time / Return-by",
+      "ownerDecision": "KEEP NEW",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "No new consolidation authorization",
+      "route": "/city/:citySlug/walk — cursor=time",
+      "source": "mobile/src/components/AvailableTime.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S07",
+      "name": "Location Permission",
+      "ownerDecision": "KEEP NEW",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "No new consolidation authorization",
+      "route": "/city/:citySlug/walk — cursor=location",
+      "source": "mobile/src/components/LocationPermission.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S08",
+      "name": "First Experience",
+      "ownerDecision": "REBUILD FLOW",
+      "originalNote": "",
+      "status": "Approved design/UX; authorized Slice01/Slice02/storage/focus guard implemented and verified within scope; broader native acceptance partial; further feature work on hold",
+      "specDecision": "No new consolidation authorization",
+      "route": "/city/:citySlug/walk — cursor=confirmation",
+      "source": "mobile/src/components/FirstExperience.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S09",
+      "name": "City Hub",
+      "ownerDecision": "MERGE BEST OF BOTH",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "PENDING",
+      "route": "/city/:citySlug",
+      "source": "mobile/src/app/city/[citySlug]/index.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S10",
+      "name": "Explore Places",
+      "ownerDecision": "MERGE BEST OF BOTH",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "PENDING",
+      "route": "/city/:citySlug/explore",
+      "source": "mobile/src/app/city/[citySlug]/explore.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S11",
+      "name": "Place Detail",
+      "ownerDecision": "KEEP NEW",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "No new consolidation authorization",
+      "route": "/city/:citySlug/place/:placeSlug [without published-trip context]",
+      "source": "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S12",
+      "name": "Walking Routes",
+      "ownerDecision": "MERGE BEST OF BOTH",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "PENDING",
+      "route": "/city/:citySlug/routes",
+      "source": "mobile/src/app/city/[citySlug]/routes.tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "S13",
+      "name": "Route Preview",
+      "ownerDecision": "KEEP NEW",
+      "originalNote": "",
+      "status": "Visually Approved / Functional Verification Pending",
+      "specDecision": "No new consolidation authorization",
+      "route": "/city/:citySlug/tour/:tourSlug",
+      "source": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx",
+      "recommendation": "Preserve approved version and existing behavior; resolve only linked scope decisions"
+    },
+    {
+      "id": "D01",
+      "name": "Home vs focused City Selection",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Intentional entry variants; one controller",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "KEEP BOTH ENTRY VARIANTS; reuse existing HomeScreen. Decide launch/revisit policy separately."
+    },
+    {
+      "id": "D02",
+      "name": "Ordinary Account vs onboarding Account",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Intentional entry intents; one authentication system",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "KEEP ONE ACCOUNT CONTROLLER; retain management and the approved onboarding frame."
+    },
+    {
+      "id": "D03",
+      "name": "Account interests vs per-walk interests",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Distinct state scopes; repeated question already resolved",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "RETAIN CURRENT ONCE-PER-DRAFT FLOW; keep account defaults separate; no automatic account write."
+    },
+    {
+      "id": "D04",
+      "name": "Duration / return-by vs account defaults",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Reusable inputs; different contracts",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "KEEP APPROVED S06 AND DISTINCT DEFAULTS CONTRACT; share validated input semantics only."
+    },
+    {
+      "id": "D05",
+      "name": "Location explanation vs contextual location actions",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Shared permission service; legitimate contextual actions",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "KEEP EXPLANATION AND CONTEXTUAL ACTIONS; reuse current adapter and avoid unsolicited/repeated prompts."
+    },
+    {
+      "id": "D06",
+      "name": "Hub Places vs Explore vs Search",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Real browsing overlap; Search has distinct history semantics",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "KEEP ALL CURRENT ROUTES/VISUALS; share selectors/state contracts where justified, retain dedicated Search initially."
+    },
+    {
+      "id": "D07",
+      "name": "Suggested Walks vs Walking Routes collection",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Intentional summary + full collection; shared published data",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "KEEP SUMMARY AND COLLECTION; reuse published identities; decide collection entry and timing semantics separately."
+    },
+    {
+      "id": "D08",
+      "name": "Custom preview vs published Route Preview",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Distinct domain contracts; not replacement versions",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "KEEP BOTH DOMAIN FLOWS; share only compatible display primitives without changing approved S13."
+    },
+    {
+      "id": "D09",
+      "name": "Custom Active Walk vs published Active Walk",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Distinct execution models; Screen14 pending",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "DEFER EXECUTION CONSOLIDATION; preserve both implementations and Screen14 approval gate."
+    },
+    {
+      "id": "D10",
+      "name": "Place Guide vs city assistant fallback",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Different scope and availability; not duplicate answers",
+      "historicalRecommendation": "KEEP OLD",
+      "recommendation": "KEEP PLACE GUIDE AND HONEST CITY FALLBACK; no new AI capability."
+    },
+    {
+      "id": "D11",
+      "name": "Trips vs Saved",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Legitimate filtered modes of one controller",
+      "historicalRecommendation": "KEEP OLD",
+      "recommendation": "KEEP BOTH TABS/MODES AND EXISTING STORES; defer migrations and curated Trips inclusion."
+    },
+    {
+      "id": "D12",
+      "name": "Specific vs generic Web city/place wrappers",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Platform-specific routing overlap; shared content rendering",
+      "historicalRecommendation": "MERGE BEST OF BOTH",
+      "recommendation": "PRESERVE BOTH URL CONTRACTS; prefer shared content internals, no redirects/removal in this review."
+    },
+    {
+      "id": "D13",
+      "name": "Homepage vs landing review routes",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Shared component plus intentional preview/history",
+      "historicalRecommendation": "REMOVE CANDIDATE",
+      "recommendation": "KEEP APPROVED ROOT AND INTENTIONAL PREVIEW; mark legacy preview for owner-purpose review, no deletion."
+    },
+    {
+      "id": "D14",
+      "name": "Ordinary Place Detail vs published execution mode",
+      "ownerDecision": "PENDING",
+      "originalNote": "",
+      "status": "Await explicit owner decision; implementation not authorized",
+      "classification": "Same URL with different intent; candidate mode not approved",
+      "historicalRecommendation": "REBUILD FLOW",
+      "recommendation": "KEEP ORDINARY S11 DEFAULT; DEFER PUBLISHED-MODE FLOW DECISION WITH SCREEN14."
+    }
+  ],
+  "screen14": "PENDING / no inferred visual or implementation approval",
+  "implementationAuthorization": "NONE for consolidation; prior S08 implementation preserved"
+}

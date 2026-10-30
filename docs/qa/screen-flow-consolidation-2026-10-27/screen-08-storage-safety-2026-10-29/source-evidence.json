@@ -1,0 +1,98 @@
+[
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 79,
+    "text": "export type CurrentWalkObservation =",
+    "sha256": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 110,
+    "text": "export async function observeCurrentWalk(city: string, store?: WalkStore): Promise<CurrentWalkObservation> {",
+    "sha256": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 122,
+    "text": "export async function commitCurrentWalkPreview(",
+    "sha256": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 173,
+    "text": "async function writeCurrent(current: CurrentWalk, target: WalkStore, isCurrent?: () => boolean, expectedRaw?: string | null) {",
+    "sha256": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 217,
+    "text": "export async function startCurrentWalk(city: string, id: string, places: readonly PublicPlaceCard[], contentReady = true, store?: WalkStore) {",
+    "sha256": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 237,
+    "text": "export async function clearCurrentWalk(city: string, expected: CurrentWalk | undefined, store?: WalkStore) {",
+    "sha256": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 251,
+    "text": "export async function changeCurrentWalk(",
+    "sha256": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 188,
+    "text": "const [storageRetry, setStorageRetry] = useState(0);",
+    "sha256": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 378,
+    "text": "const observed = await observeCurrentWalk(citySlug);",
+    "sha256": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 442,
+    "text": "const committed = await commitCurrentWalkPreview(restored, observed.receipt, \"replay\", { isCurrent: () => alive && mounted.current });",
+    "sha256": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 564,
+    "text": "async function build() {",
+    "sha256": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 653,
+    "text": "const committed = await commitCurrentWalkPreview(generated, observed.receipt, intent, { isCurrent });",
+    "sha256": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 981,
+    "text": "const customize = () => {",
+    "sha256": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 1013,
+    "text": "async function retryStorage() {",
+    "sha256": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 1024,
+    "text": "const observed = await observeCurrentWalk(citySlug);",
+    "sha256": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 1062,
+    "text": "if (storageRecovery) {",
+    "sha256": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c"
+  }
+]

@@ -1,0 +1,40 @@
+flowchart TD
+ Launch[App launch] --> Home[Home / legacy discovery]
+ Review[Explicit Welcome deep link / fallback] --> S01[01 Global Welcome]
+ S01 -->|Get Started| S02[02 Value Story]
+ S01 -->|Explore Cities| S04[04 Choose a City]
+ S02 -->|Next| S03[03 Optional Account]
+ S02 -->|Explore Cities| S04
+ S03 -->|Guest discovery| S04
+ Home -->|Explore tab| S04
+ S04 -->|Available city| S09[09 City Hub]
+ S09 -->|Build, no current walk| S05[05 Interests]
+ S05 --> S06[06 Time / Return-by]
+ S06 --> S07[07 Optional Location]
+ S07 -->|Allow OR Not now| S08[08 First Experience]
+ S08 -->|Retain planner in stack| HubReturn[09 Hub returnToPlanner]
+ HubReturn -->|Build = back to planner| Plan2[Interests again / walking then start-end]
+ Plan2 -->|Explicit Build| CustomPreview[Custom planner preview]
+ S09 -->|Restore existing walk| CustomPreview
+ CustomPreview -->|Explicit Start| CustomActive[Custom Active Walk]
+ CustomActive --> Finish[Finish / feedback / save]
+ S09 --> S10[10 Explore Places]
+ S09 -->|Suggested route| S13[13 Route Preview]
+ S13 -->|All walking routes| S12[12 Walking Routes]
+ S12 -->|Preview| S13
+ S13 -->|Place links| S11[11 Place Detail]
+ S13 -->|Explicit Start Walk| A14[Unapproved published Active Walk mode]
+ S10 --> Search[Separate city Search]
+ Search --> S11
+ S10 --> S11
+ S11 --> Guide[Place-scoped Guide / eligibility]
+ S09 --> Assistant[City Guide unavailable / fallback]
+ S11 -->|Add to walk| Plan2
+ Tabs[Five app tabs] --> Home
+ Tabs -->|Explore with city| S10
+ Tabs -->|Trips| Trips[/saved?view=trips]
+ Tabs -->|Saved| Saved[/saved]
+ Tabs --> Profile[/profile]
+ Profile --> Account[/account management]
+ Profile --> Legal[/legal to Photo Credits]
+

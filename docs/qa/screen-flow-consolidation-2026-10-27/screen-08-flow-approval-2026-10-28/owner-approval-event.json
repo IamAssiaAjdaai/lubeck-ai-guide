@@ -1,0 +1,50 @@
+{
+  "event": "S08 UX/FLOW APPROVAL",
+  "date": "2026-10-28",
+  "source": "Explicit owner message: CITYWALK \u2014 Screen 08 Flow Design Approval",
+  "designReviewId": "S08",
+  "originalWorksheetDecision": "REBUILD FLOW",
+  "uxFlowApproval": "APPROVED",
+  "implementationAuthorization": "NOT AUTHORIZED",
+  "executionStatus": "NOT IMPLEMENTED",
+  "newFooterVisualAcceptance": "PENDING",
+  "proposedFlowFunctionalVerification": "NOT RUN \u2014 NOT IMPLEMENTED",
+  "screen14": "PENDING",
+  "additionalDecisions": {
+    "D01": "PENDING",
+    "D02": "PENDING",
+    "D03": "PENDING",
+    "D04": "PENDING",
+    "D05": "PENDING",
+    "D06": "PENDING",
+    "D07": "PENDING",
+    "D08": "PENDING",
+    "D09": "PENDING",
+    "D10": "PENDING",
+    "D11": "PENDING",
+    "D12": "PENDING",
+    "D13": "PENDING",
+    "D14": "PENDING"
+  },
+  "approvedSpecificationSnapshot": "SCREEN-08-FLOW-REVIEW.approved-specification.md",
+  "approvedSpecificationSha256": "d2ae077e2e611f1db412ed0a50ddd3d36fe95005cd765b063b7610672b84be83",
+  "approvedBehavior": [
+    "Interests asked once unless explicitly edited",
+    "Screen 08 Continue Planning goes directly to remaining planner constraints",
+    "Explore selected city remains optional secondary exit",
+    "Back retains selections and avoids repeated onboarding",
+    "Existing current walks resume without Screens 05\u201308; saved replay semantics remain distinct",
+    "Preserve manual/GPS start, finish/loop, category filters, duration, walking preference and walking return-by",
+    "Build creates route preview",
+    "Start explicitly begins Active Walk"
+  ],
+  "prerequisites": [
+    "Draft-return identity and retained state",
+    "Back and Edit Interests transitions",
+    "Preservation of legacy planner controls",
+    "Storage-error recovery",
+    "Guest behavior",
+    "English/German copy and accessibility",
+    "Small iPhone and Android layout acceptance"
+  ]
+}

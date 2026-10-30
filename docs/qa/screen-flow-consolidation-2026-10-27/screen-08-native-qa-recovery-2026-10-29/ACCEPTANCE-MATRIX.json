@@ -1,0 +1,122 @@
+[
+  {
+    "case": "Android development-client recovery",
+    "status": "PASS",
+    "evidence": "ANDROID-REUSE.md",
+    "detail": "Existing separate development APK loaded actual worktree JS; release apps untouched."
+  },
+  {
+    "case": "Android native guest identity",
+    "status": "PASS",
+    "evidence": "android-profile-verified.png",
+    "detail": "Profile explicitly states CITYWALK works without an account; no live login."
+  },
+  {
+    "case": "Android Continue Planning",
+    "status": "PASS",
+    "evidence": "android-direct-constraints.json",
+    "detail": "Direct remaining constraints; Food selection and 180 min; no repeated interests."
+  },
+  {
+    "case": "Android hardware Back chain",
+    "status": "PASS",
+    "evidence": "android-back-to-screen08.json; android-back-location.json; android-back-duration.json; android-back-interests.json",
+    "detail": "Constraints \u2192 08 \u2192 Location \u2192 Duration \u2192 Interests; 3 hours and selected interests retained."
+  },
+  {
+    "case": "Android Edit Interests Continue",
+    "status": "PASS",
+    "evidence": "android-edit-interests.json; android-edit-return.json",
+    "detail": "Retained checkboxes; added Hidden Gems; Continue returns directly to constraints, still 180 min."
+  },
+  {
+    "case": "Android Edit Interests hardware Back",
+    "status": "PASS",
+    "evidence": "android-edit-hardware-back.json",
+    "detail": "Direct constraints return with interests and duration retained."
+  },
+  {
+    "case": "Android optional Hub / Build my walk return",
+    "status": "PASS",
+    "evidence": "android-secondary-hub.json; android-hub-draft-return.json",
+    "detail": "Build my walk returns to same live constraints with all four interests, 180 min, manual start and loop."
+  },
+  {
+    "case": "Android optional Hub visible Back control",
+    "status": "PASS",
+    "evidence": "android-hub-visible-back-control.json",
+    "detail": "Fresh optional Hub visit \u2192 visible Back \u2192 constraints; positive control for hardware case."
+  },
+  {
+    "case": "Android optional Hub hardware Back",
+    "status": "FAIL",
+    "evidence": "android-hub-hardware-back.png; android-hub-back-settled.json; android-hub-visible-back.json",
+    "detail": "KEYCODE_BACK leaves Hub visible; subsequent visible Back reveals Screen 08 rather than constraints. Background Back listener lacks focus guard; suspected cause, not patched."
+  },
+  {
+    "case": "iPhone small maximum-text footer",
+    "status": "PASS",
+    "evidence": "ios-max-text-attempt.png",
+    "detail": "Both actions fully visible at accessibility-extra-extra-extra-large on SE3; does not establish body scrolling."
+  },
+  {
+    "case": "iPhone full maximum-text scrolling",
+    "status": "BLOCKED",
+    "evidence": "ios-max-text-attempt.png",
+    "detail": "Fresh CUA drag yielded no observable scroll. Offscreen headline/body remain unverified. Input tool cannot establish a reliable gesture positive control."
+  },
+  {
+    "case": "iPhone native edge gestures / Hub gesture return",
+    "status": "BLOCKED",
+    "evidence": "REPORT.md",
+    "detail": "Touch/gesture injection unreliable; installed simctl has no swipe command; no Maestro/idb driver available."
+  },
+  {
+    "case": "iPhone Continue / Edit button navigation",
+    "status": "PASS",
+    "evidence": "REPORT.md",
+    "detail": "Native AX activation reached constraints with History, Architecture, Food and 180 min, then restored original Edit screen without changing selections."
+  },
+  {
+    "case": "TalkBack spoken/focus acceptance",
+    "status": "NOT TESTED",
+    "evidence": "REPORT.md",
+    "detail": "TalkBack package installed; no reliable AT focus/gesture interaction established. UI Automator metadata is not TalkBack proof."
+  },
+  {
+    "case": "Physical-device VoiceOver",
+    "status": "BLOCKED",
+    "evidence": "../screen-08-post-slice02-acceptance-2026-10-29/physical-device-availability.json",
+    "detail": "No connected physical iOS device. Simulator AX tree is not VoiceOver acceptance."
+  },
+  {
+    "case": "Live authenticated native acceptance",
+    "status": "NOT TESTED",
+    "evidence": "REPORT.md",
+    "detail": "No live authenticated QA session used; controller tests with identity doubles remain separate evidence."
+  },
+  {
+    "case": "Screens 01\u201313 source preservation",
+    "status": "PASS",
+    "evidence": "preservation.json",
+    "detail": "All 1,054 product/test/config/asset hashes identical to completed Slice02; no app or test edits."
+  },
+  {
+    "case": "Screens 01\u201313 complete native rerun",
+    "status": "NOT TESTED",
+    "evidence": "REPORT.md",
+    "detail": "Targeted 05\u201309 navigation exercised; no claim of full thirteen-screen visual/device acceptance."
+  },
+  {
+    "case": "Existing same-source automated verification",
+    "status": "PASS",
+    "evidence": "../screen-08-slice-02-implementation-2026-10-29/REPORT.md",
+    "detail": "1,066 ordinary passes; 1 expected failure and 17 TODO remain separate; TypeScript/lint/localization/iOS+Android bundles previously passed on identical source. Not rerun here."
+  },
+  {
+    "case": "Midnight return-by dependency D03",
+    "status": "FAIL",
+    "evidence": "../screen-08-slice-02-implementation-2026-10-29/verification/",
+    "detail": "Known strict-red expected failure; unrelated to native recovery. No fix authorized or made. Zone/day metadata remains separately pending."
+  }
+]

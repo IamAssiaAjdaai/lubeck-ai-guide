@@ -1,0 +1,79 @@
+[
+  {
+    "text": "",
+    "content-desc": "App Icon",
+    "class": "android.widget.ImageView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1705][179,1821]"
+  },
+  {
+    "text": "CITYWALK",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[221,1710][441,1761]"
+  },
+  {
+    "text": "Runtime version: 1.0.0",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[221,1772][574,1817]"
+  },
+  {
+    "text": "",
+    "content-desc": "Close",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[949,1743][991,1785]"
+  },
+  {
+    "text": "This is the developer menu. It gives you access to useful tools in your development builds.",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[105,1905][975,1995]"
+  },
+  {
+    "text": "You can press ⌘ + m on macOS or Ctrl + m on other platforms to get back to it at any time.",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[105,2016][975,2106]"
+  },
+  {
+    "text": "Continue",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[464,2169][617,2214]"
+  }
+]

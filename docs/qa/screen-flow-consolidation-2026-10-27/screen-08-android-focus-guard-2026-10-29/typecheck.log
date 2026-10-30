@@ -1,0 +1,10 @@
+
+> @citywalk/mobile@1.0.0 typecheck
+> tsc --noEmit
+
+tests/walk-flow.behavior.tsx(1863,7): error TS2322: Type 'StackNavigationState<ParamListBase> | PartialState<StackNavigationState<ParamListBase>>' is not assignable to type 'StackNavigationState<ParamListBase>'.
+  Type 'PartialState<StackNavigationState<ParamListBase>>' is not assignable to type 'StackNavigationState<ParamListBase>'.
+    Type 'PartialState<StackNavigationState<ParamListBase>>' is not assignable to type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>'.
+      Types of property 'key' are incompatible.
+        Type 'string | undefined' is not assignable to type 'string'.
+          Type 'undefined' is not assignable to type 'string'.

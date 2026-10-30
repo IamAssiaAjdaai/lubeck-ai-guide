@@ -1,0 +1,6 @@
+{
+  "mobile/src/app/account/index.tsx": "226cf52452e51c916bff6c1f13ad00fb15692a464049252c6bf8bfba7ed854a4",
+  "mobile/src/components/AccountOnboardingFrame.tsx": "8d1b190f850da73693b88c38047f2d8a71867ed3e456eaabd3deff2ba210505a",
+  "mobile/assets/images/account-journey.svg": "1311bb5af5f003a77e3dc1e002da897397d9f4d8348e4798615eefdaff8cfd86",
+  "mobile/tests/account-onboarding-frame.test.tsx": "06837bf908b49b2646e13baca95bd77864db2aca1bfbffe1f687602c1420f7a6"
+}

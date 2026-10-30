@@ -1,0 +1,686 @@
+[
+  {
+    "id": "01",
+    "name": "Global Welcome",
+    "source": "mobile/src/app/welcome.tsx",
+    "component": "WelcomeScreen",
+    "route": "/welcome",
+    "oldSource": "",
+    "oldComponent": "",
+    "oldRoute": "",
+    "oldFunctionality": "No legacy equivalent identified. The pre-redesign launch was the existing Home/city discovery, not a photographic welcome.",
+    "newFunctionality": "Four-photo global carousel; attribution modal; Get Started → introduction; Explore Cities → existing city discovery; localization.",
+    "functionalGaps": "Review/deep-link entry only. Normal launch still resolves Home; no first-run completion or returning-traveler policy is wired.",
+    "uxDifferences": "New immersive global entry; discovery remains optional. The earlier first-draft welcome is a redesign iteration, not an original legacy screen.",
+    "recommendation": "KEEP NEW",
+    "decision": "PENDING",
+    "noLegacy": true,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/app/welcome.tsx",
+        "currentSnapshot": "sources/01/welcome.tsx.current.txt",
+        "sha256": "62060d8d9fdac224b51288d15be9651c6a3afb66b05ef640eab7cf9f84a205e3",
+        "baseSnapshot": null,
+        "baseGitBlob": null
+      }
+    ],
+    "newImage": {
+      "screen": "01",
+      "kind": "fresh-current-native",
+      "path": "images/01-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-01-current-en.png",
+      "sha256": "f915f88946de95aa94c5cc06f4f152833735e4ccf9ac565ce03190033d8c8c56",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+    },
+    "oldImage": null,
+    "supplement": null,
+    "viewportComparison": "Native legacy screenshot unavailable; no fabricated OLD capture. Supplementary Web evidence, where shown, is not a matched native comparison."
+  },
+  {
+    "id": "02",
+    "name": "Product Value Story",
+    "source": "mobile/src/app/introduction.tsx",
+    "component": "IntroductionScreen",
+    "route": "/introduction",
+    "oldSource": "",
+    "oldComponent": "",
+    "oldRoute": "",
+    "oldFunctionality": "No legacy equivalent identified. Product capabilities previously appeared within Home/planner/city content.",
+    "newFunctionality": "Wide licensed-photo composition, four descriptive noninteractive value rows, availability disclaimer, Next → optional account, Explore Cities guest exit.",
+    "functionalGaps": "Only entered through Screen 01 or explicit deep link. City-wide Guide remains unavailable; audio is exact-locale and content dependent. Disclaimer is material.",
+    "uxDifferences": "Editorial introduction instead of adding planner steps; no false chevrons. Compact earlier collage is an iteration, not legacy.",
+    "recommendation": "KEEP NEW",
+    "decision": "PENDING",
+    "noLegacy": true,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/app/introduction.tsx",
+        "currentSnapshot": "sources/02/introduction.tsx.current.txt",
+        "sha256": "b6c54826891b1d17cec7e7dce9306f41ea300bd55ace9c76a3633ad1a19607e4",
+        "baseSnapshot": null,
+        "baseGitBlob": null
+      }
+    ],
+    "newImage": {
+      "screen": "02",
+      "kind": "fresh-current-native",
+      "path": "images/02-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-02-current-en.png",
+      "sha256": "bb80b1cf633a117eba88be0f996a84f50b7524b84f1ea7aeb5e46183045beb01",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+    },
+    "oldImage": null,
+    "supplement": null,
+    "viewportComparison": "Native legacy screenshot unavailable; no fabricated OLD capture. Supplementary Web evidence, where shown, is not a matched native comparison."
+  },
+  {
+    "id": "03",
+    "name": "Account / Sign-in",
+    "source": "mobile/src/app/account/index.tsx",
+    "component": "AccountScreen + AccountOnboardingFrame",
+    "route": "/account?onboarding=1",
+    "oldSource": "mobile/src/app/account/index.tsx",
+    "oldComponent": "AccountScreen",
+    "oldRoute": "/account; ?entry=sign-in|sign-up",
+    "oldFunctionality": "Guest account chooser, email sign-in/sign-up, recovery, configured OAuth, authenticated account management, preferences/password/deletion and entitlement status.",
+    "newFunctionality": "Same Better Auth and forms inside a premium onboarding frame; email action; sign-in; reassuring guest exit. General account variant remains available.",
+    "functionalGaps": "Visual approval is not live OAuth/email/provider acceptance. General guest exit returns Home/back, onboarding guest exit replaces with city discovery. Authenticated account still contains a Lübeck-specific pass link; not a dynamic selected-city profile.",
+    "uxDifferences": "Two intentional entry presentations currently coexist; management actions must not be removed with the old chooser.",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/app/account/index.tsx",
+        "currentSnapshot": "sources/03/index.tsx.current.txt",
+        "sha256": "226cf52452e51c916bff6c1f13ad00fb15692a464049252c6bf8bfba7ed854a4",
+        "baseSnapshot": "sources/03/index.tsx.base.txt",
+        "baseGitBlob": "3b371f0c98ba281ef88dfdd51ce20d9e8665483d"
+      }
+    ],
+    "newImage": {
+      "screen": "03",
+      "kind": "fresh-current-native",
+      "path": "images/03-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-03-current-en.png",
+      "sha256": "15e616967ab905783d7c51bc060f5c4285e350a55323f053f25266b1bd2bf296",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+    },
+    "oldImage": {
+      "screen": "03",
+      "kind": "retained-legacy-native",
+      "path": "images/03-old.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-03-retained-legacy-en.png",
+      "sha256": "90cb51a61e4997e0069847849e9107723383d82da9b2d091a244abc543795b50",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh retained legacy presentation on current source, not an exact checkout of baseline."
+    },
+    "supplement": null,
+    "viewportComparison": "Matched pixel dimensions."
+  },
+  {
+    "id": "04",
+    "name": "Choose a City",
+    "source": "mobile/src/app/index.tsx",
+    "component": "HomeScreen + HomeCityCard(size=selection)",
+    "route": "/?section=cities",
+    "oldSource": "mobile/src/app/index.tsx",
+    "oldComponent": "HomeScreen + HomeCityCard",
+    "oldRoute": "/",
+    "oldFunctionality": "Original Home editorial city discovery, featured cities, search, optional location, availability, language and bottom navigation.",
+    "newFunctionality": "Premium full selection variant on the same source/route, city search/location, disabled Coming Soon and licensed city photos; selection → Hub.",
+    "functionalGaps": "No direct continuation to Screen 05; this is intentional guest discovery but differs from storyboard numbering. Back without stack falls to Welcome; normal Home and selection mode remain separate variants.",
+    "uxDifferences": "Focused selection versus original Home discovery. Same city registry/data, not two city systems.",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/app/index.tsx",
+        "currentSnapshot": "sources/04/index.tsx.current.txt",
+        "sha256": "32c23f617579eda1656ee7038fcf548c5292d25ffc844f7e6ef9807744855ada",
+        "baseSnapshot": "sources/04/index.tsx.base.txt",
+        "baseGitBlob": "64be48f0f3a43d8552020c28a3fd1e499172565c"
+      }
+    ],
+    "newImage": {
+      "screen": "04",
+      "kind": "fresh-current-native",
+      "path": "images/04-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-04-current-en.png",
+      "sha256": "ed97d31accd504811482f9d4dc1be1bb6c5cf08a00a45a79f4a2a8236a763dcc",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+    },
+    "oldImage": {
+      "screen": "04",
+      "kind": "retained-legacy-native",
+      "path": "images/04-old.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-04-retained-legacy-en.png",
+      "sha256": "00f333dc85c63b32597bdc488091cf0b239f051e38af42a7d63d4c318b1f9718",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh retained legacy presentation on current source, not an exact checkout of baseline."
+    },
+    "supplement": null,
+    "viewportComparison": "Matched pixel dimensions."
+  },
+  {
+    "id": "05",
+    "name": "Select Interests",
+    "source": "mobile/src/components/SelectInterests.tsx",
+    "component": "SelectInterests; NativeWalkFlow internal state",
+    "route": "/city/:citySlug/walk [plan, step=1, !interestEntryComplete]",
+    "oldSource": "mobile/src/components/NativeWalkFlow.tsx",
+    "oldComponent": "NativeWalkFlow planning fields",
+    "oldRoute": "/city/:citySlug/walk [legacy plan step 2]",
+    "oldFunctionality": "Existing city-scoped planner interests, duration and walking preferences used shared builder settings; retained later planner controls remain.",
+    "newFunctionality": "Optional multiple-select supported taxonomy including expandable family; Continue requires selection; Skip clears interest selection; city retained.",
+    "functionalGaps": "Per-mounted-flow completion flag, not global onboarding completion. Rebuild resets defaults; process termination does not preserve unbuilt draft selections. Guest selections do not feed Hub recommendations (account interests only).",
+    "uxDifferences": "Dedicated premium cards replace the interest entry presentation; not a standalone navigation route.",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/components/SelectInterests.tsx",
+        "currentSnapshot": "sources/05/SelectInterests.tsx.current.txt",
+        "sha256": "b2ea0124f5e66f071a727e8d2b9316146eacdae357be8594713d3f2c25223c1a",
+        "baseSnapshot": null,
+        "baseGitBlob": null
+      },
+      {
+        "path": "mobile/src/components/NativeWalkFlow.tsx",
+        "currentSnapshot": "sources/05/NativeWalkFlow.tsx.current.txt",
+        "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+        "baseSnapshot": "sources/05/NativeWalkFlow.tsx.base.txt",
+        "baseGitBlob": "774d053aa66ed4b50da0b6e7dfc3fb173c1ef32e"
+      }
+    ],
+    "newImage": {
+      "screen": "05",
+      "kind": "fresh-current-native",
+      "path": "images/05-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-05-current-de.png",
+      "sha256": "4fcb007d6195b455e43b5431a619f9b1aca0bf27be8f10da0f0d77eb4ff9a99a",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: German. Source hashes in registry."
+    },
+    "oldImage": null,
+    "supplement": {
+      "screen": "05",
+      "kind": "supplementary-web",
+      "path": "images/05-legacy-web.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/planner-interests-390.png",
+      "sha256": "7ff7dc4d1f06caa8b5eff97e7638afa7e85a5f10a77e69b8726b1bfa44d16340",
+      "width": 390,
+      "height": 844,
+      "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+    },
+    "viewportComparison": "Native legacy screenshot unavailable; no fabricated OLD capture. Supplementary Web evidence, where shown, is not a matched native comparison."
+  },
+  {
+    "id": "06",
+    "name": "Available Time / Return-by",
+    "source": "mobile/src/components/AvailableTime.tsx",
+    "component": "AvailableTime + ReturnByTimePicker; NativeWalkFlow",
+    "route": "/city/:citySlug/walk [plan, step=1, interestEntryComplete]",
+    "oldSource": "mobile/src/components/NativeWalkFlow.tsx",
+    "oldComponent": "NativeWalkFlow + ReturnByTimePicker",
+    "oldRoute": "/city/:citySlug/walk [legacy plan step 1]",
+    "oldFunctionality": "Planner time budget/deadline, walking pace, start/end/return constraints; saved/current journey restoration.",
+    "newFunctionality": "60/120/180/240-minute cards; hydrated values such as 90 preserved; optional return-by; existing shared planner deadline/return-leg estimates. Saved picker HH:MM restoration fix.",
+    "functionalGaps": "Skip advances with the current/default duration; it does not remove the budget. Return-by is walking-based estimated planning, no car/transit or verified street-routing ETA. Unbuilt draft deadline remains in mounted state only.",
+    "uxDifferences": "Large accessible duration cards and inline optional return-by replace combined form presentation.",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/components/AvailableTime.tsx",
+        "currentSnapshot": "sources/06/AvailableTime.tsx.current.txt",
+        "sha256": "f96925b72cf414f5278ce573c19f51e4341f15b8be85ca294b30802be27bad58",
+        "baseSnapshot": null,
+        "baseGitBlob": null
+      },
+      {
+        "path": "mobile/src/components/NativeWalkFlow.tsx",
+        "currentSnapshot": "sources/06/NativeWalkFlow.tsx.current.txt",
+        "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+        "baseSnapshot": "sources/06/NativeWalkFlow.tsx.base.txt",
+        "baseGitBlob": "774d053aa66ed4b50da0b6e7dfc3fb173c1ef32e"
+      }
+    ],
+    "newImage": {
+      "screen": "06",
+      "kind": "fresh-current-native",
+      "path": "images/06-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-06-current-de.png",
+      "sha256": "2417a3b42929b1b08aaac756e44b735b46e71b2ca9cf134db236a0eb06af0011",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: German. Source hashes in registry."
+    },
+    "oldImage": null,
+    "supplement": {
+      "screen": "06",
+      "kind": "supplementary-web",
+      "path": "images/06-legacy-web.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/planner-time-390.png",
+      "sha256": "b00fbfe23f7987c13e181dfb3c7e40030f62ff380e0cbf34b4e423d57ff4ed8b",
+      "width": 390,
+      "height": 844,
+      "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+    },
+    "viewportComparison": "Native legacy screenshot unavailable; no fabricated OLD capture. Supplementary Web evidence, where shown, is not a matched native comparison."
+  },
+  {
+    "id": "07",
+    "name": "Location Permission",
+    "source": "mobile/src/components/LocationPermission.tsx",
+    "component": "LocationPermission; NativeWalkFlow",
+    "route": "/city/:citySlug/walk [plan, step=2, !locationEntryComplete]",
+    "oldSource": "mobile/src/components/NativeWalkFlow.tsx",
+    "oldComponent": "NativeWalkFlow locate/manual start controls",
+    "oldRoute": "/city/:citySlug/walk [legacy start/end step 3]",
+    "oldFunctionality": "Optional explicit locate action and manual place start/end in the existing builder; no separate explanation screen.",
+    "newFunctionality": "Global map illustration; explicit permission request; Not now; errors; existing location handler; manual controls continue below the introductory states.",
+    "functionalGaps": "This is a planner-context explanation, not an OS permission screen or global first-launch gate. Later planner/map locate controls can repeat the location request affordance.",
+    "uxDifferences": "New standalone-looking state, backed by the old permission system and retained manual controls.",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/components/LocationPermission.tsx",
+        "currentSnapshot": "sources/07/LocationPermission.tsx.current.txt",
+        "sha256": "ae66aa695e9b4ea01e1569b84d330e72904b5e76af83b71f3686c9d7c96538a3",
+        "baseSnapshot": null,
+        "baseGitBlob": null
+      },
+      {
+        "path": "mobile/src/components/NativeWalkFlow.tsx",
+        "currentSnapshot": "sources/07/NativeWalkFlow.tsx.current.txt",
+        "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+        "baseSnapshot": "sources/07/NativeWalkFlow.tsx.base.txt",
+        "baseGitBlob": "774d053aa66ed4b50da0b6e7dfc3fb173c1ef32e"
+      }
+    ],
+    "newImage": {
+      "screen": "07",
+      "kind": "fresh-current-native",
+      "path": "images/07-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-07-current-de.png",
+      "sha256": "3e88bf7d375357729de9b38068d32af4e84bb5fc7f51b3a23ac15b5adea011a0",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: German. Source hashes in registry."
+    },
+    "oldImage": null,
+    "supplement": {
+      "screen": "07",
+      "kind": "supplementary-web",
+      "path": "images/07-legacy-web.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/planner-start-end-390.png",
+      "sha256": "bdf407cde34ed4ee641bf4e7da22adac8da13365781d6af0bca5f222b8d7bb12",
+      "width": 390,
+      "height": 844,
+      "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+    },
+    "viewportComparison": "Native legacy screenshot unavailable; no fabricated OLD capture. Supplementary Web evidence, where shown, is not a matched native comparison."
+  },
+  {
+    "id": "08",
+    "name": "First Experience",
+    "source": "mobile/src/components/FirstExperience.tsx",
+    "component": "FirstExperience; NativeWalkFlow",
+    "route": "/city/:citySlug/walk [plan, step=2, location complete, firstExperience incomplete]",
+    "oldSource": "",
+    "oldComponent": "",
+    "oldRoute": "",
+    "oldFunctionality": "No legacy equivalent identified. The planner previously advanced directly into start/end planning.",
+    "newFunctionality": "Selected available city photo and confirmation; honest no-generated-route text; Explore city → Hub(returnToPlanner=1); retained mounted planner resumes from Hub.",
+    "functionalGaps": "Detour to a second Hub instance can feel circular. A cold launch/direct Hub link cannot recover an unbuilt draft; stack intent is not durable persistence.",
+    "uxDifferences": "New confirmation state; does not build or start a route. Number 08 is design review identity, not launch step eight.",
+    "recommendation": "REBUILD FLOW",
+    "decision": "PENDING",
+    "noLegacy": true,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/components/FirstExperience.tsx",
+        "currentSnapshot": "sources/08/FirstExperience.tsx.current.txt",
+        "sha256": "73280d834c4d227d2eddfe4e6d04c7fff3191410e5e6acdfcdb10139e844f858",
+        "baseSnapshot": null,
+        "baseGitBlob": null
+      },
+      {
+        "path": "mobile/src/components/NativeWalkFlow.tsx",
+        "currentSnapshot": "sources/08/NativeWalkFlow.tsx.current.txt",
+        "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+        "baseSnapshot": "sources/08/NativeWalkFlow.tsx.base.txt",
+        "baseGitBlob": "774d053aa66ed4b50da0b6e7dfc3fb173c1ef32e"
+      }
+    ],
+    "newImage": {
+      "screen": "08",
+      "kind": "fresh-current-native",
+      "path": "images/08-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-08-current-de.png",
+      "sha256": "f24fbfa5a518b2186f20d9e64cac0b2c19850d0e503efd2492470b932b7c60a9",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: German. Source hashes in registry."
+    },
+    "oldImage": null,
+    "supplement": null,
+    "viewportComparison": "Native legacy screenshot unavailable; no fabricated OLD capture. Supplementary Web evidence, where shown, is not a matched native comparison."
+  },
+  {
+    "id": "09",
+    "name": "City Hub",
+    "source": "mobile/src/app/city/[citySlug]/index.tsx",
+    "component": "CityScreen + CityHubHero",
+    "route": "/city/:citySlug",
+    "oldSource": "mobile/src/app/city/[citySlug]/index.tsx",
+    "oldComponent": "CityScreen / existing hub content",
+    "oldRoute": "/city/:citySlug",
+    "oldFunctionality": "City-scoped published tours, places, search/category/map discovery, trip builder and honest Guide fallback.",
+    "newFunctionality": "Premium hero, retained builder action, Explore/Near me/Ask actions, real tour recommendation and places list/map, city switcher and attribution.",
+    "functionalGaps": "Hub route card still advertises 45 min while Screen 13 shows 120 min at stops. Guest onboarding interests are not consumed by cityHubRecommendations. Walking Routes 12 has no direct Hub entry; Ask opens supported unavailable fallback rather than a city-wide answer.",
+    "uxDifferences": "Compact editorial route card and photography improve hierarchy. City Hub and Places are both in Explore tab; Home remains global discovery.",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/app/city/[citySlug]/index.tsx",
+        "currentSnapshot": "sources/09/index.tsx.current.txt",
+        "sha256": "94aec476b53bfee1414614810227da3a99722de65a6d226cae5fdbf7787abe4c",
+        "baseSnapshot": "sources/09/index.tsx.base.txt",
+        "baseGitBlob": "bf0820b1598356bde3d5504dd3e439aaf723d49a"
+      }
+    ],
+    "newImage": {
+      "screen": "09",
+      "kind": "fresh-current-native",
+      "path": "images/09-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-09-current-en.png",
+      "sha256": "9b0fca5ec4ce3c48057176c85b469e6d32f4060cd2aa1833a860b4a49cd889ea",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+    },
+    "oldImage": null,
+    "supplement": {
+      "screen": "09",
+      "kind": "supplementary-web",
+      "path": "images/09-legacy-web.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/city-hub-390.png",
+      "sha256": "8030aa65ad2d84f2e03c4aeb802a573997c237ef7700f3892d760991b4da5080",
+      "width": 390,
+      "height": 844,
+      "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+    },
+    "viewportComparison": "Native legacy screenshot unavailable; no fabricated OLD capture. Supplementary Web evidence, where shown, is not a matched native comparison."
+  },
+  {
+    "id": "10",
+    "name": "Explore Places",
+    "source": "mobile/src/app/city/[citySlug]/explore.tsx",
+    "component": "ExploreScreen / ExploreContent",
+    "route": "/city/:citySlug/explore",
+    "oldSource": "mobile/src/app/city/[citySlug]/explore.tsx",
+    "oldComponent": "ExploreScreen",
+    "oldRoute": "/city/:citySlug/explore",
+    "oldFunctionality": "Existing city POI list/map, category browsing, save and walk integration; legacy header/search entry.",
+    "newFunctionality": "Compact navy header, richer POI cards, distinct Save/Add, genuine photo where verified, polished placeholders; search opens separate SearchScreen.",
+    "functionalGaps": "20 missing photos and four unverified legacy assets remain excluded, not solved by placeholders. Separate Search route has recent history/result caps, so merging inline search blindly would lose functionality. Current runtime still exposes adjacent Holstentor attribution text in Explore; centralized Place Detail credits do not imply every credit UI was removed.",
+    "uxDifferences": "Premium discovery layout replaces generic rows; crash fix and existing five tabs retained.",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/app/city/[citySlug]/explore.tsx",
+        "currentSnapshot": "sources/10/explore.tsx.current.txt",
+        "sha256": "5b8f617d255854675af7a9e288f7b469b9fbdef3b5b6b8f9f5044a7d81041db6",
+        "baseSnapshot": "sources/10/explore.tsx.base.txt",
+        "baseGitBlob": "f3599c3db9d436f43a58fe7f9801a898fc81a769"
+      }
+    ],
+    "newImage": {
+      "screen": "10",
+      "kind": "fresh-current-native",
+      "path": "images/10-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-10-current-en.png",
+      "sha256": "d904ee993a09ae0f018f061abca9edebe4eaf3579561c46e9fc96fb7f26815bd",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+    },
+    "oldImage": null,
+    "supplement": {
+      "screen": "10",
+      "kind": "supplementary-web",
+      "path": "images/10-legacy-web.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/explore-map-390.png",
+      "sha256": "083221ef08c169987e79a65ee1cb5eff8ab19a02c316e1d524feb9b1fd5afc0a",
+      "width": 390,
+      "height": 844,
+      "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+    },
+    "viewportComparison": "Native legacy screenshot unavailable; no fabricated OLD capture. Supplementary Web evidence, where shown, is not a matched native comparison."
+  },
+  {
+    "id": "11",
+    "name": "Place Detail",
+    "source": "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx",
+    "component": "PlaceScreen → PlaceContent (ordinary place context)",
+    "route": "/city/:citySlug/place/:placeSlug [without published-trip context]",
+    "oldSource": "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx",
+    "oldComponent": "PlaceScreen / PlaceContent",
+    "oldRoute": "/city/:citySlug/place/:placeSlug",
+    "oldFunctionality": "Verified content, exact-locale audio, sources, guide eligibility, directions, saved place and walk actions; trip-context next/previous.",
+    "newFunctionality": "Large place-specific hero/fallback, title/category/visit time, Save/Add/Directions, real Overview/Story/Audio, accessible central Photo Credits link.",
+    "functionalGaps": "Published-trip URL now dispatches to unapproved PublishedActiveWalk rather than PlaceContent; this is a distinct mode sharing one route. Missing photos and exact-locale unavailable audio remain real limits. Live external directions and provider-gated Guide not accepted by a screenshot.",
+    "uxDifferences": "Large inline Holstentor credit removed in ordinary detail in favor of centralized credits; required licensing metadata preserved.",
+    "recommendation": "KEEP NEW",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx",
+        "currentSnapshot": "sources/11/[placeSlug].tsx.current.txt",
+        "sha256": "7c7c2f93fff29a48aef53ccb8bb703dde392e2f6635d913426e305beac2ddf91",
+        "baseSnapshot": "sources/11/[placeSlug].tsx.base.txt",
+        "baseGitBlob": "8f22ca93088feb8647bb0b361e730bd9920d5159"
+      }
+    ],
+    "newImage": {
+      "screen": "11",
+      "kind": "fresh-current-native",
+      "path": "images/11-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-11-current-en.png",
+      "sha256": "e49314be1192b35f130e42757a9962c5a1d7ea5292f631f789405c826e725144",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+    },
+    "oldImage": {
+      "screen": "11",
+      "kind": "archived-before-native",
+      "path": "images/11-old.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-11/screenshots/standard-before-en.png",
+      "sha256": "1ed8f055022662c49940bbc3917ed55e48027c3fb9ae7b9aaeeb5a270141c050",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Archived pre-redesign simulator capture. Language: English. Retained report identifies context; source-to-binary exact match not independently established."
+    },
+    "supplement": null,
+    "viewportComparison": "Matched pixel dimensions."
+  },
+  {
+    "id": "12",
+    "name": "Walking Routes",
+    "source": "mobile/src/app/city/[citySlug]/routes.tsx",
+    "component": "WalkingRoutesScreen / RoutesContent / PublishedRouteCard",
+    "route": "/city/:citySlug/routes",
+    "oldSource": "mobile/src/app/city/[citySlug]/index.tsx",
+    "oldComponent": "existing TourCard in City Hub",
+    "oldRoute": "/city/:citySlug [tour collection section]",
+    "oldFunctionality": "No legacy equivalent identified for a standalone route-list page. Equivalent published-tour collection was embedded in City Hub.",
+    "newFunctionality": "Dedicated real published route collection; supported duration filters; real metadata/themes; preview; build/saved/hub exits; legal credits.",
+    "functionalGaps": "Duration filters use ambiguous estimatedDurationMinutes=45 despite 120 min summed visits shown in preview. Single real route matches all current budget filters. No curated-route favorite contract. Discoverability is reverse: preview links to list, not Hub → list.",
+    "uxDifferences": "New dedicated list; no fictional storyboard routes or ratings. Host collection overlap is legitimate reuse, but entry needs a decision.",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/app/city/[citySlug]/routes.tsx",
+        "currentSnapshot": "sources/12/routes.tsx.current.txt",
+        "sha256": "e2529da8f5ed7512b53a01d8de7eb23edac890b346d7a466c03243076ade8107",
+        "baseSnapshot": null,
+        "baseGitBlob": null
+      },
+      {
+        "path": "mobile/src/app/city/[citySlug]/index.tsx",
+        "currentSnapshot": "sources/12/index.tsx.current.txt",
+        "sha256": "94aec476b53bfee1414614810227da3a99722de65a6d226cae5fdbf7787abe4c",
+        "baseSnapshot": "sources/12/index.tsx.base.txt",
+        "baseGitBlob": "bf0820b1598356bde3d5504dd3e439aaf723d49a"
+      }
+    ],
+    "newImage": {
+      "screen": "12",
+      "kind": "fresh-current-native",
+      "path": "images/12-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-12-current-en.png",
+      "sha256": "f2e391696ab566c0f056cde62ebaa1ad0a6d9c063e8de01050400325ed691ae6",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+    },
+    "oldImage": null,
+    "supplement": {
+      "screen": "12",
+      "kind": "supplementary-web",
+      "path": "images/12-legacy-web.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/citywalk-native-visual-parity/screenshots/web/city-hub-390.png",
+      "sha256": "8030aa65ad2d84f2e03c4aeb802a573997c237ef7700f3892d760991b4da5080",
+      "width": 390,
+      "height": 844,
+      "notes": "Archived web screenshot, not a native OLD screenshot; no native parity or exact revision claim."
+    },
+    "viewportComparison": "Native legacy screenshot unavailable; no fabricated OLD capture. Supplementary Web evidence, where shown, is not a matched native comparison."
+  },
+  {
+    "id": "13",
+    "name": "Route Preview",
+    "source": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx",
+    "component": "TourScreen → RoutePreview",
+    "route": "/city/:citySlug/tour/:tourSlug",
+    "oldSource": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx",
+    "oldComponent": "TourScreen (original published-tour preview)",
+    "oldRoute": "/city/:citySlug/tour/:tourSlug",
+    "oldFunctionality": "Published title/description/duration/stops; place links and explicit first-stop start, without separate verified pedestrian routing.",
+    "newFunctionality": "Real coordinate map with numbered stop sequence, ordered places, truthful visit-only total, original-duration disclosure; explicit Start Walk; builder return-by link.",
+    "functionalGaps": "45 min has no verified walking/full-experience semantics. Real pedestrian geometry unavailable; dashed sequence explicitly not directions. Curated favorite unavailable. Start goes to new unapproved Active Walk mode; current preview contains no direct durable-progress resume decision itself.",
+    "uxDifferences": "Map/list and duration integrity replace simple metadata list; explicit action is still required before active context.",
+    "recommendation": "KEEP NEW",
+    "decision": "PENDING",
+    "noLegacy": false,
+    "status": "Visually Approved / Functional Verification Pending",
+    "branch": "codex/onboarding-global-welcome",
+    "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+    "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+    "sources": [
+      {
+        "path": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx",
+        "currentSnapshot": "sources/13/[tourSlug].tsx.current.txt",
+        "sha256": "f118343371c16ed0ff55b370c9de6633548b335f58b70bf1e8211331ae0d7dda",
+        "baseSnapshot": "sources/13/[tourSlug].tsx.base.txt",
+        "baseGitBlob": "e08eb8086f59fc57f270f7a4ab155cb94ef0c0cb"
+      }
+    ],
+    "newImage": {
+      "screen": "13",
+      "kind": "fresh-current-native",
+      "path": "images/13-new.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/captures/screen-13-current-en.png",
+      "sha256": "2238cab27b47f388c3e7bc680ebdca91424cc399cf3a59816b39d0d06cf8da0c",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Fresh 28 October 2026 local native capture; 402×874 point standard iPhone. Language: English. Source hashes in registry."
+    },
+    "oldImage": {
+      "screen": "13",
+      "kind": "archived-before-native",
+      "path": "images/13-old.png",
+      "original": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-13/screenshots/before-standard-de.png",
+      "sha256": "1eaec139d39652f553a8fbadbb1614675bd25cc1c800fcf0246528bf459d7dba",
+      "width": 1206,
+      "height": 2622,
+      "notes": "Archived pre-redesign simulator capture. Language: German. Retained report identifies context; source-to-binary exact match not independently established."
+    },
+    "supplement": null,
+    "viewportComparison": "Matched pixel dimensions."
+  }
+]

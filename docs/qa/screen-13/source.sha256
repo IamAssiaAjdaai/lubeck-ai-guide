@@ -1,0 +1,5 @@
+684094c1c8501ec446aaed988f461ef44361810ca6da85a63f51148f2b50f6ab  mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx
+b21cbe1c5b2ed2aaed1c62394f6b4537ca1a8ddc8bc95aa4fc8ebfc57e35b006  mobile/src/components/NativeCityMap.tsx
+b316b27ae90677daef9a6adc22d93673a722cbf39feeaa3f737697706985846e  mobile/src/lib/routePreviewCopy.ts
+78c4122bc0500d06fb0407ddab4d34be1b9e20ca0f3fb65e72231adde700c5b4  mobile/tests/route-preview.test.tsx
+453b278e2c7f6dbd9259f0a99a65c33b15f20b3b7b70af0413a01feea22fb6cb  mobile/tests/route-overview-map.test.tsx

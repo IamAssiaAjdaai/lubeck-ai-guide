@@ -1,0 +1,122 @@
+[
+  {
+    "id": "F01",
+    "priority": "P1",
+    "title": "Launch bypass / missing onboarding policy",
+    "evidence": "Normal launch is / Home. Welcome is explicitly a visual-review route; no persisted first-run/revisit gate. This is a confirmed bypass, not proof Welcome is unreachable.",
+    "source": "mobile/src/app/welcome.tsx:27",
+    "recommendation": "Decide optional first-entry policy; preserve deep links and returning walks."
+  },
+  {
+    "id": "F02",
+    "priority": "P1",
+    "title": "Numbered flow differs from actual flow",
+    "evidence": "04 → 09 → Build → 05–08 → 09 → retained planner. Design IDs must remain unchanged. This is not an eight-screen mandatory wizard.",
+    "source": "mobile/src/components/NativeWalkFlow.tsx:965",
+    "recommendation": "Decide whether confirmation detour should remain; no automatic flow rewrite."
+  },
+  {
+    "id": "F03",
+    "priority": "P1",
+    "title": "Duration semantics inconsistent across discovery and preview",
+    "evidence": "Live Hub and Walking Routes advertise 45 min; Preview correctly shows 120 min at stops and unverified walking/total. List filters consume the ambiguous 45-minute field.",
+    "source": "mobile/src/lib/publishedRoutes.ts:8",
+    "recommendation": "Editorial/source owner must establish scoped duration; then shared display/filter contract regression."
+  },
+  {
+    "id": "F04",
+    "priority": "P1",
+    "title": "Guest personalization not used in Hub recommendations",
+    "evidence": "Hub reads accountInterests only when userId matches. NativeWalkFlow holds guest selections in its own mounted state; no durable guest preference handoff to recommendations.",
+    "source": "mobile/src/app/city/[citySlug]/index.tsx:114",
+    "recommendation": "Choose ownership of guest defaults and recommendation inputs without duplicating planner state."
+  },
+  {
+    "id": "F05",
+    "priority": "P1",
+    "title": "Unbuilt drafts are not durable",
+    "evidence": "Screen 08 retains draft via native stack. Build/resume journeys persist; unbuilt interests/return-by/location and completion flags do not have a durable draft contract.",
+    "source": "mobile/src/components/NativeWalkFlow.tsx:205",
+    "recommendation": "Accept session-only draft or authorize a tested shared draft contract; never describe as process-safe."
+  },
+  {
+    "id": "F06",
+    "priority": "P2",
+    "title": "Collection entry inversion",
+    "evidence": "Only /tour preview contains a navigation reference to /routes in current native code. Hub can open a specific preview; collection discovery comes afterward.",
+    "source": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx:109",
+    "recommendation": "Decide explicit route-collection entry while preserving approved visuals."
+  },
+  {
+    "id": "F07",
+    "priority": "P1",
+    "title": "Active-walk modes share Place route and differ in persistence",
+    "evidence": "Published trip context dispatches to unapproved PublishedActiveWalk. Ordinary places remain Screen 11; custom journeys use NativeWalkFlow. Saved/Trips loads custom/legacy saved walks, not curatedProgressStorage.",
+    "source": "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx:61",
+    "recommendation": "Review unapproved candidate and resume/Trips discovery before consolidation; do not merge models blindly."
+  },
+  {
+    "id": "F08",
+    "priority": "P2",
+    "title": "Repeated preferences and Skip semantics",
+    "evidence": "Confirmed repeated question: Screen 05 selects interests, but after 08 returns through Hub, the retained planner step 2 renders the legacy interests grid again (same state), plus categories/walking pace. Step 3 then asks manual/GPS start/end. Available Time Skip advances with current/default budget; rebuild resets interests/time.",
+    "source": "mobile/src/components/NativeWalkFlow.tsx:1070",
+    "recommendation": "Decide whether the second interests entry should be editing-only; preserve categories/walking controls and choose Skip/default semantics."
+  },
+  {
+    "id": "F09",
+    "priority": "P2",
+    "title": "Home / Explore tab semantics are conditional",
+    "evidence": "/ has Home; /?section=cities and /city/:citySlug have Explore. /walk and /tour have Trips. /routes currently falls through to Explore. This differs from catalog/preview tab expectations but is not a proven crash.",
+    "source": "mobile/src/lib/tabNavigation.tsx:9",
+    "recommendation": "Approve tab ownership before any route/active-tab changes."
+  },
+  {
+    "id": "F10",
+    "priority": "P2",
+    "title": "Multiple search/filter presentations",
+    "evidence": "Hub places filters, Explore list/map and dedicated Search/recent history overlap. Search limits visible matches to 12; Explore is full catalog. Removal would lose capabilities.",
+    "source": "mobile/src/app/city/[citySlug]/search.tsx:99",
+    "recommendation": "Merge best capabilities only after search/history/category/map regression matrix."
+  },
+  {
+    "id": "F11",
+    "priority": "P1",
+    "title": "Guide/audio claims remain availability bounded",
+    "evidence": "City Assistant is explicitly unavailable with a place-discovery fallback. Real Guide is place-scoped. English Holstentor capture has no English audio; no substituted-locale playback.",
+    "source": "mobile/src/app/city/[citySlug]/assistant.tsx:32",
+    "recommendation": "Keep honest capability-specific paths; verify deployed provider/locale integration separately."
+  },
+  {
+    "id": "F12",
+    "priority": "P1",
+    "title": "Photography and attribution coverage incomplete",
+    "evidence": "Recorded audit: 20 missing POI images + four unverified legacy assets, all excluded/fallbacks. Current Explore still contains adjacent licensed text; Detail uses central Photo Credits. No new license compliance opinion established by this audit.",
+    "source": "mobile/src/app/city/[citySlug]/explore.tsx:35",
+    "recommendation": "Preserve source/license metadata and per-license handling; approved asset acquisition is a separate task."
+  },
+  {
+    "id": "F13",
+    "priority": "P1",
+    "title": "Snapshot is behind current integration branches",
+    "evidence": "Redesign base 98a1… differs from live develop 9f847…; #449/#450/#452 merged separately. Some #450 progress was locally reused, but branch ancestry and partial copies do not prove all backend/shared/native contracts are integrated. #454 remains a separate open selected-place UI PR.",
+    "source": "github-evidence.json; refs.json; branch-route-versions.json",
+    "recommendation": "No-loss source→successor comparison and exact revision regression required before any merge; preserve independent worktrees."
+  },
+  {
+    "id": "F14",
+    "priority": "P2",
+    "title": "Legacy selected-city assumptions remain outside redesigned flow",
+    "evidence": "Authenticated /account has a city pass card/link explicitly for lubeck. Dynamic city context in 04/09/10 does not make that legacy account area globally city-aware.",
+    "source": "mobile/src/app/account/index.tsx:543",
+    "recommendation": "Choose account/pass scoping independently; do not modify commerce in this audit."
+  },
+  {
+    "id": "F15",
+    "priority": "P1",
+    "title": "Product-wide device/back/provider acceptance is incomplete",
+    "evidence": "Historical reports document tests/simulator evidence with unverified Android devices, physical VoiceOver/TalkBack, live OAuth/email/purchases, process-death draft behavior and full back-stack traversal. Audit captures do not close these gates.",
+    "source": "docs/qa/screen-14/REPORT.md; docs/qa/onboarding-screen-03-polish/README.md",
+    "recommendation": "Require explicit per-platform, guest/account, locale, restart and provider acceptance before removal or release."
+  }
+]

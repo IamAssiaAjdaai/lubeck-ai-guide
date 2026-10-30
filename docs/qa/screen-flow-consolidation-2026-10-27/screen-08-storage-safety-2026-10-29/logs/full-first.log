@@ -1,0 +1,169 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run --reporter=default --reporter=json --outputFile=../docs/qa/screen-flow-consolidation-2026-10-27/screen-08-storage-safety-2026-10-29/logs/full-first.json
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+ ✓ tests/walk-session.test.ts (10 tests) 15ms
+ ✓ tests/metro-workspace.test.ts (2 tests) 910ms
+     ✓ watches the shared catalogs outside the Expo project root  904ms
+ ✓ tests/native-billing.test.ts (16 tests) 428ms
+stderr | tests/launch-locale-selector.test.tsx > single native launch-language selector > selects de with its full native label and shared copy
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <NativeLocaleProvider>
+    <Example>
+      <LocaleSelector showLabel={true}>
+        <Pressable>
+        <Modal animationType="fade" onRequestClose={function onRequestClose} transparent={true} visible={true}>
+          <div role="dialog">
+            <Pressable accessible={false} accessibilityLabel="Close" accessibilityRole="button" ...>
+>             <button role="button" aria-label="Close" aria-checked={undefined} onClick={function onPress}>
+                <View accessibilityRole="radiogroup" onAccessibilityEscape={function onAccessibilityEscape} style={{...}}>
+                  <div role="radiogroup">
+                    <ScrollView contentContainerStyle={{gap:4}}>
+                      <div data-testid="language-s...">
+                        <AppText>
+                        <Pressable accessibilityRole="radio" accessibilityState={{checked:false}} ...>
+>                         <button role="radio" aria-label={undefined} aria-checked={false} onClick={function onPress}>
+                        ...
+      ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+ ✓ tests/launch-locale-selector.test.tsx (7 tests) 367ms
+ ✓ tests/route-preview.test.tsx (7 tests) 559ms
+   ✓ keeps en guest browsing outside trip execution until Start Walk  305ms
+ ✓ tests/public-store-review.test.tsx (11 tests) 771ms
+ ✓ tests/membership-presentation.test.tsx (19 tests) 691ms
+ ✓ tests/city-unlock-gate.test.tsx (12 tests) 1112ms
+   ✓ renders translated guest paywall and preserves a dismissed Start intent in en  351ms
+ ✓ tests/native-screen-chrome.test.tsx (25 tests) 760ms
+ ✓ tests/welcome.test.tsx (30 tests) 1203ms
+ ✓ tests/compact-city-filters.test.tsx (12 tests) 745ms
+   ✓ fills categories equally and adapts live without changing selection in en  374ms
+ ✓ tests/city-hub-actions.test.tsx (22 tests) 1231ms
+ ✓ tests/membership-screens.test.tsx (10 tests) 1358ms
+     ✓ adds from Explore and immediately updates Detail in en  551ms
+ ✓ tests/home-presentation.test.tsx (25 tests) 1367ms
+     ✓ uses V2 copy and published imagery even when the API has no city media  325ms
+ ✓ tests/published-active-walk.test.tsx (9 tests) 1584ms
+   ✓ shows the real en guest route and keeps stop details outside execution context  472ms
+ ✓ tests/route-overview-map.test.tsx (5 tests) 371ms
+ ✓ tests/account-guest-flow.test.tsx (43 tests) 2520ms
+     ✓ offers truthful choices and localized email flow in en without gating guests  425ms
+ ✓ tests/photo-credits.test.tsx (4 tests) 428ms
+ ✓ tests/native-tab-navigation.test.tsx (9 tests) 452ms
+ ✓ tests/location-permission.test.tsx (4 tests) 353ms
+ ✓ tests/available-time.test.tsx (3 tests) 366ms
+ ✓ tests/account-onboarding-frame.test.tsx (8 tests) 393ms
+ ✓ tests/walking-routes.test.tsx (4 tests) 385ms
+   ✓ keeps guest route filtering and exact preview navigation in en  318ms
+ ✓ tests/return-by-picker.test.tsx (2 tests) 320ms
+ ✓ tests/account-walk-scope.test.tsx (3 tests) 215ms
+ ✓ tests/select-interests.test.tsx (2 tests) 372ms
+ ✓ tests/native-media-loading.test.tsx (2 tests) 270ms
+ ✓ tests/public-content-cache.test.ts (11 tests) 129ms
+ ✓ tests/api-client.test.ts (18 tests) 74ms
+ ✓ tests/city-unlock-access.test.ts (7 tests) 57ms
+ ✓ tests/account-lifecycle.test.ts (3 tests) 51ms
+ ✓ tests/native-v2-regressions.test.tsx (67 tests) 4173ms
+   ✓ adapts quick actions/tour cards on mounted de screens and restores the normal layout  307ms
+   ✓ adapts quick actions/tour cards on mounted sv screens and restores the normal layout  340ms
+   ✓ adapts quick actions/tour cards on mounted nl screens and restores the normal layout  330ms
+   ✓ adapts quick actions/tour cards on mounted ar screens and restores the normal layout  340ms
+ ✓ tests/content-image.test.tsx (6 tests) 193ms
+ ✓ tests/account-walk-api.test.ts (6 tests) 49ms
+ ✓ tests/location.test.ts (16 tests) 26ms
+ ✓ tests/marketing-performance.test.ts (4 tests) 41ms
+ ✓ tests/current-walk-observation.test.ts (35 tests) 26ms
+ ✓ tests/store-review.test.ts (26 tests) 14ms
+ ✓ tests/guide-acceptance.test.ts (5 tests) 52ms
+ ✓ tests/trip-storage.test.ts (3 tests) 9ms
+ ✓ tests/city-unlock.test.ts (25 tests) 18ms
+ ✓ tests/native-audio-playback.test.tsx (5 tests) 200ms
+ ✓ tests/app-config.test.ts (22 tests) 11ms
+ ✓ tests/locale-preference.test.tsx (15 tests) 198ms
+ ✓ tests/curated-progress.test.ts (23 tests) 15ms
+ ✓ tests/walk-membership.test.tsx (11 tests) 559ms
+     ✓ never offers Add for an existing place and synchronizes removal/addition in en  317ms
+ ✓ tests/planner-return-intent.test.ts (12 tests | 1 todo) 17ms
+ ✓ tests/revenuecat-city-pass.test.ts (6 tests) 7ms
+ ✓ tests/api-environment.test.ts (15 tests) 8ms
+ ✓ tests/marketing-attribution.test.ts (3 tests) 6ms
+ ✓ tests/content-loading-retry.test.tsx (4 tests) 200ms
+ ✓ tests/saved-route-identity.test.ts (7 tests) 11ms
+ ✓ tests/responsive-text.test.ts (8 tests) 7ms
+ ✓ tests/native-analytics-consent.test.ts (6 tests) 6ms
+ ✓ tests/live-walk.test.ts (12 tests) 10ms
+ ✓ tests/walk-save.test.ts (12 tests) 17ms
+ ✓ tests/localization.test.ts (4 tests) 7ms
+ ✓ tests/traveler-style.test.ts (6 tests) 9ms
+ ✓ tests/audio-diagnostics.test.ts (2 tests) 14ms
+ ✓ tests/display-names.test.ts (5 tests) 6ms
+ ✓ tests/contracts.test.ts (9 tests) 8ms
+ ✓ tests/walk-storage.test.ts (6 tests) 14ms
+ ✓ tests/guide-conversation-storage.test.ts (7 tests) 11ms
+ ✓ tests/map-style.test.ts (3 tests) 4ms
+ ✓ tests/native-legal.test.ts (3 tests) 4ms
+ ✓ tests/premium-paywall-p3.test.ts (5 tests) 4ms
+ ✓ tests/native-card-followup.test.ts (4 tests) 5ms
+ ✓ tests/rtl-presentation.test.ts (10 tests) 6ms
+ ✓ tests/native-city-experience.test.ts (11 tests) 6ms
+ ✓ tests/published-routes.test.ts (4 tests) 5ms
+ ✓ tests/native-observability.test.ts (5 tests) 6ms
+ ✓ tests/first-experience.test.tsx (5 tests) 355ms
+ ✓ tests/place-detail-p1.test.ts (3 tests) 5ms
+ ✓ tests/auth-errors.test.ts (4 tests) 4ms
+ ✓ tests/mediaAttribution.test.ts (4 tests) 7ms
+ ✓ tests/visitor-identity.test.ts (3 tests) 5ms
+ ✓ tests/loading-experience.test.ts (7 tests) 4ms
+ ✓ tests/haptics.test.ts (2 tests) 5ms
+ ✓ tests/published-route-timing.test.ts (4 tests) 4ms
+ ✓ tests/app-links-config.test.ts (3 tests) 4ms
+ ✓ tests/guide-conversation.test.ts (3 tests) 4ms
+ ✓ tests/city-hub-editorial-v1.test.ts (5 tests) 6ms
+ ✓ tests/search-p1.test.ts (3 tests) 6ms
+ ✓ tests/product-design-polish.test.ts (8 tests) 5ms
+ ✓ tests/guide-experience.test.ts (6 tests) 4ms
+ ✓ tests/privacy-commerce.test.ts (2 tests) 5ms
+ ✓ tests/tour-planning.test.ts (3 tests) 4ms
+ ✓ tests/places-v2-presentation.test.ts (5 tests) 4ms
+ ✓ tests/trip-navigation.test.ts (4 tests) 4ms
+ ✓ tests/smart-replanning-p3.test.ts (3 tests) 4ms
+ ✓ tests/premium-entitlements-p3.test.ts (4 tests) 5ms
+ ✓ tests/explore-photography.test.ts (4 tests) 5ms
+ ✓ tests/account-data-export.test.ts (2 tests) 4ms
+ ✓ tests/ai-guide-premium-p3.test.ts (3 tests) 3ms
+ ✓ tests/routing.test.ts (4 tests) 8ms
+ ✓ tests/trips-p2.test.ts (4 tests) 4ms
+ ✓ tests/guide-failure.test.ts (4 tests) 6ms
+ ✓ tests/saved-p2.test.ts (4 tests) 4ms
+ ✓ tests/app-icon-pack.test.ts (2 tests) 3ms
+ ✓ tests/profile-p2.test.ts (3 tests) 4ms
+ ✓ tests/media.test.ts (4 tests) 5ms
+ ✓ tests/premium-traveler-copy.test.ts (2 tests) 5ms
+ ✓ tests/city-hub-photography.test.ts (2 tests) 4ms
+ ✓ tests/audio.test.ts (5 tests) 3ms
+ ✓ tests/auth-configuration.test.ts (3 tests) 4ms
+ ✓ tests/explore-p1.test.ts (3 tests) 3ms
+ ✓ tests/screen-08-persistence-regressions.test.ts (11 tests) 15ms
+ ✓ tests/premium-audio-p3.test.ts (3 tests) 4ms
+ ✓ tests/brand-system.test.ts (2 tests) 5ms
+ ✓ tests/screenLayout.test.ts (2 tests) 3ms
+ ↓ tests/screen-08-contract-pending.test.ts (19 tests | 19 todo)
+ ✓ tests/locale-selector-large-text.test.ts (1 test) 2ms
+ ✓ tests/account-diagnostics-visibility.test.ts (2 tests) 3ms
+ ✓ tests/walk-flow.test.tsx (102 tests) 11743ms
+     ✓ keeps the exact preview when Start authorization is dismissed, then starts once authorized  324ms
+     ✓ [S08 PASS][C03] all finish modes map to actual planner settings  352ms
+
+ Test Files  113 passed | 1 skipped (114)
+      Tests  1026 passed | 9 expected fail | 20 todo (1055)
+   Start at  03:47:58
+   Duration  18.88s (transform 11.10s, setup 0ms, import 26.08s, tests 38.12s, environment 48.70s)
+
+JSON report written to /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/screen-08-storage-safety-2026-10-29/logs/full-first.json

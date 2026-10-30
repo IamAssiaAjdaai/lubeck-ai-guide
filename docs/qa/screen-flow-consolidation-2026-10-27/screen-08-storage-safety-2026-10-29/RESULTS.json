@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-29",
+  "fullMobile": {
+    "ordinaryPassed": 1039,
+    "expectedFailureVariantsNotFunctionalityPasses": 9,
+    "todo": 17,
+    "unexpectedFailed": 0,
+    "total": 1065
+  },
+  "baseline": {
+    "ordinaryPassed": 985,
+    "expectedFailureVariants": 15,
+    "todo": 20,
+    "total": 1020
+  },
+  "contractCaseCounts": {
+    "pending": 20,
+    "expected-failure": 8,
+    "passed": 18,
+    "blocked": 1
+  },
+  "convertedExpectedFailures": [
+    "S02",
+    "S04",
+    "S05",
+    "S07",
+    "E03",
+    "E04"
+  ],
+  "activatedStorageTodoCases": [
+    "S01",
+    "S03",
+    "S06"
+  ],
+  "storageRedToGreen": {
+    "beforeOrdinaryFailures": 6,
+    "afterOrdinaryPasses": 6
+  },
+  "remainingStrictRed": {
+    "ordinaryFailures": 9,
+    "distinctCases": 8,
+    "expectedExitCode": 1
+  },
+  "newStorageUnitTests": 37,
+  "newControllerTests": 11,
+  "typescript": "PASS",
+  "lint": "PASS; zero warnings, one narrowly documented existing-event purity exception",
+  "i18n": "PASS: 7 locales, 681 keys each, zero errors",
+  "iosHermesExport": "PASS",
+  "androidHermesExport": "PASS",
+  "nativeInteractiveAcceptance": "NOT RUN; not claimed",
+  "navigationIntegration": "NOT AUTHORIZED / NOT IMPLEMENTED",
+  "legacyAssertionMigration": "NOT AUTHORIZED / NOT PERFORMED",
+  "Screen14": "PENDING",
+  "D01_D14": "PENDING",
+  "additionalChangedTestLint": {
+    "result": "5 PREEXISTING import/first warnings, 0 new findings, 0 errors",
+    "strictCommandExitCode": 1,
+    "comparison": "test-lint-baseline.json"
+  }
+}

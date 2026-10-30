@@ -1,0 +1,127 @@
+--- a/mobile/src/app/city/[citySlug]/explore.tsx
++++ b/mobile/src/app/city/[citySlug]/explore.tsx
+@@ -29,7 +29,7 @@
+   nativeRowStyle,
+   nativeTextBlock,
+ } from "../../../design/rtlPresentation";
+-import { colors, motion } from "../../../design/tokens";
++import { colors, motion, shadows } from "../../../design/tokens";
+ import { prefetchPublicPlace, usePublicCity } from "../../../hooks/usePublicContent";
+ import { citywalkApi } from "../../../lib/api/instance";
+ import { explorePhotography } from "../../../lib/explorePhotography";
+@@ -118,7 +118,7 @@
+     contentContainerStyle={styles.content}
+     ListHeaderComponent={<View style={styles.header}>
+       <View style={styles.intro}>
+-        <AppText accessibilityRole="header" style={[styles.title, fontScale > 1.5 && { fontSize: 24, lineHeight: 30 }, fontScale > 2.5 && { fontSize: 15, lineHeight: 21 }]}>{t.explore}{"\n"}{nativeCityName(city.slug, city.content.name, locale)}</AppText>
++        <AppText accessibilityRole="header" style={[styles.title, fontScale > 1.5 && { fontSize: 24, lineHeight: 30 }, fontScale > 2.5 && { fontSize: 15, lineHeight: 21 }]}>{t.explore}{" "}{nativeCityName(city.slug, city.content.name, locale)}</AppText>
+         <Link href={{ pathname: "/city/[citySlug]/search", params: { citySlug: city.slug } }} asChild>
+           <PressableSurface accessibilityLabel={searchLabels.placeholder} accessibilityRole="link" style={StyleSheet.flatten([styles.search, nativeRowStyle(direction)])}>
+             <NativeIcon ios="magnifyingglass" android="search" color={colors.textMuted} size={19} />
+@@ -168,7 +168,6 @@
+ 
+   return (
+     <View style={styles.placeShell}>
+-      <View style={[styles.placeRow, nativeRowStyle(direction), expanded && styles.stacked]}>
+         <Link
+           href={{
+             pathname: "/city/[citySlug]/place/[placeSlug]",
+@@ -192,7 +191,7 @@
+               );
+             }}
+           >
+-            <Image
++            {photo ? <Image
+               source={photo?.uri ? { uri: citywalkApi.resolveUrl(photo.uri) } : photo?.source}
+               placeholderIcon={
+                 place.category === "eat"
+@@ -212,7 +211,13 @@
+                 place.content.name,
+                 locale,
+               )}
+-            />
++            /> : <View accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.thumbnail, styles.placeholder, expanded && styles.expandedThumbnail]}>
++              <View style={styles.placeholderOrbit} />
++              <View style={styles.placeholderMedallion}>
++                <NativeIcon ios={place.category === "eat" ? "fork.knife" : place.category === "fun" ? "sparkles" : "map"}
++                  android={place.category === "eat" ? "restaurant" : place.category === "fun" ? "auto_awesome" : "map"} size={30} color={colors.primary} />
++              </View>
++            </View>}
+             <View style={[styles.placeCopy, nativeTextBlock(direction)]}>
+               <AppText numberOfLines={expanded ? undefined : 2} style={styles.placeTitle}>
+                 {nativePlaceName(
+@@ -227,7 +232,7 @@
+               </AppText>
+               {place.content.shortDescription ? (
+                 <AppText
+-                  numberOfLines={expanded ? undefined : 2}
++                  numberOfLines={expanded ? undefined : 3}
+                   variant="metadata"
+                   style={[styles.description, textStyle]}
+                 >
+@@ -237,14 +242,14 @@
+             </View>
+           </PressableSurface>
+         </Link>
+-        <View style={[styles.membership, expanded && styles.expandedActions]}>
++        <View style={[styles.membership, nativeRowStyle(direction), expanded && styles.expandedActions]}>
+           <PressableSurface accessibilityRole="button" accessibilityLabel={`${translate(locale, saved ? "common.saved" : "common.save")}: ${name}`}
+             accessibilityState={{ selected: saved, disabled: saveDisabled }} disabled={saveDisabled} onPress={onSave} style={styles.save}>
+-            <NativeIcon ios={saved ? "heart.fill" : "heart"} android={saved ? "favorite" : "favorite_border"} color={colors.primary} size={21} />
++            <NativeIcon ios={saved ? "heart.fill" : "heart"} android={saved ? "favorite" : "favorite_border"} color={colors.primary} size={19} />
++            <AppText style={styles.saveLabel}>{translate(locale, saved ? "common.saved" : "common.save")}</AppText>
+           </PressableSurface>
+-          <WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} iconOnly onFeedback={(message, showCustomize) => { setFeedback(message); setCustomize(showCustomize); }} />
++          <WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense inline discoveryCard onFeedback={(message, showCustomize) => { setFeedback(message); setCustomize(showCustomize); }} />
+         </View>
+-      </View>
+       {photo?.credit || photo?.attribution ? <MediaAttribution attribution={photo.credit ? {
+         text: `${photo.credit.credit} · Wikimedia Commons ${photo.credit.source} · ${photo.credit.licenseName} ${photo.credit.license}`,
+       } : photo.attribution} /> : null}
+@@ -255,27 +260,30 @@
+ }
+ 
+ const styles = StyleSheet.create({
+-  content: { paddingTop: 4, gap: 12 },
+-  header: { gap: 14 },
+-  intro: { padding: 18, gap: 16, borderRadius: 22, backgroundColor: colors.text },
+-  title: { color: colors.surface, fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 30, lineHeight: 35, fontWeight: "700", letterSpacing: -0.5 },
++  content: { paddingTop: 4, gap: 16 },
++  header: { gap: 10 },
++  intro: { padding: 14, gap: 10, borderRadius: 22, backgroundColor: colors.text },
++  title: { color: colors.surface, fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 28, lineHeight: 34, fontWeight: "700", letterSpacing: -0.5 },
+   muted: { color: colors.textMuted },
+-  search: { minHeight: 48, flexDirection: "row", alignItems: "center", gap: 8, padding: 12, backgroundColor: colors.surface, borderRadius: 14 },
++  search: { minHeight: 44, flexDirection: "row", alignItems: "center", gap: 8, padding: 10, backgroundColor: colors.surface, borderRadius: 12 },
+   searchLabel: { flex: 1, color: colors.textMuted, fontSize: 13, lineHeight: 19 },
+   resultControls: { alignItems: "center", justifyContent: "space-between", gap: 8 },
+   viewSwitch: { minWidth: 176 },
+   stacked: { flexDirection: "column", alignItems: "stretch" },
+-  placeShell: { backgroundColor: colors.surface, borderRadius: 19, borderWidth: 1, borderColor: colors.border, padding: 10, gap: 8, position: "relative" },
+-  placeRow: { flexDirection: "row", alignItems: "flex-start", gap: 6 },
+-  placeLink: { flex: 1, minWidth: 0, minHeight: 112, flexDirection: "row", alignItems: "center", gap: 12 },
+-  thumbnail: { width: 80, height: 112, flexShrink: 0, borderRadius: 12, backgroundColor: colors.primarySoft },
++  placeShell: { ...shadows.card, backgroundColor: colors.surface, borderRadius: 22, padding: 12, gap: 10 },
++  placeLink: { minWidth: 0, minHeight: 128, flexDirection: "row", alignItems: "center", gap: 14 },
++  thumbnail: { width: 100, height: 132, flexShrink: 0, borderRadius: 15, backgroundColor: colors.primarySoft, overflow: "hidden" },
+   expandedThumbnail: { width: "100%", height: 150 },
+-  placeCopy: { flex: 1, minWidth: 0, gap: 4 },
+-  placeTitle: { color: colors.text, fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 19, lineHeight: 24, fontWeight: "700" },
+-  metadata: { color: colors.primary, fontSize: 11, lineHeight: 16 },
+-  description: { color: colors.textMuted, fontSize: 12, lineHeight: 17 },
+-  membership: { flexShrink: 0, gap: 12 },
+-  expandedActions: { flexDirection: "row", justifyContent: "flex-end" },
+-  save: { minWidth: 44, minHeight: 44, justifyContent: "center", alignItems: "center", borderRadius: 22, backgroundColor: colors.primarySoft },
++  placeholder: { alignItems: "center", justifyContent: "center", backgroundColor: "#EAF3F7" },
++  placeholderOrbit: { position: "absolute", width: 170, height: 100, borderWidth: 1, borderColor: "#D0E3EB", borderRadius: 60, transform: [{ rotate: "-40deg" }] },
++  placeholderMedallion: { width: 64, height: 64, borderRadius: 32, backgroundColor: "#FBFDFF", alignItems: "center", justifyContent: "center" },
++  placeCopy: { flex: 1, minWidth: 0, gap: 6 },
++  placeTitle: { color: colors.text, fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 21, lineHeight: 26, fontWeight: "700", letterSpacing: -0.3 },
++  metadata: { color: colors.primary, fontSize: 11, lineHeight: 16, fontWeight: "600" },
++  description: { color: colors.textMuted, fontSize: 13, lineHeight: 19 },
++  membership: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" },
++  expandedActions: { flexDirection: "column", alignItems: "flex-end" },
++  save: { minWidth: 78, minHeight: 44, paddingHorizontal: 8, flexDirection: "row", gap: 6, justifyContent: "center", alignItems: "center" },
++  saveLabel: { color: colors.primary, fontSize: 13, lineHeight: 19, fontWeight: "600", flexShrink: 1 },
+   feedback: { color: colors.textMuted, fontSize: 13, lineHeight: 19 },
+ });

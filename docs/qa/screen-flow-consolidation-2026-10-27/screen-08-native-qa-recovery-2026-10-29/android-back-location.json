@@ -1,0 +1,189 @@
+[
+  {
+    "text": "",
+    "content-desc": "Tools",
+    "class": "android.widget.ImageView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[937,219][1005,287]"
+  },
+  {
+    "text": "",
+    "content-desc": "Back",
+    "class": "android.widget.Button",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[53,163][179,289]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[87,197][146,255]"
+  },
+  {
+    "text": "",
+    "content-desc": "Language",
+    "class": "android.widget.Button",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[912,168][1028,284]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[941,197][1000,255]"
+  },
+  {
+    "text": "Use your location for a better experience",
+    "content-desc": "",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1013][1017,1213]"
+  },
+  {
+    "text": "Find what’s nearby and start your walk from where you are.",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1260][1017,1386]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1455][116,1508]"
+  },
+  {
+    "text": "Discover nearby places",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[147,1452][1017,1510]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1581][116,1634]"
+  },
+  {
+    "text": "Plan a walk from your location",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[147,1578][1017,1636]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1707][116,1760]"
+  },
+  {
+    "text": "Keep exploring without an account",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[147,1704][1017,1762]"
+  },
+  {
+    "text": "",
+    "content-desc": "Use my location",
+    "class": "android.widget.Button",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,2088][1017,2225]"
+  },
+  {
+    "text": "Use my location",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[396,2130][684,2183]"
+  },
+  {
+    "text": "",
+    "content-desc": "Not now",
+    "class": "android.widget.Button",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,2235][1017,2361]"
+  },
+  {
+    "text": "Not now",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[465,2271][614,2324]"
+  }
+]

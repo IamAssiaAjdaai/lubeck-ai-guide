@@ -1,0 +1,14 @@
+{
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-headline-wash.svg": "9101018033db59daa02049a61ea6f08aeedee5580304d991f0796d76f57856f5",
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-holstentor.LICENSE.md": "5a8bf025a56ce89c7166e5163329f6ad7e9fbb10c050142be94c5147c7bc0eb3",
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-overlay-alternate.svg": "5eba56732876715b84185ad458e50e63efab2be1b457a7f881fbcbf8a396d100",
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-overlay.svg": "73493c11f8a28c5ff6bc37d90381d7eea79b26e76cb3713e3d9907495b468241",
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-photos.LICENSE.md": "a02e1a03c524df1d7ea1d2cca04719f7d3ef6f83067e687dc17810324ef28010",
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-skyline.svg": "7f63ac85bbaaaac940389291d2daee30d179c713ca2e5910ba9d8ebb5f8f9ad4",
+  "mobile/assets/images/welcome-headline-wash.svg": "9101018033db59daa02049a61ea6f08aeedee5580304d991f0796d76f57856f5",
+  "mobile/src/app/welcome.tsx": "93dd4214eb2a32dcf067b84fa090564e1564dce70609db21fdc7c9d90877de0a",
+  "mobile/src/components/LocaleSelector.tsx": "eb038214bb5b8db3fe9dc2b6f18bad2ca02d0f112a6cbced736ccd89c2eea59f",
+  "mobile/src/components/ui.tsx": "aca304b81efc5ab7bc39437e4f0fb665145902f8118ee2d9247ae42e83c331cc",
+  "mobile/src/lib/welcomeCopy.ts": "3a041120953e7e9a4bb6b81bff088fb18c1c8b3fdd5b2fc21b084bce8197d8e8",
+  "mobile/tests/welcome.test.tsx": "55e4c913724616ed59fb1ffc28c082677af06b35cf09eed2cc5ff0a3a615315a"
+}

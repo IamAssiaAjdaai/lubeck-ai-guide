@@ -1,0 +1,271 @@
+[
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 20,
+    "text": "async function read(key: string, store: WalkStore): Promise<unknown> {",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 29,
+    "text": "let queue: Promise<unknown> = Promise.resolve();",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 30,
+    "text": "function mutate<T>(work: () => Promise<T>): Promise<T> {",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 55,
+    "text": "export function reopenSavedWalk(record: WalkJourney, sessionId: string): WalkJourney {",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 65,
+    "text": "export function subscribeCurrentWalk(city: string, listener: (current: CurrentWalk | undefined) => void) {",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 75,
+    "text": "export async function loadCurrentWalk(city: string, store?: WalkStore): Promise<CurrentWalk | undefined> {",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 85,
+    "text": "async function writeCurrent(current: CurrentWalk, target: WalkStore) {",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 103,
+    "text": "export async function persistCurrentWalk(journey: WalkJourney, phase: CurrentWalk[\"phase\"], store?: WalkStore) {",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 125,
+    "text": "export async function startCurrentWalk(city: string, id: string, places: readonly PublicPlaceCard[], contentReady = true, store?: WalkStore) {",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 142,
+    "text": "export async function clearCurrentWalk(city: string, expected: CurrentWalk | undefined, store?: WalkStore) {",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 153,
+    "text": "export async function changeCurrentWalk(",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkStorage.ts",
+    "line": 271,
+    "text": "export async function saveCurrentAccountWalk(",
+    "sourceSha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0"
+  },
+  {
+    "file": "mobile/src/lib/walkMembership.ts",
+    "line": 10,
+    "text": "export async function addPlaceToCurrentWalk(city: string, slug: string, places: readonly PublicPlaceCard[], store?: WalkStore) {",
+    "sourceSha256": "1a9f3353f8ea15254784682c4342b1d6c3e2c469d22b33cfceb196485db3b464"
+  },
+  {
+    "file": "mobile/src/lib/walkMembership.ts",
+    "line": 15,
+    "text": "if (!current) {",
+    "sourceSha256": "1a9f3353f8ea15254784682c4342b1d6c3e2c469d22b33cfceb196485db3b464"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 360,
+    "text": "if (savedId) {",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 408,
+    "text": "if (savedId) await persistCurrentWalk(restored, \"preview\");",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 395,
+    "text": "const current = await loadCurrentWalk(citySlug);",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 685,
+    "text": "const current = await loadCurrentWalk(citySlug);",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 446,
+    "text": "setMessage(messages.tripSaveFailed);",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 620,
+    "text": "} catch { setMessage(messages.tripSaveFailed); return false; }",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 689,
+    "text": "catch { setMessage(messages.tripSaveFailed); }",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 712,
+    "text": "} catch { setMessage(messages.tripSaveFailed); }",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 835,
+    "text": "setMessage(messages.tripSaveFailed);",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 457,
+    "text": "if (stage !== \"preview\" && stage !== \"active\") return;",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 520,
+    "text": "async function build() {",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 591,
+    "text": "await persistCurrentWalk(generated, \"preview\");",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 682,
+    "text": "async function requestRebuild() {",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 696,
+    "text": "await clearCurrentWalk(citySlug, rebuildConfirmation.current);",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 965,
+    "text": "return <FirstExperience citySlug={citySlug} cityName={cityName} cityMedia={cityMedia}",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 969,
+    "text": "router.push({ pathname: \"/city/[citySlug]\", params: { citySlug, returnToPlanner: \"1\" } });",
+    "sourceSha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6"
+  },
+  {
+    "file": "mobile/src/lib/plannerReturnIntent.ts",
+    "line": 80,
+    "text": "export function createPlannerReturnIntents() {",
+    "sourceSha256": "7d8d697afb22a58ce255c2af506c45eb07902c42987f995cf2158fdb830ebc44"
+  },
+  {
+    "file": "mobile/src/lib/plannerReturnIntent.ts",
+    "line": 83,
+    "text": "function publish(value: PlannerReturnLease): PlannerReturnEnvelope | undefined {",
+    "sourceSha256": "7d8d697afb22a58ce255c2af506c45eb07902c42987f995cf2158fdb830ebc44"
+  },
+  {
+    "file": "mobile/src/lib/plannerReturnIntent.ts",
+    "line": 100,
+    "text": "function revoke(routeKey: string, mountToken: string): boolean {",
+    "sourceSha256": "7d8d697afb22a58ce255c2af506c45eb07902c42987f995cf2158fdb830ebc44"
+  },
+  {
+    "file": "mobile/src/lib/plannerReturnIntent.ts",
+    "line": 106,
+    "text": "function reconcile(liveRouteKeys: unknown): boolean {",
+    "sourceSha256": "7d8d697afb22a58ce255c2af506c45eb07902c42987f995cf2158fdb830ebc44"
+  },
+  {
+    "file": "mobile/src/lib/plannerReturnIntent.ts",
+    "line": 119,
+    "text": "function resolve(context: PlannerReturnContext): PlannerReturnTarget | undefined {",
+    "sourceSha256": "7d8d697afb22a58ce255c2af506c45eb07902c42987f995cf2158fdb830ebc44"
+  },
+  {
+    "file": "mobile/src/app/city/[citySlug]/index.tsx",
+    "line": 111,
+    "text": "const guideRoute = params.returnToPlanner === \"1\"",
+    "sourceSha256": "94aec476b53bfee1414614810227da3a99722de65a6d226cae5fdbf7787abe4c"
+  },
+  {
+    "file": "mobile/src/app/city/[citySlug]/index.tsx",
+    "line": 154,
+    "text": "if (params.returnToPlanner === \"1\" && router.canGoBack()) {",
+    "sourceSha256": "94aec476b53bfee1414614810227da3a99722de65a6d226cae5fdbf7787abe4c"
+  },
+  {
+    "file": "mobile/src/app/city/[citySlug]/assistant.tsx",
+    "line": 20,
+    "text": "export function CityAssistant({ context, returnToPlanner = false }: { context: CityAssistantContext; returnToPlanner?: boolean }) {",
+    "sourceSha256": "9bada2b7b87eb0ae00ae62554a5b313d4c580e27d5c6582bd8ccdccaeaebd44b"
+  },
+  {
+    "file": "mobile/src/app/city/[citySlug]/assistant.tsx",
+    "line": 34,
+    "text": "<Link dismissTo href={{ pathname: \"/city/[citySlug]\", params: { citySlug: context.citySlug, section: \"places\", ...(returnToPlanner ? { returnToPlanner: \"1\" } : {}) } }} asChild>",
+    "sourceSha256": "9bada2b7b87eb0ae00ae62554a5b313d4c580e27d5c6582bd8ccdccaeaebd44b"
+  },
+  {
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "line": 215,
+    "text": "expect(state.back).toHaveBeenCalledTimes(calls);",
+    "sourceSha256": "37f5afb414320680354df2bd5746b1e2b26acdaa7dedc006c78029a2de09cc1c",
+    "inventoryId": "B01"
+  },
+  {
+    "file": "mobile/tests/walk-flow.behavior.tsx",
+    "line": 1252,
+    "text": "expect(mocks.routePush).toHaveBeenCalledWith({ pathname: \"/city/[citySlug]\", params: { citySlug: \"lubeck\", returnToPlanner: \"1\" } });",
+    "sourceSha256": "c2797f8680bcf86f5af347702dd491f2ef717e80c7565483a3f26d87145a5997",
+    "inventoryId": "B02"
+  },
+  {
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "line": 236,
+    "text": "expect(routeFor(screen.getByRole(\"button\", { name: walkCopy(\"en\").ask }))).toEqual({ pathname: \"/city/[citySlug]/assistant\", params: { citySlug: \"lubeck\", returnToPlanner: \"1\" } });",
+    "sourceSha256": "37f5afb414320680354df2bd5746b1e2b26acdaa7dedc006c78029a2de09cc1c",
+    "inventoryId": "B03"
+  },
+  {
+    "file": "mobile/tests/native-v2-regressions.test.tsx",
+    "line": 457,
+    "text": "expect(JSON.parse(link.dataset.route!)).toEqual({ pathname: \"/city/[citySlug]\", params: { citySlug: \"lubeck\", section: \"places\", returnToPlanner: \"1\" } });",
+    "sourceSha256": "171342c117648684c0f738c64a6b70e685a3d5284525663d3b2b93601364c141",
+    "inventoryId": "B04"
+  },
+  {
+    "file": "mobile/tests/city-hub-editorial-v1.test.ts",
+    "line": 44,
+    "text": "expect(hub).toContain('params.returnToPlanner === \"1\"');",
+    "sourceSha256": "b7e642e18b0352aa4e34fa988cd6e1158ec1358d75862bc8bd83cdac4ff4b24e",
+    "inventoryId": "B05"
+  }
+]

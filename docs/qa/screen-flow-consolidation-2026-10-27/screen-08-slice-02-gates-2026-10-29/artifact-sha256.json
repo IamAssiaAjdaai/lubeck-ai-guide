@@ -1,0 +1,15 @@
+{
+  "git-status-before.txt": "bc01e58e685725c1c85433e776e768e580e73ceca6a257213c00f25b7c7e932c",
+  "legacy-assertions.verbatim.json": "75ad54b66048861a8eff4d488dffb65be115fb84538098094da57c21f36586c3",
+  "SOURCE-EVIDENCE.md": "e01c0a4525344dc12b94d860dfda5e36da551617befa81637c0bf994f5cbe3c7",
+  "worktrees-before.txt": "c402b014845f44f52e3b72d6c5039c03a198b2a498727c2846d6425846ef7ae8",
+  "VALIDATION.md": "b00b43063b3855142f44b054a5a7bbb6880209c8ff9bd970ec7761430bc6bce8",
+  "product-before.sha256.json": "3ca44640ebf12f1c744e90e080aa8f499ba1c21e3f554bd52fe241fbebd3ff13",
+  "README.md": "3652626111fd513fd333e72c103f5ae086d9b0ca1bf64d87ca77a4512739e240",
+  "GATE-2-BACK-ASSERTIONS.md": "bd9dd953e2f1ea291ab0a3be61e6b95b1c369b75f6f65948762c5b4d86853e10",
+  "validation.json": "0e5c4c833b022e7f8ea8376e8c041bce584104a17cc09ece4893cb05dcff2073",
+  "source-evidence.json": "21e5eabbe74f4406bb02dc764dc9b4da102828c10dba6a083bff26b7b1dc80f6",
+  "SLICE-02-FINAL-SCOPE.md": "68bb005c0c82a742026a193da10fd0c37124d1e156d8d3051590bffcfe82ab94",
+  "PREFLIGHT.json": "14fbe411cd911e0a371268dddd13aadadcfac8516c77ab2313e5a9a8cf11d03d",
+  "GATE-1-STORAGE-DECISION.md": "a88e017359370f55bb4d0ba4e2742168386a813030cc11758ab0b5ad8e16c59e"
+}

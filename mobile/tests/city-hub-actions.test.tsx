@@ -6,24 +6,34 @@ import type { NativeLocale, PublicPlaceCard } from "../src/lib/api/contracts";
 
 type LayoutEvent = { nativeEvent: { layout: { y: number } } };
 const state = vi.hoisted(() => ({
-  width: 390, fontScale: 1, locale: "en" as NativeLocale, citySlug: "lubeck",
-  scrollToOffset: vi.fn(), requestLocation: vi.fn(),
+  userId: undefined as string | undefined, interestsLoaded: vi.fn(), width: 390, fontScale: 1, locale: "en" as NativeLocale, citySlug: "lubeck",
+  scrollToOffset: vi.fn(), requestLocation: vi.fn(), returnToPlanner: undefined as string | undefined, back: vi.fn(), canGoBack: true,
+  dispatch: vi.fn(), focused: true, setParams: vi.fn(), nativeStack: undefined as unknown,
+  s08ReturnParams: {} as Record<string, string>,
   headerLayout: undefined as ((event: LayoutEvent) => void) | undefined,
   placesLayout: undefined as ((event: LayoutEvent) => void) | undefined,
 }));
 const flatten = (style: unknown): Record<string, unknown> =>
   Object.assign({}, ...[style].flat(Infinity).filter(Boolean));
 
+vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { useSession: () => ({ data: state.userId ? { user: { id: state.userId } } : null }) } }));
+vi.mock("../src/lib/travelerStyle", () => ({ loadTravelerStyle: state.interestsLoaded }));
+vi.mock("../src/components/CityPhotoCredits", () => ({ CityPhotoCredits: () => null }));
+vi.mock("../src/components/CityHubHero", () => ({ CityHubHero: () => null }));
 vi.mock("expo-router", () => ({
+  useRoute: () => ({ key: "hub-route", params: { citySlug: state.citySlug, returnToPlanner: state.returnToPlanner, ...state.s08ReturnParams } }),
+  useNavigation: () => ({ isFocused: () => state.focused, getState: () => state.nativeStack, dispatch: state.dispatch, setParams: state.setParams }),
+  router: { canGoBack: () => state.canGoBack, back: state.back },
   Stack: { Screen: () => null },
-  useLocalSearchParams: () => ({ citySlug: state.citySlug }),
-  Link: ({ children, href }: React.PropsWithChildren<{ href: unknown }>) => {
+  useLocalSearchParams: () => ({ citySlug: state.citySlug, returnToPlanner: state.returnToPlanner, ...state.s08ReturnParams }),
+  Link: ({ children, href, onPress }: React.PropsWithChildren<{ href: unknown; onPress?: (event: React.MouseEvent) => void }>) => {
     const child = children as React.ReactElement<{ style?: unknown }>;
     if (Array.isArray(child.props.style)) throw new Error("Link asChild needs a flattened style");
-    return <div data-route={JSON.stringify(href)}>{children}</div>;
+    return <div data-route={JSON.stringify(href)} onClick={onPress}>{children}</div>;
   },
 }));
 vi.mock("react-native", () => ({
+  Platform: { OS: "ios" },
   useWindowDimensions: () => ({ width: state.width, fontScale: state.fontScale }),
   StyleSheet: { create: (s: unknown) => s, flatten: (s: unknown) => flatten(s), hairlineWidth: 1 },
   View: ({ children, testID, style, onLayout }: React.PropsWithChildren<{ testID?: string; style?: unknown; onLayout?: (event: LayoutEvent) => void }>) => {
@@ -79,7 +89,8 @@ vi.mock("../src/hooks/usePublicContent", () => ({
   prefetchPublicPlace: vi.fn(),
 }));
 
-import CityScreen from "../src/app/city/[citySlug]/index";
+import { plannerReturnIntents, normalizePlannerIntentScope } from "../src/lib/plannerReturnIntent";
+import CityScreen, { returnToRetainedPlanner } from "../src/app/city/[citySlug]/index";
 import citySource from "../src/app/city/[citySlug]/index.tsx?raw";
 import uiSource from "../src/components/ui.tsx?raw";
 import { textLayout } from "../src/design/responsiveText";
@@ -98,7 +109,10 @@ const places: PublicPlaceCard[] = [
 
 beforeEach(() => {
   vi.clearAllMocks();
+  state.userId = undefined; state.interestsLoaded.mockResolvedValue({ interests: ["food"], walking: "balanced", minutes: 120 });
   state.width = 390; state.fontScale = 1; state.locale = "en"; state.citySlug = "lubeck";
+  state.focused = true; state.nativeStack = undefined; state.dispatch.mockClear(); state.setParams.mockClear(); plannerReturnIntents.revoke("walk-route", "draft-mount");
+  state.s08ReturnParams = {}; state.returnToPlanner = undefined; state.canGoBack = true;
   state.headerLayout = undefined; state.placesLayout = undefined;
   state.requestLocation.mockReset().mockResolvedValue({ status: "denied" });
 });
@@ -196,5 +210,108 @@ describe("focused native City Hub actions (native bridges mocked)", () => {
     expect(screen.getByTestId("visible-places").dataset.order).toBe("far-place,near-place");
     expect(state.scrollToOffset).not.toHaveBeenCalled();
     expect((screen.getByRole("button", { name: walkCopy("en").near }) as HTMLButtonElement).disabled).toBe(false);
+  });
+});
+
+it.each([["1", true, 1], [undefined, true, 0], ["1", false, 0]] as const)("returns only Screen 08 city entry to its retained planner (%s, %s)", (returnToPlanner, canGoBack, calls) => {
+  state.returnToPlanner = returnToPlanner; state.canGoBack = canGoBack; state.back.mockClear();
+  if (calls) {
+    const envelope = plannerReturnIntents.publish({ citySlug: "lubeck", routeKey: "walk-route", mountToken: "draft-mount", ready: "constraints", normalizedIntentScope: normalizePlannerIntentScope({ citySlug: "lubeck" })! })!;
+    state.s08ReturnParams = { ...envelope };
+    state.nativeStack = { key: "root", type: "stack", stale: false, index: 1, routes: [{ name: "city/[citySlug]/walk", key: "walk-route", params: { citySlug: "lubeck" } }, { name: "city/[citySlug]/index", key: "hub-route", params: envelope }] };
+  }
+  render(<CityScreen />);
+  fireEvent.click(screen.getByRole("button", { name: walkCopy(state.locale).build }));
+  expect(state.back).not.toHaveBeenCalled();
+  expect(state.dispatch).toHaveBeenCalledTimes(calls);
+  if (calls) expect(state.dispatch).toHaveBeenCalledWith({ type: "POP", payload: { count: 1 }, source: "hub-route", target: "root" });
+  state.returnToPlanner = undefined; state.canGoBack = true;
+});
+
+ it("loads preference defaults only for the current authenticated owner and remains guest accessible", async () => {
+   const view = render(<CityScreen />);
+   expect(state.interestsLoaded).not.toHaveBeenCalled();
+   state.userId = "account-one";
+   await act(async () => view.rerender(<CityScreen />));
+   expect(state.interestsLoaded).toHaveBeenLastCalledWith("account-one");
+   state.userId = "account-two";
+   await act(async () => view.rerender(<CityScreen />));
+   expect(state.interestsLoaded).toHaveBeenLastCalledWith("account-two");
+   state.userId = undefined;
+   view.rerender(<CityScreen />);
+   expect(screen.getByRole("button", { name: walkCopy("en").build })).toBeTruthy();
+ });
+
+it("carries the retained-planner entry through the Guide fallback route", () => {
+  state.returnToPlanner = "1";
+  state.s08ReturnParams = { plannerReturnVersion: "1", plannerRouteKey: "walk-route", plannerDraftToken: "draft-mount" };
+  render(<CityScreen />);
+  expect(routeFor(screen.getByRole("button", { name: walkCopy("en").ask }))).toEqual({ pathname: "/city/[citySlug]/assistant", params: { citySlug: "lubeck", returnToPlanner: "1", plannerReturnVersion: "1", plannerRouteKey: "walk-route", plannerDraftToken: "draft-mount" } });
+  state.returnToPlanner = undefined;
+});
+
+
+const s08NavigationGap = it;
+describe("S08 navigation identity gaps — no lease substitute", () => {
+  s08NavigationGap("[S08 PASS][I03] bare returnToPlanner flag cannot authorize arbitrary Back", () => {
+    state.returnToPlanner = "1"; state.canGoBack = true;
+    render(<CityScreen />);
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").build }));
+    expect(state.back).not.toHaveBeenCalled();
+  });
+  s08NavigationGap("[S08 PASS][I02] forged/mismatched mount token cannot resume a same-city draft", () => {
+    state.returnToPlanner = "1"; state.canGoBack = true;
+    state.s08ReturnParams = { plannerReturnVersion: "1", plannerRouteKey: "unrelated-route", plannerDraftToken: "retired-mount" };
+    render(<CityScreen />);
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").build }));
+    expect(state.back).not.toHaveBeenCalled();
+  });
+  s08NavigationGap("[S08 PASS][I08] Guide entry retains the complete return envelope", () => {
+    state.returnToPlanner = "1";
+    state.s08ReturnParams = { plannerReturnVersion: "1", plannerRouteKey: "walk-route", plannerDraftToken: "draft-mount" };
+    render(<CityScreen />);
+    expect(routeFor(screen.getByRole("button", { name: walkCopy("en").ask })).params).toMatchObject(state.s08ReturnParams);
+  });
+});
+
+describe("B01/B05 real owning-stack return adapter", () => {
+  function context(extra = false) {
+    const envelope = plannerReturnIntents.publish({ citySlug: "lubeck", routeKey: "walk-route", mountToken: "draft-mount", ready: "constraints", normalizedIntentScope: normalizePlannerIntentScope({ citySlug: "lubeck" })! })!;
+    return { params: envelope, citySlug: "lubeck", focusedRouteKey: "hub-route", isFocused: true,
+      stack: { type: "stack", stale: false, key: "root", index: extra ? 2 : 1, routes: [
+        { key: "walk-route", name: "city/[citySlug]/walk", params: { citySlug: "lubeck" } },
+        ...(extra ? [{ key: "place-route", name: "city/[citySlug]/place/[placeSlug]", params: { citySlug: "lubeck" } }] : []),
+        { key: "hub-route", name: "city/[citySlug]/index", params: envelope },
+      ] } };
+  }
+  it.each([false, true])("revalidates, dispatches one exact pop and consumes the lease (intermediate=%s)", extra => {
+    const snapshot = context(extra), read = vi.fn(() => snapshot), dispatch = vi.fn();
+    expect(returnToRetainedPlanner(read, dispatch)).toBe(true);
+    expect(read).toHaveBeenCalledTimes(2);
+    expect(dispatch).toHaveBeenCalledExactlyOnceWith({ type: "POP", payload: { count: extra ? 2 : 1 }, source: "hub-route", target: "root" });
+    expect(returnToRetainedPlanner(read, dispatch)).toBe(false);
+    expect(dispatch).toHaveBeenCalledTimes(1);
+  });
+  it("rejects a stack change between resolution and dispatch without consuming the live lease", () => {
+    const snapshot = context(), dispatch = vi.fn();
+    const read = vi.fn().mockReturnValueOnce(snapshot).mockReturnValue({ ...snapshot, isFocused: false });
+    expect(returnToRetainedPlanner(read, dispatch)).toBe(false); expect(dispatch).not.toHaveBeenCalled();
+    expect(plannerReturnIntents.resolve(snapshot)).toBeDefined();
+  });
+  it.each(["city", "token", "route", "cold", "inactive", "duplicate"])("B05 preserves real valid/invalid planner navigation: %s", invalid => {
+    const snapshot = context();
+    if (invalid === "city") snapshot.citySlug = "hamburg";
+    if (invalid === "token") snapshot.params = { ...snapshot.params, plannerDraftToken: "retired" };
+    if (invalid === "route") snapshot.stack.routes[0].key = "missing";
+    if (invalid === "cold") plannerReturnIntents.revoke("walk-route", "draft-mount");
+    if (invalid === "inactive") snapshot.isFocused = false;
+    if (invalid === "duplicate") snapshot.stack.routes[1].key = "walk-route";
+    const dispatch = vi.fn(); expect(returnToRetainedPlanner(() => snapshot, dispatch)).toBe(false); expect(dispatch).not.toHaveBeenCalled();
+  });
+  it("bare/malformed envelopes are cleared from the actual native params port", () => {
+    state.returnToPlanner = "1"; state.s08ReturnParams = { plannerRouteKey: "orphan" };
+    render(<CityScreen />);
+    expect(state.setParams).toHaveBeenCalledWith({ returnToPlanner: undefined, plannerReturnVersion: undefined, plannerRouteKey: undefined, plannerDraftToken: undefined });
+    expect(routeFor(screen.getByRole("button", { name: walkCopy("en").ask }))).toEqual({ pathname: "/city/[citySlug]/assistant", params: { citySlug: "lubeck" } });
   });
 });

@@ -1,0 +1,34 @@
+{"action": "back"}
+{"action": "tap", "query": "Home", "bounds": "[21,2215][229,2361]", "point": [125, 2288]}
+{"action": "tap", "query": "Explore city: Lübeck", "bounds": "[63,1460][530,2079]", "point": [296, 1769]}
+{"action": "tap", "query": "Build my walk", "bounds": "[419,774][668,827]", "point": [543, 800]}
+{"action": "tap", "query": "Food & Local Life", "bounds": "[556,784][1017,1057]", "point": [786, 920]}
+{"action": "tap", "query": "Continue", "bounds": "[422,2130][584,2183]", "point": [503, 2156]}
+{"action": "tap", "query": "3 hours. More to see, more to experience.", "bounds": "[63,1264][1017,1478]", "point": [540, 1371]}
+{"action": "tap", "query": "Continue", "bounds": "[422,2130][584,2183]", "point": [503, 2156]}
+{"action": "tap", "query": "Not now", "bounds": "[63,2235][1017,2361]", "point": [540, 2298]}
+{"action": "tap", "query": "Continue planning", "bounds": "[63,2036][1017,2172]", "point": [540, 2104]}
+{"action": "back"}
+{"action": "back"}
+{"action": "back"}
+{"action": "back"}
+{"action": "tap", "query": "Continue", "bounds": "[422,2130][584,2183]", "point": [503, 2156]}
+{"action": "tap", "query": "Continue", "bounds": "[422,2130][584,2183]", "point": [503, 2156]}
+{"action": "tap", "query": "Not now", "bounds": "[63,2235][1017,2361]", "point": [540, 2298]}
+{"action": "tap", "query": "Continue planning", "bounds": "[63,2036][1017,2172]", "point": [540, 2104]}
+{"action": "tap", "query": "Edit interests", "bounds": "[63,893][1017,1029]", "point": [540, 961]}
+{"action": "tap", "query": "Hidden Gems", "bounds": "[556,1393][1017,1666]", "point": [786, 1529]}
+{"action": "tap", "query": "Continue", "bounds": "[422,2130][584,2183]", "point": [503, 2156]}
+{"action": "tap", "query": "Edit interests", "bounds": "[63,893][1017,1029]", "point": [540, 961]}
+{"action": "back"}
+{"action": "back"}
+{"action": "tap", "query": "Explore Lübeck", "bounds": "[366,2236][640,2289]", "point": [503, 2262]}
+{"action": "tap", "query": "Build my walk", "bounds": "[419,774][668,827]", "point": [543, 800]}
+{"action": "back"}
+{"action": "tap", "query": "Explore Lübeck", "bounds": "[366,2236][640,2289]", "point": [503, 2262]}
+{"action": "back"}
+{"action": "tap", "query": "Back", "bounds": "[42,147][147,263]", "point": [94, 205]}
+{"action": "tap", "query": "Continue planning", "bounds": "[63,2036][1017,2172]", "point": [540, 2104]}
+{"action": "back"}
+{"action": "tap", "query": "Explore Lübeck", "bounds": "[366,2236][640,2289]", "point": [503, 2262]}
+{"action": "tap", "query": "Back", "bounds": "[42,147][147,263]", "point": [94, 205]}

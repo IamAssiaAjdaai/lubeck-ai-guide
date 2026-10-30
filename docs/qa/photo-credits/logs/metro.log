@@ -1,0 +1,286 @@
+🔍 [expo-iap] Config values: horizonAppId=undefined, pinnedStore=auto, amazonAppstoreKey=none, isVegaEnabled=false, isOnsideEnabled=false
+📦 [expo-iap] Using OpenIAP from CocoaPods
+Networking has been disabled
+Starting project at /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Starting Metro Bundler
+
+Waiting on http://localhost:8091
+
+Logs for your project will appear below.
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundled 4360ms node_modules/expo-router/entry.js (2245 modules)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 163ms node_modules/expo-network/build/Network.js (507 modules)
+ INFO  CITYWALK_PERF {"durationMs": 12, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 5, "key": "cities:de", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 179, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 55, "key": "place:de:lubeck:holstentor", "source": "persisted"}
+iOS Bundled 228ms node_modules/@react-native-async-storage/async-storage/src/index.ts (608 modules)
+ INFO  CITYWALK_PERF {"durationMs": 837, "key": "place:de:lubeck:holstentor", "source": "network"}
+iOS Bundled 89ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 17ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 68, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 58, "key": "cities:en", "source": "network"}
+iOS Bundled 25ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 15, "key": "place:en:lubeck:holstentor", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 48, "key": "place:en:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "place:de:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 98, "key": "place:de:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 14, "key": "city:en:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 53, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 17, "key": "city:de:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 39, "key": "city:de:lubeck", "source": "network"}
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+Unable to resolve "@citywalk/traveler-core/tourBuilder" from "src/lib/publishedRoutes.ts"
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mTOUR_TIME_BUDGETS[39m[33m,[39m type [33mTourTimeBudget[39m } [36mfrom[39m [32m"@citywalk/traveler-core/tourBuilder"[39m[33m;[39m
+ [90m   |[39m                                                         [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m type { [33mPublicPlaceCard[39m[33m,[39m [33mPublicTour[39m } [36mfrom[39m [32m"./api/contracts"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { selectImageUrl[33m,[39m selectPrimaryImageMedia } [36mfrom[39m [32m"./api/media"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { explorePhotography } [36mfrom[39m [32m"./explorePhotography"[39m[33m;[39m[0m
+
+Import stack:
+
+ src/lib/publishedRoutes.ts
+ | import "@citywalk/traveler-core/tourBuilder"
+
+ src/app/city/[citySlug]/tour/[tourSlug].tsx
+ | import "../../../../lib/publishedRoutes"
+
+ src/app (require.context)
+
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+Unable to resolve "@citywalk/traveler-core/tourBuilder" from "src/lib/publishedRoutes.ts"
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mTOUR_TIME_BUDGETS[39m[33m,[39m type [33mTourTimeBudget[39m } [36mfrom[39m [32m"@citywalk/traveler-core/tourBuilder"[39m[33m;[39m
+ [90m   |[39m                                                         [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m type { [33mPublicPlaceCard[39m[33m,[39m [33mPublicTour[39m } [36mfrom[39m [32m"./api/contracts"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { selectImageUrl[33m,[39m selectPrimaryImageMedia } [36mfrom[39m [32m"./api/media"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { explorePhotography } [36mfrom[39m [32m"./explorePhotography"[39m[33m;[39m[0m
+
+Import stack:
+
+ src/lib/publishedRoutes.ts
+ | import "@citywalk/traveler-core/tourBuilder"
+
+ src/app/city/[citySlug]/routes.tsx
+ | import "../../../lib/publishedRoutes"
+
+ src/app (require.context)
+
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+Unable to resolve "@citywalk/traveler-core/tourBuilder" from "src/lib/publishedRoutes.ts"
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mTOUR_TIME_BUDGETS[39m[33m,[39m type [33mTourTimeBudget[39m } [36mfrom[39m [32m"@citywalk/traveler-core/tourBuilder"[39m[33m;[39m
+ [90m   |[39m                                                         [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m type { [33mPublicPlaceCard[39m[33m,[39m [33mPublicTour[39m } [36mfrom[39m [32m"./api/contracts"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { selectImageUrl[33m,[39m selectPrimaryImageMedia } [36mfrom[39m [32m"./api/media"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { explorePhotography } [36mfrom[39m [32m"./explorePhotography"[39m[33m;[39m[0m
+
+Import stack:
+
+ src/lib/publishedRoutes.ts
+ | import "@citywalk/traveler-core/tourBuilder"
+
+ src/app/city/[citySlug]/routes.tsx
+ | import "../../../lib/publishedRoutes"
+
+ src/app (require.context)
+
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+ WARN  Attempted to import the module "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/node_modules/@citywalk/traveler-core/tourBuilder" which is not listed in the "exports" of "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/packages/traveler-core" under the requested subpath "./tourBuilder". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+Unable to resolve "@citywalk/traveler-core/tourBuilder" from "src/lib/publishedRoutes.ts"
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mTOUR_TIME_BUDGETS[39m[33m,[39m type [33mTourTimeBudget[39m } [36mfrom[39m [32m"@citywalk/traveler-core/tourBuilder"[39m[33m;[39m
+ [90m   |[39m                                                         [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m type { [33mPublicPlaceCard[39m[33m,[39m [33mPublicTour[39m } [36mfrom[39m [32m"./api/contracts"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { selectImageUrl[33m,[39m selectPrimaryImageMedia } [36mfrom[39m [32m"./api/media"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { explorePhotography } [36mfrom[39m [32m"./explorePhotography"[39m[33m;[39m[0m
+
+Import stack:
+
+ src/lib/publishedRoutes.ts
+ | import "@citywalk/traveler-core/tourBuilder"
+
+ src/app/city/[citySlug]/routes.tsx
+ | import "../../../lib/publishedRoutes"
+
+ src/app (require.context)
+
+iOS Bundled 72ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 17ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 27, "key": "city:en:lubeck", "source": "persisted"}
+iOS Bundled 73ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 22ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 17, "key": "city:en:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 2, "key": "city:de:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 87, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 40, "key": "city:de:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 3, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 29, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+iOS Bundled 17ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ WARN  MapLibre Native [WARN] [virtual bool mbgl::MLNCoreLoggingObserver::onRecord(EventSeverity, Event, int64_t, const std::string &)] [event]:General [code]:-1 [message]:Invalid geometry in line layer
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 11, "key": "city:de:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 11, "key": "city:de:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 33, "key": "city:de:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 6, "key": "cities:de", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 24, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "cities:de", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "cities:de", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 36, "key": "city:de:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 32, "key": "city:de:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 4, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 82, "key": "city:de:lubeck", "source": "network"}
+ ERROR  [Error: [expo-router]: You are passing an array of styles to a child of <Slot>. Consider flattening the styles with StyleSheet.flatten before passing them to the child component.] 
+
+Code: [tourSlug].tsx
+[0m [90m 81 |[39m     [33m<[39m[33m/[39m[33mView[39m[33m>[39m [33m:[39m [36mnull[39m}
+ [90m 82 |[39m     [33m<[39m[33mAppText[39m accessibilityRole[33m=[39m[32m"header"[39m style[33m=[39m{styles[33m.[39msectionTitle}[33m>[39m{copy[33m.[39mstops}[33m<[39m[33m/[39m[33mAppText[39m[33m>[39m
+[31m[1m>[22m[39m[90m 83 |[39m     [33m<[39m[33mView[39m style[33m=[39m{styles[33m.[39mstopList}[33m>[39m{stops[33m.[39mmap(({stop[33m,[39m place}[33m,[39m index) [33m=>[39m [33m<[39m[33mLink[39m key[33m=[39m{[32m`${stop.position}-${place.slug}`[39m}
+ [90m    |[39m                                                                        [31m[1m^[22m[39m
+ [90m 84 |[39m       href[33m=[39m{{ pathname[33m:[39m [32m"/city/[citySlug]/place/[placeSlug]"[39m[33m,[39m params[33m:[39m { citySlug[33m,[39m placeSlug[33m:[39m place[33m.[39mslug } }} asChild[33m>[39m
+ [90m 85 |[39m       [33m<[39m[33mPressableSurface[39m accessibilityRole[33m=[39m[32m"link"[39m accessibilityLabel[33m=[39m{[32m`${copy.stop} ${index+1}: ${nativePlaceName(citySlug, place.slug, place.content.name, locale)}${stop.visitDurationMinutes ? ` · ${stop.visitDurationMinutes} ${messages.visitMinutes}` : ""}`[39m}
+ [90m 86 |[39m         style[33m=[39m{[styles[33m.[39mstopCard[33m,[39m {direction}[33m,[39m selected [33m===[39m place[33m.[39mslug [33m&&[39m styles[33m.[39mselectedStop]}[33m>[39m[0m
+Call Stack
+  stops.map$argument_0 (src/app/city/[citySlug]/tour/[tourSlug].tsx:83:72)
+  RoutePreview (src/app/city/[citySlug]/tour/[tourSlug].tsx:83:45)
+  TourScreen (src/app/city/[citySlug]/tour/[tourSlug].tsx:35:10)
+  RootLayout (src/app/_layout.tsx:24:11)
+ ERROR  [Error: [expo-router]: You are passing an array of styles to a child of <Slot>. Consider flattening the styles with StyleSheet.flatten before passing them to the child component.] 
+
+Code: [tourSlug].tsx
+[0m [90m 81 |[39m     [33m<[39m[33m/[39m[33mView[39m[33m>[39m [33m:[39m [36mnull[39m}
+ [90m 82 |[39m     [33m<[39m[33mAppText[39m accessibilityRole[33m=[39m[32m"header"[39m style[33m=[39m{styles[33m.[39msectionTitle}[33m>[39m{copy[33m.[39mstops}[33m<[39m[33m/[39m[33mAppText[39m[33m>[39m
+[31m[1m>[22m[39m[90m 83 |[39m     [33m<[39m[33mView[39m style[33m=[39m{styles[33m.[39mstopList}[33m>[39m{stops[33m.[39mmap(({stop[33m,[39m place}[33m,[39m index) [33m=>[39m [33m<[39m[33mLink[39m key[33m=[39m{[32m`${stop.position}-${place.slug}`[39m}
+ [90m    |[39m                                                                        [31m[1m^[22m[39m
+ [90m 84 |[39m       href[33m=[39m{{ pathname[33m:[39m [32m"/city/[citySlug]/place/[placeSlug]"[39m[33m,[39m params[33m:[39m { citySlug[33m,[39m placeSlug[33m:[39m place[33m.[39mslug } }} asChild[33m>[39m
+ [90m 85 |[39m       [33m<[39m[33mPressableSurface[39m accessibilityRole[33m=[39m[32m"link"[39m accessibilityLabel[33m=[39m{[32m`${copy.stop} ${index+1}: ${nativePlaceName(citySlug, place.slug, place.content.name, locale)}${stop.visitDurationMinutes ? ` · ${stop.visitDurationMinutes} ${messages.visitMinutes}` : ""}`[39m}
+ [90m 86 |[39m         style[33m=[39m{[styles[33m.[39mstopCard[33m,[39m {direction}[33m,[39m selected [33m===[39m place[33m.[39mslug [33m&&[39m styles[33m.[39mselectedStop]}[33m>[39m[0m
+Call Stack
+  stops.map$argument_0 (src/app/city/[citySlug]/tour/[tourSlug].tsx:83:72)
+  RoutePreview (src/app/city/[citySlug]/tour/[tourSlug].tsx:83:45)
+  TourScreen (src/app/city/[citySlug]/tour/[tourSlug].tsx:35:10)
+  RootLayout (src/app/_layout.tsx:24:11)
+iOS Bundled 75ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 22ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 83, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 38, "key": "cities:en", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "cities:de", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 22, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 15, "key": "city:de:lubeck", "source": "persisted"}
+iOS Bundled 40ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 71, "key": "place:de:lubeck:buddenbrookhaus", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 47, "key": "place:de:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 34, "key": "place:de:lubeck:marienkirche", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "cities:en", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 2, "key": "city:en:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 58, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 21, "key": "place:en:lubeck:buddenbrookhaus", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 3, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 38, "key": "city:de:lubeck", "source": "network"}
+iOS Bundled 27ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 73, "key": "place:de:lubeck:buddenbrookhaus", "source": "network"}
+iOS Bundled 74ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 24ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 80, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 39, "key": "cities:en", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "cities:de", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 23, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 15, "key": "city:de:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 2, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 36, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 23, "key": "city:de:lubeck", "source": "network"}
+iOS Bundled 21ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 11, "key": "place:de:lubeck:buddenbrookhaus", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "cities:en", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 2, "key": "city:en:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 65, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "cities:de", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 31, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 32, "key": "city:de:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 65, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 61, "key": "city:de:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "place:de:lubeck:marienkirche", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 130, "key": "place:de:lubeck:marienkirche", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:de:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 116, "key": "place:de:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "cities:en", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 40, "key": "cities:en", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 41, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "cities:de", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 65, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 77, "key": "city:de:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "place:de:lubeck:buddenbrookhaus", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 99, "key": "place:de:lubeck:buddenbrookhaus", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "cities:de", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 41, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 42, "key": "city:de:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "cities:en", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 37, "key": "cities:en", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 40, "key": "city:en:lubeck", "source": "network"}

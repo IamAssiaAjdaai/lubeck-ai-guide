@@ -1,0 +1,23 @@
+{
+  "SCREEN-08-FLOW-REVIEW.approved-specification.md": "d2ae077e2e611f1db412ed0a50ddd3d36fe95005cd765b063b7610672b84be83",
+  "VALIDATION.md": "2abbc2ea929a40209c711b296e88e1c92d706d97574425649f9be14dff5665d0",
+  "verification-cases.json": "956b6b5c55c4baf97445d9a7dd61e8d36e2d833ae4b1b243a347514645ea8745",
+  "previous-document-hashes.json": "e130b68f1202dd55f235086f2dd25d6776b9e24a7800dc35fc83de797fca778c",
+  "product-before.sha256.json": "6dde3917f7f7667ddb2689403bb5b1c04990f133f950eef77cde0a6c25764df7",
+  "SCREEN-08-APPROVAL-RECORD.md": "1c04ef2451319052f01d0d6b072b97598672b501c6b0b955d34af9a5e9bb14ba",
+  "README.md": "8be78460214b8845877661d72c687665118af3f1e413f198e565b98d23fbf903",
+  "PREIMPLEMENTATION-VERIFICATION.md": "2701eec18f9a5afe5e86fa8275a3c2c685cd1e79261d88073dca2d2623c169f1",
+  "validation.json": "4ad9015246ff1ddb49e778d3163f06637b62c3eff8546b75d447a28f9e6eaaac",
+  "NEXT-IMPLEMENTATION-PROPOSAL.md": "4e72174544eb4436bdcd17d8b317082d9dc93e708d401b291a23cd35d32d15a8",
+  "owner-approval-event.json": "8bc9ee37b87e1b85c3d569123deb3c803a8467fa49d6cf4a8b9e47b02576795d",
+  "previous-documents/owner-review-plan-2026-10-28/SCREEN-MERGE-SPEC.md": "c8395e450552ea848f46e91f9cd032a3299fc2e33e476321da98e1e34529c89e",
+  "previous-documents/owner-review-plan-2026-10-28/UPDATED-DECISION-MATRIX.md": "7d6a4fbfd8c77529409a62db00c790e7afb9ac269361403500ae6425fa72ecf7",
+  "previous-documents/owner-review-plan-2026-10-28/IMPLEMENTATION-ORDER.md": "c33adc38e0b37fad71509fd771a4689dac733258b9ca4e5f9aac395de10b9bbb",
+  "previous-documents/owner-review-plan-2026-10-28/README.md": "f6e2a4b8efa696add9152eef373661f4e39f48de1a1f70bb58e668096ef59f82",
+  "previous-documents/owner-review-plan-2026-10-28/OWNER-DECISIONS.md": "538efa4c88d4fc0764961007ca3fa06de9945016490ae5650486cc695e921f62",
+  "previous-documents/owner-review-plan-2026-10-28/updated-decision-matrix.json": "1c17d961ed2ee751cfd7e04d71aa6e384d93e7dd00f5e338b4b39d363784d0aa",
+  "previous-documents/owner-review-plan-2026-10-28/SCREEN-08-FLOW-REDESIGN.md": "218932c82f39e6bdca7fc0f7745fae794abd7003c29e8a8c0bfa614f2cda7e38",
+  "previous-documents/screen-08-flow-review-gate-2026-10-28/review.html": "7fe6e4bdfd22f8d8fa9562208b40e2a056ad003f11f4eebd206d01918807fa03",
+  "previous-documents/screen-08-flow-review-gate-2026-10-28/SCREEN-08-FLOW-REVIEW.md": "d2ae077e2e611f1db412ed0a50ddd3d36fe95005cd765b063b7610672b84be83",
+  "logs/current-baseline-tests.log": "1b9100468932af404e989d55c9d79b1a8994f2a9ad3f7712750ecd3ec4923d2a"
+}

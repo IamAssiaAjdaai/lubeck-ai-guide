@@ -1,0 +1,20 @@
+{
+  "production": [
+    "mobile/src/app/city/[citySlug]/walk.tsx",
+    "mobile/src/components/NativeWalkFlow.tsx",
+    "mobile/src/components/FirstExperience.tsx",
+    "mobile/src/lib/firstExperienceCopy.ts",
+    "mobile/src/app/city/[citySlug]/index.tsx",
+    "mobile/src/app/city/[citySlug]/assistant.tsx",
+    "mobile/src/lib/plannerNavigationCopy.ts"
+  ],
+  "tests": [
+    "mobile/tests/native-v2-regressions.test.tsx",
+    "mobile/tests/city-hub-editorial-v1.test.ts",
+    "mobile/tests/membership-screens.test.tsx",
+    "mobile/tests/first-experience.test.tsx",
+    "mobile/tests/walk-flow.behavior.tsx",
+    "mobile/tests/city-hub-actions.test.tsx"
+  ],
+  "outsideApprovedProductionBoundary": []
+}

@@ -1,0 +1,62 @@
+# Source evidence — approval gates
+
+Current local source/line anchors, 29 October 2026. Read-only review; no new execution proof inferred from code.
+
+| File | Exact anchor | Current code |
+|---|---|---|
+| `mobile/src/lib/walkStorage.ts` | [L20](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:20) | `async function read(key: string, store: WalkStore): Promise<unknown> {` |
+| `mobile/src/lib/walkStorage.ts` | [L29](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:29) | `let queue: Promise<unknown> = Promise.resolve();` |
+| `mobile/src/lib/walkStorage.ts` | [L30](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:30) | `function mutate<T>(work: () => Promise<T>): Promise<T> {` |
+| `mobile/src/lib/walkStorage.ts` | [L55](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:55) | `export function reopenSavedWalk(record: WalkJourney, sessionId: string): WalkJourney {` |
+| `mobile/src/lib/walkStorage.ts` | [L65](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:65) | `export function subscribeCurrentWalk(city: string, listener: (current: CurrentWalk \| undefined) => void) {` |
+| `mobile/src/lib/walkStorage.ts` | [L75](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:75) | `export async function loadCurrentWalk(city: string, store?: WalkStore): Promise<CurrentWalk \| undefined> {` |
+| `mobile/src/lib/walkStorage.ts` | [L85](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:85) | `async function writeCurrent(current: CurrentWalk, target: WalkStore) {` |
+| `mobile/src/lib/walkStorage.ts` | [L103](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:103) | `export async function persistCurrentWalk(journey: WalkJourney, phase: CurrentWalk["phase"], store?: WalkStore) {` |
+| `mobile/src/lib/walkStorage.ts` | [L125](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:125) | `export async function startCurrentWalk(city: string, id: string, places: readonly PublicPlaceCard[], contentReady = true, store?: WalkStore) {` |
+| `mobile/src/lib/walkStorage.ts` | [L142](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:142) | `export async function clearCurrentWalk(city: string, expected: CurrentWalk \| undefined, store?: WalkStore) {` |
+| `mobile/src/lib/walkStorage.ts` | [L153](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:153) | `export async function changeCurrentWalk(` |
+| `mobile/src/lib/walkStorage.ts` | [L271](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkStorage.ts:271) | `export async function saveCurrentAccountWalk(` |
+| `mobile/src/lib/walkMembership.ts` | [L10](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkMembership.ts:10) | `export async function addPlaceToCurrentWalk(city: string, slug: string, places: readonly PublicPlaceCard[], store?: WalkStore) {` |
+| `mobile/src/lib/walkMembership.ts` | [L15](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/walkMembership.ts:15) | `if (!current) {` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L360](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:360) | `if (savedId) {` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L408](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:408) | `if (savedId) await persistCurrentWalk(restored, "preview");` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L395](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:395) | `const current = await loadCurrentWalk(citySlug);` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L685](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:685) | `const current = await loadCurrentWalk(citySlug);` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L446](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:446) | `setMessage(messages.tripSaveFailed);` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L620](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:620) | `} catch { setMessage(messages.tripSaveFailed); return false; }` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L689](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:689) | `catch { setMessage(messages.tripSaveFailed); }` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L712](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:712) | `} catch { setMessage(messages.tripSaveFailed); }` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L835](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:835) | `setMessage(messages.tripSaveFailed);` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L457](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:457) | `if (stage !== "preview" && stage !== "active") return;` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L520](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:520) | `async function build() {` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L591](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:591) | `await persistCurrentWalk(generated, "preview");` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L682](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:682) | `async function requestRebuild() {` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L696](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:696) | `await clearCurrentWalk(citySlug, rebuildConfirmation.current);` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L965](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:965) | `return <FirstExperience citySlug={citySlug} cityName={cityName} cityMedia={cityMedia}` |
+| `mobile/src/components/NativeWalkFlow.tsx` | [L969](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:969) | `router.push({ pathname: "/city/[citySlug]", params: { citySlug, returnToPlanner: "1" } });` |
+| `mobile/src/lib/plannerReturnIntent.ts` | [L80](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/plannerReturnIntent.ts:80) | `export function createPlannerReturnIntents() {` |
+| `mobile/src/lib/plannerReturnIntent.ts` | [L83](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/plannerReturnIntent.ts:83) | `function publish(value: PlannerReturnLease): PlannerReturnEnvelope \| undefined {` |
+| `mobile/src/lib/plannerReturnIntent.ts` | [L100](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/plannerReturnIntent.ts:100) | `function revoke(routeKey: string, mountToken: string): boolean {` |
+| `mobile/src/lib/plannerReturnIntent.ts` | [L106](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/plannerReturnIntent.ts:106) | `function reconcile(liveRouteKeys: unknown): boolean {` |
+| `mobile/src/lib/plannerReturnIntent.ts` | [L119](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/lib/plannerReturnIntent.ts:119) | `function resolve(context: PlannerReturnContext): PlannerReturnTarget \| undefined {` |
+| `mobile/src/app/city/[citySlug]/index.tsx` | [L111](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/app/city/[citySlug]/index.tsx:111) | `const guideRoute = params.returnToPlanner === "1"` |
+| `mobile/src/app/city/[citySlug]/index.tsx` | [L154](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/app/city/[citySlug]/index.tsx:154) | `if (params.returnToPlanner === "1" && router.canGoBack()) {` |
+| `mobile/src/app/city/[citySlug]/assistant.tsx` | [L20](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/app/city/[citySlug]/assistant.tsx:20) | `export function CityAssistant({ context, returnToPlanner = false }: { context: CityAssistantContext; returnToPlanner?: boolean }) {` |
+| `mobile/src/app/city/[citySlug]/assistant.tsx` | [L34](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/app/city/[citySlug]/assistant.tsx:34) | `<Link dismissTo href={{ pathname: "/city/[citySlug]", params: { citySlug: context.citySlug, section: "places", ...(returnToPlanner ? { returnToPlanner: "1" } : {}) } }} asChild>` |
+| `mobile/tests/city-hub-actions.test.tsx` | [L215](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/tests/city-hub-actions.test.tsx:215) | `expect(state.back).toHaveBeenCalledTimes(calls);` |
+| `mobile/tests/walk-flow.behavior.tsx` | [L1252](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/tests/walk-flow.behavior.tsx:1252) | `expect(mocks.routePush).toHaveBeenCalledWith({ pathname: "/city/[citySlug]", params: { citySlug: "lubeck", returnToPlanner: "1" } });` |
+| `mobile/tests/city-hub-actions.test.tsx` | [L236](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/tests/city-hub-actions.test.tsx:236) | `expect(routeFor(screen.getByRole("button", { name: walkCopy("en").ask }))).toEqual({ pathname: "/city/[citySlug]/assistant", params: { citySlug: "lubeck", returnToPlanner: "1" } });` |
+| `mobile/tests/native-v2-regressions.test.tsx` | [L457](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/tests/native-v2-regressions.test.tsx:457) | `expect(JSON.parse(link.dataset.route!)).toEqual({ pathname: "/city/[citySlug]", params: { citySlug: "lubeck", section: "places", returnToPlanner: "1" } });` |
+| `mobile/tests/city-hub-editorial-v1.test.ts` | [L44](/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/tests/city-hub-editorial-v1.test.ts:44) | `expect(hub).toContain('params.returnToPlanner === "1"');` |
+
+## Reviewed proposal / evidence
+
+- [Slice 02 proposal](../screen-08-slice-02-plan-2026-10-29/SLICE-02-PROPOSAL.md), [FLOW.md](../screen-08-slice-02-plan-2026-10-29/FLOW.md), [TEST-CONTRACT-REVIEW.md](../screen-08-slice-02-plan-2026-10-29/TEST-CONTRACT-REVIEW.md), [NATIVE-ACCEPTANCE.md](../screen-08-slice-02-plan-2026-10-29/NATIVE-ACCEPTANCE.md).
+- [Technical contract](../screen-08-technical-contract-2026-10-28/TECHNICAL-CONTRACT.md), [regression cases](../screen-08-technical-contract-2026-10-28/REGRESSION-CASES.md), [approved UX](../screen-08-flow-approval-2026-10-28/SCREEN-08-FLOW-REVIEW.approved-specification.md).
+- [Slice 01 report](../screen-08-slice-01-2026-10-29/REPORT.md), [historical strict-red evidence](../screen-08-slice-01-2026-10-29/strict-red-evidence.json), [all-case mapping](../screen-08-slice-01-2026-10-29/CASE-MAPPING.md).
+
+The historical 985 ordinary passes / 15 expected-failure variants / 20 TODOs are not rerun in this documentation task. Gate 1 scenario permutations without a prior case are labelled source-derived required regressions, not newly reproduced failures. Gate 2 adds the source-text assertion B05 to the previous four-site inventory.
+
+## Inventory search boundary
+
+Searched `returnToPlanner`, planner key/token, `state.back`, `router.back` and native Back references across current mobile test/behavior files and root src/packages test/spec files, then inspected the complete relevant cases. No additional boolean planner-return assertion site was identified. Helper negative fixtures and unrelated generic Back/header/account/Welcome tests are explicitly preserved. Exact five original assertion sites and contexts are in [legacy-assertions.verbatim.json](legacy-assertions.verbatim.json).

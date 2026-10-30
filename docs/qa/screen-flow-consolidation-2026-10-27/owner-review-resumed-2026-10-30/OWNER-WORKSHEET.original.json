@@ -1,0 +1,115 @@
+{
+  "audit": "CITYWALK screen-flow-consolidation",
+  "exportedAt": "2026-10-28T04:20:45.479Z",
+  "authority": "Local worksheet only; no app changes or release authorization",
+  "choices": {
+    "S01": {
+      "decision": "KEEP NEW",
+      "note": ""
+    },
+    "S02": {
+      "decision": "KEEP NEW",
+      "note": ""
+    },
+    "S03": {
+      "decision": "MERGE BEST OF BOTH",
+      "note": ""
+    },
+    "S04": {
+      "decision": "MERGE BEST OF BOTH",
+      "note": ""
+    },
+    "S05": {
+      "decision": "KEEP NEW",
+      "note": ""
+    },
+    "S06": {
+      "decision": "KEEP NEW",
+      "note": ""
+    },
+    "S07": {
+      "decision": "KEEP NEW",
+      "note": ""
+    },
+    "S08": {
+      "decision": "REBUILD FLOW",
+      "note": ""
+    },
+    "S09": {
+      "decision": "MERGE BEST OF BOTH",
+      "note": ""
+    },
+    "S10": {
+      "decision": "MERGE BEST OF BOTH",
+      "note": ""
+    },
+    "S11": {
+      "decision": "KEEP NEW",
+      "note": ""
+    },
+    "S12": {
+      "decision": "MERGE BEST OF BOTH",
+      "note": ""
+    },
+    "S13": {
+      "decision": "KEEP NEW",
+      "note": ""
+    },
+    "D01": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D02": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D03": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D04": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D05": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D06": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D07": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D08": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D09": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D10": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D11": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D12": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D13": {
+      "decision": "PENDING",
+      "note": ""
+    },
+    "D14": {
+      "decision": "PENDING",
+      "note": ""
+    }
+  }
+}

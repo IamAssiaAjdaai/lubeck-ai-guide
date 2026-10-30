@@ -1,0 +1,30 @@
+  it("keeps guest selections in the current city and existing planner contract", async () => {
+    mocks.guest = true; mocks.load.mockResolvedValue(undefined); mocks.persist.mockResolvedValue(undefined);
+    mocks.loadTravelerStyle.mockResolvedValue({ interests: [], walking: "balanced", minutes: 120 });
+    render(<NativeWalkFlow interestOnboarding citySlug="city" cityName="City" places={places} />);
+    expect((await screen.findByTestId("interest-entry")).getAttribute("data-city")).toBe("city");
+    expect((screen.getByRole("button", { name: walkCopy("en").continue }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "Entry food" }));
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").continue }));
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").continue }));
+    if (screen.queryByTestId("location-entry")) fireEvent.click(screen.getByRole("button", { name: "Not now" }));
+    if (screen.queryByTestId("first-experience")) fireEvent.click(screen.getByRole("button", { name: "Continue planning" }));
+    expect(screen.getByRole("button", { name: walkCopy("en").food }).getAttribute("aria-pressed")).toBe("true");
+    expect(mocks.persist).not.toHaveBeenCalled();
+  });
+  it("skips with no interest filter and never writes account defaults", async () => {
+    mocks.load.mockResolvedValue(undefined);
+    mocks.loadTravelerStyle.mockResolvedValue({ interests: ["history"], walking: "easy", minutes: 60 });
+    render(<NativeWalkFlow interestOnboarding citySlug="city" cityName="City" places={places} />);
+    await screen.findByTestId("interest-entry");
+    fireEvent.click(screen.getByRole("button", { name: "Entry food" }));
+    fireEvent.click(screen.getByRole("button", { name: "Skip interests" }));
+    expect(screen.queryByTestId("interest-entry")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: walkCopy("en").continue }));
+    if (screen.queryByTestId("location-entry")) fireEvent.click(screen.getByRole("button", { name: "Not now" }));
+    if (screen.queryByTestId("first-experience")) fireEvent.click(screen.getByRole("button", { name: "Continue planning" }));
+    expect(screen.getByRole("button", { name: walkCopy("en").history }).getAttribute("aria-pressed")).toBe("false");
+    if (screen.queryByTestId("location-entry")) fireEvent.click(screen.getByRole("button", { name: "Not now" }));
+    if (screen.queryByTestId("first-experience")) fireEvent.click(screen.getByRole("button", { name: "Continue planning" }));
+    expect(screen.getByRole("button", { name: walkCopy("en").food }).getAttribute("aria-pressed")).toBe("false");
+  });

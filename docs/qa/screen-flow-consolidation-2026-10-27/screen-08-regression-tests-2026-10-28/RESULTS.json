@@ -1,0 +1,28 @@
+{
+  "contractCases": 47,
+  "caseCounts": {
+    "passed": 9,
+    "unexpectedFailed": 0,
+    "knownExpectedFailures": 14,
+    "pending": 23,
+    "blocked": 1
+  },
+  "fullMobileUnitCounts": {
+    "ordinaryPassed": 974,
+    "expectedFailuresNotFunctionalityPasses": 15,
+    "todoIncludingBlocked": 24,
+    "unexpectedFailed": 0,
+    "total": 1013
+  },
+  "strictRedProbe": {
+    "ordinaryFailedAssertions": 15,
+    "distinctCases": 14,
+    "unexpectedHarnessFailures": 0,
+    "expectedExitCode": 1
+  },
+  "typescript": "PASS",
+  "lint": "PASS, zero warnings",
+  "featureImplementation": "NOT AUTHORIZED / NOT IMPLEMENTED",
+  "D01_D14": "PENDING",
+  "screen14": "PENDING"
+}

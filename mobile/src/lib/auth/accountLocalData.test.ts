@@ -15,6 +15,7 @@ describe("purgeDeletedAccountLocalData", () => {
     const { store, multiRemove, removeItem } = storeWith([
       `${accountLocalDataContract.nativeTravelerPrefix}saved`,
       `${accountLocalDataContract.nativeTravelerPrefix}active:lubeck`,
+      `${accountLocalDataContract.curatedProgressPrefix}lubeck:historic-center-walk`,
       `${accountLocalDataContract.guideHistoryPrefix}1:lubeck:holstentor`,
       accountLocalDataContract.localTripsKey,
       accountLocalDataContract.liveWalkKey,
@@ -27,6 +28,7 @@ describe("purgeDeletedAccountLocalData", () => {
     expect(multiRemove).toHaveBeenCalledWith([
       `${accountLocalDataContract.nativeTravelerPrefix}saved`,
       `${accountLocalDataContract.nativeTravelerPrefix}active:lubeck`,
+      `${accountLocalDataContract.curatedProgressPrefix}lubeck:historic-center-walk`,
       `${accountLocalDataContract.guideHistoryPrefix}1:lubeck:holstentor`,
       accountLocalDataContract.localTripsKey,
       accountLocalDataContract.liveWalkKey,

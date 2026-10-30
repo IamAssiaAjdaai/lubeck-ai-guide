@@ -1,0 +1,3691 @@
+[
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 1
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 2
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 3
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 4
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 5
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 6
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 7
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-5EDe7FCbsqYjy-VF0dOiM"
+    },
+    "noop": false,
+    "sequence": 8
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 9
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 10
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 11
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "consumed": true,
+    "sequence": 12
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "sequence": 13
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "sequence": 14
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ZOZeC19YV23XQvMYRgx7m",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 15
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 16
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 17
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 18
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 19
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-5EDe7FCbsqYjy-VF0dOiM"
+    },
+    "noop": false,
+    "sequence": 20
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 21
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 22
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 23
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "consumed": true,
+    "sequence": 24
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "sequence": 25
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "sequence": 26
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "sequence": 27
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 28
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "sequence": 29
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "location",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "sequence": 30
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "location",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-HmOJA_yQot3zxuVAi4t38",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 31
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "location",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 32
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "location",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 33
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "location",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 34
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 35
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 36
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 37
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-5EDe7FCbsqYjy-VF0dOiM"
+    },
+    "noop": false,
+    "sequence": 38
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-wdkQMRhKrHdAZaAwSdGzx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-wdkQMRhKrHdAZaAwSdGzx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 39
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-wdkQMRhKrHdAZaAwSdGzx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-wdkQMRhKrHdAZaAwSdGzx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 40
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-wdkQMRhKrHdAZaAwSdGzx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-wdkQMRhKrHdAZaAwSdGzx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "POP",
+      "source": "city/[citySlug]/index-wdkQMRhKrHdAZaAwSdGzx",
+      "target": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "count": 1
+    },
+    "noop": false,
+    "sequence": 41
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 42
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 43
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 44
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 45
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 46
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 47
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 48
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 49
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-5EDe7FCbsqYjy-VF0dOiM"
+    },
+    "noop": false,
+    "sequence": 50
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 51
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 52
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "NAVIGATE",
+      "target": "stack-5EDe7FCbsqYjy-VF0dOiM"
+    },
+    "noop": false,
+    "sequence": 53
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 8,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-2rMq0tUuUL5Ruw2jBbOfA",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-2rMq0tUuUL5Ruw2jBbOfA",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "sequence": 54
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 8,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-2rMq0tUuUL5Ruw2jBbOfA",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-2rMq0tUuUL5Ruw2jBbOfA",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 55
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 56
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "NAVIGATE",
+      "target": "stack-5EDe7FCbsqYjy-VF0dOiM"
+    },
+    "noop": false,
+    "sequence": 57
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 8,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "sequence": 58
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 8,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "sequence": 59
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 8,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 60
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 8,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "sequence": 61
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 8,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "sequence": 62
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 8,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-ZqemwQzmzI4LT8feG8UVV",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 63
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "sequence": 64
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": false,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 7,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-ceiM7YPYn8rx3TiC8ryva",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 65
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 66
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 67
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": false,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 68
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-5EDe7FCbsqYjy-VF0dOiM",
+      "type": "stack",
+      "index": 6,
+      "routes": [
+        {
+          "key": "index-zq9BBtO4xpxD3l-qKoc81",
+          "name": "index"
+        },
+        {
+          "key": "profile-QpLKCUyxYfRoSRnhWbnO8",
+          "name": "profile"
+        },
+        {
+          "key": "index-yl6E8gOVLkIbwzf2mLfvA",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/explore-BIkk1pMzLj85N8zlNNy1G",
+          "name": "city/[citySlug]/explore"
+        },
+        {
+          "key": "index-rkLfEor4193EVK7xaWYGB",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-fOug1hj6pOUchNDnQD_RC",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-XDdFLIPtMGXe1v3-7r01a",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 69
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-headline-wash.svg": true,
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-holstentor.LICENSE.md": true,
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-overlay-alternate.svg": true,
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-overlay.svg": true,
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-photos.LICENSE.md": true,
+  "/private/tmp/citywalk-recovery-stage/mobile/assets/images/welcome-skyline.svg": true,
+  "mobile/assets/images/welcome-headline-wash.svg": true,
+  "mobile/src/app/welcome.tsx": true,
+  "mobile/src/components/LocaleSelector.tsx": true,
+  "mobile/src/components/ui.tsx": true,
+  "mobile/src/lib/welcomeCopy.ts": true
+}

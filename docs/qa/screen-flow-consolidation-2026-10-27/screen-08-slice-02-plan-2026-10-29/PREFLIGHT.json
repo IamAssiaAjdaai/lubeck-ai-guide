@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-29",
+  "readOnly": true,
+  "issue": {
+    "number": 424,
+    "title": "PR-CONSOLIDATION-01 \u2014 34 Draft PRs, verified CI and no-loss integration gates",
+    "state": "open",
+    "updatedAt": "2026-10-23T12:29:04Z",
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/issues/424"
+  },
+  "comments": 0,
+  "branches": [
+    {
+      "name": "develop",
+      "sha": "9f8470077dfa8eb7663246905bffd3cf8a0c6591"
+    },
+    {
+      "name": "main",
+      "sha": "88191e77e55a489804c49bccccf6307b5876b41d"
+    }
+  ],
+  "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+  "branch": "codex/onboarding-global-welcome",
+  "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "workingTree": "Preexisting dirty approved work preserved; no source/test change in this task",
+  "CI": "No new revision or CI claim; historical Slice 01 local results only",
+  "skills": [
+    "github-project-truth",
+    "citywalk-product-manager",
+    "citywalk-senior-engineer"
+  ],
+  "MobileCore": "Required iOS/Android; proposal only",
+  "PublicWeb": "Not applicable; unchanged",
+  "AdminWeb": "Not applicable; unchanged"
+}

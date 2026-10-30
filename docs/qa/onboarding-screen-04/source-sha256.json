@@ -1,0 +1,6 @@
+{
+  "mobile/src/app/index.tsx": "a586e8289cd2f02cb9a5728914b4347ba3227a511e78cc47520f057740c2930d",
+  "mobile/src/lib/citySelectionCopy.ts": "93309bb4e35d6f69a9e0c3f9679a5583987197940fee5e137f95c0ee738f856a",
+  "mobile/tests/home-presentation.test.tsx": "c5d161e15279c3099c7a3f9b8cd5048b0cf53adf7bb76875484db71877562796",
+  "mobile/tests/native-screen-chrome.test.tsx": "fc797803bdceb5380a8124149d6e2542f946b8b73fc6594727e4179dc4772f77"
+}

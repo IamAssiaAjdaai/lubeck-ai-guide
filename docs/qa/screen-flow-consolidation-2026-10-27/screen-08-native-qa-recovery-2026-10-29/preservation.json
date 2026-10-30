@@ -1,0 +1,15 @@
+{
+  "head": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "branch": "codex/onboarding-global-welcome",
+  "source_files_checked": 1054,
+  "source_changes": [],
+  "matches_slice02_source_manifest": true,
+  "git_status_unchanged_outside_this_qa_folder": true,
+  "apk_sha256": "905941515ce1f4447db78da63af6cb2dc93a3dc3d31c6cbf3918ca1ddbb6db15",
+  "production_tests_dependencies_native_config_modified": false,
+  "iphone_text_size_restored": "large",
+  "iphone_original_edit_cursor_and_selections_restored": true,
+  "screen14": "PENDING; unchanged",
+  "D01_D14": "PENDING; unchanged",
+  "commit_push_merge_deploy": false
+}

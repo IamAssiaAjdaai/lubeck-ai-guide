@@ -1,0 +1,53 @@
+mobile/src/app/index.tsx:2:import { CityPhotoCredits } from "../components/CityPhotoCredits";
+mobile/src/app/index.tsx:27:import { MediaAttribution } from "../components/MediaAttribution";
+mobile/src/app/index.tsx:173:      {selection ? <CityPhotoCredits cityName={cityName} photo={localImage ? selectionCredit : undefined} attribution={!localImage ? city.attribution : undefined} /> : null}
+mobile/src/app/index.tsx:174:      {!selection && city.attribution && city.available ? <MediaAttribution attribution={city.attribution} /> : null}
+mobile/src/app/index.tsx:440:      <Link href="/photo-credits" asChild>
+src/app/[locale]/lubeck/[slug]/page.tsx:52:import { MediaAttribution } from "@/components/travel/MediaAttribution";
+src/app/[locale]/lubeck/[slug]/page.tsx:283:            <MediaAttribution as="figcaption" attribution={selectedImage?.attribution} className="mt-2 px-1" />
+mobile/src/app/legal.tsx:96:        onPress={() => router.navigate("/photo-credits")}
+src/components/travel/PlaceExperience.tsx:18:import { MediaAttribution } from "@/components/travel/MediaAttribution";
+src/components/travel/PlaceExperience.tsx:90:            <MediaAttribution as="figcaption" attribution={imageAttribution} className="mt-2 px-1" />
+src/components/travel/MediaAttribution.test.tsx:4:import { MediaAttribution } from "@/components/travel/MediaAttribution";
+src/components/travel/MediaAttribution.test.tsx:6:describe("MediaAttribution", () => {
+src/components/travel/MediaAttribution.test.tsx:11:      <MediaAttribution
+src/components/travel/MediaAttribution.test.tsx:27:    const { container } = render(<MediaAttribution />);
+src/components/travel/MediaAttribution.tsx:3:type MediaAttributionValue = NonNullable<PublicMedia["attribution"]>;
+src/components/travel/MediaAttribution.tsx:7:export function MediaAttribution({
+src/components/travel/MediaAttribution.tsx:12:  attribution?: MediaAttributionValue;
+src/components/travel/CityExperience.tsx:9:import { MediaAttribution } from "@/components/travel/MediaAttribution";
+src/components/travel/CityExperience.tsx:151:              <MediaAttribution
+mobile/src/app/introduction.tsx:41:  const [creditsOpen, setCreditsOpen] = useState(false);
+mobile/src/app/introduction.tsx:96:      <Modal visible={creditsOpen} transparent animationType={reducedMotion ? "none" : "fade"} onRequestClose={() => setCreditsOpen(false)}>
+src/components/travel/PlaceDiscovery.tsx:29:import { MediaAttribution } from "@/components/travel/MediaAttribution";
+src/components/travel/PlaceDiscovery.tsx:308:        <MediaAttribution attribution={place.imageAttribution} className="mt-2" />
+src/components/travel/PlaceDiscovery.tsx:318:      <MediaAttribution attribution={place.imageAttribution} className="mt-2" />
+mobile/src/components/CityHubHero.tsx:10:import { CityPhotoCredits } from "./CityPhotoCredits";
+mobile/src/components/CityHubHero.tsx:51:    <CityPhotoCredits cityName={name} photo={bundled?.credit} attribution={bundled ? undefined : media?.attribution} />
+mobile/src/components/FirstExperience.tsx:16:import { CityPhotoCredits } from "./CityPhotoCredits";
+mobile/src/components/FirstExperience.tsx:45:            <CityPhotoCredits cityName={name} photo={bundled ? welcomePhotos.find(photo => photo.id === citySlug) : undefined} attribution={bundled ? undefined : media?.attribution} />
+mobile/src/components/CityPhotoCredits.tsx:4:import type { PublicMediaAttribution } from "../lib/api/contracts";
+mobile/src/components/CityPhotoCredits.tsx:5:import { formatMediaAttribution } from "../lib/mediaAttribution";
+mobile/src/components/CityPhotoCredits.tsx:13:export function CityPhotoCredits({ cityName, photo, attribution }: { cityName: string; photo?: Photo; attribution?: PublicMediaAttribution }) {
+mobile/src/components/CityPhotoCredits.tsx:20:  const links = photo ? [{ label: copy.source, url: photo.source }, { label: `${copy.license} · ${photo.licenseName}`, url: photo.license }] : formatMediaAttribution(attribution!).filter(segment => segment.url);
+mobile/src/components/CityPhotoCredits.tsx:35:            <AppText>{photo ? photo.credit : formatMediaAttribution(attribution!).map(segment => segment.label).join(" · ")}</AppText>
+mobile/src/components/MediaAttribution.tsx:4:import type { PublicMediaAttribution } from "../lib/api/contracts";
+mobile/src/components/MediaAttribution.tsx:5:import { formatMediaAttribution } from "../lib/mediaAttribution";
+mobile/src/components/MediaAttribution.tsx:9:export function MediaAttribution({
+mobile/src/components/MediaAttribution.tsx:11:}: Readonly<{ attribution?: PublicMediaAttribution }>) {
+mobile/src/components/MediaAttribution.tsx:14:  const segments = formatMediaAttribution(attribution);
+mobile/src/app/welcome.tsx:37:  const [creditsOpen, setCreditsOpen] = useState(false);
+mobile/src/app/welcome.tsx:103:      <Modal visible={creditsOpen} transparent animationType={reducedMotion ? "none" : "fade"} onRequestClose={() => setCreditsOpen(false)}>
+mobile/src/app/city/[citySlug]/explore.tsx:10:import { MediaAttribution } from "../../../components/MediaAttribution";
+mobile/src/app/city/[citySlug]/explore.tsx:253:      {photo?.credit || photo?.attribution ? <MediaAttribution attribution={photo.credit ? {
+mobile/src/app/city/[citySlug]/index.tsx:23:import { MediaAttribution } from "../../../components/MediaAttribution";
+mobile/src/app/city/[citySlug]/index.tsx:26:import { CityPhotoCredits } from "../../../components/CityPhotoCredits";
+mobile/src/app/city/[citySlug]/index.tsx:453:      {bundled ? <View pointerEvents="box-none" style={[styles.tourPhotoCredit, expanded && { width: "100%" }]}><CityPhotoCredits cityName={nativePlaceName(citySlug, firstPlace!.slug, firstPlace!.content.name, uiLocale)} photo={bundled.credit} /></View> : null}
+mobile/src/app/city/[citySlug]/index.tsx:455:        <MediaAttribution attribution={image.attribution} />
+mobile/src/app/city/[citySlug]/index.tsx:556:      {bundled ? <View pointerEvents="box-none" style={styles.placePhotoCredit}><CityPhotoCredits cityName={nativePlaceName(citySlug, place.slug, place.content.name, locale)} photo={bundled.credit} /></View> : null}
+mobile/src/app/city/[citySlug]/index.tsx:558:        <MediaAttribution attribution={imageMedia.attribution} />
+mobile/src/app/city/[citySlug]/place/[placeSlug].tsx:23:import { MediaAttribution } from "../../../../components/MediaAttribution";
+mobile/src/app/city/[citySlug]/place/[placeSlug].tsx:316:            {centralCredit ? <Link href={{ pathname: "/photo-credits", params: { image: centralCredit.id } }} asChild>
+mobile/src/app/city/[citySlug]/place/[placeSlug].tsx:327:        {!centralCredit && (photo?.credit || photo?.attribution) ? <MediaAttribution attribution={photo.credit ? {
+mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx:8:import { MediaAttribution } from "../../../../components/MediaAttribution";
+mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx:75:            <MediaAttribution attribution={image.attribution} />

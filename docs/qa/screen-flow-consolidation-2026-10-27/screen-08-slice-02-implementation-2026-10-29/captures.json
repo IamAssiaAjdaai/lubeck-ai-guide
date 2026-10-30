@@ -1,0 +1,66 @@
+[
+  {
+    "file": "screenshots/ios-small-de-max-text.png",
+    "pixels": [
+      750,
+      1334
+    ],
+    "sha256": "174404ea38705b675c7e8060ec2d76f0db48442a27f5fd2d890bc39940d59606"
+  },
+  {
+    "file": "screenshots/ios-small-de-screen08.png",
+    "pixels": [
+      750,
+      1334
+    ],
+    "sha256": "cf65d0af8cb3b653dc1c97ec3e772a44eaf6d1f45df26cc2503e2ab0ab60a397"
+  },
+  {
+    "file": "screenshots/ios-small-en-max-text.png",
+    "pixels": [
+      750,
+      1334
+    ],
+    "sha256": "b9fd623a5d8b499a1ad592fbee77841fbc9199be4ef53b7f48d2634f9f045ff5"
+  },
+  {
+    "file": "screenshots/ios-small-en-retained-constraints.png",
+    "pixels": [
+      750,
+      1334
+    ],
+    "sha256": "d64a8e0d1dc501943d1f13e8f9d8efd46559cfb862dbe3d752c1888603a81999"
+  },
+  {
+    "file": "screenshots/ios-small-en-screen08.png",
+    "pixels": [
+      750,
+      1334
+    ],
+    "sha256": "f34aaefa437a6d3f35f4da958ebf586b6d2846ff2508b340082ec78d9906ccf1"
+  },
+  {
+    "file": "screenshots/ios-small-explicit-build-preview.png",
+    "pixels": [
+      750,
+      1334
+    ],
+    "sha256": "7a55ddbe4f21110eee1a5e3591d99a91a98e7fcc2bf5f1bfe2a20dead997ddef"
+  },
+  {
+    "file": "screenshots/ios-standard-de-screen08.png",
+    "pixels": [
+      1206,
+      2622
+    ],
+    "sha256": "8b080875ab510d8e3a49159d8ab4e9cff5a86cd081e3e7cc84fe0535f43dc24d"
+  },
+  {
+    "file": "screenshots/ios-standard-en-screen08.png",
+    "pixels": [
+      1206,
+      2622
+    ],
+    "sha256": "5df0fd5f137af9156dd15fb2ea7848b06f453743152d890a66be01843fa907f1"
+  }
+]

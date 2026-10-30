@@ -1,0 +1,6 @@
+
+> lubeck-ai-guide@0.1.0 db:verify
+> tsx scripts/verify-database.ts
+
+Verified database catalog: 1 city, 25 places.
+- lubeck: 25 places (17 See, 5 Eat, 3 Fun; 5 curated Hidden Gems)

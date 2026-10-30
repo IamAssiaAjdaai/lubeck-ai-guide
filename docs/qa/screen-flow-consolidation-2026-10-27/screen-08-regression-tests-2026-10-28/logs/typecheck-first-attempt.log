@@ -1,0 +1,12 @@
+
+> @citywalk/mobile@1.0.0 typecheck
+> tsc --noEmit
+
+tests/walk-flow.behavior.tsx(1427,29): error TS2339: Property 'journey' does not exist on type 'never'.
+tests/walk-flow.behavior.tsx(1428,29): error TS2339: Property 'phase' does not exist on type 'never'.
+tests/walk-flow.behavior.tsx(1503,61): error TS2488: Type 'readonly string[] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
+tests/walk-flow.behavior.tsx(1511,77): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined): HTMLElement[]', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.
+  Overload 2 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined): HTMLElement[]', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.

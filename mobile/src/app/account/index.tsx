@@ -7,6 +7,9 @@ import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BackHandler, Share, StyleSheet, TextInput, View } from "react-native";
 
+import { AccountOnboardingFrame } from "../../components/AccountOnboardingFrame";
+import { accountOnboardingCopy } from "../../lib/accountOnboardingCopy";
+import { welcomeCopy } from "../../lib/welcomeCopy";
 import { NativeIcon } from "../../components/NativeIcon";
 import { PasswordField } from "../../components/PasswordField";
 import { AppText, Card, PrimaryButton, PressableSurface, Screen, StatusMessage } from "../../components/ui";
@@ -45,8 +48,10 @@ const diagnosticApi = createCitywalkApiClient({ origin: getConfiguredApiOrigin()
 
 export default function AccountScreen() {
   const { locale, direction, messages } = useNativeLocale();
-  const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string; error?: string; reauth?: string }>();
+  const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string; error?: string; reauth?: string; onboarding?: string }>();
   const { data: session, isPending } = nativeAuthClient.useSession();
+  const onboarding = params.onboarding === "1";
+  const onboardingCopy = accountOnboardingCopy[locale];
   const socialAuth = getNativeSocialAuthAvailability();
   const showDiagnostics = accountDiagnosticsEnabled();
   const accountWalks = useAccountWalks();
@@ -157,10 +162,10 @@ export default function AccountScreen() {
       setNotice(undefined);
       setFailure(classifyNativeAuthError({ code: oauthError }));
       if (returnToDelete) setEntry("delete");
-      router.replace(returnToDelete ? "/account?entry=delete" : "/account");
+      router.replace(returnToDelete ? "/account?entry=delete" : params.onboarding === "1" ? "/account?onboarding=1" : "/account");
     });
     return () => { active = false; };
-  }, [params.error, params.entry]);
+  }, [params.error, params.entry, params.onboarding]);
   function clearPasswords() { setPassword(""); setNewPassword(""); setConfirmation(""); }
   const open = useCallback((next?: Entry) => {
     request.current++;
@@ -188,7 +193,8 @@ export default function AccountScreen() {
   }, [entry, open]);
   function leave() {
     open();
-    if (router.canGoBack()) router.back(); else router.replace("/");
+    if (onboarding) router.replace({ pathname: "/", params: { section: "cities" } });
+    else if (router.canGoBack()) router.back(); else router.replace("/");
   }
   async function perform(action: Action, work: () => Promise<{ error?: unknown }>, success: () => void) {
     if (submitLock.current) return;
@@ -237,8 +243,8 @@ export default function AccountScreen() {
       `social-${provider}`,
       () => nativeAuthClient.signIn.social({
         provider,
-        callbackURL: "citywalk://account",
-        errorCallbackURL: "citywalk://account",
+        callbackURL: onboarding ? "citywalk://account?onboarding=1" : "citywalk://account",
+        errorCallbackURL: onboarding ? "citywalk://account?onboarding=1" : "citywalk://account",
       }),
       () => {
         setEntry(undefined);
@@ -401,6 +407,66 @@ export default function AccountScreen() {
     <TextInput accessibilityLabel={messages.email} autoCapitalize="none" autoCorrect={false} keyboardType="email-address"
       autoComplete="email" textContentType="emailAddress" value={email} onChangeText={setEmail} editable={!busy} style={[styles.input, { textAlign: direction === "rtl" ? "right" : "left" }]} />
   </>;
+  const guestForms = <>{isEmailEntry ? <Card>
+      {socialAuth.apple ? <PrimaryButton
+        label={label("profile.continueWithApple")}
+        leadingIcon={socialIcon("apple")}
+        busy={busy === "social-apple"}
+        disabled={isPending || Boolean(busy)}
+        onPress={() => socialSignIn("apple")}
+      /> : null}
+      {socialAuth.google ? <PrimaryButton
+        label={label("profile.continueWithGoogle")}
+        leadingIcon={socialIcon("google")}
+        busy={busy === "social-google"}
+        disabled={isPending || Boolean(busy)}
+        tone="secondary"
+        onPress={() => socialSignIn("google")}
+      /> : null}
+      <AppText variant="heading">{entry === "sign-up" ? messages.signUp : messages.signIn}</AppText>
+      {entry === "sign-up" ? nameField : null}
+      {emailField}
+      <PasswordField key={entry} label={messages.password} value={password} onChange={setPassword} newPassword={entry === "sign-up"} disabled={Boolean(busy)} />
+      {entry === "sign-up" ? <AppText variant="metadata">{messages.passwordTooShort}</AppText> : null}
+      <PrimaryButton label={entry === "sign-up" ? messages.signUp : messages.signIn} busy={Boolean(busy)} disabled={isPending} onPress={() => authenticate(entry === "sign-up" ? "sign-up" : "sign-in")} />
+      {entry === "sign-in" ? <PrimaryButton label={label("profile.forgotPassword")} tone="secondary" onPress={() => open("reset")} /> : null}
+    </Card> : null}
+    {!session && entry === "reset" ? <Card>
+      <AppText variant="heading">{label("profile.resetPassword")}</AppText>
+      {emailField}
+      <AppText>{label("lifecycle.resetRequestHelp")}</AppText>
+      <PrimaryButton label={label("profile.sendResetLink")} busy={busy === "reset"} onPress={requestReset} />
+    </Card> : null}</>;
+  const feedback = <>{failure ? <StatusMessage tone="error">{failure === "invalid_credentials" && entry === "change-password" ? label("profile.currentPasswordIncorrect") : authFailureMessage(failure, locale, messages)}</StatusMessage> : null}
+    {failure === "email_not_verified" && !session && entry === "sign-in" ? <PrimaryButton
+      label={label("profile.resendVerification")}
+      tone="secondary"
+      busy={busy === "resend-verification"}
+      disabled={Boolean(busy)}
+      onPress={resendVerification}
+    /> : null}
+    {lifecycleFailure ? <StatusMessage tone="error">{label(lifecycleFailure)}</StatusMessage> : null}
+    {notice ? <StatusMessage tone="success">{label(notice)}</StatusMessage> : null}</>;
+  if (onboarding && (!entry || entry === "sign-in" || entry === "sign-up" || entry === "reset")) {
+    const title = session ? onboardingCopy.ready : entry === "sign-in" ? messages.signIn : entry === "reset" ? label("profile.resetPassword") : onboardingCopy.title;
+    return <AccountOnboardingFrame choice={!session && !entry} title={title} description={session ? label("profile.guestFirst") : onboardingCopy.description}
+      onBack={() => entry ? back() : router.canGoBack() ? router.back() : router.replace("/introduction")}
+      footer={<><AppText variant="metadata" style={{ color: "#506984", textAlign: "center" }}>{label("profile.guestFirst")}</AppText><PressableSurface accessibilityRole="button" accessibilityLabel={welcomeCopy[locale].explore} onPress={leave} style={{ minHeight: 48, justifyContent: "center", alignItems: "center", paddingVertical: 12 }}><AppText variant="label" style={{ color: colors.primary, textAlign: "center" }}>{welcomeCopy[locale].explore}</AppText></PressableSurface></>}>
+      {isPending ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
+      {!session && !entry ? <>
+        {socialAuth.apple ? <PrimaryButton label={label("profile.continueWithApple")} leadingIcon={socialIcon("apple")} tone="secondary" busy={busy === "social-apple"} disabled={isPending || Boolean(busy)} onPress={() => socialSignIn("apple")} /> : null}
+        {socialAuth.google ? <PrimaryButton label={label("profile.continueWithGoogle")} leadingIcon={socialIcon("google")} tone="secondary" busy={busy === "social-google"} disabled={isPending || Boolean(busy)} onPress={() => socialSignIn("google")} /> : null}
+        <PrimaryButton style={{ backgroundColor: "#155CAF" }} label={onboardingCopy.email} disabled={isPending || Boolean(busy)} onPress={() => open("sign-up")} />
+        <View style={{ marginTop: 4, gap: 2, alignItems: "center", justifyContent: "center", flexDirection: "row", flexWrap: "wrap" }}>
+          <AppText style={styles.muted}>{onboardingCopy.existing}</AppText>
+          <PressableSurface accessibilityRole="button" accessibilityLabel={messages.signIn} disabled={isPending || Boolean(busy)} onPress={() => open("sign-in")} style={{ minHeight: 48, justifyContent: "center", paddingHorizontal: 8 }}><AppText variant="label" style={{ color: colors.primary, textDecorationLine: "underline" }}>{messages.signIn}</AppText></PressableSurface>
+        </View>
+      </> : null}
+      {guestForms}
+      {session ? <PrimaryButton label={label("profile.nativeAccountTitle")} tone="secondary" onPress={() => router.replace("/account")} /> : null}
+      {feedback}
+    </AccountOnboardingFrame>;
+  }
   return <Screen>
     <Stack.Screen options={{ title: label("profile.nativeAccountTitle") }} />
     <View style={[styles.introduction, nativeRowStyle(direction)]}>
@@ -564,36 +630,7 @@ export default function AccountScreen() {
       <PrimaryButton label={messages.signIn} disabled={isPending || Boolean(busy)} tone="secondary" onPress={() => open("sign-in")} />
       <PrimaryButton label={messages.continueAsGuest} tone="secondary" onPress={leave} />
     </Card> : null}
-    {isEmailEntry ? <Card>
-      {socialAuth.apple ? <PrimaryButton
-        label={label("profile.continueWithApple")}
-        leadingIcon={socialIcon("apple")}
-        busy={busy === "social-apple"}
-        disabled={isPending || Boolean(busy)}
-        onPress={() => socialSignIn("apple")}
-      /> : null}
-      {socialAuth.google ? <PrimaryButton
-        label={label("profile.continueWithGoogle")}
-        leadingIcon={socialIcon("google")}
-        busy={busy === "social-google"}
-        disabled={isPending || Boolean(busy)}
-        tone="secondary"
-        onPress={() => socialSignIn("google")}
-      /> : null}
-      <AppText variant="heading">{entry === "sign-up" ? messages.signUp : messages.signIn}</AppText>
-      {entry === "sign-up" ? nameField : null}
-      {emailField}
-      <PasswordField key={entry} label={messages.password} value={password} onChange={setPassword} newPassword={entry === "sign-up"} disabled={Boolean(busy)} />
-      {entry === "sign-up" ? <AppText variant="metadata">{messages.passwordTooShort}</AppText> : null}
-      <PrimaryButton label={entry === "sign-up" ? messages.signUp : messages.signIn} busy={Boolean(busy)} disabled={isPending} onPress={() => authenticate(entry === "sign-up" ? "sign-up" : "sign-in")} />
-      {entry === "sign-in" ? <PrimaryButton label={label("profile.forgotPassword")} tone="secondary" onPress={() => open("reset")} /> : null}
-    </Card> : null}
-    {!session && entry === "reset" ? <Card>
-      <AppText variant="heading">{label("profile.resetPassword")}</AppText>
-      {emailField}
-      <AppText>{label("lifecycle.resetRequestHelp")}</AppText>
-      <PrimaryButton label={label("profile.sendResetLink")} busy={busy === "reset"} onPress={requestReset} />
-    </Card> : null}
+    {guestForms}
     {session && entry === "edit" ? <Card>
       <AppText variant="heading">{label("profile.editProfile")}</AppText>
       {nameField}
@@ -702,16 +739,7 @@ export default function AccountScreen() {
         </>}
       </> : null}
     </Card> : null}
-    {failure ? <StatusMessage tone="error">{failure === "invalid_credentials" && entry === "change-password" ? label("profile.currentPasswordIncorrect") : authFailureMessage(failure, locale, messages)}</StatusMessage> : null}
-    {failure === "email_not_verified" && !session && entry === "sign-in" ? <PrimaryButton
-      label={label("profile.resendVerification")}
-      tone="secondary"
-      busy={busy === "resend-verification"}
-      disabled={Boolean(busy)}
-      onPress={resendVerification}
-    /> : null}
-    {lifecycleFailure ? <StatusMessage tone="error">{label(lifecycleFailure)}</StatusMessage> : null}
-    {notice ? <StatusMessage tone="success">{label(notice)}</StatusMessage> : null}
+    {feedback}
     {entry ? <PrimaryButton label={label("common.back")} tone="secondary" onPress={back} /> : null}
     {!session && entry ? <PrimaryButton label={messages.continueAsGuest} tone="secondary" onPress={leave} /> : null}
   </Screen>;

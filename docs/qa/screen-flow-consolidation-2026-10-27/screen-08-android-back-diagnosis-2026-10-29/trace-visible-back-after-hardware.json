@@ -1,0 +1,178 @@
+[
+  {
+    "text": "",
+    "content-desc": "Tools",
+    "class": "android.widget.ImageView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[937,219][1005,287]"
+  },
+  {
+    "text": "",
+    "content-desc": "Back",
+    "class": "android.widget.Button",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[53,163][179,289]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[87,197][146,255]"
+  },
+  {
+    "text": "",
+    "content-desc": "Language",
+    "class": "android.widget.Button",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[912,168][1028,284]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[941,197][1000,255]"
+  },
+  {
+    "text": "",
+    "content-desc": "Lübeck",
+    "class": "android.widget.ImageView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,342][1017,1260]"
+  },
+  {
+    "text": "",
+    "content-desc": "Photo credits: Lübeck",
+    "class": "android.widget.Button",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[865,368][991,494]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[900,403][956,459]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[485,1227][597,1338]"
+  },
+  {
+    "text": "You're all set!",
+    "content-desc": "",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1428][1017,1539]"
+  },
+  {
+    "text": "Start exploring Lübeck at your own pace. Your choices are ready when you build a walk.",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,1586][1017,1724]"
+  },
+  {
+    "text": "",
+    "content-desc": "Continue planning",
+    "class": "android.widget.Button",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,2036][1017,2172]"
+  },
+  {
+    "text": "Continue planning",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[377,2078][703,2131]"
+  },
+  {
+    "text": "",
+    "content-desc": "Explore Lübeck, ",
+    "class": "android.widget.Button",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,2194][1017,2331]"
+  },
+  {
+    "text": "Explore Lübeck",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[366,2236][640,2289]"
+  },
+  {
+    "text": "",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[662,2236][715,2289]"
+  }
+]

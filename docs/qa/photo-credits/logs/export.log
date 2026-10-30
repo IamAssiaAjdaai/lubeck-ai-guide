@@ -1,0 +1,81 @@
+🔍 [expo-iap] Config values: horizonAppId=undefined, pinnedStore=auto, amazonAppstoreKey=none, isVegaEnabled=false, isOnsideEnabled=false
+📦 [expo-iap] Using OpenIAP from CocoaPods
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Starting Metro Bundler
+
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundled 12744ms node_modules/expo-router/entry.js (2111 modules)
+Android Bundled 18607ms node_modules/expo-router/entry.js (2190 modules)
+
+› Assets (61):
+assets/images/account-journey.svg (1.5KB)
+assets/images/city-hub-blue-fill.svg (302B)
+assets/images/city-hub-cinematic-wash.svg (631B)
+assets/images/citywalk-mark.svg (2.7KB)
+assets/images/citywalk-waterfront.webp (61KB)
+assets/images/content-placeholder.svg (342B)
+assets/images/home-card-gradient.svg (488B)
+assets/images/home-duesseldorf.webp (10KB)
+assets/images/home-hamburg.webp (46KB)
+assets/images/home-hero-sky-gradient.svg (484B)
+assets/images/home-holstentor.jpg (2.5MB)
+assets/images/home-multicity-approved.webp (274KB)
+assets/images/introduction-holstentor.jpg (3.6MB)
+assets/images/introduction-sky-wash.svg (439B)
+assets/images/location-world.svg (2.6KB)
+assets/images/selection-card-gradient.svg (524B)
+assets/images/welcome-duesseldorf.webp (129KB)
+assets/images/welcome-hamburg.webp (725KB)
+assets/images/welcome-headline-wash.svg (538B)
+assets/images/welcome-holstentor.webp (935KB)
+assets/images/welcome-overlay-alternate.svg (640B)
+assets/images/welcome-overlay.svg (640B)
+assets/images/welcome-prague.webp (522KB)
+assets/images/welcome-skyline.svg (337B)
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.ttf (967KB)
+node_modules/@maplibre/maplibre-react-native/lib/module/assets/heading.png (3 variations | 450B)
+node_modules/expo-router/assets/arrow_down.png (9.5KB)
+node_modules/expo-router/assets/arrow_right.xml (307B)
+node_modules/expo-router/assets/checkmark.xml (312B)
+node_modules/expo-router/assets/error.png (469B)
+node_modules/expo-router/assets/file.png (138B)
+node_modules/expo-router/assets/forward.png (188B)
+node_modules/expo-router/assets/pkg.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.png (8 variations | 359B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.png (7 variations | 592B)
+node_modules/expo-router/assets/sitemap.png (465B)
+node_modules/expo-router/assets/unmatched.png (4.8KB)
+
+› ios bundles (1):
+_expo/static/js/ios/entry-f0af45ff633804aca8a2bc914563d5d0.hbc (7.1MB)
+
+› android bundles (1):
+_expo/static/js/android/entry-e93e1e5446e8a2329d20fb7d87ab9c42.hbc (7.4MB)
+
+› Files (1):
+metadata.json (6.8KB)
+
+Exported: /private/tmp/citywalk-photo-credits

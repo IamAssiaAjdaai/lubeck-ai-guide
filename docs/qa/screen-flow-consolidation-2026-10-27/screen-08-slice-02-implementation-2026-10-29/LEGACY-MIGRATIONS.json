@@ -1,0 +1,47 @@
+[
+  {
+    "id": "B01",
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "case": "returns only Screen 08 city entry to its retained planner (%s, %s)",
+    "currentCaseLine": 216,
+    "originalAssertion": "expect(state.back).toHaveBeenCalledTimes(calls);",
+    "originalAssertionStillActive": false,
+    "replacement": "Real full-envelope / owning-stack behavior, mapped in REPORT.md and city-hub-actions.test.tsx; original capability assertions retained."
+  },
+  {
+    "id": "B02",
+    "file": "mobile/tests/walk-flow.behavior.tsx",
+    "case": "Screen 08 preserves onboarding without generating a walk > supports Back through location/time/interests and retains choices after city entry",
+    "currentCaseLine": 1266,
+    "originalAssertion": "expect(mocks.routePush).toHaveBeenCalledWith({ pathname: \"/city/[citySlug]\", params: { citySlug: \"lubeck\", returnToPlanner: \"1\" } });",
+    "originalAssertionStillActive": false,
+    "replacement": "Real full-envelope / owning-stack behavior, mapped in REPORT.md and city-hub-actions.test.tsx; original capability assertions retained."
+  },
+  {
+    "id": "B03",
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "case": "carries the retained-planner entry through the Guide fallback route",
+    "currentCaseLine": 245,
+    "originalAssertion": "expect(routeFor(screen.getByRole(\"button\", { name: walkCopy(\"en\").ask }))).toEqual({ pathname: \"/city/[citySlug]/assistant\", params: { citySlug: \"lubeck\", returnToPlanner: \"1\" } });",
+    "originalAssertionStillActive": false,
+    "replacement": "Real full-envelope / owning-stack behavior, mapped in REPORT.md and city-hub-actions.test.tsx; original capability assertions retained."
+  },
+  {
+    "id": "B04",
+    "file": "mobile/tests/native-v2-regressions.test.tsx",
+    "case": "dismisses the Guide fallback to the same hub while retaining its planner return context",
+    "currentCaseLine": 455,
+    "originalAssertion": "expect(JSON.parse(link.dataset.route!)).toEqual({ pathname: \"/city/[citySlug]\", params: { citySlug: \"lubeck\", section: \"places\", returnToPlanner: \"1\" } });",
+    "originalAssertionStillActive": false,
+    "replacement": "Real full-envelope / owning-stack behavior, mapped in REPORT.md and city-hub-actions.test.tsx; original capability assertions retained."
+  },
+  {
+    "id": "B05",
+    "file": "mobile/tests/city-hub-editorial-v1.test.ts",
+    "case": "Screen 09 integration boundaries > preserves virtualized places, actual tours, account ownership and planner navigation",
+    "currentCaseLine": 40,
+    "originalAssertion": "expect(hub).toContain('params.returnToPlanner === \"1\"');",
+    "originalAssertionStillActive": false,
+    "replacement": "Real full-envelope / owning-stack behavior, mapped in REPORT.md and city-hub-actions.test.tsx; original capability assertions retained."
+  }
+]

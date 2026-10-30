@@ -1,0 +1,87 @@
+{
+  "storage": [
+    {
+      "test": "S08 persistence regression boundaries (real production contracts) [S08 XFAIL][S07] corrupt slot cannot be cleared under an absent-slot expectation",
+      "before": "ordinary assertion failure",
+      "firstFailure": "Error: promise resolved \"undefined\" instead of rejecting",
+      "after": "ordinary passing test"
+    },
+    {
+      "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][S02] storage I/O failure blocks fresh personalization rather than masquerading as no walk",
+      "before": "ordinary assertion failure",
+      "firstFailure": "AssertionError: expected <section …(2)>…(10)</section> to be null",
+      "after": "ordinary passing test"
+    },
+    {
+      "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][E03] missing saved ID cannot silently become a new planning session",
+      "before": "ordinary assertion failure",
+      "firstFailure": "AssertionError: expected <section …(2)>…(11)</section> to be null",
+      "after": "ordinary passing test"
+    },
+    {
+      "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][E04] opening saved replay cannot silently replace another unfinished current walk",
+      "before": "ordinary assertion failure",
+      "firstFailure": "AssertionError: expected 'walk-0521eac9-280c-43c4-8a15-8451e54f…' to be 'keep-current' // Object.is equality",
+      "after": "ordinary passing test"
+    },
+    {
+      "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][S04] a new current walk arriving during Build must not be overwritten",
+      "before": "ordinary assertion failure",
+      "firstFailure": "AssertionError: expected 'walk-a68a4d8d-56ee-4d82-9391-5cf05e83…' to be 'newer-current' // Object.is equality",
+      "after": "ordinary passing test"
+    },
+    {
+      "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][S05] same-ID concurrent edits during Customize Build must survive",
+      "before": "ordinary assertion failure",
+      "firstFailure": "AssertionError: expected { …(9) } to deeply equal { id: 's08-existing', …(8) }",
+      "after": "ordinary passing test"
+    }
+  ],
+  "remainingExpectedFailures": [
+    {
+      "test": "S08 navigation identity gaps — no lease substitute [S08 XFAIL][I03] bare returnToPlanner flag cannot authorize arbitrary Back",
+      "status": "ordinary assertion failure, intentional",
+      "firstFailure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times"
+    },
+    {
+      "test": "S08 navigation identity gaps — no lease substitute [S08 XFAIL][I02] forged/mismatched mount token cannot resume a same-city draft",
+      "status": "ordinary assertion failure, intentional",
+      "firstFailure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times"
+    },
+    {
+      "test": "S08 navigation identity gaps — no lease substitute [S08 XFAIL][I08] Guide entry retains the complete return envelope",
+      "status": "ordinary assertion failure, intentional",
+      "firstFailure": "AssertionError: expected { citySlug: 'lubeck', …(1) } to match object { plannerReturnVersion: '1', …(2) }"
+    },
+    {
+      "test": "[S08 XFAIL][A01] distinct planning primary and city-browsing secondary in en",
+      "status": "ordinary assertion failure, intentional",
+      "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Continue planning\""
+    },
+    {
+      "test": "[S08 XFAIL][A01] distinct planning primary and city-browsing secondary in de",
+      "status": "ordinary assertion failure, intentional",
+      "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Planung fortsetzen\""
+    },
+    {
+      "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T01] primary continues to constraints without Hub push or repeated interests",
+      "status": "ordinary assertion failure, intentional",
+      "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Continue planning\""
+    },
+    {
+      "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T02] skipped interests stay empty after direct planning handoff",
+      "status": "ordinary assertion failure, intentional",
+      "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Continue planning\""
+    },
+    {
+      "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T05] constraints Back returns to confirmation rather than repeated interests",
+      "status": "ordinary assertion failure, intentional",
+      "firstFailure": "AssertionError: expected null not to be null"
+    },
+    {
+      "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][D03] midnight cannot reinterpret an earlier-day HH:MM as a new deadline",
+      "status": "ordinary assertion failure, intentional",
+      "firstFailure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times"
+    }
+  ]
+}

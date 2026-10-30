@@ -1,0 +1,5 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run --maxWorkers=2 --reporter=json --outputFile=../docs/qa/screen-flow-consolidation-2026-10-27/screen-08-android-focus-guard-2026-10-29/full-mobile-verified.json
+
+JSON report written to /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/screen-08-android-focus-guard-2026-10-29/full-mobile-verified.json

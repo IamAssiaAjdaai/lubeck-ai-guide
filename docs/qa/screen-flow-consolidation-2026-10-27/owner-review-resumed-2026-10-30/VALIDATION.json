@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-30",
+  "existing_git_visible_files_preserved": 3359,
+  "existing_changed_or_deleted_files": [],
+  "same_source_as_verified_focus_guard": 1054,
+  "original_worksheet_sha256": "c9c7ce183342f482fbb2d8a0bea98a35fa0520253fc3f6d63142351c142ece30",
+  "original_decisions_preserved": 27,
+  "D_pending": 14,
+  "merge_choice_ids": [
+    "S03",
+    "S04",
+    "S09",
+    "S10",
+    "S12"
+  ],
+  "new_review_drafts_pending": 19,
+  "Screen14": "PENDING",
+  "application_code_or_tests_changed": false,
+  "native_checks_rerun": false,
+  "commit_push_merge_deploy_delete": false,
+  "gallery": "14 comparisons,5 exact retention specs; source/provenance links and local-only worksheet"
+}

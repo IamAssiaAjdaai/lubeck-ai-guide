@@ -1,0 +1,5 @@
+e2529da8f5ed7512b53a01d8de7eb23edac890b346d7a466c03243076ade8107  mobile/src/app/city/[citySlug]/routes.tsx
+50d22f25e79e2e887a5bb9edcaf17aa6412c64aa2a526b0bfdbf576d1d644733  mobile/src/lib/publishedRoutes.ts
+ef8843ab4ec6697719aa38f63fd8c4ea19b27ade1bf2ecde81090d3498e3a3be  mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx
+fa8e0dcc6c4f1ee3fe07cd1a8bb25bbfad8d024f1631cfe176670c59f229d5ba  mobile/tests/published-routes.test.ts
+3e038c7ba512d8e4be068d8b67984f4925a2918a576145cf2aee32d25e878bdd  mobile/tests/walking-routes.test.tsx

@@ -1,0 +1,189 @@
+[
+  {
+    "text": "",
+    "content-desc": "App Icon",
+    "class": "android.widget.ImageView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,205][179,321]"
+  },
+  {
+    "text": "CITYWALK",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[221,210][441,261]"
+  },
+  {
+    "text": "Development Build",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[221,272][526,317]"
+  },
+  {
+    "text": "",
+    "content-desc": "User",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[928,232][991,295]"
+  },
+  {
+    "text": "DEVELOPMENT SERVERS",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,489][424,530]"
+  },
+  {
+    "text": "INFO",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "true",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[916,447][1042,573]"
+  },
+  {
+    "text": "CITYWALK",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[179,614][399,665]"
+  },
+  {
+    "text": "http://192.168.178.93:8091",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[179,676][543,715]"
+  },
+  {
+    "text": "",
+    "content-desc": "Chevron",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[922,638][975,691]"
+  },
+  {
+    "text": "",
+    "content-desc": "Plus",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[105,820][147,862]"
+  },
+  {
+    "text": "New development server",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[168,822][518,861]"
+  },
+  {
+    "text": "",
+    "content-desc": "Home",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[163,2227][226,2290]"
+  },
+  {
+    "text": "Home",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[152,2301][237,2340]"
+  },
+  {
+    "text": "",
+    "content-desc": "Updates",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[509,2227][572,2290]"
+  },
+  {
+    "text": "Updates",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[481,2301][599,2340]"
+  },
+  {
+    "text": "",
+    "content-desc": "Settings",
+    "class": "android.view.View",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[855,2227][918,2290]"
+  },
+  {
+    "text": "Settings",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[828,2301][944,2340]"
+  }
+]

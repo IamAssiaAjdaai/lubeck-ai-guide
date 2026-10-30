@@ -1,0 +1,6 @@
+{
+  "mobile/src/app/introduction.tsx": "bb5f1fdecbec172a3852e9aea727bf93f67e51ce9e4f8dce9c8722b31f665d34",
+  "mobile/src/lib/introductionCopy.ts": "22ec1f0f0d37c1de31a86c7195ed3dd81e23d2f9fdba9d52cb95a155b44d80a6",
+  "mobile/assets/images/introduction-sky-wash.svg": "db8159b36aca18cc4b10a58138fe71a85ed1df4f4085a022f9972a09e15300b5",
+  "mobile/tests/welcome.test.tsx": "50cde2db3ed6d19092ac5b562ca73b3d74fb9a7a9b433d66932e25c84779ee21"
+}

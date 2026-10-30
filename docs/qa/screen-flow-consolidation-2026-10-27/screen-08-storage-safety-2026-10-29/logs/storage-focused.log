@@ -1,0 +1,34 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/current-walk-observation.test.ts tests/walk-session.test.ts tests/walk-membership.test.ts tests/walk-save.test.ts tests/walk-storage.test.ts
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+ ❯ tests/walk-session.test.ts (10 tests | 1 failed) 16ms
+     × rejects replaced or corrupt drafts without starting a different session 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/walk-session.test.ts > canonical native preview start and session reset > rejects replaced or corrupt drafts without starting a different session
+AssertionError: expected [Function] to throw error including 'walk-changed' but got 'walk-storage-blocked'
+
+Expected: "walk-changed"
+Received: "walk-storage-blocked"
+
+ ❯ tests/walk-session.test.ts:61:76
+     59|     await expect(startCurrentWalk("lubeck", "old-id", [place], true, s…
+     60|     store.values.set("citywalk:native:v2:active:lubeck", "{}"); store.…
+     61|     await expect(startCurrentWalk("lubeck", "draft", [place], true, st…
+       |                                                                            ^
+     62|     expect(store.setItem).not.toHaveBeenCalled();
+     63|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 73 passed (74)
+   Start at  03:47:29
+   Duration  1.25s (transform 506ms, setup 0ms, import 750ms, tests 305ms, environment 580ms)
+

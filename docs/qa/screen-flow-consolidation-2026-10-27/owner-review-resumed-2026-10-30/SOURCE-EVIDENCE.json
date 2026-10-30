@@ -1,0 +1,302 @@
+{
+  "mobile/src/app/account/index.tsx": {
+    "current": "sources/current/mobile/src/app/account/index.tsx.txt",
+    "sha256": "226cf52452e51c916bff6c1f13ad00fb15692a464049252c6bf8bfba7ed854a4",
+    "base": "sources/base/mobile/src/app/account/index.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/city/[citySlug]/assistant.tsx": {
+    "current": "sources/current/mobile/src/app/city/[citySlug]/assistant.tsx.txt",
+    "sha256": "bd83cdfdc375cf1a37ebcf3218b34d616bca738d566667c8370bd90b9ad622f2",
+    "base": "sources/base/mobile/src/app/city/[citySlug]/assistant.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/city/[citySlug]/explore.tsx": {
+    "current": "sources/current/mobile/src/app/city/[citySlug]/explore.tsx.txt",
+    "sha256": "5b8f617d255854675af7a9e288f7b469b9fbdef3b5b6b8f9f5044a7d81041db6",
+    "base": "sources/base/mobile/src/app/city/[citySlug]/explore.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/city/[citySlug]/guide/[placeSlug].tsx": {
+    "current": "sources/current/mobile/src/app/city/[citySlug]/guide/[placeSlug].tsx.txt",
+    "sha256": "36f6202d0b4d4d9bf6bb164d3ee227c42182541831786464bc4352b955c4e093",
+    "base": "sources/base/mobile/src/app/city/[citySlug]/guide/[placeSlug].tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/city/[citySlug]/index.tsx": {
+    "current": "sources/current/mobile/src/app/city/[citySlug]/index.tsx.txt",
+    "sha256": "df8f74f52d00c2ff06ab1703813c14cee5fcacf6ceed2852c1e15ca77116a3d2",
+    "base": "sources/base/mobile/src/app/city/[citySlug]/index.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx": {
+    "current": "sources/current/mobile/src/app/city/[citySlug]/place/[placeSlug].tsx.txt",
+    "sha256": "7c7c2f93fff29a48aef53ccb8bb703dde392e2f6635d913426e305beac2ddf91",
+    "base": "sources/base/mobile/src/app/city/[citySlug]/place/[placeSlug].tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/city/[citySlug]/routes.tsx": {
+    "current": "sources/current/mobile/src/app/city/[citySlug]/routes.tsx.txt",
+    "sha256": "e2529da8f5ed7512b53a01d8de7eb23edac890b346d7a466c03243076ade8107",
+    "base": "sources/base/mobile/src/app/city/[citySlug]/routes.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/city/[citySlug]/search.tsx": {
+    "current": "sources/current/mobile/src/app/city/[citySlug]/search.tsx.txt",
+    "sha256": "504c49bc5cbcf376cc30b5779c4e3ca1d5ad3e7135f915c691e2badf2e3fce7f",
+    "base": "sources/base/mobile/src/app/city/[citySlug]/search.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx": {
+    "current": "sources/current/mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx.txt",
+    "sha256": "f118343371c16ed0ff55b370c9de6633548b335f58b70bf1e8211331ae0d7dda",
+    "base": "sources/base/mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/index.tsx": {
+    "current": "sources/current/mobile/src/app/index.tsx.txt",
+    "sha256": "32c23f617579eda1656ee7038fcf548c5292d25ffc844f7e6ef9807744855ada",
+    "base": "sources/base/mobile/src/app/index.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/app/saved.tsx": {
+    "current": "sources/current/mobile/src/app/saved.tsx.txt",
+    "sha256": "b17a9bfe2698c057bf37ee4e0ff5382ab7a3eea12710d1df2de20eab9d4b902a",
+    "base": "sources/base/mobile/src/app/saved.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/components/AccountOnboardingFrame.tsx": {
+    "current": "sources/current/mobile/src/components/AccountOnboardingFrame.tsx.txt",
+    "sha256": "8d1b190f850da73693b88c38047f2d8a71867ed3e456eaabd3deff2ba210505a",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/components/AvailableTime.tsx": {
+    "current": "sources/current/mobile/src/components/AvailableTime.tsx.txt",
+    "sha256": "f96925b72cf414f5278ce573c19f51e4341f15b8be85ca294b30802be27bad58",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/components/CityHubHero.tsx": {
+    "current": "sources/current/mobile/src/components/CityHubHero.tsx.txt",
+    "sha256": "4f9dcb7dbcdd95bc0bb602ada16b2f8d3107fd1b919d9c7ee9732247575d4264",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/components/LocationPermission.tsx": {
+    "current": "sources/current/mobile/src/components/LocationPermission.tsx.txt",
+    "sha256": "ae66aa695e9b4ea01e1569b84d330e72904b5e76af83b71f3686c9d7c96538a3",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/components/NativeCityMap.tsx": {
+    "current": "sources/current/mobile/src/components/NativeCityMap.tsx.txt",
+    "sha256": "16b72fe707a893fe6c148b6a08c2cd17a17a422384a068653ba6c6607eb41b0d",
+    "base": "sources/base/mobile/src/components/NativeCityMap.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/components/NativeWalkFlow.tsx": {
+    "current": "sources/current/mobile/src/components/NativeWalkFlow.tsx.txt",
+    "sha256": "593a0047328b70f73d75e818761a054f23bdbaa0711d70826acd3cf09f82b780",
+    "base": "sources/base/mobile/src/components/NativeWalkFlow.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/components/PublishedActiveWalk.tsx": {
+    "current": "sources/current/mobile/src/components/PublishedActiveWalk.tsx.txt",
+    "sha256": "c30a1782033013685ccc0888fa39388953cbaff81e948c8527c7429992662bdf",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/components/ReturnByTimePicker.tsx": {
+    "current": "sources/current/mobile/src/components/ReturnByTimePicker.tsx.txt",
+    "sha256": "2adf64943e3efcfb35cfe321eb0c9cc55e720118cb6c909f7562b0f132da726d",
+    "base": "sources/base/mobile/src/components/ReturnByTimePicker.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/components/SelectInterests.tsx": {
+    "current": "sources/current/mobile/src/components/SelectInterests.tsx.txt",
+    "sha256": "b2ea0124f5e66f071a727e8d2b9316146eacdae357be8594713d3f2c25223c1a",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/accountOnboardingCopy.ts": {
+    "current": "sources/current/mobile/src/lib/accountOnboardingCopy.ts.txt",
+    "sha256": "440a4e21c0146b00fd03b4ddbb930e465915ece1c9073b4e517dc9bc9f555bb6",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/activePublishedTrip.ts": {
+    "current": "sources/current/mobile/src/lib/activePublishedTrip.ts.txt",
+    "sha256": "0433477e2628cd4ceb19ab038a4a0384fc86567b72c2bda4309b6cb569bceef0",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/auth/client.ts": {
+    "current": "sources/current/mobile/src/lib/auth/client.ts.txt",
+    "sha256": "c52c499e3a3670427ed51ccae2c03de346636c489f5f0f6ba515dc4277f8d20a",
+    "base": "sources/base/mobile/src/lib/auth/client.ts.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/lib/cityAssistant.ts": {
+    "current": "sources/current/mobile/src/lib/cityAssistant.ts.txt",
+    "sha256": "89602a973018faab593d4c38fe1cf5e66a3e62846d0a519233e57edeebca41c2",
+    "base": "sources/base/mobile/src/lib/cityAssistant.ts.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/lib/cityHubRecommendations.ts": {
+    "current": "sources/current/mobile/src/lib/cityHubRecommendations.ts.txt",
+    "sha256": "f58114e4ea8cd1ebff4a72bf6498b23467d90aefaa5a7336d4243608957bd472",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/citySelectionCopy.ts": {
+    "current": "sources/current/mobile/src/lib/citySelectionCopy.ts.txt",
+    "sha256": "93309bb4e35d6f69a9e0c3f9679a5583987197940fee5e137f95c0ee738f856a",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/curatedProgressStorage.ts": {
+    "current": "sources/current/mobile/src/lib/curatedProgressStorage.ts.txt",
+    "sha256": "a3b26c6b0f8f426620a0527fbded1bfcfa6d0b5c71c71a5c12bae06035d4864e",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/explorePhotography.ts": {
+    "current": "sources/current/mobile/src/lib/explorePhotography.ts.txt",
+    "sha256": "9367b3a5da0e43dd48aa5a4862c15eaf67b9e70a664e1e1d83d31837d7410a4b",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/location.expo.ts": {
+    "current": "sources/current/mobile/src/lib/location.expo.ts.txt",
+    "sha256": "7315e30b406eb596223d8f7f0e989d23250af9e9f8e0132859bb899e3271a2af",
+    "base": "sources/base/mobile/src/lib/location.expo.ts.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/lib/location.ts": {
+    "current": "sources/current/mobile/src/lib/location.ts.txt",
+    "sha256": "4b760af7c0175b289d2a9b4a306d3e5269b2ee6cb98f894dde7d935f95887714",
+    "base": "sources/base/mobile/src/lib/location.ts.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/lib/plannerReturnIntent.ts": {
+    "current": "sources/current/mobile/src/lib/plannerReturnIntent.ts.txt",
+    "sha256": "7d8d697afb22a58ce255c2af506c45eb07902c42987f995cf2158fdb830ebc44",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/publishedRouteTiming.ts": {
+    "current": "sources/current/mobile/src/lib/publishedRouteTiming.ts.txt",
+    "sha256": "fef2f6fbbd4f05890501d1483c1cf4e8ff699678b6321105ea158902e799e346",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/publishedRoutes.ts": {
+    "current": "sources/current/mobile/src/lib/publishedRoutes.ts.txt",
+    "sha256": "50d22f25e79e2e887a5bb9edcaf17aa6412c64aa2a526b0bfdbf576d1d644733",
+    "base": null,
+    "baseline_commit": null
+  },
+  "mobile/src/lib/routing.ts": {
+    "current": "sources/current/mobile/src/lib/routing.ts.txt",
+    "sha256": "fc17b67f5bdf1486e522bd31d8945e99ed4c595cd959430113cace2564d66a04",
+    "base": "sources/base/mobile/src/lib/routing.ts.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/lib/searchHistory.ts": {
+    "current": "sources/current/mobile/src/lib/searchHistory.ts.txt",
+    "sha256": "03c10ed3886b68b07e8ea764c905f5b1c72a181adec03385a5958cfbb519b7f1",
+    "base": "sources/base/mobile/src/lib/searchHistory.ts.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/lib/tabNavigation.tsx": {
+    "current": "sources/current/mobile/src/lib/tabNavigation.tsx.txt",
+    "sha256": "c2b27feac45b20ed52da9b14ed43b8d544ba49ec3f4604dcc7f5cf6882df2b94",
+    "base": "sources/base/mobile/src/lib/tabNavigation.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/lib/travelerStyle.ts": {
+    "current": "sources/current/mobile/src/lib/travelerStyle.ts.txt",
+    "sha256": "944eeed08f9f81899d0d42f300fd101e6d5cd54707adb0a88185c80839772dd2",
+    "base": "sources/base/mobile/src/lib/travelerStyle.ts.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/lib/tripNavigation.ts": {
+    "current": "sources/current/mobile/src/lib/tripNavigation.ts.txt",
+    "sha256": "c5c49d76f962dbfd4ee91d8330fffefc06a49ac90d65147bb487a89f119fe36e",
+    "base": "sources/base/mobile/src/lib/tripNavigation.ts.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "mobile/src/lib/walkStorage.ts": {
+    "current": "sources/current/mobile/src/lib/walkStorage.ts.txt",
+    "sha256": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838",
+    "base": "sources/base/mobile/src/lib/walkStorage.ts.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/app/[locale]/[citySlug]/CityPageContent.tsx": {
+    "current": "sources/current/src/app/[locale]/[citySlug]/CityPageContent.tsx.txt",
+    "sha256": "93e9bf1f93e2ee401d94258781dc121d8bd295906d59089b2f849b70898b169c",
+    "base": "sources/base/src/app/[locale]/[citySlug]/CityPageContent.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/app/[locale]/[citySlug]/[placeSlug]/PlacePageContent.tsx": {
+    "current": "sources/current/src/app/[locale]/[citySlug]/[placeSlug]/PlacePageContent.tsx.txt",
+    "sha256": "b75d57c70c9bed57f97bf192fcbdb2daf470382d465c583cc2cf6303e4df2c68",
+    "base": "sources/base/src/app/[locale]/[citySlug]/[placeSlug]/PlacePageContent.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/app/[locale]/[citySlug]/[placeSlug]/page.tsx": {
+    "current": "sources/current/src/app/[locale]/[citySlug]/[placeSlug]/page.tsx.txt",
+    "sha256": "b29f5fbd63000fa7bc4cf131f8136285391d42ec821976746fbdfd87ba70a0c2",
+    "base": "sources/base/src/app/[locale]/[citySlug]/[placeSlug]/page.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/app/[locale]/[citySlug]/page.tsx": {
+    "current": "sources/current/src/app/[locale]/[citySlug]/page.tsx.txt",
+    "sha256": "acd702bf49ce3471a1b5ff243666d62c0446fd1d68ca798c15cf70c817ccf408",
+    "base": "sources/base/src/app/[locale]/[citySlug]/page.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/app/[locale]/lubeck/[slug]/page.tsx": {
+    "current": "sources/current/src/app/[locale]/lubeck/[slug]/page.tsx.txt",
+    "sha256": "0f80a37602faea9607c243729abfd5c1b0bd13afecb0a46b08c4e7fa664415cc",
+    "base": "sources/base/src/app/[locale]/lubeck/[slug]/page.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/app/[locale]/lubeck/page.tsx": {
+    "current": "sources/current/src/app/[locale]/lubeck/page.tsx.txt",
+    "sha256": "f83937128b158d52048497e190232458ae90c849ee66b8074b0c34946eef5658",
+    "base": "sources/base/src/app/[locale]/lubeck/page.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/app/landing-next-preview/page.tsx": {
+    "current": "sources/current/src/app/landing-next-preview/page.tsx.txt",
+    "sha256": "9f3874b06fbd2048c76bd7b5f1e20b482d104a9295fea8ff603f2f9301c2b5e7",
+    "base": "sources/base/src/app/landing-next-preview/page.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/app/landing-preview/page.tsx": {
+    "current": "sources/current/src/app/landing-preview/page.tsx.txt",
+    "sha256": "0c57ea51bfad0d1c9c71180ce9053b8f3bd6825b1c3df250970163ab00f36af1",
+    "base": "sources/base/src/app/landing-preview/page.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/app/page.tsx": {
+    "current": "sources/current/src/app/page.tsx.txt",
+    "sha256": "e77f4632440e2c99b6007a780b49fe91f02e5b20925adc36605687806cf84f99",
+    "base": "sources/base/src/app/page.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/components/landing-next/LandingNext.tsx": {
+    "current": "sources/current/src/components/landing-next/LandingNext.tsx.txt",
+    "sha256": "bd683a01cc0f387aeb7b411b0ef364c97d938c5cf373f6599a58e7f16b7ade85",
+    "base": "sources/base/src/components/landing-next/LandingNext.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  "src/components/landing/LandingPreview.tsx": {
+    "current": "sources/current/src/components/landing/LandingPreview.tsx.txt",
+    "sha256": "e0a4c993dc77f386896dbd55934afe8de2c9ebb6d54d36f5d5930776d83f1def",
+    "base": "sources/base/src/components/landing/LandingPreview.tsx.txt",
+    "baseline_commit": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  }
+}

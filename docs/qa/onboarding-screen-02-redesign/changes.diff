@@ -1,0 +1,24 @@
+--- before/mobile/src/app/introduction.tsx
++++ after/mobile/src/app/introduction.tsx
+@@ -37,7 +37,7 @@
+   const { height, width, fontScale } = useWindowDimensions();
+   const insets = useSafeAreaInsets();
+   const compact = height < 740 && fontScale <= 1.3;
+-  const collageHeight = fontScale > 1.5 ? 144 : Math.max(172, Math.min(width * 0.7, height - insets.top - insets.bottom - (compact ? 524 : 540)));
++  const collageHeight = fontScale > 1.5 ? 144 : Math.max(172, Math.min(width * 0.7, height - insets.top - insets.bottom - (compact ? 536 : 552)));
+   const [creditsOpen, setCreditsOpen] = useState(false);
+   const [creditError, setCreditError] = useState(false);
+   const discover = () => router.replace({ pathname: "/", params: { section: "cities" } });
+@@ -140,9 +140,9 @@
+   compactTitle: { fontSize: 30, lineHeight: 34 },
+   description: { color: colors.textMuted, fontSize: 15, lineHeight: 20, marginBottom: spacing.md },
+   features: { gap: 6 },
+-  feature: { flexDirection: "row", alignItems: "center", minHeight: 54, gap: 12, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: "rgba(251,253,255,0.96)" },
+-  compactFeature: { minHeight: 54 },
+-  iconTile: { width: 40, height: 40, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: colors.primarySoft },
++  feature: { flexDirection: "row", alignItems: "center", minHeight: 50, gap: 12, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: "rgba(251,253,255,0.96)" },
++  compactFeature: { minHeight: 50 },
++  iconTile: { width: 36, height: 36, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: colors.primarySoft },
+   featureCopy: { flex: 1, gap: 2 },
+   featureLabel: { fontSize: 14, lineHeight: 18, letterSpacing: -0.2 },
+   featureDescription: { color: colors.textMuted, fontSize: 11.5, lineHeight: 15 },

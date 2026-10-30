@@ -1,0 +1,242 @@
+{
+  "ROUTE": {
+    "source": "mobile/src/app/city/[citySlug]/walk.tsx",
+    "line": 13,
+    "sha256": "be4b3b65d58cbb740db235bcb6631f5c592e56ace0f2cd493e9e42afe0c21206",
+    "anchor": "export default function WalkScreen"
+  },
+  "MOUNT": {
+    "source": "mobile/src/app/city/[citySlug]/walk.tsx",
+    "line": 47,
+    "sha256": "be4b3b65d58cbb740db235bcb6631f5c592e56ace0f2cd493e9e42afe0c21206",
+    "anchor": "key={`${identity.citySlug}"
+  },
+  "STATE": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 203,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "const [interestEntryComplete"
+  },
+  "HYDRATE": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 358,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "let restored: WalkJourney"
+  },
+  "SUBSCRIBE": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 458,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "return subscribeCurrentWalk"
+  },
+  "BACK": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 473,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "const subscription = BackHandler"
+  },
+  "GPS": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 506,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "async function locate"
+  },
+  "BUILD": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 520,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "async function build()"
+  },
+  "SETTINGS": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 549,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "const settings: WalkSettings ="
+  },
+  "START": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 640,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "async function start("
+  },
+  "REBUILD": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 682,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "async function requestRebuild"
+  },
+  "CUSTOMIZE": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 906,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "const customize ="
+  },
+  "S05": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 935,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "return <SelectInterests"
+  },
+  "S06": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 942,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "return <AvailableTime"
+  },
+  "S07": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 955,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "return <LocationPermission"
+  },
+  "S08": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 965,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "return <FirstExperience"
+  },
+  "REPEAT": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 1070,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "label={t.interests}"
+  },
+  "WALKING": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 1131,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "label={t.walking}"
+  },
+  "CONSTRAINTS": {
+    "source": "mobile/src/components/NativeWalkFlow.tsx",
+    "line": 1147,
+    "sha256": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "anchor": "<SectionTitle>{t.start}</SectionTitle>"
+  },
+  "HUBRETURN": {
+    "source": "mobile/src/app/city/[citySlug]/index.tsx",
+    "line": 154,
+    "sha256": "94aec476b53bfee1414614810227da3a99722de65a6d226cae5fdbf7787abe4c",
+    "anchor": "if (params.returnToPlanner === \"1\""
+  },
+  "GUIDERETURN": {
+    "source": "mobile/src/app/city/[citySlug]/assistant.tsx",
+    "line": 13,
+    "sha256": "9bada2b7b87eb0ae00ae62554a5b313d4c580e27d5c6582bd8ccdccaeaebd44b",
+    "anchor": "export default function CityAssistantScreen"
+  },
+  "READ": {
+    "source": "mobile/src/lib/walkStorage.ts",
+    "line": 20,
+    "sha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0",
+    "anchor": "async function read("
+  },
+  "REPLAY": {
+    "source": "mobile/src/lib/walkStorage.ts",
+    "line": 55,
+    "sha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0",
+    "anchor": "export function reopenSavedWalk"
+  },
+  "CURRENT": {
+    "source": "mobile/src/lib/walkStorage.ts",
+    "line": 75,
+    "sha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0",
+    "anchor": "export async function loadCurrentWalk"
+  },
+  "WRITE": {
+    "source": "mobile/src/lib/walkStorage.ts",
+    "line": 103,
+    "sha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0",
+    "anchor": "export async function persistCurrentWalk"
+  },
+  "STARTSTORE": {
+    "source": "mobile/src/lib/walkStorage.ts",
+    "line": 125,
+    "sha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0",
+    "anchor": "export async function startCurrentWalk"
+  },
+  "CLEAR": {
+    "source": "mobile/src/lib/walkStorage.ts",
+    "line": 142,
+    "sha256": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0",
+    "anchor": "export async function clearCurrentWalk"
+  },
+  "ACCOUNTOPEN": {
+    "source": "mobile/src/lib/accountWalks.ts",
+    "line": 54,
+    "sha256": "d575398181cae964d117d54b04d0f7055de3eeb47fbfeaef3e2d291fc88f051b",
+    "anchor": "export async function loadAccountWalkForOpen"
+  },
+  "DEFAULTS": {
+    "source": "mobile/src/lib/travelerStyle.ts",
+    "line": 58,
+    "sha256": "944eeed08f9f81899d0d42f300fd101e6d5cd54707adb0a88185c80839772dd2",
+    "anchor": "export async function loadTravelerStyle"
+  },
+  "PLANNER": {
+    "source": "packages/traveler-core/src/walkPlanner.ts",
+    "line": 15,
+    "sha256": "53a4600c350b70ec68c126fe6f663930a3b4eba1bb55587fcc153429f9b0a2f4",
+    "anchor": "export type WalkSettings"
+  },
+  "MEASURE": {
+    "source": "packages/traveler-core/src/walkPlanner.ts",
+    "line": 40,
+    "sha256": "53a4600c350b70ec68c126fe6f663930a3b4eba1bb55587fcc153429f9b0a2f4",
+    "anchor": "export function measureWalk"
+  },
+  "DEADLINE": {
+    "source": "packages/traveler-core/src/walkPlanner.ts",
+    "line": 148,
+    "sha256": "53a4600c350b70ec68c126fe6f663930a3b4eba1bb55587fcc153429f9b0a2f4",
+    "anchor": "export function deadlineForToday"
+  },
+  "PICKER": {
+    "source": "mobile/src/components/ReturnByTimePicker.tsx",
+    "line": 21,
+    "sha256": "2adf64943e3efcfb35cfe321eb0c9cc55e720118cb6c909f7562b0f132da726d",
+    "anchor": "export function ReturnByTimePicker"
+  },
+  "PRESENTATION": {
+    "source": "mobile/src/components/FirstExperience.tsx",
+    "line": 21,
+    "sha256": "73280d834c4d227d2eddfe4e6d04c7fff3191410e5e6acdfcdb10139e844f858",
+    "anchor": "export function FirstExperience"
+  },
+  "ID": {
+    "source": "mobile/src/lib/tripNavigation.ts",
+    "line": 26,
+    "sha256": "c5c49d76f962dbfd4ee91d8330fffefc06a49ac90d65147bb487a89f119fe36e",
+    "anchor": "export function createMobileTripId"
+  },
+  "NAVPATTERN": {
+    "source": "mobile/src/lib/tabNavigation.tsx",
+    "line": 41,
+    "sha256": "c2b27feac45b20ed52da9b14ed43b8d544ba49ec3f4604dcc7f5cf6882df2b94",
+    "anchor": "export function useRootTabScroll"
+  },
+  "SDK_NAV": {
+    "source": "mobile/node_modules/expo-router/build/useNavigation.d.ts",
+    "line": 57,
+    "sha256": "fe3b315ef5b18bcafd06595e6e37d695d3ec4be2ac18d9a01579d472d6a42e6e",
+    "anchor": "export declare function useNavigation"
+  },
+  "SDK_POP": {
+    "source": "mobile/node_modules/expo-router/build/react-navigation/routers/StackRouter.d.ts",
+    "line": 68,
+    "sha256": "1dff67f562e248191a85018e6ebab29e9fc2e09c016c1bb017022d5253c9ad58",
+    "anchor": "pop(count?: number): void"
+  },
+  "SDK_PARAMS": {
+    "source": "mobile/node_modules/expo-router/build/react-navigation/core/types.d.ts",
+    "line": 293,
+    "sha256": "465acde8459d88b87838f43695c0cddb74dd1fb54f656634f227578c8e6667eb",
+    "anchor": "setParams(params:"
+  },
+  "SDK_GESTURE": {
+    "source": "mobile/node_modules/expo-router/build/react-navigation/native-stack/types.d.ts",
+    "line": 558,
+    "sha256": "bd4ec00bf0914512a51a7a52a9769e0ba302f6c5300c481cb69c848a4221c888",
+    "anchor": "gestureEnabled?: boolean;"
+  }
+}

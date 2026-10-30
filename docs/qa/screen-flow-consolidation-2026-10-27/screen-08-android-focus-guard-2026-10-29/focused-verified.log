@@ -1,0 +1,5 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/walk-flow.test.tsx -t Android Back focus guard --reporter=json --outputFile=../docs/qa/screen-flow-consolidation-2026-10-27/screen-08-android-focus-guard-2026-10-29/focused-verified.json
+
+JSON report written to /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/screen-08-android-focus-guard-2026-10-29/focused-verified.json

@@ -1,0 +1,1622 @@
+[
+  {
+    "ref": "refs/heads/audit/ai-grounding-safety-20261010",
+    "sha": "9f5dbe964a52d16d88bc9cc91438b2375fcea492"
+  },
+  {
+    "ref": "refs/heads/codex/347-launch-free",
+    "sha": "90c9c6d293b232f2d2e8dd323d5573f472634b2c"
+  },
+  {
+    "ref": "refs/heads/codex/admin-publishing-queue",
+    "sha": "ae4cb301869b95553ea5f23334ee86272e1d0cbb"
+  },
+  {
+    "ref": "refs/heads/codex/backend-core-contracts",
+    "sha": "5e83fb84d6f84c28924ec2f62084cc3a5bcf2687"
+  },
+  {
+    "ref": "refs/heads/codex/cloudflare-api-preview-20261022",
+    "sha": "c490437a426864df3442ef8df0b4f4fafcb69eb3"
+  },
+  {
+    "ref": "refs/heads/codex/expo-sdk57-patch-alignment",
+    "sha": "998381eb634871e8f85e687cdb9f260941e6a6ef"
+  },
+  {
+    "ref": "refs/heads/codex/historic-tour-progress",
+    "sha": "2e18b8714dc47310c81311b07813454aaa45e1e0"
+  },
+  {
+    "ref": "refs/heads/codex/landing-homepage-402-20261021",
+    "sha": "c31f1b7ea488902fa1b36d7e828398d5285ef0f2"
+  },
+  {
+    "ref": "refs/heads/codex/landing-runtime-rc",
+    "sha": "b4e2cdf030ace037cccc4ab1dd240106b072baf2"
+  },
+  {
+    "ref": "refs/heads/codex/legal-cloudflare-launch-readiness",
+    "sha": "ea7b1e192abb1bfb3c7232f8a8272672c012065e"
+  },
+  {
+    "ref": "refs/heads/codex/legal-launch-readiness",
+    "sha": "123f077b91427a5f71da54f4a8c16022b6e424c8"
+  },
+  {
+    "ref": "refs/heads/codex/legal-support-review-20261021",
+    "sha": "3e4fb745845ff230363c93784e7bed95c20b4ec2"
+  },
+  {
+    "ref": "refs/heads/codex/marketing-brand-context-sprint-01",
+    "sha": "d15be4197162a356d43ff3bc2ab27b3da911df32"
+  },
+  {
+    "ref": "refs/heads/codex/marketing-brand-onboarding",
+    "sha": "80b1bae7a6bfafc0c75a9377edff15caca227faa"
+  },
+  {
+    "ref": "refs/heads/codex/marketing-saas-auth-backend",
+    "sha": "699a63ea31c15977ed2fb9d756d3f145cc4d5cb0"
+  },
+  {
+    "ref": "refs/heads/codex/marketing-saas-auth-ui",
+    "sha": "268f2e2e40b2bdc92b9ded2972e261f66744e523"
+  },
+  {
+    "ref": "refs/heads/codex/marketing-saas-onboarding",
+    "sha": "d8fd10b2a8054651991898113139577d224b12c2"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-420-product-acceptance",
+    "sha": "4810ce7986bed93dc8b37ce83c299cb66650db2f"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-ai-02-offline-v2",
+    "sha": "4810ce7986bed93dc8b37ce83c299cb66650db2f"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-ai-qa-01-offline-acceptance",
+    "sha": "7e67061362762020f97d707898927a82c21b2994"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-brand-01-concepts",
+    "sha": "3289e31dfafb44be8d1c76d694d723fa075d4ccd"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-brand-02-green-system",
+    "sha": "684aa76ff871e4b0f825aa053849ad2c70a86860"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-consolidate-01",
+    "sha": "c48bf732213dd4f4fbbe737c9e329deea1678982"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-creative-01-foundation",
+    "sha": "4810ce7986bed93dc8b37ce83c299cb66650db2f"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-dashboard-01",
+    "sha": "cab658a5afd724cc5cac8a3e5211b104a9be3b5a"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-landing-d-artistic-clarity",
+    "sha": "4810ce7986bed93dc8b37ce83c299cb66650db2f"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-mvp-01-safe-intake",
+    "sha": "a60e64126db8b38043b100d28fa7c3c9db6ea585"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-mvp-02-local-pilot",
+    "sha": "52d4e455a9057bda1972bb01c26bf0c9de5999f4"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-mvp-03-marketing-packs",
+    "sha": "40d7bc7871603cb4df3fc3e07b57405b4c37057e"
+  },
+  {
+    "ref": "refs/heads/codex/mkt-ux-01-conversion-journey",
+    "sha": "f1986fdb4018966616ce8fd5fbdd9abcdff6604d"
+  },
+  {
+    "ref": "refs/heads/codex/mobile-expo-sdk57-patch-alignment",
+    "sha": "e9564e9be5581c61be8a1a2b8cfc495e7c604880"
+  },
+  {
+    "ref": "refs/heads/codex/mobile-release-readiness",
+    "sha": "7b78a96fa2ae274f7710a0ba3f873e3fa35bdf7e"
+  },
+  {
+    "ref": "refs/heads/codex/native-preview-api-design-20261022",
+    "sha": "e9c6c92f15b012f62b2e6ad474eb551effabde59"
+  },
+  {
+    "ref": "refs/heads/codex/next-page-export-build-fix",
+    "sha": "90c7ebdaefc83bf63239de7069678858ff498dc6"
+  },
+  {
+    "ref": "refs/heads/codex/onboarding-global-welcome",
+    "sha": "98a1dbbda17f945a0d982eb6dbc36713bad61617"
+  },
+  {
+    "ref": "refs/heads/codex/original-landing-release",
+    "sha": "88191e77e55a489804c49bccccf6307b5876b41d"
+  },
+  {
+    "ref": "refs/heads/codex/project-skills-bootstrap",
+    "sha": "d080f5186572df2c8d2e8a39d255a6a8be1f59bb"
+  },
+  {
+    "ref": "refs/heads/codex/public-beta-readiness",
+    "sha": "3679a0d6322cb7947aa185df50750f26e51fb9ab"
+  },
+  {
+    "ref": "refs/heads/codex/rc-security-readiness-387",
+    "sha": "87d44e3398242574b9071510dd04a97044992247"
+  },
+  {
+    "ref": "refs/heads/develop",
+    "sha": "4a74395838d0064e1fabf21f0f4ac3b9f951ecad"
+  },
+  {
+    "ref": "refs/heads/feat/admin-auth-0027-migration-20261024",
+    "sha": "e1e79f5c75d3bfce5a1ce13e3baa65a9997f6ddc"
+  },
+  {
+    "ref": "refs/heads/feat/android-preview-auth0",
+    "sha": "d080f5186572df2c8d2e8a39d255a6a8be1f59bb"
+  },
+  {
+    "ref": "refs/heads/feat/landing-next-planta-20261021",
+    "sha": "4a2586aab5a440254be6cfd57945d677481d4264"
+  },
+  {
+    "ref": "refs/heads/feat/marketing-ai-studio-generation-foundation",
+    "sha": "943b12c93eb6a92dace6d54bed68a0da41050e2b"
+  },
+  {
+    "ref": "refs/heads/feat/marketing-brand-context-persistence",
+    "sha": "407e98a0094e3f733241a062554fb101fedaa9f5"
+  },
+  {
+    "ref": "refs/heads/feat/marketing-business-understanding-01",
+    "sha": "ea32babcdd14960c79443b0f608df344b88ff39b"
+  },
+  {
+    "ref": "refs/heads/feat/mkt-mvp-01-website-intake",
+    "sha": "d080f5186572df2c8d2e8a39d255a6a8be1f59bb"
+  },
+  {
+    "ref": "refs/heads/fix/admin-publishing-merge",
+    "sha": "a230856a944ed8b3593766013685bbf462c75a89"
+  },
+  {
+    "ref": "refs/heads/fix/drizzle-0026-snapshot-only-20261023",
+    "sha": "1e06b02baedf9509997774a8fcc8cf208a41c412"
+  },
+  {
+    "ref": "refs/heads/fix/mobile-brace-expansion-security-20261015",
+    "sha": "48e281e3522261e1666dd1f4ceb2e100952175b3"
+  },
+  {
+    "ref": "refs/heads/fix/mobile-expo-doctor-sdk57-20261018",
+    "sha": "80ad7c309020f4f04bac0d677fd56f4d86fc607c"
+  },
+  {
+    "ref": "refs/heads/fix/mobile-expo57-doctor-patch-align-20261013",
+    "sha": "3d6949e22f71bd6036c00e89a5099b2c7fe4ded4"
+  },
+  {
+    "ref": "refs/heads/fix/mobile-shell-quote-security-20261014",
+    "sha": "5fe6b98731730166bb8130c709744864c7433efd"
+  },
+  {
+    "ref": "refs/heads/fix/mobile-source-map-js-20261014",
+    "sha": "dc08fd151688319e1040a17c33d04306d5997862"
+  },
+  {
+    "ref": "refs/heads/main",
+    "sha": "88191e77e55a489804c49bccccf6307b5876b41d"
+  },
+  {
+    "ref": "refs/heads/qa/brace-expo57-20261018",
+    "sha": "0c8a7f53bd4dd5854649702fb41dec52f592c165"
+  },
+  {
+    "ref": "refs/heads/release/citywalk-v1",
+    "sha": "695b9604c89f489548ac60b24ed287a58f11c6ee"
+  },
+  {
+    "ref": "refs/heads/review/landing-legal-integration-20261021",
+    "sha": "aec0919c2112942beaf11fd7c069acaeabb21e6c"
+  },
+  {
+    "ref": "refs/remotes/origin/DO-NOT-USE-sync-probe",
+    "sha": "3e665c2fe0110c11febbe451899880d1038e7ee0"
+  },
+  {
+    "ref": "refs/remotes/origin/HEAD",
+    "sha": "88191e77e55a489804c49bccccf6307b5876b41d"
+  },
+  {
+    "ref": "refs/remotes/origin/audit/ai-grounding-safety-20261010",
+    "sha": "0182e12319a0a7f7c002505537ab0c7f4affd723"
+  },
+  {
+    "ref": "refs/remotes/origin/beta/store",
+    "sha": "a67b7cbec1f04649b086b4d142ed4f0f2fcb73fa"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/ci-cost-guardrails-2026",
+    "sha": "145b775fc638fce17b36e2e2c68b7c9ca6c53cfa"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/citywalk-agent-v1",
+    "sha": "82d325639043e72db97d27907b567c6eb7673b89"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-deploy-dry-run",
+    "sha": "6fa5a5e3aa5cdb13a07fd553ba4e12cfb94d259a"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-deployment-audit",
+    "sha": "20410c75e324a67b9b90d87e7a42ba38e834f888"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-prebuilt-artifact",
+    "sha": "e15ef66c4fb000dc0f96691cbeacad3f7627f36a"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-production-worker-name",
+    "sha": "643fa69711bff5dca0c84e42b508a8e0af2fec49"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-remove-vercel-legacy",
+    "sha": "02e0e26892b3692ffaf645c8a7e72123ef1e65bc"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-required-runtime-bindings",
+    "sha": "84c168582e270fdf2bc4803f7621a3b0c465758c"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-required-runtime-bindings-v2",
+    "sha": "2067fcb2e123869e52c69f066a827b9af9ef3b3b"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-vinext-config",
+    "sha": "384eded977fd27e16b321ac0dec8ee6da56054bb"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-vinext-latest",
+    "sha": "c8103dbdfa6adaa3864db36a0cbe7fa1d6fe1e46"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-vinext-spike",
+    "sha": "ae33b6eedef568cf52388c6a0c962d3696d2aff9"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/cloudflare-vscode-mcp",
+    "sha": "0003ebfb23f6a13fdc0048f8ab0c1de69315e589"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/expo-sdk57-patch-alignment",
+    "sha": "9814938a8c941ca16ce1758f23cc1925f2ea4491"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/expose-cloudflare-prebuilt-workflow",
+    "sha": "fd2105a6bad6c6aeb3cd75ea6f9a1e6ddc6dd2fb"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/local-dev-startup",
+    "sha": "ac99037f826f4239126c56054e872ddbb04fa299"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/local-mobile-build-workflow",
+    "sha": "d088af90f37db31b8e288bcb413d3135ff08ecb4"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/macbook-mobile-readiness",
+    "sha": "b22e197698616222abb6669c60e8425e6e9b4393"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/mobile-production-api-origin",
+    "sha": "101df8c73122f2cde50446f0c7c883b0ade4588e"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/neon-rate-limits",
+    "sha": "5d3a69f493311f9dc35e23ca16eaa0be7f158220"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/production-env-contract",
+    "sha": "307bbb04a8d758e0654b2cdd0384b56857678a6f"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/production-origin-contract-v2",
+    "sha": "5c50969dc5f43d57382eedf73d4ec0d42cb813dc"
+  },
+  {
+    "ref": "refs/remotes/origin/chore/reduce-vercel-deployments",
+    "sha": "449a7f3c3b358cf899435fd5d369c30ba4282eba"
+  },
+  {
+    "ref": "refs/remotes/origin/ci/preview-no-deploy-readiness-20261024",
+    "sha": "3a1e3c34a9532541dc7f15201f4ff5398ce678f0"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/347-launch-free",
+    "sha": "90c9c6d293b232f2d2e8dd323d5573f472634b2c"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/admin-publishing-queue",
+    "sha": "ae4cb301869b95553ea5f23334ee86272e1d0cbb"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/backend-core-contracts",
+    "sha": "5e83fb84d6f84c28924ec2f62084cc3a5bcf2687"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/cloudflare-api-preview-20261022",
+    "sha": "c490437a426864df3442ef8df0b4f4fafcb69eb3"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/expo-sdk57-patch-alignment",
+    "sha": "998381eb634871e8f85e687cdb9f260941e6a6ef"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/historic-tour-progress",
+    "sha": "2e18b8714dc47310c81311b07813454aaa45e1e0"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/landing-homepage-402-20261021",
+    "sha": "c31f1b7ea488902fa1b36d7e828398d5285ef0f2"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/legal-cloudflare-launch-readiness",
+    "sha": "81d364c4d3d0356f2a217108be814d9d53c0bd35"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/legal-launch-readiness",
+    "sha": "30c5566c051d137566829764e9baad7e8f420c30"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/legal-support-review-20261021",
+    "sha": "cd738226cb2fd63dff4b3c7a1a1c3b9d5b1d58b2"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/marketing-brand-context-sprint-01",
+    "sha": "e0c105cb16bf7f7228d65134f3662c9826174abb"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/marketing-brand-onboarding",
+    "sha": "5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/marketing-saas-auth-backend",
+    "sha": "699a63ea31c15977ed2fb9d756d3f145cc4d5cb0"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/marketing-saas-auth-ui",
+    "sha": "268f2e2e40b2bdc92b9ded2972e261f66744e523"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/marketing-saas-onboarding",
+    "sha": "d8fd10b2a8054651991898113139577d224b12c2"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-ai-02-offline-v2",
+    "sha": "4810ce7986bed93dc8b37ce83c299cb66650db2f"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-ai-qa-01-offline-acceptance",
+    "sha": "7e67061362762020f97d707898927a82c21b2994"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-brand-01-concepts",
+    "sha": "3289e31dfafb44be8d1c76d694d723fa075d4ccd"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-brand-02-green-system",
+    "sha": "684aa76ff871e4b0f825aa053849ad2c70a86860"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-consolidate-01",
+    "sha": "c48bf732213dd4f4fbbe737c9e329deea1678982"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-dashboard-01",
+    "sha": "cab658a5afd724cc5cac8a3e5211b104a9be3b5a"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-mvp-01-safe-intake",
+    "sha": "a60e64126db8b38043b100d28fa7c3c9db6ea585"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-mvp-02-local-pilot",
+    "sha": "52d4e455a9057bda1972bb01c26bf0c9de5999f4"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-mvp-03-marketing-packs",
+    "sha": "40d7bc7871603cb4df3fc3e07b57405b4c37057e"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mkt-ux-01-conversion-journey",
+    "sha": "f1986fdb4018966616ce8fd5fbdd9abcdff6604d"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mobile-expo-sdk57-patch-alignment",
+    "sha": "e9564e9be5581c61be8a1a2b8cfc495e7c604880"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/mobile-release-readiness",
+    "sha": "092272ada6d8b7b3ee8d277e28ce726529b495a3"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/native-preview-api-design-20261022",
+    "sha": "e9c6c92f15b012f62b2e6ad474eb551effabde59"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/next-page-export-build-fix",
+    "sha": "90c7ebdaefc83bf63239de7069678858ff498dc6"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/preview-schema-fixture-20261025",
+    "sha": "639a0148244441c2f2fe41e5536a70c5308befab"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/preview-synthetic-fixture-gate-20261025",
+    "sha": "6bb06999b464d7fc509165633d362befe6efd706"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/project-skills-bootstrap",
+    "sha": "d080f5186572df2c8d2e8a39d255a6a8be1f59bb"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/public-beta-readiness",
+    "sha": "3679a0d6322cb7947aa185df50750f26e51fb9ab"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/rc-security-readiness-387",
+    "sha": "87d44e3398242574b9071510dd04a97044992247"
+  },
+  {
+    "ref": "refs/remotes/origin/design/active-walk-v2-controls",
+    "sha": "790697f9ce742205b23e767c520a3b02bc04e90f"
+  },
+  {
+    "ref": "refs/remotes/origin/design/city-hub-v1",
+    "sha": "9e37b0d7f8fb760aa07bf52f2788f2e87efd6dad"
+  },
+  {
+    "ref": "refs/remotes/origin/design/finish-walk-v2",
+    "sha": "890a8fd816ee7cbf8dc2e708e8511495808ef674"
+  },
+  {
+    "ref": "refs/remotes/origin/design/home-editorial-v1",
+    "sha": "cb41336ecc6a64375675029446e276440dac11d6"
+  },
+  {
+    "ref": "refs/remotes/origin/design/places-v2",
+    "sha": "e2cd43a02a909acca902f1ead8296d33174ec6e9"
+  },
+  {
+    "ref": "refs/remotes/origin/design/planner-return-time-picker",
+    "sha": "72cae796b10c02653adb2da5c7e79fcbbcdd4df2"
+  },
+  {
+    "ref": "refs/remotes/origin/design/planner-v2-interests",
+    "sha": "7c7d9b44b64f421d75f4c601b00249c7d57b27b1"
+  },
+  {
+    "ref": "refs/remotes/origin/design/planner-v2-start-finish",
+    "sha": "4113710e9a3c747da85b89a9278147f846751427"
+  },
+  {
+    "ref": "refs/remotes/origin/design/walk-preview-v2",
+    "sha": "32aa9ac3eeca7a40b0bc431624266fe9f9488f41"
+  },
+  {
+    "ref": "refs/remotes/origin/develop",
+    "sha": "9f8470077dfa8eb7663246905bffd3cf8a0c6591"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/api-preview-cloudflare-domain-gate-20261024",
+    "sha": "2c693aac66c0a03cc94ccf4f7d4a843e34db6df2"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/citywalk-context-engine-architecture",
+    "sha": "3582fc41b649db50402ccfe58afc1a0164235996"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/legal-data-inventory-audit-v3",
+    "sha": "6a166d594ed13a7e589670e3b5145a63dd6b03a0"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/legal-data-inventory-refresh",
+    "sha": "855b67236ba4799c4366c7cfc5e18c42cb9897f2"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/legal-data-inventory-v1",
+    "sha": "65f398606cbc11c058d8679d3393c9f5a6fec4ff"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/legal-data-inventory-v2",
+    "sha": "674f45ef643324d0698d1322620411cfa24a29b8"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/native-funnel-privacy-alignment",
+    "sha": "a44147d091720091e1e0cdf161ac573429c5b4f6"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/native-funnel-privacy-alignment-v2",
+    "sha": "635e590b982e4d1695028ed9cd8b31cd3dfec8f6"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/production-email-config",
+    "sha": "77c9d2b78989c7ae950207e74b01e1805698dff1"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/store-privacy-declarations-v1",
+    "sha": "4114f9d4120af6eea9680c700e835d83e3128264"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-data-export",
+    "sha": "7591e616c78815c9bee96747ab61dc1b5b8d3872"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-apple-revocation",
+    "sha": "b37a7d7de71f1a7a43d20d0d38179dc3b65e3d53"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-erasure-outbox",
+    "sha": "470eafce6d6a933a8819cfca2e018cb7dbecec0d"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-erasure-worker",
+    "sha": "f4fbf34fe211e4add9228017e904b912638b9d55"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-foundation",
+    "sha": "b004e1701b544c06e5d19403aa59bd6d86aa8e5e"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-local-cleanup",
+    "sha": "7eab705a0e8b73803141876f9230ba37fa0bc020"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-local-purge",
+    "sha": "838cd9991f11f07228dd93fe86c670fb424d1fac"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-public-page",
+    "sha": "c086e602378d4437e3b87ed0296750e19bee7900"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-revenuecat-erasure",
+    "sha": "fd6c1f2f1a92b4df832ebf6096e2c36e332a6caa"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-revenuecat-erasure-v1",
+    "sha": "2b8bb358ca15c6b3119262a70126ce037d71d055"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-revenuecat-erasure-v2",
+    "sha": "81b63598f6089f5acda2a8d33321df18daf9b19d"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-social-mobile",
+    "sha": "5131d9c3232b109e9797720ecead31a7e8725c47"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-social-reauth-foundation",
+    "sha": "7a16df9d754215ce31f4fd5b0a179744db86f5ce"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-web-request",
+    "sha": "742a7f30e10575adca5cbcf00ae79de8099c1b95"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-deletion-worker-schedule",
+    "sha": "3b3f72f90b37a8313dad9a6fbef1699ba0673688"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/account-lifecycle",
+    "sha": "9f39a8f07159f39e3721b217f697c76bf2c0132b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/admin-auth-0027-migration-20261024",
+    "sha": "e1e79f5c75d3bfce5a1ce13e3baa65a9997f6ddc"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/admin-console-rbac",
+    "sha": "a495c4623cda87720e777bdb05e132c20b452baf"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/admin-passkey-develop-integration-20261024",
+    "sha": "0c77432c4e647e6beb7741f086a61f8fe64531d5"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/admin-passkey-v1",
+    "sha": "36385cf33e97fc125a7b22c227571cb39d9c0e4b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/ai-guide-premium-p3",
+    "sha": "c75aa78e0b4aba8cdd8ca617c887a0ba0f9cbdc4"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/ai-tour-builder",
+    "sha": "701b4c3c2bd02b0f657accf3d35be62406fced29"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/ai-tour-context",
+    "sha": "84bfeebfcca3f2ec4e47ceb9b6f026775cde3db2"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/analytics-consent-gate",
+    "sha": "16fda6e036e22397e244b54a56960cf8695b19de"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/anonymous-visitor-sessions",
+    "sha": "7fd496440ffcdb4893189c3b56854773365b1644"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/app-icon-pack-v1",
+    "sha": "b0cfe29d8b44717c8db730bf7dc170a25b1dbd0f"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/app-icon-pack-v2-clean",
+    "sha": "a7abf6d362df1a3f6d9cae2446b1cfa8d843e874"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/arrival-detection",
+    "sha": "c3ef0ef3cc25c206710e6dd4046d97ce784b6376"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/auth-failure-observability",
+    "sha": "74898ebe69d3ce6f47de16deaf3040c081264658"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/automation-updates",
+    "sha": "b91a6a6fe0794d54b19f1bd3c995f66870fe4528"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/backup-restore-runbooks",
+    "sha": "d0cc389ebc3a9862fe94d1dbbbd0b36721c2a0b4"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/brand-system-v1",
+    "sha": "4cecb9b3adb90354c7c23468fa5beac4f19af184"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/brand-system-v2-clean",
+    "sha": "1b89f66a9213b219bec237a4abb4e5f67dddbe6b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/city-hub-compact-actions",
+    "sha": "cb561c5fc3cf9313f9564f2f7762b8a8e95843d5"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/city-hub-simplify-actions",
+    "sha": "26d012769ca1a1a69e87d62c3760254f4335af5f"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/citywalk-mobile-parity",
+    "sha": "43e1e28280aedcff55c311df2ac517dec27d74ed"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/citywalk-preview-acceptance",
+    "sha": "92dbb8b4f930ec2c870d4f9049888850c8e2d904"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/citywalk-real-data-integration",
+    "sha": "c61fbf52b0137a42169902a66647d68f8b8b9fea"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/citywalk-v2",
+    "sha": "5c5538432fb38a5ff4d55ca870d47410ac889ad0"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-city-workflow-v1",
+    "sha": "62641e1d30bdb363ae9f4bd6cd07438332388d0f"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-content-management",
+    "sha": "141cae79ca79d5f9ffaf48fc9940d821e5f53ee3"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-control-center-v1",
+    "sha": "51f6861ffe8201e3bdccabe194510e5f12142569"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-driven-city-discovery",
+    "sha": "da1d3c89e9dbfbe11e6dd3fbde756171ef90a31b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-driven-city-experience",
+    "sha": "02c9219cf7e4497e73e2730ac98e2723c1cc1df2"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-marketing-city-v1",
+    "sha": "e886f00c19476b247cbe7bb0635d3cb6c7431d61"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-marketing-public-pages-v1",
+    "sha": "12dbbba2ac01b7ca4664a1f47e818b2b477d8049"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-marketing-v1",
+    "sha": "3e665c2fe0110c11febbe451899880d1038e7ee0"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-place-location-autofill",
+    "sha": "d2d810bda521711f1dab325f8bb4b765ab6c1a85"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-place-tour-content-qa-321",
+    "sha": "f0b5f0810d1143ad013e57b43c5d8cae7b4d9b06"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/cms-traveler-place-preview",
+    "sha": "ed725acab713a50405c25000a20d9b816517d287"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/compact-suggested-walk-cards",
+    "sha": "7b5995bbeb01eb88eca6b475df60426dc556b1fd"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/content-berlin",
+    "sha": "e6beeb88f9d52dd39ee1dd82f18d08bf1cad6019"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/content-hamburg-pipeline",
+    "sha": "95e206e2f0df8fc8dbda1eb621b5b0c6fe3deb5b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/content-hamburg-readiness",
+    "sha": "aad4271465d507b411228b5fc3b3f79012ba07dc"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/content-qa-ai-review-321",
+    "sha": "262aedeac25b0c40b15f3ca87cea93051d912130"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/content-qa-bounded-guards-321",
+    "sha": "bf9379ef062286a6906016c015079e0896a7386e"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/content-qa-foundation",
+    "sha": "fa6948b1fce1b3f0126b99223d5b0fffee88c595"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/content-qa-groq-budget-321",
+    "sha": "5ed674990846327a940108985fd4bb821853c109"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/database-restore-drill-ci",
+    "sha": "9adb165cfac55c332e427af3e017d5d2e1612b53"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/editorial-workflow",
+    "sha": "74be7f988b0934d75cba2397e4252ad49cfce42c"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/email-verification",
+    "sha": "0a9fe30a52a8d430a2f91549ded68868f4d1d54d"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/example",
+    "sha": "30a0b914402e4f880a54b8a8615297eaf50fc130"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/generic-place-experience",
+    "sha": "8b93b9c3e1ecdee7a770682b1aaf198f3c56d207"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/generic-verified-ai-guide",
+    "sha": "a9edf1af7a422d2ed9dda356fc416e7d570fcf8f"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/guide-suggestion-chips",
+    "sha": "737b44eaacc4bc089ea810667793e7ce4ba77f96"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/hidden-gems",
+    "sha": "280652461f47c79fd564e585da0cfa01e1ebbb01"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/home-density-polish",
+    "sha": "e905cfcb1d9358a2630673b5a95253eec809e0a8"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/home-explore-redesign",
+    "sha": "6bd74c68454240ae5711d8403c6b76b176c7d5f0"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/interactive-map",
+    "sha": "7d3beb97c5d41d84096918352443d01533b309a8"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/landing-cities",
+    "sha": "d7c3bedd5f579f63f5b031b5ac1451eccef6eb73"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/landing-header-hero",
+    "sha": "bf018021d6264a7b706e24a9424ec2d6a9859385"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/landing-homepage-cutover",
+    "sha": "cdd276cbef27b6f04889e07525dc6fd691ab990d"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/landing-how-return",
+    "sha": "ae330c03a7589193af9f16153350c89969665fa5"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/landing-launch-faq-footer",
+    "sha": "758fae33079e966c27fa4fe72027b6f280141f67"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/landing-launch-rebase",
+    "sha": "26f6554a8421334c5d6c620afe1e391f861f5f2f"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/landing-next-planta-20261021",
+    "sha": "4a2586aab5a440254be6cfd57945d677481d4264"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/landing-production-shell",
+    "sha": "54d4a96ba9cc8eecf83ada3bd35e6b73d7ac6bc0"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/landing-stories-guide",
+    "sha": "c66cdb061b2721a3f0a8cf7059de60935418d133"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/legal-pages-foundation",
+    "sha": "7d3dc3163404980a6b581f251066ab58836c53a1"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/legal-pages-foundation-v2",
+    "sha": "ec60abb39825c0ff602e97ac72dbe382779a83b0"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/lubeck-20-places",
+    "sha": "e05a184c6895d31f1f211743ee98501f3644a711"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/lubeck-city-pass-paywall",
+    "sha": "7a1a300eeebc9b4a94a48b11ce69d09e43697d56"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-ai-studio-generation-foundation",
+    "sha": "943b12c93eb6a92dace6d54bed68a0da41050e2b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-approved-media-webhook",
+    "sha": "43759e29c3593cf585fdd56c39f3e18d31a48d7b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-automation-published-endpoint",
+    "sha": "c2ad3e830487842ba11263f9ce8868d3792556dc"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-automation-ready-endpoint",
+    "sha": "eb600620ee0468b26661654c57d8b89c1654f827"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-brand-context-persistence",
+    "sha": "407e98a0094e3f733241a062554fb101fedaa9f5"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-business-understanding-01",
+    "sha": "ea32babcdd14960c79443b0f608df344b88ff39b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-city-workspace-v1",
+    "sha": "6f7a09bb10a264b178b2a6be13a0a79ebd3d2ad8"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-cms-run-qa-321",
+    "sha": "205ac7bf754cb14fef62e4434a756e42aa5ea30b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-cms-run-qa-321-synced",
+    "sha": "80b665ecf0a39163c0c8431dc2c8637463bb1341"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-media-attachments",
+    "sha": "4a2eda88f2d6375839ab308d5d69c68059bb524b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-n8n-mock-publisher",
+    "sha": "b398f75c70fbd201723468798b31e9dae11537ba"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-performance-dashboard-v1",
+    "sha": "d2e73a9f6b1c70ba72152cf4571f13a7b62206eb"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-performance-v1",
+    "sha": "503dab5d07fe3bfedd47758cba32df1ebdb4fbfc"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/marketing-qa-verified-place-context-321",
+    "sha": "a2f17e7fe2e46e6a7abf77e6869737b67c62b8ca"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/media-library",
+    "sha": "8f2c429b7ae8322b4ed220d1fdb3b1c5e067c3c1"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/media-library-actions",
+    "sha": "a89a8d8a7ad318a876a5f86050aff82570e77b65"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/mkt-mvp-01-website-intake",
+    "sha": "d080f5186572df2c8d2e8a39d255a6a8be1f59bb"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/mobile-store-beta-readiness",
+    "sha": "db62331918ca79d4b238980c1405fc1aec3082a6"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/mon-01-subscription-entitlements",
+    "sha": "d9c667afa35c3493e0deb5be7a3153ae6fa2e364"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/mon-02-revenuecat-foundation",
+    "sha": "f42b467de826a1cbfde3c77831d1eed5eaf1d8a4"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/mon-03-revenuecat-webhook",
+    "sha": "ef87d44ef39a7938fd3d694cdb58d07cd83fcaf6"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/mon-04-revenuecat-city-pass",
+    "sha": "90390f1dd44979e7022ab12b7c35a70b6cb79c0a"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/mon-05-revenuecat-premium",
+    "sha": "0212ea6fe6517d6012888668ae82a15665749266"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/more-audio-languages",
+    "sha": "894c6041d323b5207c6cb4371827fcfcd4769952"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-analytics-consent",
+    "sha": "894f1ce8093cbbf857c755d23d5d72ec4d64bdd1"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-analytics-consent-v2",
+    "sha": "1a8241938c61196ac667303c2eeeedad1a8bfcde"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-app-handoff-v1",
+    "sha": "c6e1834e4c5785b3139c71d8ba91b3b0bfa89923"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-app-shell",
+    "sha": "399da368fe45304d3ec5d4e4dff8926ccc1d39dc"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-crash-observability",
+    "sha": "cfc010212f28d16216b410ed29870806a09a11ed"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-legal-support",
+    "sha": "97260b63a339d75f4d84e27051cb764fa801f259"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-legal-support-v2",
+    "sha": "2541924c0a35bd990d5acee8ffd1cc88dd17f3aa"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-marketing-handoff-v2",
+    "sha": "6ca5cad539ca7c67027b1fbb8307db11571359f7"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-mobile-ui-polish",
+    "sha": "e2ffe4118fee1e60f0ba4880e96aabb05f61cd11"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-preview-real-id-offline-dryrun-20261024",
+    "sha": "a8f20976f7b735f7b820e81f16bbd048604f61ae"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/native-walk-explicit-place-picker-20261025",
+    "sha": "52a7ca7555a04ddbc4a11277a01395e360be8183"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/near-me-discovery",
+    "sha": "4b9e03673308d1ea7df053afd75630efccf8cafc"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/observability-error-events",
+    "sha": "b102dd7b9d4d32da7486e562fd8db6e6cf842c04"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/observability-health-foundation",
+    "sha": "51c118caaf334a193841a4d054cece5c2645bfa0"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/offline-content-fallback-p3",
+    "sha": "423b5b8ca39eb00097ac8612df89ddece0daf4c0"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/payments-entitlements",
+    "sha": "4a30ae98ba6469c87d42bb88d7013f61a345075b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/performance-shared-traveler-core",
+    "sha": "18cc91423930ec537d05d2ac272c69f39090d60e"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/personal-walk-selection-contract-20261025",
+    "sha": "b288048042ce32412ea7ad47ea7d16e397e4e4f7"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/place-categories",
+    "sha": "ca4c21044d7b7e0dbc2b8b535cf8b403ca69f624"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/place-data-model",
+    "sha": "238b36a13a268571848af8a0699963a0836035df"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/place-detail-compact-actions",
+    "sha": "d40ea1eafcbca94f39b76641f011eb48f495f27e"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/place-detail-editorial-hierarchy",
+    "sha": "203621b753ba4561c029bdff73a5e6285c239ca8"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/place-detail-verified-sources",
+    "sha": "d15c875d81416946c97e0bda5695d50d58292a5f"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/place-distance",
+    "sha": "8dfb4a9a2b3df6774bd0578010d3d3c1ef654496"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/places-controls-polish",
+    "sha": "bbcab72cc3078f17dcab9c3b0432b0d7b35abde7"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/places-inline-membership-actions",
+    "sha": "d08f997fac42ad58d4117d2cdf06871168c2bfc4"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/postgres-drizzle-foundation",
+    "sha": "c8e6eaa0047fd6a9b886d63a6bbfa4e8d3a34e03"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/postgres-runtime-verification",
+    "sha": "975d14ae99ed74a8ecc54f7c2c6c57adfa6a7c22"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/premium-audio-p3",
+    "sha": "eb5011c944478f134c9b4e78481933a3df9fee5c"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/premium-entitlements-p3",
+    "sha": "1ec9b48d5e6cff7d019daa1c20f9c759fe0294d6"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/premium-luebeck",
+    "sha": "ad23b52798d54cae4b44ec37cebe7357ad7ec8a0"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/premium-paywall-p3",
+    "sha": "5fa2044189ce6e2fd9aa3ff09a0458551c6d2550"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/premium-ux-p0",
+    "sha": "79d61f15305b469e4fe1ccc02fc296de60a4933a"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/preview-local-tester-jwt-20261024",
+    "sha": "6ba03630cf4becf3c7a617eefda47beb9c8d80af"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/public-marketing-pages-v1",
+    "sha": "285ecc1b007f6d573dc0497eaa4290612704d27a"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/real-data-preview-policy-20261025",
+    "sha": "b5a0c644ad2a7a136e59767c53f9dbb80c73b107"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/saved-walk-account-ux",
+    "sha": "10cb4ae326f7cba82fc23463c70e031f3273e2af"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/shareable-walks-api-v1",
+    "sha": "d5fdc4c8f48868efcb5504ab7462430715e7f99c"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/shareable-walks-v1",
+    "sha": "a6c62d87d0ae92acee6ddc2ec6e802cea2d02dc2"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/smart-replanning-p3",
+    "sha": "b2c517121b7c0277d238386ac15ba3c1500ca97a"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/social-auth-google-apple",
+    "sha": "6dba447aca13e2873b52ad84aaae7f417da220dd"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/store-beta-distribution",
+    "sha": "874d1ed44ebd745471612243fb16f8e3476fb812"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/support-contact-v1",
+    "sha": "8ac4ec080054aab99e6b96e4a6c16729b15e6e8d"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/tour-preferences",
+    "sha": "770952a556bbed21e36b252b70cf9671d45ede39"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/translation-audio-ops",
+    "sha": "2c000efdc753ec26b06be12dc3606d9ec31d958d"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-discovery-p1",
+    "sha": "653d69f17ecc102e8cdad9cdbaa3804ea419fd29"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-place-detail-p1",
+    "sha": "76ea094f5ce72f9879365db6dd0c05bbb527803a"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-profile-p2",
+    "sha": "aeea4de6d8113eb372a05e6883677498b78b9e7f"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-profile-v1",
+    "sha": "2e7e96fcd635421f494b3a366e408626b4351637"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-saved-p2",
+    "sha": "04083d201fa8c48bc0969ffaa4eb181a3a863851"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-search-p1",
+    "sha": "4dbc1fe900d548bc1965e47988f7ebe8510ecfa6"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-style-defaults",
+    "sha": "62fdd034f44c654fde1f2991d30853d27a441df3"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-travel-style",
+    "sha": "0aa633324a5e53f6150c973866a8aa1bdf100174"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-trips-p2",
+    "sha": "0a2fa7ba6d1f760d6b466fde7a09d4818bac253e"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/traveler-ui-p1",
+    "sha": "b2f9ffc1204f79631e4f695a7b5f891a05b03d68"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/ui-cleanup-p0",
+    "sha": "02ce37a9b2c21220f9f2a753766e66c4e881dae5"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/user-accounts",
+    "sha": "cf055c535b0fa99f401db33e324f6ac6f602b16b"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/user-gps-location",
+    "sha": "406de50c6cc4a1a293a876e788099eff755546cb"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/verified-rag-knowledge-base",
+    "sha": "51372b3c394393a6ef5cd9e9260afe7599456ed5"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/walk-completion-p2",
+    "sha": "ddc7f64af28bf9b7a62ed2eafa79f5d65677e15a"
+  },
+  {
+    "ref": "refs/remotes/origin/feature/ai-guide",
+    "sha": "3a04963dddbf021f13f133a910ea6ea04203a0bd"
+  },
+  {
+    "ref": "refs/remotes/origin/feature/analytics",
+    "sha": "9cd98c3960d6589b2a4c5fbe8c797434691ed58e"
+  },
+  {
+    "ref": "refs/remotes/origin/feature/landmark-images",
+    "sha": "3f006e26608e77f68bb5d0f47e91d7c02365be65"
+  },
+  {
+    "ref": "refs/remotes/origin/feature/landmark-media",
+    "sha": "bb7ee25128924a7f73f11bb82ccfb3e9081ff5b0"
+  },
+  {
+    "ref": "refs/remotes/origin/feature/multilingual",
+    "sha": "e37da03687f9eab85ec8abd4fc6f50e0cd14568e"
+  },
+  {
+    "ref": "refs/remotes/origin/feature/native-shareable-walks-app-first",
+    "sha": "55c20dfb7e183cc25d7e9575e24b63c009727e07"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/account-diagnostics-qa-only",
+    "sha": "ec384d0409227cdd9d100f8460a86fdbc6b9eca2"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/active-walk-guide-context",
+    "sha": "886745383843ef12d2d0c632fb70c6fa675cafcc"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/admin-local-media-image-preview",
+    "sha": "d57b67cee01460a20ea43e0fcface4d93885ded6"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/admin-publishing-merge",
+    "sha": "a230856a944ed8b3593766013685bbf462c75a89"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/apple-signin-entitlement",
+    "sha": "09efa2f0afbb55834646710524ad256c9f1dadeb"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/better-auth-1-7-schema",
+    "sha": "15d6c649d341383dad584c659ad729f8dcb831a2"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/better-auth-1.7-account-schema",
+    "sha": "bc3ba6a568ada0a364f2439ca1e88bee0e338174"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/citywalk-native-device-acceptance",
+    "sha": "3c654fb8bf65908f24821b0ef5d5d8094bbef7c9"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/cloudflare-hyperdrive-runtime",
+    "sha": "c6ee276b45ea8a655a81a29120ac5e2b906a287c"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/cloudflare-media-portability",
+    "sha": "c58e49ca4589bef9953f3b9209912135f4a6829c"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/cms-audio-duration",
+    "sha": "15fb29325f7a8df9eead03daa0de02b7b52312cd"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/drizzle-0026-snapshot-only-20261023",
+    "sha": "1e06b02baedf9509997774a8fcc8cf208a41c412"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/guide-edge-identity-global-budget-348",
+    "sha": "9d35de7d5aa4e9a3790565430219ca871324f674"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/hide-production-build-diagnostics",
+    "sha": "b91830f2c7181c318ea05e7fea6f1d4df6855f2b"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/live-walk-entitlement-revalidation",
+    "sha": "7a209c2523a5bdc9e65b77f406815c23a1747340"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/live-walk-foreground-distance-theme",
+    "sha": "ce7ba415134a046ee3b0e9f548ac1fc5f1b4b916"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/live-walk-large-text-destination",
+    "sha": "5703abf60ad70d737049e98fe0016f207c60f0aa"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/live-walk-premium-gate-localization",
+    "sha": "c629e2b363dd2497afb15a781dab054e8f88c772"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/local-media-filesystem",
+    "sha": "1a33b47dc79d9d28cf0580a56dbf04e44cf0b99c"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/local-media-localstack",
+    "sha": "dfe06ce6a20b3ffef323e3d7d4eb0571e6003148"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/local-media-object-storage",
+    "sha": "13f2034da393318dd192d8775f5e37686bfb2e50"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/local-media-quay-images",
+    "sha": "220cbc473bed19bbfd275290a1b6d736524f0706"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/locale-selector-large-text",
+    "sha": "e2ce935dc413f5184fb696a0b95b6b9e57442456"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/map-startup-timeout",
+    "sha": "c098b8e3b7ac66eae8c5f5a2888952db8380c31e"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/mobile-brace-expansion-security-20261015",
+    "sha": "48e281e3522261e1666dd1f4ceb2e100952175b3"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/mobile-build-api-diagnostics",
+    "sha": "2890983336fd2aee902f3922b6cc3305bce38b64"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/mobile-expo-doctor-sdk57-20261018",
+    "sha": "80ad7c309020f4f04bac0d677fd56f4d86fc607c"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/mobile-expo57-doctor-patch-align-20261013",
+    "sha": "396083bd3fc16d299a2340f28ca12f809e54209a"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/mobile-provider-neutral-api-origin",
+    "sha": "56c60de86ad041b1dbedfe822035a7b275895c1a"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/mobile-shell-quote-security-20261014",
+    "sha": "5fe6b98731730166bb8130c709744864c7433efd"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/mobile-source-map-js-20261014",
+    "sha": "dc08fd151688319e1040a17c33d04306d5997862"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/native-preview-single-tester-20261024",
+    "sha": "c5fded6570eb39fe42300e1627faccc1fa99fd98"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/native-social-deep-link",
+    "sha": "d4101a7669b35259b84da2214433b26d95d5e0f6"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/native-social-error-return",
+    "sha": "6743c8527db393041ed319e6f1585559de5a9608"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/p0-compact-loading-footprint",
+    "sha": "376c5131127318f88578ec520c0272b917f422e4"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/p0-compact-native-chrome",
+    "sha": "901fe189740d5014611b73ed5140a6eca12d2868"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/p0-compact-native-header",
+    "sha": "612f37f0e000b2ac5433172223ea4f99369a3733"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/p0-loading-cleanup",
+    "sha": "cae3ac77a94d32809ed5c0c99e2d73e6510b583d"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/p0-outline-secondary-actions",
+    "sha": "6fe03d2384bd0747376c84123fac5e1158daa63e"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/p0-walk-builder-cleanup",
+    "sha": "69f0629c177fb756e76a05bb7922a39d2d013d2f"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/p0-walk-preview-cleanup",
+    "sha": "3bf780e63755c3a17e0302a20bbb7092b12417f2"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/pr159-user-scoped-travel-style",
+    "sha": "f3e44178d6179e61b6428b11a4b5fe07dda683ad"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/premium-localization-launch",
+    "sha": "eafb8a1f6e5af11f507f039b3f230468cba6a696"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/premium-traveler-copy-i18n",
+    "sha": "df9289ccd14d00cc05c16c44aac161a774789d8a"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/preview-api-origin-build-guard",
+    "sha": "9b302b99b542fe79ba39d0f1b6f83256d496a848"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/preview-deny-session-route-20261024",
+    "sha": "29b6f12ee2451fd7252a3ed4e5d29106390742ca"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/production-mobile-environment-guard",
+    "sha": "c8f7973927c5c339e71633df04d8934e54eda59c"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/public-content-authoritative-removal",
+    "sha": "6bc4408148c223df24dd0b6b23b9759d191d1e0a"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/rate-limit-integration-empty-secret",
+    "sha": "7ecb79fef800e50c46a417330e588073aac97802"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/revenuecat-annual-product-id",
+    "sha": "1da4258ed06e830666c72b31eafd5384786dce3c"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/revenuecat-annual-runtime-id",
+    "sha": "29d804737299dd832e29c77bc5187ee4b0538a87"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/revenuecat-store-product-ids",
+    "sha": "5f7232bdf8d5beb14db48e400c9d7b9ec7f852f8"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/social-auth-preview-ui",
+    "sha": "c4cae816fe81f0261132ad5f61b89cf6cf14e6e6"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/store-beta-device-polish",
+    "sha": "a1d7a3e7ead76c845d7a92d332c4a0d363a6ada3"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/v2-large-text-layout",
+    "sha": "7c06562f644882aa9fe2a577dfbd52fb65508a35"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/vinext-ssr-module-extension",
+    "sha": "c0d09580e782a4474c7ad41fb140949f9aeea50c"
+  },
+  {
+    "ref": "refs/remotes/origin/fix/web-signin-error-guidance",
+    "sha": "1defd7ca26f69dca5f69a2efe9dd4982933c70c6"
+  },
+  {
+    "ref": "refs/remotes/origin/hotfix/mobile-acceptance-followup",
+    "sha": "fb2b35d8b44c48f258d89f3dea6ef25ae6d9c569"
+  },
+  {
+    "ref": "refs/remotes/origin/integration/admin-webauthn-guard-latest-develop-20261024",
+    "sha": "157f8ffbe1e5ce8ae03ed820bdfbf141a9a86fef"
+  },
+  {
+    "ref": "refs/remotes/origin/integration/cloudflare-preview-isolated-20261024",
+    "sha": "f9c50628463c3783a2cc7a5449cdcc9bc13e602d"
+  },
+  {
+    "ref": "refs/remotes/origin/integration/homepage-403-develop-20261023",
+    "sha": "d11b2dcbf42b2e56f0ce4a506c1088ea00e6972e"
+  },
+  {
+    "ref": "refs/remotes/origin/integration/landing-402-develop-20261023",
+    "sha": "0f5f3915bcbe620ffe9d7c599488c3f9c059e15c"
+  },
+  {
+    "ref": "refs/remotes/origin/integration/legal-support-develop-20261023",
+    "sha": "350915fd6d8371448dec5fe51edd7deff9434be1"
+  },
+  {
+    "ref": "refs/remotes/origin/integration/native-api-preview-locked-20261024",
+    "sha": "100aa67dbe9e13466c0313d3cb9e216ac13c9c8c"
+  },
+  {
+    "ref": "refs/remotes/origin/integration/security-rolling-budget-tests-20261023",
+    "sha": "70c747d9bbb12670fd30e1e8a90667454a0d8a9b"
+  },
+  {
+    "ref": "refs/remotes/origin/integration/shareable-walks-v1-preview",
+    "sha": "259aac33cf9750c85ebf8955a7523ef24f12c26c"
+  },
+  {
+    "ref": "refs/remotes/origin/main",
+    "sha": "88191e77e55a489804c49bccccf6307b5876b41d"
+  },
+  {
+    "ref": "refs/remotes/origin/perf/cms-targeted-record-reads",
+    "sha": "9cbfb96ea18f9c0006933007129092927abf2b64"
+  },
+  {
+    "ref": "refs/remotes/origin/perf/dev-react-compiler",
+    "sha": "3cffd5cd4a400b29d33a8ff3e6d02d68647d4fec"
+  },
+  {
+    "ref": "refs/remotes/origin/polish/active-walk-ui",
+    "sha": "c725633a14369e91e49b890d87aa85b9534f4594"
+  },
+  {
+    "ref": "refs/remotes/origin/recovery/live-walk",
+    "sha": "05fcc02631af2a2e3c830d1998df55c32074ddc2"
+  },
+  {
+    "ref": "refs/remotes/origin/recovery/restore-citywalk-mobile-parity",
+    "sha": "094c54525fe8ef8e9cc403ff6b27f69cd01238a4"
+  },
+  {
+    "ref": "refs/remotes/origin/refactor/i18n-json",
+    "sha": "b2d872ae69417bca5f38a7d8818fd605a1529bc4"
+  },
+  {
+    "ref": "refs/remotes/origin/revert-1-feature/landmark-media",
+    "sha": "a789bf27049ef27d4a4808db02bd2ffa43bcbb38"
+  },
+  {
+    "ref": "refs/remotes/origin/revert-139-feat/citywalk-mobile-parity",
+    "sha": "0ca7a9f9116a4d335e5d491f3301d98884739039"
+  },
+  {
+    "ref": "refs/remotes/origin/revert-244-feat/traveler-ui-p1",
+    "sha": "9c8c48ae005b4b1a55994fd8eb1b091afcb27c4e"
+  },
+  {
+    "ref": "refs/remotes/origin/review/expo57-ci-extraction-20261022",
+    "sha": "d3f7869db5bf1a0fca99984fdf035ceefd4b4f1d"
+  },
+  {
+    "ref": "refs/remotes/origin/review/landing-legal-expo-ci-20261023",
+    "sha": "cfe5520d8b1f2a8ce70c09df516333ecaf6c4b7e"
+  },
+  {
+    "ref": "refs/remotes/origin/review/landing-legal-integration-20261021",
+    "sha": "aec0919c2112942beaf11fd7c069acaeabb21e6c"
+  },
+  {
+    "ref": "refs/remotes/origin/review/legal-support-ci-20261021",
+    "sha": "cd738226cb2fd63dff4b3c7a1a1c3b9d5b1d58b2"
+  },
+  {
+    "ref": "refs/remotes/origin/security/better-auth-1.7.7",
+    "sha": "ca6a28916d2a5395bc834f365167fca79d73da2b"
+  },
+  {
+    "ref": "refs/remotes/origin/security/guide-location-privacy",
+    "sha": "d027605531f13fed55e81af375ac79e0ac1d96c6"
+  },
+  {
+    "ref": "refs/remotes/origin/security/next-16.3.8",
+    "sha": "06617e2d3455a995e40cd32827a6c05560bcb5e4"
+  },
+  {
+    "ref": "refs/remotes/origin/sync/city-first-marketing-v1",
+    "sha": "3e665c2fe0110c11febbe451899880d1038e7ee0"
+  },
+  {
+    "ref": "refs/remotes/origin/sync/cms-marketing-v1-develop-20261006",
+    "sha": "3e665c2fe0110c11febbe451899880d1038e7ee0"
+  },
+  {
+    "ref": "refs/remotes/origin/sync/cms-marketing-v1-develop-head",
+    "sha": "acd7a6036fe4a292438a9821ea9a2685c03378c8"
+  },
+  {
+    "ref": "refs/remotes/origin/sync/cms-marketing-v1-work",
+    "sha": "3e665c2fe0110c11febbe451899880d1038e7ee0"
+  },
+  {
+    "ref": "refs/remotes/origin/sync/marketing-ux-city-first",
+    "sha": "3e665c2fe0110c11febbe451899880d1038e7ee0"
+  },
+  {
+    "ref": "refs/remotes/origin/test/account-deletion-e2e",
+    "sha": "9843fee70e3181c4f9511a5195e8d42e0c985fb2"
+  },
+  {
+    "ref": "refs/remotes/origin/test/content-qa-db-acceptance-321",
+    "sha": "b1baa325a009b9f1b7ee8dfe51c5cf6d6a5dc7aa"
+  },
+  {
+    "ref": "refs/remotes/origin/test/preview-hyperdrive-closed-probe-20261024",
+    "sha": "8d38df0a325878c2613d22d14e2b3fb7abbac1b4"
+  },
+  {
+    "ref": "refs/remotes/origin/tmp-ignore",
+    "sha": "3e665c2fe0110c11febbe451899880d1038e7ee0"
+  },
+  {
+    "ref": "refs/remotes/origin/tmp/p0-sync-check",
+    "sha": "cda6d8569bc54a13c05a3c6c1f9cd6ce898617c8"
+  }
+]

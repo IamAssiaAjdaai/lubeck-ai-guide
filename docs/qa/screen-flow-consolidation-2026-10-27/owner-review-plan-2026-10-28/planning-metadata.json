@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-28",
+  "sourceWorksheet": "/Users/assia/Downloads/CITYWALK-review-decisions.json",
+  "sourceSha256": "c9c7ce183342f482fbb2d8a0bea98a35fa0520253fc3f6d63142351c142ece30",
+  "exportedAt": "2026-10-28T04:20:45.479Z",
+  "counts": {
+    "KEEP NEW": 7,
+    "MERGE BEST OF BOTH": 5,
+    "REBUILD FLOW": 1,
+    "PENDING": 14
+  },
+  "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "branch": "codex/onboarding-global-welcome",
+  "implementation": false,
+  "screen14": "PENDING",
+  "dDecisions": "PENDING"
+}

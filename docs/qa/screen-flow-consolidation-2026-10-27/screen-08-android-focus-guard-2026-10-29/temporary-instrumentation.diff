@@ -1,0 +1,48 @@
+--- /private/tmp/citywalk-NativeWalkFlow-focus-fixed.tsx	2026-10-29 23:33:40
++++ /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx	2026-10-29 23:33:40
+@@ -577,6 +577,31 @@
+     router.push({ pathname: "/city/[citySlug]", params: envelope });
+   }, [routeKey, mountToken, leaseReady, citySlug, browseRequested, focusReady, navigation, router, t.invalid]);
+   useEffect(() => {
++    // TEMPORARY DIAGNOSTIC ONLY: sanitized navigation metadata, no settings/params.
++    const diagnostic = (event: string, extra: object = {}) => {
++      if (Platform.OS !== "android") return;
++      try {
++        const stack = navigation?.getState();
++        const focused = stack?.routes[stack.index];
++        const lease = focused ? plannerReturnIntents.resolve({ params: focused.params, citySlug,
++          stack, focusedRouteKey: focused.key, isFocused: true }) : undefined;
++        console.info("CW_BACK_FOCUS " + JSON.stringify({ event, owner: routeKey, ownFocused: navigation?.isFocused(),
++          cursor, stage, editingInterests, focusReady,
++          stack: stack && { key: stack.key, type: stack.type, index: stack.index,
++            routes: stack.routes.map(item => ({ key: item.key, name: item.name })) },
++          focused: focused && { key: focused.key, name: focused.name }, leaseValid: !!lease, ...extra }));
++      } catch { console.info("CW_BACK_FOCUS " + JSON.stringify({ event: "diagnostic-unavailable" })); }
++    };
++    const root = Platform.OS === "android" ? require("expo-router/build/global-state/router-store").store.navigationRef : undefined;
++    const unsubscribers = [navigation?.addListener("state", () => diagnostic("state")),
++      navigation?.addListener("focus", () => diagnostic("focus")),
++      navigation?.addListener("blur", () => diagnostic("blur")),
++      root?.addListener("__unsafe_action__", (event: any) => {
++        const action = event.data?.action;
++        diagnostic("action", { action: { type: action?.type, source: action?.source, target: action?.target,
++          count: action?.payload?.count }, noop: event.data?.noop });
++      })];
++    diagnostic("register");
+     const subscription = BackHandler.addEventListener(
+       "hardwareBackPress",
+       () => {
+@@ -600,9 +625,12 @@
+           return true;
+         }
+         return false;
++        })();
++        diagnostic("hardware-return", { consumed });
++        return consumed;
+       },
+     );
+-    return () => subscription.remove();
++    return () => { diagnostic("remove"); subscription.remove(); unsubscribers.forEach(remove => remove?.()); };
+   }, [navigation, newDraft, draftBack, storageRecovery, proposed, panel, stage, step, rebuildConfirmation, interestOnboarding, buildError, journey, savedId, addSlug]);
+   async function locate(applyResult: () => boolean = () => true) {
+     setLocating(true);
