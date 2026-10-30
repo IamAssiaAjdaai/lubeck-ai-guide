@@ -1,0 +1,67 @@
+[
+  {
+    "id": "B01",
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "case": "returns only Screen 08 city entry to its retained planner (%s, %s)",
+    "assertionLine": 215,
+    "originalAssertion": "expect(state.back).toHaveBeenCalledTimes(calls);",
+    "contextStartLine": 211,
+    "verbatimCaseContext": "it.each([[\"1\", true, 1], [undefined, true, 0], [\"1\", false, 0]] as const)(\"returns only Screen 08 city entry to its retained planner (%s, %s)\", (returnToPlanner, canGoBack, calls) => {\n  state.returnToPlanner = returnToPlanner; state.canGoBack = canGoBack; state.back.mockClear();\n  render(<CityScreen />);\n  fireEvent.click(screen.getByRole(\"button\", { name: walkCopy(state.locale).build }));\n  expect(state.back).toHaveBeenCalledTimes(calls);\n  state.returnToPlanner = undefined; state.canGoBack = true;\n});\n",
+    "sourceSha256": "37f5afb414320680354df2bd5746b1e2b26acdaa7dedc006c78029a2de09cc1c",
+    "status": "UNCHANGED; proposed revision needs owner approval",
+    "currentAssertionLine": 215,
+    "currentSourceSha256": "37f5afb414320680354df2bd5746b1e2b26acdaa7dedc006c78029a2de09cc1c"
+  },
+  {
+    "id": "B02",
+    "file": "mobile/tests/walk-flow.behavior.tsx",
+    "case": "Screen 08 preserves onboarding without generating a walk > supports Back through location/time/interests and retains choices after city entry",
+    "assertionLine": 1252,
+    "originalAssertion": "expect(mocks.routePush).toHaveBeenCalledWith({ pathname: \"/city/[citySlug]\", params: { citySlug: \"lubeck\", returnToPlanner: \"1\" } });",
+    "contextStartLine": 1225,
+    "verbatimCaseContext": "describe(\"Screen 08 preserves onboarding without generating a walk\", () => {\n  it(\"supports Back through location/time/interests and retains choices after city entry\", async () => {\n    vi.useFakeTimers({ toFake: [\"Date\"] });\n    vi.setSystemTime(new Date(\"2026-10-25T12:00:00\"));\n    mocks.guest = true; mocks.load.mockResolvedValue(undefined); mocks.persist.mockResolvedValue(undefined);\n    render(<NativeWalkFlow interestOnboarding citySlug=\"lubeck\" cityName=\"L\u00fcbeck\" places={places} />);\n    await screen.findByTestId(\"interest-entry\");\n    const t = walkCopy(\"en\");\n    fireEvent.click(screen.getByRole(\"button\", { name: \"Entry food\" }));\n    fireEvent.click(screen.getByRole(\"button\", { name: t.continue }));\n    fireEvent.click(screen.getByRole(\"button\", { name: \"Time 180\" }));\n    fireEvent.change(screen.getByLabelText(t.returnBy), { target: { value: \"23:15\" } });\n    fireEvent.click(screen.getByRole(\"button\", { name: t.continue }));\n    fireEvent.click(screen.getByRole(\"button\", { name: \"Not now\" }));\n    expect(screen.getByTestId(\"first-experience\").getAttribute(\"data-city\")).toBe(\"lubeck\");\n    expect(mocks.persist).not.toHaveBeenCalled(); expect(mocks.location).not.toHaveBeenCalled();\n    act(() => { expect(mocks.hardwareBack?.()).toBe(true); });\n    expect(screen.getByTestId(\"location-entry\")).toBeTruthy();\n    fireEvent.click(screen.getByRole(\"button\", { name: \"Location back\" }));\n    expect(screen.getByRole(\"button\", { name: \"Time 180\" }).getAttribute(\"aria-pressed\")).toBe(\"true\");\n    expect((screen.getByLabelText(t.returnBy) as HTMLInputElement).value).toBe(\"23:15\");\n    fireEvent.click(screen.getByRole(\"button\", { name: \"Time back\" }));\n    expect(screen.getByRole(\"button\", { name: \"Entry food\" }).getAttribute(\"aria-pressed\")).toBe(\"true\");\n    fireEvent.click(screen.getByRole(\"button\", { name: t.continue }));\n    fireEvent.click(screen.getByRole(\"button\", { name: t.continue }));\n    fireEvent.click(screen.getByRole(\"button\", { name: \"Not now\" }));\n    fireEvent.click(screen.getByRole(\"button\", { name: \"Explore city\" }));\n    expect(mocks.routePush).toHaveBeenCalledWith({ pathname: \"/city/[citySlug]\", params: { citySlug: \"lubeck\", returnToPlanner: \"1\" } });\n    expect(mocks.persist).not.toHaveBeenCalled();\n    fireEvent.click(screen.getByRole(\"button\", { name: t.continue }));\n    fireEvent.click(screen.getByRole(\"button\", { name: t.buildAction }));\n    await screen.findByRole(\"button\", { name: t.startWalk });\n    expect(mocks.current?.journey.citySlug).toBe(\"lubeck\");\n    expect(mocks.current?.journey.settings).toMatchObject({ minutes: 180, interests: expect.arrayContaining([\"food\"]), start: places[0].coordinates });\n    expect(mocks.current?.journey.settings.deadline).toBeTypeOf(\"number\");\n  });\n});\n",
+    "sourceSha256": "c2797f8680bcf86f5af347702dd491f2ef717e80c7565483a3f26d87145a5997",
+    "status": "UNCHANGED; proposed revision needs owner approval",
+    "currentAssertionLine": 1273,
+    "currentSourceSha256": "283b0fbde6e50cdcf7a6f64e2a62b74f4ca153383dbcb3a76b0475bb181d11c4"
+  },
+  {
+    "id": "B03",
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "case": "carries the retained-planner entry through the Guide fallback route",
+    "assertionLine": 236,
+    "originalAssertion": "expect(routeFor(screen.getByRole(\"button\", { name: walkCopy(\"en\").ask }))).toEqual({ pathname: \"/city/[citySlug]/assistant\", params: { citySlug: \"lubeck\", returnToPlanner: \"1\" } });",
+    "contextStartLine": 233,
+    "verbatimCaseContext": "it(\"carries the retained-planner entry through the Guide fallback route\", () => {\n  state.returnToPlanner = \"1\";\n  render(<CityScreen />);\n  expect(routeFor(screen.getByRole(\"button\", { name: walkCopy(\"en\").ask }))).toEqual({ pathname: \"/city/[citySlug]/assistant\", params: { citySlug: \"lubeck\", returnToPlanner: \"1\" } });\n  state.returnToPlanner = undefined;\n});\n",
+    "sourceSha256": "37f5afb414320680354df2bd5746b1e2b26acdaa7dedc006c78029a2de09cc1c",
+    "status": "UNCHANGED; proposed revision needs owner approval",
+    "currentAssertionLine": 236,
+    "currentSourceSha256": "37f5afb414320680354df2bd5746b1e2b26acdaa7dedc006c78029a2de09cc1c"
+  },
+  {
+    "id": "B04",
+    "file": "mobile/tests/native-v2-regressions.test.tsx",
+    "case": "dismisses the Guide fallback to the same hub while retaining its planner return context",
+    "assertionLine": 457,
+    "originalAssertion": "expect(JSON.parse(link.dataset.route!)).toEqual({ pathname: \"/city/[citySlug]\", params: { citySlug: \"lubeck\", section: \"places\", returnToPlanner: \"1\" } });",
+    "contextStartLine": 453,
+    "verbatimCaseContext": "it(\"dismisses the Guide fallback to the same hub while retaining its planner return context\", () => {\n  render(<CityAssistant context={{ type: \"city\", citySlug: \"lubeck\" }} returnToPlanner />);\n  const link = screen.getByRole(\"button\", { name: walkCopy(\"en\").places }).closest(\"a\")!;\n  expect(link.dataset.dismiss).toBe(\"true\");\n  expect(JSON.parse(link.dataset.route!)).toEqual({ pathname: \"/city/[citySlug]\", params: { citySlug: \"lubeck\", section: \"places\", returnToPlanner: \"1\" } });\n});\n",
+    "sourceSha256": "171342c117648684c0f738c64a6b70e685a3d5284525663d3b2b93601364c141",
+    "status": "UNCHANGED; proposed revision needs owner approval",
+    "currentAssertionLine": 457,
+    "currentSourceSha256": "171342c117648684c0f738c64a6b70e685a3d5284525663d3b2b93601364c141"
+  },
+  {
+    "id": "B05",
+    "file": "mobile/tests/city-hub-editorial-v1.test.ts",
+    "case": "Screen 09 integration boundaries > preserves virtualized places, actual tours, account ownership and planner navigation",
+    "assertionLine": 44,
+    "originalAssertion": "expect(hub).toContain('params.returnToPlanner === \"1\"');",
+    "contextStartLine": 40,
+    "verbatimCaseContext": "  it(\"preserves virtualized places, actual tours, account ownership and planner navigation\", () => {\n    expect(hub).toContain('accountInterests?.userId === userId');\n    expect(hub).toContain('suggestedTours.map');\n    expect(hub).toContain('<VirtualizedScreen');\n    expect(hub).toContain('params.returnToPlanner === \"1\"');\n    expect(hub).toContain('requestForegroundLocation');\n    expect(hub).not.toContain('UNESCO Old Town \u00b7 Hanseatic history');\n  });\n",
+    "sourceSha256": "b7e642e18b0352aa4e34fa988cd6e1158ec1358d75862bc8bd83cdac4ff4b24e",
+    "status": "UNCHANGED; proposed revision needs owner approval",
+    "currentAssertionLine": 44,
+    "currentSourceSha256": "b7e642e18b0352aa4e34fa988cd6e1158ec1358d75862bc8bd83cdac4ff4b24e"
+  }
+]

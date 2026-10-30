@@ -1,0 +1,86 @@
+[
+  {
+    "id": "T01",
+    "finding": "Current retention works only while the controller instance survives",
+    "observed": "05\u201308 and legacy steps use the same NativeWalkFlow values. No writes happen for unbuilt settings. Locale fetch deliberately keeps the same instance/data; WalkScreen key changes for city/saved/add and excludes locale. It also excludes accountSaved/source, though hydration depends on it.",
+    "sourceKey": "STATE",
+    "requiredContract": "Define normalized route scope including account/local saved source, exclude locale and transient return markers; no remount on locale/marker updates."
+  },
+  {
+    "id": "T02",
+    "finding": "Primary handoff currently exits rather than continuing",
+    "observed": "S08 onExplore sets a completion flag and pushes another Hub. Return lands on the old step-2 interests grid.",
+    "sourceKey": "S08",
+    "requiredContract": "New-draft cursor, direct confirmation\u2192constraints transition; walking/tags retained elsewhere in same controller."
+  },
+  {
+    "id": "T03",
+    "finding": "Return identity is not reliable today",
+    "observed": "Hub checks a flag and canGoBack only; this proves neither city, controller mount nor a correct target. Assistant fallback forwards only that flag.",
+    "sourceKey": "HUBRETURN",
+    "requiredContract": "Versioned transient return envelope + ephemeral live lease + exact native route key/city/mount matching; no params-only liveness proof."
+  },
+  {
+    "id": "T04",
+    "finding": "Absence, invalid storage and completed state are conflated",
+    "observed": "read catches malformed JSON as undefined. loadCurrentWalk returns undefined for invalid schema, wrong city or finishedAt. I/O can throw. Hydration catch then switches to plan.",
+    "sourceKey": "CURRENT",
+    "requiredContract": "Classify slot observation before new-draft init. Unreadable/unexpected states enter recovery, never enable overwrite as if empty."
+  },
+  {
+    "id": "T05",
+    "finding": "Queued writes are not optimistic concurrency protection",
+    "observed": "persistCurrentWalk serializes but writeCurrent can replace any existing slot. A different journey may appear during a mounted draft/build. Draft plan does not currently subscribe to slot changes.",
+    "sourceKey": "WRITE",
+    "requiredContract": "Observe raw slot revision, recheck under the same existing mutation queue before committing new preview. Preserve current record on conflict; no last-write-wins generation."
+  },
+  {
+    "id": "T06",
+    "finding": "Saved opening is a replay and may replace current slot during hydration",
+    "observed": "reopenSavedWalk resets execution and clears deadline; hydration then unconditionally persists its preview. Missing saved local IDs can fall into plan; account-open errors throw and catch also falls into plan.",
+    "sourceKey": "REPLAY",
+    "requiredContract": "Retain replay transform; handle requested-but-missing/account-failed separately. Do not silently replace a different current active/preview when opening a saved replay; retain both and present recovery/explicit existing replacement policy."
+  },
+  {
+    "id": "T07",
+    "finding": "Customize is a distinct existing planning mode",
+    "observed": "customize keeps journey, changes stage to plan and hydrates fields from settings. Original manual/GPS provenance is not stored; it sets gps=settings.start and infers finish mode.",
+    "sourceKey": "CUSTOMIZE",
+    "requiredContract": "Do not replay 05\u201308 for explicit existing-walk Customize; preserve its edit lifecycle and coordinates without claiming a saved start is a fresh GPS fix."
+  },
+  {
+    "id": "T08",
+    "finding": "HH:MM alone cannot preserve a return-by calendar intent",
+    "observed": "returnBy string survives Back, but deadlineForToday evaluates it on the current local date. After midnight, yesterday\u2019s HH:MM could become a future time today.",
+    "sourceKey": "DEADLINE",
+    "requiredContract": "Transient selected local day/time-zone metadata; day/zone change requires explicit time reconfirmation. Persist only existing absolute settings.deadline after Build."
+  },
+  {
+    "id": "T09",
+    "finding": "Build needs a synchronous single-flight/cancellation boundary",
+    "observed": "build uses mounted guards and real layout/presentation waits but no initial build-specific ref lock. React rerender alone is not a double-tap guard.",
+    "sourceKey": "BUILD",
+    "requiredContract": "One build request ticket, input snapshot, guarded commit and cancellation semantics; explicit Build only, no stale stage/record update."
+  },
+  {
+    "id": "T10",
+    "finding": "Controller Back paths are not one unified transition contract",
+    "observed": "Android handler and Screen onBack use different numeric/flag paths. Plan step3 goes to repeated interests step2; edit origin is not represented.",
+    "sourceKey": "BACK",
+    "requiredContract": "One pure target decision called by both handlers, priority for current modals, explicit edit return and permission-attempt invalidation."
+  },
+  {
+    "id": "T11",
+    "finding": "Planner estimates are not pedestrian street routes",
+    "observed": "measureWalk derives walking estimates from coordinate-to-coordinate distances and reserves a finish leg; deadline is future-today. Existing Start checks content/identity; it is not a guaranteed arrival-time replan.",
+    "sourceKey": "MEASURE",
+    "requiredContract": "Preserve existing walking-based estimates and explicit return choices. No street geometry, arrival guarantee, car/transit or automatic GPS completion."
+  },
+  {
+    "id": "T12",
+    "finding": "Account defaults cannot be repurposed as a guest draft store",
+    "observed": "Guest loadTravelerStyle returns defaults; account style supports 60/90/120/180, while AvailableTime can select 240 and hydrate 90. Preference read failure falls back to defaults.",
+    "sourceKey": "DEFAULTS",
+    "requiredContract": "Account defaults initialize only after a genuinely safe new-draft decision; never replace retained draft or auto-save 240/deadline/GPS as account defaults."
+  }
+]

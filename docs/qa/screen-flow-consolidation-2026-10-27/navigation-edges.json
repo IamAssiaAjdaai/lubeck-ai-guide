@@ -1,0 +1,218 @@
+[
+  {
+    "from": "App launch",
+    "to": "Home /",
+    "trigger": "Default Expo index; Welcome does not replace root",
+    "source": "mobile/src/app/_layout.tsx"
+  },
+  {
+    "from": "01 /welcome",
+    "to": "02 /introduction",
+    "trigger": "Get Started",
+    "source": "mobile/src/app/welcome.tsx"
+  },
+  {
+    "from": "01 /welcome",
+    "to": "04 /?section=cities",
+    "trigger": "Explore Cities",
+    "source": "mobile/src/app/welcome.tsx"
+  },
+  {
+    "from": "02 /introduction",
+    "to": "03 /account?onboarding=1",
+    "trigger": "Next",
+    "source": "mobile/src/app/introduction.tsx"
+  },
+  {
+    "from": "02 /introduction",
+    "to": "04 /?section=cities",
+    "trigger": "Explore Cities",
+    "source": "mobile/src/app/introduction.tsx"
+  },
+  {
+    "from": "03 onboarding account",
+    "to": "04 /?section=cities",
+    "trigger": "Guest leave; authentication optional",
+    "source": "mobile/src/app/account/index.tsx"
+  },
+  {
+    "from": "04 selection",
+    "to": "09 /city/:citySlug",
+    "trigger": "Available city only",
+    "source": "mobile/src/app/index.tsx"
+  },
+  {
+    "from": "Home /",
+    "to": "04 /?section=cities",
+    "trigger": "Explore tab; focused selection variant",
+    "source": "mobile/src/components/NativeChrome.tsx"
+  },
+  {
+    "from": "09 City Hub",
+    "to": "05 /walk interests",
+    "trigger": "Build My Walk when no retained journey",
+    "source": "mobile/src/app/city/[citySlug]/index.tsx"
+  },
+  {
+    "from": "09 City Hub",
+    "to": "Custom preview / active",
+    "trigger": "Build My Walk restores current city journey instead of new draft",
+    "source": "mobile/src/components/NativeWalkFlow.tsx"
+  },
+  {
+    "from": "05 Interests",
+    "to": "06 Available Time",
+    "trigger": "Continue / Skip; same mounted controller",
+    "source": "mobile/src/components/NativeWalkFlow.tsx"
+  },
+  {
+    "from": "06 Available Time",
+    "to": "07 Location",
+    "trigger": "Continue / Skip current budget",
+    "source": "mobile/src/components/NativeWalkFlow.tsx"
+  },
+  {
+    "from": "07 Location",
+    "to": "08 First Experience",
+    "trigger": "Explicit permission success OR Not now",
+    "source": "mobile/src/components/NativeWalkFlow.tsx"
+  },
+  {
+    "from": "08 First Experience",
+    "to": "09 City Hub",
+    "trigger": "Explore city; returnToPlanner=1, planner kept underneath",
+    "source": "mobile/src/components/NativeWalkFlow.tsx"
+  },
+  {
+    "from": "09 returnToPlanner=1",
+    "to": "Planner interests/walking (step 2)",
+    "trigger": "Build My Walk goes back when stack exists",
+    "source": "mobile/src/app/city/[citySlug]/index.tsx"
+  },
+  {
+    "from": "Planner interests/walking (step 2)",
+    "to": "Planner start/end (step 3)",
+    "trigger": "Continue; next manual/GPS start, end/loop constraints",
+    "source": "mobile/src/components/NativeWalkFlow.tsx"
+  },
+  {
+    "from": "Planner start/end (step 3)",
+    "to": "Custom preview",
+    "trigger": "Explicit Build → shared planner → persistCurrentWalk preview",
+    "source": "mobile/src/components/NativeWalkFlow.tsx"
+  },
+  {
+    "from": "Custom preview",
+    "to": "Custom Active Walk",
+    "trigger": "Explicit Start Walk; separate from curated route",
+    "source": "mobile/src/components/NativeWalkFlow.tsx"
+  },
+  {
+    "from": "Custom Active Walk",
+    "to": "Custom finished",
+    "trigger": "Manual progression/end and feedback/save/share",
+    "source": "mobile/src/components/NativeWalkFlow.tsx"
+  },
+  {
+    "from": "09 City Hub",
+    "to": "10 Explore Places",
+    "trigger": "Explore places; Near me sorts after optional location",
+    "source": "mobile/src/app/city/[citySlug]/index.tsx"
+  },
+  {
+    "from": "09 City Hub",
+    "to": "City Assistant fallback",
+    "trigger": "Ask CITYWALK; no city-wide answer contract",
+    "source": "mobile/src/app/city/[citySlug]/assistant.tsx"
+  },
+  {
+    "from": "09 City Hub",
+    "to": "13 Route Preview",
+    "trigger": "Suggested route",
+    "source": "mobile/src/app/city/[citySlug]/index.tsx"
+  },
+  {
+    "from": "13 Route Preview",
+    "to": "12 Walking Routes",
+    "trigger": "All walking routes; reverse collection discovery",
+    "source": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx"
+  },
+  {
+    "from": "12 Walking Routes",
+    "to": "13 Route Preview",
+    "trigger": "Select published route",
+    "source": "mobile/src/app/city/[citySlug]/routes.tsx"
+  },
+  {
+    "from": "13 Route Preview",
+    "to": "11 Place Detail",
+    "trigger": "Stop/detail links without trip context",
+    "source": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx"
+  },
+  {
+    "from": "13 Route Preview",
+    "to": "Candidate Active Walk (unapproved)",
+    "trigger": "Start Walk → place URL with published trip context",
+    "source": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx"
+  },
+  {
+    "from": "10 Explore Places",
+    "to": "City Search",
+    "trigger": "Search entry opens separate route",
+    "source": "mobile/src/app/city/[citySlug]/explore.tsx"
+  },
+  {
+    "from": "10 Explore Places",
+    "to": "11 Place Detail",
+    "trigger": "Place link; saves/adds are distinct actions",
+    "source": "mobile/src/app/city/[citySlug]/explore.tsx"
+  },
+  {
+    "from": "City Search",
+    "to": "11 Place Detail",
+    "trigger": "Place selection with city recent search history",
+    "source": "mobile/src/app/city/[citySlug]/search.tsx"
+  },
+  {
+    "from": "11 Place Detail",
+    "to": "Place-scoped Guide",
+    "trigger": "Eligibility-gated Ask CITYWALK",
+    "source": "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx"
+  },
+  {
+    "from": "11 Place Detail",
+    "to": "Custom planner",
+    "trigger": "Add to my walk integrates current draft/journey",
+    "source": "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx"
+  },
+  {
+    "from": "Trips tab",
+    "to": "/saved?view=trips",
+    "trigger": "Custom active/saved/legacy walks; not a route catalog",
+    "source": "mobile/src/app/saved.tsx"
+  },
+  {
+    "from": "Saved tab",
+    "to": "/saved",
+    "trigger": "Place favorites and saved walks view",
+    "source": "mobile/src/app/saved.tsx"
+  },
+  {
+    "from": "Profile tab",
+    "to": "/profile → /account",
+    "trigger": "Profile summary / account management",
+    "source": "mobile/src/app/profile.tsx"
+  },
+  {
+    "from": "Profile",
+    "to": "Legal → Photo Credits",
+    "trigger": "Guest accessible; external legal publication policy separate",
+    "source": "mobile/src/app/legal.tsx"
+  },
+  {
+    "from": "Premium",
+    "to": "Account / native purchase",
+    "trigger": "Only purchase entitlement flow needs sign-in; basic discovery exit retained",
+    "source": "mobile/src/app/premium.tsx"
+  }
+]

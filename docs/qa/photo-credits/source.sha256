@@ -1,0 +1,6 @@
+fed9e93d8f9f96d65ad29d2b04ef02a46fa3612de8a9b32417e50f74f6b71f07  mobile/src/app/city/[citySlug]/place/[placeSlug].tsx
+66919b43b4bae029f77c0664457c907f0617e5591e0bc54fb435cad3aa0a011b  mobile/src/app/legal.tsx
+c7a8ddb25fb8da7ded06cb9a2b4b275ba27cec61c7351cb6772d457464f3029d  mobile/src/app/photo-credits.tsx
+86f59f5709ccba030f376776a437f7127823ad00b581a007f5e3957ce2112556  mobile/src/lib/photoCredits.ts
+980f84f3868df3f11cf206f660317a65354e255a76986fcb36f42255b40e6cb4  mobile/tests/photo-credits.test.tsx
+171342c117648684c0f738c64a6b70e685a3d5284525663d3b2b93601364c141  mobile/tests/native-v2-regressions.test.tsx

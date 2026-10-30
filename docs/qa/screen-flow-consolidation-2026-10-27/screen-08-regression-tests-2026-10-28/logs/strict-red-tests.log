@@ -1,0 +1,836 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/walk-flow.test.tsx tests/city-hub-actions.test.tsx tests/first-experience.test.tsx tests/screen-08-persistence-regressions.test.ts --testNamePattern=S08 XFAIL --reporter=default --reporter=json --outputFile=../docs/qa/screen-flow-consolidation-2026-10-27/screen-08-regression-tests-2026-10-28/logs/strict-red-results.json
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+ ❯ tests/screen-08-persistence-regressions.test.ts (11 tests | 1 failed | 10 skipped) 5ms
+     ↓ [S08 BASELINE][S01] absent/tombstone null reads without writing
+     ↓ [S08 BASELINE][S01] absent/tombstone null reads without writing
+     ↓ [S08 BASELINE][S02] I/O read rejection propagates and cannot mutate bytes
+     ↓ [S08 BASELINE][S03] completed is not active while valid phase-less legacy remains active
+     ↓ [S08 PASS][E02] saved replay resets execution/deadline and stores preview without mutating source
+     ↓ [S08 PASS][E05] stale confirmed rebuild cannot clear same-ID changed current or another city
+     × [S08 XFAIL][S07] corrupt slot cannot be cleared under an absent-slot expectation 4ms
+     ↓ [S08 BASELINE][S06] failed write never notifies preview success; a real retry succeeds
+     ↓ [S08 PASS][D02] actual deadline parser rejects past/invalid, normalizes digits, and does not create tomorrow
+     ↓ [S08 PASS][D05] actual shared planner reserves walking return and applies real deadline budget
+     ↓ [S08 BASELINE][G04] preview persists as preview; explicit Start is idempotent and identity guarded
+ ❯ tests/first-experience.test.tsx (5 tests | 2 failed | 3 skipped) 131ms
+     ↓ uses the selected available city without claiming a route exists in en
+     ↓ uses the selected available city without claiming a route exists in de
+     ↓ does not offer city entry for an unavailable city
+   × [S08 XFAIL][A01] distinct planning primary and city-browsing secondary in en 110ms
+   × [S08 XFAIL][A01] distinct planning primary and city-browsing secondary in de 19ms
+ ❯ tests/city-hub-actions.test.tsx (22 tests | 3 failed | 19 skipped) 105ms
+     ↓ offers three secondary shortcuts and one primary builder in en
+     ↓ offers three secondary shortcuts and one primary builder in de
+     ↓ offers three secondary shortcuts and one primary builder in da
+     ↓ offers three secondary shortcuts and one primary builder in sv
+     ↓ offers three secondary shortcuts and one primary builder in nl
+     ↓ offers three secondary shortcuts and one primary builder in es
+     ↓ offers three secondary shortcuts and one primary builder in ar
+     ↓ adapts three actions live to larger text at width 320 without clamping labels
+     ↓ adapts three actions live to larger text at width 390 without clamping labels
+     ↓ adapts three actions live to larger text at width 430 without clamping labels
+     ↓ keeps the Explore root navigation shell and does not hardcode a city into actions
+     ↓ scrolls Places to the measured list section without requesting GPS
+     ↓ requests location only on tap, prevents duplicate taps while busy, and sorts published coordinates
+     ↓ keeps browsing available after denied location without inventing a nearby order
+   ↓ returns only Screen 08 city entry to its retained planner (1, true)
+   ↓ returns only Screen 08 city entry to its retained planner (undefined, true)
+   ↓ returns only Screen 08 city entry to its retained planner (1, false)
+   ↓ loads preference defaults only for the current authenticated owner and remains guest accessible
+   ↓ carries the retained-planner entry through the Guide fallback route
+     × [S08 XFAIL][I03] bare returnToPlanner flag cannot authorize arbitrary Back 81ms
+     × [S08 XFAIL][I02] forged/mismatched mount token cannot resume a same-city draft 11ms
+     × [S08 XFAIL][I08] Guide entry retains the complete return envelope 12ms
+ ❯ tests/walk-flow.test.tsx (102 tests | 9 failed | 93 skipped) 566ms
+     ↓ uses only the active CITYWALK user's style for a brand-new walk
+     ↓ uses launch defaults for a guest instead of another account's saved style
+     ↓ does not reapply Profile defaults to an existing preview
+     ↓ revalidates the plan when its last stop disappears during Start authorization
+     ↓ keeps the exact preview when Start authorization is dismissed, then starts once authorized
+     ↓ plans, previews, saves and starts in en
+     ↓ plans, previews, saves and starts in de
+     ↓ plans, previews, saves and starts in da
+     ↓ plans, previews, saves and starts in sv
+     ↓ plans, previews, saves and starts in nl
+     ↓ plans, previews, saves and starts in es
+     ↓ plans, previews, saves and starts in ar
+     ↓ retains the itinerary until a shortening proposal is confirmed
+     ↓ records visited highlights, finish feedback and native share requests
+     ↓ handles denied GPS and invalid return-by without generating a route
+     ↓ confirms a return-only route without losing visited history
+     ↓ offers a closable Add stop sheet and confirms one addition in en
+     ↓ offers a closable Add stop sheet and confirms one addition in de
+     ↓ explains a rejected Add stop inside the sheet and lets the traveler close it
+     ↓ opens a place-detail add request as a proposal, without silently changing the route
+     ↓ updates an open preview after another screen removes a stop
+     ↓ updates an active stop and discards a stale proposal after external membership changes
+     ↓ clears a mounted route when its current walk finishes elsewhere
+     ↓ does not enter active mode when the start write fails
+     ↓ keeps a failed save visible without blocking the route
+     ↓ binds Listen, Read and Ask to holstentor, then the next stop
+     ↓ binds Listen, Read and Ask to marienkirche, then the next stop
+     ↓ keeps completed local planning visible until its native presentation finishes
+     ↓ shows actual build stages before preview without percentage or delayed completion
+     ↓ keeps the current native walk mounted through a locale content fetch
+     ↓ separates content fetch from real planner progress in en
+     ↓ separates content fetch from real planner progress in de
+     ↓ separates content fetch from real planner progress in ar
+     ↓ immediately disables Start when the last stop is removed and offers rebuild
+     ↓ restores preview [] with safe empty/unresolved recovery
+     ↓ restores preview [ 'missing' ] with safe empty/unresolved recovery
+     ↓ keeps loading distinct and re-enables a valid preview after refreshed content arrives
+     ↓ shows recovery rather than indefinite loading after a preview content failure
+     ↓ keeps the preview unchanged when rebuild confirmation is cancelled
+     ↓ keeps a failed reset and its recovery feedback visible inside confirmation
+     ↓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in en
+     ↓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in de
+     ↓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in da
+     ↓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in sv
+     ↓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in nl
+     ↓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in es
+     ↓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in ar
+     ↓ offers true rebuild after an empty calculation rather than retrying its previous inputs
+     ↓ disables zero-stop Save and explains recovery in en
+     ↓ disables zero-stop Save and explains recovery in de
+     ↓ disables zero-stop Save and explains recovery in da
+     ↓ disables zero-stop Save and explains recovery in sv
+     ↓ disables zero-stop Save and explains recovery in nl
+     ↓ disables zero-stop Save and explains recovery in es
+     ↓ disables zero-stop Save and explains recovery in ar
+     ↓ rechecks a stale enabled button against the current persisted empty route
+     ↓ keeps Save unavailable during content loading without calling the plan empty
+     ↓ opens an old empty saved record with blocked Start/Save and recovery, without purging it
+     ↓ saves a finished itinerary with zero remaining stops and preserves the original visit
+     ↓ reopened route shows Saved, a changed route shows Update, and external removal resets Save
+   ↓ guest Save opens a cancelable gate without changing current walk or permanent records
+   ↓ guest gate pushes sign-up without resetting or saving the walk
+   ↓ guest gate pushes sign-in without resetting or saving the walk
+     ↓ resumes an existing walk without reopening optional personalization
+     ↓ keeps guest selections in the current city and existing planner contract
+     ↓ skips with no interest filter and never writes account defaults
+     ↓ retains duration and interests when returning to Screen 05
+     ↓ changes actual suggested stops when the duration budget changes
+     ↓ does not request permission on entry or Not now
+     ↓ applies an explicitly requested fix to the actual route start
+     ↓ keeps manual discovery available after denied
+     ↓ keeps manual discovery available after services_disabled
+     ↓ keeps manual discovery available after provider_unavailable
+     ↓ keeps manual discovery available after fix_failed
+     ↓ keeps manual discovery available after error
+     ↓ ignores a late fix after Not now
+   ↓ connects the return-by input to a deadline budget including the walking return leg
+     ↓ supports Back through location/time/interests and retains choices after city entry
+     × [S08 XFAIL][T01] primary continues to constraints without Hub push or repeated interests 103ms
+     × [S08 XFAIL][T02] skipped interests stay empty after direct planning handoff 26ms
+     × [S08 XFAIL][T05] constraints Back returns to confirmation rather than repeated interests 44ms
+     ↓ [S08 BASELINE][R04] hydrated 90 can change to 240 without account-default persistence
+     ↓ [S08 PASS][E01] guest current preview resumes without introductory screens or writes
+     ↓ [S08 PASS][E01] guest current active resumes without introductory screens or writes
+     ↓ [S08 BASELINE][T07] Customize retains built journey identity and does not open new interests/location/08
+     × [S08 XFAIL][S02] storage I/O failure blocks fresh personalization rather than masquerading as no walk 6ms
+     × [S08 XFAIL][E03] missing saved ID cannot silently become a new planning session 6ms
+     × [S08 XFAIL][E04] opening saved replay cannot silently replace another unfinished current walk 20ms
+     × [S08 XFAIL][S04] a new current walk arriving during Build must not be overwritten 125ms
+     × [S08 XFAIL][S05] same-ID concurrent edits during Customize Build must survive 128ms
+     ↓ [S08 BASELINE][S06] failed preview write retains constraints and can retry without false success
+     × [S08 XFAIL][D03] midnight cannot reinterpret an earlier-day HH:MM as a new deadline 108ms
+     ↓ [S08 PASS][C03] all finish modes map to actual planner settings
+     ↓ [S08 PASS][T03] time Skip preserves chosen duration and return-by through Back
+     ↓ [S08 PASS][C02] actual manual start retains manual fallback and correct coordinates
+     ↓ [S08 PASS][C02] actual gps start retains manual fallback and correct coordinates
+     ↓ [S08 PASS][C02] actual denied start retains manual fallback and correct coordinates
+     ↓ [S08 PASS][P01] late fix after skip cannot update a retired request or replacement draft
+     ↓ [S08 PASS][P01] late fix after back cannot update a retired request or replacement draft
+     ↓ [S08 PASS][P01] late fix after remount cannot update a retired request or replacement draft
+   ↓ [S08 BASELINE][C01] legacy walking/category controls reach the actual shared planner
+   ↓ [S08 PASS][C03] a removed destination is rejected without preview or persistence
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/city-hub-actions.test.tsx > S08 navigation identity gaps — no lease substitute > [S08 XFAIL][I03] bare returnToPlanner flag cannot authorize arbitrary Back
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ tests/city-hub-actions.test.tsx:247:28
+    245|     render(<CityScreen />);
+    246|     fireEvent.click(screen.getByRole("button", { name: walkCopy("en").…
+    247|     expect(state.back).not.toHaveBeenCalled();
+       |                            ^
+    248|   });
+    249|   s08NavigationGap("[S08 XFAIL][I02] forged/mismatched mount token can…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+ FAIL  tests/city-hub-actions.test.tsx > S08 navigation identity gaps — no lease substitute > [S08 XFAIL][I02] forged/mismatched mount token cannot resume a same-city draft
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ tests/city-hub-actions.test.tsx:254:28
+    252|     render(<CityScreen />);
+    253|     fireEvent.click(screen.getByRole("button", { name: walkCopy("en").…
+    254|     expect(state.back).not.toHaveBeenCalled();
+       |                            ^
+    255|   });
+    256|   s08NavigationGap("[S08 XFAIL][I08] Guide entry retains the complete …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+ FAIL  tests/city-hub-actions.test.tsx > S08 navigation identity gaps — no lease substitute > [S08 XFAIL][I08] Guide entry retains the complete return envelope
+AssertionError: expected { citySlug: 'lubeck', …(1) } to match object { plannerReturnVersion: '1', …(2) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "plannerDraftToken": "draft-mount",
+-   "plannerReturnVersion": "1",
+-   "plannerRouteKey": "walk-route",
++   "citySlug": "lubeck",
++   "returnToPlanner": "1",
+  }
+
+ ❯ tests/city-hub-actions.test.tsx:260:87
+    258|     state.s08ReturnParams = { plannerReturnVersion: "1", plannerRouteK…
+    259|     render(<CityScreen />);
+    260|     expect(routeFor(screen.getByRole("button", { name: walkCopy("en").…
+       |                                                                                       ^
+    261|   });
+    262| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/15]⎯
+
+ FAIL  tests/first-experience.test.tsx > [S08 XFAIL][A01] distinct planning primary and city-browsing secondary in en
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "Continue planning"
+
+Here are the accessible roles:
+
+  button:
+
+  Name "Back":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Back"[39m
+    [33mrole[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Language":
+  [36m<button />[39m
+
+  Name "Credits: Test City":
+  [36m<button />[39m
+
+  Name "Explore Test City":
+  [36m<button />[39m
+
+  --------------------------------------------------
+  img:
+
+  Name "Test City":
+  [36m<img[39m
+    [33malt[39m=[32m"Test City"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "You're all set!":
+  [36m<h1 />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Back"[39m
+            [33mrole[39m=[32m"button"[39m
+          [36m/>[39m
+          [36m<button>[39m
+            [0mLanguage[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section>[39m
+          [36m<div>[39m
+            [36m<img[39m
+              [33malt[39m=[32m"Test City"[39m
+            [36m/>[39m
+            [36m<button>[39m
+              [0mCredits: [0m
+              [0mTest City[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div />[39m
+          [36m<h1>[39m
+            [0mYou're all set![0m
+          [36m</h1>[39m
+          [36m<span>[39m
+            [0mStart exploring Test City at your own pace. Your choices are ready when you build a walk.[0m
+          [36m</span>[39m
+        [36m</section>[39m
+        [36m<div>[39m
+          [36m<button>[39m
+            [0mExplore Test City[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/first-experience.test.tsx:55:27
+     53|   state.locale = locale;
+     54|   render(<FirstExperience citySlug="test-city" cityName="Test City" on…
+     55|   const planning = screen.getByRole("button", { name: locale === "en" …
+       |                           ^
+     56|   const browse = screen.getByRole("button", { name: firstExperienceCop…
+     57|   expect(planning).not.toBe(browse);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/15]⎯
+
+ FAIL  tests/first-experience.test.tsx > [S08 XFAIL][A01] distinct planning primary and city-browsing secondary in de
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "Planung fortsetzen"
+
+Here are the accessible roles:
+
+  button:
+
+  Name "Zurück":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Zurück"[39m
+    [33mrole[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Language":
+  [36m<button />[39m
+
+  Name "Credits: Test City":
+  [36m<button />[39m
+
+  Name "Test City entdecken":
+  [36m<button />[39m
+
+  --------------------------------------------------
+  img:
+
+  Name "Test City":
+  [36m<img[39m
+    [33malt[39m=[32m"Test City"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "Du bist startklar!":
+  [36m<h1 />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Zurück"[39m
+            [33mrole[39m=[32m"button"[39m
+          [36m/>[39m
+          [36m<button>[39m
+            [0mLanguage[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section>[39m
+          [36m<div>[39m
+            [36m<img[39m
+              [33malt[39m=[32m"Test City"[39m
+            [36m/>[39m
+            [36m<button>[39m
+              [0mCredits: [0m
+              [0mTest City[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div />[39m
+          [36m<h1>[39m
+            [0mDu bist startklar![0m
+          [36m</h1>[39m
+          [36m<span>[39m
+            [0mEntdecke Test City in deinem Tempo. Deine Auswahl bleibt für die Planung erhalten.[0m
+          [36m</span>[39m
+        [36m</section>[39m
+        [36m<div>[39m
+          [36m<button>[39m
+            [0mTest City entdecken[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/first-experience.test.tsx:55:27
+     53|   state.locale = locale;
+     54|   render(<FirstExperience citySlug="test-city" cityName="Test City" on…
+     55|   const planning = screen.getByRole("button", { name: locale === "en" …
+       |                           ^
+     56|   const browse = screen.getByRole("button", { name: firstExperienceCop…
+     57|   expect(planning).not.toBe(browse);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/15]⎯
+
+ FAIL  tests/screen-08-persistence-regressions.test.ts > S08 persistence regression boundaries (real production contracts) > [S08 XFAIL][S07] corrupt slot cannot be cleared under an absent-slot expectation
+AssertionError: promise resolved "undefined" instead of rejecting
+
+- Expected:
+Error {
+  "message": "rejected promise",
+}
+
++ Received:
+undefined
+
+ ❯ tests/screen-08-persistence-regressions.test.ts:77:61
+     75|   s08StorageGap("[S08 XFAIL][S07] corrupt slot cannot be cleared under…
+     76|     const store = memory(); store.values.set(slot, "{broken-json");
+     77|     await expect(clearCurrentWalk("city", undefined, store)).rejects.t…
+       |                                                             ^
+     78|     expect(store.values.get(slot)).toBe("{broken-json"); expect(store.…
+     79|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/15]⎯
+
+ FAIL  tests/walk-flow.test.tsx > S08 approved-flow regression contract (production unchanged) > [S08 XFAIL][T01] primary continues to constraints without Hub push or repeated interests
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "Continue planning"
+
+Here are the accessible roles:
+
+  button:
+
+  Name "Explore city":
+  [36m<button />[39m
+
+  Name "Entry back":
+  [36m<button />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mdata-city[39m=[32m"city"[39m
+      [33mdata-testid[39m=[32m"first-experience"[39m
+    [36m>[39m
+      [36m<button>[39m
+        [0mExplore city[0m
+      [36m</button>[39m
+      [36m<button>[39m
+        [0mEntry back[0m
+      [36m</button>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/walk-flow.behavior.tsx:1300:28
+    1298|   s08Gap("[S08 XFAIL][T01] primary continues to constraints without Hu…
+    1299|     await enterS08();
+    1300|     fireEvent.click(screen.getByRole("button", { name: "Continue plann…
+       |                            ^
+    1301|     expect(screen.getByRole("button", { name: t.buildAction })).toBeTr…
+    1302|     expect(screen.queryByRole("group", { name: t.interests })).toBeNul…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/15]⎯
+
+ FAIL  tests/walk-flow.test.tsx > S08 approved-flow regression contract (production unchanged) > [S08 XFAIL][T02] skipped interests stay empty after direct planning handoff
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "Continue planning"
+
+Here are the accessible roles:
+
+  button:
+
+  Name "Explore city":
+  [36m<button />[39m
+
+  Name "Entry back":
+  [36m<button />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mdata-city[39m=[32m"city"[39m
+      [33mdata-testid[39m=[32m"first-experience"[39m
+    [36m>[39m
+      [36m<button>[39m
+        [0mExplore city[0m
+      [36m</button>[39m
+      [36m<button>[39m
+        [0mEntry back[0m
+      [36m</button>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/walk-flow.behavior.tsx:1308:28
+    1306|   s08Gap("[S08 XFAIL][T02] skipped interests stay empty after direct p…
+    1307|     await enterS08(true);
+    1308|     fireEvent.click(screen.getByRole("button", { name: "Continue plann…
+       |                            ^
+    1309|     expect(screen.queryByRole("group", { name: t.interests })).toBeNul…
+    1310|     fireEvent.click(screen.getByRole("button", { name: t.buildAction }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/15]⎯
+
+ FAIL  tests/walk-flow.test.tsx > S08 approved-flow regression contract (production unchanged) > [S08 XFAIL][T05] constraints Back returns to confirmation rather than repeated interests
+AssertionError: expected null not to be null
+ ❯ tests/walk-flow.behavior.tsx:1321:58
+    1319|     expect(screen.getByRole("button", { name: t.buildAction })).toBeTr…
+    1320|     fireEvent.click(screen.getByRole("button", { name: "Planner back" …
+    1321|     expect(screen.queryByTestId("first-experience")).not.toBeNull();
+       |                                                          ^
+    1322|   });
+    1323|   it("[S08 BASELINE][R04] hydrated 90 can change to 240 without accoun…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/15]⎯
+
+ FAIL  tests/walk-flow.test.tsx > S08 approved-flow regression contract (production unchanged) > [S08 XFAIL][S02] storage I/O failure blocks fresh personalization rather than masquerading as no walk
+AssertionError: expected <section …(2)>…(10)</section> to be null
+
+- Expected:
+null
+
++ Received:
+<section
+  data-city="city"
+  data-testid="interest-entry"
+>
+  <h1>
+    Interest entry
+  </h1>
+  <button
+    aria-pressed="true"
+  >
+    Entry 
+    history
+  </button>
+  <button
+    aria-pressed="false"
+  >
+    Entry 
+    food
+  </button>
+  <button
+    aria-pressed="true"
+  >
+    Entry 
+    architecture
+  </button>
+  <button
+    aria-pressed="false"
+  >
+    Entry 
+    nature
+  </button>
+  <button
+    aria-pressed="false"
+  >
+    Entry 
+    culture
+  </button>
+  <button
+    aria-pressed="false"
+  >
+    Entry 
+    hidden-gems
+  </button>
+  <button
+    aria-pressed="false"
+  >
+    Entry 
+    family
+  </button>
+  <button>
+    Continue
+  </button>
+  <button>
+    Skip interests
+  </button>
+</section>
+
+ ❯ tests/walk-flow.behavior.tsx:1359:52
+    1357|     render(<NativeWalkFlow interestOnboarding citySlug="city" cityName…
+    1358|     await waitFor(() => expect(screen.queryByTestId("content-loader"))…
+    1359|     expect(screen.queryByTestId("interest-entry")).toBeNull();
+       |                                                    ^
+    1360|     expect(mocks.persist).not.toHaveBeenCalled();
+    1361|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/15]⎯
+
+ FAIL  tests/walk-flow.test.tsx > S08 approved-flow regression contract (production unchanged) > [S08 XFAIL][E03] missing saved ID cannot silently become a new planning session
+AssertionError: expected <section …(2)>…(11)</section> to be null
+
+- Expected:
+null
+
++ Received:
+<section
+  data-city="city"
+  data-testid="time-entry"
+>
+  <button
+    aria-pressed="false"
+  >
+    Time 
+    60
+  </button>
+  <button
+    aria-pressed="false"
+  >
+    Time 
+    90
+  </button>
+  <button
+    aria-pressed="true"
+  >
+    Time 
+    120
+  </button>
+  <button
+    aria-pressed="false"
+  >
+    Time 
+    180
+  </button>
+  <button
+    aria-pressed="false"
+  >
+    Time 
+    240
+  </button>
+  <span>
+    Need to be somewhere at a specific time?
+  </span>
+  <span>
+    We’ll fit your walk to your schedule, including the way back.
+  </span>
+  <label>
+    I need to be back by…
+    <input
+      value=""
+    />
+  </label>
+  <button>
+    Time back
+  </button>
+  <button>
+    Continue
+  </button>
+  <button>
+    Skip time
+  </button>
+</section>
+
+ ❯ tests/walk-flow.behavior.tsx:1366:48
+    1364|     render(<NativeWalkFlow interestOnboarding citySlug="city" cityName…
+    1365|     await waitFor(() => expect(screen.queryByTestId("content-loader"))…
+    1366|     expect(screen.queryByTestId("time-entry")).toBeNull();
+       |                                                ^
+    1367|     expect(mocks.persist).not.toHaveBeenCalled();
+    1368|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/15]⎯
+
+ FAIL  tests/walk-flow.test.tsx > S08 approved-flow regression contract (production unchanged) > [S08 XFAIL][E04] opening saved replay cannot silently replace another unfinished current walk
+AssertionError: expected 'walk-b72d89da-4c53-4b29-8c62-16cb954b…' to be 'keep-current' // Object.is equality
+
+Expected: "keep-current"
+Received: "walk-b72d89da-4c53-4b29-8c62-16cb954b9c31"
+
+ ❯ tests/walk-flow.behavior.tsx:1374:39
+    1372|     render(<NativeWalkFlow interestOnboarding citySlug="city" cityName…
+    1373|     await waitFor(() => expect(screen.queryByTestId("content-loader"))…
+    1374|     expect(mocks.current?.journey.id).toBe("keep-current");
+       |                                       ^
+    1375|     expect(mocks.persist).not.toHaveBeenCalled();
+    1376|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/15]⎯
+
+ FAIL  tests/walk-flow.test.tsx > S08 approved-flow regression contract (production unchanged) > [S08 XFAIL][S04] a new current walk arriving during Build must not be overwritten
+AssertionError: expected 'walk-79819595-09a9-4b13-93ec-0a6731e6…' to be 'newer-current' // Object.is equality
+
+Expected: "newer-current"
+Received: "walk-79819595-09a9-4b13-93ec-0a6731e6ccd0"
+
+ ❯ tests/walk-flow.behavior.tsx:1382:39
+    1380|     await act(async () => mocks.presented?.());
+    1381|     await waitFor(() => expect(screen.queryByTestId("build-stage")).to…
+    1382|     expect(mocks.current?.journey.id).toBe("newer-current");
+       |                                       ^
+    1383|   });
+    1384|   s08Gap("[S08 XFAIL][S05] same-ID concurrent edits during Customize B…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/15]⎯
+
+ FAIL  tests/walk-flow.test.tsx > S08 approved-flow regression contract (production unchanged) > [S08 XFAIL][S05] same-ID concurrent edits during Customize Build must survive
+AssertionError: expected { …(9) } to deeply equal { id: 's08-existing', …(8) }
+
+- Expected
++ Received
+
+@@ -3,19 +3,25 @@
+    "finish": {
+      "lat": 53.865,
+      "lng": 10.68,
+    },
+    "historyDistance": 0,
+-   "id": "s08-existing",
++   "id": "walk-3edab08c-ebc1-4403-bf8c-334c422ceaf3",
+    "position": {
+      "lat": 53.865,
+      "lng": 10.68,
+    },
+    "remaining": [
++     "place-0",
+      "place-1",
++     "place-2",
++     "place-3",
++     "place-4",
+    ],
+    "settings": {
++     "categories": [],
++     "deadline": undefined,
+      "finish": {
+        "lat": 53.865,
+        "lng": 10.68,
+      },
+      "interests": [
+@@ -26,10 +32,8 @@
+        "lat": 53.865,
+        "lng": 10.68,
+      },
+      "walking": "easy",
+    },
+-   "startedAt": 10,
+-   "visited": [
+-     "place-0",
+-   ],
++   "startedAt": 1793226304585,
++   "visited": [],
+  }
+
+ ❯ tests/walk-flow.behavior.tsx:1394:36
+    1392|     await act(async () => mocks.presented?.());
+    1393|     await waitFor(() => expect(screen.queryByTestId("build-stage")).to…
+    1394|     expect(mocks.current?.journey).toEqual(edited);
+       |                                    ^
+    1395|   });
+    1396|   it("[S08 BASELINE][S06] failed preview write retains constraints and…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/15]⎯
+
+ FAIL  tests/walk-flow.test.tsx > S08 approved-flow regression contract (production unchanged) > [S08 XFAIL][D03] midnight cannot reinterpret an earlier-day HH:MM as a new deadline
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "citySlug": "city",
+        "finish": Object {
+          "lat": 53.865,
+          "lng": 10.68,
+        },
+        "historyDistance": 0,
+        "id": "walk-ce70852f-3ca3-4a8e-80e5-97c0fbccffb8",
+        "position": Object {
+          "lat": 53.865,
+          "lng": 10.68,
+        },
+        "remaining": Array [
+          "place-0",
+          "place-1",
+        ],
+        "settings": Object {
+          "categories": Array [],
+          "deadline": 1793275200000,
+          "finish": Object {
+            "lat": 53.865,
+            "lng": 10.68,
+          },
+          "interests": Array [
+            "history",
+            "architecture",
+          ],
+          "minutes": 120,
+          "start": Object {
+            "lat": 53.865,
+            "lng": 10.68,
+          },
+          "walking": "balanced",
+        },
+        "startedAt": 1793271600000,
+        "visited": Array [],
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/walk-flow.behavior.tsx:1418:31
+    1416|     fireEvent.click(screen.getByRole("button", { name: t.buildAction }…
+    1417|     await waitFor(() => expect(screen.queryByTestId("build-stage")).to…
+    1418|     expect(mocks.persist).not.toHaveBeenCalled();
+       |                               ^
+    1419|     expect(screen.queryByRole("button", { name: t.startWalk })).toBeNu…
+    1420|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/15]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  15 failed | 125 skipped (140)
+   Start at  23:25:02
+   Duration  2.41s (transform 808ms, setup 0ms, import 1.60s, tests 808ms, environment 3.21s)
+
+JSON report written to /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/screen-08-regression-tests-2026-10-28/logs/strict-red-results.json

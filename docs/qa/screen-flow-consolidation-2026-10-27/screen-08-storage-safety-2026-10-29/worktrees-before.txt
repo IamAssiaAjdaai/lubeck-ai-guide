@@ -1,0 +1,198 @@
+worktree /Users/assia/Documents/GitHub/lubeck-ai-guide
+HEAD d080f5186572df2c8d2e8a39d255a6a8be1f59bb
+branch refs/heads/codex/project-skills-bootstrap
+
+worktree /private/tmp/citywalk-brace-expo-qa
+HEAD 0c8a7f53bd4dd5854649702fb41dec52f592c165
+branch refs/heads/qa/brace-expo57-20261018
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/citywalk-expo57-qa
+HEAD 80ad7c309020f4f04bac0d677fd56f4d86fc607c
+branch refs/heads/fix/mobile-expo-doctor-sdk57-20261018
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/citywalk-groq354-qa
+HEAD 9d35de7d5aa4e9a3790565430219ca871324f674
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/citywalk-launch-20261018
+HEAD 90c9c6d293b232f2d2e8dd323d5573f472634b2c
+branch refs/heads/codex/347-launch-free
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/citywalk-legal-20261018
+HEAD 123f077b91427a5f71da54f4a8c16022b6e424c8
+branch refs/heads/codex/legal-launch-readiness
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/citywalk-rc-security-20261018
+HEAD 87d44e3398242574b9071510dd04a97044992247
+branch refs/heads/codex/rc-security-readiness-387
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/marketing-next-build-gate
+HEAD 90c7ebdaefc83bf63239de7069678858ff498dc6
+branch refs/heads/codex/next-page-export-build-fix
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/mkt-bue-01
+HEAD ea32babcdd14960c79443b0f608df344b88ff39b
+branch refs/heads/feat/marketing-business-understanding-01
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/mkt-dashboard-01
+HEAD cab658a5afd724cc5cac8a3e5211b104a9be3b5a
+branch refs/heads/codex/mkt-dashboard-01
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/mkt-pr435-integration
+HEAD 56868a98cecb2f28eb66a0af0d7a73ff06d28ac9
+detached
+prunable gitdir file points to non-existent location
+
+worktree /Users/assia/.codex/worktrees/brand-workspace-sync/lubeck-ai-guide
+HEAD 5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd
+detached
+
+worktree /Users/assia/.codex/worktrees/citywalk-admin-publishing/lubeck-ai-guide
+HEAD ae4cb301869b95553ea5f23334ee86272e1d0cbb
+branch refs/heads/codex/admin-publishing-queue
+
+worktree /Users/assia/.codex/worktrees/citywalk-backend-completion/lubeck-ai-guide
+HEAD 5e83fb84d6f84c28924ec2f62084cc3a5bcf2687
+branch refs/heads/codex/backend-core-contracts
+
+worktree /Users/assia/.codex/worktrees/historic-tour-progress/lubeck-ai-guide
+HEAD 2e18b8714dc47310c81311b07813454aaa45e1e0
+branch refs/heads/codex/historic-tour-progress
+
+worktree /Users/assia/.codex/worktrees/marketing-ai-02/lubeck-ai-guide
+HEAD 4810ce7986bed93dc8b37ce83c299cb66650db2f
+branch refs/heads/codex/mkt-ai-02-offline-v2
+
+worktree /Users/assia/.codex/worktrees/marketing-ai-qa-01/lubeck-ai-guide
+HEAD 7e67061362762020f97d707898927a82c21b2994
+branch refs/heads/codex/mkt-ai-qa-01-offline-acceptance
+
+worktree /Users/assia/.codex/worktrees/marketing-brand-02/lubeck-ai-guide
+HEAD 684aa76ff871e4b0f825aa053849ad2c70a86860
+branch refs/heads/codex/mkt-brand-02-green-system
+
+worktree /Users/assia/.codex/worktrees/marketing-brand-concepts/lubeck-ai-guide
+HEAD 3289e31dfafb44be8d1c76d694d723fa075d4ccd
+branch refs/heads/codex/mkt-brand-01-concepts
+
+worktree /Users/assia/.codex/worktrees/marketing-consolidate-01/lubeck-ai-guide
+HEAD e1e79f5c75d3bfce5a1ce13e3baa65a9997f6ddc
+branch refs/heads/feat/admin-auth-0027-migration-20261024
+
+worktree /Users/assia/.codex/worktrees/marketing-creative-01/lubeck-ai-guide
+HEAD 4810ce7986bed93dc8b37ce83c299cb66650db2f
+branch refs/heads/codex/mkt-creative-01-foundation
+
+worktree /Users/assia/.codex/worktrees/marketing-landing-d/lubeck-ai-guide
+HEAD 4810ce7986bed93dc8b37ce83c299cb66650db2f
+branch refs/heads/codex/mkt-landing-d-artistic-clarity
+
+worktree /Users/assia/.codex/worktrees/marketing-product-acceptance/lubeck-ai-guide
+HEAD 4810ce7986bed93dc8b37ce83c299cb66650db2f
+branch refs/heads/codex/mkt-420-product-acceptance
+
+worktree /Users/assia/.codex/worktrees/mobile-release-readiness/lubeck-ai-guide
+HEAD 7b78a96fa2ae274f7710a0ba3f873e3fa35bdf7e
+branch refs/heads/codex/mobile-release-readiness
+
+worktree /Users/assia/Documents/GitHub/citywalk-admin-merge
+HEAD a230856a944ed8b3593766013685bbf462c75a89
+branch refs/heads/fix/admin-publishing-merge
+
+worktree /Users/assia/Documents/GitHub/citywalk-android-auth
+HEAD d080f5186572df2c8d2e8a39d255a6a8be1f59bb
+branch refs/heads/feat/android-preview-auth0
+
+worktree /Users/assia/Documents/GitHub/citywalk-api-preview
+HEAD c490437a426864df3442ef8df0b4f4fafcb69eb3
+branch refs/heads/codex/cloudflare-api-preview-20261022
+
+worktree /Users/assia/Documents/GitHub/citywalk-brand-workspace-qa
+HEAD 5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd
+detached
+
+worktree /Users/assia/Documents/GitHub/citywalk-hyperdrive-check
+HEAD 98a1dbbda17f945a0d982eb6dbc36713bad61617
+detached
+
+worktree /Users/assia/Documents/GitHub/citywalk-landing-release
+HEAD 88191e77e55a489804c49bccccf6307b5876b41d
+branch refs/heads/codex/original-landing-release
+
+worktree /Users/assia/Documents/GitHub/citywalk-landing-runtime-rc
+HEAD 4a74395838d0064e1fabf21f0f4ac3b9f951ecad
+branch refs/heads/develop
+
+worktree /Users/assia/Documents/GitHub/citywalk-migration-check
+HEAD e9c6c92f15b012f62b2e6ad474eb551effabde59
+detached
+
+worktree /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome
+HEAD 98a1dbbda17f945a0d982eb6dbc36713bad61617
+branch refs/heads/codex/onboarding-global-welcome
+
+worktree /Users/assia/Documents/GitHub/citywalk-play-aab
+HEAD d080f5186572df2c8d2e8a39d255a6a8be1f59bb
+detached
+
+worktree /Users/assia/Documents/GitHub/citywalk-preview-release-check
+HEAD b5a0c644ad2a7a136e59767c53f9dbb80c73b107
+detached
+
+worktree /Users/assia/Documents/GitHub/citywalk-release-v1
+HEAD 1e06b02baedf9509997774a8fcc8cf208a41c412
+branch refs/heads/fix/drizzle-0026-snapshot-only-20261023
+
+worktree /Users/assia/Documents/GitHub/citywalk-shareable-walks-qa
+HEAD 55c20dfb7e183cc25d7e9575e24b63c009727e07
+detached
+
+worktree /Users/assia/Documents/GitHub/citywalk-time-picker-review
+HEAD 72cae796b10c02653adb2da5c7e79fcbbcdd4df2
+detached
+
+worktree /Users/assia/Documents/GitHub/lubeck-ai-guide/citywalk-preview-review
+HEAD 32aa9ac3eeca7a40b0bc431624266fe9f9488f41
+detached
+
+worktree /Users/assia/Documents/GitHub/lubeck-ai-guide/citywalk-preview-review/citywalk-active-review
+HEAD 790697f9ce742205b23e767c520a3b02bc04e90f
+detached
+
+worktree /Users/assia/Documents/GitHub/lubeck-ai-guide/citywalk-preview-review/citywalk-active-review/citywalk-finish-review
+HEAD 14d1fae8d9b1489c983760a9787d36c7fdee2925
+detached
+
+worktree /Users/assia/Documents/GitHub/marketing-saas-auth-backend
+HEAD 699a63ea31c15977ed2fb9d756d3f145cc4d5cb0
+branch refs/heads/codex/marketing-saas-auth-backend
+
+worktree /Users/assia/Documents/GitHub/marketing-saas-auth-ui
+HEAD 268f2e2e40b2bdc92b9ded2972e261f66744e523
+branch refs/heads/codex/marketing-saas-auth-ui
+
+worktree /Users/assia/Documents/GitHub/marketing-saas-mvp
+HEAD f1986fdb4018966616ce8fd5fbdd9abcdff6604d
+branch refs/heads/codex/mkt-ux-01-conversion-journey
+
+worktree /Users/assia/Documents/GitHub/marketing-saas-onboarding
+HEAD d8fd10b2a8054651991898113139577d224b12c2
+branch refs/heads/codex/marketing-saas-onboarding
+
+worktree /Users/assia/Documents/GitHub/marketing-saas-website-intake
+HEAD d080f5186572df2c8d2e8a39d255a6a8be1f59bb
+branch refs/heads/feat/mkt-mvp-01-website-intake
+
+worktree /Users/assia/Documents/GitHub/wirkfaden-recovery
+HEAD ea32babcdd14960c79443b0f608df344b88ff39b
+detached
+

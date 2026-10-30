@@ -1,0 +1,25 @@
+{
+  "assertions": [
+    {
+      "file": "mobile/tests/walk-flow.behavior.tsx",
+      "originalAssertionChains": 279,
+      "preserved": 275,
+      "changedOriginalChains": [
+        "expect(screen.getByRole(\"button\", { name: walkCopy(\"en\").food }).getAttribute(\"aria-pressed\")).toBe(\"true\")",
+        "expect(screen.getByRole(\"button\", { name: walkCopy(\"en\").history }).getAttribute(\"aria-pressed\")).toBe(\"false\")",
+        "expect(screen.getByRole(\"button\", { name: walkCopy(\"en\").food }).getAttribute(\"aria-pressed\")).toBe(\"false\")",
+        "expect(mocks.routePush).toHaveBeenCalledWith({ pathname: \"/city/[citySlug]\", params: { citySlug: \"lubeck\", returnToPlanner: \"1\" } })"
+      ]
+    },
+    {
+      "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+      "originalAssertionChains": 39,
+      "preserved": 39,
+      "changedOriginalChains": []
+    }
+  ],
+  "firstExperienceEditorialBodyByteIdentical": true,
+  "firstExperienceStylesExceptFooterIdentical": true,
+  "activeStartASTUnchanged": true,
+  "activeUpdateASTUnchanged": true
+}

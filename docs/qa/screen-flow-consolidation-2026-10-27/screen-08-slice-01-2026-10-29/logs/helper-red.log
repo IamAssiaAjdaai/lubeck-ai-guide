@@ -1,0 +1,28 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/planner-return-intent.test.ts
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+ ❯ tests/planner-return-intent.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/planner-return-intent.test.ts [ tests/planner-return-intent.test.ts ]
+Error: Cannot find module '../src/lib/plannerReturnIntent' imported from /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/tests/planner-return-intent.test.ts
+ ❯ tests/planner-return-intent.test.ts:2:1
+      1| import { describe, expect, it, vi } from "vitest";
+      2| import {
+       | ^
+      3|   createPlannerReturnIntents,
+      4|   normalizePlannerIntentScope,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  01:24:50
+   Duration  149ms (transform 20ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)
+

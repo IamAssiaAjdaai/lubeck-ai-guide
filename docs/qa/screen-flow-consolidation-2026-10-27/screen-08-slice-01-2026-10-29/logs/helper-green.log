@@ -1,0 +1,15 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/planner-return-intent.test.ts --reporter=default --reporter=json --outputFile=../docs/qa/screen-flow-consolidation-2026-10-27/screen-08-slice-01-2026-10-29/logs/helper-green.json
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+ ✓ tests/planner-return-intent.test.ts (12 tests | 1 todo) 8ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed | 1 todo (12)
+   Start at  01:25:16
+   Duration  166ms (transform 30ms, setup 0ms, import 40ms, tests 8ms, environment 0ms)
+
+JSON report written to /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/screen-08-slice-01-2026-10-29/logs/helper-green.json

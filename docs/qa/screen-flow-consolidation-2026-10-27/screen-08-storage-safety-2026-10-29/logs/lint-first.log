@@ -1,0 +1,21 @@
+
+> @citywalk/mobile@1.0.0 lint
+> expo lint --max-warnings=0
+
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx
+  714:14  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx:714:14
+  712 |       setActiveMode(mode);
+  713 |       setJourney(next.journey);
+> 714 |       setNow(Date.now());
+      |              ^^^^^^^^^^ Cannot call impure function
+  715 |       setStage("active");
+  716 |       void captureNativeMarketingFunnelEvent("walk_started", citySlug);
+  717 |       if (mode === "live") {  react-hooks/purity
+
+✖ 1 problem (1 error, 0 warnings)
+

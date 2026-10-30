@@ -1,0 +1,119 @@
+--- before/mobile/src/components/CityHubHero.tsx
++++ after/mobile/src/components/CityHubHero.tsx
+@@ -17,13 +17,13 @@
+   const { fontScale = 1 } = useWindowDimensions();
+   const name = nativeCityName(city.slug, city.content.name, locale);
+   const copy = {
+-    en: { switch: "Change city", greeting: "Your city. Your day.", explore: "Explore" },
+-    de: { switch: "Stadt wechseln", greeting: "Deine Stadt. Dein Tag.", explore: "Entdecke" },
+-    es: { switch: "Cambiar ciudad", greeting: "Tu ciudad. Tu día.", explore: "Explora" },
+-    nl: { switch: "Andere stad", greeting: "Jouw stad. Jouw dag.", explore: "Ontdek" },
+-    da: { switch: "Skift by", greeting: "Din by. Din dag.", explore: "Udforsk" },
+-    sv: { switch: "Byt stad", greeting: "Din stad. Din dag.", explore: "Utforska" },
+-    ar: { switch: "تغيير المدينة", greeting: "مدينتك. يومك.", explore: "اكتشف" },
++    en: { switch: "Change city", explore: "Explore" },
++    de: { switch: "Stadt wechseln", explore: "Entdecke" },
++    es: { switch: "Cambiar ciudad", explore: "Explora" },
++    nl: { switch: "Andere stad", explore: "Ontdek" },
++    da: { switch: "Skift by", explore: "Udforsk" },
++    sv: { switch: "Byt stad", explore: "Utforska" },
++    ar: { switch: "تغيير المدينة", explore: "اكتشف" },
+   }[locale];
+   const media = selectPrimaryImageMedia(city.media ?? []);
+   const uri = selectImageUrl(media, undefined, undefined, "hero");
+@@ -38,7 +38,6 @@
+           <NativeIcon ios="chevron.down" android="expand_more" color="#FFFFFF" size={18} />
+         </PressableSurface>
+       </Link>
+-      <AppText style={styles.greeting}>{copy.greeting}</AppText>
+       <AppText accessibilityRole="header" style={[styles.heading, fontScale > 1.5 && { fontSize: 26, lineHeight: 32 }, fontScale > 2.5 && { fontSize: 16, lineHeight: 22 }]}>{copy.explore} {name}</AppText>
+     </View>
+     {source ? <View style={styles.photoArea}>
+@@ -49,10 +48,9 @@
+ }
+ const styles = StyleSheet.create({
+   hero: { backgroundColor: "#09234D", borderRadius: 24, overflow: "hidden" },
+-  copy: { paddingHorizontal: 22, paddingTop: 10, paddingBottom: 22 },
++  copy: { paddingHorizontal: 20, paddingTop: 4, paddingBottom: 12 },
+   switch: { minHeight: 48, alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8 },
+   city: { color: "#FFFFFF", fontSize: 20, lineHeight: 26, fontWeight: "700", flexShrink: 1 },
+-  greeting: { color: "#D6E6FA", fontSize: 14, lineHeight: 21, marginTop: 7 },
+-  heading: { color: "#FFFFFF", fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 31, lineHeight: 38, fontWeight: "700", marginTop: 3 },
+-  photoArea: { height: 174, backgroundColor: "#155CAF" }, photo: { width: "100%", height: "100%" },
++  heading: { color: "#FFFFFF", fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 28, lineHeight: 34, fontWeight: "700", marginTop: 0 },
++  photoArea: { height: 128, backgroundColor: "#155CAF" }, photo: { width: "100%", height: "100%" },
+ });
+--- before/mobile/src/app/city/[citySlug]/index.tsx
++++ after/mobile/src/app/city/[citySlug]/index.tsx
+@@ -106,6 +106,10 @@
+     return <Screen><ContentRecovery retry={cityState.retry} citySlug={identity.citySlug} /></Screen>;
+ 
+   const { city, places, tours } = cityState.data;
++  const assistantRoute = cityAssistantRoute(city.slug);
++  const guideRoute = params.returnToPlanner === "1"
++    ? { ...assistantRoute, params: { ...assistantRoute.params, returnToPlanner: "1" } }
++    : assistantRoute;
+   const suggestedTours = cityHubRecommendations(tours, places, userId && accountInterests?.userId === userId ? accountInterests.interests : []);
+   const filteredPlaces = places.filter(
+     (place) => category === "all" || place.category === category,
+@@ -219,7 +223,7 @@
+                   });
+                 }}
+               />
+-              <Link href={cityAssistantRoute(city.slug)} asChild>
++              <Link href={guideRoute} asChild>
+                 <PrimaryButton compact style={StyleSheet.flatten([styles.quickAction, { flex: 0, width: textLayout.quickWidth }])} tone="secondary"
+                   label={t.ask} wrapLabel
+                   leadingIcon={<NativeIcon ios="bubble.left" android="chat_bubble_outline" color={colors.primary} size={20} />} />
+@@ -629,7 +633,7 @@
+   tourLink: { overflow: "hidden", flexDirection: "column" },
+   tourImage: {
+     width: "100%",
+-    height: 164,
++    height: 112,
+     alignSelf: "stretch",
+     backgroundColor: colors.primarySoft,
+   },
+--- before/mobile/src/app/city/[citySlug]/assistant.tsx
++++ after/mobile/src/app/city/[citySlug]/assistant.tsx
+@@ -1,22 +1,23 @@
+ import { nativeCityName } from "../../../lib/displayNames";
+-import { useLocalSearchParams } from "expo-router";
++import { Link, useLocalSearchParams } from "expo-router";
+ import { View } from "react-native";
+-import { AppText, Screen, StatusMessage } from "../../../components/ui";
++import { AppText, PrimaryButton, Screen, StatusMessage } from "../../../components/ui";
+ import { NativeIcon } from "../../../components/NativeIcon";
+ import { colors, spacing } from "../../../design/tokens";
++import { walkCopy } from "@citywalk/traveler-core/walkCopy";
+ import { discoveryCopy } from "../../../design/discoveryCopy";
+ import { cityAssistantContext, type CityAssistantContext } from "../../../lib/cityAssistant";
+ import { useNativeLocale } from "../../../localization/LocaleProvider";
+ import { usePublicCity } from "../../../hooks/usePublicContent";
+ 
+ export default function CityAssistantScreen() {
+-  const { citySlug } = useLocalSearchParams<{ citySlug?: string }>();
++  const { citySlug, returnToPlanner } = useLocalSearchParams<{ citySlug?: string; returnToPlanner?: string }>();
+   const { messages } = useNativeLocale();
+   const context = cityAssistantContext(citySlug);
+-  return context ? <CityAssistant context={context} /> : <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
++  return context ? <CityAssistant context={context} returnToPlanner={returnToPlanner === "1"} /> : <Screen><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
+ }
+ 
+-export function CityAssistant({ context }: { context: CityAssistantContext }) {
++export function CityAssistant({ context, returnToPlanner = false }: { context: CityAssistantContext; returnToPlanner?: boolean }) {
+   const { locale, direction, messages } = useNativeLocale();
+   const city = usePublicCity(context.citySlug, locale);
+   const copy = discoveryCopy(locale);
+@@ -29,6 +30,11 @@
+         {/* The deployed guide contract requires placeSlug. Do not send a fake
+             place or present a city-wide answer as grounded by that place. */}
+         <StatusMessage>{copy.cityAssistantUnavailable}</StatusMessage>
++        {city.status === "available" && city.data.places.length > 0 ? (
++          <Link dismissTo href={{ pathname: "/city/[citySlug]", params: { citySlug: context.citySlug, section: "places", ...(returnToPlanner ? { returnToPlanner: "1" } : {}) } }} asChild>
++            <PrimaryButton label={walkCopy(locale).places} />
++          </Link>
++        ) : null}
+       </View>
+     </Screen>
+   );

@@ -1,0 +1,5 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/walk-flow.test.tsx --reporter=json --outputFile=/tmp/citywalk-slice02-strict-red.json
+
+JSON report written to /tmp/citywalk-slice02-strict-red.json

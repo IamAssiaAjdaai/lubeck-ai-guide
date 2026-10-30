@@ -1,0 +1,385 @@
+import {
+  isWalkJourney,
+  type WalkJourney,
+} from "@citywalk/traveler-core/walkJourney";
+import { isEligibleTourPlace, savedRouteIdentity } from "@citywalk/traveler-core";
+import type { PublicPlaceCard } from "./api/contracts";
+export { savedRouteIdentity } from "@citywalk/traveler-core";
+
+export type WalkStore = {
+  getItem(key: string): Promise<string | null>;
+  setItem(key: string, value: string): Promise<void>;
+};
+export type SavedPlace = { citySlug: string; slug: string; name: string };
+const savedKey = "citywalk:native:v2:saved";
+const placesKey = "citywalk:native:v2:places";
+const activeKey = (city: string) => `citywalk:native:v2:active:${city}`;
+async function defaultStore(): Promise<WalkStore> {
+  return (await import("@react-native-async-storage/async-storage")).default;
+}
+async function read(key: string, store: WalkStore): Promise<unknown> {
+  const value = await store.getItem(key);
+  try {
+    return value ? JSON.parse(value) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+// Serialize read-modify-write operations so rapid save/remove taps cannot lose updates.
+let queue: Promise<unknown> = Promise.resolve();
+function mutate<T>(work: () => Promise<T>): Promise<T> {
+  const next = queue.then(work, work);
+  queue = next.catch(() => undefined);
+  return next;
+}
+// Native-only save lineage; session IDs and progress remain independent.
+export type SavedWalk = WalkJourney & { savedAt?: number; updatedAt?: number };
+type LinkedJourney = WalkJourney & { savedWalkId?: string };
+const savedListeners = new Set<(walks: SavedWalk[]) => void>();
+export function subscribeSavedWalks(listener: (walks: SavedWalk[]) => void) {
+  savedListeners.add(listener);
+  return () => { savedListeners.delete(listener); };
+}
+function notifySavedWalks(walks: SavedWalk[]) { savedListeners.forEach(listener => listener(walks)); }
+// Planned visit order survives normal progress (visited prefix + remaining suffix).
+// Skip/remove/shorten change the itinerary; locale, clocks and current position do not.
+export function savedWalkState(journey: WalkJourney, walks: readonly SavedWalk[]) {
+  const sameCity = walks.filter(walk => walk.citySlug === journey.citySlug);
+  const linkedId = (journey as LinkedJourney).savedWalkId;
+  const record = sameCity.find(walk => walk.id === linkedId)
+    ?? sameCity.find(walk => walk.id === journey.id)
+    ?? sameCity.find(walk => savedRouteIdentity(walk) === savedRouteIdentity(journey));
+  return { record, status: !record ? "unsaved" as const
+    : savedRouteIdentity(record) === savedRouteIdentity(journey) ? "saved" as const : "changed" as const };
+}
+export function reopenSavedWalk(record: WalkJourney, sessionId: string): WalkJourney {
+  const { savedAt: _savedAt, updatedAt: _updatedAt, ...route } = record as SavedWalk;
+  return { ...route, savedWalkId: record.id, id: sessionId,
+    remaining: [...new Set([...record.visited, ...record.remaining])], visited: [],
+    position: record.settings.start, historyDistance: 0, startedAt: Date.now(), finishedAt: undefined,
+    settings: { ...record.settings, deadline: undefined },
+  } as LinkedJourney;
+}
+export type CurrentWalk = { journey: WalkJourney; phase: "preview" | "active" };
+const listeners = new Map<string, Set<(current: CurrentWalk | undefined) => void>>();
+export function subscribeCurrentWalk(city: string, listener: (current: CurrentWalk | undefined) => void) {
+  const group = listeners.get(city) ?? new Set();
+  listeners.set(city, group); group.add(listener);
+  return () => { group.delete(listener); if (!group.size) listeners.delete(city); };
+}
+function notifyCurrentWalk(city: string, current: CurrentWalk | undefined) { listeners.get(city)?.forEach(listener => listener(current)); }
+function uniqueJourney(journey: WalkJourney): WalkJourney {
+  const visited = [...new Set(journey.visited)];
+  return { ...journey, visited, remaining: [...new Set(journey.remaining)].filter(slug => !visited.includes(slug)) };
+}
+// Receipts are navigation-independent, runtime-only observations. Raw bytes and
+// storage handles stay private; a forged, serialized or cross-store receipt fails closed.
+declare const slotReceiptBrand: unique symbol;
+export type WalkSlotReceipt = Readonly<{ [slotReceiptBrand]: true }>;
+export type CurrentWalkObservation =
+  | Readonly<{ kind: "empty"; receipt: WalkSlotReceipt }>
+  | Readonly<{ kind: "current"; current: CurrentWalk; receipt: WalkSlotReceipt }>
+  | Readonly<{ kind: "terminal"; journey: WalkJourney; receipt: WalkSlotReceipt }>
+  | Readonly<{ kind: "blocked" }>
+  | Readonly<{ kind: "unavailable" }>;
+export type PreviewWriteIntent = "new" | "replay" | Readonly<{ customize: string }>;
+const slotReceipts = new WeakMap<WalkSlotReceipt, { city: string; store: WalkStore; raw: string | null }>();
+
+function classifyCurrentSlot(city: string, raw: string | null):
+  { kind: "empty" } | { kind: "blocked" } |
+  { kind: "terminal"; journey: WalkJourney } | { kind: "current"; current: CurrentWalk } {
+  if (raw === null) return { kind: "empty" };
+  let value: unknown;
+  try { value = JSON.parse(raw); } catch { return { kind: "blocked" }; }
+  if (value === null) return { kind: "empty" };
+  if (!isWalkJourney(value) || value.citySlug !== city) return { kind: "blocked" };
+  const { nativePhase, ...journey } = value as WalkJourney & { nativePhase?: unknown };
+  if (nativePhase !== undefined && nativePhase !== "preview" && nativePhase !== "active") return { kind: "blocked" };
+  if (journey.finishedAt !== undefined) return { kind: "terminal", journey: uniqueJourney(journey) };
+  return { kind: "current", current: { journey: uniqueJourney(journey), phase: nativePhase === "preview" ? "preview" : "active" } };
+}
+async function observeSlot(city: string, target: WalkStore): Promise<CurrentWalkObservation> {
+  let raw: string | null;
+  try { raw = await target.getItem(activeKey(city)); } catch { return { kind: "unavailable" }; }
+  const slot = classifyCurrentSlot(city, raw);
+  if (slot.kind === "blocked") return Object.freeze(slot);
+  const receipt = Object.freeze({}) as WalkSlotReceipt;
+  slotReceipts.set(receipt, { city, store: target, raw });
+  return Object.freeze({ ...slot, receipt });
+}
+export async function observeCurrentWalk(city: string, store?: WalkStore): Promise<CurrentWalkObservation> {
+  return mutate(async () => {
+    try { return await observeSlot(city, store ?? await defaultStore()); }
+    catch { return { kind: "unavailable" } as const; }
+  });
+}
+function requireReadableSlot(slot: CurrentWalkObservation): void {
+  if (slot.kind === "blocked") throw new Error("walk-storage-blocked");
+  if (slot.kind === "unavailable") throw new Error("walk-storage-unavailable");
+}
+
+/** Single-runtime queued compare/write, not cross-process CAS or persistent drafts. */
+export async function commitCurrentWalkPreview(
+  input: WalkJourney, receipt: WalkSlotReceipt, writeIntent: PreviewWriteIntent,
+  options: { store?: WalkStore; isCurrent?: () => boolean } = {},
+): Promise<CurrentWalk> {
+  if (!isWalkJourney(input) || input.finishedAt !== undefined) throw new Error("Invalid journey");
+  const phase = (input as WalkJourney & { nativePhase?: unknown }).nativePhase;
+  if (phase !== undefined && phase !== "active" && phase !== "preview") throw new Error("Invalid journey");
+  // Capture input ownership before joining the queue; caller edits cannot alter
+  // the accepted candidate while asynchronous storage work is pending.
+  const journey: WalkJourney = JSON.parse(JSON.stringify(input));
+  const intent = typeof writeIntent === "object" ? { customize: writeIntent.customize } : writeIntent;
+  return mutate(async () => {
+    const target = options.store ?? await defaultStore();
+    const observed = slotReceipts.get(receipt);
+    if (!observed || observed.city !== journey.citySlug || observed.store !== target) throw new Error("walk-changed");
+    if (!isWalkJourney(journey) || journey.finishedAt !== undefined) throw new Error("Invalid journey");
+    if (options.isCurrent && !options.isCurrent()) throw new Error("walk-cancelled");
+    const raw = await target.getItem(activeKey(journey.citySlug));
+    if (raw !== observed.raw) throw new Error("walk-changed");
+    const slot = classifyCurrentSlot(journey.citySlug, raw);
+    if (slot.kind === "blocked") throw new Error("walk-storage-blocked");
+    if (intent === "new" || intent === "replay") {
+      if (slot.kind === "current") throw new Error("walk-changed");
+    } else if (slot.kind !== "current" || slot.current.journey.id !== intent.customize) throw new Error("walk-changed");
+    // An explicit Customize may keep its saved lineage in the new preview
+    // execution. Never infer linkage for an unrelated new or replayed route.
+    const previous = slot.kind === "current" ? slot.current.journey as WalkJourney & {
+      savedWalkId?: string; accountSavedWalkId?: string; accountSavedUserId?: string;
+    } : undefined;
+    const candidate = previous && typeof intent === "object" ? { ...journey,
+      ...(previous.savedWalkId ? { savedWalkId: previous.savedWalkId } : {}),
+      ...(previous.accountSavedWalkId ? { accountSavedWalkId: previous.accountSavedWalkId, accountSavedUserId: previous.accountSavedUserId } : {}),
+    } : journey;
+    // One accepted attempt consumes its receipt, including failed/uncertain writes.
+    // Retry must inspect actual storage again instead of blindly replaying it.
+    slotReceipts.delete(receipt);
+    const written = await writeCurrent({ journey: candidate, phase: "preview" }, target, options.isCurrent, observed.raw);
+    return { journey: written, phase: "preview" };
+  });
+}
+
+export async function loadCurrentWalk(city: string, store?: WalkStore): Promise<CurrentWalk | undefined> {
+  const value = await read(activeKey(city), store ?? (await defaultStore()));
+  if (!isWalkJourney(value) || value.citySlug !== city || value.finishedAt) return;
+  const { nativePhase, ...journey } = value as WalkJourney & { nativePhase?: string };
+  return { journey: uniqueJourney(journey), phase: nativePhase === "preview" ? "preview" : "active" };
+}
+export async function loadActiveWalk(city: string, store?: WalkStore) {
+  const current = await loadCurrentWalk(city, store);
+  return current?.phase === "active" ? current.journey : undefined;
+}
+async function writeCurrent(current: CurrentWalk, target: WalkStore, isCurrent?: () => boolean, expectedRaw?: string | null) {
+  if (!isWalkJourney(current.journey)) throw new Error("Invalid journey");
+  const slot = await observeSlot(current.journey.citySlug, target);
+  requireReadableSlot(slot);
+  if (expectedRaw !== undefined && (slot.kind === "blocked" || slot.kind === "unavailable" || slotReceipts.get(slot.receipt)?.raw !== expectedRaw)) throw new Error("walk-changed");
+  const previous = slot.kind === "current" ? slot.current.journey : slot.kind === "terminal" ? slot.journey : undefined;
+  const linkedId = isWalkJourney(previous) && previous.id === current.journey.id
+    ? (previous as LinkedJourney).savedWalkId : undefined;
+  const accountLink = isWalkJourney(previous) && previous.id === current.journey.id
+    ? previous as WalkJourney & { accountSavedWalkId?: string; accountSavedUserId?: string } : undefined;
+  const journey = uniqueJourney({ ...current.journey,
+    ...(accountLink?.accountSavedWalkId ? { accountSavedWalkId: accountLink.accountSavedWalkId, accountSavedUserId: accountLink.accountSavedUserId } : {}),
+    ...((current.journey as LinkedJourney).savedWalkId || linkedId
+      ? { savedWalkId: (current.journey as LinkedJourney).savedWalkId ?? linkedId } : {}),
+  });
+  if (isCurrent && !isCurrent()) throw new Error("walk-cancelled");
+  await target.setItem(activeKey(journey.citySlug), JSON.stringify(
+    current.phase === "preview" ? { ...journey, nativePhase: "preview" } : journey,
+  ));
+  notifyCurrentWalk(journey.citySlug, journey.finishedAt ? undefined : { ...current, journey });
+  return journey;
+}
+export async function persistCurrentWalk(journey: WalkJourney, phase: CurrentWalk["phase"], store?: WalkStore) {
+  return mutate(async () => writeCurrent({ journey, phase }, store ?? await defaultStore()));
+}
+export async function persistActiveWalk(journey: WalkJourney, store?: WalkStore) {
+  return persistCurrentWalk(journey, "active", store);
+}
+
+function visitStopStatus(slugs: readonly string[], places: readonly PublicPlaceCard[], contentReady: boolean) {
+  if (!contentReady) return "loading";
+  const stops = slugs.map(slug => places.find(place => place.slug === slug));
+  if (stops.some(place => !place)) return "unresolved";
+  if (!stops.length || stops.some(place => !isEligibleTourPlace(place!))) return "empty";
+  return "ready";
+}
+// Preview eligibility is separate from completed/return-only active journeys.
+export function walkStartStatus(journey: WalkJourney, places: readonly PublicPlaceCard[], contentReady = true) {
+  return visitStopStatus(journey.remaining, places, contentReady);
+}
+export function walkSaveStatus(journey: WalkJourney, places: readonly PublicPlaceCard[], contentReady = true) {
+  return visitStopStatus([...new Set([...journey.visited, ...journey.remaining])], places, contentReady);
+}
+
+export async function startCurrentWalk(city: string, id: string, places: readonly PublicPlaceCard[], contentReady = true, store?: WalkStore) {
+  return mutate(async () => {
+    const target = store ?? await defaultStore();
+    const slot = await observeSlot(city, target);
+    if (slot.kind === "blocked") throw new Error("walk-changed");
+    requireReadableSlot(slot);
+    const current = slot.kind === "current" ? slot.current : undefined;
+    if (!current || current.journey.id !== id) throw new Error("walk-changed");
+    // Idempotent: repeated taps never reset a running timer or write another start.
+    if (current.phase === "active") return current;
+    const status = walkStartStatus(current.journey, places, contentReady);
+    if (status !== "ready") throw new Error(`walk-start-${status}`);
+    const next: CurrentWalk = { phase: "active", journey: { ...current.journey, startedAt: Date.now() } };
+    await writeCurrent(next, target);
+    return next;
+  });
+}
+
+// Confirmation applies to the exact session reviewed, not a newer edit from
+// another screen. Only this city's current slot is cleared; saved data survives.
+export async function clearCurrentWalk(city: string, expected: CurrentWalk | undefined, store?: WalkStore) {
+  return mutate(async () => {
+    const target = store ?? await defaultStore();
+    const slot = await observeSlot(city, target);
+    requireReadableSlot(slot);
+    const current = slot.kind === "current" ? slot.current : undefined;
+    if (slot.kind === "terminal") throw new Error("walk-changed");
+    if (current?.phase !== expected?.phase || JSON.stringify(current?.journey) !== JSON.stringify(expected?.journey)) throw new Error("walk-changed");
+    await target.setItem(activeKey(city), "null");
+    notifyCurrentWalk(city, undefined);
+  });
+}
+// Read and transform under the same queue so two screens cannot add duplicates
+// or lose each other's membership edits. The caller checks any route constraints.
+export async function changeCurrentWalk(
+  city: string,
+  change: (current: CurrentWalk | undefined) => CurrentWalk,
+  store?: WalkStore,
+): Promise<CurrentWalk> {
+  return mutate(async () => {
+    const target = store ?? (await defaultStore());
+    const slot = await observeSlot(city, target);
+    requireReadableSlot(slot);
+    const next = change(slot.kind === "current" ? slot.current : undefined);
+    if (next.journey.citySlug !== city) throw new Error("Wrong walk city");
+    const normalized = { ...next, journey: uniqueJourney(next.journey) };
+    const journey = await writeCurrent(normalized, target);
+    return { ...normalized, journey };
+  });
+}
+export async function loadSavedWalks(
+  store?: WalkStore,
+): Promise<SavedWalk[]> {
+  const value = await read(savedKey, store ?? (await defaultStore()));
+  return Array.isArray(value) ? value.filter(isWalkJourney) : [];
+}
+export async function saveNativeWalk(journey: WalkJourney, places: readonly PublicPlaceCard[], contentReady = true, store?: WalkStore) {
+  if (!store) throw new Error("account-required"); // Historical local helper is not a production save path.
+  if (!isWalkJourney(journey)) throw new Error("Invalid journey");
+  return mutate(async () => {
+    const target = store;
+    const suppliedStatus = walkSaveStatus(journey, places, contentReady);
+    if (suppliedStatus !== "ready") throw new Error(`walk-save-${suppliedStatus}`);
+    // Read the persisted session under the same queue as membership/removal.
+    // Include finished records: loadCurrentWalk intentionally hides those.
+    const current = await read(activeKey(journey.citySlug), target);
+    if (!isWalkJourney(current) || current.citySlug !== journey.citySlug || current.id !== journey.id) throw new Error("walk-changed");
+    const status = walkSaveStatus(current, places, contentReady);
+    if (status !== "ready") throw new Error(`walk-save-${status}`);
+    const { nativePhase: _phase, ...savedJourney } = current as WalkJourney & { nativePhase?: string };
+    const existing = await loadSavedWalks(target);
+    const match = savedWalkState(savedJourney, existing);
+    const id = match.record?.id ?? savedJourney.id;
+    // Persist lineage on the current session, never changing membership/progress.
+    // A failed saved write can leave a harmless unresolved link, never a false Saved state.
+    const linked = { ...current, savedWalkId: id };
+    if ((current as LinkedJourney).savedWalkId !== id) {
+      await target.setItem(activeKey(journey.citySlug), JSON.stringify(linked));
+    }
+    if (match.status !== "saved") {
+      const { savedWalkId: _link, ...route } = uniqueJourney(savedJourney) as LinkedJourney;
+      const stamp = Date.now();
+      const record: SavedWalk = { ...route, id,
+        // Do not invent creation times for historical records.
+        ...(match.record ? { savedAt: match.record.savedAt } : { savedAt: stamp }), updatedAt: stamp };
+      const next = [...existing];
+      if (match.record) next[existing.indexOf(match.record)] = record;
+      else next.unshift(record);
+      await target.setItem(savedKey, JSON.stringify(next));
+      notifySavedWalks(next);
+    } else notifySavedWalks(existing);
+    return { ...savedJourney, savedWalkId: id } as LinkedJourney;
+  });
+}
+export async function removeNativeWalk(
+  city: string,
+  id: string,
+  store?: WalkStore,
+) {
+  return mutate(async () => {
+    const target = store ?? (await defaultStore());
+    const existing = await loadSavedWalks(target);
+    const next = existing.filter(w => w.id !== id || w.citySlug !== city);
+    await target.setItem(savedKey, JSON.stringify(next));
+    notifySavedWalks(next);
+  });
+}
+export async function loadSavedPlaces(
+  store?: WalkStore,
+): Promise<SavedPlace[]> {
+  const value = await read(placesKey, store ?? (await defaultStore()));
+  return Array.isArray(value)
+    ? value.filter(
+        (p) =>
+          p &&
+          typeof p.citySlug === "string" &&
+          typeof p.slug === "string" &&
+          typeof p.name === "string",
+      )
+    : [];
+}
+export async function toggleSavedPlace(place: SavedPlace, store?: WalkStore) {
+  return mutate(async () => {
+    const target = store ?? (await defaultStore()),
+      existing = await loadSavedPlaces(target);
+    const has = existing.some(
+      (p) => p.citySlug === place.citySlug && p.slug === place.slug,
+    );
+    await target.setItem(
+      placesKey,
+      JSON.stringify(
+        has
+          ? existing.filter(
+              (p) => p.citySlug !== place.citySlug || p.slug !== place.slug,
+            )
+          : [...existing, place],
+      ),
+    );
+    return !has;
+  });
+}
+export async function saveWalkFeedback(
+  id: string,
+  key: "rating" | "fit" | "tags",
+  value: string,
+  store?: WalkStore,
+) {
+  await (store ?? (await defaultStore())).setItem(
+    `citywalk:native:v2:feedback:${id}:${key}`,
+    value,
+  );
+}
+
+// Account save re-reads under the same queue as remove-last-stop and membership.
+export async function saveCurrentAccountWalk(
+  journey: WalkJourney, places: readonly PublicPlaceCard[], ready: boolean,
+  persist: (current: WalkJourney) => Promise<{ accountSavedWalkId: string; accountSavedUserId: string }>, store?: WalkStore,
+) {
+  return mutate(async () => {
+    const target = store ?? await defaultStore();
+    const current = await read(activeKey(journey.citySlug), target);
+    if (!isWalkJourney(current) || current.id !== journey.id || current.citySlug !== journey.citySlug) throw new Error("walk-changed");
+    const status = walkSaveStatus(current, places, ready);
+    if (status !== "ready") throw new Error(`walk-save-${status}`);
+    const link = await persist(current);
+    await target.setItem(activeKey(current.citySlug), JSON.stringify({ ...current, ...link }));
+    return { ...current, ...link };
+  });
+}

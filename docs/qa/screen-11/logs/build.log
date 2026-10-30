@@ -1,0 +1,125 @@
+
+> lubeck-ai-guide@0.1.0 build
+> next build
+
+▲ Next.js 16.3.8 (Turbopack)
+✓ Running next.config.ts took 16ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1483ms
+  Running TypeScript ...
+  Finished TypeScript in 3.1s ...
+  Collecting page data using 14 workers ...
+  Generating static pages using 14 workers (0/785) ...
+  Generating static pages using 14 workers (196/785) 
+  Generating static pages using 14 workers (392/785) 
+  Generating static pages using 14 workers (588/785) 
+✓ Generating static pages using 14 workers (785/785) in 1104ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /.well-known/apple-app-site-association
+├ ƒ /.well-known/assetlinks.json
+├ ƒ /[locale]/[citySlug]
+├ ƒ /[locale]/[citySlug]/[placeSlug]
+├ ƒ /[locale]/account
+├ ƒ /[locale]/account/purchases
+├   /[locale]/lubeck
+│ ├ ● /de/lubeck
+│ ├ ● /da/lubeck
+│ ├ ● /nl/lubeck
+│ └ ● [+24 more paths]
+├ ƒ /[locale]/lubeck/[slug]
+├   /[locale]/lubeck/complete
+│ ├ ● /de/lubeck/complete
+│ ├ ● /da/lubeck/complete
+│ ├ ● /nl/lubeck/complete
+│ └ ● [+24 more paths]
+├ ƒ /[locale]/pass/[citySlug]
+├ ƒ /[locale]/walks
+├ ○ /account-deletion
+├ ƒ /account/reset-password
+├ ƒ /admin
+├ ƒ /admin/[section]
+├ ƒ /admin/cities
+├ ƒ /admin/cities/[id]
+├ ƒ /admin/cities/new
+├ ƒ /admin/commerce
+├ ƒ /admin/login
+├ ƒ /admin/marketing
+├ ƒ /admin/marketing/campaigns/[id]
+├ ƒ /admin/marketing/campaigns/new
+├ ƒ /admin/marketing/pages/[id]
+├ ƒ /admin/marketing/pages/new
+├ ƒ /admin/marketing/social/[id]
+├ ƒ /admin/marketing/social/new
+├ ƒ /admin/media
+├ ƒ /admin/media/[id]
+├ ƒ /admin/media/new
+├ ƒ /admin/operations
+├ ƒ /admin/operations/audio
+├ ƒ /admin/operations/translations
+├ ƒ /admin/places
+├ ƒ /admin/places/[id]
+├ ƒ /admin/places/new
+├ ƒ /admin/preview/places/[id]
+├ ƒ /admin/tours
+├ ƒ /admin/tours/[id]
+├ ƒ /admin/tours/new
+├ ƒ /admin/unauthorized
+├ ƒ /api/account/delete
+├ ƒ /api/account/delete-confirm
+├ ƒ /api/account/delete-request
+├ ƒ /api/account/export
+├ ƒ /api/account/link-guest
+├ ƒ /api/account/reset-token
+├ ƒ /api/account/saved-walks
+├ ƒ /api/admin/media/[id]/finalize
+├ ƒ /api/admin/media/local-object
+├ ƒ /api/admin/media/upload-intents
+├ ƒ /api/admin/place-search
+├ ƒ /api/analytics/marketing-funnel
+├ ƒ /api/auth/[...all]
+├ ƒ /api/commerce/checkout
+├ ƒ /api/commerce/city-unlock/[citySlug]
+├ ƒ /api/commerce/media/[assetKey]
+├ ƒ /api/commerce/native/context
+├ ƒ /api/commerce/native/notifications/apple
+├ ƒ /api/commerce/native/notifications/google
+├ ƒ /api/commerce/premium
+├ ƒ /api/commerce/webhooks/revenuecat
+├ ƒ /api/commerce/webhooks/stripe
+├ ƒ /api/content/cities
+├ ƒ /api/content/cities/[citySlug]
+├ ƒ /api/content/cities/[citySlug]/places/[placeSlug]
+├ ƒ /api/content/cities/[citySlug]/summary
+├ ƒ /api/content/image
+├ ƒ /api/guide
+├ ƒ /api/guide/eligibility
+├ ƒ /api/health
+├ ƒ /api/internal/marketing/content/[id]/published
+├ ƒ /api/internal/marketing/content/[id]/ready
+├ ƒ /api/locale
+├ ƒ /api/media/[assetKey]
+├ ○ /apple-icon.png
+├ ƒ /city/[citySlug]/[marketingSlug]
+├ ƒ /explore
+├ ○ /icon.svg
+├ ƒ /imprint
+├ ○ /landing-next-preview
+├ ○ /landing-preview
+├ ○ /manifest.webmanifest
+├ ƒ /open/[citySlug]/[marketingSlug]
+├ ƒ /privacy
+├ ○ /robots.txt
+├ ƒ /sitemap.xml
+├ ○ /support
+└ ƒ /terms
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,28 @@
+{"device": "emulator-5556", "action": "tap", "query": "Explore Lübeck", "bounds": "[366,2236][640,2289]", "point": [503, 2262]}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "tap", "query": "Not now", "bounds": "[63,2235][1017,2361]", "point": [540, 2298]}
+{"device": "emulator-5556", "action": "tap", "query": "Explore Lübeck", "bounds": "[366,2236][640,2289]", "point": [503, 2262]}
+{"device": "emulator-5556", "action": "tap", "query": "Ask CITYWALK", "bounds": "[92,1185][340,1225]", "point": [216, 1205]}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "tap", "query": "Explore Lübeck", "bounds": "[366,2236][640,2289]", "point": [503, 2262]}
+{"device": "emulator-5556", "action": "tap", "query": "Build my walk", "bounds": "[419,774][668,827]", "point": [543, 800]}
+{"device": "emulator-5556", "action": "tap", "query": "Edit interests", "bounds": "[63,893][1017,1029]", "point": [540, 961]}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "tap", "query": "Explore Lübeck", "bounds": "[366,2236][640,2289]", "point": [503, 2262]}
+{"device": "emulator-5556", "action": "tap", "query": "Continue planning", "bounds": "[63,2036][1017,2172]", "point": [540, 2104]}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "tap", "query": "Explore Lübeck", "bounds": "[366,2236][640,2289]", "point": [503, 2262]}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "tap", "query": "Explore Lübeck", "bounds": "[366,2236][640,2289]", "point": [503, 2262]}
+{"device": "emulator-5556", "action": "tap", "query": "Ask CITYWALK", "bounds": "[92,1185][340,1225]", "point": [216, 1205]}
+{"device": "emulator-5556", "action": "tap", "query": "Explore places", "bounds": "[63,978][1017,1115]", "point": [540, 1046]}
+{"device": "emulator-5556", "action": "back"}
+{"device": "emulator-5556", "action": "tap", "query": "Build my CITYWALK", "bounds": "[398,2245][759,2298]", "point": [578, 2271]}
+{"device": "emulator-5556", "action": "tap", "query": "Back", "bounds": "[42,153][147,258]", "point": [94, 205]}
+{"device": "emulator-5556", "action": "tap", "query": "Build my walk", "bounds": "[419,774][668,827]", "point": [543, 800]}

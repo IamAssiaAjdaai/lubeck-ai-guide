@@ -1,0 +1,1053 @@
+--- before/mobile/src/lib/walkStorage.ts
++++ after/mobile/src/lib/walkStorage.ts
+@@ -72,6 +72,94 @@
+   const visited = [...new Set(journey.visited)];
+   return { ...journey, visited, remaining: [...new Set(journey.remaining)].filter(slug => !visited.includes(slug)) };
+ }
++// Receipts are navigation-independent, runtime-only observations. Raw bytes and
++// storage handles stay private; a forged, serialized or cross-store receipt fails closed.
++declare const slotReceiptBrand: unique symbol;
++export type WalkSlotReceipt = Readonly<{ [slotReceiptBrand]: true }>;
++export type CurrentWalkObservation =
++  | Readonly<{ kind: "empty"; receipt: WalkSlotReceipt }>
++  | Readonly<{ kind: "current"; current: CurrentWalk; receipt: WalkSlotReceipt }>
++  | Readonly<{ kind: "terminal"; journey: WalkJourney; receipt: WalkSlotReceipt }>
++  | Readonly<{ kind: "blocked" }>
++  | Readonly<{ kind: "unavailable" }>;
++export type PreviewWriteIntent = "new" | "replay" | Readonly<{ customize: string }>;
++const slotReceipts = new WeakMap<WalkSlotReceipt, { city: string; store: WalkStore; raw: string | null }>();
++
++function classifyCurrentSlot(city: string, raw: string | null):
++  { kind: "empty" } | { kind: "blocked" } |
++  { kind: "terminal"; journey: WalkJourney } | { kind: "current"; current: CurrentWalk } {
++  if (raw === null) return { kind: "empty" };
++  let value: unknown;
++  try { value = JSON.parse(raw); } catch { return { kind: "blocked" }; }
++  if (value === null) return { kind: "empty" };
++  if (!isWalkJourney(value) || value.citySlug !== city) return { kind: "blocked" };
++  const { nativePhase, ...journey } = value as WalkJourney & { nativePhase?: unknown };
++  if (nativePhase !== undefined && nativePhase !== "preview" && nativePhase !== "active") return { kind: "blocked" };
++  if (journey.finishedAt !== undefined) return { kind: "terminal", journey: uniqueJourney(journey) };
++  return { kind: "current", current: { journey: uniqueJourney(journey), phase: nativePhase === "preview" ? "preview" : "active" } };
++}
++async function observeSlot(city: string, target: WalkStore): Promise<CurrentWalkObservation> {
++  let raw: string | null;
++  try { raw = await target.getItem(activeKey(city)); } catch { return { kind: "unavailable" }; }
++  const slot = classifyCurrentSlot(city, raw);
++  if (slot.kind === "blocked") return Object.freeze(slot);
++  const receipt = Object.freeze({}) as WalkSlotReceipt;
++  slotReceipts.set(receipt, { city, store: target, raw });
++  return Object.freeze({ ...slot, receipt });
++}
++export async function observeCurrentWalk(city: string, store?: WalkStore): Promise<CurrentWalkObservation> {
++  return mutate(async () => {
++    try { return await observeSlot(city, store ?? await defaultStore()); }
++    catch { return { kind: "unavailable" } as const; }
++  });
++}
++function requireReadableSlot(slot: CurrentWalkObservation): void {
++  if (slot.kind === "blocked") throw new Error("walk-storage-blocked");
++  if (slot.kind === "unavailable") throw new Error("walk-storage-unavailable");
++}
++
++/** Single-runtime queued compare/write, not cross-process CAS or persistent drafts. */
++export async function commitCurrentWalkPreview(
++  input: WalkJourney, receipt: WalkSlotReceipt, writeIntent: PreviewWriteIntent,
++  options: { store?: WalkStore; isCurrent?: () => boolean } = {},
++): Promise<CurrentWalk> {
++  if (!isWalkJourney(input) || input.finishedAt !== undefined) throw new Error("Invalid journey");
++  const phase = (input as WalkJourney & { nativePhase?: unknown }).nativePhase;
++  if (phase !== undefined && phase !== "active" && phase !== "preview") throw new Error("Invalid journey");
++  // Capture input ownership before joining the queue; caller edits cannot alter
++  // the accepted candidate while asynchronous storage work is pending.
++  const journey: WalkJourney = JSON.parse(JSON.stringify(input));
++  const intent = typeof writeIntent === "object" ? { customize: writeIntent.customize } : writeIntent;
++  return mutate(async () => {
++    const target = options.store ?? await defaultStore();
++    const observed = slotReceipts.get(receipt);
++    if (!observed || observed.city !== journey.citySlug || observed.store !== target) throw new Error("walk-changed");
++    if (!isWalkJourney(journey) || journey.finishedAt !== undefined) throw new Error("Invalid journey");
++    if (options.isCurrent && !options.isCurrent()) throw new Error("walk-cancelled");
++    const raw = await target.getItem(activeKey(journey.citySlug));
++    if (raw !== observed.raw) throw new Error("walk-changed");
++    const slot = classifyCurrentSlot(journey.citySlug, raw);
++    if (slot.kind === "blocked") throw new Error("walk-storage-blocked");
++    if (intent === "new" || intent === "replay") {
++      if (slot.kind === "current") throw new Error("walk-changed");
++    } else if (slot.kind !== "current" || slot.current.journey.id !== intent.customize) throw new Error("walk-changed");
++    // An explicit Customize may keep its saved lineage in the new preview
++    // execution. Never infer linkage for an unrelated new or replayed route.
++    const previous = slot.kind === "current" ? slot.current.journey as WalkJourney & {
++      savedWalkId?: string; accountSavedWalkId?: string; accountSavedUserId?: string;
++    } : undefined;
++    const candidate = previous && typeof intent === "object" ? { ...journey,
++      ...(previous.savedWalkId ? { savedWalkId: previous.savedWalkId } : {}),
++      ...(previous.accountSavedWalkId ? { accountSavedWalkId: previous.accountSavedWalkId, accountSavedUserId: previous.accountSavedUserId } : {}),
++    } : journey;
++    // One accepted attempt consumes its receipt, including failed/uncertain writes.
++    // Retry must inspect actual storage again instead of blindly replaying it.
++    slotReceipts.delete(receipt);
++    const written = await writeCurrent({ journey: candidate, phase: "preview" }, target, options.isCurrent, observed.raw);
++    return { journey: written, phase: "preview" };
++  });
++}
++
+ export async function loadCurrentWalk(city: string, store?: WalkStore): Promise<CurrentWalk | undefined> {
+   const value = await read(activeKey(city), store ?? (await defaultStore()));
+   if (!isWalkJourney(value) || value.citySlug !== city || value.finishedAt) return;
+@@ -82,9 +170,12 @@
+   const current = await loadCurrentWalk(city, store);
+   return current?.phase === "active" ? current.journey : undefined;
+ }
+-async function writeCurrent(current: CurrentWalk, target: WalkStore) {
++async function writeCurrent(current: CurrentWalk, target: WalkStore, isCurrent?: () => boolean, expectedRaw?: string | null) {
+   if (!isWalkJourney(current.journey)) throw new Error("Invalid journey");
+-  const previous = await read(activeKey(current.journey.citySlug), target);
++  const slot = await observeSlot(current.journey.citySlug, target);
++  requireReadableSlot(slot);
++  if (expectedRaw !== undefined && (slot.kind === "blocked" || slot.kind === "unavailable" || slotReceipts.get(slot.receipt)?.raw !== expectedRaw)) throw new Error("walk-changed");
++  const previous = slot.kind === "current" ? slot.current.journey : slot.kind === "terminal" ? slot.journey : undefined;
+   const linkedId = isWalkJourney(previous) && previous.id === current.journey.id
+     ? (previous as LinkedJourney).savedWalkId : undefined;
+   const accountLink = isWalkJourney(previous) && previous.id === current.journey.id
+@@ -94,6 +185,7 @@
+     ...((current.journey as LinkedJourney).savedWalkId || linkedId
+       ? { savedWalkId: (current.journey as LinkedJourney).savedWalkId ?? linkedId } : {}),
+   });
++  if (isCurrent && !isCurrent()) throw new Error("walk-cancelled");
+   await target.setItem(activeKey(journey.citySlug), JSON.stringify(
+     current.phase === "preview" ? { ...journey, nativePhase: "preview" } : journey,
+   ));
+@@ -125,7 +217,10 @@
+ export async function startCurrentWalk(city: string, id: string, places: readonly PublicPlaceCard[], contentReady = true, store?: WalkStore) {
+   return mutate(async () => {
+     const target = store ?? await defaultStore();
+-    const current = await loadCurrentWalk(city, target);
++    const slot = await observeSlot(city, target);
++    if (slot.kind === "blocked") throw new Error("walk-changed");
++    requireReadableSlot(slot);
++    const current = slot.kind === "current" ? slot.current : undefined;
+     if (!current || current.journey.id !== id) throw new Error("walk-changed");
+     // Idempotent: repeated taps never reset a running timer or write another start.
+     if (current.phase === "active") return current;
+@@ -142,7 +237,10 @@
+ export async function clearCurrentWalk(city: string, expected: CurrentWalk | undefined, store?: WalkStore) {
+   return mutate(async () => {
+     const target = store ?? await defaultStore();
+-    const current = await loadCurrentWalk(city, target);
++    const slot = await observeSlot(city, target);
++    requireReadableSlot(slot);
++    const current = slot.kind === "current" ? slot.current : undefined;
++    if (slot.kind === "terminal") throw new Error("walk-changed");
+     if (current?.phase !== expected?.phase || JSON.stringify(current?.journey) !== JSON.stringify(expected?.journey)) throw new Error("walk-changed");
+     await target.setItem(activeKey(city), "null");
+     notifyCurrentWalk(city, undefined);
+@@ -157,7 +255,9 @@
+ ): Promise<CurrentWalk> {
+   return mutate(async () => {
+     const target = store ?? (await defaultStore());
+-    const next = change(await loadCurrentWalk(city, target));
++    const slot = await observeSlot(city, target);
++    requireReadableSlot(slot);
++    const next = change(slot.kind === "current" ? slot.current : undefined);
+     if (next.journey.citySlug !== city) throw new Error("Wrong walk city");
+     const normalized = { ...next, journey: uniqueJourney(next.journey) };
+     const journey = await writeCurrent(normalized, target);
+--- before/mobile/src/components/NativeWalkFlow.tsx
++++ after/mobile/src/components/NativeWalkFlow.tsx
+@@ -47,7 +47,10 @@
+   loadCurrentWalk,
+   changeCurrentWalk,
+   subscribeCurrentWalk,
+-  persistCurrentWalk,
++  observeCurrentWalk,
++  commitCurrentWalkPreview,
++  type CurrentWalkObservation,
++  type PreviewWriteIntent,
+   loadSavedWalks,
+   reopenSavedWalk,
+   saveWalkFeedback,
+@@ -182,10 +185,21 @@
+     liveSession?.journeyId === journey.id
+       ? "live"
+       : requestedActiveMode;
++  const [storageRetry, setStorageRetry] = useState(0);
++  const [storageRecovery, setStorageRecovery] = useState<{ source: "hydrate" | "plan"; current?: CurrentWalk }>();
++  const planObservation = useRef<CurrentWalkObservation>(undefined);
++  const pendingObservation = useRef<Promise<CurrentWalkObservation>>(undefined);
++  const previewIntent = useRef<PreviewWriteIntent>("new");
++  const customizeExpected = useRef<WalkJourney>(undefined);
++  const attemptedPreview = useRef<WalkJourney>(undefined);
++  const storageEpoch = useRef(0);
++  const buildTicket = useRef(0);
++  const buildLock = useRef(false);
++  const recoveryLock = useRef(false);
+   const mounted = useRef(true);
+   useEffect(() => {
+     mounted.current = true;
+-    return () => { mounted.current = false; buildLayoutReady.current?.(); buildPresented.current?.(); };
++    return () => { mounted.current = false; storageEpoch.current += 1; buildTicket.current += 1; buildLayoutReady.current?.(); buildPresented.current?.(); };
+   }, []);
+   useEffect(() => {
+     let alive = true;
+@@ -354,7 +368,21 @@
+ 
+   useEffect(() => {
+     let alive = true;
++    buildLock.current = false;
++    planObservation.current = undefined;
++    pendingObservation.current = undefined;
++    previewIntent.current = "new";
++    customizeExpected.current = undefined;
++    attemptedPreview.current = undefined;
+     void (async () => {
++      const observed = await observeCurrentWalk(citySlug);
++      if (!alive) return;
++      if (observed.kind === "blocked" || observed.kind === "unavailable") {
++        setStorageRecovery({ source: "hydrate" });
++        setStage("plan");
++        return;
++      }
++      planObservation.current = observed;
+       let restored: WalkJourney | undefined;
+       let restoredPhase: "preview" | "active" = "active";
+       if (savedId) {
+@@ -388,11 +416,16 @@
+               },
+             };
+         }
+-        if (restored) {
+-          restored = reopenSavedWalk(restored, createMobileTripId("walk"));
++        if (!alive) return;
++        if (!restored) throw new Error("walk-saved-missing");
++        if (observed.kind === "current") {
++          setStorageRecovery({ source: "hydrate", current: observed.current });
++          setStage("plan");
++          return;
+         }
++        restored = reopenSavedWalk(restored, createMobileTripId("walk"));
+       } else {
+-        const current = await loadCurrentWalk(citySlug);
++        const current = observed.kind === "current" ? observed.current : undefined;
+         restored = current?.journey;
+         restoredPhase = current?.phase ?? "active";
+       }
+@@ -405,7 +438,10 @@
+           eligible.some((p) => p.slug === slug),
+         );
+         if (savedId || restoredPhase === "preview" || (allKnown && allEligible)) {
+-          if (savedId) await persistCurrentWalk(restored, "preview");
++          if (savedId) {
++            const committed = await commitCurrentWalkPreview(restored, observed.receipt, "replay", { isCurrent: () => alive && mounted.current });
++            restored = committed.journey;
++          }
+           if (!alive) return;
+           setJourney(restored);
+           setStage(savedId ? "preview" : restoredPhase);
+@@ -433,6 +469,9 @@
+           return;
+         }
+         setMessage(t.noEligible);
++        setStorageRecovery({ source: "hydrate" });
++        setStage("plan");
++        return;
+       }
+       const auth = await nativeAuthClient.getSession().catch(() => ({ data: null }));
+       const style = await loadTravelerStyle(auth.data?.user.id);
+@@ -444,15 +483,20 @@
+     })().catch(() => {
+       if (alive) {
+         setMessage(messages.tripSaveFailed);
++        setStorageRecovery({ source: "hydrate" });
+         setStage("plan");
+       }
+     });
+     return () => {
+       alive = false;
++      storageEpoch.current += 1;
++      buildTicket.current += 1;
++      buildLayoutReady.current?.();
++      buildPresented.current?.();
+     };
+     // Hydrate once per city/saved route; locale refresh must not reset an active walk.
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+-  }, [citySlug, savedId, accountSaved]);
++  }, [citySlug, savedId, accountSaved, storageRetry]);
+   useEffect(() => {
+     if (stage !== "preview" && stage !== "active") return;
+     return subscribeCurrentWalk(citySlug, current => {
+@@ -518,56 +562,68 @@
+     return result.status === "available";
+   }
+   async function build() {
+-    const start =
+-      startMode === "gps"
+-        ? gps
+-        : places.find((p) => p.slug === startSlug)?.coordinates;
+-    const finish =
+-      endMode === "loop"
+-        ? start
+-        : endMode === "destination"
+-          ? places.find((p) => p.slug === endSlug)?.coordinates
+-          : undefined;
+-    const deadline = returnBy ? deadlineForToday(returnBy) : undefined;
+-    if (
+-      !start ||
+-      (returnBy && !deadline) ||
+-      (endMode === "destination" && !finish)
+-    ) {
+-      setMessage(t.invalid);
+-      return;
+-    }
+-    setMessage("");
+-    setBuildStage("matching");
+-    const presented = new Promise<void>((resolve) => { buildPresented.current = resolve; });
+-    setStage("building");
+-    // Wait for this native view's real layout, not a synthetic display timer.
+-    // A fast local plan must not finish before its progress screen is attached.
+-    await new Promise<void>((resolve) => { buildLayoutReady.current = resolve; });
+-    if (!mounted.current) return;
++    if (buildLock.current || recoveryLock.current || storageRecovery) return;
++    buildLock.current = true;
++    const ticket = ++buildTicket.current;
++    const epoch = storageEpoch.current;
++    const isCurrent = () => mounted.current && epoch === storageEpoch.current && ticket === buildTicket.current;
+     try {
++      const start =
++        startMode === "gps"
++          ? gps
++          : places.find((p) => p.slug === startSlug)?.coordinates;
++      const finish =
++        endMode === "loop"
++          ? start
++          : endMode === "destination"
++            ? places.find((p) => p.slug === endSlug)?.coordinates
++            : undefined;
++      const deadline = returnBy ? deadlineForToday(returnBy) : undefined;
++      if (
++        !start ||
++        (returnBy && !deadline) ||
++        (endMode === "destination" && !finish)
++      ) {
++        setMessage(t.invalid);
++        return;
++      }
+       const settings: WalkSettings = {
+-        minutes,
+-        deadline,
+-        start,
+-        finish,
+-        interests,
+-        categories,
+-        walking,
++        minutes, deadline, start: { ...start }, finish: finish ? { ...finish } : undefined,
++        interests: [...interests], categories: [...categories], walking,
+       };
++      const intent = previewIntent.current;
++      const observed = pendingObservation.current ? await pendingObservation.current : planObservation.current;
++      if (!isCurrent()) return;
++      if (!observed || observed.kind === "blocked" || observed.kind === "unavailable") {
++        setStorageRecovery({ source: "plan" });
++        return;
++      }
++      if (typeof intent === "object" && (observed.kind !== "current" ||
++          JSON.stringify(observed.current.journey) !== JSON.stringify(customizeExpected.current))) {
++        setStorageRecovery({ source: "plan", current: observed.kind === "current" ? observed.current : undefined });
++        return;
++      }
++      setMessage("");
++      setBuildStage("matching");
++      const presented = new Promise<void>((resolve) => { buildPresented.current = resolve; });
++      setStage("building");
++      // Wait for this native view's real layout, not a synthetic display timer.
++      // A fast local plan must not finish before its progress screen is attached.
++      await new Promise<void>((resolve) => { buildLayoutReady.current = resolve; });
++      if (!isCurrent()) return;
+       const steps = buildWalkSteps(places, settings);
+       let result = steps.next();
+       while (!result.done) {
+         setBuildStage(result.value);
+         // Render before the next synchronous work unit; no decorative delay.
+         await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+-        if (!mounted.current) return;
++        if (!isCurrent()) return;
+         result = steps.next();
+       }
+       // Local planning can finish during the native entrance transition. Keep
+       // its real progress mounted until that transition has actually completed.
+       await presented;
+-      if (!mounted.current) return;
++      if (!isCurrent()) return;
+       const route = result.value;
+       if (!route.places.length) {
+         setBuildError("empty");
+@@ -577,24 +633,36 @@
+       const time = Date.now();
+       setGeneratedAt(time);
+       setNow(time);
++      const remaining = route.places.map(place => place.slug);
++      const previousAttempt = attemptedPreview.current;
++      const sameAttempt = previousAttempt?.citySlug === citySlug &&
++        JSON.stringify(previousAttempt.settings) === JSON.stringify(settings) &&
++        JSON.stringify(previousAttempt.remaining) === JSON.stringify(remaining);
+       const generated: WalkJourney = {
+-        id: createMobileTripId("walk"),
++        id: sameAttempt ? previousAttempt.id : createMobileTripId("walk"),
+         citySlug,
+         settings,
+-        remaining: route.places.map((p) => p.slug),
++        remaining,
+         visited: [],
+         position: start,
+         finish,
+         historyDistance: 0,
+         startedAt: time,
+       };
+-      await persistCurrentWalk(generated, "preview");
+-      if (!mounted.current) return;
+-      setJourney(generated);
++      attemptedPreview.current = generated;
++      const committed = await commitCurrentWalkPreview(generated, observed.receipt, intent, { isCurrent });
++      if (!isCurrent()) return;
++      attemptedPreview.current = undefined;
++      setJourney(committed.journey);
+       setStage("preview");
+-    } catch {
+-      setBuildError("error");
++    } catch (error) {
++      if (!isCurrent()) return;
++      const code = error instanceof Error ? error.message : "";
++      if (code === "walk-changed" || code.startsWith("walk-storage-")) setStorageRecovery({ source: "plan" });
++      else setBuildError("error");
+       setStage("plan");
++    } finally {
++      if (ticket === buildTicket.current) buildLock.current = false;
+     }
+   }
+   async function update(
+@@ -650,6 +718,8 @@
+       const next = await startCurrentWalk(citySlug, journey.id, places, contentStatus === "available");
+       setActiveMode(mode);
+       setJourney(next.journey);
++      // Only reached from the explicit Start button after storage authorization.
++      // eslint-disable-next-line react-hooks/purity -- Existing async event handler, never invoked during render.
+       setNow(Date.now());
+       setStage("active");
+       void captureNativeMarketingFunnelEvent("walk_started", citySlug);
+@@ -692,8 +762,13 @@
+     if (!rebuildConfirmation || updateLock.current) return;
+     updateLock.current = true; setUpdating(true);
+     try {
++      await clearCurrentWalk(citySlug, rebuildConfirmation.current);
+       await completeCitywalkLiveWalk();
+-      await clearCurrentWalk(citySlug, rebuildConfirmation.current);
++      planObservation.current = await observeCurrentWalk(citySlug);
++      pendingObservation.current = undefined;
++      previewIntent.current = "new";
++      customizeExpected.current = undefined;
++      attemptedPreview.current = undefined;
+       setJourney(undefined); setProposed(undefined); setPanel(undefined);
+       setLiveSession(undefined); setForegroundPoint(undefined); setActiveMode("basic");
+       setShowManageWalk(false); setShowLiveItinerary(false); setShowLiveInspect(false);
+@@ -905,6 +980,10 @@
+   );
+   const customize = () => {
+     if (!journey) return;
++    previewIntent.current = { customize: journey.id };
++    attemptedPreview.current = undefined;
++    customizeExpected.current = journey;
++    pendingObservation.current = observeCurrentWalk(citySlug);
+     setStage("plan");
+     setStep(1);
+     setShowMap(false);
+@@ -930,6 +1009,63 @@
+     );
+     if (endpoint) setEndSlug(endpoint.slug);
+   };
++
++  async function retryStorage() {
++    if (recoveryLock.current || buildLock.current) return;
++    if (storageRecovery?.source === "hydrate") {
++      setStorageRecovery(undefined);
++      setStage("hydrate");
++      setStorageRetry(value => value + 1);
++      return;
++    }
++    recoveryLock.current = true;
++    const epoch = storageEpoch.current;
++    try {
++      const observed = await observeCurrentWalk(citySlug);
++      if (!mounted.current || storageEpoch.current !== epoch) return;
++      if (observed.kind === "blocked" || observed.kind === "unavailable") {
++        setStorageRecovery({ source: "plan" });
++        return;
++      }
++      if (observed.kind === "current") {
++        const candidate = attemptedPreview.current;
++        // An uncertain write can have reached disk. Reconcile that exact preview
++        // on explicit Retry; never generate another session over it or auto-start.
++        const sameCandidate = candidate && observed.current.phase === "preview" &&
++          Object.entries(candidate).every(([key, value]) => JSON.stringify((observed.current.journey as unknown as Record<string, unknown>)[key]) === JSON.stringify(value));
++        if (sameCandidate) {
++          attemptedPreview.current = undefined;
++          setJourney(observed.current.journey);
++          setStage("preview");
++          setBuildError(undefined);
++          setStorageRecovery(undefined);
++          return;
++        }
++        if (typeof previewIntent.current !== "object" ||
++            JSON.stringify(observed.current.journey) !== JSON.stringify(customizeExpected.current)) {
++          setStorageRecovery({ source: "plan", current: observed.current });
++          return;
++        }
++      } else if (typeof previewIntent.current === "object") {
++        setStorageRecovery({ source: "plan" });
++        return;
++      }
++      planObservation.current = observed;
++      pendingObservation.current = undefined;
++      setStorageRecovery(undefined);
++      setBuildError(undefined);
++      // Preserve existing Retry entry/controls; every selected value remains live.
++      setStep(1);
++    } finally { recoveryLock.current = false; }
++  }
++
++  if (storageRecovery) {
++    return <Screen navigation={false}>
++      <StatusMessage>{messages.tripSaveFailed}</StatusMessage>
++      <V2WalkError retry={() => void retryStorage()} close={() => router.replace({ pathname: "/city/[citySlug]", params: { citySlug } })} />
++      {storageRecovery.current ? <PrimaryButton label={translate(locale, "trips.resumeTrip")} onPress={() => router.replace({ pathname: "/city/[citySlug]/walk", params: { citySlug } })} /> : null}
++    </Screen>;
++  }
+ 
+   if (interestOnboarding && !interestEntryComplete && !savedId && !addSlug && !journey && stage === "plan" && step === 1 && !buildError) {
+     return <SelectInterests citySlug={citySlug} cityName={cityName} selected={interests}
+@@ -1011,8 +1147,7 @@
+           recoveryLabel={buildError === "empty" ? t.rebuild : undefined}
+           retry={() => {
+             if (buildError === "empty") { void requestRebuild(); return; }
+-            setBuildError(undefined);
+-            setStep(1);
++            void retryStorage();
+           }}
+           close={() =>
+             router.replace({
+--- before/mobile/tests/walk-flow.behavior.tsx
++++ after/mobile/tests/walk-flow.behavior.tsx
+@@ -15,8 +15,13 @@
+ const mocks = vi.hoisted(() => ({
+   guest: false,
+   routePush: vi.fn(),
++  routeReplace: vi.fn(),
+   hardwareBack: undefined as (() => boolean) | undefined,
+   saved: [] as import("@citywalk/traveler-core/walkJourney").WalkJourney[],
++  slotLoaded: false,
++  rawOverride: undefined as string | undefined,
++  readSlot: vi.fn(),
++  writeThenReject: false,
+   current: undefined as import("../src/lib/walkStorage").CurrentWalk | undefined,
+   changed: undefined as ((current: import("../src/lib/walkStorage").CurrentWalk | undefined) => void) | undefined,
+   load: vi.fn(),
+@@ -64,7 +69,7 @@
+   useLocalSearchParams: () => ({ citySlug: "city" }),
+   Link: ({ children, href, push }: React.PropsWithChildren<{ href: unknown; push?: boolean }>) =>
+     <a data-route={JSON.stringify(href)} data-push={String(Boolean(push))}>{children}</a>,
+-  useRouter: () => ({ replace: vi.fn(), push: mocks.routePush }), router: { push: vi.fn() },
++  useRouter: () => ({ replace: mocks.routeReplace, push: mocks.routePush }), router: { push: vi.fn() },
+ }));
+ vi.mock("react-native", () => ({
+   Platform: { OS: "ios" },
+@@ -308,7 +313,19 @@
+ vi.mock("../src/lib/walkStorage", async (importOriginal) => {
+   const actual = await importOriginal<typeof import("../src/lib/walkStorage")>();
+   const store = {
+-    getItem: async (key: string) => key === "citywalk:native:v2:saved" ? JSON.stringify(mocks.saved) : mocks.current ? JSON.stringify({ ...mocks.current.journey, nativePhase: mocks.current.phase }) : null,
++    getItem: async (key: string) => {
++      if (key === "citywalk:native:v2:saved") return JSON.stringify(mocks.saved);
++      await mocks.readSlot();
++      if (mocks.rawOverride !== undefined) return mocks.rawOverride;
++      if (!mocks.slotLoaded) {
++        if (!mocks.current) {
++          const journey = await mocks.load();
++          mocks.current = journey ? { journey, phase: "active" } : undefined;
++        }
++        mocks.slotLoaded = true;
++      }
++      return mocks.current ? JSON.stringify({ ...mocks.current.journey, nativePhase: mocks.current.phase }) : null;
++    },
+     setItem: async (_key: string, value: string) => {
+       const stored = JSON.parse(value);
+       if (_key === "citywalk:native:v2:saved") { await mocks.save(stored); mocks.saved = stored; return; }
+@@ -317,11 +334,14 @@
+         const { nativePhase, ...journey } = stored;
+         mocks.current = { journey, phase: nativePhase === "preview" ? "preview" : "active" };
+       } else mocks.current = undefined;
++      if (mocks.writeThenReject) { mocks.writeThenReject = false; throw new Error("uncertain-write"); }
+       mocks.changed?.(mocks.current);
+     },
+   };
+   return {
+   ...actual,
++  observeCurrentWalk: (city: string) => actual.observeCurrentWalk(city, store),
++  commitCurrentWalkPreview: (journey: Parameters<typeof actual.commitCurrentWalkPreview>[0], receipt: Parameters<typeof actual.commitCurrentWalkPreview>[1], intent: Parameters<typeof actual.commitCurrentWalkPreview>[2], options: Parameters<typeof actual.commitCurrentWalkPreview>[3]) => actual.commitCurrentWalkPreview(journey, receipt, intent, { ...options, store }),
+   startCurrentWalk: (city: string, id: string, places: readonly PublicPlaceCard[], ready: boolean) => actual.startCurrentWalk(city, id, places, ready, store),
+   removeNativeWalk: (city: string, id: string) => actual.removeNativeWalk(city, id, store),
+   clearCurrentWalk: (city: string, expected: import("../src/lib/walkStorage").CurrentWalk | undefined) => actual.clearCurrentWalk(city, expected, store),
+@@ -385,6 +405,7 @@
+   mocks.holdPresentation = false; mocks.presented = undefined;
+   cleanup();
+   mocks.current = undefined; mocks.changed = undefined; mocks.saved = [];
++  mocks.slotLoaded = false; mocks.rawOverride = undefined; mocks.writeThenReject = false; mocks.readSlot.mockReset();
+   vi.clearAllMocks();
+   mocks.locale = "en"; mocks.guest = false;
+   mocks.contentStatus = "available";
+@@ -1352,21 +1373,21 @@
+     expect(mocks.current?.journey.id).toBe("s08-existing");
+     expect(mocks.persist).not.toHaveBeenCalled();
+   });
+-  s08Gap("[S08 XFAIL][S02] storage I/O failure blocks fresh personalization rather than masquerading as no walk", async () => {
++  it("[S08 PASS][S02] storage I/O failure blocks fresh personalization rather than masquerading as no walk", async () => {
+     mocks.load.mockRejectedValueOnce(new Error("storage-offline"));
+     render(<NativeWalkFlow interestOnboarding citySlug="city" cityName="City" places={places} />);
+     await waitFor(() => expect(screen.queryByTestId("content-loader")).toBeNull());
+     expect(screen.queryByTestId("interest-entry")).toBeNull();
+     expect(mocks.persist).not.toHaveBeenCalled();
+   });
+-  s08Gap("[S08 XFAIL][E03] missing saved ID cannot silently become a new planning session", async () => {
++  it("[S08 PASS][E03] missing saved ID cannot silently become a new planning session", async () => {
+     mocks.saved = []; mocks.load.mockResolvedValue(undefined);
+     render(<NativeWalkFlow interestOnboarding citySlug="city" cityName="City" places={places} savedId="missing" />);
+     await waitFor(() => expect(screen.queryByTestId("content-loader")).toBeNull());
+     expect(screen.queryByTestId("time-entry")).toBeNull();
+     expect(mocks.persist).not.toHaveBeenCalled();
+   });
+-  s08Gap("[S08 XFAIL][E04] opening saved replay cannot silently replace another unfinished current walk", async () => {
++  it("[S08 PASS][E04] opening saved replay cannot silently replace another unfinished current walk", async () => {
+     mocks.current = { phase: "active", journey: existingJourney("keep-current") };
+     mocks.saved = [existingJourney("saved-record")]; mocks.persist.mockResolvedValue(undefined);
+     render(<NativeWalkFlow interestOnboarding citySlug="city" cityName="City" places={places} savedId="saved-record" />);
+@@ -1374,14 +1395,14 @@
+     expect(mocks.current?.journey.id).toBe("keep-current");
+     expect(mocks.persist).not.toHaveBeenCalled();
+   });
+-  s08Gap("[S08 XFAIL][S04] a new current walk arriving during Build must not be overwritten", async () => {
++  it("[S08 PASS][S04] a new current walk arriving during Build must not be overwritten", async () => {
+     setup(); await legacyConstraints(); await heldBuild();
+     mocks.current = { phase: "active", journey: existingJourney("newer-current") };
+     await act(async () => mocks.presented?.());
+     await waitFor(() => expect(screen.queryByTestId("build-stage")).toBeNull());
+     expect(mocks.current?.journey.id).toBe("newer-current");
+   });
+-  s08Gap("[S08 XFAIL][S05] same-ID concurrent edits during Customize Build must survive", async () => {
++  it("[S08 PASS][S05] same-ID concurrent edits during Customize Build must survive", async () => {
+     mocks.current = { phase: "preview", journey: existingJourney() };
+     render(<NativeWalkFlow citySlug="city" cityName="City" places={places} />);
+     await screen.findByRole("button", { name: t.startWalk });
+@@ -1536,3 +1557,150 @@
+   expect(mocks.persist).not.toHaveBeenCalled();
+   expect(screen.queryByRole("button", { name: t.startWalk })).toBeNull();
+ });
++
++describe("authorized storage safety prerequisite — real controller, unchanged navigation", () => {
++  async function constraints() {
++    const t = walkCopy(mocks.locale);
++    await screen.findByRole("button", { name: t.continue });
++    fireEvent.click(screen.getByRole("button", { name: t.continue }));
++    fireEvent.click(screen.getByRole("button", { name: t.continue }));
++    return screen.getByRole("button", { name: t.buildAction });
++  }
++  function current(id = "other-current") {
++    return { phase: "active" as const, journey: { id, citySlug: "city", remaining: ["place-0"], visited: [],
++      settings: { minutes: 120, interests: ["history"] as import("@citywalk/traveler-core/walkPlanner").Interest[], walking: "balanced" as const, start: places[0].coordinates },
++      startedAt: 100, historyDistance: 0, position: places[0].coordinates } };
++  }
++  it.each(["en", "de"] as const)("[S02] corrupt entry stays read-only until explicit successful Retry (%s)", async locale => {
++    mocks.locale = locale; mocks.rawOverride = "{corrupt-current";
++    render(<NativeWalkFlow interestOnboarding citySlug="city" cityName="City" places={places} />);
++    const alert = await screen.findByRole("alert");
++    expect(mocks.loadTravelerStyle).not.toHaveBeenCalled(); expect(mocks.persist).not.toHaveBeenCalled();
++    expect(screen.queryByTestId("interest-entry")).toBeNull();
++    mocks.rawOverride = undefined; mocks.load.mockResolvedValue(undefined);
++    fireEvent.click(within(alert).getByRole("button", { name: "Retry" }));
++    await screen.findByTestId("interest-entry");
++    expect(mocks.loadTravelerStyle).toHaveBeenCalledOnce(); expect(mocks.persist).not.toHaveBeenCalled();
++  });
++  it("[S02] Retry after a transient read error resumes the existing active walk without defaults", async () => {
++    mocks.current = current(); const before = JSON.stringify(mocks.current);
++    mocks.readSlot.mockRejectedValueOnce(new Error("read-offline"));
++    render(<NativeWalkFlow interestOnboarding citySlug="city" cityName="City" places={places} />);
++    const alert = await screen.findByRole("alert");
++    expect(mocks.loadTravelerStyle).not.toHaveBeenCalled();
++    fireEvent.click(within(alert).getByRole("button", { name: "Retry" }));
++    await waitFor(() => expect(mocks.changed).toBeTypeOf("function"));
++    expect(JSON.stringify(mocks.current)).toBe(before);
++    expect(mocks.loadTravelerStyle).not.toHaveBeenCalled(); expect(mocks.persist).not.toHaveBeenCalled();
++    expect(screen.queryByTestId("interest-entry")).toBeNull();
++  });
++  it("[S03] completed current slot remains intact while safe fresh planning initializes", async () => {
++    mocks.current = { ...current(), journey: { ...current().journey, finishedAt: 0 } };
++    const before = JSON.stringify(mocks.current); mocks.loadTravelerStyle.mockResolvedValue(mocks.travelerStyle);
++    render(<NativeWalkFlow interestOnboarding citySlug="city" cityName="City" places={places} />);
++    await screen.findByTestId("interest-entry");
++    expect(JSON.stringify(mocks.current)).toBe(before); expect(mocks.persist).not.toHaveBeenCalled();
++    expect(mocks.loadTravelerStyle).toHaveBeenCalledOnce();
++    expect(screen.queryByRole("button", { name: walkCopy("en").startWalk })).toBeNull();
++  });
++  it("[E04] saved replay collision offers real current resume and preserves both source and current", async () => {
++    mocks.current = current(); mocks.saved = [{ ...current("saved-source").journey }];
++    const before = JSON.stringify({ current: mocks.current, saved: mocks.saved });
++    render(<NativeWalkFlow citySlug="city" cityName="City" places={places} savedId="saved-source" />);
++    await screen.findByRole("alert");
++    expect(JSON.stringify({ current: mocks.current, saved: mocks.saved })).toBe(before);
++    expect(mocks.persist).not.toHaveBeenCalled(); expect(mocks.loadTravelerStyle).not.toHaveBeenCalled();
++    fireEvent.click(screen.getByRole("button", { name: translate("en", "trips.resumeTrip") }));
++    expect(mocks.routeReplace).toHaveBeenCalledWith({ pathname: "/city/[citySlug]/walk", params: { citySlug: "city" } });
++    expect(JSON.stringify({ current: mocks.current, saved: mocks.saved })).toBe(before);
++  });
++  it("[S06] failed write retains all selected values; Retry re-observes without defaults or false success", async () => {
++    vi.useFakeTimers({ toFake: ["Date"] }); vi.setSystemTime(new Date("2026-10-29T12:00:00"));
++    mocks.travelerStyle = { interests: ["food"], walking: "easy", minutes: 90 };
++    const tagged = places.map(place => ({ ...place, tags: [...(place.tags ?? []), "synthetic-special"] }));
++    mocks.load.mockResolvedValue(undefined); mocks.persist.mockResolvedValue(undefined);
++    render(<NativeWalkFlow citySlug="city" cityName="City" places={tagged} />);
++    const t = walkCopy("en"); await screen.findByRole("button", { name: t.continue });
++    fireEvent.click(screen.getByRole("button", { name: t.halfDay }));
++    fireEvent.change(screen.getByLabelText(t.returnBy), { target: { value: "23:15" } });
++    fireEvent.click(screen.getByRole("button", { name: t.continue }));
++    fireEvent.click(screen.getByRole("button", { name: translate("en", "planner.showMore") }));
++    fireEvent.click(screen.getByRole("button", { name: /^synthetic special$/ }));
++    fireEvent.click(screen.getByRole("button", { name: t.continue }));
++    fireEvent.click(within(screen.getByRole("group", { name: t.choosePlace })).getByRole("button", { name: "Place 1" }));
++    fireEvent.click(screen.getByRole("button", { name: t.destination }));
++    fireEvent.click(within(screen.getByRole("group", { name: t.destination })).getByRole("button", { name: "Place 2" }));
++    mocks.persist.mockRejectedValueOnce(new Error("disk-full"));
++    fireEvent.click(screen.getByRole("button", { name: t.buildAction }));
++    const alert = await screen.findByRole("alert");
++    expect(screen.queryByRole("button", { name: t.startWalk })).toBeNull(); expect(mocks.current).toBeUndefined();
++    fireEvent.click(within(alert).getByRole("button", { name: "Retry" }));
++    await screen.findByRole("button", { name: t.continue });
++    expect(screen.getByRole("button", { name: t.halfDay }).getAttribute("aria-pressed")).toBe("true");
++    expect((screen.getByLabelText(t.returnBy) as HTMLInputElement).value).toBe("23:15");
++    fireEvent.click(screen.getByRole("button", { name: t.continue }));
++    expect(screen.getByRole("button", { name: t.food }).getAttribute("aria-pressed")).toBe("true");
++    expect(screen.getByRole("button", { name: t.easy }).getAttribute("aria-pressed")).toBe("true");
++    expect(screen.getByRole("button", { name: /^synthetic special$/ }).getAttribute("aria-pressed")).toBe("true");
++    fireEvent.click(screen.getByRole("button", { name: t.continue }));
++    expect(screen.getByRole("button", { name: t.destination }).getAttribute("aria-pressed")).toBe("true");
++    fireEvent.click(screen.getByRole("button", { name: t.buildAction }));
++    await screen.findByRole("button", { name: t.startWalk });
++    expect(mocks.loadTravelerStyle).toHaveBeenCalledOnce();
++    expect(observedS08Current()?.journey.settings).toMatchObject({ minutes: 240, interests: ["food"], walking: "easy", categories: ["synthetic-special"], start: places[1].coordinates, finish: places[2].coordinates, deadline: new Date("2026-10-29T23:15:00").getTime() });
++    expect(mocks.persist).toHaveBeenCalledTimes(2);
++    expect(mocks.persist.mock.calls[1][0].id).toBe(mocks.persist.mock.calls[0][0].id);
++  });
++  it("[S06] uncertain write reconciles the exact committed preview on Retry without a second write or Start", async () => {
++    setup(); const build = await constraints(); mocks.writeThenReject = true;
++    fireEvent.click(build); const alert = await screen.findByRole("alert");
++    const id = observedS08Current()?.journey.id;
++    expect(id).toBeTypeOf("string"); expect(screen.queryByRole("button", { name: walkCopy("en").startWalk })).toBeNull();
++    expect(mocks.persist).toHaveBeenCalledTimes(1);
++    fireEvent.click(within(alert).getByRole("button", { name: "Retry" }));
++    await screen.findByRole("button", { name: walkCopy("en").startWalk });
++    expect(observedS08Current()?.journey.id).toBe(id); expect(observedS08Current()?.phase).toBe("preview");
++    expect(mocks.persist).toHaveBeenCalledTimes(1);
++  });
++  it("[S06][S04] Retry cannot accept a newer current slot as replacement permission", async () => {
++    setup(); fireEvent.click(await constraints()); await screen.findByRole("button", { name: walkCopy("en").startWalk });
++    // Start a separate new draft against an initially empty slot in a clean mounted controller.
++    cleanup(); mocks.current = undefined; mocks.slotLoaded = false; mocks.persist.mockClear();
++    setup(); const build = await constraints(); mocks.persist.mockRejectedValueOnce(new Error("disk-full"));
++    fireEvent.click(build); const alert = await screen.findByRole("alert");
++    mocks.current = current("arrived-after-failure"); const bytes = JSON.stringify(mocks.current);
++    fireEvent.click(within(alert).getByRole("button", { name: "Retry" }));
++    await screen.findByRole("button", { name: translate("en", "trips.resumeTrip") });
++    expect(JSON.stringify(mocks.current)).toBe(bytes); expect(mocks.persist).toHaveBeenCalledTimes(1);
++    expect(screen.queryByRole("button", { name: walkCopy("en").buildAction })).toBeNull();
++    expect(screen.queryByRole("button", { name: walkCopy("en").startWalk })).toBeNull();
++  });
++  it("[G01] rapid Build taps share one accepted request and one preview commit", async () => {
++    setup(); const build = await constraints(); mocks.holdPresentation = true;
++    fireEvent.click(build); fireEvent.click(build);
++    await waitFor(() => expect(screen.getByTestId("build-stage").textContent).toBe("choosing"));
++    expect(mocks.persist).not.toHaveBeenCalled();
++    await act(async () => mocks.presented?.());
++    await screen.findByRole("button", { name: walkCopy("en").startWalk });
++    expect(mocks.persist).toHaveBeenCalledTimes(1); expect(observedS08Current()?.phase).toBe("preview");
++  });
++  it("[G02] retired controller before commit cannot write a late preview", async () => {
++    setup(); const build = await constraints(); mocks.holdPresentation = true;
++    fireEvent.click(build); await waitFor(() => expect(screen.getByTestId("build-stage").textContent).toBe("choosing"));
++    cleanup(); await act(async () => mocks.presented?.());
++    expect(mocks.persist).not.toHaveBeenCalled(); expect(mocks.current).toBeUndefined();
++  });
++});
++
++it("[G02] a real controller retired during a started write leaves truthful preview storage without late navigation", async () => {
++  setup(); const t = walkCopy("en"); await screen.findByRole("button", { name: t.continue });
++  fireEvent.click(screen.getByRole("button", { name: t.continue })); fireEvent.click(screen.getByRole("button", { name: t.continue }));
++  let release!: () => void;
++  mocks.persist.mockImplementationOnce(() => new Promise<void>(resolve => { release = resolve; }));
++  fireEvent.click(screen.getByRole("button", { name: t.buildAction }));
++  await waitFor(() => expect(mocks.persist).toHaveBeenCalledOnce());
++  cleanup(); await act(async () => release());
++  expect(observedS08Current()?.phase).toBe("preview");
++  expect(mocks.persist).toHaveBeenCalledTimes(1); expect(mocks.routePush).not.toHaveBeenCalled();
++  expect(mocks.routeReplace).not.toHaveBeenCalled();
++});
+--- before/mobile/tests/screen-08-persistence-regressions.test.ts
++++ after/mobile/tests/screen-08-persistence-regressions.test.ts
+@@ -25,7 +25,6 @@
+   return { values, getItem: vi.fn(async (key: string) => values.get(key) ?? null),
+     setItem: vi.fn(async (key: string, value: string) => { values.set(key, value); }) };
+ }
+-const s08StorageGap = process.env.CITYWALK_S08_STRICT_RED === "1" ? it : it.fails;
+ afterEach(() => vi.useRealTimers());
+ 
+ describe("S08 persistence regression boundaries (real production contracts)", () => {
+@@ -72,7 +71,7 @@
+     expect(store.values.get(slot)).toBe(currentBytes); expect(store.values.get("citywalk:native:v2:active:other")).toBe(otherBytes);
+     expect(store.setItem).toHaveBeenCalledTimes(writes);
+   });
+-  s08StorageGap("[S08 XFAIL][S07] corrupt slot cannot be cleared under an absent-slot expectation", async () => {
++  it("[S08 PASS][S07] corrupt slot cannot be cleared under an absent-slot expectation", async () => {
+     const store = memory(); store.values.set(slot, "{broken-json");
+     await expect(clearCurrentWalk("city", undefined, store)).rejects.toThrow();
+     expect(store.values.get(slot)).toBe("{broken-json"); expect(store.setItem).not.toHaveBeenCalled();
+--- before/mobile/tests/screen-08-contract-pending.test.ts
++++ after/mobile/tests/screen-08-contract-pending.test.ts
+@@ -1,7 +1,8 @@
+ import { describe, it } from "vitest";
+ 
+ // TESTS ONLY: honest pending specifications, not executable replicas of production logic.
+-// Required interfaces / native implementations do not exist. No stub feature is supplied.
++// Remaining controller/native gates are not implemented. S01/S03/S06 now have
++// executable real-storage/controller coverage in the storage prerequisite suites.
+ describe("S08 pending contract gates (never functionality passes)", () => {
+   it.todo("[S08 PENDING][R01] Full field fingerprint through the direct primary cannot run: controller supplies no onContinue; T01 records that gap independently.");
+   it.todo("[S08 PENDING][R02] Live mount token/lease does not exist, so unchanged token across locale/account refresh cannot be asserted yet; existing settings retention remains baseline only.");
+@@ -10,16 +11,13 @@
+   it.todo("[S08 PENDING][T04] Explicit Edit Interests and its return target are not implemented; old grid is not a substitute for an edit transition.");
+   it.todo("[S08 PENDING][T06] Existing modal priority is covered by current tests; combining it with a new draft cursor is pending that cursor.");
+   it.todo("[S08 PENDING][T07] Existing Customize baseline is executable; new mode discriminator and combined legacy/add/new behavior are not implemented.");
+-  it.todo("[S08 PENDING][S01] Current absent/tombstone baseline passes, but classified slot observation/snapshot interface does not exist.");
+-  it.todo("[S08 PENDING][S03] Legacy/completed baseline passes, but terminal/blocked observation types do not exist.");
+-  it.todo("[S08 PENDING][S06] Actual write-failure/retry baseline is tested, but new observed-revision reinspection on retry has no API yet.");
+   it.todo("[S08 PENDING][E06] Existing add path is retained; complete new intent-mode/invalid-add recovery coverage requires implementation.");
+   it.todo("[S08 PENDING][C01] Real legacy controls can be tested; their preserved remaining-constraints composition after new primary is not implemented.");
+   it.todo("[S08 PENDING][D01] Existing real picker reopen tests pass; parent selected-day/zone metadata and reconfirmation are not implemented.");
+   it.todo("[S08 PENDING][D04] No selected-day/time-zone intent state exists; no fake date-intent object is introduced solely for a test.");
+-  it.todo("[S08 PENDING][G01] No build request ticket/lock surface exists; current layout wait must not be replaced by a fake generator to get a passing single-flight test.");
+-  it.todo("[S08 PENDING][G02] Precommit unmount behavior exists, but cancellation/obsolete-request ticket and guarded-commit lifecycle are not implemented.");
+-  it.todo("[S08 PENDING][G03] Legacy empty/error cases exist; recovery of the full approved-flow fingerprint after new guarded commit is not implemented.");
++  it.todo("[S08 PENDING][G01] Single-flight and immutable storage-candidate baselines pass; full controller input/permission-race fingerprint coverage remains pending.");
++  it.todo("[S08 PENDING][G02] Precommit and started-write unmount behavior pass; complete scope-retirement/obsolete-request variants remain pending.");
++  it.todo("[S08 PENDING][G03] Guarded storage recovery is implemented; full approved-flow empty/error/conflict fingerprint coverage awaits navigation integration.");
+   it.todo("[S08 PENDING][G04] Real preview/Start storage gates are tested; negative new-primary callback coverage is blocked by missing callback (T01).");
+   it.todo("[S08 BLOCKED][A02] BLOCKED: actual proposed footer and native stack behavior are unimplemented; iOS/Android/device/VoiceOver/TalkBack acceptance cannot be produced by DOM doubles.");
+ });
+--- /dev/null
++++ after/mobile/tests/current-walk-observation.test.ts
+@@ -0,0 +1,201 @@
++import { describe, expect, it, vi } from "vitest";
++import type { WalkJourney } from "@citywalk/traveler-core/walkJourney";
++import type { PublicPlaceCard } from "../src/lib/api/contracts";
++import {
++  observeCurrentWalk, commitCurrentWalkPreview, persistCurrentWalk, loadCurrentWalk,
++  clearCurrentWalk, changeCurrentWalk, startCurrentWalk, subscribeCurrentWalk,
++  reopenSavedWalk, type WalkSlotReceipt,
++} from "../src/lib/walkStorage";
++import { addPlaceToCurrentWalk } from "../src/lib/walkMembership";
++
++const key = "citywalk:native:v2:active:city";
++const point = { lat: 53.86, lng: 10.68 };
++function journey(id = "session"): WalkJourney {
++  return { id, citySlug: "city", remaining: ["place-0"], visited: [], settings: { minutes: 120, interests: ["history"], walking: "balanced", start: point },
++    position: point, historyDistance: 0, startedAt: 10 };
++}
++function memory(raw?: string) {
++  const values = new Map<string, string>();
++  if (raw !== undefined) values.set(key, raw);
++  return { values, getItem: vi.fn(async (slot: string) => values.get(slot) ?? null),
++    setItem: vi.fn(async (slot: string, value: string) => { values.set(slot, value); }) };
++}
++async function receipt(store: ReturnType<typeof memory>) {
++  const observed = await observeCurrentWalk("city", store);
++  expect(["empty", "current", "terminal"]).toContain(observed.kind);
++  if (!("receipt" in observed)) throw new Error("Expected real observation receipt");
++  return observed.receipt;
++}
++const place: PublicPlaceCard = { slug: "place-0", category: "see", coordinates: point, durationMinutes: 15, tags: ["history"], media: [],
++  requestedLocale: "en", resolvedLocale: "en", didFallback: false, content: { name: "Synthetic place", shortDescription: "Fixture, not city content" } };
++
++describe("classified city current-walk storage (real implementation, I/O faults only)", () => {
++  it.each([undefined, "null"])("[S01] observes absent/tombstone %s without writing or leaking raw bytes", async raw => {
++    const store = memory(raw);
++    const o = await observeCurrentWalk("city", store);
++    expect(o.kind).toBe("empty");
++    expect(store.setItem).not.toHaveBeenCalled();
++    expect(Object.keys(await receipt(store))).toEqual([]);
++    expect(JSON.stringify(await receipt(store))).toBe("{}");
++    expect(Object.isFrozen(o)).toBe(true);
++  });
++  it.each([undefined, "active", "preview"])("[S03] preserves supported current phase %s and legacy identity", async phase => {
++    const store = memory(JSON.stringify({ ...journey(), ...(phase ? { nativePhase: phase } : {}) }));
++    expect(await observeCurrentWalk("city", store)).toMatchObject({ kind: "current", current: { journey: journey(), phase: phase === "preview" ? "preview" : "active" } });
++    expect(store.setItem).not.toHaveBeenCalled();
++  });
++  it.each([0, 100])("[S03] classifies a valid completed timestamp %s as terminal without resuming or clearing", async finishedAt => {
++    const raw = JSON.stringify({ ...journey(), finishedAt }); const store = memory(raw);
++    expect(await observeCurrentWalk("city", store)).toMatchObject({ kind: "terminal", journey: { finishedAt } });
++    expect(store.values.get(key)).toBe(raw); expect(store.setItem).not.toHaveBeenCalled();
++    await expect(clearCurrentWalk("city", undefined, store)).rejects.toThrow("walk-changed");
++    expect(store.values.get(key)).toBe(raw);
++  });
++  it.each(["", "{broken", "undefined", "[]", "false", "{}", JSON.stringify({ ...journey(), citySlug: "other" }),
++    JSON.stringify({ ...journey(), nativePhase: "future-phase" }), JSON.stringify({ ...journey(), nativePhase: null }),
++    JSON.stringify({ ...journey(), finishedAt: 100, nativePhase: "future-phase" })])("[S02][S07] blocks invalid raw slot %s and all affected mutation fallbacks", async raw => {
++    const store = memory(raw);
++    expect(await observeCurrentWalk("city", store)).toEqual({ kind: "blocked" });
++    await expect(clearCurrentWalk("city", undefined, store)).rejects.toThrow("walk-storage-blocked");
++    await expect(addPlaceToCurrentWalk("city", place.slug, [place], store)).rejects.toThrow("walk-storage-blocked");
++    await expect(persistCurrentWalk(journey("replacement"), "preview", store)).rejects.toThrow("walk-storage-blocked");
++    await expect(startCurrentWalk("city", "session", [place], true, store)).rejects.toThrow("walk-changed");
++    expect(store.values.get(key)).toBe(raw); expect(store.setItem).not.toHaveBeenCalled();
++  });
++  it("[S02] reports read errors separately and preserves legacy public read rejection", async () => {
++    const raw = JSON.stringify(journey()); const store = memory(raw);
++    store.getItem.mockRejectedValue(new Error("read-offline"));
++    expect(await observeCurrentWalk("city", store)).toEqual({ kind: "unavailable" });
++    await expect(loadCurrentWalk("city", store)).rejects.toThrow("read-offline");
++    await expect(clearCurrentWalk("city", undefined, store)).rejects.toThrow("walk-storage-unavailable");
++    expect(store.values.get(key)).toBe(raw); expect(store.setItem).not.toHaveBeenCalled();
++  });
++  it("[S01][G04] commits a real preview only against unchanged empty/terminal observations", async () => {
++    for (const raw of [undefined, JSON.stringify({ ...journey("completed"), finishedAt: 100 })]) {
++      const store = memory(raw); const token = await receipt(store);
++      const result = await commitCurrentWalkPreview(journey("new"), token, "new", { store });
++      expect(result).toEqual({ phase: "preview", journey: journey("new") });
++      expect(await loadCurrentWalk("city", store)).toEqual(result);
++      expect(store.setItem).toHaveBeenCalledTimes(1);
++      expect(result.journey.startedAt).toBe(10);
++    }
++  });
++  it("[S04] refuses a stale empty observation after another queued preview is written", async () => {
++    const store = memory(); const token = await receipt(store);
++    await persistCurrentWalk(journey("newer"), "active", store); const bytes = store.values.get(key);
++    await expect(commitCurrentWalkPreview(journey("stale"), token, "new", { store })).rejects.toThrow("walk-changed");
++    expect(store.values.get(key)).toBe(bytes); expect(store.setItem).toHaveBeenCalledTimes(1);
++  });
++  it("[S04] real browse Add to Walk creates B and prevents draft A replacing it", async () => {
++    const store = memory(); const token = await receipt(store);
++    const b = await addPlaceToCurrentWalk("city", place.slug, [place], store); const bytes = store.values.get(key);
++    await expect(commitCurrentWalkPreview(journey("draft-a"), token, "new", { store })).rejects.toThrow("walk-changed");
++    expect((await loadCurrentWalk("city", store))?.journey.id).toBe(b.journey.id);
++    expect(store.values.get(key)).toBe(bytes); expect(store.setItem).toHaveBeenCalledTimes(1);
++  });
++  it.each(["membership", "phase", "linkage"] as const)("[S05] rejects same-ID %s changes, preserving exact current bytes", async field => {
++    const store = memory(JSON.stringify({ ...journey(), nativePhase: "preview" })); const token = await receipt(store);
++    const changed = field === "membership" ? { ...journey(), visited: ["place-0"], remaining: [] }
++      : field === "phase" ? journey() : { ...journey(), accountSavedWalkId: "linked-record", accountSavedUserId: "owner" };
++    if (field === "membership") await changeCurrentWalk("city", current => ({ ...current!, journey: changed }), store);
++    else await persistCurrentWalk(changed, field === "phase" ? "active" : "preview", store);
++    const bytes = store.values.get(key);
++    await expect(commitCurrentWalkPreview(journey("edited"), token, { customize: "session" }, { store })).rejects.toThrow("walk-changed");
++    expect(store.values.get(key)).toBe(bytes); expect(store.setItem).toHaveBeenCalledTimes(1);
++  });
++  it("[S05] permits exact explicit Customize while preserving current saved/account linkage", async () => {
++    const linked = { ...journey(), savedWalkId: "saved-source", accountSavedWalkId: "account-source", accountSavedUserId: "owner" };
++    const store = memory(JSON.stringify({ ...linked, nativePhase: "preview" })); store.values.set("citywalk:native:v2:saved", "preserve-saved-bytes");
++    const result = await commitCurrentWalkPreview(journey("new-execution"), await receipt(store), { customize: "session" }, { store });
++    expect(result.journey).toMatchObject({ ...linked, id: "new-execution" });
++    expect(store.values.get("citywalk:native:v2:saved")).toBe("preserve-saved-bytes");
++  });
++  it.each(["new", "replay"] as const)("[E04] intent %s cannot replace even an unchanged unfinished current", async intent => {
++    const raw = JSON.stringify(journey("keep-current")); const store = memory(raw);
++    await expect(commitCurrentWalkPreview(journey("replacement"), await receipt(store), intent, { store })).rejects.toThrow("walk-changed");
++    expect(store.values.get(key)).toBe(raw); expect(store.setItem).not.toHaveBeenCalled();
++  });
++  it("[E02] saved replay into empty slot preserves source/lineage and is a distinct preview", async () => {
++    const store = memory(); const saved = { ...journey("saved"), visited: ["visited"], settings: { ...journey().settings, deadline: 200 } };
++    const source = JSON.stringify(saved); store.values.set("citywalk:native:v2:saved", source);
++    const replay = reopenSavedWalk(saved, "replayed");
++    const result = await commitCurrentWalkPreview(replay, await receipt(store), "replay", { store });
++    expect(result).toMatchObject({ phase: "preview", journey: { id: "replayed", savedWalkId: "saved", remaining: ["visited", "place-0"], visited: [] } });
++    expect(result.journey.settings.deadline).toBeUndefined(); expect(store.values.get("citywalk:native:v2:saved")).toBe(source);
++  });
++  it("[S05] rejects forged, serialized, cross-city/store and invalid-candidate receipts without writes", async () => {
++    const store = memory(), other = memory(); const token = await receipt(store);
++    await expect(commitCurrentWalkPreview(journey(), {} as WalkSlotReceipt, "new", { store })).rejects.toThrow("walk-changed");
++    await expect(commitCurrentWalkPreview(journey(), JSON.parse(JSON.stringify(token)), "new", { store })).rejects.toThrow("walk-changed");
++    await expect(commitCurrentWalkPreview(journey(), token, "new", { store: other })).rejects.toThrow("walk-changed");
++    await expect(commitCurrentWalkPreview({ ...journey(), citySlug: "other" }, token, "new", { store })).rejects.toThrow("walk-changed");
++    await expect(commitCurrentWalkPreview({ ...journey(), historyDistance: -1 }, token, "new", { store })).rejects.toThrow("Invalid journey");
++    await expect(commitCurrentWalkPreview({ ...journey(), nativePhase: "unsupported" } as WalkJourney, token, "new", { store })).rejects.toThrow("Invalid journey");
++    expect(store.setItem).not.toHaveBeenCalled(); expect(other.setItem).not.toHaveBeenCalled();
++  });
++  it("[S04][G01] two receipts/rapid queued commits yield one successful preview", async () => {
++    const store = memory(); const first = await receipt(store), second = await receipt(store);
++    const results = await Promise.allSettled([commitCurrentWalkPreview(journey("first"), first, "new", { store }), commitCurrentWalkPreview(journey("second"), second, "new", { store })]);
++    expect(results.map(r => r.status)).toEqual(["fulfilled", "rejected"]);
++    expect((await loadCurrentWalk("city", store))?.journey.id).toBe("first"); expect(store.setItem).toHaveBeenCalledTimes(1);
++  });
++  it("[S06] rejected write consumes receipt, sends no success, and a fresh observation allows truthful retry", async () => {
++    const store = memory(), token = await receipt(store), changed = vi.fn(); const off = subscribeCurrentWalk("city", changed);
++    try {
++      store.setItem.mockRejectedValueOnce(new Error("disk-full"));
++      await expect(commitCurrentWalkPreview(journey(), token, "new", { store })).rejects.toThrow("disk-full");
++      expect(changed).not.toHaveBeenCalled(); expect(store.values.has(key)).toBe(false);
++      await expect(commitCurrentWalkPreview(journey(), token, "new", { store })).rejects.toThrow("walk-changed");
++      await commitCurrentWalkPreview(journey(), await receipt(store), "new", { store });
++      expect(changed).toHaveBeenCalledOnce(); expect(store.setItem).toHaveBeenCalledTimes(2);
++    } finally { off(); }
++  });
++  it("[S06] write-applied-then-rejected is observed as current and cannot be blindly replaced", async () => {
++    const store = memory(), token = await receipt(store), changed = vi.fn(); const off = subscribeCurrentWalk("city", changed);
++    store.setItem.mockImplementationOnce(async (slot, value) => { store.values.set(slot, value); throw new Error("uncertain-write"); });
++    try {
++      await expect(commitCurrentWalkPreview(journey(), token, "new", { store })).rejects.toThrow("uncertain-write");
++      expect(changed).not.toHaveBeenCalled(); expect(await observeCurrentWalk("city", store)).toMatchObject({ kind: "current", current: { phase: "preview", journey: { id: "session" } } });
++      await expect(commitCurrentWalkPreview(journey("duplicate"), await receipt(store), "new", { store })).rejects.toThrow("walk-changed");
++      expect(store.setItem).toHaveBeenCalledTimes(1);
++    } finally { off(); }
++  });
++  it("[S05] captures caller-owned candidate and intent before queued asynchronous work", async () => {
++    const store = memory(); const token = await receipt(store); const candidate = journey("captured");
++    const pending = commitCurrentWalkPreview(candidate, token, "new", { store });
++    candidate.citySlug = "other"; candidate.remaining = []; candidate.settings.minutes = 999;
++    await pending;
++    expect(await loadCurrentWalk("city", store)).toEqual({ phase: "preview", journey: journey("captured") });
++    expect(store.values.has("citywalk:native:v2:active:other")).toBe(false);
++  });
++  it("[S02] a commit-time read failure is never empty and cannot write", async () => {
++    const store = memory(); const token = await receipt(store);
++    store.getItem.mockRejectedValueOnce(new Error("offline-at-commit"));
++    await expect(commitCurrentWalkPreview(journey(), token, "new", { store })).rejects.toThrow("offline-at-commit");
++    expect(store.values.has(key)).toBe(false); expect(store.setItem).not.toHaveBeenCalled();
++  });
++  it("[G02] cancellation before the actual write, including after await, performs no write", async () => {
++    const store = memory(); const token = await receipt(store);
++    const isCurrent = vi.fn().mockReturnValueOnce(true).mockReturnValue(false);
++    await expect(commitCurrentWalkPreview(journey(), token, "new", { store, isCurrent })).rejects.toThrow("walk-cancelled");
++    expect(store.setItem).not.toHaveBeenCalled(); expect(isCurrent).toHaveBeenCalledTimes(2);
++  });
++  it("[G02] a write already started may finish after retirement; it stays preview and never auto-starts", async () => {
++    const store = memory(); const token = await receipt(store); let live = true;
++    let signal!: () => void, finish!: () => void;
++    const began = new Promise<void>(r => { signal = r; }), pending = new Promise<void>(r => { finish = r; });
++    store.setItem.mockImplementationOnce(async (slot, value) => { store.values.set(slot, value); signal(); await pending; });
++    const write = commitCurrentWalkPreview(journey(), token, "new", { store, isCurrent: () => live });
++    await began; live = false; finish(); await write;
++    expect(await loadCurrentWalk("city", store)).toEqual({ phase: "preview", journey: journey() }); expect(store.setItem).toHaveBeenCalledTimes(1);
++  });
++  it("[S04] rechecks exact bytes at the writer boundary even if the I/O source changes between reads", async () => {
++    const store = memory(); const token = await receipt(store); let reads = 0;
++    store.getItem.mockImplementation(async slot => {
++      reads++; if (reads === 2) store.values.set(key, JSON.stringify(journey("appeared")));
++      return store.values.get(slot) ?? null;
++    });
++    await expect(commitCurrentWalkPreview(journey("stale"), token, "new", { store })).rejects.toThrow("walk-changed");
++    expect((await loadCurrentWalk("city", store))?.journey.id).toBe("appeared"); expect(store.setItem).not.toHaveBeenCalled();
++  });
++});

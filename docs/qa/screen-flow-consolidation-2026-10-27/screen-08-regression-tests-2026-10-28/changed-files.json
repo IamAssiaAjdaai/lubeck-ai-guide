@@ -1,0 +1,13 @@
+{
+  "changedTests": [
+    "mobile/tests/first-experience.test.tsx",
+    "mobile/tests/walk-flow.behavior.tsx",
+    "mobile/tests/city-hub-actions.test.tsx"
+  ],
+  "createdTests": [
+    "mobile/tests/planner-return-intent.test.ts",
+    "mobile/tests/screen-08-contract-pending.test.ts",
+    "mobile/tests/screen-08-persistence-regressions.test.ts"
+  ],
+  "productionFilesChanged": []
+}

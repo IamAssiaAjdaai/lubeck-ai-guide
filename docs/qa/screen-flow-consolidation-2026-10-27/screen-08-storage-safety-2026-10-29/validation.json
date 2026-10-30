@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-29",
+  "existingFilesCaptured": 1052,
+  "existingFilesUnchanged": 1047,
+  "modifiedProductionFiles": [
+    "mobile/src/lib/walkStorage.ts",
+    "mobile/src/components/NativeWalkFlow.tsx"
+  ],
+  "modifiedTestFiles": [
+    "mobile/tests/walk-flow.behavior.tsx",
+    "mobile/tests/screen-08-persistence-regressions.test.ts",
+    "mobile/tests/screen-08-contract-pending.test.ts"
+  ],
+  "createdTestFiles": [
+    "mobile/tests/current-walk-observation.test.ts"
+  ],
+  "noOtherProductionTestAssetConfigChanges": true,
+  "originalAssertionChainsPreserved": 318,
+  "legacyBackAssertionContextsPreserved": 5,
+  "priorArtifactHashesVerified": 262,
+  "slice01AndPublishedActiveWalkUnchanged": true,
+  "frozenScreen05To08CallbacksRenderingAndAndroidBackUnchanged": true,
+  "activeStartRuntimeASTUnchanged": true,
+  "legacyPublicReaderAndReplayTransformationUnchanged": true,
+  "additionalTestLint": "5 unchanged baseline import-order warnings; no new finding/error",
+  "gitDiffCheck": "PASS",
+  "HEAD": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "stagedFiles": [],
+  "Screen14": "PENDING",
+  "D01_D14": "PENDING",
+  "navigationIntegrationOrLegacyAssertionMigrationPerformed": false,
+  "commitPushMergeDeleteDeployPerformed": false,
+  "finalCodeHashes": {
+    "mobile/src/lib/walkStorage.ts": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838",
+    "mobile/src/components/NativeWalkFlow.tsx": "4b8d7619edad2687758e12bea727a61711caa85fcc890acc73e4e08ba714761c",
+    "mobile/tests/walk-flow.behavior.tsx": "283b0fbde6e50cdcf7a6f64e2a62b74f4ca153383dbcb3a76b0475bb181d11c4",
+    "mobile/tests/screen-08-persistence-regressions.test.ts": "745ab3ce2fbe54b9ab1935e58cdbf0971b5bbef3cf81374dad570ae0aed4a42d",
+    "mobile/tests/screen-08-contract-pending.test.ts": "99ed0ac55f06de1664eece85b959016861d25f436d088da6c2e8ac3b9d20cd45",
+    "mobile/tests/current-walk-observation.test.ts": "41c6ea454c0d3759059f9cd662ec7be55ee7722c02321cd9cb22c7d8bf5f199e"
+  }
+}

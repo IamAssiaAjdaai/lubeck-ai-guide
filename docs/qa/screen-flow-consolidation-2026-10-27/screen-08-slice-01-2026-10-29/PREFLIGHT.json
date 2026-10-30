@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-29",
+  "issue": {
+    "number": 424,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/issues/424",
+    "updatedAt": "2026-10-23T12:29:04Z"
+  },
+  "comments": 0,
+  "branches": [
+    {
+      "branch": "develop",
+      "sha": "9f8470077dfa8eb7663246905bffd3cf8a0c6591"
+    },
+    {
+      "branch": "main",
+      "sha": "88191e77e55a489804c49bccccf6307b5876b41d"
+    }
+  ],
+  "worktree": "/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome",
+  "branch": "codex/onboarding-global-welcome",
+  "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "ownerRule": "Preserve narrower NEXT-MINIMAL-SLICE helper-only boundary",
+  "CI": "No new remote revision/checks; local evidence only",
+  "MobileCore": "Required iOS/Android; standalone helper tested, native integration not in scope",
+  "PublicWeb": "Not applicable; untouched",
+  "AdminWeb": "Not applicable; untouched"
+}

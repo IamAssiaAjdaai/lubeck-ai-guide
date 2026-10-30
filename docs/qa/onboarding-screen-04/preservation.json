@@ -1,0 +1,5 @@
+{
+  "normal_home_jsx_and_styles_unchanged": true,
+  "frozen_screen_hashes": "logs/preservation.log",
+  "city_selection_source": "same HomeScreen state, public content hook, query, location adapter, registry gates, card component and city links"
+}

@@ -1,0 +1,11 @@
+mobile/src/app/index.tsx: OK
+mobile/src/app/welcome.tsx: OK
+mobile/src/app/introduction.tsx: OK
+mobile/src/app/account/index.tsx: OK
+mobile/src/app/city/[citySlug]/index.tsx: OK
+mobile/src/components/NativeChrome.tsx: OK
+mobile/src/components/ui.tsx: OK
+mobile/src/components/SelectInterests.tsx: OK
+mobile/src/components/AvailableTime.tsx: OK
+mobile/src/components/LocationPermission.tsx: OK
+mobile/src/components/FirstExperience.tsx: OK

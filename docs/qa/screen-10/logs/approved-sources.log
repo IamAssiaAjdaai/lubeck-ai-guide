@@ -1,0 +1,17 @@
+mobile/src/app/welcome.tsx: OK
+mobile/src/lib/introductionCopy.ts: OK
+mobile/src/app/introduction.tsx: OK
+mobile/src/app/account/index.tsx: OK
+mobile/src/components/AccountOnboardingFrame.tsx: OK
+mobile/src/app/index.tsx: OK
+mobile/src/components/CityPhotoCredits.tsx: OK
+mobile/src/components/SelectInterests.tsx: OK
+mobile/src/lib/interestOnboardingCopy.ts: OK
+mobile/src/components/AvailableTime.tsx: OK
+mobile/src/components/LocationPermission.tsx: OK
+mobile/src/lib/locationOnboardingCopy.ts: OK
+mobile/src/components/FirstExperience.tsx: OK
+mobile/src/components/NativeWalkFlow.tsx: OK
+mobile/src/components/ReturnByTimePicker.tsx: OK
+mobile/src/lib/firstExperienceCopy.ts: OK
+mobile/src/app/city/[citySlug]/walk.tsx: OK

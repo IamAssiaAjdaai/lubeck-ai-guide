@@ -1,0 +1,11 @@
+import { describe, it } from "vitest";
+
+// TESTS ONLY: honest pending specifications, not executable replicas of production logic.
+// Required interfaces / native implementations do not exist. No stub feature is supplied.
+describe("S08 pending contract gates (never functionality passes)", () => {
+  it.todo("[S08 PENDING][I01] Live lease helper and exact native target resolution are not implemented; no fake registry imported.");
+  it.todo("[S08 PENDING][I04] Cold-runtime lease lifecycle cannot be tested before a real nonserialized lease helper exists.");
+  it.todo("[S08 PENDING][I05] Token-conditional cleanup/replacement API does not exist; no mirror implementation in tests.");
+  it.todo("[S08 PENDING][I06] Committed cursor/lease registration order is absent; double-tap-before-registration test requires the actual callback/helper.");
+  it.todo("[S08 PENDING][I07] Native owning-stack pop resolution is not implemented; current Hub tests only expose the unsafe boolean Back behavior.");
+});

@@ -1,0 +1,21 @@
+{
+  "currentRouteEntries": 68,
+  "nativeRouteEntries": 19,
+  "publicWebRouteEntries": 21,
+  "adminWebRouteEntries": 28,
+  "additionalHistoricalOrOtherBranchPaths": 15,
+  "allDiscoveredRouteFilePaths": 83,
+  "embeddedStateGroups": 41,
+  "officialDesignScreens": 13,
+  "duplicateCandidateGroups": 14,
+  "flowInconsistenciesAndGaps": 15,
+  "confirmedUnreachableRoutes": 0,
+  "confirmedLaunchBypassedDesignScreens": 2,
+  "screenDecisionsPending": 13,
+  "additionalFlowDecisionsPending": 14,
+  "allReviewDecisionsPending": 27,
+  "freshCurrentNativeCaptures": 13,
+  "nativeOldComparisonCaptures": 4,
+  "refsRead": 405,
+  "worktreesPreserved": 47
+}

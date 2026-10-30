@@ -1,0 +1,68 @@
+[
+  {
+    "text": "There was a problem loading the project.",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[21,184][817,235]"
+  },
+  {
+    "text": "This development build encountered the following error:",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[21,277][926,322]"
+  },
+  {
+    "text": "com.facebook.react.common.DebugServerException: SyntaxError: /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx: Unexpected token (636:3)\n\n  634 |     );\n  635 |     return () => { diagnostic(\"remove\"); subscription.remove(); unsubscribers.forEach(remove => remove?.()); };\n> 636 |   }, [navigation, newDraft, draftBack, storageRecovery, proposed, panel, stage, step, rebuildConfirmation, interestOnboarding, buildError, journey, savedId, addSlug]);\n      |    ^\n  637 |   async function locate(applyResult: () => boolean = () => true) {\n  638 |     setLocating(true);\n  639 |     const result = await requestForegroundLocation(\n  at NativeWalkFlow.tsx:636:3\n\tat com.facebook.react.common.DebugServerException$Companion.parse(DebugServerException.kt:89)\n\tat com.facebook.react.devsupport.BundleDownloader.processBundleResult(BundleDownloader.kt:292)\n\tat com.facebook.react.devsupport.BundleDownloader.access$processBundleResult(BundleDownloader.kt:35)\n\tat com.facebook.react.devsupport.BundleDownloader$processMultipartResponse$completed$1.onChunkComplete(BundleDownloader.kt:205)\n\tat com.facebook.react.devsupport.MultipartStreamReader.emitChunk(MultipartStreamReader.kt:141)\n\tat com.facebook.react.devsupport.MultipartStreamReader.readAllParts(MultipartStreamReader.kt:99)\n\tat com.facebook.react.devsupport.BundleDownloader.processMultipartResponse(BundleDownloader.kt:187)\n\tat com.facebook.react.devsupport.BundleDownloader.access$processMultipartResponse(BundleDownloader.kt:35)\n\tat com.facebook.react.devsupport.BundleDownloader$downloadBundleFromURL$1.onResponse(BundleDownloader.kt:133)\n\tat okhttp3.internal.connection.RealCall$AsyncCall.run(RealCall.kt:519)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\n\tat java.lang.Thread.run(Thread.java:1571)\n",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[63,364][1080,1365]"
+  },
+  {
+    "text": "Reload",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[473,2133][607,2184]"
+  },
+  {
+    "text": "Go home",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[197,2247][374,2298]"
+  },
+  {
+    "text": "Copy",
+    "content-desc": "",
+    "class": "android.widget.TextView",
+    "package": "com.citywalk.app.dev",
+    "clickable": "false",
+    "checkable": "false",
+    "checked": "false",
+    "enabled": "true",
+    "bounds": "[742,2247][847,2298]"
+  }
+]

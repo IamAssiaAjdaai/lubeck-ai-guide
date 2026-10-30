@@ -1,0 +1,142 @@
+[
+  {
+    "id": "D01",
+    "flow": "Home vs focused City Selection",
+    "implementations": "/ and /?section=cities; same HomeScreen",
+    "oldStrengths": "Original featured/global discovery and tabs",
+    "newStrengths": "Focused approved selection with search/location",
+    "missingFeatures": "Do not drop launch/returning-user discovery",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D02",
+    "flow": "General account chooser vs onboarding account",
+    "implementations": "/account vs /account?onboarding=1",
+    "oldStrengths": "Full lifecycle/profile management and context returns",
+    "newStrengths": "Approved guest reassurance and premium chooser",
+    "missingFeatures": "Preserve Better Auth, recovery, deletion and configured provider gates",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D03",
+    "flow": "Interests/defaults across account/planner/onboarding",
+    "implementations": "Account preferences, NativeWalkFlow steps, SelectInterests",
+    "oldStrengths": "Shared supported taxonomy and per-walk configuration",
+    "newStrengths": "Accessible optional selection",
+    "missingFeatures": "Guest defaults / draft / account scope needs explicit ownership",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D04",
+    "flow": "Duration/deadline entry variants",
+    "implementations": "AvailableTime + planner/time picker + account defaults",
+    "oldStrengths": "Existing walking/deadline calculation",
+    "newStrengths": "Approved accessible cards, fixed restoration",
+    "missingFeatures": "No durable unbuilt draft or scoped published-duration semantics",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D05",
+    "flow": "Location affordances",
+    "implementations": "Explanation, manual builder, map controls, Near me",
+    "oldStrengths": "Manual fallback and existing permission system",
+    "newStrengths": "Clear explicit optional explanation",
+    "missingFeatures": "Avoid repeated prompts; never remove manual start/end",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D06",
+    "flow": "Hub places vs Explore vs Search",
+    "implementations": "Hub list/map; Explore list/map; Search recent history",
+    "oldStrengths": "Broad discoverability and recent history",
+    "newStrengths": "Approved premium city and POI hierarchy",
+    "missingFeatures": "Search result caps/history and map state are not identical",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D07",
+    "flow": "Embedded tour collection vs Walking Routes",
+    "implementations": "Hub TourCard vs /routes",
+    "oldStrengths": "Immediate route entry",
+    "newStrengths": "Filters and dedicated collection",
+    "missingFeatures": "No direct Hub collection link; ambiguous duration filters",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D08",
+    "flow": "Published preview vs custom preview",
+    "implementations": "/tour/:tourSlug vs /walk stage preview",
+    "oldStrengths": "Custom time/finish/adaptation constraints",
+    "newStrengths": "Curated editorial stop order and approved map",
+    "missingFeatures": "Legitimate distinct domains; share presentation primitives only",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D09",
+    "flow": "Published Active Walk vs custom Active Walk",
+    "implementations": "PublishedActiveWalk vs NativeWalkFlow active",
+    "oldStrengths": "Custom saved journey/adaptation/finish",
+    "newStrengths": "Device-local curated manual progress/pause/restore",
+    "missingFeatures": "No shared street routing; curated Trips discovery incomplete",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D10",
+    "flow": "City Assistant fallback vs place Guide",
+    "implementations": "/assistant vs /guide/:placeSlug",
+    "oldStrengths": "Grounded place context and eligibility",
+    "newStrengths": "Honest unavailable city-wide fallback",
+    "missingFeatures": "Never replace fallback with fake city-wide answer",
+    "recommendation": "KEEP OLD",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D11",
+    "flow": "Trips vs Saved tabs",
+    "implementations": "/saved?view=trips vs /saved",
+    "oldStrengths": "Existing local/account/legacy saved walk handling",
+    "newStrengths": "Same existing source; no new approved redesign",
+    "missingFeatures": "Legitimate filtered modes, not duplicate stores",
+    "recommendation": "KEEP OLD",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D12",
+    "flow": "Generic vs Lübeck-specific Web city/place routes",
+    "implementations": "/[locale]/[citySlug] vs /[locale]/lubeck; analogous place routes",
+    "oldStrengths": "Existing local editorial and completion behavior",
+    "newStrengths": "Generic city-scoped server wrappers / CityExperience reuse",
+    "missingFeatures": "Audit analytics, canonical SEO, audio/commerce before any redirect",
+    "recommendation": "MERGE BEST OF BOTH",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D13",
+    "flow": "Homepage / landing preview versions",
+    "implementations": "/ vs /landing-next-preview vs /landing-preview; history Coming Soon",
+    "oldStrengths": "Approved landing-next shared composition",
+    "newStrengths": "Current homepage and intentional noindex preview",
+    "missingFeatures": "Closed unmerged historical PR metadata is not permission to revive rejected Coming Soon",
+    "recommendation": "REMOVE CANDIDATE",
+    "decision": "PENDING"
+  },
+  {
+    "id": "D14",
+    "flow": "Place detail vs published execution route mode",
+    "implementations": "Same /place URL; ordinary vs published trip context",
+    "oldStrengths": "Full content, sources, audio, directions",
+    "newStrengths": "Candidate progress-first interface; no visual approval",
+    "missingFeatures": "Review route intent/resume/deep-link/back guarantees",
+    "recommendation": "REBUILD FLOW",
+    "decision": "PENDING"
+  }
+]

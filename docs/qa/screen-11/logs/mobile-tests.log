@@ -1,0 +1,13 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+
+ Test Files  102 passed (102)
+      Tests  888 passed (888)
+   Start at  03:17:44
+   Duration  9.80s (transform 5.20s, setup 0ms, import 11.25s, tests 18.51s, environment 22.96s)
+

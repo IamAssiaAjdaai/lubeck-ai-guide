@@ -1,0 +1,1679 @@
+[
+  {
+    "id": "R01",
+    "area": "Retention",
+    "arrange": "Existing setup()/places/mocks harness, valid empty current slot; nondefault supported interests, duration, walking, tags, start and finish",
+    "act": "05→06→07→08→Continue planning",
+    "assert": "Every settings field remains exact in same controller; no Hub push; no generate/persist/start calls",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Full field fingerprint through the direct primary cannot run: controller supplies no onContinue; T01 records that gap independently.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][R01] Full field fingerprint through the direct primary cannot run: controller supplies no onContinue; T01 records that gap independently.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "R02",
+    "area": "Retention",
+    "arrange": "Guest initialized once from defaults; mounted draft with edited values",
+    "act": "Locale refresh and matching available content, then account/session refresh",
+    "assert": "Same controller/draft values; no defaults reapplication or new token merely due to locale",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Normalized identity helper now exists and is tested, but controller/account/locale lifecycle integration is not implemented.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][R02] Live mount token/lease does not exist, so unchanged token across locale/account refresh cannot be asserted yet; existing settings retention remains baseline only.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "R03",
+    "area": "Retention",
+    "arrange": "Same route key with saved source/account flag or add/city scope changes",
+    "act": "Change normalized route intent",
+    "assert": "Retired lease and request tickets invalidated; new scope hydrates independently; no old selected city/fields written",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Normalized identity helper now exists and is tested, but controller/account/locale lifecycle integration is not implemented.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][R03] Normalized source-aware route scope / lease invalidation does not exist; do not fake a controller identity in the test.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "R04",
+    "area": "Retention",
+    "arrange": "Account style contains supported 90, new draft later selects 240",
+    "act": "Advance/back/browse and Build",
+    "assert": "90 hydrates without coercion; 240 retained in WalkSettings; no saveTravelerStyle call or account data mutation",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Budget/domain baseline is executable, but retained-draft browsing through the new lease is not implemented.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][R04] Budget/domain baseline is executable, but retained-draft browsing through the new lease is not implemented.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 BASELINE][R04] hydrated 90 can change to 240 without account-default persistence",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "T01",
+    "area": "Transitions",
+    "arrange": "New draft with interest selection",
+    "act": "Complete flow through 08 primary",
+    "assert": "Constraints shown, automatic interest grid rendered only once; no second Hub navigation or route preview",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "expected-failure",
+    "reason": "Strict-red ordinary run confirms a real assertion violation. This is a counterexample to the contract, not proof that every later assertion in this case ran.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T01] primary continues to constraints without Hub push or repeated interests",
+        "runnerStatus": "passed",
+        "interpretation": "Known gap; NOT functionality pass"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "T01",
+        "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T01] primary continues to constraints without Hub push or repeated interests",
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Continue planning\""
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "T02",
+    "area": "Transitions",
+    "arrange": "Interests skipped via real SelectInterests",
+    "act": "Continue time/location/08 and Build",
+    "assert": "interests=[] reaches shared planner; old legacy step2 does not restore history/architecture defaults",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "expected-failure",
+    "reason": "Strict-red ordinary run confirms a real assertion violation. This is a counterexample to the contract, not proof that every later assertion in this case ran.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T02] skipped interests stay empty after direct planning handoff",
+        "runnerStatus": "passed",
+        "interpretation": "Known gap; NOT functionality pass"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "T02",
+        "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T02] skipped interests stay empty after direct planning handoff",
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Continue planning\""
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "T03",
+    "area": "Transitions",
+    "arrange": "Existing duration/deadline; time Skip",
+    "act": "Advance and return Back",
+    "assert": "Same minutes/returnBy; Skip not interpreted as no budget",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "passed",
+    "reason": "Executable production behavior assertion; see test report for exact result.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 retained-input regression assertions [S08 PASS][T03] time Skip preserves chosen duration and return-by through Back",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "T04",
+    "area": "Transitions",
+    "arrange": "Constraints with nondefault fields",
+    "act": "Explicit Edit Interests→change→Continue; repeat with Skip and Back",
+    "assert": "Each returns directly to constraints, other fields untouched; Back retains live edit values; no 06–08 replay",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Explicit Edit Interests and its return target are not implemented; old grid is not a substitute for an edit transition.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][T04] Explicit Edit Interests and its return target are not implemented; old grid is not a substitute for an edit transition.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "T05",
+    "area": "Transitions",
+    "arrange": "Constraints; no modal",
+    "act": "On-screen Back and captured Android BackHandler events through complete chain",
+    "assert": "Same target sequence constraints→08→07→06→05; token readiness revoked/reissued correctly; no writes/start; internal iOS pop gesture disabled, visible Back still traverses exact targets; restore default for real route exit",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "expected-failure",
+    "reason": "Strict-red ordinary run confirms a real assertion violation. This is a counterexample to the contract, not proof that every later assertion in this case ran.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T05] constraints Back returns to confirmation rather than repeated interests",
+        "runnerStatus": "passed",
+        "interpretation": "Known gap; NOT functionality pass"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "T05",
+        "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][T05] constraints Back returns to confirmation rather than repeated interests",
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected null not to be null"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "T06",
+    "area": "Transitions",
+    "arrange": "Pending proposal/rebuild-confirmation/add panel atop draft/legacy flow",
+    "act": "Back",
+    "assert": "Existing modal priority preserved; no accidental cursor advance or confirmed rebuild",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Existing modal priority is covered by current tests; combining it with a new draft cursor is pending that cursor.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][T06] Existing modal priority is covered by current tests; combining it with a new draft cursor is pending that cursor.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "T07",
+    "area": "Transitions",
+    "arrange": "Legacy/add and explicit Customize with journey",
+    "act": "Continue/back through old controls",
+    "assert": "Do not enter new-draft 05–08; retain correct journey and meaningful old controls",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Existing Customize baseline is executable; new mode discriminator and combined legacy/add/new behavior are not implemented.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][T07] Existing Customize baseline is executable; new mode discriminator and combined legacy/add/new behavior are not implemented.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 BASELINE][T07] Customize retains built journey identity and does not open new interests/location/08",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "I01",
+    "area": "Identity",
+    "arrange": "Focused Hub with full v1 envelope and earlier exact walk route; matching live constraints lease",
+    "act": "Build",
+    "assert": "Exactly one pop to correct key in same owning stack; settings retained, no duplicate /walk route",
+    "target": "mobile/tests/city-hub-actions.test.tsx",
+    "caseStatus": "pending",
+    "reason": "Real helper assertions pass; full contract remains PENDING because controller publication/revocation, actual Hub invocation and native pop integration are not part of this slice.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I01] resolves exact earlier key/token/city to one owning-stack pop request without navigating",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I01] chooses the exact one of two same-city instances and ignores locale/marker changes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I01] normalizes actual city/saved/source/add scope while excluding locale and markers",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I01] rejects malformed/bare/versioned/array/oversized envelopes and projects metadata only",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I01] rejects wrong city, token, target name, readiness and scope",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "helperStatus": "PASS at standalone helper boundary only",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "I02",
+    "area": "Identity",
+    "arrange": "Same pathname/city but wrong key or mount token; two same-city draft instances",
+    "act": "Build with older envelope",
+    "assert": "No arbitrary Back/pop to other instance; ordinary hydration fallback and no resume claim",
+    "target": "mobile/tests/planner-return-intent.test.ts (NEW proposed) + mobile/tests/city-hub-actions.test.tsx",
+    "caseStatus": "expected-failure",
+    "reason": "Strict-red ordinary run confirms a real assertion violation. This is a counterexample to the contract, not proof that every later assertion in this case ran.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/city-hub-actions.test.tsx",
+        "name": "S08 navigation identity gaps — no lease substitute [S08 XFAIL][I02] forged/mismatched mount token cannot resume a same-city draft",
+        "runnerStatus": "passed",
+        "interpretation": "Known gap; NOT functionality pass"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "I02",
+        "test": "S08 navigation identity gaps — no lease substitute [S08 XFAIL][I02] forged/mismatched mount token cannot resume a same-city draft",
+        "file": "mobile/tests/city-hub-actions.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "I03",
+    "area": "Identity",
+    "arrange": "Missing lease; old bare returnToPlanner flag or malformed/array/wrong-city/version envelope",
+    "act": "Build",
+    "assert": "No Back solely because canGoBack=true; recover through ordinary selected-city route",
+    "target": "mobile/tests/planner-return-intent.test.ts (NEW proposed) + mobile/tests/city-hub-actions.test.tsx",
+    "caseStatus": "expected-failure",
+    "reason": "Strict-red ordinary run confirms a real assertion violation. This is a counterexample to the contract, not proof that every later assertion in this case ran.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/city-hub-actions.test.tsx",
+        "name": "S08 navigation identity gaps — no lease substitute [S08 XFAIL][I03] bare returnToPlanner flag cannot authorize arbitrary Back",
+        "runnerStatus": "passed",
+        "interpretation": "Known gap; NOT functionality pass"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "I03",
+        "test": "S08 navigation identity gaps — no lease substitute [S08 XFAIL][I03] bare returnToPlanner flag cannot authorize arbitrary Back",
+        "file": "mobile/tests/city-hub-actions.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "I04",
+    "area": "Identity",
+    "arrange": "Serialized stack/envelope from previous process but fresh in-memory lease module",
+    "act": "Build",
+    "assert": "Cold URL/native state never revives old lease or draft; normal slot hydration only",
+    "target": "mobile/tests/planner-return-intent.test.ts (NEW proposed) + mobile/tests/city-hub-actions.test.tsx",
+    "caseStatus": "pending",
+    "reason": "Real helper assertions pass; full contract remains PENDING because controller publication/revocation, actual Hub invocation and native pop integration are not part of this slice.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I04] cold module cannot revive a serialized stack/envelope or an old runtime lease",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "helperStatus": "PASS at standalone helper boundary only",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "I05",
+    "area": "Identity",
+    "arrange": "Old controller unmount cleanup arrives after replacement controller registers same native key",
+    "act": "Run old cleanup",
+    "assert": "Only old token may be revoked; replacement lease survives; registry contains metadata only",
+    "target": "mobile/tests/planner-return-intent.test.ts (NEW proposed) + mobile/tests/city-hub-actions.test.tsx",
+    "caseStatus": "pending",
+    "reason": "Real helper assertions pass; full contract remains PENDING because controller publication/revocation, actual Hub invocation and native pop integration are not part of this slice.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I05] old token cleanup cannot revoke replacement; matching cleanup revokes readiness",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I05] projects and freezes only bounded lease metadata; caller extras and mutation are not retained",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I05] bounds live entries without evicting valid drafts; revoke/orphan reconciliation frees capacity",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "helperStatus": "PASS at standalone helper boundary only",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "I06",
+    "area": "Identity",
+    "arrange": "S08 secondary tapped twice before render commits",
+    "act": "Commit cursor/lease, then handle transitions",
+    "assert": "One Hub push after lease published, not before; no timer; both Back and Build return to constraints",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Committed cursor/lease registration order is absent; double-tap-before-registration test requires the actual callback/helper.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [S08 PENDING][I06] Committed cursor/lease registration order is absent; double-tap-before-registration test requires the actual callback/helper.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "I07",
+    "area": "Identity",
+    "arrange": "Earlier matching target with intermediate supported screens; current Hub not focused or stack changed before pop",
+    "act": "Resolve/pop request",
+    "assert": "Use final owning-stack state; no cross-stack/arbitrary pop; fail closed on stale/focus mismatch",
+    "target": "mobile/tests/city-hub-actions.test.tsx",
+    "caseStatus": "pending",
+    "reason": "Real helper assertions pass; full contract remains PENDING because controller publication/revocation, actual Hub invocation and native pop integration are not part of this slice.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I07] resolves final owning-stack count with intermediate screens; never scans a nested or unrelated stack",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/planner-return-intent.test.ts",
+        "name": "Screen 08 real transient return-intent helper (integration remains pending) [I07] re-resolution rejects removed/changed/future/duplicate targets and malformed/unfocused state",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "helperStatus": "PASS at standalone helper boundary only",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "I08",
+    "area": "Identity",
+    "arrange": "Hub→CityAssistant existing fallback round trip",
+    "act": "Forward full intent / deliberately clear on unsupported exit",
+    "assert": "Whole envelope preserved and revalidated, never boolean-only claimed resume; tabs/cross-city have honest fallback",
+    "target": "mobile/tests/city-hub-actions.test.tsx + mobile/tests/city-assistant-return.test.tsx (NEW proposed)",
+    "caseStatus": "expected-failure",
+    "reason": "Strict-red ordinary run confirms a real assertion violation. This is a counterexample to the contract, not proof that every later assertion in this case ran.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/city-hub-actions.test.tsx",
+        "name": "S08 navigation identity gaps — no lease substitute [S08 XFAIL][I08] Guide entry retains the complete return envelope",
+        "runnerStatus": "passed",
+        "interpretation": "Known gap; NOT functionality pass"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "I08",
+        "test": "S08 navigation identity gaps — no lease substitute [S08 XFAIL][I08] Guide entry retains the complete return envelope",
+        "file": "mobile/tests/city-hub-actions.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected { citySlug: 'lubeck', …(1) } to match object { plannerReturnVersion: '1', …(2) }"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "S01",
+    "area": "Storage",
+    "arrange": "Existing walk-storage memory() fixture: absent key or literal null",
+    "act": "Inspect current slot",
+    "assert": "empty classification, valid observation; defaults/new-draft allowed without writes",
+    "target": "mobile/tests/walk-storage.test.ts",
+    "caseStatus": "passed",
+    "reason": "Authorized storage prerequisite implemented and verified at real storage/controller boundary; exact assertions preserved. See report for mocked native/I/O boundary and compatibility limits.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S01] observes absent/tombstone undefined without writing or leaking raw bytes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S01] observes absent/tombstone null without writing or leaking raw bytes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S01][G04] commits a real preview only against unchanged empty/terminal observations",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 BASELINE][S01] absent/tombstone null reads without writing",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 BASELINE][S01] absent/tombstone null reads without writing",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "S02",
+    "area": "Storage",
+    "arrange": "memory() throws on getItem; malformed JSON or invalid schema/wrong city/unknown explicit phase",
+    "act": "Inspect / hydrate",
+    "assert": "unavailable or blocked recovery, raw slot unchanged; no Build/replay/persist/default-as-absence success",
+    "target": "mobile/tests/walk-storage.test.ts + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "passed",
+    "reason": "Authorized storage prerequisite implemented and verified at real storage/controller boundary; exact assertions preserved. See report for mocked native/I/O boundary and compatibility limits.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot  and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {broken and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot undefined and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot [] and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot false and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {\"id\":\"session\",\"citySlug\":\"other\",\"remaining\":[\"place-0\"],\"visited\":[],\"settings\":{\"minutes\":120,\"interests\":[\"history\"],\"walking\":\"balanced\",\"start\":{\"lat\":53.86,\"lng\":10.68}},\"position\":{\"lat\":53.86,\"lng\":10.68},\"historyDistance\":0,\"startedAt\":10} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {\"id\":\"session\",\"citySlug\":\"city\",\"remaining\":[\"place-0\"],\"visited\":[],\"settings\":{\"minutes\":120,\"interests\":[\"history\"],\"walking\":\"balanced\",\"start\":{\"lat\":53.86,\"lng\":10.68}},\"position\":{\"lat\":53.86,\"lng\":10.68},\"historyDistance\":0,\"startedAt\":10,\"nativePhase\":\"future-phase\"} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {\"id\":\"session\",\"citySlug\":\"city\",\"remaining\":[\"place-0\"],\"visited\":[],\"settings\":{\"minutes\":120,\"interests\":[\"history\"],\"walking\":\"balanced\",\"start\":{\"lat\":53.86,\"lng\":10.68}},\"position\":{\"lat\":53.86,\"lng\":10.68},\"historyDistance\":0,\"startedAt\":10,\"nativePhase\":null} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {\"id\":\"session\",\"citySlug\":\"city\",\"remaining\":[\"place-0\"],\"visited\":[],\"settings\":{\"minutes\":120,\"interests\":[\"history\"],\"walking\":\"balanced\",\"start\":{\"lat\":53.86,\"lng\":10.68}},\"position\":{\"lat\":53.86,\"lng\":10.68},\"historyDistance\":0,\"startedAt\":10,\"finishedAt\":100,\"nativePhase\":\"future-phase\"} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02] reports read errors separately and preserves legacy public read rejection",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02] a commit-time read failure is never empty and cannot write",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 BASELINE][S02] I/O read rejection propagates and cannot mutate bytes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 PASS][S02] storage I/O failure blocks fresh personalization rather than masquerading as no walk",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [S02] corrupt entry stays read-only until explicit successful Retry (en)",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [S02] corrupt entry stays read-only until explicit successful Retry (de)",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [S02] Retry after a transient read error resumes the existing active walk without defaults",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "S02",
+        "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][S02] storage I/O failure blocks fresh personalization rather than masquerading as no walk",
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected <section …(2)>…(10)</section> to be null"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "S03",
+    "area": "Storage",
+    "arrange": "Valid finishedAt record, existing legacy valid record without nativePhase",
+    "act": "Inspect",
+    "assert": "Completed=terminal not active; missing phase valid legacy record preserves active compatibility; no clearing",
+    "target": "mobile/tests/walk-storage.test.ts",
+    "caseStatus": "passed",
+    "reason": "Authorized storage prerequisite implemented and verified at real storage/controller boundary; exact assertions preserved. See report for mocked native/I/O boundary and compatibility limits.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S03] preserves supported current phase undefined and legacy identity",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S03] preserves supported current phase active and legacy identity",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S03] preserves supported current phase preview and legacy identity",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S03] classifies a valid completed timestamp 0 as terminal without resuming or clearing",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S03] classifies a valid completed timestamp 100 as terminal without resuming or clearing",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 BASELINE][S03] completed is not active while valid phase-less legacy remains active",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [S03] completed current slot remains intact while safe fresh planning initializes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "S04",
+    "area": "Storage",
+    "arrange": "Observe empty slot, then another valid journey written before draft commit",
+    "act": "Commit generated preview with original observation",
+    "assert": "Conflict: newer journey and links unchanged; keep draft fields/recovery, no overwriting write",
+    "target": "mobile/tests/walk-storage.test.ts + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "passed",
+    "reason": "Authorized storage prerequisite implemented and verified at real storage/controller boundary; exact assertions preserved. See report for mocked native/I/O boundary and compatibility limits.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S04] refuses a stale empty observation after another queued preview is written",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S04] real browse Add to Walk creates B and prevents draft A replacing it",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S04][G01] two receipts/rapid queued commits yield one successful preview",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S04] rechecks exact bytes at the writer boundary even if the I/O source changes between reads",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 PASS][S04] a new current walk arriving during Build must not be overwritten",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [S06][S04] Retry cannot accept a newer current slot as replacement permission",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "S04",
+        "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][S04] a new current walk arriving during Build must not be overwritten",
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected 'walk-79819595-09a9-4b13-93ec-0a6731e6…' to be 'newer-current' // Object.is equality"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "S05",
+    "area": "Storage",
+    "arrange": "Observe matching slot, mutate membership/phase to same ID before commit",
+    "act": "Commit with old observation",
+    "assert": "Exact revision mismatch rejected even when ID matches; queued mutation order preserved",
+    "target": "mobile/tests/walk-storage.test.ts",
+    "caseStatus": "passed",
+    "reason": "Authorized storage prerequisite implemented and verified at real storage/controller boundary; exact assertions preserved. See report for mocked native/I/O boundary and compatibility limits.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S05] rejects same-ID membership changes, preserving exact current bytes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S05] rejects same-ID phase changes, preserving exact current bytes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S05] rejects same-ID linkage changes, preserving exact current bytes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S05] permits exact explicit Customize while preserving current saved/account linkage",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S05] rejects forged, serialized, cross-city/store and invalid-candidate receipts without writes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S05] captures caller-owned candidate and intent before queued asynchronous work",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 PASS][S05] same-ID concurrent edits during Customize Build must survive",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "S05",
+        "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][S05] same-ID concurrent edits during Customize Build must survive",
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected { …(9) } to deeply equal { id: 's08-existing', …(8) }"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "S06",
+    "area": "Storage",
+    "arrange": "Valid unchanged observed slot; commit write rejects",
+    "act": "Build/commit/retry",
+    "assert": "No preview-success UI; same inputs retained; lock released; retry re-inspects and does not duplicate generated session",
+    "target": "mobile/tests/walk-storage.test.ts + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "passed",
+    "reason": "Authorized storage prerequisite implemented and verified at real storage/controller boundary; exact assertions preserved. See report for mocked native/I/O boundary and compatibility limits.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S06] rejected write consumes receipt, sends no success, and a fresh observation allows truthful retry",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S06] write-applied-then-rejected is observed as current and cannot be blindly replaced",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 BASELINE][S06] failed write never notifies preview success; a real retry succeeds",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 BASELINE][S06] failed preview write retains constraints and can retry without false success",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [S06] failed write retains all selected values; Retry re-observes without defaults or false success",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [S06] uncertain write reconciles the exact committed preview on Retry without a second write or Start",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [S06][S04] Retry cannot accept a newer current slot as replacement permission",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "S07",
+    "area": "Storage",
+    "arrange": "Corrupt slot plus existing clear/rebuild caller with expected undefined",
+    "act": "Attempt scope recovery",
+    "assert": "Cannot treat corrupt as empty and write null; no silent clear/reset/new-draft overwrite",
+    "target": "mobile/tests/walk-storage.test.ts",
+    "caseStatus": "passed",
+    "reason": "Authorized storage prerequisite implemented and verified at real storage/controller boundary; exact assertions preserved. See report for mocked native/I/O boundary and compatibility limits.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot  and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {broken and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot undefined and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot [] and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot false and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {\"id\":\"session\",\"citySlug\":\"other\",\"remaining\":[\"place-0\"],\"visited\":[],\"settings\":{\"minutes\":120,\"interests\":[\"history\"],\"walking\":\"balanced\",\"start\":{\"lat\":53.86,\"lng\":10.68}},\"position\":{\"lat\":53.86,\"lng\":10.68},\"historyDistance\":0,\"startedAt\":10} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {\"id\":\"session\",\"citySlug\":\"city\",\"remaining\":[\"place-0\"],\"visited\":[],\"settings\":{\"minutes\":120,\"interests\":[\"history\"],\"walking\":\"balanced\",\"start\":{\"lat\":53.86,\"lng\":10.68}},\"position\":{\"lat\":53.86,\"lng\":10.68},\"historyDistance\":0,\"startedAt\":10,\"nativePhase\":\"future-phase\"} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {\"id\":\"session\",\"citySlug\":\"city\",\"remaining\":[\"place-0\"],\"visited\":[],\"settings\":{\"minutes\":120,\"interests\":[\"history\"],\"walking\":\"balanced\",\"start\":{\"lat\":53.86,\"lng\":10.68}},\"position\":{\"lat\":53.86,\"lng\":10.68},\"historyDistance\":0,\"startedAt\":10,\"nativePhase\":null} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S02][S07] blocks invalid raw slot {\"id\":\"session\",\"citySlug\":\"city\",\"remaining\":[\"place-0\"],\"visited\":[],\"settings\":{\"minutes\":120,\"interests\":[\"history\"],\"walking\":\"balanced\",\"start\":{\"lat\":53.86,\"lng\":10.68}},\"position\":{\"lat\":53.86,\"lng\":10.68},\"historyDistance\":0,\"startedAt\":10,\"finishedAt\":100,\"nativePhase\":\"future-phase\"} and all affected mutation fallbacks",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 PASS][S07] corrupt slot cannot be cleared under an absent-slot expectation",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "S07",
+        "test": "S08 persistence regression boundaries (real production contracts) [S08 XFAIL][S07] corrupt slot cannot be cleared under an absent-slot expectation",
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "Error: promise resolved \"undefined\" instead of rejecting"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "E01",
+    "area": "Existing walks",
+    "arrange": "Valid current preview then active fixture in selected city",
+    "act": "Open normal /walk",
+    "assert": "Exact current journey/phase restored before new draft; no 05–08, generation or new ID",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/walk-storage.test.ts",
+    "caseStatus": "passed",
+    "reason": "Executable production behavior assertion; see test report for exact result.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 PASS][E01] guest current preview resumes without introductory screens or writes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 PASS][E01] guest current active resumes without introductory screens or writes",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "E02",
+    "area": "Existing walks",
+    "arrange": "Saved local/account/legacy record with visited stops/old deadline, safe target slot",
+    "act": "Explicit saved opening",
+    "assert": "New execution ID, full deduplicated ordered itinerary, visited reset, deadline/finishedAt cleared, preview only; original saved record retained",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/walk-storage.test.ts",
+    "caseStatus": "passed",
+    "reason": "Executable production behavior assertion; see test report for exact result.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [E02] saved replay into empty slot preserves source/lineage and is a distinct preview",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 PASS][E02] saved replay resets execution/deadline and stores preview without mutating source",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "E03",
+    "area": "Existing walks",
+    "arrange": "Missing local saved ID or account route getSession/list rejection",
+    "act": "Open saved intent",
+    "assert": "Requested-route recovery; no fresh draft under unresolved saved ID and no silent guest fallback",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "passed",
+    "reason": "Authorized storage prerequisite implemented and verified at real storage/controller boundary; exact assertions preserved. See report for mocked native/I/O boundary and compatibility limits.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 PASS][E03] missing saved ID cannot silently become a new planning session",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "E03",
+        "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][E03] missing saved ID cannot silently become a new planning session",
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected <section …(2)>…(11)</section> to be null"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "E04",
+    "area": "Existing walks",
+    "arrange": "Saved route exists but a different unfinished current journey occupies slot",
+    "act": "Open saved replay",
+    "assert": "Keep current and saved records; no unconditional hydration replacement; supported Resume/return recovery",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/walk-storage.test.ts",
+    "caseStatus": "passed",
+    "reason": "Authorized storage prerequisite implemented and verified at real storage/controller boundary; exact assertions preserved. See report for mocked native/I/O boundary and compatibility limits.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [E04] intent new cannot replace even an unchanged unfinished current",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [E04] intent replay cannot replace even an unchanged unfinished current",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 PASS][E04] opening saved replay cannot silently replace another unfinished current walk",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [E04] saved replay collision offers real current resume and preserves both source and current",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "E04",
+        "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][E04] opening saved replay cannot silently replace another unfinished current walk",
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected 'walk-b72d89da-4c53-4b29-8c62-16cb954b…' to be 'keep-current' // Object.is equality"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "E05",
+    "area": "Existing walks",
+    "arrange": "Actual current journey changes after requestRebuild confirmation snapshot",
+    "act": "Confirm rebuild",
+    "assert": "Existing compare-and-clear rejects stale snapshot; no clear of replacement; S08 never invokes rebuild",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/walk-storage.test.ts",
+    "caseStatus": "passed",
+    "reason": "Executable production behavior assertion; see test report for exact result.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 PASS][E05] stale confirmed rebuild cannot clear same-ID changed current or another city",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "E06",
+    "area": "Existing walks",
+    "arrange": "add intent plus valid current, invalid add or no current",
+    "act": "Hydrate and continue",
+    "assert": "Existing add proposal/eligibility behavior preserved; no forced S08 or second planner",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Existing add path is retained; complete new intent-mode/invalid-add recovery coverage requires implementation.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][E06] Existing add path is retained; complete new intent-mode/invalid-add recovery coverage requires implementation.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "C01",
+    "area": "Controls",
+    "arrange": "Existing six-place fixture, distinct walking choices/tags",
+    "act": "Select controls in remaining constraints then invoke real build path",
+    "assert": "Same interests/categories/walking/minutes sent to shared planner; genuine eligibility/cap effects verified, not DOM selection only",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Real legacy controls can be tested; their preserved remaining-constraints composition after new primary is not implemented.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][C01] Real legacy controls can be tested; their preserved remaining-constraints composition after new primary is not implemented.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "[S08 BASELINE][C01] legacy walking/category controls reach the actual shared planner",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "C02",
+    "area": "Controls",
+    "arrange": "Manual place start, accepted GPS start, then missing/denied GPS",
+    "act": "Build",
+    "assert": "Manual uses selected coordinates; GPS uses accepted point; missing point fails without write; manual never requests permission",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "passed",
+    "reason": "Executable production behavior assertion; see test report for exact result.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 planner-control and request-lifetime preservation [S08 PASS][C02] actual manual start retains manual fallback and correct coordinates",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 planner-control and request-lifetime preservation [S08 PASS][C02] actual gps start retains manual fallback and correct coordinates",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 planner-control and request-lifetime preservation [S08 PASS][C02] actual denied start retains manual fallback and correct coordinates",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "C03",
+    "area": "Controls",
+    "arrange": "Same start with endMode anywhere, loop or real destination",
+    "act": "Build each",
+    "assert": "finish undefined/start/selected endpoint respectively; destination missing rejects; shared finish-leg estimate reserved when configured",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "passed",
+    "reason": "Executable production behavior assertion; see test report for exact result.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 PASS][C03] all finish modes map to actual planner settings",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "[S08 PASS][C03] a removed destination is rejected without preview or persistence",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "D01",
+    "area": "Deadline",
+    "arrange": "ReturnByTimePicker saved 13:25 then user changes/saves 15:45",
+    "act": "Reopen picker and navigate Back/Continue",
+    "assert": "Previously saved HH:MM retained; no default clock reset; parent day/zone metadata tracks explicit reconfirmation",
+    "target": "mobile/tests/return-by-picker.test.tsx + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Existing real picker reopen tests pass; parent selected-day/zone metadata and reconfirmation are not implemented.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][D01] Existing real picker reopen tests pass; parent selected-day/zone metadata and reconfirmation are not implemented.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "supplementalExistingEvidence": [
+      {
+        "file": "mobile/tests/return-by-picker.test.tsx",
+        "name": "saved iOS return-by restoration through the picker component opens and reopens the previously saved time in en",
+        "status": "passed",
+        "limit": "Picker restoration only; selected-day/zone integration remains pending"
+      },
+      {
+        "file": "mobile/tests/return-by-picker.test.tsx",
+        "name": "saved iOS return-by restoration through the picker component opens and reopens the previously saved time in de",
+        "status": "passed",
+        "limit": "Picker restoration only; selected-day/zone integration remains pending"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "D02",
+    "area": "Deadline",
+    "arrange": "Fake clock fixed to one local day; invalid/past time, blank input, supported localized digits",
+    "act": "Build",
+    "assert": "Existing deadlineForToday semantics; past/invalid rejects without persistence, blank no deadline; no altered finish mode",
+    "target": "packages/traveler-core/src/walkParity.test.ts + mobile/tests/walk-flow.test.tsx",
+    "caseStatus": "passed",
+    "reason": "Executable production behavior assertion; see test report for exact result.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 PASS][D02] actual deadline parser rejects past/invalid, normalizes digits, and does not create tomorrow",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "D03",
+    "area": "Deadline",
+    "arrange": "Select HH:MM before midnight; fake clock advances to next day where same HH:MM would be future",
+    "act": "Return from optional browsing and Build",
+    "assert": "Require explicit reconfirmation; do not silently interpret previous-day selection as today/tomorrow",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "expected-failure",
+    "reason": "Strict-red ordinary run confirms a real assertion violation. This is a counterexample to the contract, not proof that every later assertion in this case ran.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][D03] midnight cannot reinterpret an earlier-day HH:MM as a new deadline",
+        "runnerStatus": "passed",
+        "interpretation": "Known gap; NOT functionality pass"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "D03",
+        "test": "S08 approved-flow regression contract (production unchanged) [S08 XFAIL][D03] midnight cannot reinterpret an earlier-day HH:MM as a new deadline",
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times"
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "D04",
+    "area": "Deadline",
+    "arrange": "Selected time-zone/day context changes; Customize seeded from an absolute deadline",
+    "act": "Build/reconfirm time",
+    "assert": "Stale day/zone rejected until user reconfirms; preserved existing absolute timestamp semantics; saved replay still clears deadline",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "No selected-day/time-zone intent state exists; no fake date-intent object is introduced solely for a test.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][D04] No selected-day/time-zone intent state exists; no fake date-intent object is introduced solely for a test.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "D05",
+    "area": "Deadline",
+    "arrange": "Walking budget and fixed loop/destination finish under existing fixture",
+    "act": "Generate with and without return-by constraint",
+    "assert": "Real shared deadline budget/finish leg affects suggestions; no street routing or arrival guarantee inferred",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "passed",
+    "reason": "Executable production behavior assertion; see test report for exact result.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 PASS][D05] actual shared planner reserves walking return and applies real deadline budget",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "G01",
+    "area": "Build lifecycle",
+    "arrange": "Two rapid Build taps before React renders building",
+    "act": "Resolve existing layout/presentation signals then planning",
+    "assert": "Single accepted request/input snapshot; at most one preview write/session; no decorative timer or second blocked promise",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Rapid double-tap and immutable storage-candidate snapshots pass; complete controller input/permission-race fingerprint variants remain pending.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S04][G01] two receipts/rapid queued commits yield one successful preview",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][G01] Single-flight and immutable storage-candidate baselines pass; full controller input/permission-race fingerprint coverage remains pending.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [G01] rapid Build taps share one accepted request and one preview commit",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "G02",
+    "area": "Build lifecycle",
+    "arrange": "Build pending before commit; scope unmount/cancel or obsolete generation ticket",
+    "act": "Resolve late layout/plan result",
+    "assert": "No precommit write or stale UI. If write already began, successful preview may remain but no auto-start/stale navigation or false rollback claim",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Precommit/started-write unmount and storage cancellation pass; complete scope-retirement/obsolete-generation variants remain pending.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [G02] cancellation before the actual write, including after await, performs no write",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [G02] a write already started may finish after retirement; it stays preview and never auto-starts",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][G02] Precommit and started-write unmount behavior pass; complete scope-retirement/obsolete-request variants remain pending.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "authorized storage safety prerequisite — real controller, unchanged navigation [G02] retired controller before commit cannot write a late preview",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "[G02] a real controller retired during a started write leaves truthful preview storage without late navigation",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "G03",
+    "area": "Build lifecycle",
+    "arrange": "No eligible route/planner throws/storage conflict",
+    "act": "Finish failed Build",
+    "assert": "Return constraints/error with all settings; no successful preview/journey/active state",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "pending",
+    "reason": "Guarded storage recovery and retained real selected values pass; full approved-flow empty/error/conflict fingerprint awaits navigation integration.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][G03] Guarded storage recovery is implemented; full approved-flow empty/error/conflict fingerprint coverage awaits navigation integration.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "G04",
+    "area": "Build lifecycle",
+    "arrange": "S08 primary/secondary/Back and custom preview",
+    "act": "Trigger callbacks; then explicit Build and explicit Start separately",
+    "assert": "S08/Back/browse never generate/persist/start; real Build commits preview; Start alone uses current start/content/ID guards",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/first-experience.test.tsx",
+    "caseStatus": "pending",
+    "reason": "Real preview/Start storage gates are tested; negative new-primary callback coverage is blocked by missing callback (T01).",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/current-walk-observation.test.ts",
+        "name": "classified city current-walk storage (real implementation, I/O faults only) [S01][G04] commits a real preview only against unchanged empty/terminal observations",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 PENDING][G04] Real preview/Start storage gates are tested; negative new-primary callback coverage is blocked by missing callback (T01).",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      },
+      {
+        "file": "mobile/tests/screen-08-persistence-regressions.test.ts",
+        "name": "S08 persistence regression boundaries (real production contracts) [S08 BASELINE][G04] preview persists as preview; explicit Start is idempotent and identity guarded",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "P01",
+    "area": "Permission",
+    "arrange": "Deferred location promise; user skips/backs/unmounts/remounts with same city",
+    "act": "Resolve late permission result",
+    "assert": "No GPS/cursor mutation on retired request/mount; no automatic request in 08/Back/browse",
+    "target": "mobile/tests/location-permission.test.tsx + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "caseStatus": "passed",
+    "reason": "Executable production behavior assertion; see test report for exact result.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 planner-control and request-lifetime preservation [S08 PASS][P01] late fix after skip cannot update a retired request or replacement draft",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 planner-control and request-lifetime preservation [S08 PASS][P01] late fix after back cannot update a retired request or replacement draft",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      },
+      {
+        "file": "mobile/tests/walk-flow.test.tsx",
+        "name": "S08 planner-control and request-lifetime preservation [S08 PASS][P01] late fix after remount cannot update a retired request or replacement draft",
+        "runnerStatus": "passed",
+        "interpretation": "Real tested current storage/controller/helper boundary; not device/new navigation acceptance"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "A01",
+    "area": "Guest/copy/a11y",
+    "arrange": "Guest EN and DE, long dynamic city name; existing fonts/scaling harness",
+    "act": "Render FirstExperience two-action interface and invoke controls",
+    "assert": "Exact semantic primary/secondary, independent callbacks, no auth/permission gate, correct heading/roles/focus targets",
+    "target": "mobile/tests/first-experience.test.tsx",
+    "caseStatus": "expected-failure",
+    "reason": "Strict-red ordinary run confirms a real assertion violation. This is a counterexample to the contract, not proof that every later assertion in this case ran.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/first-experience.test.tsx",
+        "name": "[S08 XFAIL][A01] distinct planning primary and city-browsing secondary in en",
+        "runnerStatus": "passed",
+        "interpretation": "Known gap; NOT functionality pass"
+      },
+      {
+        "file": "mobile/tests/first-experience.test.tsx",
+        "name": "[S08 XFAIL][A01] distinct planning primary and city-browsing secondary in de",
+        "runnerStatus": "passed",
+        "interpretation": "Known gap; NOT functionality pass"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "counterexamples": [
+      {
+        "caseId": "A01",
+        "test": "[S08 XFAIL][A01] distinct planning primary and city-browsing secondary in en",
+        "file": "mobile/tests/first-experience.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Continue planning\""
+      },
+      {
+        "caseId": "A01",
+        "test": "[S08 XFAIL][A01] distinct planning primary and city-browsing secondary in de",
+        "file": "mobile/tests/first-experience.test.tsx",
+        "actualStatus": "failed as ordinary test",
+        "firstFailure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"Planung fortsetzen\""
+      }
+    ],
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  },
+  {
+    "id": "A02",
+    "area": "Native acceptance",
+    "arrange": "Authorized future implementation on standard and 375×667 iPhone, narrow Android; EN/DE max text",
+    "act": "Traverse Back/edit/optional browse/permission denial, picker/keyboard/safe areas",
+    "assert": "Both actions and all legacy controls reachable; native stack and hardware/gesture behavior correct; VoiceOver/TalkBack evidence separate; iOS internal-step edge swipe cannot discard the controller; optional Hub native Back returns constraints",
+    "target": "Future real simulator/device captures; not a mocked layout assertion",
+    "caseStatus": "blocked",
+    "reason": "BLOCKED: actual proposed footer and native stack behavior are unimplemented; iOS/Android/device/VoiceOver/TalkBack acceptance cannot be produced by DOM doubles.",
+    "coverageNote": "Case-level result excludes baseline-only subchecks from functionality-pass counts.",
+    "tests": [
+      {
+        "file": "mobile/tests/screen-08-contract-pending.test.ts",
+        "name": "S08 pending contract gates (never functionality passes) [S08 BLOCKED][A02] BLOCKED: actual proposed footer and native stack behavior are unimplemented; iOS/Android/device/VoiceOver/TalkBack acceptance cannot be produced by DOM doubles.",
+        "runnerStatus": "todo",
+        "interpretation": "Pending/blocked; not executed"
+      }
+    ],
+    "scope": "Real current production unit/controller/presentation boundary, native and services mocked; no new-flow/native acceptance implied.",
+    "slice01Scope": "Helper-only under the narrower NEXT-MINIMAL-SLICE.md; no UI/controller/storage integration.",
+    "storagePrerequisiteScope": "Only walkStorage and affected NativeWalkFlow storage paths; no navigation integration or native acceptance."
+  }
+]

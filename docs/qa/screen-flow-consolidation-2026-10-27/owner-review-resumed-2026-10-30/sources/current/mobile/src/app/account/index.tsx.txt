@@ -1,0 +1,805 @@
+import { nativeRowStyle, nativeTextBlock } from "../../design/rtlPresentation";
+import { uxCopy } from "../../design/uxCopy";
+import { t, type TranslationKey } from "@citywalk/i18n";
+import { cityLaunches } from "@citywalk/traveler-core/cityAvailability";
+import Constants from "expo-constants";
+import { Link, router, Stack, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { BackHandler, Share, StyleSheet, TextInput, View } from "react-native";
+
+import { AccountOnboardingFrame } from "../../components/AccountOnboardingFrame";
+import { accountOnboardingCopy } from "../../lib/accountOnboardingCopy";
+import { welcomeCopy } from "../../lib/welcomeCopy";
+import { NativeIcon } from "../../components/NativeIcon";
+import { PasswordField } from "../../components/PasswordField";
+import { AppText, Card, PrimaryButton, PressableSurface, Screen, StatusMessage } from "../../components/ui";
+import { CitywalkLoading } from "../../components/CitywalkLoading";
+import { colors, radius, spacing, typography } from "../../design/tokens";
+import { deleteNativeAccount } from "../../lib/auth/lifecycle";
+import { fetchNativeAccountDataExport } from "../../lib/accountDataExport";
+import { nativeAuthClient } from "../../lib/auth/client";
+import { getNativeSocialAuthAvailability } from "../../lib/auth/configuration";
+import { classifyNativeAuthError, type NativeAuthErrorCode, validateDisplayName, validateNativeAuthInput, validateNewPassword } from "../../lib/auth/errors";
+import { triggerCitywalkHaptic } from "../../lib/haptics";
+import { useNativeLocale } from "../../localization/LocaleProvider";
+import { nativeCityName } from "../../lib/displayNames";
+import { useAccountWalks } from "../../hooks/useAccountWalks";
+import { readCityUnlock } from "../../lib/cityUnlockAccess";
+import { loadLocalTrips } from "../../lib/tripStorage";
+import { loadSavedPlaces, loadSavedWalks } from "../../lib/walkStorage";
+import { createCitywalkApiClient } from "../../lib/api/client";
+import { getConfiguredApiOrigin } from "../../lib/api/environment";
+import { accountDiagnosticsEnabled } from "../../lib/accountDiagnostics";
+import {
+  DEFAULT_TRAVELER_STYLE,
+  TRAVELER_STYLE_DURATIONS,
+  TRAVELER_STYLE_INTERESTS,
+  TRAVELER_STYLE_WALKING,
+  loadTravelerStyle,
+  saveTravelerStyle,
+  type TravelerStyle,
+} from "../../lib/travelerStyle";
+
+type Entry = "sign-in" | "sign-up" | "reset" | "edit" | "preferences" | "change-password" | "delete";
+type SocialProvider = "google" | "apple";
+type Action = "sign-in" | "sign-up" | "edit" | "preferences" | "change-password" | "sign-out" | "reset" | "resend-verification" | "delete" | "export" | "social-google" | "social-apple" | "link-google" | "link-apple";
+
+const diagnosticApi = createCitywalkApiClient({ origin: getConfiguredApiOrigin() });
+
+export default function AccountScreen() {
+  const { locale, direction, messages } = useNativeLocale();
+  const params = useLocalSearchParams<{ entry?: string; returnToWalk?: string; error?: string; reauth?: string; onboarding?: string }>();
+  const { data: session, isPending } = nativeAuthClient.useSession();
+  const onboarding = params.onboarding === "1";
+  const onboardingCopy = accountOnboardingCopy[locale];
+  const socialAuth = getNativeSocialAuthAvailability();
+  const showDiagnostics = accountDiagnosticsEnabled();
+  const accountWalks = useAccountWalks();
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmation, setConfirmation] = useState("");
+  const [busy, setBusy] = useState<Action>();
+  const [failure, setFailure] = useState<NativeAuthErrorCode>();
+  const [deleteConfirmed, setDeleteConfirmed] = useState(false);
+  const [lifecycleFailure, setLifecycleFailure] = useState<TranslationKey>();
+  const [notice, setNotice] = useState<TranslationKey>();
+  const [entry, setEntry] = useState<Entry | undefined>(() => params.entry === "sign-in" || params.entry === "sign-up" || params.entry === "delete" ? params.entry : undefined);
+  const submitLock = useRef(false);
+  const mounted = useRef(true);
+  const request = useRef(0);
+  const [providerReload, setProviderReload] = useState(0);
+  const [localActivity, setLocalActivity] = useState<{
+    walkKeys: string[];
+    citySlugs: string[];
+    savedPlaces: number;
+    loading: boolean;
+    error: boolean;
+  }>({ walkKeys: [], citySlugs: [], savedPlaces: 0, loading: true, error: false });
+  const [passState, setPassState] = useState<"loading" | "free" | "active" | "unavailable">("loading");
+  const [apiDiagnostic, setApiDiagnostic] = useState<"idle" | "running" | string>("idle");
+  const [travelerStyle, setTravelerStyle] = useState<TravelerStyle>(DEFAULT_TRAVELER_STYLE);
+  const [styleDraft, setStyleDraft] = useState<TravelerStyle>(DEFAULT_TRAVELER_STYLE);
+  const [credential, setCredential] = useState<{ userId: string; status: "yes" | "no" | "error"; providers: string[] }>();
+  const userId = session?.user.id;
+  const socialDeleteReauthenticated = params.reauth === "1";
+  useEffect(() => {
+    let active = true;
+    void loadTravelerStyle(userId).then((style) => {
+      if (!active) return;
+      setTravelerStyle(style);
+      setStyleDraft(style);
+    });
+    return () => { active = false; };
+  }, [userId]);
+  // Provider IDs are used only to gate password management, never displayed or logged.
+  useEffect(() => {
+    let active = true;
+    if (userId) void nativeAuthClient.listAccounts().then(result => {
+      const providers = result.data?.map(account => account.providerId) ?? [];
+      if (active) setCredential({
+        userId,
+        status: result.error ? "error" : providers.includes("credential") ? "yes" : "no",
+        providers,
+      });
+    }).catch(() => { if (active) setCredential({ userId, status: "error", providers: [] }); });
+    return () => { active = false; };
+  }, [userId, providerReload]);
+  const hasCredential = credential?.userId === userId && credential?.status === "yes";
+  const linkedProviders =
+    credential && credential.userId === userId ? credential.providers : [];
+  const hasGoogle = linkedProviders.includes("google");
+  const hasApple = linkedProviders.includes("apple");
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  useEffect(() => {
+    let active = true;
+    void Promise.all([loadSavedWalks(), loadLocalTrips(), loadSavedPlaces()])
+      .then(([savedWalks, legacyTrips, savedPlaces]) => {
+        if (!active) return;
+        const walkKeys = [
+          ...savedWalks.map((walk) => `${walk.citySlug}:${walk.id}`),
+          ...legacyTrips.map((walk) => `${walk.citySlug}:${walk.id}`),
+        ];
+        const citySlugs = [
+          ...savedWalks.map((walk) => walk.citySlug),
+          ...legacyTrips.map((walk) => walk.citySlug),
+          ...savedPlaces.map((place) => place.citySlug),
+        ];
+        setLocalActivity({
+          walkKeys,
+          citySlugs,
+          savedPlaces: savedPlaces.length,
+          loading: false,
+          error: false,
+        });
+      })
+      .catch(() => {
+        if (active) setLocalActivity((current) => ({ ...current, loading: false, error: true }));
+      });
+    return () => { active = false; };
+  }, [userId]);
+  useEffect(() => {
+    if (!userId) return;
+    let active = true;
+    void readCityUnlock("lubeck", userId)
+      .then((unlocked) => { if (active) setPassState(unlocked ? "active" : "free"); })
+      .catch(() => { if (active) setPassState("unavailable"); });
+    return () => { active = false; };
+  }, [userId]);
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(undefined), 2800);
+    return () => clearTimeout(timer);
+  }, [notice]);
+  useEffect(() => {
+    if (!params.error) return;
+    const oauthError = params.error;
+    const returnToDelete = params.entry === "delete";
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (!active) return;
+      setNotice(undefined);
+      setFailure(classifyNativeAuthError({ code: oauthError }));
+      if (returnToDelete) setEntry("delete");
+      router.replace(returnToDelete ? "/account?entry=delete" : params.onboarding === "1" ? "/account?onboarding=1" : "/account");
+    });
+    return () => { active = false; };
+  }, [params.error, params.entry, params.onboarding]);
+  function clearPasswords() { setPassword(""); setNewPassword(""); setConfirmation(""); }
+  const open = useCallback((next?: Entry) => {
+    request.current++;
+    setDeleteConfirmed(false); setLifecycleFailure(undefined);
+    setPassword(""); setNewPassword(""); setConfirmation("");
+    setFailure(undefined); setNotice(undefined); setEntry(next);
+    if (next === "edit") setName(session?.user.name ?? "");
+    if (next === "preferences") setStyleDraft(travelerStyle);
+    if (next === "sign-up") setName("");
+  }, [session?.user.name, travelerStyle]);
+  function back() {
+    if (entry === "delete" && params.entry === "delete") {
+      open();
+      router.replace("/account");
+      return;
+    }
+    open(entry === "reset" ? "sign-in" : undefined);
+  }
+  useEffect(() => {
+    const listener = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (!entry) return false;
+      open(entry === "reset" ? "sign-in" : undefined); return true;
+    });
+    return () => listener.remove();
+  }, [entry, open]);
+  function leave() {
+    open();
+    if (onboarding) router.replace({ pathname: "/", params: { section: "cities" } });
+    else if (router.canGoBack()) router.back(); else router.replace("/");
+  }
+  async function perform(action: Action, work: () => Promise<{ error?: unknown }>, success: () => void) {
+    if (submitLock.current) return;
+    submitLock.current = true;
+    const token = ++request.current;
+    setBusy(action); setFailure(undefined); setNotice(undefined); setLifecycleFailure(undefined);
+    try {
+      const result = await work();
+      if (!mounted.current || token !== request.current) return;
+      if (result.error) {
+        const code = typeof result.error === "object" && result.error !== null && "code" in result.error ? result.error.code : undefined;
+        if (action === "export") setLifecycleFailure("profile.dataExportUnavailable");
+        else if (action === "reset" || action === "delete") setLifecycleFailure(code === "RETENTION_REVIEW_REQUIRED" ? "lifecycle.retentionBlocked" : code === "RATE_LIMITED" ? "lifecycle.rateLimited" : code === "REAUTH_REQUIRED" ? "lifecycle.reauthRequired" : "lifecycle.unavailable");
+        else setFailure(classifyNativeAuthError(result.error));
+        void triggerCitywalkHaptic("error"); return;
+      }
+      clearPasswords(); success(); void triggerCitywalkHaptic("success");
+    } catch {
+      if (mounted.current && token === request.current) setFailure("network");
+    } finally {
+      submitLock.current = false;
+      if (mounted.current) setBusy(undefined);
+    }
+  }
+  function authenticate(mode: "sign-in" | "sign-up") {
+    if (submitLock.current) return;
+    const error = (mode === "sign-up" ? validateDisplayName(name) : undefined) ?? validateNativeAuthInput(email.trim(), password);
+    if (error) { setFailure(error); setNotice(undefined); return; }
+    const fetchOptions = { headers: { "X-Citywalk-Locale": locale } };
+    void perform(mode, () => mode === "sign-in"
+      ? nativeAuthClient.signIn.email({ email: email.trim(), password, fetchOptions })
+      : nativeAuthClient.signUp.email({
+          email: email.trim(),
+          password,
+          name: name.trim(),
+          callbackURL: "citywalk://account",
+          fetchOptions,
+        }), () => {
+        if (mode === "sign-up") { setEntry("sign-in"); setNotice("profile.verificationSent"); }
+        else { setEntry(undefined); if (params.returnToWalk === "1" && router.canGoBack()) router.back(); }
+      });
+  }
+  function socialSignIn(provider: SocialProvider) {
+    if (submitLock.current) return;
+    void perform(
+      `social-${provider}`,
+      () => nativeAuthClient.signIn.social({
+        provider,
+        callbackURL: onboarding ? "citywalk://account?onboarding=1" : "citywalk://account",
+        errorCallbackURL: onboarding ? "citywalk://account?onboarding=1" : "citywalk://account",
+      }),
+      () => {
+        setEntry(undefined);
+        setProviderReload(value => value + 1);
+        if (params.returnToWalk === "1" && router.canGoBack()) router.back();
+      },
+    );
+  }
+  function reauthenticateForDelete(provider: SocialProvider) {
+    if (submitLock.current || !session) return;
+    void perform(
+      `social-${provider}`,
+      () => nativeAuthClient.signIn.social({
+        provider,
+        callbackURL: "citywalk://account?entry=delete&reauth=1",
+        errorCallbackURL: "citywalk://account?entry=delete",
+      }),
+      () => {
+        setEntry("delete");
+        setDeleteConfirmed(false);
+        setProviderReload(value => value + 1);
+      },
+    );
+  }
+  function linkSocial(provider: SocialProvider) {
+    if (submitLock.current || !session) return;
+    void perform(
+      `link-${provider}`,
+      () => nativeAuthClient.linkSocial({
+        provider,
+        callbackURL: "citywalk://account",
+        errorCallbackURL: "citywalk://account",
+      }),
+      () => {
+        setProviderReload(value => value + 1);
+        setNotice("profile.socialLinked");
+      },
+    );
+  }
+  async function runApiDiagnostic() {
+    if (apiDiagnostic === "running") return;
+    setApiDiagnostic("running");
+    try {
+      const result = await diagnosticApi.getCities(locale);
+      const count = result.cities.length;
+      setApiDiagnostic(`OK · ${count} ${count === 1 ? "city" : "cities"}`);
+    } catch (error) {
+      setApiDiagnostic(`Error · ${error instanceof Error ? error.message : "Unknown API failure"}`);
+    }
+  }
+  function saveProfile() {
+    if (submitLock.current || !session) return;
+    const error = validateDisplayName(name);
+    if (error) { setFailure(error); return; }
+    void perform("edit", () => nativeAuthClient.updateUser({ name: name.trim() }), () => {
+      setEntry(undefined); setNotice("profile.profileUpdated");
+    });
+  }
+  function savePreferences() {
+    if (submitLock.current || !userId) return;
+    void perform("preferences", async () => {
+      try {
+        const saved = await saveTravelerStyle(userId, styleDraft);
+        setTravelerStyle(saved);
+        return {};
+      } catch {
+        return { error: { code: "UNAVAILABLE" } };
+      }
+    }, () => {
+      setEntry(undefined);
+      setNotice("profile.preferencesUpdated");
+    });
+  }
+    function changePassword() {
+    if (submitLock.current || !session || !hasCredential) return;
+    const error = !password ? "current_password_required" : validateNewPassword(newPassword, confirmation);
+    if (error) { setFailure(error); return; }
+    void perform("change-password", () => nativeAuthClient.changePassword({ currentPassword: password, newPassword, revokeOtherSessions: true }), () => {
+      setEntry(undefined); setNotice("profile.passwordChanged");
+    });
+  }
+  function requestReset() {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setFailure("invalid_email"); setNotice(undefined); setLifecycleFailure(undefined); return; }
+    void perform("reset", async () => {
+      const result = await nativeAuthClient.requestPasswordReset({ email: email.trim(), fetchOptions: { headers: { "X-Citywalk-Locale": locale } } });
+      return result.error ? { error: result.error } : result.data?.status === true ? {} : { error: { code: "UNAVAILABLE" } };
+    }, () => setNotice("lifecycle.resetRequested"));
+  }
+  function resendVerification() {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setFailure("invalid_email"); setNotice(undefined); return; }
+    void perform("resend-verification", async () => {
+      const result = await nativeAuthClient.sendVerificationEmail({
+        email: email.trim(),
+        callbackURL: "citywalk://account",
+        fetchOptions: { headers: { "X-Citywalk-Locale": locale } },
+      });
+      return result.error ? { error: result.error } : result.data?.status === true ? {} : { error: { code: "UNAVAILABLE" } };
+    }, () => setNotice("profile.verificationResent"));
+  }
+  function exportAccountData() {
+    if (!session) return;
+    void perform("export", async () => {
+      try {
+        const data = await fetchNativeAccountDataExport(session.user.id);
+        await Share.share({ message: data, title: label("profile.exportData") });
+        return {};
+      } catch {
+        return { error: { code: "UNAVAILABLE" } };
+      }
+    }, () => setNotice("profile.dataExportReady"));
+  }
+
+  function deleteAccount() {
+    if (!session || !deleteConfirmed) return;
+    if (hasCredential && !password) { setFailure("current_password_required"); return; }
+    if (!hasCredential && !socialDeleteReauthenticated) { setLifecycleFailure("lifecycle.reauthRequired"); return; }
+    void perform("delete", () => deleteNativeAccount(session.user.id, hasCredential ? password : undefined), () => { setEntry(undefined); });
+  }
+  const localWalkKeys = new Set(localActivity.walkKeys);
+  const walkKeys = new Set([
+    ...accountWalks.walks.map((walk) => `${walk.citySlug}:${walk.id}`),
+    ...localWalkKeys,
+  ]);
+  const citySlugs = new Set([
+    ...accountWalks.walks.map((walk) => walk.citySlug),
+    ...localActivity.citySlugs,
+  ]);
+  const activity = {
+    cities: citySlugs.size,
+    walks: walkKeys.size,
+    saved: localActivity.savedPlaces,
+    loading: accountWalks.loading || localActivity.loading,
+    error: accountWalks.error || localActivity.error,
+  };
+  const lubeckName = nativeCityName("lubeck", cityLaunches.lubeck.name, locale);
+  const buildEnvironment = process.env.EXPO_PUBLIC_CITYWALK_ENV ?? "development";
+  const appVersion = Constants.nativeAppVersion ?? Constants.expoConfig?.version ?? "unknown";
+  const buildVersion = Constants.nativeBuildVersion ?? "unknown";
+  const isEmailEntry = !session && (entry === "sign-in" || entry === "sign-up");
+  const label = (key: TranslationKey) => t(locale, key);
+  const socialIcon = (provider: SocialProvider) => (
+    <View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={styles.socialIcon}
+    >
+      <AppText style={styles.socialIconText}>
+        {provider === "apple" ? "" : "G"}
+      </AppText>
+    </View>
+  );
+  const nameField = <>
+    <AppText variant="label">{label("profile.accountDisplayName")}</AppText>
+    <TextInput accessibilityLabel={label("profile.accountDisplayName")} value={name} onChangeText={setName}
+      autoComplete="name" textContentType="name" autoCapitalize="words" editable={!busy} maxLength={100}
+      style={[styles.input, { textAlign: direction === "rtl" ? "right" : "left" }]} />
+  </>;
+  const emailField = <>
+    <AppText variant="label">{messages.email}</AppText>
+    <TextInput accessibilityLabel={messages.email} autoCapitalize="none" autoCorrect={false} keyboardType="email-address"
+      autoComplete="email" textContentType="emailAddress" value={email} onChangeText={setEmail} editable={!busy} style={[styles.input, { textAlign: direction === "rtl" ? "right" : "left" }]} />
+  </>;
+  const guestForms = <>{isEmailEntry ? <Card>
+      {socialAuth.apple ? <PrimaryButton
+        label={label("profile.continueWithApple")}
+        leadingIcon={socialIcon("apple")}
+        busy={busy === "social-apple"}
+        disabled={isPending || Boolean(busy)}
+        onPress={() => socialSignIn("apple")}
+      /> : null}
+      {socialAuth.google ? <PrimaryButton
+        label={label("profile.continueWithGoogle")}
+        leadingIcon={socialIcon("google")}
+        busy={busy === "social-google"}
+        disabled={isPending || Boolean(busy)}
+        tone="secondary"
+        onPress={() => socialSignIn("google")}
+      /> : null}
+      <AppText variant="heading">{entry === "sign-up" ? messages.signUp : messages.signIn}</AppText>
+      {entry === "sign-up" ? nameField : null}
+      {emailField}
+      <PasswordField key={entry} label={messages.password} value={password} onChange={setPassword} newPassword={entry === "sign-up"} disabled={Boolean(busy)} />
+      {entry === "sign-up" ? <AppText variant="metadata">{messages.passwordTooShort}</AppText> : null}
+      <PrimaryButton label={entry === "sign-up" ? messages.signUp : messages.signIn} busy={Boolean(busy)} disabled={isPending} onPress={() => authenticate(entry === "sign-up" ? "sign-up" : "sign-in")} />
+      {entry === "sign-in" ? <PrimaryButton label={label("profile.forgotPassword")} tone="secondary" onPress={() => open("reset")} /> : null}
+    </Card> : null}
+    {!session && entry === "reset" ? <Card>
+      <AppText variant="heading">{label("profile.resetPassword")}</AppText>
+      {emailField}
+      <AppText>{label("lifecycle.resetRequestHelp")}</AppText>
+      <PrimaryButton label={label("profile.sendResetLink")} busy={busy === "reset"} onPress={requestReset} />
+    </Card> : null}</>;
+  const feedback = <>{failure ? <StatusMessage tone="error">{failure === "invalid_credentials" && entry === "change-password" ? label("profile.currentPasswordIncorrect") : authFailureMessage(failure, locale, messages)}</StatusMessage> : null}
+    {failure === "email_not_verified" && !session && entry === "sign-in" ? <PrimaryButton
+      label={label("profile.resendVerification")}
+      tone="secondary"
+      busy={busy === "resend-verification"}
+      disabled={Boolean(busy)}
+      onPress={resendVerification}
+    /> : null}
+    {lifecycleFailure ? <StatusMessage tone="error">{label(lifecycleFailure)}</StatusMessage> : null}
+    {notice ? <StatusMessage tone="success">{label(notice)}</StatusMessage> : null}</>;
+  if (onboarding && (!entry || entry === "sign-in" || entry === "sign-up" || entry === "reset")) {
+    const title = session ? onboardingCopy.ready : entry === "sign-in" ? messages.signIn : entry === "reset" ? label("profile.resetPassword") : onboardingCopy.title;
+    return <AccountOnboardingFrame choice={!session && !entry} title={title} description={session ? label("profile.guestFirst") : onboardingCopy.description}
+      onBack={() => entry ? back() : router.canGoBack() ? router.back() : router.replace("/introduction")}
+      footer={<><AppText variant="metadata" style={{ color: "#506984", textAlign: "center" }}>{label("profile.guestFirst")}</AppText><PressableSurface accessibilityRole="button" accessibilityLabel={welcomeCopy[locale].explore} onPress={leave} style={{ minHeight: 48, justifyContent: "center", alignItems: "center", paddingVertical: 12 }}><AppText variant="label" style={{ color: colors.primary, textAlign: "center" }}>{welcomeCopy[locale].explore}</AppText></PressableSurface></>}>
+      {isPending ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
+      {!session && !entry ? <>
+        {socialAuth.apple ? <PrimaryButton label={label("profile.continueWithApple")} leadingIcon={socialIcon("apple")} tone="secondary" busy={busy === "social-apple"} disabled={isPending || Boolean(busy)} onPress={() => socialSignIn("apple")} /> : null}
+        {socialAuth.google ? <PrimaryButton label={label("profile.continueWithGoogle")} leadingIcon={socialIcon("google")} tone="secondary" busy={busy === "social-google"} disabled={isPending || Boolean(busy)} onPress={() => socialSignIn("google")} /> : null}
+        <PrimaryButton style={{ backgroundColor: "#155CAF" }} label={onboardingCopy.email} disabled={isPending || Boolean(busy)} onPress={() => open("sign-up")} />
+        <View style={{ marginTop: 4, gap: 2, alignItems: "center", justifyContent: "center", flexDirection: "row", flexWrap: "wrap" }}>
+          <AppText style={styles.muted}>{onboardingCopy.existing}</AppText>
+          <PressableSurface accessibilityRole="button" accessibilityLabel={messages.signIn} disabled={isPending || Boolean(busy)} onPress={() => open("sign-in")} style={{ minHeight: 48, justifyContent: "center", paddingHorizontal: 8 }}><AppText variant="label" style={{ color: colors.primary, textDecorationLine: "underline" }}>{messages.signIn}</AppText></PressableSurface>
+        </View>
+      </> : null}
+      {guestForms}
+      {session ? <PrimaryButton label={label("profile.nativeAccountTitle")} tone="secondary" onPress={() => router.replace("/account")} /> : null}
+      {feedback}
+    </AccountOnboardingFrame>;
+  }
+  return <Screen>
+    <Stack.Screen options={{ title: label("profile.nativeAccountTitle") }} />
+    <View style={[styles.introduction, nativeRowStyle(direction)]}>
+      <View style={styles.accountIcon}><NativeIcon ios="person.crop.circle" android="account_circle" color={colors.primary} size={30} /></View>
+      <View style={[styles.introductionText, nativeTextBlock(direction)]}>
+        <AppText variant="screenTitle">{session ? label("navigation.profile") : label("profile.nativeAccountTitle")}</AppText>
+        {!session ? <AppText style={styles.muted}>{label("profile.guestFirst")}</AppText> : null}
+      </View>
+    </View>
+    {!session && !entry ? <AppText>{label("profile.accountValue")}</AppText> : null}
+    {isPending ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
+    {session && !entry ? <>
+      <View style={styles.profileHero}>
+        <View style={styles.profileAvatar}>
+          <NativeIcon ios="person.crop.circle.fill" android="account_circle" color={colors.primary} size={48} />
+        </View>
+        <AppText variant="title" style={styles.profileName}>{session.user.name}</AppText>
+        <AppText variant="metadata" style={styles.profileEyebrow}>{label("profile.explorerTitle")}</AppText>
+        {!activity.loading ? (
+          <AppText variant="metadata" style={styles.muted}>
+            {activity.cities} {label("profile.activityCities")} · {activity.walks} {label("profile.activityWalks")}
+          </AppText>
+        ) : null}
+        <PrimaryButton compact label={label("profile.editProfile")} tone="secondary" onPress={() => open("edit")} />
+      </View>
+
+      <Card>
+        <AppText variant="heading">{label("profile.travelStyle")}</AppText>
+        <View style={styles.chips}>
+          {travelerStyle.interests.map((interest) => (
+            <View key={interest} style={styles.chip}>
+              <AppText variant="metadata">{label(`profile.interest_${interest.replace("-", "_")}` as TranslationKey)}</AppText>
+            </View>
+          ))}
+        </View>
+        <AppText variant="metadata" style={styles.muted}>
+          {label(`profile.walking_${travelerStyle.walking}` as TranslationKey)} · {label("profile.typicalWalkMinutes").replace("{minutes}", String(travelerStyle.minutes))}
+        </AppText>
+        <PrimaryButton tone="secondary" label={label("profile.editPreferences")} onPress={() => open("preferences")} />
+      </Card>
+
+      <Card>
+        <AppText variant="heading">{label("profile.yourActivity")}</AppText>
+        {activity.loading ? <CitywalkLoading compact label={uxCopy(locale).account} /> : (
+          <View style={styles.metrics}>
+            <View style={styles.metric}>
+              <AppText variant="title">{activity.cities}</AppText>
+              <AppText variant="metadata" style={styles.muted}>{label("profile.activityCities")}</AppText>
+            </View>
+            <View style={styles.metric}>
+              <AppText variant="title">{activity.walks}</AppText>
+              <AppText variant="metadata" style={styles.muted}>{label("profile.activityWalks")}</AppText>
+            </View>
+            <View style={styles.metric}>
+              <AppText variant="title">{activity.saved}</AppText>
+              <AppText variant="metadata" style={styles.muted}>{label("profile.activitySavedPlaces")}</AppText>
+            </View>
+          </View>
+        )}
+        {activity.error ? <AppText variant="metadata" style={styles.muted}>{label("profile.activityUnavailable")}</AppText> : null}
+      </Card>
+
+      <Card>
+        <View style={styles.cardHeaderRow}>
+          <AppText variant="heading">{label("profile.citywalkPass")}</AppText>
+          {passState === "active" ? <AppText variant="metadata" style={styles.connected}>{label("profile.passActive")}</AppText> : null}
+        </View>
+        {passState === "loading" ? <CitywalkLoading compact label={uxCopy(locale).account} /> : <>
+          <AppText variant="label">{passState === "active" ? label("profile.cityExplorerPass").replace("{city}", lubeckName) : passState === "free" ? label("profile.freePlan") : label("profile.passUnavailable")}</AppText>
+          <AppText variant="metadata" style={styles.muted}>
+            {passState === "active" ? label("profile.passActiveDescription") : passState === "free" ? label("profile.passFreeDescription") : label("profile.passUnavailableDescription")}
+          </AppText>
+          {passState !== "unavailable" ? (
+            <Link href={{ pathname: "/city/[citySlug]", params: { citySlug: "lubeck" } }} asChild>
+              <PrimaryButton tone="secondary" label={passState === "active" ? label("profile.openCity").replace("{city}", lubeckName) : label("profile.explorePass")} />
+            </Link>
+          ) : null}
+        </>}
+      </Card>
+
+      <Card>
+        <AppText variant="heading">{messages.account}</AppText>
+        {credential?.userId !== userId ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
+        {credential?.userId === userId && credential?.status === "error" ? <>
+          <StatusMessage>{messages.authNetworkError}</StatusMessage>
+          <PrimaryButton label={messages.retry} tone="secondary" onPress={() => { setCredential(undefined); setProviderReload(value => value + 1); }} />
+        </> : null}
+
+        {socialAuth.apple ? (
+          <View style={styles.accountRow}>
+            <View style={styles.accountRowLabel}>{socialIcon("apple")}<AppText variant="label">Apple</AppText></View>
+            {hasApple ? <AppText variant="metadata" style={styles.connected}>{label("profile.connected")}</AppText> :
+              <PressableSurface accessibilityRole="button" accessibilityLabel={label("profile.connectApple")} style={styles.compactAction} disabled={Boolean(busy)} onPress={() => linkSocial("apple")}>
+                <AppText variant="label" style={styles.actionText}>{label("profile.connect")}</AppText>
+              </PressableSurface>}
+          </View>
+        ) : null}
+        {socialAuth.google ? (
+          <View style={styles.accountRow}>
+            <View style={styles.accountRowLabel}>{socialIcon("google")}<AppText variant="label">Google</AppText></View>
+            {hasGoogle ? <AppText variant="metadata" style={styles.connected}>{label("profile.connected")}</AppText> :
+              <PressableSurface accessibilityRole="button" accessibilityLabel={label("profile.connectGoogle")} style={styles.compactAction} disabled={Boolean(busy)} onPress={() => linkSocial("google")}>
+                <AppText variant="label" style={styles.actionText}>{label("profile.connect")}</AppText>
+              </PressableSurface>}
+          </View>
+        ) : null}
+        <View style={styles.accountRow}>
+          <AppText variant="label">{messages.email}</AppText>
+          <AppText variant="metadata" style={[styles.muted, styles.accountEmail]} numberOfLines={1}>{session.user.email}</AppText>
+        </View>
+        {hasCredential ? <PrimaryButton label={label("profile.changePassword")} tone="secondary" onPress={() => open("change-password")} /> : null}
+        <AppText variant="metadata" style={styles.muted}>{label("profile.dataExportHelp")}</AppText>
+        <PrimaryButton
+          label={label("profile.exportData")}
+          tone="secondary"
+          busy={busy === "export"}
+          disabled={Boolean(busy)}
+          onPress={exportAccountData}
+        />
+        <PrimaryButton label={messages.signOut} busy={busy === "sign-out"} onPress={() => void perform("sign-out", () => nativeAuthClient.signOut(), () => setEntry(undefined))} tone="secondary" />
+        <PressableSurface accessibilityRole="button" onPress={() => open("delete")} style={styles.deleteAction}>
+          <AppText variant="label" style={styles.destructive}>{label("profile.deleteAccount")}</AppText>
+        </PressableSurface>
+      </Card>
+
+      {showDiagnostics ? (
+        <Card>
+          <AppText variant="heading">Build diagnostics</AppText>
+          <AppText variant="metadata" style={styles.muted}>Environment · {buildEnvironment}</AppText>
+          <AppText variant="metadata" style={styles.muted}>Version · {appVersion} ({buildVersion})</AppText>
+          <AppText variant="metadata" style={styles.muted}>API · {diagnosticApi.origin}</AppText>
+          <PrimaryButton
+            tone="secondary"
+            label={apiDiagnostic === "running" ? "Checking API…" : "Run API check"}
+            disabled={apiDiagnostic === "running"}
+            onPress={() => void runApiDiagnostic()}
+          />
+          {apiDiagnostic !== "idle" && apiDiagnostic !== "running" ? (
+            <AppText variant="metadata" style={styles.muted}>{apiDiagnostic}</AppText>
+          ) : null}
+        </Card>
+      ) : null}
+    </> : null}
+    {!session && !entry ? <Card>
+      {socialAuth.apple ? <PrimaryButton
+        label={label("profile.continueWithApple")}
+        leadingIcon={socialIcon("apple")}
+        busy={busy === "social-apple"}
+        disabled={isPending || Boolean(busy)}
+        onPress={() => socialSignIn("apple")}
+      /> : null}
+      {socialAuth.google ? <PrimaryButton
+        label={label("profile.continueWithGoogle")}
+        leadingIcon={socialIcon("google")}
+        busy={busy === "social-google"}
+        disabled={isPending || Boolean(busy)}
+        tone="secondary"
+        onPress={() => socialSignIn("google")}
+      /> : null}
+      <PrimaryButton label={messages.signUp} disabled={isPending || Boolean(busy)} onPress={() => open("sign-up")} />
+      <PrimaryButton label={messages.signIn} disabled={isPending || Boolean(busy)} tone="secondary" onPress={() => open("sign-in")} />
+      <PrimaryButton label={messages.continueAsGuest} tone="secondary" onPress={leave} />
+    </Card> : null}
+    {guestForms}
+    {session && entry === "edit" ? <Card>
+      <AppText variant="heading">{label("profile.editProfile")}</AppText>
+      {nameField}
+      <AppText variant="label">{messages.email}</AppText><AppText>{session.user.email}</AppText>
+      <AppText variant="metadata">{label("profile.emailReadOnly")}</AppText>
+      <PrimaryButton label={label("profile.saveProfile")} busy={Boolean(busy)} onPress={saveProfile} />
+    </Card> : null}
+    {session && entry === "preferences" ? <Card>
+      <AppText variant="heading">{label("profile.editPreferences")}</AppText>
+      <AppText variant="label">{label("profile.interests")}</AppText>
+      <View style={styles.chips}>
+        {TRAVELER_STYLE_INTERESTS.map((interest) => {
+          const selected = styleDraft.interests.includes(interest);
+          return <PressableSurface
+            key={interest}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: selected }}
+            style={[styles.choiceChip, selected ? styles.choiceChipSelected : undefined]}
+            onPress={() => setStyleDraft((current) => ({
+              ...current,
+              interests: selected ? current.interests.filter((value) => value !== interest) : [...current.interests, interest],
+            }))}
+          >
+            <AppText variant="metadata" style={selected ? styles.choiceChipTextSelected : undefined}>
+              {label(`profile.interest_${interest.replace("-", "_")}` as TranslationKey)}
+            </AppText>
+          </PressableSurface>;
+        })}
+      </View>
+      <AppText variant="label">{label("profile.walkingPace")}</AppText>
+      <View style={styles.chips}>
+        {TRAVELER_STYLE_WALKING.map((walking) => <PressableSurface
+          key={walking}
+          accessibilityRole="radio"
+          accessibilityState={{ checked: styleDraft.walking === walking }}
+          style={[styles.choiceChip, styleDraft.walking === walking ? styles.choiceChipSelected : undefined]}
+          onPress={() => setStyleDraft((current) => ({ ...current, walking }))}
+        >
+          <AppText variant="metadata" style={styleDraft.walking === walking ? styles.choiceChipTextSelected : undefined}>
+            {label(`profile.walking_${walking}` as TranslationKey)}
+          </AppText>
+        </PressableSurface>)}
+      </View>
+      <AppText variant="label">{label("profile.typicalWalk")}</AppText>
+      <View style={styles.chips}>
+        {TRAVELER_STYLE_DURATIONS.map((minutes) => <PressableSurface
+          key={minutes}
+          accessibilityRole="radio"
+          accessibilityState={{ checked: styleDraft.minutes === minutes }}
+          style={[styles.choiceChip, styleDraft.minutes === minutes ? styles.choiceChipSelected : undefined]}
+          onPress={() => setStyleDraft((current) => ({ ...current, minutes }))}
+        >
+          <AppText variant="metadata" style={styleDraft.minutes === minutes ? styles.choiceChipTextSelected : undefined}>
+            {label("profile.typicalWalkMinutes").replace("{minutes}", String(minutes))}
+          </AppText>
+        </PressableSurface>)}
+      </View>
+      <AppText variant="metadata" style={styles.muted}>{label("profile.preferencesHelp")}</AppText>
+      <PrimaryButton label={label("profile.savePreferences")} busy={busy === "preferences"} onPress={savePreferences} />
+    </Card> : null}
+    {session && entry === "change-password" ? <Card>
+      <AppText variant="heading">{label("profile.changePassword")}</AppText>
+      <PasswordField label={label("profile.currentPassword")} value={password} onChange={setPassword} disabled={Boolean(busy)} />
+      <PasswordField label={label("profile.newPassword")} value={newPassword} onChange={setNewPassword} newPassword disabled={Boolean(busy)} />
+      <PasswordField label={label("profile.confirmPassword")} value={confirmation} onChange={setConfirmation} newPassword disabled={Boolean(busy)} />
+      <AppText variant="metadata">{messages.passwordTooShort}</AppText>
+      <PrimaryButton label={label("profile.changePassword")} busy={Boolean(busy)} disabled={!hasCredential} onPress={changePassword} />
+    </Card> : null}
+    {session && entry === "delete" ? <Card>
+      <AppText variant="heading">{label("profile.deleteAccount")}</AppText>
+      <AppText>{label("lifecycle.deleteWarning")}</AppText>
+      {credential?.userId !== userId ? <CitywalkLoading compact label={uxCopy(locale).account} /> : null}
+      {credential?.userId === userId && credential?.status === "error" ? <>
+        <StatusMessage>{messages.authNetworkError}</StatusMessage>
+        <PrimaryButton label={messages.retry} tone="secondary" onPress={() => { setCredential(undefined); setProviderReload(value => value + 1); }} />
+      </> : null}
+      {hasCredential ? <>
+        <PasswordField label={label("profile.currentPassword")} value={password} onChange={setPassword} disabled={Boolean(busy)} />
+        <PressableSurface accessibilityRole="checkbox" accessibilityState={{ checked: deleteConfirmed, disabled: Boolean(busy) }} disabled={Boolean(busy)} onPress={() => setDeleteConfirmed(value => !value)} style={styles.deleteAction}>
+          <AppText variant="label">{deleteConfirmed ? "✓ " : "□ "}{label("lifecycle.deleteConfirm")}</AppText>
+        </PressableSurface>
+        <PrimaryButton label={label("lifecycle.deletePermanently")} busy={busy === "delete"} disabled={!deleteConfirmed || !password} onPress={deleteAccount} />
+      </> : credential?.userId === userId && credential?.status === "no" ? <>
+        {!socialDeleteReauthenticated ? <>
+          {hasApple ? <PrimaryButton
+            label={label("profile.continueWithApple")}
+            leadingIcon={socialIcon("apple")}
+            busy={busy === "social-apple"}
+            disabled={Boolean(busy)}
+            onPress={() => reauthenticateForDelete("apple")}
+          /> : null}
+          {hasGoogle ? <PrimaryButton
+            label={label("profile.continueWithGoogle")}
+            leadingIcon={socialIcon("google")}
+            busy={busy === "social-google"}
+            disabled={Boolean(busy)}
+            tone="secondary"
+            onPress={() => reauthenticateForDelete("google")}
+          /> : null}
+          {!hasApple && !hasGoogle ? <StatusMessage>{label("lifecycle.reauthRequired")}</StatusMessage> : null}
+        </> : <>
+          <PressableSurface accessibilityRole="checkbox" accessibilityState={{ checked: deleteConfirmed, disabled: Boolean(busy) }} disabled={Boolean(busy)} onPress={() => setDeleteConfirmed(value => !value)} style={styles.deleteAction}>
+            <AppText variant="label">{deleteConfirmed ? "✓ " : "□ "}{label("lifecycle.deleteConfirm")}</AppText>
+          </PressableSurface>
+          <PrimaryButton label={label("lifecycle.deletePermanently")} busy={busy === "delete"} disabled={!deleteConfirmed} onPress={deleteAccount} />
+        </>}
+      </> : null}
+    </Card> : null}
+    {feedback}
+    {entry ? <PrimaryButton label={label("common.back")} tone="secondary" onPress={back} /> : null}
+    {!session && entry ? <PrimaryButton label={messages.continueAsGuest} tone="secondary" onPress={leave} /> : null}
+  </Screen>;
+}
+function authFailureMessage(failure: NativeAuthErrorCode, locale: string, messages: ReturnType<typeof useNativeLocale>["messages"]): string {
+  if (failure === "invalid_email") return messages.invalidEmail;
+  if (failure === "password_too_short") return messages.passwordTooShort;
+  if (failure === "password_too_long") return t(locale, "profile.passwordTooLong");
+  if (failure === "password_mismatch") return t(locale, "profile.passwordMismatch");
+  if (failure === "invalid_name") return t(locale, "profile.invalidName");
+  if (failure === "current_password_required") return t(locale, "profile.currentPasswordRequired");
+  if (failure === "account_exists") return messages.accountExists;
+  if (failure === "email_not_verified") return t(locale, "profile.emailNotVerified");
+  if (failure === "social_account_in_use") return t(locale, "profile.socialAccountInUse");
+  if (failure === "invalid_credentials") return messages.invalidCredentials;
+  if (failure === "network") return messages.authNetworkError;
+  return messages.authError;
+}
+const styles = StyleSheet.create({
+  introduction: { alignItems: "center", flexDirection: "row", gap: spacing.md },
+  profileHero: { alignItems: "center", gap: spacing.xs, paddingVertical: spacing.md },
+  profileAvatar: { alignItems: "center", justifyContent: "center", width: 84, height: 84, borderRadius: radius.pill, backgroundColor: colors.primarySoft, marginBottom: spacing.xs },
+  profileName: { textAlign: "center" },
+  profileEyebrow: { color: colors.primary, fontWeight: "700" },
+  metrics: { flexDirection: "row", gap: spacing.sm },
+  metric: { flex: 1, minWidth: 0, alignItems: "center", gap: spacing.xs, paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: colors.surfaceMuted },
+  cardHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm },
+  accountRow: { minHeight: 48, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border, paddingVertical: spacing.sm },
+  accountRowLabel: { flexDirection: "row", alignItems: "center", gap: spacing.sm, flexShrink: 1 },
+  accountEmail: { flex: 1, textAlign: "right" },
+  compactAction: { minHeight: 36, justifyContent: "center", paddingHorizontal: spacing.sm },
+  actionText: { color: colors.primary },
+  connected: { color: colors.success, fontWeight: "700" },
+  chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  chip: { backgroundColor: colors.surfaceMuted, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
+  choiceChip: { minHeight: 38, justifyContent: "center", borderWidth: 1, borderColor: colors.border, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
+  choiceChipSelected: { backgroundColor: colors.primarySoft, borderColor: colors.primary },
+  choiceChipTextSelected: { color: colors.primary, fontWeight: "700" },
+  introductionText: { flex: 1, gap: spacing.xs },
+  accountIcon: { alignItems: "center", backgroundColor: colors.primarySoft, borderRadius: radius.pill, height: 56, justifyContent: "center", width: 56 },
+  muted: { color: colors.textMuted },
+  input: { minHeight: 50, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md,
+    paddingHorizontal: spacing.md, paddingVertical: spacing.sm, color: colors.text, backgroundColor: colors.surface, ...typography.body },
+  deleteAction: { minHeight: 48, justifyContent: "center", padding: spacing.sm },
+  destructive: { color: colors.danger },
+  socialIcon: {
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    height: 28,
+    justifyContent: "center",
+    width: 28,
+  },
+  socialIconText: {
+    color: colors.text,
+    fontSize: 17,
+    fontWeight: "700",
+    lineHeight: 20,
+    textAlign: "center",
+  },
+});

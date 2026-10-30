@@ -1,0 +1,21 @@
+# Regression coverage proposal — no tests changed
+
+The current walk-flow fixture retains only one mocked hardware callback (`mobile/tests/walk-flow.behavior.tsx:90`); it cannot model last-registered-first consumption, an unfocused mounted controller and the real navigator listener together. Existing City Hub tests replace Expo Router with route/dispatch doubles. Those tests remain valuable, but neither establishes actual focused-route transitions.
+
+Required integration/native contract: mount/preserve the real stack and owning route keys; observe sanitized root state before/after each native event. Spy on/observe actual navigation actions without substituting a fake pop. Keep UI/content/storage/auth I/O fixtures separate. On-device tests use real Android KEYCODE_BACK. For every case assert stack key, focused route key/name, index, preserved planner key, no duplicate Hub and no unexpected preview/write/start. Compare retained settings within assertions; do not emit their values to diagnostic logs.
+
+| Case | Required focused-route / stack assertions |
+|---|---|
+| 08 → Explore city → hardware Back | Exactly one new Hub above retained planner; planner not focused while browsing. One Back yields actual GO_BACK, removes only that Hub, focuses original planner key at constraints. No internal cursor change during blur. |
+| Repeated Back | First Back Hub → constraints with one stack pop; second Back remains same planner key/index at 08; next reaches Location. No hidden cursor advancement or repeated Hub removal. Include rapid and settled presses as separate variants, not timing sleeps as correctness. |
+| Hub → Build my walk | Valid lease resolves; one targeted POP with correct source/target/count; original planner key/constraints focused, no new draft. Retain existing invalid/cold/forged-envelope negatives. |
+| Hub → Guide → Hub | Actual assistant/fallback route at index+1; hardware and visible Back each return to same Hub key with no planner mutation; Hub Build/Back then returns to constraints. Test existing Explore places dismissTo fallback separately, preserving lease envelope or clearing invalid markers as designed. Do not claim city-wide answers exist. |
+| 08 → Continue Planning | Same planner key/index, constraints directly; no new Hub, no repeat Interests; explicit Back/ Edit retain their approved return targets. |
+| Background/foreground | Background with Hub/assistant focused, restore without process kill; same keys and cursor, one Back removes top route only. Reobserve storage on planner focus; stale/error observations must still block Build. Cold-process restoration is separate: no session-draft persistence promised, invalid lease must not impersonate a retained draft. |
+| Guest | Real guest runtime runs the above paths without sign-in; no account/network-auth requirement introduced. |
+| Existing-walk resume | Native existing current preview/active resume bypasses 05–08; unfocused planner declines Back; focused existing preview/active panel/proposal controls retain existing semantics. Never Start implicitly. Saved replay remains distinct and guarded; verify no current replacement. |
+| Listener lifecycle | Multiple mounted planners/Account/Hub/Guide: every unfocused controller declines, real focused route alone consumes or lets navigator pop. Effect refresh/unmount removes the original listener, no duplicate or orphan callbacks. Preserve focused no-navigation unit-fixture behavior. |
+
+Layered evidence: (1) focused/unfocused controller unit assertions, (2) true stack integration with actual state/focus changes, (3) emulator hardware Back on unchanged/release-like native client. A mock-only green suite is insufficient. Proposed integration harness feasibility is an implementation preflight gate; no fake navigator solely to satisfy tests.
+
+Native acceptance matrix after authorized fix: Android small/standard, EN/DE, guest plus available live authenticated QA session; focused/blurred controls, Guide, foreground restoration and existing preview resume. iOS button/gesture parity and existing maximum-text/manual AT gaps remain distinct. Retain source-hash checks for approved 01–13 and pending14/D01–D14. Run focused + full mobile tests, TypeScript, lint, localization, applicable Android/iOS bundles; device results are reported separately. D03 midnight/time-zone work stays out of scope.

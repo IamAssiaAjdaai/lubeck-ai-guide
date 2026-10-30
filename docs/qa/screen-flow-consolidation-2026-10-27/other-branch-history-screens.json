@@ -1,0 +1,303 @@
+[
+  {
+    "path": "mobile/src/app/shared-walk/[id].tsx",
+    "route": "/shared-walk/:id",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/remotes/origin/feature/native-shareable-walks-app-first"
+    ],
+    "latestPathChangeCommit": "55c20dfb7e183cc25d7e9575e24b63c009727e07",
+    "worktrees": [
+      {
+        "worktree": "/Users/assia/Documents/GitHub/citywalk-shareable-walks-qa",
+        "HEAD": "55c20dfb7e183cc25d7e9575e24b63c009727e07",
+        "detached": true,
+        "exists": true
+      }
+    ],
+    "lastPresentCommit": "55c20dfb7e183cc25d7e9575e24b63c009727e07",
+    "snapshot": "sources/history/mobile/src/app/shared-walk/[id].tsx.txt"
+  },
+  {
+    "path": "src/app/[citySlug]/[marketingSlug]/page.tsx",
+    "route": "/:citySlug/:marketingSlug",
+    "status": "Git history only; no current ref-head route identified",
+    "refs": [],
+    "latestPathChangeCommit": "4edaf72dd3f1411301b7d45cb03588bc56227e82",
+    "worktrees": [],
+    "lastPresentCommit": "c16cfe739e7fd85c2393fa927c759a5816c6baf8",
+    "snapshot": "sources/history/src/app/[citySlug]/[marketingSlug]/page.tsx.txt"
+  },
+  {
+    "path": "src/app/[locale]/shared-walk/[id]/page.tsx",
+    "route": "/:locale/shared-walk/:id",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/remotes/origin/feat/shareable-walks-api-v1",
+      "refs/remotes/origin/feature/native-shareable-walks-app-first",
+      "refs/remotes/origin/integration/shareable-walks-v1-preview"
+    ],
+    "latestPathChangeCommit": "5d6c7160ba40985ab3db8eeef47bb89e03b2c8ed",
+    "worktrees": [
+      {
+        "worktree": "/Users/assia/Documents/GitHub/citywalk-shareable-walks-qa",
+        "HEAD": "55c20dfb7e183cc25d7e9575e24b63c009727e07",
+        "detached": true,
+        "exists": true
+      }
+    ],
+    "lastPresentCommit": "5d6c7160ba40985ab3db8eeef47bb89e03b2c8ed",
+    "snapshot": "sources/history/src/app/[locale]/shared-walk/[id]/page.tsx.txt"
+  },
+  {
+    "path": "src/app/admin/(protected)/marketing/brands/[projectId]/[contextId]/page.tsx",
+    "route": "/admin/marketing/brands/:projectId/:contextId",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/heads/codex/marketing-brand-onboarding",
+      "refs/remotes/origin/codex/marketing-brand-onboarding"
+    ],
+    "latestPathChangeCommit": "80b1bae7a6bfafc0c75a9377edff15caca227faa",
+    "worktrees": [
+      {
+        "worktree": "/Users/assia/.codex/worktrees/brand-workspace-sync/lubeck-ai-guide",
+        "HEAD": "5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd",
+        "detached": true,
+        "exists": true
+      },
+      {
+        "worktree": "/Users/assia/Documents/GitHub/citywalk-brand-workspace-qa",
+        "HEAD": "5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd",
+        "detached": true,
+        "exists": true
+      }
+    ],
+    "lastPresentCommit": "80b1bae7a6bfafc0c75a9377edff15caca227faa",
+    "snapshot": "sources/history/src/app/admin/(protected)/marketing/brands/[projectId]/[contextId]/page.tsx.txt"
+  },
+  {
+    "path": "src/app/admin/(protected)/marketing/brands/new/page.tsx",
+    "route": "/admin/marketing/brands/new",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/heads/codex/marketing-brand-onboarding",
+      "refs/remotes/origin/codex/marketing-brand-onboarding"
+    ],
+    "latestPathChangeCommit": "80b1bae7a6bfafc0c75a9377edff15caca227faa",
+    "worktrees": [
+      {
+        "worktree": "/Users/assia/.codex/worktrees/brand-workspace-sync/lubeck-ai-guide",
+        "HEAD": "5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd",
+        "detached": true,
+        "exists": true
+      },
+      {
+        "worktree": "/Users/assia/Documents/GitHub/citywalk-brand-workspace-qa",
+        "HEAD": "5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd",
+        "detached": true,
+        "exists": true
+      }
+    ],
+    "lastPresentCommit": "80b1bae7a6bfafc0c75a9377edff15caca227faa",
+    "snapshot": "sources/history/src/app/admin/(protected)/marketing/brands/new/page.tsx.txt"
+  },
+  {
+    "path": "src/app/admin/(protected)/marketing/brands/page.tsx",
+    "route": "/admin/marketing/brands",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/heads/codex/marketing-brand-onboarding",
+      "refs/remotes/origin/codex/marketing-brand-onboarding"
+    ],
+    "latestPathChangeCommit": "80b1bae7a6bfafc0c75a9377edff15caca227faa",
+    "worktrees": [
+      {
+        "worktree": "/Users/assia/.codex/worktrees/brand-workspace-sync/lubeck-ai-guide",
+        "HEAD": "5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd",
+        "detached": true,
+        "exists": true
+      },
+      {
+        "worktree": "/Users/assia/Documents/GitHub/citywalk-brand-workspace-qa",
+        "HEAD": "5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd",
+        "detached": true,
+        "exists": true
+      }
+    ],
+    "lastPresentCommit": "80b1bae7a6bfafc0c75a9377edff15caca227faa",
+    "snapshot": "sources/history/src/app/admin/(protected)/marketing/brands/page.tsx.txt"
+  },
+  {
+    "path": "src/app/admin/(protected)/publishing/page.tsx",
+    "route": "/admin/publishing",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/heads/codex/admin-publishing-queue",
+      "refs/heads/fix/admin-publishing-merge",
+      "refs/remotes/origin/codex/admin-publishing-queue",
+      "refs/remotes/origin/develop",
+      "refs/remotes/origin/feat/native-walk-explicit-place-picker-20261025",
+      "refs/remotes/origin/fix/admin-publishing-merge"
+    ],
+    "latestPathChangeCommit": "c4c4eb2cb0a6697d18749f1c3561b17014d26ad7",
+    "worktrees": [
+      {
+        "worktree": "/Users/assia/.codex/worktrees/citywalk-admin-publishing/lubeck-ai-guide",
+        "HEAD": "ae4cb301869b95553ea5f23334ee86272e1d0cbb",
+        "branch": "refs/heads/codex/admin-publishing-queue",
+        "exists": true
+      },
+      {
+        "worktree": "/Users/assia/Documents/GitHub/citywalk-admin-merge",
+        "HEAD": "a230856a944ed8b3593766013685bbf462c75a89",
+        "branch": "refs/heads/fix/admin-publishing-merge",
+        "exists": true
+      }
+    ],
+    "lastPresentCommit": "c4c4eb2cb0a6697d18749f1c3561b17014d26ad7",
+    "snapshot": "sources/history/src/app/admin/(protected)/publishing/page.tsx.txt"
+  },
+  {
+    "path": "src/app/admin/(protected)/review/page.tsx",
+    "route": "/admin/review",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/remotes/origin/DO-NOT-USE-sync-probe",
+      "refs/remotes/origin/feat/admin-passkey-v1",
+      "refs/remotes/origin/feat/app-icon-pack-v1",
+      "refs/remotes/origin/feat/brand-system-v1",
+      "refs/remotes/origin/feat/cms-control-center-v1",
+      "refs/remotes/origin/feat/cms-marketing-public-pages-v1",
+      "refs/remotes/origin/feat/cms-marketing-v1",
+      "refs/remotes/origin/feat/marketing-city-workspace-v1",
+      "refs/remotes/origin/feat/native-app-handoff-v1",
+      "refs/remotes/origin/sync/city-first-marketing-v1",
+      "refs/remotes/origin/sync/cms-marketing-v1-develop-20261006",
+      "refs/remotes/origin/sync/cms-marketing-v1-work",
+      "refs/remotes/origin/sync/marketing-ux-city-first",
+      "refs/remotes/origin/tmp-ignore"
+    ],
+    "latestPathChangeCommit": "41cd4a8a21ae64e53dcabc9f4f967e52eba4db1f",
+    "worktrees": [],
+    "lastPresentCommit": "41cd4a8a21ae64e53dcabc9f4f967e52eba4db1f",
+    "snapshot": "sources/history/src/app/admin/(protected)/review/page.tsx.txt"
+  },
+  {
+    "path": "src/app/admin/(protected)/security/page.tsx",
+    "route": "/admin/security",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/remotes/origin/DO-NOT-USE-sync-probe",
+      "refs/remotes/origin/feat/admin-passkey-v1",
+      "refs/remotes/origin/feat/app-icon-pack-v1",
+      "refs/remotes/origin/feat/brand-system-v1",
+      "refs/remotes/origin/feat/cms-marketing-public-pages-v1",
+      "refs/remotes/origin/feat/cms-marketing-v1",
+      "refs/remotes/origin/feat/marketing-city-workspace-v1",
+      "refs/remotes/origin/feat/native-app-handoff-v1",
+      "refs/remotes/origin/sync/city-first-marketing-v1",
+      "refs/remotes/origin/sync/cms-marketing-v1-develop-20261006",
+      "refs/remotes/origin/sync/cms-marketing-v1-work",
+      "refs/remotes/origin/sync/marketing-ux-city-first",
+      "refs/remotes/origin/tmp-ignore"
+    ],
+    "latestPathChangeCommit": "b0581441576f6ec2978b0c595002a00128cfcac4",
+    "worktrees": [],
+    "lastPresentCommit": "b0581441576f6ec2978b0c595002a00128cfcac4",
+    "snapshot": "sources/history/src/app/admin/(protected)/security/page.tsx.txt"
+  },
+  {
+    "path": "src/app/admin/two-factor/page.tsx",
+    "route": "/admin/two-factor",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/remotes/origin/DO-NOT-USE-sync-probe",
+      "refs/remotes/origin/feat/admin-passkey-v1",
+      "refs/remotes/origin/feat/app-icon-pack-v1",
+      "refs/remotes/origin/feat/brand-system-v1",
+      "refs/remotes/origin/feat/cms-marketing-public-pages-v1",
+      "refs/remotes/origin/feat/cms-marketing-v1",
+      "refs/remotes/origin/feat/marketing-city-workspace-v1",
+      "refs/remotes/origin/feat/native-app-handoff-v1",
+      "refs/remotes/origin/sync/city-first-marketing-v1",
+      "refs/remotes/origin/sync/cms-marketing-v1-develop-20261006",
+      "refs/remotes/origin/sync/cms-marketing-v1-work",
+      "refs/remotes/origin/sync/marketing-ux-city-first",
+      "refs/remotes/origin/tmp-ignore"
+    ],
+    "latestPathChangeCommit": "9d30fc23011dce78cd0597c805abe52d47fd6ad9",
+    "worktrees": [],
+    "lastPresentCommit": "9d30fc23011dce78cd0597c805abe52d47fd6ad9",
+    "snapshot": "sources/history/src/app/admin/two-factor/page.tsx.txt"
+  },
+  {
+    "path": "src/app/lubeck/[marketingSlug]/page.tsx",
+    "route": "/lubeck/:marketingSlug",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/remotes/origin/feat/app-icon-pack-v1",
+      "refs/remotes/origin/feat/brand-system-v1",
+      "refs/remotes/origin/feat/cms-marketing-public-pages-v1",
+      "refs/remotes/origin/feat/native-app-handoff-v1"
+    ],
+    "latestPathChangeCommit": "82077c3360fd992e63860acc388931984c593f85",
+    "worktrees": [],
+    "lastPresentCommit": "82077c3360fd992e63860acc388931984c593f85",
+    "snapshot": "sources/history/src/app/lubeck/[marketingSlug]/page.tsx.txt"
+  },
+  {
+    "path": "src/app/lubeck/[slug]/page.tsx",
+    "route": "/lubeck/:slug",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/remotes/origin/feature/landmark-media",
+      "refs/remotes/origin/revert-1-feature/landmark-media"
+    ],
+    "latestPathChangeCommit": "830817f9fb81db3c13b184738067fbb88e131d97",
+    "worktrees": [],
+    "lastPresentCommit": "a789bf27049ef27d4a4808db02bd2ffa43bcbb38",
+    "snapshot": "sources/history/src/app/lubeck/[slug]/page.tsx.txt"
+  },
+  {
+    "path": "src/app/lubeck/holstentor/page.tsx",
+    "route": "/lubeck/holstentor",
+    "status": "Git history only; no current ref-head route identified",
+    "refs": [],
+    "latestPathChangeCommit": "64998b7b2bb59957b704997186daafcd1989c9ac",
+    "worktrees": [],
+    "lastPresentCommit": "7af567c3042f9d50f6463661337af0fb4fe711cf",
+    "snapshot": "sources/history/src/app/lubeck/holstentor/page.tsx.txt"
+  },
+  {
+    "path": "src/app/lubeck/page.tsx",
+    "route": "/lubeck",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/remotes/origin/feature/landmark-media",
+      "refs/remotes/origin/revert-1-feature/landmark-media"
+    ],
+    "latestPathChangeCommit": "830817f9fb81db3c13b184738067fbb88e131d97",
+    "worktrees": [],
+    "lastPresentCommit": "1758d6b3c40e70db3efd9987edc900c754f1c8b2",
+    "snapshot": "sources/history/src/app/lubeck/page.tsx.txt"
+  },
+  {
+    "path": "src/app/shared-walk/[id]/page.tsx",
+    "route": "/shared-walk/:id",
+    "status": "Other branch/worktree route",
+    "refs": [
+      "refs/remotes/origin/feature/native-shareable-walks-app-first"
+    ],
+    "latestPathChangeCommit": "3008ebe8d1c67a3525553e334c53b61d5eacc892",
+    "worktrees": [
+      {
+        "worktree": "/Users/assia/Documents/GitHub/citywalk-shareable-walks-qa",
+        "HEAD": "55c20dfb7e183cc25d7e9575e24b63c009727e07",
+        "detached": true,
+        "exists": true
+      }
+    ],
+    "lastPresentCommit": "3008ebe8d1c67a3525553e334c53b61d5eacc892",
+    "snapshot": "sources/history/src/app/shared-walk/[id]/page.tsx.txt"
+  }
+]

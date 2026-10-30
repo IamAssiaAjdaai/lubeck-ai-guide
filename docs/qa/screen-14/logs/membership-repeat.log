@@ -1,0 +1,13 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/membership-screens.test.tsx
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  23:38:17
+   Duration  1.44s (transform 252ms, setup 0ms, import 388ms, tests 408ms, environment 507ms)
+

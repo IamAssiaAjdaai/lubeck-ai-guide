@@ -1,0 +1,5 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run --reporter=json --outputFile=/tmp/citywalk-slice02-full-final.json
+
+JSON report written to /tmp/citywalk-slice02-full-final.json

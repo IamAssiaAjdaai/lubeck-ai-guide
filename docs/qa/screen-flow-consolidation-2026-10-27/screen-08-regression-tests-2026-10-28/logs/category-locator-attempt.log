@@ -1,0 +1,326 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/walk-flow.test.tsx tests/city-hub-actions.test.tsx tests/first-experience.test.tsx tests/screen-08-persistence-regressions.test.ts tests/planner-return-intent.test.ts tests/screen-08-contract-pending.test.ts tests/available-time.test.tsx tests/location-permission.test.tsx tests/select-interests.test.tsx tests/return-by-picker.test.tsx tests/walk-storage.test.ts --reporter=default --reporter=json --outputFile=../docs/qa/screen-flow-consolidation-2026-10-27/screen-08-regression-tests-2026-10-28/logs/targeted-results.json
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+ ↓ tests/screen-08-contract-pending.test.ts (19 tests | 19 todo)
+ ↓ tests/planner-return-intent.test.ts (5 tests | 5 todo)
+ ✓ tests/walk-storage.test.ts (6 tests) 6ms
+ ✓ tests/screen-08-persistence-regressions.test.ts (11 tests) 11ms
+ ✓ tests/return-by-picker.test.tsx (2 tests) 91ms
+ ✓ tests/location-permission.test.tsx (4 tests) 105ms
+ ✓ tests/first-experience.test.tsx (5 tests) 107ms
+ ✓ tests/select-interests.test.tsx (2 tests) 101ms
+ ✓ tests/available-time.test.tsx (3 tests) 106ms
+ ✓ tests/city-hub-actions.test.tsx (22 tests) 228ms
+ ❯ tests/walk-flow.test.tsx (101 tests | 1 failed) 9071ms
+     ✓ uses only the active CITYWALK user's style for a brand-new walk 74ms
+     ✓ uses launch defaults for a guest instead of another account's saved style 8ms
+     ✓ does not reapply Profile defaults to an existing preview 14ms
+     ✓ revalidates the plan when its last stop disappears during Start authorization 110ms
+     ✓ keeps the exact preview when Start authorization is dismissed, then starts once authorized 121ms
+     ✓ plans, previews, saves and starts in en 120ms
+     ✓ plans, previews, saves and starts in de 119ms
+     ✓ plans, previews, saves and starts in da 119ms
+     ✓ plans, previews, saves and starts in sv 120ms
+     ✓ plans, previews, saves and starts in nl 119ms
+     ✓ plans, previews, saves and starts in es 121ms
+     ✓ plans, previews, saves and starts in ar 120ms
+     ✓ retains the itinerary until a shortening proposal is confirmed 137ms
+     ✓ records visited highlights, finish feedback and native share requests 140ms
+     ✓ handles denied GPS and invalid return-by without generating a route 28ms
+     ✓ confirms a return-only route without losing visited history 135ms
+     ✓ offers a closable Add stop sheet and confirms one addition in en 40ms
+     ✓ offers a closable Add stop sheet and confirms one addition in de 39ms
+     ✓ explains a rejected Add stop inside the sheet and lets the traveler close it 20ms
+     ✓ opens a place-detail add request as a proposal, without silently changing the route 17ms
+     ✓ updates an open preview after another screen removes a stop 96ms
+     ✓ updates an active stop and discards a stale proposal after external membership changes 105ms
+     ✓ clears a mounted route when its current walk finishes elsewhere 92ms
+     ✓ does not enter active mode when the start write fails 98ms
+     ✓ keeps a failed save visible without blocking the route 104ms
+     ✓ binds Listen, Read and Ask to holstentor, then the next stop 36ms
+     ✓ binds Listen, Read and Ask to marienkirche, then the next stop 31ms
+     ✓ keeps completed local planning visible until its native presentation finishes 24ms
+     ✓ shows actual build stages before preview without percentage or delayed completion 27ms
+     ✓ keeps the current native walk mounted through a locale content fetch 111ms
+     ✓ separates content fetch from real planner progress in en 30ms
+     ✓ separates content fetch from real planner progress in de 28ms
+     ✓ separates content fetch from real planner progress in ar 26ms
+     ✓ immediately disables Start when the last stop is removed and offers rebuild 112ms
+     ✓ restores preview [] with safe empty/unresolved recovery 8ms
+     ✓ restores preview [ 'missing' ] with safe empty/unresolved recovery 7ms
+     ✓ keeps loading distinct and re-enables a valid preview after refreshed content arrives 102ms
+     ✓ shows recovery rather than indefinite loading after a preview content failure 97ms
+     ✓ keeps the preview unchanged when rebuild confirmation is cancelled 104ms
+     ✓ keeps a failed reset and its recovery feedback visible inside confirmation 107ms
+     ✓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in en 245ms
+     ✓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in de 252ms
+     ✓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in da 249ms
+     ✓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in sv 249ms
+     ✓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in nl 247ms
+     ✓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in es 245ms
+     ✓ Cancel preserves exact active progress; Confirm rebuilds step 1 and a fresh preview in ar 249ms
+     ✓ offers true rebuild after an empty calculation rather than retrying its previous inputs 105ms
+     ✓ disables zero-stop Save and explains recovery in en 110ms
+     ✓ disables zero-stop Save and explains recovery in de 110ms
+     ✓ disables zero-stop Save and explains recovery in da 108ms
+     ✓ disables zero-stop Save and explains recovery in sv 107ms
+     ✓ disables zero-stop Save and explains recovery in nl 107ms
+     ✓ disables zero-stop Save and explains recovery in es 107ms
+     ✓ disables zero-stop Save and explains recovery in ar 103ms
+     ✓ rechecks a stale enabled button against the current persisted empty route 100ms
+     ✓ keeps Save unavailable during content loading without calling the plan empty 109ms
+     ✓ opens an old empty saved record with blocked Start/Save and recovery, without purging it 104ms
+     ✓ saves a finished itinerary with zero remaining stops and preserves the original visit 22ms
+     ✓ reopened route shows Saved, a changed route shows Update, and external removal resets Save 127ms
+   ✓ guest Save opens a cancelable gate without changing current walk or permanent records 100ms
+   ✓ guest gate pushes sign-up without resetting or saving the walk 102ms
+   ✓ guest gate pushes sign-in without resetting or saving the walk 101ms
+     ✓ resumes an existing walk without reopening optional personalization 8ms
+     ✓ keeps guest selections in the current city and existing planner contract 17ms
+     ✓ skips with no interest filter and never writes account defaults 15ms
+     ✓ retains duration and interests when returning to Screen 05 99ms
+     ✓ changes actual suggested stops when the duration budget changes 201ms
+     ✓ does not request permission on entry or Not now 102ms
+     ✓ applies an explicitly requested fix to the actual route start 103ms
+     ✓ keeps manual discovery available after denied 18ms
+     ✓ keeps manual discovery available after services_disabled 16ms
+     ✓ keeps manual discovery available after provider_unavailable 15ms
+     ✓ keeps manual discovery available after fix_failed 15ms
+     ✓ keeps manual discovery available after error 14ms
+     ✓ ignores a late fix after Not now 95ms
+   ✓ connects the return-by input to a deadline budget including the walking return leg 96ms
+     ✓ supports Back through location/time/interests and retains choices after city entry 108ms
+     ✓ [S08 XFAIL][T01] primary continues to constraints without Hub push or repeated interests 14ms
+     ✓ [S08 XFAIL][T02] skipped interests stay empty after direct planning handoff 10ms
+     ✓ [S08 XFAIL][T05] constraints Back returns to confirmation rather than repeated interests 21ms
+     ✓ [S08 BASELINE][R04] hydrated 90 can change to 240 without account-default persistence 95ms
+     ✓ [S08 PASS][E01] guest current preview resumes without introductory screens or writes 57ms
+     ✓ [S08 PASS][E01] guest current active resumes without introductory screens or writes 58ms
+     ✓ [S08 BASELINE][T07] Customize retains built journey identity and does not open new interests/location/08 11ms
+     ✓ [S08 XFAIL][S02] storage I/O failure blocks fresh personalization rather than masquerading as no walk 5ms
+     ✓ [S08 XFAIL][E03] missing saved ID cannot silently become a new planning session 3ms
+     ✓ [S08 XFAIL][E04] opening saved replay cannot silently replace another unfinished current walk 7ms
+     ✓ [S08 XFAIL][S04] a new current walk arriving during Build must not be overwritten 93ms
+     ✓ [S08 XFAIL][S05] same-ID concurrent edits during Customize Build must survive 105ms
+     ✓ [S08 BASELINE][S06] failed preview write retains constraints and can retry without false success 190ms
+     ✓ [S08 XFAIL][D03] midnight cannot reinterpret an earlier-day HH:MM as a new deadline 99ms
+     ✓ [S08 PASS][C03] all finish modes map to actual planner settings  307ms
+     ✓ [S08 PASS][T03] time Skip preserves chosen duration and return-by through Back 15ms
+     ✓ [S08 PASS][C02] actual manual start retains manual fallback and correct coordinates 97ms
+     ✓ [S08 PASS][C02] actual gps start retains manual fallback and correct coordinates 100ms
+     ✓ [S08 PASS][C02] actual denied start retains manual fallback and correct coordinates 102ms
+     ✓ [S08 PASS][P01] late fix after skip cannot update a retired request or replacement draft 98ms
+     ✓ [S08 PASS][P01] late fix after back cannot update a retired request or replacement draft 104ms
+     ✓ [S08 PASS][P01] late fix after remount cannot update a retired request or replacement draft 106ms
+   × [S08 BASELINE][C01] legacy walking/category controls reach the actual shared planner 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/walk-flow.test.tsx > [S08 BASELINE][C01] legacy walking/category controls reach the actual shared planner
+TestingLibraryElementError: Found multiple elements with the role "group"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<fieldset>[39m
+  [36m<legend>[39m
+    [0mWhat are you into?[0m
+  [36m</legend>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+  [36m>[39m
+    [0mHistory[0m
+  [36m</button>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+  [36m>[39m
+    [0mArchitecture[0m
+  [36m</button>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m>[39m
+    [0mHidden gems[0m
+  [36m</button>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m>[39m
+    [0mNature[0m
+  [36m</button>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m>[39m
+    [0mFood & local[0m
+  [36m</button>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m>[39m
+    [0mCulture[0m
+  [36m</button>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m>[39m
+    [0mFamily[0m
+  [36m</button>[39m
+[36m</fieldset>[39m
+
+Ignored nodes: comments, script, style
+[36m<fieldset>[39m
+  [36m<legend />[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m>[39m
+    [0msynthetic special[0m
+  [36m</button>[39m
+[36m</fieldset>[39m
+
+Ignored nodes: comments, script, style
+[36m<fieldset>[39m
+  [36m<legend>[39m
+    [0mHow do you want to explore?[0m
+  [36m</legend>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+  [36m>[39m
+    [0mEasy[0m
+  [36m</button>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m>[39m
+    [0mBalanced[0m
+  [36m</button>[39m
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m>[39m
+    [0mLong[0m
+  [36m</button>[39m
+[36m</fieldset>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main>[39m
+      [36m<button>[39m
+        [0mPlanner back[0m
+      [36m</button>[39m
+      [36m<span>[39m
+        [0mStep 2 of 3[0m
+      [36m</span>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0mBuild my walk[0m
+        [36m</h2>[39m
+        [36m<p>[39m
+          [0mInterests & pace[0m
+        [36m</p>[39m
+      [36m</header>[39m
+      [36m<fieldset>[39m
+        [36m<legend>[39m
+          [0mWhat are you into?[0m
+        [36m</legend>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"true"[39m
+        [36m>[39m
+          [0mHistory[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"true"[39m
+        [36m>[39m
+          [0mArchitecture[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"false"[39m
+        [36m>[39m
+          [0mHidden gems[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"false"[39m
+        [36m>[39m
+          [0mNature[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"false"[39m
+        [36m>[39m
+          [0mFood & local[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"false"[39m
+        [36m>[39m
+          [0mCulture[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"false"[39m
+        [36m>[39m
+          [0mFamily[0m
+        [36m</button>[39m
+      [36m</fieldset>[39m
+      [36m<button[39m
+        [33maria-label[39m=[32m"Show less"[39m
+      [36m>[39m
+        [36m<span>[39m
+          [0mMore interests[0m
+          [0m · [0m
+          [0mShow less[0m
+        [36m</span>[39m
+      [36m</button>[39m
+      [36m<fieldset>[39m
+        [36m<legend />[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"false"[39m
+        [36m>[39m
+          [0msynthetic special[0m
+        [36m</button>[39m
+      [36m</fieldset>[39m
+      [36m<fieldset>[39m
+        [36m<legend>[39m
+          [0mHow do you want to explore?[0m
+        [36m</legend>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"true"[39m
+        [36m>[39m
+          [0mEasy[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"false"[39m
+        [36m>[39m
+          [0mBalanced[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-pressed[39m=[32m"false"[39m
+        [36m>[39m
+          [0mLong[0m
+        [36m</button>[39m
+      [36m</fieldset>[39m
+      [36m<button>[39m
+        [0mContinue[0m
+      [36m</button>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/walk-flow.behavior.tsx:1511:32
+    1509|   fireEvent.click(screen.getByRole("button", { name: translate("en", "…
+    1510|   fireEvent.click(screen.getByRole("button", { name: translate("en", "…
+    1511|   const extras = within(screen.getByRole("group", { name: t.moreIntere…
+       |                                ^
+    1512|   expect(extras).toHaveLength(1); fireEvent.click(extras[0]);
+    1513|   fireEvent.click(screen.getByRole("button", { name: t.continue }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 8 passed | 2 skipped (11)
+      Tests  1 failed | 140 passed | 15 expected fail | 24 todo (180)
+   Start at  23:20:34
+   Duration  10.02s (transform 821ms, setup 0ms, import 1.64s, tests 9.83s, environment 3.62s)
+
+JSON report written to /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/screen-08-regression-tests-2026-10-28/logs/targeted-results.json

@@ -1,0 +1,13 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/route-preview.test.tsx tests/route-overview-map.test.tsx
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+
+ Test Files  2 passed (2)
+      Tests  8 passed (8)
+   Start at  16:45:35
+   Duration  1.27s (transform 292ms, setup 0ms, import 609ms, tests 276ms, environment 1.32s)
+

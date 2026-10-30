@@ -1,0 +1,114 @@
+[
+  {
+    "id": "I01",
+    "area": "Draft identity",
+    "assertion": "Correct city + mounted planner instance + continuation target resumes same fingerprint; unrelated/stale back stack never receives Back",
+    "evidenceTarget": "city-hub-actions.test.tsx; walk-flow.test.tsx",
+    "currentStatus": "Existing hub return tests pass only intent/canGoBack baseline; stronger identity cases NOT RUN"
+  },
+  {
+    "id": "I02",
+    "area": "Retained state",
+    "assertion": "Browse/Back/edit retains every field in defined fingerprint; rapid taps and locale/account changes do not create/reinitialize drafts",
+    "evidenceTarget": "walk-flow.test.tsx",
+    "currentStatus": "New-flow cases NOT RUN"
+  },
+  {
+    "id": "I03",
+    "area": "Cold/missing stack",
+    "assertion": "Ordinary hydration restores real current walk or creates new draft honestly; never claims unbuilt process-death restore",
+    "evidenceTarget": "walk-flow.test.tsx; walk-storage.test.ts",
+    "currentStatus": "Storage baseline passed; proposed no-stack semantics NOT RUN"
+  },
+  {
+    "id": "B01",
+    "area": "Back chain",
+    "assertion": "Constraints\u219208\u219207\u219206\u219205; edit Back/Continue\u2192constraints; hardware and on-screen agree",
+    "evidenceTarget": "walk-flow.test.tsx",
+    "currentStatus": "Legacy Back baseline passed; new targets NOT RUN"
+  },
+  {
+    "id": "B02",
+    "area": "Explicit edit / skip",
+    "assertion": "Interests rendered once unless explicit edit; skipped [] stays []; edited values reach actual builder",
+    "evidenceTarget": "select-interests.test.tsx; walk-flow.test.tsx",
+    "currentStatus": "Existing input baseline passed; repeated-question removal NOT RUN"
+  },
+  {
+    "id": "B03",
+    "area": "Permission races",
+    "assertion": "Skip/Back while locating invalidates late fix; no request on 08, browse or Back",
+    "evidenceTarget": "location-permission.test.tsx; walk-flow.test.tsx",
+    "currentStatus": "Existing mocked denial/handler baseline passed; new-flow races NOT RUN"
+  },
+  {
+    "id": "C01",
+    "area": "Legacy controls",
+    "assertion": "Walking/categories/manual or GPS start/finish anywhere-loop-destination all remain visible/usable and affect actual builder",
+    "evidenceTarget": "walk-flow.test.tsx",
+    "currentStatus": "Legacy planner baseline passed; proposed re-composition NOT RUN"
+  },
+  {
+    "id": "C02",
+    "area": "Time / return-by",
+    "assertion": "60/120/180/240 and hydrated 90; saved HH:MM; expired/deadline return-walk feasibility; no account-default coercion",
+    "evidenceTarget": "available-time.test.tsx; return-by-picker.test.tsx; walk-flow.test.tsx",
+    "currentStatus": "Existing input/picker/builder baseline passed; full new path NOT RUN"
+  },
+  {
+    "id": "C03",
+    "area": "Build / Start separation",
+    "assertion": "S08 callbacks/Back/browse never build/persist/start; explicit Build previews and explicit Start alone activates",
+    "evidenceTarget": "first-experience.test.tsx; walk-flow.test.tsx",
+    "currentStatus": "Current no-generation/explicit actions baseline passed; new callback NOT RUN"
+  },
+  {
+    "id": "R01",
+    "area": "Storage recovery",
+    "assertion": "Read failure/corrupt/incompatible distinguishes absence; preserves bytes; Retry/Explore available; no silent overwrite",
+    "evidenceTarget": "walk-storage.test.ts; walk-flow.test.tsx",
+    "currentStatus": "Current storage tests passed; new typed recovery contract NOT RUN"
+  },
+  {
+    "id": "R02",
+    "area": "Current vs saved replay",
+    "assertion": "Current preview/active bypass05\u201308; completed records not resumed; saved replay new preview clears deadline; stale CAS refuses replacement",
+    "evidenceTarget": "walk-storage.test.ts; walk-flow.test.tsx",
+    "currentStatus": "Existing contracts baseline passed; approved-flow integration NOT RUN"
+  },
+  {
+    "id": "G01",
+    "area": "Guest",
+    "assertion": "Unauthenticated launch/selection/05\u201308/constraints/Build works; no OAuth/payment/location requirement; account-only save separate",
+    "evidenceTarget": "walk-flow.test.tsx; city-hub-actions.test.tsx",
+    "currentStatus": "Existing mocked guest paths baseline passed; new transitions NOT RUN"
+  },
+  {
+    "id": "A01",
+    "area": "EN/DE actions",
+    "assertion": "Exact primary/secondary labels, dynamic city wrapping, distinct accessible names, correct callback and screen-reader focus",
+    "evidenceTarget": "first-experience.test.tsx; copy/component review",
+    "currentStatus": "Current EN/DE baseline passed; new two-action footer NOT RUN"
+  },
+  {
+    "id": "A02",
+    "area": "Accessibility",
+    "assertion": "Large text, focus order, contrast, minimum targets, keyboard/time picker, reduced motion, VoiceOver/TalkBack traversal",
+    "evidenceTarget": "Rendered checks + native/physical assistive technology",
+    "currentStatus": "PENDING \u2014 proposed UI not implemented"
+  },
+  {
+    "id": "L01",
+    "area": "Small iPhone",
+    "assertion": "375\u00d7667 pt and standard iPhone EN/DE; bottom/scroll/large text/insets; both actions reachable without overlap",
+    "evidenceTarget": "Real simulator/device captures at exact source",
+    "currentStatus": "PENDING \u2014 no new capture"
+  },
+  {
+    "id": "L02",
+    "area": "Android",
+    "assertion": "Narrow EN/DE with scaling/insets; hardware Back/denied location/process recreation; TalkBack separately",
+    "evidenceTarget": "Real Android emulator/device evidence",
+    "currentStatus": "PENDING \u2014 no new capture"
+  }
+]

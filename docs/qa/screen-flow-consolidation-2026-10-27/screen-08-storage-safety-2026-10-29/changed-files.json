@@ -1,0 +1,14 @@
+{
+  "modifiedProduction": [
+    "mobile/src/lib/walkStorage.ts",
+    "mobile/src/components/NativeWalkFlow.tsx"
+  ],
+  "modifiedTests": [
+    "mobile/tests/walk-flow.behavior.tsx",
+    "mobile/tests/screen-08-persistence-regressions.test.ts",
+    "mobile/tests/screen-08-contract-pending.test.ts"
+  ],
+  "createdTests": [
+    "mobile/tests/current-walk-observation.test.ts"
+  ]
+}

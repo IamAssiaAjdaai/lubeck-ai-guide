@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-28 Europe/Berlin",
+  "officialIDsExact": true,
+  "officialRegistryRows": 13,
+  "currentNativeCaptures": 13,
+  "allDecisionsPendingInArtifact": true,
+  "htmlDecisionControls": 27,
+  "duplicateHtmlIDs": false,
+  "htmlLocalLinksChecked": 155,
+  "brokenHtmlLinks": [],
+  "jsonFilesParsed": 20,
+  "sourceSnapshotErrors": [],
+  "preservedProductFilesChecked": 1791,
+  "productFileChanges": [],
+  "browserChecks": {
+    "initialPending": 27,
+    "localSelectionObserved": true,
+    "persistenceAcrossReloadObserved": true,
+    "resetToPendingObserved": 27,
+    "narrowLayoutObserved": "319px; one comparison column",
+    "desktopLayoutObserved": "1400px; two 509px columns; no horizontal overflow"
+  },
+  "applicationTests": "Not rerun; report-only audit. Historical QA reports are not new acceptance.",
+  "exportDownload": "Export implementation syntax checked; actual browser download not exercised.",
+  "javascriptSyntaxCheck": "Passed: node --check review-script.js",
+  "gitDiffCheck": "Passed: git diff --check"
+}

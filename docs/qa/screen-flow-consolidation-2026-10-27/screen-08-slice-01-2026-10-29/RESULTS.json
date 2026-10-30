@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-29",
+  "caseCounts": {
+    "pending": 23,
+    "expected-failure": 14,
+    "passed": 9,
+    "blocked": 1
+  },
+  "unexpectedFailedCases": 0,
+  "fullMobile": {
+    "ordinaryPassed": 985,
+    "knownExpectedFailureVariants": 15,
+    "todo": 20,
+    "unexpectedFailed": 0,
+    "total": 1020,
+    "helperExecutablePasses": 11,
+    "helperTodo": 1
+  },
+  "strictRedOrdinaryFailures": 15,
+  "strictRedDistinctCases": 14,
+  "typescript": "PASS",
+  "lint": "PASS, zero warnings",
+  "iosHermesExport": "PASS",
+  "androidHermesExport": "PASS",
+  "nativeDeviceAcceptance": "NOT RUN; helper not integrated",
+  "UIChanges": false,
+  "D01_D14": "PENDING",
+  "Screen14": "PENDING"
+}

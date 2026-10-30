@@ -1,0 +1,13 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/native-v2-regressions.test.tsx tests/place-detail-p1.test.ts tests/native-city-experience.test.ts
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+
+ Test Files  3 passed (3)
+      Tests  80 passed (80)
+   Start at  03:10:07
+   Duration  1.72s (transform 254ms, setup 0ms, import 387ms, tests 865ms, environment 445ms)
+

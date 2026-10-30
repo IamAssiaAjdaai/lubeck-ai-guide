@@ -1,0 +1,67 @@
+
+> lubeck-ai-guide@0.1.0 db:generate
+> drizzle-kit generate
+
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/drizzle.config.ts'
+58 tables
+audio_generation_metadata 7 columns 1 indexes 1 fks
+cities 10 columns 0 indexes 0 fks
+city_launch_readiness 16 columns 0 indexes 1 fks
+city_localizations 10 columns 1 indexes 1 fks
+city_media 8 columns 2 indexes 2 fks
+city_sources 5 columns 1 indexes 2 fks
+content_sources 11 columns 1 indexes 0 fks
+content_tags 4 columns 0 indexes 0 fks
+content_workflow_events 8 columns 1 indexes 0 fks
+media_asset_rights 14 columns 0 indexes 1 fks
+media_assets 27 columns 4 indexes 1 fks
+place_content_tags 2 columns 1 indexes 2 fks
+place_localizations 13 columns 1 indexes 1 fks
+place_media 8 columns 2 indexes 2 fks
+place_revisions 7 columns 2 indexes 1 fks
+place_sources 5 columns 1 indexes 2 fks
+places 20 columns 1 indexes 1 fks
+tour_localizations 10 columns 1 indexes 1 fks
+tour_media 8 columns 2 indexes 2 fks
+tour_stops 4 columns 2 indexes 2 fks
+tours 9 columns 1 indexes 1 fks
+verified_knowledge_chunks 12 columns 2 indexes 2 fks
+account 13 columns 1 indexes 1 fks
+external_account_erasure_jobs 10 columns 2 indexes 0 fks
+passkey 11 columns 2 indexes 1 fks
+session 8 columns 1 indexes 1 fks
+staff_city_access 3 columns 1 indexes 2 fks
+staff_memberships 8 columns 2 indexes 2 fks
+twoFactor 7 columns 1 indexes 1 fks
+user 8 columns 0 indexes 0 fks
+verification 6 columns 1 indexes 0 fks
+account_saved_walks 7 columns 1 indexes 1 fks
+shared_walk_links 7 columns 1 indexes 1 fks
+traveler_guest_links 6 columns 2 indexes 1 fks
+traveler_profiles 4 columns 0 indexes 1 fks
+commerce_customers 6 columns 2 indexes 1 fks
+commerce_entitlements 14 columns 5 indexes 4 fks
+commerce_orders 15 columns 4 indexes 3 fks
+commerce_prices 9 columns 3 indexes 1 fks
+commerce_product_grants 7 columns 2 indexes 1 fks
+commerce_products 8 columns 1 indexes 0 fks
+commerce_provider_events 6 columns 1 indexes 0 fks
+commerce_subscriptions 15 columns 3 indexes 2 fks
+rate_limit_events 4 columns 2 indexes 0 fks
+marketing_campaigns 15 columns 3 indexes 1 fks
+marketing_content_media 5 columns 3 indexes 2 fks
+marketing_content 18 columns 5 indexes 3 fks
+marketing_pages 17 columns 5 indexes 2 fks
+marketing_generation_jobs 17 columns 6 indexes 2 fks
+marketing_generation_outputs 15 columns 6 indexes 4 fks
+marketing_source_snapshots 11 columns 4 indexes 2 fks
+brand_context_audit 6 columns 1 indexes 1 fks
+brand_context_revisions 6 columns 0 indexes 1 fks
+brand_contexts 3 columns 2 indexes 1 fks
+brand_projects 2 columns 0 indexes 0 fks
+citywalk_brand_project_campaigns 3 columns 1 indexes 2 fks
+citywalk_brand_projects 2 columns 0 indexes 2 fks
+citywalk_brand_reviewers 2 columns 1 indexes 1 fks
+
+No schema changes, nothing to migrate 😴

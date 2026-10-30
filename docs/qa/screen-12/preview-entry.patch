@@ -1,0 +1,18 @@
+--- a/mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx
++++ b/mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx
+@@ -1,4 +1,5 @@
+ import { ContentRecovery } from "../../../../components/ContentRecovery";
++import { routesCopy } from "../../../../lib/publishedRoutes";
+ import { nativePlaceName } from "../../../../lib/displayNames";
+ import { Image } from "expo-image";
+ import { Link, Stack, useLocalSearchParams } from "expo-router";
+@@ -61,6 +62,9 @@
+   return (
+     <Screen>
+       <Stack.Screen options={{ title: tour.content.title }} />
++      <Link href={{ pathname: "/city/[citySlug]/routes", params: { citySlug: identity.citySlug } }} dismissTo asChild>
++        <PrimaryButton wrapLabel label={routesCopy(locale).more} tone="secondary" />
++      </Link>
+       <MotionView duration={motion.screen} style={styles.content}>
+         {image && imageUrl ? (
+           <View>

@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-28",
+  "base": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "branch": "codex/onboarding-global-welcome",
+  "files": {
+    "mobile/src/app/_layout.tsx": "b4d4bc164b693a411b7438a35de65b2b6b21ef8c20d4eadf46380e9f41f63a85",
+    "mobile/src/app/index.tsx": "32c23f617579eda1656ee7038fcf548c5292d25ffc844f7e6ef9807744855ada",
+    "mobile/src/app/welcome.tsx": "62060d8d9fdac224b51288d15be9651c6a3afb66b05ef640eab7cf9f84a205e3",
+    "mobile/src/app/introduction.tsx": "b6c54826891b1d17cec7e7dce9306f41ea300bd55ace9c76a3633ad1a19607e4",
+    "mobile/src/app/account/index.tsx": "226cf52452e51c916bff6c1f13ad00fb15692a464049252c6bf8bfba7ed854a4",
+    "mobile/src/app/city/[citySlug]/index.tsx": "94aec476b53bfee1414614810227da3a99722de65a6d226cae5fdbf7787abe4c",
+    "mobile/src/app/city/[citySlug]/walk.tsx": "be4b3b65d58cbb740db235bcb6631f5c592e56ace0f2cd493e9e42afe0c21206",
+    "mobile/src/components/NativeWalkFlow.tsx": "14ca5f69a51fdc23e80a9a4b52b7988e140206bdaf07e044fe9212fa7bcea9e6",
+    "mobile/src/components/SelectInterests.tsx": "b2ea0124f5e66f071a727e8d2b9316146eacdae357be8594713d3f2c25223c1a",
+    "mobile/src/components/AvailableTime.tsx": "f96925b72cf414f5278ce573c19f51e4341f15b8be85ca294b30802be27bad58",
+    "mobile/src/components/ReturnByTimePicker.tsx": "2adf64943e3efcfb35cfe321eb0c9cc55e720118cb6c909f7562b0f132da726d",
+    "mobile/src/components/LocationPermission.tsx": "ae66aa695e9b4ea01e1569b84d330e72904b5e76af83b71f3686c9d7c96538a3",
+    "mobile/src/components/FirstExperience.tsx": "73280d834c4d227d2eddfe4e6d04c7fff3191410e5e6acdfcdb10139e844f858",
+    "mobile/src/lib/walkStorage.ts": "dd582039fac0012a600ec2fc048eb6d851a8cfffa40aece0fd172f5baa04deb0",
+    "mobile/src/lib/travelerStyle.ts": "944eeed08f9f81899d0d42f300fd101e6d5cd54707adb0a88185c80839772dd2",
+    "mobile/src/lib/routing.ts": "fc17b67f5bdf1486e522bd31d8945e99ed4c595cd959430113cace2564d66a04",
+    "mobile/src/lib/tripNavigation.ts": "c5c49d76f962dbfd4ee91d8330fffefc06a49ac90d65147bb487a89f119fe36e",
+    "packages/traveler-core/src/walkPlanner.ts": "53a4600c350b70ec68c126fe6f663930a3b4eba1bb55587fcc153429f9b0a2f4",
+    "packages/traveler-core/src/walkJourney.ts": "3b764d1bf832d2f17772bfe3d6c16be0e94c2de61ae35b7eaadf6d7acdd2cdf7"
+  },
+  "approval": "PENDING",
+  "implementationAuthorized": false
+}

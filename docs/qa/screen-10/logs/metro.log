@@ -1,0 +1,190 @@
+🔍 [expo-iap] Config values: horizonAppId=undefined, pinnedStore=auto, amazonAppstoreKey=none, isVegaEnabled=false, isOnsideEnabled=false
+📦 [expo-iap] Using OpenIAP from CocoaPods
+Networking has been disabled
+Starting project at /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Waiting on http://localhost:8091
+
+Logs for your project will appear below.
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:5229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundled 7701ms node_modules/expo-router/entry.js (2243 modules)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 200ms node_modules/expo-network/build/Network.js (433 modules)
+ INFO  CITYWALK_PERF {"durationMs": 13, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 6, "key": "cities:de", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 305, "key": "cities:de", "source": "network"}
+iOS Bundled 62ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 22ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 63, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 7, "key": "cities:de", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 13, "key": "city:de:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 130, "key": "city:de:lubeck", "source": "network"}
+iOS Bundled 207ms node_modules/@react-native-async-storage/async-storage/src/index.ts (377 modules)
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "cities:en", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "city:en:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 65, "key": "cities:en", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 62, "key": "city:en:lubeck", "source": "network"}
+iOS Bundled 74ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 17ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 27, "key": "cities:en", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 10, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 10, "key": "city:de:lubeck", "source": "network"}
+iOS Bundled 16ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+iOS Bundled 64ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 20ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 71, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "cities:de", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 12, "key": "city:de:lubeck", "source": "persisted"}
+iOS Bundled 30ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:de:lubeck", "source": "memory"}
+ LOG  VirtualizedList: You have a large list that is slow to update - make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, etc. {"contentLength": 6707.5, "dt": 23725.851125000045, "prevDt": 21772.734166999813}
+iOS Bundled 60ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 16ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 56, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 6, "key": "cities:de", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 33, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 12, "key": "city:de:lubeck", "source": "persisted"}
+iOS Bundled 18ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "cities:en", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 10, "key": "cities:en", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 14, "key": "city:en:lubeck", "source": "network"}
+ WARN  MapLibre Native [WARN] [virtual bool mbgl::MLNCoreLoggingObserver::onRecord(EventSeverity, Event, int64_t, const std::string &)] [event]:General [code]:-1 [message]:Invalid geometry in line layer
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 23, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 638, "key": "place:en:lubeck:marienkirche", "source": "network"}
+ LOG  VirtualizedList: You have a large list that is slow to update - make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, etc. {"contentLength": 4020, "dt": 196412.74820800032, "prevDt": 236955.22941699997}
+iOS Bundled 418ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 22ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 36, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 63, "key": "cities:en", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 11, "key": "city:en:lubeck", "source": "persisted"}
+iOS Bundled 28ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 118, "key": "city:en:lubeck", "source": "network"}
+iOS Bundled 82ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 22ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 35, "key": "cities:en", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 72, "key": "cities:en", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 13, "key": "city:en:lubeck", "source": "persisted"}
+iOS Bundled 33ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 118, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 2, "key": "cities:de", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 2, "key": "city:de:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 74, "key": "cities:de", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 73, "key": "city:de:lubeck", "source": "network"}
+iOS Bundled 56ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 18ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 14, "key": "city:en:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 2, "key": "city:de:lubeck", "source": "persisted"}
+iOS Bundled 15ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+iOS Bundled 53ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 16ms node_modules/expo-network/build/Network.js (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 17, "key": "city:en:lubeck", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 5, "key": "city:de:lubeck", "source": "persisted"}
+iOS Bundled 18ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 152, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 27, "key": "place:en:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 21, "key": "place:en:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 54, "key": "place:en:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 76, "key": "place:en:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 46, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ LOG  VirtualizedList: You have a large list that is slow to update - make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, etc. {"contentLength": 6013, "dt": 11866.883167000487, "prevDt": 1960257.671333}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 3, "key": "place:en:lubeck:marienkirche", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 10, "key": "place:en:lubeck:marienkirche", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:marienkirche", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 1, "key": "city:de:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 22, "key": "city:de:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 23, "key": "place:de:lubeck:marienkirche", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 58, "key": "place:de:lubeck:holstentor", "source": "network"}
+iOS Bundled 80ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 26ms node_modules/expo-network/build/Network.js (1 module)
+iOS Bundled 19ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 50, "key": "place:en:lubeck:holstentor", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 12, "key": "place:de:lubeck:holstentor", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 103, "key": "place:en:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:de:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "place:en:lubeck:holstentor", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 96, "key": "place:en:lubeck:holstentor", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 7, "key": "city:de:lubeck", "source": "persisted"}
+iOS Bundled 56ms node_modules/expo-router/entry.js (1 module)
+ WARN  Require cycle: src/components/LocaleSelector.tsx -> src/components/ui.tsx -> src/components/NativeChrome.tsx -> src/components/LocaleSelector.tsx
+
+Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.
+iOS Bundled 18ms node_modules/expo-network/build/Network.js (1 module)
+iOS Bundled 12ms node_modules/@react-native-async-storage/async-storage/src/index.ts (1 module)
+ INFO  CITYWALK_PERF {"durationMs": 35, "key": "place:en:lubeck:holstentor", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 37, "key": "place:de:lubeck:holstentor", "source": "persisted"}
+ INFO  CITYWALK_PERF {"durationMs": 2, "key": "city:en:lubeck", "source": "memory"}
+ INFO  CITYWALK_PERF {"durationMs": 145, "key": "city:en:lubeck", "source": "network"}
+ INFO  CITYWALK_PERF {"durationMs": 0, "key": "city:en:lubeck", "source": "memory"}

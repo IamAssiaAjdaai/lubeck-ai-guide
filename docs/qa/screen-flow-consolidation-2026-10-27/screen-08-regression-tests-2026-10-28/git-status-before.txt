@@ -1,0 +1,123 @@
+ M mobile/src/app/account/index.tsx
+ M mobile/src/app/city/[citySlug]/assistant.tsx
+ M mobile/src/app/city/[citySlug]/explore.tsx
+ M mobile/src/app/city/[citySlug]/index.tsx
+ M mobile/src/app/city/[citySlug]/place/[placeSlug].tsx
+ M mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx
+ M mobile/src/app/city/[citySlug]/walk.tsx
+ M mobile/src/app/index.tsx
+ M mobile/src/app/legal.tsx
+ M mobile/src/app/photo-credits.tsx
+ M mobile/src/components/LocaleSelector.tsx
+ M mobile/src/components/NativeChrome.tsx
+ M mobile/src/components/NativeCityMap.tsx
+ M mobile/src/components/NativeWalkFlow.tsx
+ M mobile/src/components/ReturnByTimePicker.tsx
+ M mobile/src/components/WalkControls.tsx
+ M mobile/src/components/ui.tsx
+ M mobile/src/lib/auth/accountLocalData.test.ts
+ M mobile/src/lib/auth/accountLocalData.ts
+ M mobile/tests/account-guest-flow.test.tsx
+ M mobile/tests/city-hub-actions.test.tsx
+ M mobile/tests/city-hub-editorial-v1.test.ts
+ M mobile/tests/explore-p1.test.ts
+ M mobile/tests/home-presentation.test.tsx
+ M mobile/tests/membership-screens.test.tsx
+ M mobile/tests/native-city-experience.test.ts
+ M mobile/tests/native-screen-chrome.test.tsx
+ M mobile/tests/native-v2-regressions.test.tsx
+ M mobile/tests/place-detail-p1.test.ts
+ M mobile/tests/places-v2-presentation.test.ts
+ M mobile/tests/walk-flow.behavior.tsx
+ M packages/traveler-core/src/index.ts
+?? docs/qa/onboarding-final-polish/
+?? docs/qa/onboarding-phase-1/
+?? docs/qa/onboarding-reference/
+?? docs/qa/onboarding-screen-02-polish/
+?? docs/qa/onboarding-screen-02-redesign/
+?? docs/qa/onboarding-screen-02/
+?? docs/qa/onboarding-screen-03-polish/
+?? docs/qa/onboarding-screen-03/
+?? docs/qa/onboarding-screen-04-polish/
+?? docs/qa/onboarding-screen-04/
+?? docs/qa/onboarding-screen-05/
+?? docs/qa/onboarding-screen-06/
+?? docs/qa/onboarding-screen-07/
+?? docs/qa/onboarding-screen-08/
+?? docs/qa/photo-credits/
+?? docs/qa/screen-09-polish/
+?? docs/qa/screen-09-premium/
+?? docs/qa/screen-09/
+?? docs/qa/screen-10-refinement/
+?? docs/qa/screen-10/
+?? docs/qa/screen-11/
+?? docs/qa/screen-12/
+?? docs/qa/screen-13-refinement/
+?? docs/qa/screen-13/
+?? docs/qa/screen-14/
+?? docs/qa/screen-flow-consolidation-2026-10-27/
+?? mobile/assets/images/account-journey.svg
+?? mobile/assets/images/city-hub-blue-fill.svg
+?? mobile/assets/images/city-hub-cinematic-wash.svg
+?? mobile/assets/images/introduction-holstentor.jpg
+?? mobile/assets/images/introduction-photos.LICENSE.md
+?? mobile/assets/images/introduction-sky-wash.svg
+?? mobile/assets/images/location-world.svg
+?? mobile/assets/images/selection-card-gradient.svg
+?? mobile/assets/images/welcome-duesseldorf.webp
+?? mobile/assets/images/welcome-hamburg.webp
+?? mobile/assets/images/welcome-headline-wash.svg
+?? mobile/assets/images/welcome-holstentor.LICENSE.md
+?? mobile/assets/images/welcome-holstentor.webp
+?? mobile/assets/images/welcome-overlay-alternate.svg
+?? mobile/assets/images/welcome-overlay.svg
+?? mobile/assets/images/welcome-photos.LICENSE.md
+?? mobile/assets/images/welcome-prague.webp
+?? mobile/assets/images/welcome-skyline.svg
+?? mobile/src/app/city/[citySlug]/routes.tsx
+?? mobile/src/app/introduction.tsx
+?? mobile/src/app/welcome.tsx
+?? mobile/src/components/AccountOnboardingFrame.tsx
+?? mobile/src/components/AvailableTime.tsx
+?? mobile/src/components/CityHubHero.tsx
+?? mobile/src/components/CityPhotoCredits.tsx
+?? mobile/src/components/FirstExperience.tsx
+?? mobile/src/components/LocationPermission.tsx
+?? mobile/src/components/PublishedActiveWalk.tsx
+?? mobile/src/components/SelectInterests.tsx
+?? mobile/src/lib/accountOnboardingCopy.ts
+?? mobile/src/lib/activePublishedTrip.ts
+?? mobile/src/lib/activeWalkCopy.ts
+?? mobile/src/lib/cityHubPhotography.ts
+?? mobile/src/lib/cityHubRecommendations.ts
+?? mobile/src/lib/citySelectionCopy.ts
+?? mobile/src/lib/curatedProgressStorage.ts
+?? mobile/src/lib/explorePhotography.ts
+?? mobile/src/lib/firstExperienceCopy.ts
+?? mobile/src/lib/interestOnboardingCopy.ts
+?? mobile/src/lib/introductionCopy.ts
+?? mobile/src/lib/locationOnboardingCopy.ts
+?? mobile/src/lib/photoCredits.ts
+?? mobile/src/lib/placeDetailCopy.ts
+?? mobile/src/lib/publishedRouteTiming.ts
+?? mobile/src/lib/publishedRoutes.ts
+?? mobile/src/lib/routePreviewCopy.ts
+?? mobile/src/lib/welcomeCopy.ts
+?? mobile/tests/account-onboarding-frame.test.tsx
+?? mobile/tests/available-time.test.tsx
+?? mobile/tests/city-hub-photography.test.ts
+?? mobile/tests/curated-progress.test.ts
+?? mobile/tests/explore-photography.test.ts
+?? mobile/tests/first-experience.test.tsx
+?? mobile/tests/location-permission.test.tsx
+?? mobile/tests/photo-credits.test.tsx
+?? mobile/tests/published-active-walk.test.tsx
+?? mobile/tests/published-route-timing.test.ts
+?? mobile/tests/published-routes.test.ts
+?? mobile/tests/return-by-picker.test.tsx
+?? mobile/tests/route-overview-map.test.tsx
+?? mobile/tests/route-preview.test.tsx
+?? mobile/tests/select-interests.test.tsx
+?? mobile/tests/walking-routes.test.tsx
+?? mobile/tests/welcome.test.tsx
+?? packages/traveler-core/src/curatedProgress.ts

@@ -1,0 +1,4620 @@
+[
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "hydrate",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 1
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "hydrate",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 2
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "hydrate",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 3
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "hydrate",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 4
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 5
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 6
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "time",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 7
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "time",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 8
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "location",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 9
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "location",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 10
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 11
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 12
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 13
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO"
+    },
+    "noop": false,
+    "sequence": 14
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 15
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 16
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 17
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "consumed": false,
+    "sequence": 18
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-8L-ufbibFCT40F5o7GOq-",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 19
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 20
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 21
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 22
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 23
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 24
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 25
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 26
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 27
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 28
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "location",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 29
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "location",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 30
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 31
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 32
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 33
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO"
+    },
+    "noop": false,
+    "sequence": 34
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 35
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 36
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "NAVIGATE",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO"
+    },
+    "noop": false,
+    "sequence": 37
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 4,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-zVipqpaI-UZLx74SD8RdS",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-zVipqpaI-UZLx74SD8RdS",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "sequence": 38
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 4,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-zVipqpaI-UZLx74SD8RdS",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-zVipqpaI-UZLx74SD8RdS",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "sequence": 39
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 4,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-zVipqpaI-UZLx74SD8RdS",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-zVipqpaI-UZLx74SD8RdS",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "consumed": false,
+    "sequence": 40
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 4,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-zVipqpaI-UZLx74SD8RdS",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-zVipqpaI-UZLx74SD8RdS",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 41
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 42
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 43
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "consumed": false,
+    "sequence": 44
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-pQGi7fXDjF-YdOw_NOtie",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 45
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 46
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 47
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 48
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 49
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 50
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 51
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 52
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 53
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO"
+    },
+    "noop": false,
+    "sequence": 54
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index--abqB8ZyRroSe-KpKnEjp",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index--abqB8ZyRroSe-KpKnEjp",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 55
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index--abqB8ZyRroSe-KpKnEjp",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index--abqB8ZyRroSe-KpKnEjp",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 56
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index--abqB8ZyRroSe-KpKnEjp",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index--abqB8ZyRroSe-KpKnEjp",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "POP",
+      "source": "city/[citySlug]/index--abqB8ZyRroSe-KpKnEjp",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "count": 1
+    },
+    "noop": false,
+    "sequence": 57
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 58
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 59
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 60
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "plan",
+    "editingInterests": true,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 61
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "plan",
+    "editingInterests": true,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 62
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "plan",
+    "editingInterests": true,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 63
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "plan",
+    "editingInterests": true,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 64
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 65
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 66
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 67
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 68
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 69
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 70
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 71
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO"
+    },
+    "noop": false,
+    "sequence": 72
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 73
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 74
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 75
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "consumed": false,
+    "sequence": 76
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-F3yJYSYGqRPfT7-5ZngOz",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 77
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 78
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 79
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 80
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 81
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 82
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 83
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 84
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 85
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 86
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 87
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 88
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 89
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 90
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 91
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO"
+    },
+    "noop": false,
+    "sequence": 92
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 93
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 94
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 95
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "consumed": false,
+    "sequence": 96
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-EE_b3EiiZXFW5kRnfp0PP",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 97
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 98
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 99
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 100
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "consumed": true,
+    "sequence": 101
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 102
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 103
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "confirmation",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 104
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 105
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "PUSH",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO"
+    },
+    "noop": false,
+    "sequence": 106
+  },
+  {
+    "event": "blur",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 107
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 108
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "NAVIGATE",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO"
+    },
+    "noop": false,
+    "sequence": 109
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 4,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-m8GTUFqvXI3541fjDPKjh",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-m8GTUFqvXI3541fjDPKjh",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "sequence": 110
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 4,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/assistant-m8GTUFqvXI3541fjDPKjh",
+          "name": "city/[citySlug]/assistant"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/assistant-m8GTUFqvXI3541fjDPKjh",
+      "name": "city/[citySlug]/assistant"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "POP_TO",
+      "target": "stack-QsQTPmvJkOHPIVF3_pKcO"
+    },
+    "noop": false,
+    "sequence": 111
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 112
+  },
+  {
+    "event": "hardware-enter",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "sequence": 113
+  },
+  {
+    "event": "hardware-return",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "consumed": false,
+    "sequence": 114
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 3,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        },
+        {
+          "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-qcu7sXO4k_i0y2oRRBunx",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": true,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 115
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 116
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 117
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "plan",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 118
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "building",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 119
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "building",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 120
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "preview",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 121
+  },
+  {
+    "event": "action",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": true,
+    "cursor": "constraints",
+    "stage": "preview",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "action": {
+      "type": "GO_BACK"
+    },
+    "noop": false,
+    "sequence": 122
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-MiBxaNaBLK-wf6ObAONo1",
+    "ownFocused": false,
+    "cursor": "constraints",
+    "stage": "preview",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 1,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+      "name": "city/[citySlug]/index"
+    },
+    "leaseValid": false,
+    "sequence": 123
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "hydrate",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 124
+  },
+  {
+    "event": "focus",
+    "owner": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "hydrate",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 125
+  },
+  {
+    "event": "state",
+    "owner": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "hydrate",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 126
+  },
+  {
+    "event": "remove",
+    "owner": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "hydrate",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 127
+  },
+  {
+    "event": "register",
+    "owner": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+    "ownFocused": true,
+    "cursor": "interests",
+    "stage": "preview",
+    "editingInterests": false,
+    "focusReady": true,
+    "stack": {
+      "key": "stack-QsQTPmvJkOHPIVF3_pKcO",
+      "type": "stack",
+      "index": 2,
+      "routes": [
+        {
+          "key": "index-RFXXAcDZax4aWCT205FjV",
+          "name": "index"
+        },
+        {
+          "key": "city/[citySlug]/index-CI2oQs9ravWwJeBs6TVKW",
+          "name": "city/[citySlug]/index"
+        },
+        {
+          "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+          "name": "city/[citySlug]/walk"
+        }
+      ]
+    },
+    "focused": {
+      "key": "city/[citySlug]/walk-q5edYRHUooddVAMJLq8Wf",
+      "name": "city/[citySlug]/walk"
+    },
+    "leaseValid": false,
+    "sequence": 128
+  }
+]

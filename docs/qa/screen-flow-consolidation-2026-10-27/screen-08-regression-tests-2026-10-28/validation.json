@@ -1,0 +1,19 @@
+{
+  "productionFilesUnchanged": 934,
+  "originalAssertionsPreserved": 265,
+  "priorArtifactHashesVerified": 178,
+  "contractCases": 47,
+  "productionHelperAbsent": true,
+  "gitDiffCheck": "PASS",
+  "applicationImplementation": "NOT AUTHORIZED / NOT IMPLEMENTED",
+  "D01_D14": "PENDING",
+  "screen14": "PENDING",
+  "testFileHashes": {
+    "mobile/tests/first-experience.test.tsx": "8a3f63dcc1825d3640959cbf17ff0fc0b12dcb6195c48302814221fbf11fc84c",
+    "mobile/tests/walk-flow.behavior.tsx": "c2797f8680bcf86f5af347702dd491f2ef717e80c7565483a3f26d87145a5997",
+    "mobile/tests/city-hub-actions.test.tsx": "37f5afb414320680354df2bd5746b1e2b26acdaa7dedc006c78029a2de09cc1c",
+    "mobile/tests/planner-return-intent.test.ts": "756788759cdeb7d59680aacbd31f3c6a7147654c96ece7e28320736f78cf0553",
+    "mobile/tests/screen-08-contract-pending.test.ts": "213f63bf48eefc594741ea027bcafb95a8ceb8e3610787cc6a2526a637a3fa3b",
+    "mobile/tests/screen-08-persistence-regressions.test.ts": "ce12a01808c5230187bd4e23a96a1385517a0853ff6057dd7ebf75ca13a752c3"
+  }
+}

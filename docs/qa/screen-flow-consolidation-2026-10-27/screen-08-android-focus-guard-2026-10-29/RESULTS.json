@@ -1,0 +1,23 @@
+{
+  "focused_new_cases": {
+    "passed": 10,
+    "failed": 0
+  },
+  "red_baseline": {
+    "failed": 6,
+    "passed_controls": 4
+  },
+  "full_mobile": {
+    "ordinary_passes": 1076,
+    "expected_failures": 1,
+    "todo": 17,
+    "unexpected_failures": 0,
+    "total": 1094
+  },
+  "native_unfocused_declines": 6,
+  "production_file_count": 1,
+  "test_file_count": 1,
+  "preserved_source_files": 1052,
+  "remaining_test_reliability_observation": "one unchanged Arabic membership-case failure; isolated and full reruns passed",
+  "native_scope": "standard Android English guest; full acceptance not claimed"
+}

@@ -1,0 +1,16 @@
+
+> @citywalk/mobile@1.0.0 test:run
+> vitest run tests/walk-flow.test.tsx tests/screen-08-persistence-regressions.test.ts --testNamePattern=S08 XFAIL.*\[(S02|S04|S05|S07|E03|E04)\] --reporter=default --reporter=json --outputFile=../docs/qa/screen-flow-consolidation-2026-10-27/screen-08-storage-safety-2026-10-29/logs/storage-after.json
+
+
+ RUN  v4.1.11 /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile
+
+ ✓ tests/screen-08-persistence-regressions.test.ts (11 tests | 10 skipped) 3ms
+ ✓ tests/walk-flow.test.tsx (102 tests | 97 skipped) 342ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed | 107 skipped (113)
+   Start at  03:46:17
+   Duration  1.50s (transform 318ms, setup 0ms, import 484ms, tests 345ms, environment 548ms)
+
+JSON report written to /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/docs/qa/screen-flow-consolidation-2026-10-27/screen-08-storage-safety-2026-10-29/logs/storage-after.json

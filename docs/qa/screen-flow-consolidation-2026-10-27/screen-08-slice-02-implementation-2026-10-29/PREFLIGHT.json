@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-29",
+  "issue": 424,
+  "issueUpdatedAt": "2026-10-23T12:29:04Z",
+  "comments": 0,
+  "develop": "9f8470077dfa8eb7663246905bffd3cf8a0c6591",
+  "main": "88191e77e55a489804c49bccccf6307b5876b41d",
+  "HEAD": "98a1dbbda17f945a0d982eb6dbc36713bad61617",
+  "branch": "codex/onboarding-global-welcome",
+  "authority": "Direct owner Slice 02 authorization plus explicit three-assertion extension; older GitHub consolidation issue does not grant implementation or release authority"
+}

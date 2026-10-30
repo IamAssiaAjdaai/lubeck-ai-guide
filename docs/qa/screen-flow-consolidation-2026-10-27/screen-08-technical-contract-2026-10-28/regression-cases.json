@@ -1,0 +1,425 @@
+[
+  {
+    "id": "R01",
+    "area": "Retention",
+    "arrange": "Existing setup()/places/mocks harness, valid empty current slot; nondefault supported interests, duration, walking, tags, start and finish",
+    "act": "05\u219206\u219207\u219208\u2192Continue planning",
+    "assert": "Every settings field remains exact in same controller; no Hub push; no generate/persist/start calls",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "R02",
+    "area": "Retention",
+    "arrange": "Guest initialized once from defaults; mounted draft with edited values",
+    "act": "Locale refresh and matching available content, then account/session refresh",
+    "assert": "Same controller/draft values; no defaults reapplication or new token merely due to locale",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "R03",
+    "area": "Retention",
+    "arrange": "Same route key with saved source/account flag or add/city scope changes",
+    "act": "Change normalized route intent",
+    "assert": "Retired lease and request tickets invalidated; new scope hydrates independently; no old selected city/fields written",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "R04",
+    "area": "Retention",
+    "arrange": "Account style contains supported 90, new draft later selects 240",
+    "act": "Advance/back/browse and Build",
+    "assert": "90 hydrates without coercion; 240 retained in WalkSettings; no saveTravelerStyle call or account data mutation",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "T01",
+    "area": "Transitions",
+    "arrange": "New draft with interest selection",
+    "act": "Complete flow through 08 primary",
+    "assert": "Constraints shown, automatic interest grid rendered only once; no second Hub navigation or route preview",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "T02",
+    "area": "Transitions",
+    "arrange": "Interests skipped via real SelectInterests",
+    "act": "Continue time/location/08 and Build",
+    "assert": "interests=[] reaches shared planner; old legacy step2 does not restore history/architecture defaults",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "T03",
+    "area": "Transitions",
+    "arrange": "Existing duration/deadline; time Skip",
+    "act": "Advance and return Back",
+    "assert": "Same minutes/returnBy; Skip not interpreted as no budget",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "T04",
+    "area": "Transitions",
+    "arrange": "Constraints with nondefault fields",
+    "act": "Explicit Edit Interests\u2192change\u2192Continue; repeat with Skip and Back",
+    "assert": "Each returns directly to constraints, other fields untouched; Back retains live edit values; no 06\u201308 replay",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "T05",
+    "area": "Transitions",
+    "arrange": "Constraints; no modal",
+    "act": "On-screen Back and captured Android BackHandler events through complete chain",
+    "assert": "Same target sequence constraints\u219208\u219207\u219206\u219205; token readiness revoked/reissued correctly; no writes/start; internal iOS pop gesture disabled, visible Back still traverses exact targets; restore default for real route exit",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "T06",
+    "area": "Transitions",
+    "arrange": "Pending proposal/rebuild-confirmation/add panel atop draft/legacy flow",
+    "act": "Back",
+    "assert": "Existing modal priority preserved; no accidental cursor advance or confirmed rebuild",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "T07",
+    "area": "Transitions",
+    "arrange": "Legacy/add and explicit Customize with journey",
+    "act": "Continue/back through old controls",
+    "assert": "Do not enter new-draft 05\u201308; retain correct journey and meaningful old controls",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "I01",
+    "area": "Identity",
+    "arrange": "Focused Hub with full v1 envelope and earlier exact walk route; matching live constraints lease",
+    "act": "Build",
+    "assert": "Exactly one pop to correct key in same owning stack; settings retained, no duplicate /walk route",
+    "target": "mobile/tests/city-hub-actions.test.tsx",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "I02",
+    "area": "Identity",
+    "arrange": "Same pathname/city but wrong key or mount token; two same-city draft instances",
+    "act": "Build with older envelope",
+    "assert": "No arbitrary Back/pop to other instance; ordinary hydration fallback and no resume claim",
+    "target": "mobile/tests/planner-return-intent.test.ts (NEW proposed) + mobile/tests/city-hub-actions.test.tsx",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "I03",
+    "area": "Identity",
+    "arrange": "Missing lease; old bare returnToPlanner flag or malformed/array/wrong-city/version envelope",
+    "act": "Build",
+    "assert": "No Back solely because canGoBack=true; recover through ordinary selected-city route",
+    "target": "mobile/tests/planner-return-intent.test.ts (NEW proposed) + mobile/tests/city-hub-actions.test.tsx",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "I04",
+    "area": "Identity",
+    "arrange": "Serialized stack/envelope from previous process but fresh in-memory lease module",
+    "act": "Build",
+    "assert": "Cold URL/native state never revives old lease or draft; normal slot hydration only",
+    "target": "mobile/tests/planner-return-intent.test.ts (NEW proposed) + mobile/tests/city-hub-actions.test.tsx",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "I05",
+    "area": "Identity",
+    "arrange": "Old controller unmount cleanup arrives after replacement controller registers same native key",
+    "act": "Run old cleanup",
+    "assert": "Only old token may be revoked; replacement lease survives; registry contains metadata only",
+    "target": "mobile/tests/planner-return-intent.test.ts (NEW proposed) + mobile/tests/city-hub-actions.test.tsx",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "I06",
+    "area": "Identity",
+    "arrange": "S08 secondary tapped twice before render commits",
+    "act": "Commit cursor/lease, then handle transitions",
+    "assert": "One Hub push after lease published, not before; no timer; both Back and Build return to constraints",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "I07",
+    "area": "Identity",
+    "arrange": "Earlier matching target with intermediate supported screens; current Hub not focused or stack changed before pop",
+    "act": "Resolve/pop request",
+    "assert": "Use final owning-stack state; no cross-stack/arbitrary pop; fail closed on stale/focus mismatch",
+    "target": "mobile/tests/city-hub-actions.test.tsx",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "I08",
+    "area": "Identity",
+    "arrange": "Hub\u2192CityAssistant existing fallback round trip",
+    "act": "Forward full intent / deliberately clear on unsupported exit",
+    "assert": "Whole envelope preserved and revalidated, never boolean-only claimed resume; tabs/cross-city have honest fallback",
+    "target": "mobile/tests/city-hub-actions.test.tsx + mobile/tests/city-assistant-return.test.tsx (NEW proposed)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "S01",
+    "area": "Storage",
+    "arrange": "Existing walk-storage memory() fixture: absent key or literal null",
+    "act": "Inspect current slot",
+    "assert": "empty classification, valid observation; defaults/new-draft allowed without writes",
+    "target": "mobile/tests/walk-storage.test.ts",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "S02",
+    "area": "Storage",
+    "arrange": "memory() throws on getItem; malformed JSON or invalid schema/wrong city/unknown explicit phase",
+    "act": "Inspect / hydrate",
+    "assert": "unavailable or blocked recovery, raw slot unchanged; no Build/replay/persist/default-as-absence success",
+    "target": "mobile/tests/walk-storage.test.ts + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "S03",
+    "area": "Storage",
+    "arrange": "Valid finishedAt record, existing legacy valid record without nativePhase",
+    "act": "Inspect",
+    "assert": "Completed=terminal not active; missing phase valid legacy record preserves active compatibility; no clearing",
+    "target": "mobile/tests/walk-storage.test.ts",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "S04",
+    "area": "Storage",
+    "arrange": "Observe empty slot, then another valid journey written before draft commit",
+    "act": "Commit generated preview with original observation",
+    "assert": "Conflict: newer journey and links unchanged; keep draft fields/recovery, no overwriting write",
+    "target": "mobile/tests/walk-storage.test.ts + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "S05",
+    "area": "Storage",
+    "arrange": "Observe matching slot, mutate membership/phase to same ID before commit",
+    "act": "Commit with old observation",
+    "assert": "Exact revision mismatch rejected even when ID matches; queued mutation order preserved",
+    "target": "mobile/tests/walk-storage.test.ts",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "S06",
+    "area": "Storage",
+    "arrange": "Valid unchanged observed slot; commit write rejects",
+    "act": "Build/commit/retry",
+    "assert": "No preview-success UI; same inputs retained; lock released; retry re-inspects and does not duplicate generated session",
+    "target": "mobile/tests/walk-storage.test.ts + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "S07",
+    "area": "Storage",
+    "arrange": "Corrupt slot plus existing clear/rebuild caller with expected undefined",
+    "act": "Attempt scope recovery",
+    "assert": "Cannot treat corrupt as empty and write null; no silent clear/reset/new-draft overwrite",
+    "target": "mobile/tests/walk-storage.test.ts",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "E01",
+    "area": "Existing walks",
+    "arrange": "Valid current preview then active fixture in selected city",
+    "act": "Open normal /walk",
+    "assert": "Exact current journey/phase restored before new draft; no 05\u201308, generation or new ID",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/walk-storage.test.ts",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "E02",
+    "area": "Existing walks",
+    "arrange": "Saved local/account/legacy record with visited stops/old deadline, safe target slot",
+    "act": "Explicit saved opening",
+    "assert": "New execution ID, full deduplicated ordered itinerary, visited reset, deadline/finishedAt cleared, preview only; original saved record retained",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/walk-storage.test.ts",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "E03",
+    "area": "Existing walks",
+    "arrange": "Missing local saved ID or account route getSession/list rejection",
+    "act": "Open saved intent",
+    "assert": "Requested-route recovery; no fresh draft under unresolved saved ID and no silent guest fallback",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "E04",
+    "area": "Existing walks",
+    "arrange": "Saved route exists but a different unfinished current journey occupies slot",
+    "act": "Open saved replay",
+    "assert": "Keep current and saved records; no unconditional hydration replacement; supported Resume/return recovery",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/walk-storage.test.ts",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "E05",
+    "area": "Existing walks",
+    "arrange": "Actual current journey changes after requestRebuild confirmation snapshot",
+    "act": "Confirm rebuild",
+    "assert": "Existing compare-and-clear rejects stale snapshot; no clear of replacement; S08 never invokes rebuild",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/walk-storage.test.ts",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "E06",
+    "area": "Existing walks",
+    "arrange": "add intent plus valid current, invalid add or no current",
+    "act": "Hydrate and continue",
+    "assert": "Existing add proposal/eligibility behavior preserved; no forced S08 or second planner",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "C01",
+    "area": "Controls",
+    "arrange": "Existing six-place fixture, distinct walking choices/tags",
+    "act": "Select controls in remaining constraints then invoke real build path",
+    "assert": "Same interests/categories/walking/minutes sent to shared planner; genuine eligibility/cap effects verified, not DOM selection only",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "C02",
+    "area": "Controls",
+    "arrange": "Manual place start, accepted GPS start, then missing/denied GPS",
+    "act": "Build",
+    "assert": "Manual uses selected coordinates; GPS uses accepted point; missing point fails without write; manual never requests permission",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "C03",
+    "area": "Controls",
+    "arrange": "Same start with endMode anywhere, loop or real destination",
+    "act": "Build each",
+    "assert": "finish undefined/start/selected endpoint respectively; destination missing rejects; shared finish-leg estimate reserved when configured",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "D01",
+    "area": "Deadline",
+    "arrange": "ReturnByTimePicker saved 13:25 then user changes/saves 15:45",
+    "act": "Reopen picker and navigate Back/Continue",
+    "assert": "Previously saved HH:MM retained; no default clock reset; parent day/zone metadata tracks explicit reconfirmation",
+    "target": "mobile/tests/return-by-picker.test.tsx + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "D02",
+    "area": "Deadline",
+    "arrange": "Fake clock fixed to one local day; invalid/past time, blank input, supported localized digits",
+    "act": "Build",
+    "assert": "Existing deadlineForToday semantics; past/invalid rejects without persistence, blank no deadline; no altered finish mode",
+    "target": "packages/traveler-core/src/walkParity.test.ts + mobile/tests/walk-flow.test.tsx",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "D03",
+    "area": "Deadline",
+    "arrange": "Select HH:MM before midnight; fake clock advances to next day where same HH:MM would be future",
+    "act": "Return from optional browsing and Build",
+    "assert": "Require explicit reconfirmation; do not silently interpret previous-day selection as today/tomorrow",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "D04",
+    "area": "Deadline",
+    "arrange": "Selected time-zone/day context changes; Customize seeded from an absolute deadline",
+    "act": "Build/reconfirm time",
+    "assert": "Stale day/zone rejected until user reconfirms; preserved existing absolute timestamp semantics; saved replay still clears deadline",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "D05",
+    "area": "Deadline",
+    "arrange": "Walking budget and fixed loop/destination finish under existing fixture",
+    "act": "Generate with and without return-by constraint",
+    "assert": "Real shared deadline budget/finish leg affects suggestions; no street routing or arrival guarantee inferred",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "G01",
+    "area": "Build lifecycle",
+    "arrange": "Two rapid Build taps before React renders building",
+    "act": "Resolve existing layout/presentation signals then planning",
+    "assert": "Single accepted request/input snapshot; at most one preview write/session; no decorative timer or second blocked promise",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "G02",
+    "area": "Build lifecycle",
+    "arrange": "Build pending before commit; scope unmount/cancel or obsolete generation ticket",
+    "act": "Resolve late layout/plan result",
+    "assert": "No precommit write or stale UI. If write already began, successful preview may remain but no auto-start/stale navigation or false rollback claim",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "G03",
+    "area": "Build lifecycle",
+    "arrange": "No eligible route/planner throws/storage conflict",
+    "act": "Finish failed Build",
+    "assert": "Return constraints/error with all settings; no successful preview/journey/active state",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "G04",
+    "area": "Build lifecycle",
+    "arrange": "S08 primary/secondary/Back and custom preview",
+    "act": "Trigger callbacks; then explicit Build and explicit Start separately",
+    "assert": "S08/Back/browse never generate/persist/start; real Build commits preview; Start alone uses current start/content/ID guards",
+    "target": "mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx) + mobile/tests/first-experience.test.tsx",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "P01",
+    "area": "Permission",
+    "arrange": "Deferred location promise; user skips/backs/unmounts/remounts with same city",
+    "act": "Resolve late permission result",
+    "assert": "No GPS/cursor mutation on retired request/mount; no automatic request in 08/Back/browse",
+    "target": "mobile/tests/location-permission.test.tsx + mobile/tests/walk-flow.behavior.tsx (executed via walk-flow.test.tsx)",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "A01",
+    "area": "Guest/copy/a11y",
+    "arrange": "Guest EN and DE, long dynamic city name; existing fonts/scaling harness",
+    "act": "Render FirstExperience two-action interface and invoke controls",
+    "assert": "Exact semantic primary/secondary, independent callbacks, no auth/permission gate, correct heading/roles/focus targets",
+    "target": "mobile/tests/first-experience.test.tsx",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  },
+  {
+    "id": "A02",
+    "area": "Native acceptance",
+    "arrange": "Authorized future implementation on standard and 375\u00d7667 iPhone, narrow Android; EN/DE max text",
+    "act": "Traverse Back/edit/optional browse/permission denial, picker/keyboard/safe areas",
+    "assert": "Both actions and all legacy controls reachable; native stack and hardware/gesture behavior correct; VoiceOver/TalkBack evidence separate; iOS internal-step edge swipe cannot discard the controller; optional Hub native Back returns constraints",
+    "target": "Future real simulator/device captures; not a mocked layout assertion",
+    "status": "SPECIFIED / NOT IMPLEMENTED / NOT RUN"
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "file": "mobile/tests/walk-flow.behavior.tsx",
+    "originalAssertions": 217,
+    "currentAssertions": 279,
+    "allOriginalAssertionsPreservedInOrder": true
+  },
+  {
+    "file": "mobile/tests/city-hub-actions.test.tsx",
+    "originalAssertions": 41,
+    "currentAssertions": 44,
+    "allOriginalAssertionsPreservedInOrder": true
+  },
+  {
+    "file": "mobile/tests/first-experience.test.tsx",
+    "originalAssertions": 7,
+    "currentAssertions": 8,
+    "allOriginalAssertionsPreservedInOrder": true
+  }
+]

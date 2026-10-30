@@ -1,0 +1,19 @@
+--- /private/tmp/NativeWalkFlow.tsx.focus-before	2026-10-29 23:31:20
++++ /Users/assia/Documents/GitHub/citywalk-onboarding-global-welcome/mobile/src/components/NativeWalkFlow.tsx	2026-10-29 23:50:09
+@@ -580,6 +580,7 @@
+     const subscription = BackHandler.addEventListener(
+       "hardwareBackPress",
+       () => {
++        if (navigation && !navigation.isFocused()) return false;
+         if (rebuildConfirmation) {
+           if (!updateLock.current) setRebuildConfirmation(undefined);
+           return true;
+@@ -602,7 +603,7 @@
+       },
+     );
+     return () => subscription.remove();
+-  }, [newDraft, draftBack, storageRecovery, proposed, panel, stage, step, rebuildConfirmation, interestOnboarding, buildError, journey, savedId, addSlug]);
++  }, [navigation, newDraft, draftBack, storageRecovery, proposed, panel, stage, step, rebuildConfirmation, interestOnboarding, buildError, journey, savedId, addSlug]);
+   async function locate(applyResult: () => boolean = () => true) {
+     setLocating(true);
+     const result = await requestForegroundLocation(

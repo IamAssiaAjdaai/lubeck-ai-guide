@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-29",
+  "sourceFilesCaptured": 1054,
+  "unchangedPreexistingFiles": 1041,
+  "modifiedProductionFiles": [
+    "mobile/src/app/city/[citySlug]/walk.tsx",
+    "mobile/src/components/NativeWalkFlow.tsx",
+    "mobile/src/components/FirstExperience.tsx",
+    "mobile/src/lib/firstExperienceCopy.ts",
+    "mobile/src/app/city/[citySlug]/index.tsx",
+    "mobile/src/app/city/[citySlug]/assistant.tsx",
+    "mobile/src/lib/plannerNavigationCopy.ts"
+  ],
+  "modifiedTestFiles": [
+    "mobile/tests/native-v2-regressions.test.tsx",
+    "mobile/tests/city-hub-editorial-v1.test.ts",
+    "mobile/tests/membership-screens.test.tsx",
+    "mobile/tests/first-experience.test.tsx",
+    "mobile/tests/walk-flow.behavior.tsx",
+    "mobile/tests/city-hub-actions.test.tsx"
+  ],
+  "newProductFiles": [
+    "mobile/src/lib/plannerNavigationCopy.ts"
+  ],
+  "outsideApprovedProductionBoundary": [],
+  "priorArtifactHashesVerified": 176,
+  "reportLinksVerified": 32,
+  "original318Assertions": {
+    "exactPreserved": 314,
+    "ownerApprovedChangedChains": 4,
+    "separateReviewedHubAssertions": "B01/B03/B04/B05 migrated with stronger real adapter/link coverage"
+  },
+  "firstExperienceEditorialBodyAndNonFooterStyles": "BYTE IDENTICAL",
+  "activeStartAndUpdateRuntime": "AST IDENTICAL",
+  "Slice01HelperAndTests": "HASH IDENTICAL",
+  "storageImplementationAndStorageTests": "HASH IDENTICAL",
+  "Screen14": "PENDING; HASH IDENTICAL",
+  "D01_D14": "PENDING; no decision edits",
+  "stagedFiles": [],
+  "gitDiffCheck": "PASS",
+  "commitPushMergeDeleteDeploy": false,
+  "nativeAcceptance": "PARTIAL; see REPORT.md"
+}

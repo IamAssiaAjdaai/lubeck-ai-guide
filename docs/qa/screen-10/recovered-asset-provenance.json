@@ -1,0 +1,52 @@
+[
+  {
+    "path": "/Users/assia/Library/Developer/CoreSimulator/Devices/A6ACA995-0FA8-443E-BFB3-2DA7F73235BE/data/Containers/Data/Application/71BDB97F-B90E-4464-AB8F-79E21F8541F4/Library/Caches/com.hackemist.SDImageCache/default/60f862236a60080d4b9783bf104acd03",
+    "sha256": "c22731c5043d07569f7bf6241096d090cab8dbe4c08d51b4a319c3883294e30f",
+    "size": [
+      1200,
+      2600
+    ],
+    "bytes": 522024,
+    "format": "WEBP"
+  },
+  {
+    "path": "/Users/assia/Library/Developer/CoreSimulator/Devices/A6ACA995-0FA8-443E-BFB3-2DA7F73235BE/data/Containers/Data/Application/71BDB97F-B90E-4464-AB8F-79E21F8541F4/Library/Caches/com.hackemist.SDImageCache/default/a9ee54ecfa8cc335206228a8db05a4ac",
+    "sha256": "fb949c64783b0c8ec5048c71c7bed7671c4e40f7dc4d1df5d1e852f984aece83",
+    "size": [
+      3840,
+      3226
+    ],
+    "bytes": 3590147,
+    "format": "JPEG"
+  },
+  {
+    "path": "/Users/assia/Library/Developer/CoreSimulator/Devices/5DBCD0B6-4766-41C6-BAE6-E05E845A40C1/data/Containers/Data/Application/6865BD1E-E386-4B08-B9B4-4224A90E2ABC/Library/Caches/com.hackemist.SDImageCache/default/888b0f76ef1b9c9a45d59f87446f6bc8",
+    "sha256": "a2b8a0c4f04506f01afe1c38768d23a39d2409bdacc95c9e7ba422bde95b6bf8",
+    "size": [
+      1200,
+      2600
+    ],
+    "bytes": 935484,
+    "format": "WEBP"
+  },
+  {
+    "path": "/Users/assia/Library/Developer/CoreSimulator/Devices/5DBCD0B6-4766-41C6-BAE6-E05E845A40C1/data/Containers/Data/Application/6865BD1E-E386-4B08-B9B4-4224A90E2ABC/Library/Caches/com.hackemist.SDImageCache/default/b6bd17250e18ba66065fb6b897e8b5d7",
+    "sha256": "d46298152f0500796669686ab4b1d7561331901b37ba17bea296e6a48a4968b7",
+    "size": [
+      1200,
+      2600
+    ],
+    "bytes": 724770,
+    "format": "WEBP"
+  },
+  {
+    "path": "/Users/assia/Library/Developer/CoreSimulator/Devices/83480473-AFB5-4F00-B6FB-196503A35522/data/Containers/Data/Application/E6BCC8D9-1295-43D3-B1E8-BCE1B674905F/Library/Caches/com.hackemist.SDImageCache/default/edb915f4fa3e989bdd8845d99cdaedde",
+    "sha256": "d0bff0cc21342460ccd3b4799fdc5f114927cc7d56b2261f25922052ce0f2777",
+    "size": [
+      1200,
+      2600
+    ],
+    "bytes": 128988,
+    "format": "WEBP"
+  }
+]

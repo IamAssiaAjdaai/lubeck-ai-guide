@@ -1,0 +1,21 @@
+flowchart TD
+ Launch["App launch → / (Home): unchanged"] --> City["Choose city: /?section=cities or Home city card"]
+ Welcome["Optional /welcome → /introduction"] --> Account["Optional /account?onboarding=1"]
+ Welcome -->|"Explore Cities"| City
+ Account -->|"Guest exit"| City
+ City --> Hub["09 /city/:citySlug"]
+ Hub -->|"Build My Walk"| Walk["/city/:citySlug/walk — hydrate first"]
+ Walk -->|"Current preview/active exists"| Resume["Restore that phase; bypass 05–08"]
+ Walk -->|"New draft"| S5["05 Interests — once"]
+ S5 --> S6["06 Duration / optional return-by"]
+ S6 --> S7["07 Optional location OR Not now"]
+ S7 --> S8["08 Same confirmation UI — still no route"]
+ S8 -->|"Primary: Continue planning"| Constraints["Same controller: start/finish + preserved walking/tag controls"]
+ S8 -->|"Optional secondary: Explore city"| Browse["09 Hub — deliberate browsing only"]
+ Browse -->|"Build: verified retained-draft return"| Constraints
+ Constraints -->|"Explicit Edit Interests only"| Edit["Reuse SelectInterests; return to constraints"]
+ Edit --> Constraints
+ Constraints -->|"Explicit Build"| Preview["Custom preview in /walk — not Screen 13"]
+ Preview -->|"Explicit Start"| Active["Existing custom Active Walk"]
+ S8 -->|"Back"| S7
+ Constraints -->|"Back"| S8
