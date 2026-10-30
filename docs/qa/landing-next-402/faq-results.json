@@ -1,0 +1,38 @@
+[
+  {
+    "question": "What is CITYWALK?",
+    "pass": true
+  },
+  {
+    "question": "Is CITYWALK free?",
+    "pass": true
+  },
+  {
+    "question": "How do personalized walks work?",
+    "pass": true
+  },
+  {
+    "question": "Which cities are supported?",
+    "pass": true
+  },
+  {
+    "question": "Is CITYWALK available on iPhone and Android?",
+    "pass": true
+  },
+  {
+    "question": "Does CITYWALK work offline?",
+    "pass": true
+  },
+  {
+    "question": "Are Stories, Audio and the AI Guide available everywhere?",
+    "pass": true
+  },
+  {
+    "question": "What is a City Pass?",
+    "pass": true
+  },
+  {
+    "question": "Do I need an account?",
+    "pass": true
+  }
+]

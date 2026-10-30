@@ -1,0 +1,65 @@
+{
+  "routes": [
+    {
+      "route": "/privacy",
+      "status": 200
+    },
+    {
+      "route": "/terms",
+      "status": 200
+    },
+    {
+      "route": "/imprint",
+      "status": 200
+    },
+    {
+      "route": "/support",
+      "status": 200
+    },
+    {
+      "route": "/account-deletion",
+      "status": 200
+    },
+    {
+      "route": "/explore",
+      "status": 200
+    },
+    {
+      "route": "/robots.txt",
+      "status": 200
+    },
+    {
+      "route": "/sitemap.xml",
+      "status": 200
+    }
+  ],
+  "viewports": [
+    {
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "overflow": false
+    }
+  ],
+  "externalRequests": 0,
+  "pageErrors": [],
+  "navigation": {
+    "transferBytes": 1299121,
+    "domContentLoadedMs": 37.100000001490116
+  },
+  "disposableDatabaseDropped": true,
+  "baseline": "3679a0d6322cb7947aa185df50750f26e51fb9ab",
+  "runtime": "built Vinext / local workerd, disposable loopback PostgreSQL",
+  "productionChanged": false,
+  "limitation": "Local uncompressed transfer and timing only; not production Core Web Vitals. Incomplete legal configuration used; provider configuration absent."
+}

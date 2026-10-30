@@ -119,3 +119,16 @@ iOS and Android are the primary traveler product and require native capability p
 For each ticket classify Mobile Core, Public Web (required/optional/not applicable) and Admin Web (required/not applicable). Record iOS and Android implementation and actual acceptance separately. Reuse shared domain/backend rules without duplicating planner, adaptation, eligibility or AI context logic.
 
 Preserve the approved CITYWALK V2 brand, hierarchy and information architecture while using native interaction patterns. Require native evidence for required native capabilities; literal Web layout replication and three-frontend screenshots are not universal release gates. Distinguish local implementation, automated verification, device verification, pushed, merged and deployed evidence. Missing evidence is unverified, not an observed visual mismatch.
+
+
+## Two-product Codex skills
+
+Repository skills live in `.agents/skills/`. Before every substantial task, use `github-project-truth` for a targeted read-only preflight, then the matching CITYWALK or Marketing role:
+
+**GitHub Evidence → Product Scope → Design Review → Engineering Plan → Implementation → Tests and QA → Handoff.**
+
+Reuse existing components, tested infrastructure, drafts and approved decisions; declare changed-file boundaries and non-goals. Refresh GitHub issues/owner comments, exact branch/PR SHAs and same-SHA checks. Distinguish local, draft, merged, tested, visual-approved, native-device-accepted, deployed and production-ready. Keep changing status in task reports rather than hard-coded skills. Analysis-only steps may mark implementation/tests not applicable with a reason.
+
+Both products share this repository, not implicit identity/access. Discover SaaS code on its actual draft branch; preserve independent auth, tenant, DB, API and release boundaries and all unfinished worktrees. CITYWALK retains approved Navy/Blue landing, Personal City Experience, €4.99/72h City Pass and guest-first native scope. Marketing retains Green Direction B and Concept A Workspace UX specification; keep its approved landing unchanged unless explicitly scoped. Generic frontend references provide design-review criteria, not branding or stack replacements. Verify newer explicit owner decisions before superseding older proposals; surface unresolved conflicts.
+
+Default stop remains before commit/push/PR without explicit authorization. Never automatically merge, delete branches, deploy production, execute destructive migrations or change payments. Skills grant no infrastructure, legal-publication, provider-spend or store-submission authority. Report actual results and missing owner/external gates. Documentation/skill-only edits use file/skill/diff validation; substantial code changes retain the full gate above.

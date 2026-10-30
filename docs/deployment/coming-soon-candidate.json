@@ -1,0 +1,13 @@
+{
+  "baseline": "3679a0d6322cb7947aa185df50750f26e51fb9ab",
+  "productionBaselineVerified": false,
+  "files": {
+    "src/app/page.tsx": "24c39648996b1264b7394eb9610e17c39fb24304b15fb09b781a548b98de7e3a",
+    "src/app/page.test.tsx": "5baff21dab9aaa82d338500315f56949a037e0249351fa948c837cad7651e89e",
+    "src/components/landing/ComingSoon.tsx": "1466263e4032192e5d979c6b75249d6907506b21fc6d596f0a4aec9d71659e04",
+    "src/components/landing/coming-soon.module.css": "5718667f272ea08bd1cb73ac9d5d86e46c6d22516a36bc97eadb2b3204f2e216",
+    "scripts/check-cloudflare-build.mjs": "0a864b9dc710a4ccc85e9450c3ac9fbac3aec440c72187970458a5912b647114"
+  },
+  "patchSha256": "ce3ea27dd23c054c3c65b40023e7d36f5776c90b4fdc86b3fc6d7fc34d04b38d",
+  "deployApproved": false
+}

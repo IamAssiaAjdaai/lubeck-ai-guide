@@ -1,0 +1,153 @@
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index 9b7131f..522386b 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -1,11 +1,11 @@
+ import type { Metadata } from "next";
+ 
+-import { LandingPreview } from "@/components/landing/LandingPreview";
++import { ComingSoon } from "@/components/landing/ComingSoon";
+ import { CITYWALK_PUBLIC_ORIGIN } from "@/lib/site";
+ 
+-const title = "CITYWALK — A better way to walk a city";
++const title = "CITYWALK — Coming soon to iOS and Android";
+ const description =
+-  "Build a personal city walk around your time and interests, with local stories, audio and an estimated return time.";
++  "Discover a city, one walk at a time. CITYWALK is coming to iOS and Android, starting in Lübeck. Planned launch: 16 November 2026.";
+ 
+ export const metadata: Metadata = {
+   title,
+@@ -27,5 +27,5 @@ export const metadata: Metadata = {
+ };
+ 
+ export default function HomePage() {
+-  return <LandingPreview />;
++  return <ComingSoon />;
+ }
+diff --git a/src/app/page.test.tsx b/src/app/page.test.tsx
+index 374b44f..b4bf98d 100644
+--- a/src/app/page.test.tsx
++++ b/src/app/page.test.tsx
+@@ -44,10 +44,17 @@ const heroMedia: PublicMedia = { assetKey: "hero", kind: "image", purpose: "hero
+ describe("Homepage cutover", () => {
+   afterEach(cleanup);
+ 
+-  it("renders the reviewed CITYWALK landing at root with indexable metadata", () => {
++  it("renders the Coming Soon homepage with conditional availability and indexable metadata", () => {
+     render(<HomePage />);
+     const heading = screen.getByRole("heading", { level: 1 });
+-    expect(heading.textContent?.replace(/\s+/g, " ").replace("wayto", "way to")).toMatch(/A better way to walk a city/i);
++    expect(heading.textContent).toContain("Your pace.");
++    expect(screen.getByText("16 November 2026").getAttribute("datetime")).toBe("2026-11-16");
++    expect(screen.getByText(/Subject to store approval/)).not.toBeNull();
++    for (const route of ["privacy", "terms", "imprint", "support", "account-deletion"]) {
++      expect(document.querySelector(`a[href="/${route}"]`)).not.toBeNull();
++    }
++    expect(document.querySelector("form, iframe, video")).toBeNull();
++    expect(document.querySelector('a[href*="apps.apple.com"], a[href*="play.google.com"], a[href*="checkout"]')).toBeNull();
+     expect(homeMetadata.robots).toEqual({ index: true, follow: true });
+   });
+ });
+diff --git a/src/components/landing/ComingSoon.tsx b/src/components/landing/ComingSoon.tsx
+new file mode 100644
+index 0000000..f581702
+--- /dev/null
++++ b/src/components/landing/ComingSoon.tsx
+@@ -0,0 +1,43 @@
++import Link from "next/link";
++import { CitywalkLogo, CitywalkMark } from "@/components/brand/CitywalkLogo";
++import { CITYWALK_SUPPORT_EMAIL } from "@/lib/legal";
++import styles from "./coming-soon.module.css";
++
++export function ComingSoon() {
++  return (
++    <div className={styles.page}>
++      <a className={styles.skip} href="#main">Skip to content</a>
++      <header className={styles.header}>
++        <Link prefetch={false} href="/" aria-label="CITYWALK home">
++          <CitywalkLogo className={styles.logo} markClassName={styles.mark} wordmarkClassName={styles.wordmark} />
++        </Link>
++        <Link prefetch={false} href="/support">Get in touch <span aria-hidden="true">↗</span></Link>
++      </header>
++      <main id="main" tabIndex={-1} className={styles.main}>
++        <section className={styles.hero} aria-labelledby="intro">
++          <div className={styles.copy}>
++            <p className={styles.eyebrow}>A new way to discover · Coming soon</p>
++            <h1 id="intro">Good cities.<br />Great walks.<br /><span>Your pace.</span></h1>
++            <p className={styles.intro}>Step into the stories around you. CITYWALK is coming to iOS and Android — starting in Lübeck.</p>
++            <div className={styles.platforms} aria-label="Planned platforms"><span>iOS</span><span>Android</span></div>
++            <p className={styles.date}>Planned launch <time dateTime="2026-11-16">16 November 2026</time></p>
++            <p className={styles.note}>Subject to store approval and release readiness. Verified download links will appear here when the apps are available.</p>
++          </div>
++          <div className={styles.art} aria-hidden="true">
++            <div className={styles.orbit} />
++            <CitywalkMark className={styles.heroMark} />
++            <span className={styles.city}>54° N · 10° E<br /><strong>Lübeck first.</strong></span>
++          </div>
++        </section>
++        <section className={styles.details} aria-label="About the launch">
++          <div><p className={styles.eyebrow}>01 / The beginning</p><h2>A city worth slowing down for.</h2><p>Our first chapter begins in Lübeck. Familiar streets, unexpected corners and a little more curiosity.</p></div>
++          <div><p className={styles.eyebrow}>02 / Made for your pocket</p><h2>Discover on the go.</h2><p>Designed for iPhone and Android. This website does not sell passes or subscriptions. Paid products will be available only through in-app purchases, when approved.</p></div>
++        </section>
++      </main>
++      <footer className={styles.footer}>
++        <div><strong>CITYWALK</strong><a href={`mailto:${CITYWALK_SUPPORT_EMAIL}`}>{CITYWALK_SUPPORT_EMAIL}</a></div>
++        <nav aria-label="Legal and support"><Link prefetch={false} href="/privacy">Privacy</Link><Link prefetch={false} href="/terms">Terms</Link><Link prefetch={false} href="/imprint">Imprint</Link><Link prefetch={false} href="/support">Support</Link><Link prefetch={false} href="/account-deletion">Account deletion</Link></nav>
++      </footer>
++    </div>
++  );
++}
+diff --git a/src/components/landing/coming-soon.module.css b/src/components/landing/coming-soon.module.css
+new file mode 100644
+index 0000000..625dc36
+--- /dev/null
++++ b/src/components/landing/coming-soon.module.css
+@@ -0,0 +1,35 @@
++.page { color: #123852; background: #f6f8f7; font-family: var(--font-geist-sans), sans-serif; line-height: 1.6; }
++.page * { box-sizing: border-box; }
++.page a { color: inherit; text-underline-offset: .3em; }
++.page a:focus-visible { outline: 3px solid #008477; outline-offset: 5px; }
++.skip { position: absolute; left: 1rem; top: -8rem; z-index: 20; background: white; padding: 1rem; }
++.skip:focus { top: 1rem; }
++.header, .main, .footer { max-width: 80rem; margin-inline: auto; padding-inline: clamp(1.25rem, 5vw, 5rem); }
++.header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.5rem; }
++.header a { display: inline-flex; align-items: center; min-height: 44px; font-size: .875rem; }
++.logo { display: inline-flex; align-items: center; gap: .5rem; }
++.mark { width: 2rem; height: 2.8rem; }
++.wordmark { font-weight: 800; letter-spacing: -.04em; font-size: 1.2rem; }
++.hero { display: grid; align-items: center; gap: 2rem; padding-block: 3rem 4rem; }
++.eyebrow { font-size: .75rem; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; }
++.copy h1 { font-size: clamp(3.6rem, 7.5vw, 6.6rem); line-height: 1.04; letter-spacing: -.065em; font-weight: 600; margin: 1.5rem 0; }
++.copy h1 span { color: #007b72; }
++.intro { max-width: 30rem; font-size: 1.125rem; color: #425b67; }
++.platforms { display: flex; gap: .75rem; margin-block: 2rem; }
++.platforms span { border: 1px solid #b9cacb; border-radius: 2rem; padding: .55rem 1.4rem; font-size: .875rem; }
++.date { font-size: .875rem; }
++.date time { display: block; font-size: 1.25rem; font-weight: 650; }
++.note { max-width: 28rem; color: #526772; font-size: .8rem; }
++.art { position: relative; min-height: 23rem; display: grid; place-items: center; overflow: hidden; border-radius: 50% 50% 1rem 1rem; background: #e3edeb; }
++.heroMark { height: 18rem; width: 13rem; position: relative; }
++.orbit { position: absolute; width: 27rem; height: 27rem; border: 1px solid #b0c9c3; border-radius: 50%; transform: translate(5rem, 4rem); box-shadow: 0 0 0 3rem #e3edeb, 0 0 0 calc(3rem + 1px) #c5d9d2; }
++.city { position: absolute; bottom: 1.5rem; left: 1.5rem; font-size: .7rem; letter-spacing: .12em; }
++.city strong { font-size: 1rem; letter-spacing: 0; }
++.details { display: grid; gap: 2rem; border-top: 1px solid #cddad7; padding-block: 3rem 4rem; }
++.details h2 { font-size: 1.5rem; line-height: 1.25; font-weight: 550; letter-spacing: -.03em; }
++.details p:last-child { max-width: 31rem; color: #425b67; font-size: .95rem; }
++.footer { border-top: 1px solid #cddad7; padding-block: 2rem 8rem; display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between; font-size: .8rem; }
++.footer div { display: grid; gap: .5rem; }
++.footer nav { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-content: start; }
++.footer a { display: inline-flex; align-items: center; min-height: 44px; }
++@media (min-width: 760px) { .hero { grid-template-columns: 1.15fr 1fr; gap: 4rem; padding-block: 4rem 5rem; } .art { min-height: 34rem; } .heroMark { height: 25rem; width: 18rem; } .details { grid-template-columns: 1fr 1fr; gap: 5rem; } }
+diff --git a/scripts/check-cloudflare-build.mjs b/scripts/check-cloudflare-build.mjs
+index 322d0f4..b77d837 100644
+--- a/scripts/check-cloudflare-build.mjs
++++ b/scripts/check-cloudflare-build.mjs
+@@ -14,7 +14,7 @@ for (const route of pages) assert.ok(source.includes(`page:${route}\``) || sourc
+ for (const route of handlers) assert.ok(source.includes(`route-handler:${route}\``) || source.includes(`route-handler:${route}"`), `Missing bundled API: ${route}`);
+ const modules = await readdir(path.join(worker, "bundle"), { recursive: true });
+ const bundledText = (await Promise.all(modules.filter(file => file.endsWith(".js")).map(file => readFile(path.join(worker, "bundle", file), "utf8")))).join("\n");
+-assert.ok(bundledText.includes("A better way to") && bundledText.includes("walk a city"), "Missing marketing landing content");
++assert.ok(bundledText.includes("Your pace.") && bundledText.includes("16 November 2026"), "Missing Coming Soon landing content");
+ const config = JSON.parse(await readFile(path.join(worker, "worker.config.json"), "utf8"));
+ assert.equal(config.assets.notFoundHandling, "none", "Do not replace missing API/page routes with a static SPA fallback");
+ for (const field of ["NAME", "STREET_ADDRESS", "POSTAL_CITY"]) {
