@@ -28,9 +28,9 @@ vi.mock("react-native", () => ({
 vi.mock("react-native-safe-area-context", () => ({ useSafeAreaInsets: () => ({ top: state.top, bottom: state.bottom, left: 0, right: 0 }) }));
 vi.mock("expo-router", () => ({
   useFocusEffect: (callback: () => void | (() => void)) => React.useEffect(callback, [callback]),
-  Link: ({ children, href, asChild }: React.PropsWithChildren<{ href: unknown; asChild?: boolean }>) => {
+  Link: ({ children, href, asChild, push }: React.PropsWithChildren<{ href: unknown; asChild?: boolean; push?: boolean }>) => {
     if (asChild && Array.isArray((React.Children.only(children) as React.ReactElement<{ style?: unknown }>).props.style)) throw new Error("Expo Slot cannot accept array styles");
-    return <a data-route={JSON.stringify(href)}>{children}</a>;
+    return <a data-route={JSON.stringify(href)} data-push={String(Boolean(push))}>{children}</a>;
   },
 }));
 vi.mock("../src/components/ui", () => ({
@@ -295,4 +295,24 @@ it.each([1, 3.12])("keeps accessible text scaling and growing numbered badges at
   const bottom = within(body).getByRole("button", { name: "City hub" }).closest("a")!.parentElement!;
   expect(JSON.parse(bottom.dataset.nativeStyle!).paddingBottom).toBeGreaterThanOrEqual(16);
   expect(JSON.parse(within(body).getByRole("button", { name: "Route preview" }).closest("a")!.dataset.route!)).toEqual({ pathname: "/city/[citySlug]/tour/[tourSlug]", params: { citySlug: "test-city", tourSlug: "real-tour" } });
+});
+
+
+it("pushes ordinary current, ordered and map-selected details without execution context", async () => {
+  render(<PublishedActiveWalk trip={trip} />);
+  await ready();
+  const copy = activeWalkCopy("en");
+  function expectPush(button: HTMLElement, placeSlug: string) {
+    const link = button.closest("a")!;
+    expect(link.dataset.push).toBe("true");
+    expect(JSON.parse(link.dataset.route!)).toEqual({ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug: "test-city", placeSlug } });
+  }
+  expectPush(screen.getByRole("button", { name: copy.details }), "first");
+  for (const [index, slug] of trip.stopSlugs.entries()) {
+    expectPush(screen.getByRole("button", { name: `${index + 1}. ${slug} place · ${index === 0 ? copy.current : copy.remaining}` }), slug);
+  }
+  fireEvent.click(screen.getByRole("button", { name: "Select map stop 2" }));
+  expectPush(screen.getByRole("button", { name: `${copy.details}: second place` }), "second");
+  expect(screen.getByRole("button", { name: copy.preview }).closest("a")!.dataset.push).toBe("false");
+  expect(screen.getByRole("button", { name: copy.city }).closest("a")!.dataset.push).toBe("false");
 });

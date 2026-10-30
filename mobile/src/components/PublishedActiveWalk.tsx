@@ -150,7 +150,7 @@ function ActiveContent({ data, resolved }: { data: PublicCitySummaryResponse; re
     {progress ? <>
       {!error ? <AppText variant="caption" style={styles.muted}>{copy.saved}</AppText> : null}
       <AppText accessibilityRole="header" style={styles.sectionTitle}>{copy.stops}</AppText>
-      <View style={styles.stops}>{stops.map(({ place }, index) => <Link key={place.slug} href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }} asChild>
+      <View style={styles.stops}>{stops.map(({ place }, index) => <Link key={place.slug} href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }} push asChild>
         <PressableSurface accessibilityRole="link" accessibilityLabel={`${index + 1}. ${nativePlaceName(citySlug, place.slug, place.content.name, locale)} · ${progress.statuses[index] === "visited" ? copy.visited : progress.statuses[index] === "skipped" ? copy.skipped : index === cursor ? copy.current : copy.remaining}`}
           style={StyleSheet.flatten([styles.stopRow, index === cursor && styles.currentRow, { direction }])}>
           <View style={[styles.number, { minWidth: Math.max(30, 13 * fontScale + 14), minHeight: Math.max(30, 18 * fontScale + 12), borderRadius: Math.max(15, (18 * fontScale + 12) / 2) }, index === cursor && styles.currentNumber]}><AppText style={[styles.numberText, index === cursor && styles.white]}>{progress.statuses[index] === "visited" ? "✓" : index + 1}</AppText></View>
@@ -166,7 +166,7 @@ function ActiveContent({ data, resolved }: { data: PublicCitySummaryResponse; re
   </Screen>;
 }
 function StopLink({ citySlug, place, label }: { citySlug: string; place: PublicPlaceCard; label: string }) {
-  return <Link href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }} asChild><PrimaryButton label={label} tone="secondary" /></Link>;
+  return <Link href={{ pathname: "/city/[citySlug]/place/[placeSlug]", params: { citySlug, placeSlug: place.slug } }} push asChild><PrimaryButton label={label} tone="secondary" /></Link>;
 }
 function CurrentPhoto({ citySlug, place }: { citySlug: string; place: PublicPlaceCard }) {
   const { locale } = useNativeLocale();
