@@ -10,7 +10,7 @@ import { CitywalkLoading } from "./CitywalkLoading";
 import { nativeCityName, nativePlaceName } from "../lib/displayNames";
 import { discoveryCopy } from "../design/discoveryCopy";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useRouter } from "expo-router";
+import { Link, useRouter, type NativeStackNavigationProp } from "expo-router";
 import {
   BackHandler,
   Linking,
@@ -47,7 +47,10 @@ import {
   loadCurrentWalk,
   changeCurrentWalk,
   subscribeCurrentWalk,
-  persistCurrentWalk,
+  observeCurrentWalk,
+  commitCurrentWalkPreview,
+  type CurrentWalkObservation,
+  type PreviewWriteIntent,
   loadSavedWalks,
   reopenSavedWalk,
   saveWalkFeedback,
@@ -103,10 +106,19 @@ import {
   V2Loading,
   V2WalkError,
 } from "./V2Presentation";
+import { FirstExperience } from "./FirstExperience";
+import { LocationPermission } from "./LocationPermission";
+import { AvailableTime } from "./AvailableTime";
+import { SelectInterests } from "./SelectInterests";
 import { NativeIcon } from "./NativeIcon";
 import { colors } from "../design/tokens";
 import { walkStyles as styles } from "../design/walkStyles";
 import { captureNativeMarketingFunnelEvent } from "../lib/marketingPerformance";
+
+import { normalizePlannerIntentScope, plannerReturnIntents } from "../lib/plannerReturnIntent";
+import { plannerNavigationCopy } from "../lib/plannerNavigationCopy";
+type DraftCursor = "interests" | "time" | "location" | "confirmation" | "constraints";
+export type PlannerNavigationPort = { routeKey: string; navigation: NativeStackNavigationProp<Record<string, object | undefined>> };
 
 type ActiveWalkMode = "basic" | "live";
 
@@ -119,7 +131,11 @@ export function NativeWalkFlow({
   accountSaved = false,
   contentStatus = "available",
   authorizeStart,
+  interestOnboarding = false,
+  cityMedia = [],
+  plannerNavigation,
 }: {
+  plannerNavigation?: PlannerNavigationPort;
   citySlug: string;
   cityName: string;
   places: readonly PublicPlaceCard[];
@@ -128,6 +144,8 @@ export function NativeWalkFlow({
   addSlug?: string;
   contentStatus?: "available" | "loading" | "error";
   authorizeStart?: () => Promise<boolean>;
+  interestOnboarding?: boolean;
+  cityMedia?: readonly import("../lib/api/contracts").PublicMedia[];
 }) {
   const { locale, messages } = useNativeLocale(),
     t = walkCopy(locale),
@@ -174,10 +192,21 @@ export function NativeWalkFlow({
     liveSession?.journeyId === journey.id
       ? "live"
       : requestedActiveMode;
+  const [storageRetry, setStorageRetry] = useState(0);
+  const [storageRecovery, setStorageRecovery] = useState<{ source: "hydrate" | "plan"; current?: CurrentWalk }>();
+  const planObservation = useRef<CurrentWalkObservation>(undefined);
+  const pendingObservation = useRef<Promise<CurrentWalkObservation>>(undefined);
+  const previewIntent = useRef<PreviewWriteIntent>("new");
+  const customizeExpected = useRef<WalkJourney>(undefined);
+  const attemptedPreview = useRef<WalkJourney>(undefined);
+  const storageEpoch = useRef(0);
+  const buildTicket = useRef(0);
+  const buildLock = useRef(false);
+  const recoveryLock = useRef(false);
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
-    return () => { mounted.current = false; buildLayoutReady.current?.(); buildPresented.current?.(); };
+    return () => { mounted.current = false; storageEpoch.current += 1; buildTicket.current += 1; buildLayoutReady.current?.(); buildPresented.current?.(); };
   }, []);
   useEffect(() => {
     let alive = true;
@@ -192,6 +221,16 @@ export function NativeWalkFlow({
       unsubscribe();
     };
   }, []);
+  const [newDraft, setNewDraft] = useState(false);
+  const [cursor, setCursor] = useState<DraftCursor>("interests");
+  const [editingInterests, setEditingInterests] = useState(false);
+  const [mountToken] = useState(() => createMobileTripId("draft"));
+  const browseTicket = useRef(false);
+  const [browseRequested, setBrowseRequested] = useState(0);
+  const [focusReady, setFocusReady] = useState(true);
+  const routeKey = plannerNavigation?.routeKey;
+  const navigation = plannerNavigation?.navigation;
+  const locationEntryAttempt = useRef(0);
   const [step, setStep] = useState(1),
     [minutes, setMinutes] = useState(120),
     [returnBy, setReturnBy] = useState("");
@@ -342,7 +381,21 @@ export function NativeWalkFlow({
 
   useEffect(() => {
     let alive = true;
+    buildLock.current = false;
+    planObservation.current = undefined;
+    pendingObservation.current = undefined;
+    previewIntent.current = "new";
+    customizeExpected.current = undefined;
+    attemptedPreview.current = undefined;
     void (async () => {
+      const observed = await observeCurrentWalk(citySlug);
+      if (!alive) return;
+      if (observed.kind === "blocked" || observed.kind === "unavailable") {
+        setStorageRecovery({ source: "hydrate" });
+        setStage("plan");
+        return;
+      }
+      planObservation.current = observed;
       let restored: WalkJourney | undefined;
       let restoredPhase: "preview" | "active" = "active";
       if (savedId) {
@@ -376,11 +429,16 @@ export function NativeWalkFlow({
               },
             };
         }
-        if (restored) {
-          restored = reopenSavedWalk(restored, createMobileTripId("walk"));
+        if (!alive) return;
+        if (!restored) throw new Error("walk-saved-missing");
+        if (observed.kind === "current") {
+          setStorageRecovery({ source: "hydrate", current: observed.current });
+          setStage("plan");
+          return;
         }
+        restored = reopenSavedWalk(restored, createMobileTripId("walk"));
       } else {
-        const current = await loadCurrentWalk(citySlug);
+        const current = observed.kind === "current" ? observed.current : undefined;
         restored = current?.journey;
         restoredPhase = current?.phase ?? "active";
       }
@@ -393,7 +451,10 @@ export function NativeWalkFlow({
           eligible.some((p) => p.slug === slug),
         );
         if (savedId || restoredPhase === "preview" || (allKnown && allEligible)) {
-          if (savedId) await persistCurrentWalk(restored, "preview");
+          if (savedId) {
+            const committed = await commitCurrentWalkPreview(restored, observed.receipt, "replay", { isCurrent: () => alive && mounted.current });
+            restored = committed.journey;
+          }
           if (!alive) return;
           setJourney(restored);
           setStage(savedId ? "preview" : restoredPhase);
@@ -421,10 +482,14 @@ export function NativeWalkFlow({
           return;
         }
         setMessage(t.noEligible);
+        setStorageRecovery({ source: "hydrate" });
+        setStage("plan");
+        return;
       }
       const auth = await nativeAuthClient.getSession().catch(() => ({ data: null }));
       const style = await loadTravelerStyle(auth.data?.user.id);
       if (!alive) return;
+      setNewDraft(interestOnboarding && !savedId && !addSlug);
       setMinutes(style.minutes);
       setInterests([...style.interests]);
       setWalking(style.walking);
@@ -432,15 +497,20 @@ export function NativeWalkFlow({
     })().catch(() => {
       if (alive) {
         setMessage(messages.tripSaveFailed);
+        setStorageRecovery({ source: "hydrate" });
         setStage("plan");
       }
     });
     return () => {
       alive = false;
+      storageEpoch.current += 1;
+      buildTicket.current += 1;
+      buildLayoutReady.current?.();
+      buildPresented.current?.();
     };
     // Hydrate once per city/saved route; locale refresh must not reset an active walk.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [citySlug, savedId, accountSaved]);
+  }, [citySlug, savedId, accountSaved, storageRetry]);
   useEffect(() => {
     if (stage !== "preview" && stage !== "active") return;
     return subscribeCurrentWalk(citySlug, current => {
@@ -457,10 +527,60 @@ export function NativeWalkFlow({
     const timer = setInterval(() => setNow(Date.now()), 30000);
     return () => clearInterval(timer);
   }, [stage]);
+  const draftBack = useCallback(() => {
+    locationEntryAttempt.current += 1;
+    if (editingInterests) { setEditingInterests(false); setCursor("constraints"); return true; }
+    const previous: Partial<Record<DraftCursor, DraftCursor>> = { constraints: "confirmation", confirmation: "location", location: "time", time: "interests" };
+    if (!previous[cursor]) return false;
+    setMessage(""); setCursor(previous[cursor]!); return true;
+  }, [cursor, editingInterests, setMessage]);
+  // A native swipe must not remove the controller while Back means an internal step.
+  useEffect(() => {
+    if (!navigation) return;
+    navigation.setOptions({ gestureEnabled: !(newDraft && stage === "plan" && (cursor !== "interests" || editingInterests)) });
+  }, [navigation, newDraft, stage, cursor, editingInterests]);
+  useEffect(() => {
+    if (!navigation || !newDraft || stage !== "plan") return;
+    let alive = true;
+    let check = 0;
+    const onFocus = async () => {
+      const ticket = ++check;
+      if (routeKey) plannerReturnIntents.revoke(routeKey, mountToken);
+      setFocusReady(false);
+      const observed = await observeCurrentWalk(citySlug);
+      if (!alive || ticket !== check) return;
+      // This read diagnoses conflicts; it never refreshes the original write receipt.
+      if (observed.kind === "blocked" || observed.kind === "unavailable" || observed.kind === "current") {
+        setStorageRecovery({ source: "plan", current: observed.kind === "current" ? observed.current : undefined });
+      }
+      setFocusReady(true);
+    };
+    const unsubscribe = navigation.addListener("focus", () => { void onFocus(); });
+    const blur = navigation.addListener("blur", () => { check += 1; setFocusReady(false); });
+    if (navigation.isFocused()) void onFocus();
+    return () => { alive = false; unsubscribe(); blur(); };
+  }, [navigation, newDraft, stage, citySlug, routeKey, mountToken]);
+  const leaseReady = newDraft && stage === "plan" && cursor === "constraints" && !editingInterests &&
+    !storageRecovery && !buildError && contentStatus === "available";
+  useEffect(() => {
+    if (!routeKey) return;
+    if (!leaseReady) plannerReturnIntents.revoke(routeKey, mountToken);
+    return () => { plannerReturnIntents.revoke(routeKey, mountToken); };
+  }, [routeKey, mountToken, leaseReady]);
+  useEffect(() => {
+    if (!routeKey || !leaseReady || !browseRequested || !browseTicket.current || !focusReady || (navigation && !navigation.isFocused())) return;
+    // Publish only for this browse ticket, after healthy constraints commit.
+    const envelope = plannerReturnIntents.publish({ citySlug, routeKey, mountToken,
+      normalizedIntentScope: normalizePlannerIntentScope({ citySlug })!, ready: "constraints" });
+    if (!envelope) { browseTicket.current = false; queueMicrotask(() => { if (mounted.current) setMessage(t.invalid); }); return; }
+    browseTicket.current = false;
+    router.push({ pathname: "/city/[citySlug]", params: envelope });
+  }, [routeKey, mountToken, leaseReady, citySlug, browseRequested, focusReady, navigation, router, t.invalid]);
   useEffect(() => {
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
+        if (navigation && !navigation.isFocused()) return false;
         if (rebuildConfirmation) {
           if (!updateLock.current) setRebuildConfirmation(undefined);
           return true;
@@ -473,7 +593,9 @@ export function NativeWalkFlow({
           setPanel(undefined);
           return true;
         }
+        if (newDraft && stage === "plan" && !buildError && !storageRecovery) return draftBack();
         if (stage === "plan" && step > 1) {
+          locationEntryAttempt.current += 1;
           setStep((value) => value - 1);
           return true;
         }
@@ -481,70 +603,84 @@ export function NativeWalkFlow({
       },
     );
     return () => subscription.remove();
-  }, [proposed, panel, stage, step, rebuildConfirmation]);
-  async function locate() {
+  }, [navigation, newDraft, draftBack, storageRecovery, proposed, panel, stage, step, rebuildConfirmation, interestOnboarding, buildError, journey, savedId, addSlug]);
+  async function locate(applyResult: () => boolean = () => true) {
     setLocating(true);
     const result = await requestForegroundLocation(
       expoForegroundLocationAdapter,
     );
     setLocating(false);
+    if (!applyResult()) return false;
     if (result.status === "available") {
       setGps({ lat: result.location.latitude, lng: result.location.longitude });
       setStartMode("gps");
       setMessage("");
     } else setMessage(t.gpsHelp);
+    return result.status === "available";
   }
   async function build() {
-    const start =
-      startMode === "gps"
-        ? gps
-        : places.find((p) => p.slug === startSlug)?.coordinates;
-    const finish =
-      endMode === "loop"
-        ? start
-        : endMode === "destination"
-          ? places.find((p) => p.slug === endSlug)?.coordinates
-          : undefined;
-    const deadline = returnBy ? deadlineForToday(returnBy) : undefined;
-    if (
-      !start ||
-      (returnBy && !deadline) ||
-      (endMode === "destination" && !finish)
-    ) {
-      setMessage(t.invalid);
-      return;
-    }
-    setMessage("");
-    setBuildStage("matching");
-    const presented = new Promise<void>((resolve) => { buildPresented.current = resolve; });
-    setStage("building");
-    // Wait for this native view's real layout, not a synthetic display timer.
-    // A fast local plan must not finish before its progress screen is attached.
-    await new Promise<void>((resolve) => { buildLayoutReady.current = resolve; });
-    if (!mounted.current) return;
+    if (buildLock.current || recoveryLock.current || storageRecovery || (newDraft && (!focusReady || contentStatus !== "available" || (navigation && !navigation.isFocused())))) return;
+    buildLock.current = true;
+    const ticket = ++buildTicket.current;
+    const epoch = storageEpoch.current;
+    const isCurrent = () => mounted.current && epoch === storageEpoch.current && ticket === buildTicket.current;
     try {
+      const start =
+        startMode === "gps"
+          ? gps
+          : places.find((p) => p.slug === startSlug)?.coordinates;
+      const finish =
+        endMode === "loop"
+          ? start
+          : endMode === "destination"
+            ? places.find((p) => p.slug === endSlug)?.coordinates
+            : undefined;
+      const deadline = returnBy ? deadlineForToday(returnBy) : undefined;
+      if (
+        !start ||
+        (returnBy && !deadline) ||
+        (endMode === "destination" && !finish)
+      ) {
+        setMessage(t.invalid);
+        return;
+      }
       const settings: WalkSettings = {
-        minutes,
-        deadline,
-        start,
-        finish,
-        interests,
-        categories,
-        walking,
+        minutes, deadline, start: { ...start }, finish: finish ? { ...finish } : undefined,
+        interests: [...interests], categories: [...categories], walking,
       };
+      const intent = previewIntent.current;
+      const observed = pendingObservation.current ? await pendingObservation.current : planObservation.current;
+      if (!isCurrent()) return;
+      if (!observed || observed.kind === "blocked" || observed.kind === "unavailable") {
+        setStorageRecovery({ source: "plan" });
+        return;
+      }
+      if (typeof intent === "object" && (observed.kind !== "current" ||
+          JSON.stringify(observed.current.journey) !== JSON.stringify(customizeExpected.current))) {
+        setStorageRecovery({ source: "plan", current: observed.kind === "current" ? observed.current : undefined });
+        return;
+      }
+      setMessage("");
+      setBuildStage("matching");
+      const presented = new Promise<void>((resolve) => { buildPresented.current = resolve; });
+      setStage("building");
+      // Wait for this native view's real layout, not a synthetic display timer.
+      // A fast local plan must not finish before its progress screen is attached.
+      await new Promise<void>((resolve) => { buildLayoutReady.current = resolve; });
+      if (!isCurrent()) return;
       const steps = buildWalkSteps(places, settings);
       let result = steps.next();
       while (!result.done) {
         setBuildStage(result.value);
         // Render before the next synchronous work unit; no decorative delay.
         await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-        if (!mounted.current) return;
+        if (!isCurrent()) return;
         result = steps.next();
       }
       // Local planning can finish during the native entrance transition. Keep
       // its real progress mounted until that transition has actually completed.
       await presented;
-      if (!mounted.current) return;
+      if (!isCurrent()) return;
       const route = result.value;
       if (!route.places.length) {
         setBuildError("empty");
@@ -554,24 +690,36 @@ export function NativeWalkFlow({
       const time = Date.now();
       setGeneratedAt(time);
       setNow(time);
+      const remaining = route.places.map(place => place.slug);
+      const previousAttempt = attemptedPreview.current;
+      const sameAttempt = previousAttempt?.citySlug === citySlug &&
+        JSON.stringify(previousAttempt.settings) === JSON.stringify(settings) &&
+        JSON.stringify(previousAttempt.remaining) === JSON.stringify(remaining);
       const generated: WalkJourney = {
-        id: createMobileTripId("walk"),
+        id: sameAttempt ? previousAttempt.id : createMobileTripId("walk"),
         citySlug,
         settings,
-        remaining: route.places.map((p) => p.slug),
+        remaining,
         visited: [],
         position: start,
         finish,
         historyDistance: 0,
         startedAt: time,
       };
-      await persistCurrentWalk(generated, "preview");
-      if (!mounted.current) return;
-      setJourney(generated);
+      attemptedPreview.current = generated;
+      const committed = await commitCurrentWalkPreview(generated, observed.receipt, intent, { isCurrent });
+      if (!isCurrent()) return;
+      attemptedPreview.current = undefined;
+      setJourney(committed.journey);
       setStage("preview");
-    } catch {
-      setBuildError("error");
+    } catch (error) {
+      if (!isCurrent()) return;
+      const code = error instanceof Error ? error.message : "";
+      if (code === "walk-changed" || code.startsWith("walk-storage-")) setStorageRecovery({ source: "plan" });
+      else setBuildError("error");
       setStage("plan");
+    } finally {
+      if (ticket === buildTicket.current) buildLock.current = false;
     }
   }
   async function update(
@@ -627,6 +775,8 @@ export function NativeWalkFlow({
       const next = await startCurrentWalk(citySlug, journey.id, places, contentStatus === "available");
       setActiveMode(mode);
       setJourney(next.journey);
+      // Only reached from the explicit Start button after storage authorization.
+      // eslint-disable-next-line react-hooks/purity -- Existing async event handler, never invoked during render.
       setNow(Date.now());
       setStage("active");
       void captureNativeMarketingFunnelEvent("walk_started", citySlug);
@@ -669,12 +819,19 @@ export function NativeWalkFlow({
     if (!rebuildConfirmation || updateLock.current) return;
     updateLock.current = true; setUpdating(true);
     try {
-      await completeCitywalkLiveWalk();
       await clearCurrentWalk(citySlug, rebuildConfirmation.current);
+      await completeCitywalkLiveWalk();
+      planObservation.current = await observeCurrentWalk(citySlug);
+      pendingObservation.current = undefined;
+      previewIntent.current = "new";
+      customizeExpected.current = undefined;
+      attemptedPreview.current = undefined;
       setJourney(undefined); setProposed(undefined); setPanel(undefined);
       setLiveSession(undefined); setForegroundPoint(undefined); setActiveMode("basic");
       setShowManageWalk(false); setShowLiveItinerary(false); setShowLiveInspect(false);
       setProposalMessage(""); setMessage(""); setBuildError(undefined);
+      setNewDraft(interestOnboarding && !savedId && !addSlug);
+      setCursor("interests"); setEditingInterests(false);
       setStep(1); setMinutes(120); setReturnBy("");
       setInterests(["history", "architecture"]); setCategories([]); setWalking("balanced");
       setStartSlug(places[0]?.slug ?? ""); setEndSlug(places[0]?.slug ?? "");
@@ -879,6 +1036,11 @@ export function NativeWalkFlow({
   );
   const customize = () => {
     if (!journey) return;
+    setNewDraft(false);
+    previewIntent.current = { customize: journey.id };
+    attemptedPreview.current = undefined;
+    customizeExpected.current = journey;
+    pendingObservation.current = observeCurrentWalk(citySlug);
     setStage("plan");
     setStep(1);
     setShowMap(false);
@@ -905,11 +1067,154 @@ export function NativeWalkFlow({
     if (endpoint) setEndSlug(endpoint.slug);
   };
 
+  async function retryStorage() {
+    if (recoveryLock.current || buildLock.current) return;
+    if (storageRecovery?.source === "hydrate") {
+      setStorageRecovery(undefined);
+      setStage("hydrate");
+      setStorageRetry(value => value + 1);
+      return;
+    }
+    recoveryLock.current = true;
+    const epoch = storageEpoch.current;
+    try {
+      const observed = await observeCurrentWalk(citySlug);
+      if (!mounted.current || storageEpoch.current !== epoch) return;
+      if (observed.kind === "blocked" || observed.kind === "unavailable") {
+        setStorageRecovery({ source: "plan" });
+        return;
+      }
+      if (observed.kind === "current") {
+        const candidate = attemptedPreview.current;
+        // An uncertain write can have reached disk. Reconcile that exact preview
+        // on explicit Retry; never generate another session over it or auto-start.
+        const sameCandidate = candidate && observed.current.phase === "preview" &&
+          Object.entries(candidate).every(([key, value]) => JSON.stringify((observed.current.journey as unknown as Record<string, unknown>)[key]) === JSON.stringify(value));
+        if (sameCandidate) {
+          attemptedPreview.current = undefined;
+          setJourney(observed.current.journey);
+          setStage("preview");
+          setBuildError(undefined);
+          setStorageRecovery(undefined);
+          return;
+        }
+        if (typeof previewIntent.current !== "object" ||
+            JSON.stringify(observed.current.journey) !== JSON.stringify(customizeExpected.current)) {
+          setStorageRecovery({ source: "plan", current: observed.current });
+          return;
+        }
+      } else if (typeof previewIntent.current === "object") {
+        setStorageRecovery({ source: "plan" });
+        return;
+      }
+      planObservation.current = observed;
+      pendingObservation.current = undefined;
+      setStorageRecovery(undefined);
+      setBuildError(undefined);
+      // Retry keeps the new draft at its cursor; legacy planner retains step-one recovery.
+      setStep(newDraft ? 3 : 1);
+    } finally { recoveryLock.current = false; }
+  }
+
+  const preferenceControls = <>
+              {dynamicTags.length ? (
+                <>
+                  <PressableSurface
+                    accessibilityRole="button"
+                    accessibilityLabel={translate(locale, showMoreInterests ? "planner.showLess" : "planner.showMore")}
+                    style={styles.tertiaryAction}
+                    onPress={() => setShowMoreInterests((value) => !value)}
+                  >
+                    <AppText variant="label" style={styles.tertiaryText}>
+                      {translate(locale, "planner.moreInterests")} · {translate(locale, showMoreInterests ? "planner.showLess" : "planner.showMore")}
+                    </AppText>
+                  </PressableSurface>
+                  {showMoreInterests || categories.length ? (
+                    <WalkChoices
+                      label=""
+                      multiple
+                      interestGrid
+                      compactInterests
+                      options={dynamicTags.map((value) => ({
+                        value,
+                        label: nativeCategoryLabel(value, locale),
+                      }))}
+                      selected={categories}
+                      onSelect={(key) =>
+                        setCategories((v) =>
+                          v.includes(key)
+                            ? v.filter((k) => k !== key)
+                            : [...v, key],
+                        )
+                      }
+                    />
+                  ) : null}
+                </>
+              ) : null}
+              <WalkChoices
+                label={t.walking}
+                variant="segment"
+                compact
+                compactPace
+                options={(["easy", "balanced", "long"] as const).map(
+                  (value) => ({
+                    value,
+                    label: translate(locale, `profile.walking_${value}` as TranslationKey),
+                  }),
+                )}
+                selected={[walking]}
+                onSelect={setWalking}
+              />
+  </>;
+  if (storageRecovery) {
+    return <Screen navigation={false}>
+      <StatusMessage>{messages.tripSaveFailed}</StatusMessage>
+      <V2WalkError retry={() => void retryStorage()} close={() => router.replace({ pathname: "/city/[citySlug]", params: { citySlug } })} />
+      {storageRecovery.current ? <PrimaryButton label={translate(locale, "trips.resumeTrip")} onPress={() => router.replace({ pathname: "/city/[citySlug]/walk", params: { citySlug } })} /> : null}
+    </Screen>;
+  }
+
+  if (newDraft && stage === "plan" && !buildError && cursor === "interests") {
+    const done = () => { setCursor(editingInterests ? "constraints" : "time"); setEditingInterests(false); };
+    return <SelectInterests citySlug={citySlug} cityName={cityName} selected={interests}
+      onToggle={key => setInterests(values => values.includes(key) ? values.filter(value => value !== key) : [...values, key])}
+      onContinue={() => { if (interests.length) done(); }}
+      onSkip={() => { setInterests([]); done(); }}
+      onBack={() => { if (!draftBack()) { if (router.canGoBack()) router.back(); else router.replace({ pathname: "/city/[citySlug]", params: { citySlug } }); } }} />;
+  }
+  if (interestOnboarding && stage === "plan" && !buildError && (newDraft ? cursor === "time" : step === 1)) {
+    return <AvailableTime citySlug={citySlug} cityName={cityName} minutes={minutes} onSelect={setMinutes}
+      onContinue={() => { if (newDraft) setCursor("location"); else setStep(2); }}
+      onBack={() => { if (newDraft) draftBack(); else if (router.canGoBack()) router.back(); else router.replace({ pathname: "/city/[citySlug]", params: { citySlug } }); }}>
+      <AppText variant="label">{t.deadlineQuestion}</AppText>
+      <AppText variant="metadata" style={styles.muted}>{t.deadlineHelp}</AppText>
+      <ReturnByTimePicker label={t.returnBy} value={returnBy} onChangeText={setReturnBy} placeholder={translate(locale, "planner.timePlaceholder")} />
+    </AvailableTime>;
+  }
+  if (newDraft && stage === "plan" && !buildError && cursor === "location") {
+    return <LocationPermission busy={locating} error={message || undefined}
+      onUseLocation={() => {
+        if (locating) return;
+        const attempt = ++locationEntryAttempt.current;
+        void locate(() => mounted.current && attempt === locationEntryAttempt.current).then(available => { if (available && attempt === locationEntryAttempt.current) setCursor("confirmation"); });
+      }}
+      onSkip={() => { locationEntryAttempt.current += 1; setMessage(""); setCursor("confirmation"); }}
+      onBack={draftBack} />;
+  }
+  if (newDraft && stage === "plan" && !buildError && cursor === "confirmation") {
+    const constraints = () => { setCursor("constraints"); setStep(3); };
+    return <FirstExperience citySlug={citySlug} cityName={cityName} cityMedia={cityMedia}
+      onBack={draftBack} onContinue={constraints}
+      onExplore={() => {
+        if (!routeKey || browseTicket.current) return;
+        browseTicket.current = true; setBrowseRequested(value => value + 1); constraints();
+      }} />;
+  }
   return (
     <Screen
       scrollViewRef={scroll}
       onBack={
-        stage === "plan" && step > 1
+        stage === "plan" && newDraft ? draftBack : stage === "plan" && step > 1
           ? () => setStep((value) => value - 1)
           : undefined
       }
@@ -918,8 +1223,8 @@ export function NativeWalkFlow({
         stage === "plan" && !buildError ? (
           <PrimaryButton
             wrapLabel
-            label={step < 3 ? t.continue : t.buildAction}
-            disabled={step === 3 && !eligible.length}
+            label={newDraft ? t.buildAction : step < 3 ? t.continue : t.buildAction}
+            disabled={(step === 3 && !eligible.length) || (newDraft && (!focusReady || contentStatus !== "available"))}
             leadingIcon={
               <NativeIcon
                 ios="location.fill"
@@ -928,7 +1233,7 @@ export function NativeWalkFlow({
               />
             }
             onPress={() =>
-              step < 3 ? setStep((value) => value + 1) : void build()
+              !newDraft && step < 3 ? setStep((value) => value + 1) : void build()
             }
           />
         ) : undefined
@@ -947,8 +1252,7 @@ export function NativeWalkFlow({
           recoveryLabel={buildError === "empty" ? t.rebuild : undefined}
           retry={() => {
             if (buildError === "empty") { void requestRebuild(); return; }
-            setBuildError(undefined);
-            setStep(1);
+            void retryStorage();
           }}
           close={() =>
             router.replace({
@@ -1029,57 +1333,16 @@ export function NativeWalkFlow({
                   )
                 }
               />
-              {dynamicTags.length ? (
-                <>
-                  <PressableSurface
-                    accessibilityRole="button"
-                    accessibilityLabel={translate(locale, showMoreInterests ? "planner.showLess" : "planner.showMore")}
-                    style={styles.tertiaryAction}
-                    onPress={() => setShowMoreInterests((value) => !value)}
-                  >
-                    <AppText variant="label" style={styles.tertiaryText}>
-                      {translate(locale, "planner.moreInterests")} · {translate(locale, showMoreInterests ? "planner.showLess" : "planner.showMore")}
-                    </AppText>
-                  </PressableSurface>
-                  {showMoreInterests || categories.length ? (
-                    <WalkChoices
-                      label=""
-                      multiple
-                      interestGrid
-                      compactInterests
-                      options={dynamicTags.map((value) => ({
-                        value,
-                        label: nativeCategoryLabel(value, locale),
-                      }))}
-                      selected={categories}
-                      onSelect={(key) =>
-                        setCategories((v) =>
-                          v.includes(key)
-                            ? v.filter((k) => k !== key)
-                            : [...v, key],
-                        )
-                      }
-                    />
-                  ) : null}
-                </>
-              ) : null}
-              <WalkChoices
-                label={t.walking}
-                variant="segment"
-                compact
-                compactPace
-                options={(["easy", "balanced", "long"] as const).map(
-                  (value) => ({
-                    value,
-                    label: translate(locale, `profile.walking_${value}` as TranslationKey),
-                  }),
-                )}
-                selected={[walking]}
-                onSelect={setWalking}
-              />
+              {preferenceControls}
             </>
           ) : (
             <>
+              {newDraft ? <>
+                <AppText variant="label">{t.interests}: {interests.map(value => t[value]).join(", ")}</AppText>
+                <AppText variant="metadata">{duration(minutes)}{returnBy ? ` · ${t.returnBy}: ${returnBy}` : ""}</AppText>
+                <PrimaryButton tone="secondary" wrapLabel label={plannerNavigationCopy[locale].editInterests} onPress={() => { setEditingInterests(true); setCursor("interests"); }} />
+                {preferenceControls}
+              </> : null}
               <SectionTitle>{t.start}</SectionTitle>
               <PressableSurface
                 accessibilityRole="button"

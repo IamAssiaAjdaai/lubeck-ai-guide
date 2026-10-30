@@ -2,7 +2,8 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-const state = vi.hoisted(() => ({ path: "/", params: {} as Record<string, string>, scroll: vi.fn(), offset: vi.fn(), back: vi.fn(), locale: "en", log: vi.fn() }));
+const state = vi.hoisted(() => ({ path: "/", params: {} as Record<string, string>, scroll: vi.fn(), offset: vi.fn(), back: vi.fn(), navigate: vi.fn(), dismissTo: vi.fn(), locale: "en", log: vi.fn() }));
+vi.mock("../src/components/AccountOnboardingFrame", () => ({ AccountOnboardingFrame: () => null }));
 vi.mock("expo-constants", () => ({ default: {
   nativeAppVersion: "1.0.0", nativeBuildVersion: "7", expoConfig: { version: "1.0.0" },
 } }));
@@ -13,15 +14,16 @@ vi.mock("expo-router", () => ({
   usePathname: () => state.path, useLocalSearchParams: () => state.params,
   useRoute: () => ({ name: state.path === "/" ? "index" : state.path === "/saved" ? "saved" : state.path === "/profile" ? "profile" : state.path === "/account" ? "account/index" : state.path === "/city/lubeck/explore" ? "city/[citySlug]/explore" : "city/[citySlug]/index" }),
   useNavigation: () => ({ isFocused: () => true, addListener: () => () => {} }),
-  useRouter: () => ({ navigate: vi.fn(), dismissTo: vi.fn(), canGoBack: () => true, back: state.back }),
+  useRouter: () => ({ navigate: state.navigate, dismissTo: state.dismissTo, canGoBack: () => true, back: state.back }),
 }));
 vi.mock("react-native", () => ({
+  Platform: { OS: "ios" },
   BackHandler: { addEventListener: () => ({ remove: vi.fn() }) },
   StyleSheet: { create: (s: unknown) => s, hairlineWidth: 1 },
   useWindowDimensions: () => ({ width: 390 }),
   View: ({ children, testID, style, accessibilityRole }: React.PropsWithChildren<{ testID?: string; style?: unknown; accessibilityRole?: string }>) => <div role={accessibilityRole} data-testid={testID} data-style={JSON.stringify(style)}>{children}</div>,
   TextInput: ({ accessibilityLabel }: { accessibilityLabel: string }) => <input aria-label={accessibilityLabel} />,
-  Text: ({ children, numberOfLines, style, accessibilityRole, adjustsFontSizeToFit }: React.PropsWithChildren<{ numberOfLines?: number; style?: unknown; accessibilityRole?: string; adjustsFontSizeToFit?: boolean }>) => <span role={accessibilityRole === "header" ? "heading" : accessibilityRole} data-style={JSON.stringify(style)} data-lines={numberOfLines} data-fit={adjustsFontSizeToFit}>{children}</span>,
+  Text: ({ children, numberOfLines, style, accessibilityRole, adjustsFontSizeToFit, maxFontSizeMultiplier }: React.PropsWithChildren<{ maxFontSizeMultiplier?: number; numberOfLines?: number; style?: unknown; accessibilityRole?: string; adjustsFontSizeToFit?: boolean }>) => <span role={accessibilityRole === "header" ? "heading" : accessibilityRole} data-style={JSON.stringify(style)} data-lines={numberOfLines} data-fit={adjustsFontSizeToFit} data-max-scale={maxFontSizeMultiplier}>{children}</span>,
   Pressable: ({ children, onPress, accessibilityLabel, accessibilityRole }: React.PropsWithChildren<{ onPress: () => void; accessibilityLabel?: string; accessibilityRole?: string }>) => <button role={accessibilityRole} aria-label={accessibilityLabel} onClick={onPress}>{children}</button>,
   ScrollView: React.forwardRef(({ children }: React.PropsWithChildren, ref) => {
     React.useImperativeHandle(ref, () => ({ scrollTo: state.scroll }));
@@ -163,4 +165,21 @@ it("keeps readable unbounded tab labels in the bar below the scroll content", ()
     expect(text.dataset.fit).toBe("false");
     expect(text.dataset.lines).toBeUndefined();
   }
+});
+it("allows the hub to bound tab label growth without changing defaults or spoken destinations", () => {
+  state.path = "/city/lubeck"; state.params = { citySlug: "lubeck" };
+  const view = render(<VirtualizedScreen data={[]} renderItem={() => null} />);
+  expect(within(screen.getByRole("tab", { name: "Explore" })).getByText("Explore").dataset.maxScale).toBeUndefined();
+  view.rerender(<VirtualizedScreen navigationLabelMaxFontSizeMultiplier={1.4} data={[]} renderItem={() => null} />);
+  expect(within(screen.getByRole("tab", { name: "Explore" })).getByText("Explore").dataset.maxScale).toBe("1.4");
+  expect(screen.getAllByRole("tab")).toHaveLength(5);
+});
+
+it.each(["/city/lubeck", "/city/lubeck/place/holstentor", "/city/lubeck/walk"])("routes the Explore tab from %s to the existing city-scoped destination", path => {
+  state.path = path; state.params = { citySlug: "lubeck" };
+  render(<Screen>Current screen</Screen>);
+  fireEvent.click(screen.getByRole("tab", { name: "Explore" }));
+  const route = { pathname: "/city/[citySlug]/explore", params: { citySlug: "lubeck" } };
+  if (path.endsWith("/walk")) expect(state.navigate).toHaveBeenCalledWith(route);
+  else expect(state.dismissTo).toHaveBeenCalledWith(route);
 });

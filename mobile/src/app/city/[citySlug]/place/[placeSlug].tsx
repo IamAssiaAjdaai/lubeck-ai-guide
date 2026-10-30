@@ -1,3 +1,4 @@
+import { PublishedActiveWalk } from "../../../../components/PublishedActiveWalk";
 import { t as translate } from "@citywalk/i18n";
 import {
   nativeContentTextStyle,
@@ -6,6 +7,10 @@ import {
 } from "../../../../design/rtlPresentation";
 import { ContentRecovery } from "../../../../components/ContentRecovery";
 import { WalkMembershipControl } from "../../../../components/WalkMembershipControl";
+import { explorePhotography } from "../../../../lib/explorePhotography";
+import { photoCreditEntries, photoCreditsCopy } from "../../../../lib/photoCredits";
+import { placeDetailCopy } from "../../../../lib/placeDetailCopy";
+import { useResponsiveTextLayout } from "../../../../design/responsiveText";
 import { nativePlaceName } from "../../../../lib/displayNames";
 import { discoveryCopy } from "../../../../design/discoveryCopy";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
@@ -13,7 +18,7 @@ import { loadSavedPlaces, toggleSavedPlace } from "../../../../lib/walkStorage";
 import { NativeContentImage as Image } from "../../../../components/NativeContentImage";
 import { Link, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useRef, useState } from "react";
-import { Linking, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { Linking, Platform, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 
 import { NativeAudioPlayer } from "../../../../components/NativeAudioPlayer";
 import { MediaAttribution } from "../../../../components/MediaAttribution";
@@ -50,7 +55,10 @@ import {
 import { useNativeLocale } from "../../../../localization/LocaleProvider";
 
 export default function PlaceScreen() {
-  const { citySlug, placeSlug } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const { citySlug, placeSlug } = params;
+  const publishedTrip = parseMobileTripContext(params);
+  if (publishedTrip?.source === "published") return <PublishedActiveWalk key={`${citySlug}:${publishedTrip.id}`} trip={publishedTrip} />;
   // A different place must not inherit local audio, completion or scroll state.
   return <PlaceContent key={`${citySlug}:${placeSlug}`} />;
 }
@@ -78,7 +86,7 @@ function PlaceContent() {
   }>();
   const scroll = useRef<ScrollView>(null);
   const contentOffset = useRef<number | undefined>(undefined);
-  const sections = useRef<{ story?: number; audio?: number }>({});
+  const sections = useRef<{ overview?: number; story?: number; audio?: number }>({});
   const focusedSection = useRef<string | undefined>(undefined);
   const focusSection = useCallback(() => {
     const focus = params.focus;
@@ -109,6 +117,9 @@ function PlaceContent() {
   const trip = parseMobileTripContext(params);
   const { direction, locale, messages } = useNativeLocale();
   const t = walkCopy(locale);
+  const copy = placeDetailCopy[locale];
+  const { expanded } = useResponsiveTextLayout();
+  const { fontScale } = useWindowDimensions();
   const premium = usePremiumAccess();
   const [saved, setSaved] = useState(false),
     [saveMessage, setSaveMessage] = useState("");
@@ -193,13 +204,11 @@ function PlaceContent() {
     locale,
     place.resolvedLocale,
   );
-  const imageMedia = selectPrimaryImageMedia(place.media);
-  const image = selectImageUrl(
-    imageMedia,
-    place.image,
-    place.imageVariants,
-    "detail",
-  );
+  // Reuse the exact city/place identity and approved media policy from Explore.
+  // Unverified legacy paths never acquire an implied license in this screen.
+  const photo = explorePhotography(identity.citySlug, place);
+  const centralCredit = photo?.credit ? photoCreditEntries.find(entry => entry.source === photo.credit?.source) : undefined;
+  const photoUri = photo?.uri ? selectImageUrl(selectPrimaryImageMedia(place.media), undefined, undefined, "detail") ?? photo.uri : undefined;
   const audio = selectExactLocaleAudio(place.media, locale);
   const hasStory = Boolean(place.content.story?.trim());
   const verifiedSources = placeState.data.verifiedSources ?? [];
@@ -243,36 +252,23 @@ function PlaceContent() {
           focusSection();
         }}
       >
-        {image ? (
-          <View>
-            <Image
-              source={{ uri: citywalkApi.resolveUrl(image) }}
-              fallbackSource={
-                place.image
-                  ? { uri: citywalkApi.resolveUrl(place.image) }
-                  : undefined
-              }
-              cachePolicy="memory-disk"
-              contentFit="cover"
-              style={styles.hero}
-              accessibilityLabel={nativePlaceName(
-                identity.citySlug,
-                place.slug,
-                place.content.name,
-                locale,
-              )}
-              transition={motion.component}
-            />
-            <MediaAttribution attribution={imageMedia?.attribution} />
-          </View>
-        ) : null}
+        <View style={styles.heroFrame}>
+          {photo ? <Image
+            source={photoUri ? { uri: citywalkApi.resolveUrl(photoUri) } : photo?.source}
+            cachePolicy="memory-disk" contentFit="cover" style={styles.hero}
+            accessibilityLabel={nativePlaceName(identity.citySlug, place.slug, place.content.name, locale)}
+            transition={motion.component}
+          /> : <View testID="place-photo-fallback" style={[styles.hero, styles.photoFallback]}>
+            <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={styles.placeholderMedallion}>
+              <NativeIcon ios={place.category === "eat" ? "fork.knife" : place.category === "fun" ? "sparkles" : "building.2"}
+                android={place.category === "eat" ? "restaurant" : place.category === "fun" ? "auto_awesome" : "location_city"} size={42} color={colors.primary} />
+            </View>
+            <AppText variant="metadata" style={styles.muted}>{copy.noPhoto}</AppText>
+          </View>}
+        </View>
         <View style={[styles.introduction, nativeTextBlock(direction)]}>
-          <AppText variant="metadata" style={styles.eyebrow}>
-            {discoveryCopy(locale)[place.category]} · {place.durationMinutes}{" "}
-            {messages.visitMinutes}
-          </AppText>
-          <View style={[styles.titleRow, nativeRowStyle(direction)]}>
-            <AppText variant="screenTitle" style={styles.placeTitle}>
+          <View style={[styles.titleRow, nativeRowStyle(direction), expanded && styles.stacked]}>
+            <AppText accessibilityRole="header" variant="screenTitle" style={[styles.placeTitle, fontScale > 1.5 && styles.accessibleTitle]}>
               {nativePlaceName(
                 identity.citySlug,
                 place.slug,
@@ -312,23 +308,40 @@ function PlaceContent() {
                 color={colors.primary}
                 size={21}
               />
+              <AppText style={styles.saveLabel}>{translate(locale, saved ? "common.saved" : "common.save")}</AppText>
             </PressableSurface>
+          </View>
+          <View style={[styles.metadataRow, nativeRowStyle(direction)]}>
+            <AppText variant="metadata" style={styles.eyebrow}>{discoveryCopy(locale)[place.category]}</AppText>
+            <View style={[styles.duration, nativeRowStyle(direction)]}>
+              <NativeIcon ios="clock" android="schedule" size={16} color={colors.primary} />
+              <AppText variant="metadata" style={styles.muted}>{place.durationMinutes} {messages.visitMinutes}</AppText>
+            </View>
+            {centralCredit ? <Link href={{ pathname: "/photo-credits", params: { image: centralCredit.id } }} asChild>
+              <PressableSurface accessibilityRole="link" accessibilityLabel={`${photoCreditsCopy(locale).title}: ${centralCredit.title}`} style={styles.photoCreditLink}>
+                <AppText style={styles.photoCreditLabel}>{photoCreditsCopy(locale).title}</AppText>
+              </PressableSurface>
+            </Link> : null}
+            {place.pricing && place.pricing !== "unknown" ? <AppText variant="metadata" style={styles.muted}>{copy[place.pricing]}</AppText> : null}
           </View>
           {direction === "rtl" && place.didFallback ? (
             <AppText variant="caption">{messages.fallbackContent}</AppText>
           ) : null}
         </View>
-        <View style={[styles.quickActions, nativeRowStyle(direction)]}>
+        {!centralCredit && (photo?.credit || photo?.attribution) ? <MediaAttribution attribution={photo.credit ? {
+          text: `${photo.credit.credit} · Wikimedia Commons ${photo.credit.source} · ${photo.credit.licenseName} ${photo.credit.license}`,
+        } : photo.attribution} /> : null}
+        <View style={[styles.quickActions, nativeRowStyle(direction), expanded && styles.stacked]}>
+
           <View style={styles.quickAction}>
             <WalkMembershipControl
               citySlug={identity.citySlug}
               placeSlug={place.slug}
               dense
-              compact
             />
           </View>
           <PrimaryButton
-            compact
+            wrapLabel
             label={translate(locale, "place.directions")}
             tone="secondary"
             style={styles.directionAction}
@@ -347,6 +360,48 @@ function PlaceContent() {
             }}
           />
         </View>
+        <View style={[styles.sectionNavigation, nativeRowStyle(direction)]}>
+          {([{ key: "overview" as const, label: copy.overview }, ...(hasStory ? [{ key: "story" as const, label: messages.story }] : []), ...(audio ? [{ key: "audio" as const, label: messages.audioGuide }] : [])]).map(section => <PressableSurface
+            key={section.key} accessibilityRole="button" accessibilityLabel={section.label}
+            onPress={() => { const offset = sections.current[section.key]; if (offset !== undefined && contentOffset.current !== undefined) scroll.current?.scrollTo({ y: contentOffset.current + offset, animated: true }); }} style={styles.sectionLink}>
+            <AppText variant="label" style={styles.sectionLinkText}>{section.label}</AppText>
+          </PressableSurface>)}
+        </View>
+        <View testID="place-overview-section" style={styles.section} onLayout={event => { sections.current.overview = event.nativeEvent.layout.y; }}>
+          <AppText accessibilityRole="header" style={styles.sectionTitle}>{copy.overview}</AppText>
+          <AppText style={[contentTextStyle, styles.description]}>
+            {place.content.description ?? place.content.shortDescription}
+          </AppText>
+        </View>
+        {place.content.visitNote ? (
+          <View style={styles.note}>
+            <View style={styles.noteHeading}>
+              <NativeIcon
+                ios="info.circle"
+                android="info"
+                color={colors.primary}
+                size={19}
+              />
+              <AppText variant="label" style={styles.noteTitle}>
+                {messages.visitorNote}
+              </AppText>
+            </View>
+            <AppText style={contentTextStyle}>{place.content.visitNote}</AppText>
+          </View>
+        ) : null}
+        {hasStory ? (
+          <View
+            testID="place-story-section"
+            style={styles.section}
+            onLayout={(event) => {
+              sections.current.story = event.nativeEvent.layout.y;
+              focusSection();
+            }}
+          >
+            <AppText accessibilityRole="header" style={styles.sectionTitle}>{messages.story}</AppText>
+            <AppText style={contentTextStyle}>{place.content.story}</AppText>
+          </View>
+        ) : null}
         <View
           testID="place-audio-section"
           onLayout={(event) => {
@@ -419,41 +474,6 @@ function PlaceContent() {
             </View>
           )}
         </View>
-        <View style={styles.section}>
-          <SectionTitle>{translate(locale, "place.whyItMatters")}</SectionTitle>
-          <AppText style={[contentTextStyle, styles.description]}>
-            {place.content.description ?? place.content.shortDescription}
-          </AppText>
-        </View>
-        {place.content.visitNote ? (
-          <View style={styles.note}>
-            <View style={styles.noteHeading}>
-              <NativeIcon
-                ios="info.circle"
-                android="info"
-                color={colors.primary}
-                size={19}
-              />
-              <AppText variant="label" style={styles.noteTitle}>
-                {messages.visitorNote}
-              </AppText>
-            </View>
-            <AppText style={contentTextStyle}>{place.content.visitNote}</AppText>
-          </View>
-        ) : null}
-        {hasStory ? (
-          <View
-            testID="place-story-section"
-            style={styles.section}
-            onLayout={(event) => {
-              sections.current.story = event.nativeEvent.layout.y;
-              focusSection();
-            }}
-          >
-            <SectionTitle>{messages.story}</SectionTitle>
-            <AppText style={contentTextStyle}>{place.content.story}</AppText>
-          </View>
-        ) : null}
         {place.content.facts?.length ? (
           <View style={styles.factsList}>
             <SectionTitle>{translate(locale, "place.quickFacts")}</SectionTitle>
@@ -590,6 +610,10 @@ function PlaceContent() {
             </PressableSurface>
           </Link>
         ) : null}
+        <View style={[styles.returnLinks, nativeRowStyle(direction)]}>
+          <Link href={{ pathname: "/city/[citySlug]/explore", params: { citySlug: identity.citySlug } }} asChild><PrimaryButton wrapLabel label={t.explore} tone="secondary" /></Link>
+          <Link href={{ pathname: "/city/[citySlug]", params: { citySlug: identity.citySlug } }} asChild><PrimaryButton wrapLabel label={copy.city} tone="secondary" /></Link>
+        </View>
         {trip && !tripCompleted ? (
           <View style={styles.tripPanel}>
             <AppText variant="caption" style={styles.tripNextContext}>
@@ -733,28 +757,45 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   content: { gap: spacing.md },
+  heroFrame: { borderRadius: radius.hero, overflow: "hidden" },
   hero: {
     width: "100%",
-    height: 240,
+    height: 224,
     borderRadius: radius.hero,
     backgroundColor: colors.primarySoft,
   },
-  introduction: { gap: spacing.sm },
+  introduction: { gap: 10, marginTop: -36, padding: 16, paddingBottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor: colors.background },
+  photoFallback: { height: undefined, minHeight: 224, padding: 24, alignItems: "center", justifyContent: "center", gap: 12, paddingBottom: 20 },
+  placeholderMedallion: { width: 86, height: 86, borderRadius: 43, backgroundColor: colors.background, alignItems: "center", justifyContent: "center" },
+  metadataRow: { flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 12 },
+  duration: { flexDirection: "row", alignItems: "center", gap: 5 },
+  stacked: { flexDirection: "column", alignItems: "stretch" },
+  sectionNavigation: { flexDirection: "row", flexWrap: "wrap", gap: 8, paddingVertical: 4, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.border },
+  sectionLink: { minHeight: 44, paddingHorizontal: 12, justifyContent: "center" },
+  sectionLinkText: { color: colors.primary, fontSize: 14, lineHeight: 20 },
+  photoCreditLink: { minHeight: 44, justifyContent: "center", paddingHorizontal: 4 },
+  photoCreditLabel: { color: colors.primary, fontSize: 12, lineHeight: 18, textDecorationLine: "underline" },
+  sectionTitle: { color: colors.text, fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 23, lineHeight: 29, fontWeight: "700" },
+  returnLinks: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  saveLabel: { color: colors.primary, fontSize: 11, lineHeight: 16 },
   titleRow: {
     alignItems: "center",
     flexDirection: "row",
     gap: spacing.sm,
   },
-  placeTitle: { flex: 1, minWidth: 0 },
+  placeTitle: { flex: 1, minWidth: 0, fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 31, lineHeight: 37, fontWeight: "700", letterSpacing: -0.6 },
+  accessibleTitle: { fontSize: 21, lineHeight: 28 },
   saveAction: {
     alignItems: "center",
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
-    height: 44,
+    minHeight: 48,
     justifyContent: "center",
-    width: 44,
+    minWidth: 54,
+    padding: 6,
+    gap: 2,
   },
   quickActions: {
     alignItems: "center",
@@ -762,10 +803,10 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: spacing.sm,
   },
-  quickAction: { flexBasis: 160, flexGrow: 1, minWidth: 0 },
-  directionAction: { flexBasis: 132, flexGrow: 1, minHeight: 44 },
+  quickAction: { flexBasis: "100%", flexGrow: 1, minWidth: 0 },
+  directionAction: { flexGrow: 1, minHeight: 44, paddingVertical: 8, paddingHorizontal: 12 },
   description: { color: colors.textMuted },
-  eyebrow: { color: colors.primary, marginBottom: spacing.xs },
+  eyebrow: { color: colors.primary, backgroundColor: colors.primarySoft, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
   muted: { color: colors.textMuted },
   section: { gap: spacing.sm },
   verifiedCard: {

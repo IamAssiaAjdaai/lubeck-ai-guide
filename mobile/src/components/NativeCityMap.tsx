@@ -23,7 +23,10 @@ import { NativeIcon } from "./NativeIcon";
 
 const MAP_STYLE_URL = resolveMapStyleUrl();
 
-export function NativeCityMap({ citySlug, places, routeStart, routeFinish, currentSlug, onLocation, followUserLocation = false, compact = false, previewCompact = false, liveFocus = false }: Readonly<{
+export function NativeCityMap({ citySlug, places, routeStart, routeFinish, currentSlug, onLocation, followUserLocation = false, compact = false, previewCompact = false, liveFocus = false, routeOverview, onSelectPlace }: Readonly<{
+  /** Opt-in published stop-order diagram; never street-level walking directions. */
+  routeOverview?: { fitLabel: string; stopLabel: string };
+  onSelectPlace?: (slug: string) => void;
   citySlug?: string;
   places: readonly PublicPlaceCard[];
   routeStart?: { lat: number; lng: number };
@@ -49,6 +52,13 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
     const timer = setTimeout(() => setMapFailed(true), 30000);
     return () => clearTimeout(timer);
   }, [attempt, loaded, mapFailed]);
+  const bounds: [number, number, number, number] | undefined = places.length ? [
+    Math.min(...places.map(p => p.coordinates.lng)), Math.min(...places.map(p => p.coordinates.lat)),
+    Math.max(...places.map(p => p.coordinates.lng)), Math.max(...places.map(p => p.coordinates.lat)),
+  ] : undefined;
+  const fitOverview = () => {
+    if (bounds) cameraRef.current?.fitBounds(bounds, { padding: { top: 48, bottom: 48, left: 48, right: 48 }, duration: 0 });
+  };
   const appState = useRef(AppState.currentState);
   const initialCenter: [number, number] = routeStart ? [routeStart.lng, routeStart.lat] : places[0]
     ? [places[0].coordinates.lng, places[0].coordinates.lat]
@@ -129,7 +139,7 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
   return (
     <View style={styles.shell}>
       {mapFailed ? (
-        <View accessibilityRole="alert" style={[styles.fallback, compact && styles.compactMap, previewCompact && styles.previewCompactMap, liveFocus && styles.liveMap]}>
+        <View accessibilityRole="alert" style={[styles.fallback, routeOverview && styles.overviewMap, compact && styles.compactMap, previewCompact && styles.previewCompactMap, liveFocus && styles.liveMap]}>
           <AppText variant="caption" style={styles.statusText}>{walkCopy(locale).mapUnavailable}</AppText>
           <AppText>{walkCopy(locale).mapFallbackHelp}</AppText>
           <PrimaryButton label={walkCopy(locale).retry} onPress={() => { setLoaded(false); setMapFailed(false); setAttempt(v => v + 1); }} />
@@ -138,26 +148,40 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
         <Map
           key={attempt}
           mapStyle={MAP_STYLE_URL}
-          onDidFinishRenderingMapFully={() => setLoaded(true)}
-          style={[styles.map, compact && styles.compactMap, liveFocus && styles.liveMap]}
+          onDidFinishRenderingMapFully={() => { if (!loaded && routeOverview) fitOverview(); setLoaded(true); }}
+          style={[styles.map, routeOverview && styles.overviewMap, compact && styles.compactMap, liveFocus && styles.liveMap]}
           compass
           attribution
           onDidFailLoadingMap={() => setMapFailed(true)}
         >
-          <Camera ref={cameraRef} initialViewState={{ center: initialCenter, zoom: 13 }} />
+          <Camera ref={cameraRef} initialViewState={routeOverview && bounds ? { bounds, padding: { top: 48, bottom: 48, left: 48, right: 48 } } : { center: initialCenter, zoom: 13 }} />
           {routeStart && line.length > 1 ? <GeoJSONSource id="walk-route" data={{ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: line } }}><Layer id="walk-route-line" type="line" paint={{ "line-color": colors.primary, "line-width": 4 }} /></GeoJSONSource> : null}
+          {routeOverview && line.length > 1 ? <GeoJSONSource id="published-stop-order" data={{ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: places.map(p => [p.coordinates.lng, p.coordinates.lat]) } }}><Layer id="published-stop-order-line" type="line" paint={{ "line-color": colors.primary, "line-width": 3, "line-dasharray": [2, 2] }} /></GeoJSONSource> : null}
           {routeFinish ? <Marker id="walk-finish" lngLat={[routeFinish.lng, routeFinish.lat]}><AppText accessibilityLabel={walkCopy(locale).end}>⚑</AppText></Marker> : null}
           {places.map((place, index) => (
             <Marker
               key={place.slug}
               id={`place-${place.slug}`}
               lngLat={[place.coordinates.lng, place.coordinates.lat]}
+              onPress={onSelectPlace ? () => onSelectPlace(place.slug) : undefined}
+              accessibilityLabel={routeOverview ? `${routeOverview.stopLabel} ${index + 1}. ${nativePlaceName(citySlug ?? "", place.slug, place.content.name, locale)}` : undefined}
+              accessibilityRole={routeOverview ? "button" : undefined}
+              onAccessibilityTap={onSelectPlace ? () => onSelectPlace(place.slug) : undefined}
+              accessibilityActions={onSelectPlace ? [{ name: "activate" }] : undefined}
+              onAccessibilityAction={onSelectPlace ? event => { if (event.nativeEvent.actionName === "activate") onSelectPlace(place.slug); } : undefined}
             >
-              <View
+              {routeOverview ? <Pressable
+                accessible
+                accessibilityRole={onSelectPlace ? "button" : undefined}
+                accessibilityState={onSelectPlace ? { selected: place.slug === currentSlug } : undefined}
+                onPress={onSelectPlace ? () => onSelectPlace(place.slug) : undefined}
+                accessibilityLabel={`${routeOverview?.stopLabel ?? ""} ${index + 1}. ${nativePlaceName(citySlug ?? "", place.slug, place.content.name, locale)}`.trim()}
+                style={routeOverview ? styles.overviewMarkerTarget : undefined}
+              ><View style={[styles.placeMarker, routeOverview && styles.overviewMarker, place.slug === currentSlug && { backgroundColor: colors.success }]}><Text allowFontScaling={false} style={{ color: "white", fontSize: routeOverview ? 11 : 10, textAlign: "center", fontWeight: "600" }}>{index + 1}</Text></View></Pressable> : <View
                 accessible
                 accessibilityLabel={`${index + 1}. ${nativePlaceName(citySlug ?? "", place.slug, place.content.name, locale)}`}
                 style={[styles.placeMarker, place.slug === currentSlug && { backgroundColor: colors.success }]}
-              ><Text style={{ color: "white", fontSize: 10, textAlign: "center" }}>{index + 1}</Text></View>
+              ><Text style={{ color: "white", fontSize: 10, textAlign: "center" }}>{index + 1}</Text></View>}
             </Marker>
           ))}
           {userLocation ? (
@@ -167,11 +191,12 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
           ) : null}
         </Map>
       )}
-      {!loaded && !mapFailed ? <View pointerEvents="none" accessibilityRole="progressbar" accessibilityLabel={uxCopy(locale).map} style={[StyleSheet.absoluteFill, styles.loadingOverlay, compact && styles.compactLoadingOverlay, previewCompact && styles.previewCompactLoadingOverlay, liveFocus && styles.liveLoadingOverlay]}>
+      {!loaded && !mapFailed ? <View pointerEvents="none" accessibilityRole="progressbar" accessibilityLabel={uxCopy(locale).map} style={[StyleSheet.absoluteFill, styles.loadingOverlay, compact && styles.compactLoadingOverlay, previewCompact && styles.previewCompactLoadingOverlay, liveFocus && styles.liveLoadingOverlay, routeOverview && styles.overviewLoadingOverlay]}>
         <NativeIcon ios="map" android="map" color={colors.primary} size={30} />
         <ActivityIndicator color={colors.primary} />
         <AppText>{uxCopy(locale).map}</AppText>
       </View> : null}
+      {routeOverview && !mapFailed ? <Pressable accessibilityRole="button" accessibilityLabel={routeOverview.fitLabel} onPress={fitOverview} style={styles.fitButton}><NativeIcon ios="arrow.up.left.and.arrow.down.right" android="zoom_out_map" color={colors.primary} size={19} /></Pressable> : null}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}
@@ -180,12 +205,13 @@ export function NativeCityMap({ citySlug, places, routeStart, routeFinish, curre
         onPress={() => void handleLocationRequest()}
         style={({ pressed }) => [
           styles.locationButton,
-          (compact || previewCompact) && styles.compactLocationButton,
+          (compact || previewCompact || routeOverview) && styles.compactLocationButton,
+          routeOverview && styles.overviewLocationButton,
           pressed && styles.locationButtonPressed,
         ]}
       >
         <NativeIcon ios="location.fill" android="my_location" color={colors.primary} size={18} />
-        {!compact && !previewCompact ? (
+        {!compact && !previewCompact && !routeOverview ? (
           <Text style={styles.locationButtonText} numberOfLines={1} adjustsFontSizeToFit>
             {locationStatus === "requesting" ? messages.locationRequesting : messages.useLocation}
           </Text>
@@ -227,6 +253,10 @@ function getLocationStatusMessage(
 }
 
 const styles = StyleSheet.create({
+  overviewMap: { height: 240 }, overviewLoadingOverlay: { bottom: undefined, height: 240 }, overviewLocationButton: { width: 44, minHeight: 44 },
+  fitButton: { position: "absolute", top: 12, start: 12, width: 44, minHeight: 44, borderRadius: 22, backgroundColor: colors.surface, alignItems: "center", justifyContent: "center" },
+  overviewMarkerTarget: { width: 44, height: 44, alignItems: "center", justifyContent: "center" },
+  overviewMarker: { width: 24, height: 24, borderRadius: 12 },
   shell: { gap: spacing.sm, position: "relative" },
   map: { height: 320, borderRadius: radius.lg, overflow: "hidden" },
   compactMap: { height: 380, borderRadius: radius.md },

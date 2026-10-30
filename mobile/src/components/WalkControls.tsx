@@ -48,6 +48,7 @@ export function WalkChoices<T extends string | number>({
   interestGrid = false,
   compactInterests = false,
   compactPace = false,
+  cityHub = false,
 }: {
   label: string;
   options: readonly { value: T; label: string; description?: string }[];
@@ -62,8 +63,9 @@ export function WalkChoices<T extends string | number>({
   interestGrid?: boolean;
   compactInterests?: boolean;
   compactPace?: boolean;
+  cityHub?: boolean;
 }) {
-  const { width } = useWindowDimensions();
+  const { width, fontScale } = useWindowDimensions();
   const { categoryColumns } = useResponsiveTextLayout();
   const wrapSegments = compact && options.length > categoryColumns;
   const { direction } = useNativeLocale();
@@ -120,6 +122,7 @@ export function WalkChoices<T extends string | number>({
                 variant === "segment" && checked && styles.activeSegment,
                 compact && [styles.compactOption, wrapSegments && { flexBasis: "45%" }],
                 isCompactChip && styles.compactChip,
+                cityHub && { minHeight: 44, flex: 1, flexBasis: wrapSegments ? fontScale > 1.5 ? "100%" : "45%" : 0, flexGrow: 1, paddingHorizontal: 4, justifyContent: "center", backgroundColor: checked ? variant === "segment" ? colors.surface : colors.primary : variant === "segment" ? "transparent" : colors.surface },
                 interestGrid && styles.interestOption,
                 compactInterests && styles.compactInterestOption,
                 variant === "segment" && compactPace && styles.compactPaceOption,
@@ -158,7 +161,9 @@ export function WalkChoices<T extends string | number>({
                       styles.compactLabel,
                       { writingDirection: direction },
                       checked && variant === "chips" && styles.compactLabelSelected,
+                      cityHub && checked && { color: variant === "segment" ? colors.text : colors.surface },
                       interestGrid ? (compactInterests ? styles.compactInterestLabel : styles.interestLabel) : variant === "segment" && checked && { color: colors.surface },
+                      cityHub && variant === "segment" && checked && { color: colors.text },
                     ]}
                   >
                     {option.label}
@@ -183,7 +188,7 @@ export function WalkChoices<T extends string | number>({
                   </AppText>
                 ) : null}
               </View>
-              {compactInterests ? <NativeIcon ios={checked ? "checkmark.circle.fill" : "circle"} android={checked ? "check_circle" : "radio_button_unchecked"} size={18} color={checked ? colors.primary : colors.borderStrong} /> : interestGrid ? null : isCompactChip && checked ? (
+              {compactInterests ? <NativeIcon ios={checked ? "checkmark.circle.fill" : "circle"} android={checked ? "check_circle" : "radio_button_unchecked"} size={18} color={checked ? colors.primary : colors.borderStrong} /> : interestGrid ? null : isCompactChip && checked && !cityHub ? (
                 <NativeIcon
                   ios="checkmark"
                   android="check"
