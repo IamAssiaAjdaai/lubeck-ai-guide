@@ -9,13 +9,23 @@ import { activeWalkCopy } from "../src/lib/activeWalkCopy";
 import { resolveActivePublishedTrip } from "../src/lib/activePublishedTrip";
 import { PublishedActiveWalk } from "../src/components/PublishedActiveWalk";
 
-const state = vi.hoisted(() => ({ locale: "en", values: new Map<string, string>(), failWrite: false, retry: vi.fn() }));
+const state = vi.hoisted(() => ({ locale: "en", values: new Map<string, string>(), failWrite: false, retry: vi.fn(), width: 402, height: 874, fontScale: 1, top: 59, bottom: 34 }));
 vi.mock("react-native", () => ({
   Platform: { OS: "ios" },
-  useWindowDimensions: () => ({ fontScale: 1 }),
+  useWindowDimensions: () => ({ width: state.width, height: state.height, fontScale: state.fontScale }),
   StyleSheet: { create: (styles: unknown) => styles, flatten: (styles: unknown[]) => Object.assign({}, ...styles.filter(Boolean)) },
-  View: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  View: ({ children, style, onLayout }: React.PropsWithChildren<{ style?: unknown; onLayout?(event: { nativeEvent: { layout: { height: number } } }): void }>) => {
+    const ref = React.useRef<HTMLDivElement>(null);
+    React.useEffect(() => {
+      const element = ref.current;
+      const measure = (event: Event) => onLayout?.({ nativeEvent: { layout: { height: (event as CustomEvent<number>).detail } } });
+      element?.addEventListener("native-layout", measure);
+      return () => element?.removeEventListener("native-layout", measure);
+    }, [onLayout]);
+    return <div ref={ref} data-layout={onLayout ? "true" : undefined} data-native-style={JSON.stringify(style)}>{children}</div>;
+  },
 }));
+vi.mock("react-native-safe-area-context", () => ({ useSafeAreaInsets: () => ({ top: state.top, bottom: state.bottom, left: 0, right: 0 }) }));
 vi.mock("expo-router", () => ({
   useFocusEffect: (callback: () => void | (() => void)) => React.useEffect(callback, [callback]),
   Link: ({ children, href, asChild }: React.PropsWithChildren<{ href: unknown; asChild?: boolean }>) => {
@@ -25,9 +35,9 @@ vi.mock("expo-router", () => ({
 }));
 vi.mock("../src/components/ui", () => ({
   Screen: ({ children, footer }: React.PropsWithChildren<{ footer?: React.ReactNode }>) => <main><section data-testid="active-body">{children}</section><footer data-testid="active-actions">{footer}</footer></main>,
-  AppText: ({ children, accessibilityRole }: React.PropsWithChildren<{ accessibilityRole?: string }>) => accessibilityRole === "header" ? <h2>{children}</h2> : <span>{children}</span>,
+  AppText: ({ children, accessibilityRole, ...props }: React.PropsWithChildren<{ accessibilityRole?: string }>) => accessibilityRole === "header" ? <h2 data-text-props={JSON.stringify(props)}>{children}</h2> : <span data-text-props={JSON.stringify(props)}>{children}</span>,
   PressableSurface: ({ children, onPress, accessibilityLabel }: React.PropsWithChildren<{ onPress?(): void; accessibilityLabel?: string }>) => <button aria-label={accessibilityLabel} onClick={onPress}>{children}</button>,
-  PrimaryButton: ({ label, onPress, disabled, busy, accessibilityLabel }: { label: string; onPress?(): void; disabled?: boolean; busy?: boolean; accessibilityLabel?: string }) => <button aria-label={accessibilityLabel} disabled={disabled || busy} onClick={onPress}>{label}</button>,
+  PrimaryButton: ({ label, onPress, disabled, busy, accessibilityLabel, ...props }: { label: string; onPress?(): void; disabled?: boolean; busy?: boolean; accessibilityLabel?: string }) => <button data-button-props={JSON.stringify(props)} aria-label={accessibilityLabel} disabled={disabled || busy} onClick={onPress}>{label}</button>,
   StatusMessage: ({ children }: React.PropsWithChildren) => <p role="status">{children}</p>,
 }));
 vi.mock("../src/components/NativeCityMap", () => ({
@@ -73,7 +83,7 @@ async function ready(locale = state.locale) {
   await waitFor(() => expect((button as HTMLButtonElement).disabled).toBe(false));
   return button;
 }
-beforeEach(() => { state.locale = "en"; state.values.clear(); state.failWrite = false; });
+beforeEach(() => { state.locale = "en"; state.values.clear(); state.failWrite = false; state.width = 402; state.height = 874; state.fontScale = 1; state.top = 59; state.bottom = 34; });
 afterEach(() => { cleanup(); vi.clearAllMocks(); });
 
 it.each(["en", "de"])("shows the real %s guest route and keeps stop details outside execution context", async locale => {
@@ -215,4 +225,74 @@ it("resolves only the exact published city/tour/order and rejects unresolved or 
   expect(resolveActivePublishedTrip(fixture, { ...trip, stopSlugs: ["second", "first", "third"] })).toBeUndefined();
   expect(resolveActivePublishedTrip(fixture, { ...trip, stopSlugs: ["first", "unknown", "third"] })).toBeUndefined();
   expect(resolveActivePublishedTrip({ ...fixture, places: fixture.places.slice(0, 2) }, trip)).toBeUndefined();
+});
+
+function measureActions(primaryHeight: number, secondaryHeight: number) {
+  const primary = within(screen.getByTestId("active-actions")).getByRole("button", { name: activeWalkCopy(state.locale).mark });
+  const secondary = screen.getByRole("button", { name: activeWalkCopy(state.locale).pause });
+  fireEvent(primary.closest('[data-layout="true"]')!, new CustomEvent("native-layout", { detail: primaryHeight }));
+  fireEvent(secondary.closest('[data-layout="true"]')!, new CustomEvent("native-layout", { detail: secondaryHeight }));
+}
+
+it.each(["en", "de"])("moves measured oversized %s secondary controls into the body without duplicate actions or cursor changes", async locale => {
+  state.locale = locale; state.width = 375; state.height = 667; state.top = 20; state.bottom = 0; state.fontScale = 3.12;
+  const view = render(<PublishedActiveWalk trip={trip} />);
+  await ready();
+  const saved = structuredClone(stored());
+  measureActions(120, 180);
+  const copy = activeWalkCopy(locale);
+  expect(within(screen.getByTestId("active-actions")).getByRole("button", { name: copy.mark })).toBeTruthy();
+  expect(within(screen.getByTestId("active-actions")).queryByRole("button", { name: copy.pause })).toBeNull();
+  expect(within(screen.getByTestId("active-body")).getByRole("button", { name: copy.pause })).toBeTruthy();
+  expect(screen.getAllByRole("button", { name: copy.end })).toHaveLength(1);
+  // Measuring the relocated group must not send it back into the footer.
+  measureActions(120, 180);
+  view.rerender(<PublishedActiveWalk trip={trip} />);
+  expect(within(screen.getByTestId("active-actions")).queryByRole("button", { name: copy.pause })).toBeNull();
+  expect(stored()).toEqual(saved);
+  fireEvent.click(screen.getByRole("button", { name: copy.pause }));
+  const resume = await screen.findByRole("button", { name: copy.resume });
+  await waitFor(() => expect((resume as HTMLButtonElement).disabled).toBe(false));
+  expect(screen.getAllByText(copy.paused).length).toBeGreaterThan(0);
+  expect(currentRow(0)).toBeTruthy();
+  expect(screen.getByText(copy.saved)).toBeTruthy();
+  fireEvent.click(resume);
+  await ready();
+  expect(stored()).toMatchObject({ executionState: "active", statuses: saved.statuses, startedAt: saved.startedAt });
+});
+
+it("uses safe-area height and a strict one-third threshold, then remeasures after viewport changes", async () => {
+  state.height = 700; state.top = 40; state.bottom = 60; // safe viewport = 600
+  const view = render(<PublishedActiveWalk trip={trip} />);
+  await ready();
+  measureActions(80, 96); // + 8 gap + 16 existing Screen chrome = exactly 200
+  expect(within(screen.getByTestId("active-actions")).getByRole("button", { name: "Pause" })).toBeTruthy();
+  measureActions(80, 97);
+  expect(within(screen.getByTestId("active-actions")).queryByRole("button", { name: "Pause" })).toBeNull();
+  state.height = 1000;
+  view.rerender(<PublishedActiveWalk trip={trip} />);
+  measureActions(80, 97);
+  expect(within(screen.getByTestId("active-actions")).getByRole("button", { name: "Pause" })).toBeTruthy();
+});
+
+it.each([1, 3.12])("keeps accessible text scaling and growing numbered badges at font scale %s", async fontScale => {
+  state.fontScale = fontScale; state.width = 375;
+  render(<PublishedActiveWalk trip={trip} />);
+  await ready();
+  const title = screen.getByRole("heading", { name: "Real published route" });
+  expect(JSON.parse(title.dataset.textProps!)).not.toHaveProperty("maxFontSizeMultiplier");
+  for (const text of document.querySelectorAll<HTMLElement>("[data-text-props]")) {
+    expect(JSON.parse(text.dataset.textProps!)).not.toHaveProperty("allowFontScaling", false);
+  }
+  for (const button of document.querySelectorAll<HTMLElement>("[data-button-props]")) {
+    expect(JSON.parse(button.dataset.buttonProps!)).not.toHaveProperty("labelStyle");
+  }
+  const badge = currentRow(0).querySelector<HTMLElement>("[data-native-style]")!;
+  const badgeStyles = JSON.parse(badge.dataset.nativeStyle!);
+  expect(badgeStyles[1].minHeight).toBeGreaterThanOrEqual(18 * fontScale + 12);
+  expect(badgeStyles[1].minWidth).toBeGreaterThanOrEqual(13 * fontScale + 14);
+  const body = screen.getByTestId("active-body");
+  const bottom = within(body).getByRole("button", { name: "City hub" }).closest("a")!.parentElement!;
+  expect(JSON.parse(bottom.dataset.nativeStyle!).paddingBottom).toBeGreaterThanOrEqual(16);
+  expect(JSON.parse(within(body).getByRole("button", { name: "Route preview" }).closest("a")!.dataset.route!)).toEqual({ pathname: "/city/[citySlug]/tour/[tourSlug]", params: { citySlug: "test-city", tourSlug: "real-tour" } });
 });

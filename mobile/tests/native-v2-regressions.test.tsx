@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+vi.mock("react-native-safe-area-context", () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) }));
 vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { useSession: () => ({ data: null }) } }));
 vi.mock("../src/components/CityPhotoCredits", () => ({ CityPhotoCredits: () => null }));
 vi.mock("../src/hooks/useAccountWalks", () => ({ useAccountWalks: () => ({ userId: state.account ? "owner" : undefined, walks: state.account ? [{ id: "cloud-walk", citySlug: "lubeck", remaining: ["holstentor"], visited: [] }] : [], loading: false, error: false, refresh: vi.fn() }) }));
