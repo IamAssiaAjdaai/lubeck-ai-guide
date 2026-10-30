@@ -45,3 +45,9 @@ Each push used git push origin <SHA>:refs/heads/<backup>; git ls-remote --exit-c
 ## Integration gate
 
 Target: develop at `9f8470077dfa8eb7663246905bffd3cf8a0c6591`; main untouched. No application merge is authorized by snapshot creation. See INTEGRATION-PREFLIGHT.md for blockers and source-to-successor mapping.
+
+## Final verification observation
+
+All 13 refs pushed by this task matched their remote SHAs at final verification. All selected safe working-file contents still match their snapshots. A separate backup activity changed the onboarding worktree from the inventoried original HEAD/branch to `backup/citywalk-full-work-20261030` at `40f69ea9a5f40ec2df2a8f4215f0f6d076f543ac`. That additional remote ref was verified independently. Its complete Git tree is identical to our onboarding snapshot `ab797b5ccefdbf672b2ad6280b9cb4b4a936a2fd` (empty git diff). This task did not perform that branch checkout/reset/ordinary-index commit and has left it untouched. Therefore the earlier original-HEAD preservation statement describes this task's non-mutating snapshot procedure, not a guarantee that another process did not change the worktree. No backed-up content was lost.
+
+The final observation is recorded by a second documentation-only commit. Final totals for this task: 12 new commits (10 snapshots + 2 documentation commits), 13 branches pushed (12 backup + 1 documentation integration), 0 shared-target merges. The separately observed backup ref is not counted as a push made by this task.
