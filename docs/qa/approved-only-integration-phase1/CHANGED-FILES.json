@@ -1,0 +1,522 @@
+[
+  {
+    "path": "mobile/assets/images/account-journey.svg",
+    "sha256": "1311bb5af5f003a77e3dc1e002da897397d9f4d8348e4798615eefdaff8cfd86",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/city-hub-blue-fill.svg",
+    "sha256": "1dd1199dbdce9eadcfa1c652b25117363beeb480c18cdf1616ba661dc7c03913",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/city-hub-cinematic-wash.svg",
+    "sha256": "8cdd685631c88cfe73903cb5374ee48d0654d8f9e7236178c3bcc27bc93a4649",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/introduction-holstentor.jpg",
+    "sha256": "fb949c64783b0c8ec5048c71c7bed7671c4e40f7dc4d1df5d1e852f984aece83",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/introduction-photos.LICENSE.md",
+    "sha256": "5ad780a510677777ba6d5ba00441dedb6f028a58afebb22d7abebfcd2685cbe5",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/introduction-sky-wash.svg",
+    "sha256": "db8159b36aca18cc4b10a58138fe71a85ed1df4f4085a022f9972a09e15300b5",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/location-world.svg",
+    "sha256": "12b3729d6743531ef42e1d56dc62cfe6430f6ba6d56be8c41ca28959cdfc94ef",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/selection-card-gradient.svg",
+    "sha256": "7513fe9c90ec285dec78f335a6215d173a176bd6e2c3576c1f9ac0f14fdcf8be",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-duesseldorf.webp",
+    "sha256": "d0bff0cc21342460ccd3b4799fdc5f114927cc7d56b2261f25922052ce0f2777",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-hamburg.webp",
+    "sha256": "d46298152f0500796669686ab4b1d7561331901b37ba17bea296e6a48a4968b7",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-headline-wash.svg",
+    "sha256": "9101018033db59daa02049a61ea6f08aeedee5580304d991f0796d76f57856f5",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-holstentor.LICENSE.md",
+    "sha256": "5a8bf025a56ce89c7166e5163329f6ad7e9fbb10c050142be94c5147c7bc0eb3",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-holstentor.webp",
+    "sha256": "a2b8a0c4f04506f01afe1c38768d23a39d2409bdacc95c9e7ba422bde95b6bf8",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-overlay-alternate.svg",
+    "sha256": "5eba56732876715b84185ad458e50e63efab2be1b457a7f881fbcbf8a396d100",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-overlay.svg",
+    "sha256": "73493c11f8a28c5ff6bc37d90381d7eea79b26e76cb3713e3d9907495b468241",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-photos.LICENSE.md",
+    "sha256": "a02e1a03c524df1d7ea1d2cca04719f7d3ef6f83067e687dc17810324ef28010",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-prague.webp",
+    "sha256": "c22731c5043d07569f7bf6241096d090cab8dbe4c08d51b4a319c3883294e30f",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/assets/images/welcome-skyline.svg",
+    "sha256": "7f63ac85bbaaaac940389291d2daee30d179c713ca2e5910ba9d8ebb5f8f9ad4",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/account/index.tsx",
+    "sha256": "226cf52452e51c916bff6c1f13ad00fb15692a464049252c6bf8bfba7ed854a4",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/city/[citySlug]/assistant.tsx",
+    "sha256": "bd83cdfdc375cf1a37ebcf3218b34d616bca738d566667c8370bd90b9ad622f2",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/city/[citySlug]/explore.tsx",
+    "sha256": "5b8f617d255854675af7a9e288f7b469b9fbdef3b5b6b8f9f5044a7d81041db6",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/city/[citySlug]/index.tsx",
+    "sha256": "df8f74f52d00c2ff06ab1703813c14cee5fcacf6ceed2852c1e15ca77116a3d2",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/city/[citySlug]/place/[placeSlug].tsx",
+    "sha256": "7c7c2f93fff29a48aef53ccb8bb703dde392e2f6635d913426e305beac2ddf91",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/city/[citySlug]/routes.tsx",
+    "sha256": "e2529da8f5ed7512b53a01d8de7eb23edac890b346d7a466c03243076ade8107",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/city/[citySlug]/tour/[tourSlug].tsx",
+    "sha256": "34f4d60d0013761e6c4a20245966ff2f68b83ae73971b5368c5d77895698bda2",
+    "exactSource142bce0": false
+  },
+  {
+    "path": "mobile/src/app/city/[citySlug]/walk.tsx",
+    "sha256": "8d1bcaff9adf419eff4ca79c71533b27269c2608a25c184501318992ca4a2e4b",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/index.tsx",
+    "sha256": "32c23f617579eda1656ee7038fcf548c5292d25ffc844f7e6ef9807744855ada",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/introduction.tsx",
+    "sha256": "b6c54826891b1d17cec7e7dce9306f41ea300bd55ace9c76a3633ad1a19607e4",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/legal.tsx",
+    "sha256": "66919b43b4bae029f77c0664457c907f0617e5591e0bc54fb435cad3aa0a011b",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/photo-credits.tsx",
+    "sha256": "c7a8ddb25fb8da7ded06cb9a2b4b275ba27cec61c7351cb6772d457464f3029d",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/app/welcome.tsx",
+    "sha256": "62060d8d9fdac224b51288d15be9651c6a3afb66b05ef640eab7cf9f84a205e3",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/AccountOnboardingFrame.tsx",
+    "sha256": "8d1b190f850da73693b88c38047f2d8a71867ed3e456eaabd3deff2ba210505a",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/AvailableTime.tsx",
+    "sha256": "f96925b72cf414f5278ce573c19f51e4341f15b8be85ca294b30802be27bad58",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/CityHubHero.tsx",
+    "sha256": "4f9dcb7dbcdd95bc0bb602ada16b2f8d3107fd1b919d9c7ee9732247575d4264",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/CityPhotoCredits.tsx",
+    "sha256": "072cffe22acf3fd7d0f5629600f3e1fc8280e6e1a1c73b9dd76b8a1deea6ebaa",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/CuratedTourControls.tsx",
+    "sha256": "45541a8dc59dc56c4c44a184a04c2aacfc164475afbb0e7a6b5c9377d4279f2f",
+    "exactSource142bce0": false
+  },
+  {
+    "path": "mobile/src/components/FirstExperience.tsx",
+    "sha256": "22a3dff2192c42ad8cc541b62bbcfc0092451d6397b6a1e1b56eec0ea8376257",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/LocaleSelector.tsx",
+    "sha256": "eb038214bb5b8db3fe9dc2b6f18bad2ca02d0f112a6cbced736ccd89c2eea59f",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/LocationPermission.tsx",
+    "sha256": "ae66aa695e9b4ea01e1569b84d330e72904b5e76af83b71f3686c9d7c96538a3",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/NativeChrome.tsx",
+    "sha256": "272c224ef1d7cdc26e7f58c7244b3272f00ebb71fb9635f5cbbde32b93a5f783",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/NativeCityMap.tsx",
+    "sha256": "16b72fe707a893fe6c148b6a08c2cd17a17a422384a068653ba6c6607eb41b0d",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/NativeWalkFlow.tsx",
+    "sha256": "d0fb18622c99143fe6d60e2de4f7f91be55bcecdd7c2abb771351892af1f790e",
+    "exactSource142bce0": false
+  },
+  {
+    "path": "mobile/src/components/PublishedActiveWalk.tsx",
+    "sha256": "759dbae65e153e8b5795c3429865f5039c13add317f71d73bada5fdd26dfc3c5",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/ReturnByTimePicker.tsx",
+    "sha256": "2adf64943e3efcfb35cfe321eb0c9cc55e720118cb6c909f7562b0f132da726d",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/SelectInterests.tsx",
+    "sha256": "b2ea0124f5e66f071a727e8d2b9316146eacdae357be8594713d3f2c25223c1a",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/WalkControls.tsx",
+    "sha256": "70550b08190e8036b5fba8fc5b003bbae8ba35da30ee4fb944582ca0c2de2cde",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/components/ui.tsx",
+    "sha256": "b80f21257e9f69707696f2f7c196ade80b983fd2b0ac96b91a3c52fee9d4b453",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/accountOnboardingCopy.ts",
+    "sha256": "440a4e21c0146b00fd03b4ddbb930e465915ece1c9073b4e517dc9bc9f555bb6",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/activePublishedTrip.ts",
+    "sha256": "0433477e2628cd4ceb19ab038a4a0384fc86567b72c2bda4309b6cb569bceef0",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/activeWalkCopy.ts",
+    "sha256": "dd4b338430726765ce44806669c728f549998c16b90996bcc1817d8a358db296",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/cityHubPhotography.ts",
+    "sha256": "35cde0d3054e1518e54b6f7c63bba555ca9f91c451d7ffddb2da6fadd4ce2153",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/cityHubRecommendations.ts",
+    "sha256": "f58114e4ea8cd1ebff4a72bf6498b23467d90aefaa5a7336d4243608957bd472",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/citySelectionCopy.ts",
+    "sha256": "93309bb4e35d6f69a9e0c3f9679a5583987197940fee5e137f95c0ee738f856a",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/curatedProgressStorage.ts",
+    "sha256": "a3b26c6b0f8f426620a0527fbded1bfcfa6d0b5c71c71a5c12bae06035d4864e",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/explorePhotography.ts",
+    "sha256": "9367b3a5da0e43dd48aa5a4862c15eaf67b9e70a664e1e1d83d31837d7410a4b",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/firstExperienceCopy.ts",
+    "sha256": "6926ef44e3ce79f1ac29718409881136dbaf5148adf7d52ed3a08072d16d3531",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/interestOnboardingCopy.ts",
+    "sha256": "9d6988645428ed7d1fefd61f9e6248cc67dcc7544c1ec88f0474e2729f90014a",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/introductionCopy.ts",
+    "sha256": "22ec1f0f0d37c1de31a86c7195ed3dd81e23d2f9fdba9d52cb95a155b44d80a6",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/locationOnboardingCopy.ts",
+    "sha256": "de8e70f6644b8875ec005e04aa32d0fcd117fceaae358c6f6b1dcaeee56a706e",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/photoCredits.ts",
+    "sha256": "86f59f5709ccba030f376776a437f7127823ad00b581a007f5e3957ce2112556",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/placeDetailCopy.ts",
+    "sha256": "c519a2ae993efea558c8daf93ce5513d125aae077eefafea53ddb513e6c91a4c",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/plannerNavigationCopy.ts",
+    "sha256": "c4abf658cc6f05d3829aa5557b2a22eeda3bc32723b126c748394dbe25a6cb1d",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/plannerReturnIntent.ts",
+    "sha256": "7d8d697afb22a58ce255c2af506c45eb07902c42987f995cf2158fdb830ebc44",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/publishedRouteTiming.ts",
+    "sha256": "fef2f6fbbd4f05890501d1483c1cf4e8ff699678b6321105ea158902e799e346",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/publishedRoutes.ts",
+    "sha256": "50d22f25e79e2e887a5bb9edcaf17aa6412c64aa2a526b0bfdbf576d1d644733",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/routePreviewCopy.ts",
+    "sha256": "d2694fe1beb7a1dccc30f541f4a838c5551774727157647681ee1200999bd231",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/walkStorage.ts",
+    "sha256": "85390d11203a2c31271ef97af5e749d28114429fa0f153cf02ac3e75d20a0838",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/src/lib/welcomeCopy.ts",
+    "sha256": "3a041120953e7e9a4bb6b81bff088fb18c1c8b3fdd5b2fc21b084bce8197d8e8",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/account-guest-flow.test.tsx",
+    "sha256": "03bf5bb9140bd3acd99be2b51471ecd4547dee6b6ae993ab6304037b67551407",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/account-onboarding-frame.test.tsx",
+    "sha256": "06837bf908b49b2646e13baca95bd77864db2aca1bfbffe1f687602c1420f7a6",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/available-time.test.tsx",
+    "sha256": "750227e2b52c8ab33db2486014491996e8f1bc526359c291a2a2b37aa181caa0",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/city-hub-actions.test.tsx",
+    "sha256": "3dfb41482260187419be419064a69cfaf35cba2e006ef2097df56192024f66bd",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/city-hub-editorial-v1.test.ts",
+    "sha256": "3e7c98ad53bc76c008388a0f62eeca4deffe5c2212790f133654ef58f6af59c4",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/city-hub-photography.test.ts",
+    "sha256": "f71cbaf4294c5ab567e59d95b1e839addc51ef680f268394d2dac9da829a3cab",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/curated-controls.test.tsx",
+    "sha256": "fcceab403b761d7ead7ba7006bd4fe0fe132aa9238b8492bd64b45dad680b8e7",
+    "exactSource142bce0": false
+  },
+  {
+    "path": "mobile/tests/curated-progress.test.ts",
+    "sha256": "bce2563efee837912efb9b91d27df48be3e46cc7acad2e22878ca5cb7fbb5866",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/current-walk-observation.test.ts",
+    "sha256": "41c6ea454c0d3759059f9cd662ec7be55ee7722c02321cd9cb22c7d8bf5f199e",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/explore-p1.test.ts",
+    "sha256": "3bd93a76278d4428568a84de1089f70bf6cdf3d8b5fdc26007eb0620b2745b54",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/explore-photography.test.ts",
+    "sha256": "13ee3a12ea3683263556d362dc7e9f22d208d2ec9f39b5895ffe177185a7ee72",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/first-experience.test.tsx",
+    "sha256": "c2803efaf71e8acd0f33e2329b343bcdae0fa1322d42e0e4c2235e31bb1fc9a8",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/home-presentation.test.tsx",
+    "sha256": "4939aa498e9ea08548762dd9bbd31ef37ca19da896276ecaccb7133990f36f6f",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/location-permission.test.tsx",
+    "sha256": "d0138b3561470227303fe8fa2a5da9df9d357c21c531726bd3fb8a6fd4f70bbe",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/membership-screens.test.tsx",
+    "sha256": "07858fef51f005f514adbeddb84475d78bb43376717892e1661baf582bbc4e12",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/native-city-experience.test.ts",
+    "sha256": "3fa63e7eded6acda1b10e18dbf1864405339bdf9d075690a62ded8af1ec127c4",
+    "exactSource142bce0": false
+  },
+  {
+    "path": "mobile/tests/native-screen-chrome.test.tsx",
+    "sha256": "f7b6deb66fae6d0f17bd5fe282559785c1f7723018e01b6e0a40f33d9d0323f9",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/native-v2-regressions.test.tsx",
+    "sha256": "70facdd35bf5312a771b85d4c4d5f366d9c8e159b20fc2daeda0340acb9cb2be",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/photo-credits.test.tsx",
+    "sha256": "980f84f3868df3f11cf206f660317a65354e255a76986fcb36f42255b40e6cb4",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/place-detail-p1.test.ts",
+    "sha256": "38868bb8dcf1fd08714637565d3cdc4669d630fd389e499efa3626b0d4b09ead",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/places-v2-presentation.test.ts",
+    "sha256": "215d19821c78f0ec96b9c18e831aef0ce5dd9413f9a052e690358b962a4ba8f9",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/planner-return-intent.test.ts",
+    "sha256": "883b782b596a770ad29af8098831d9a15423827e5f7b087ebcd4a159c8c8d8fd",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/published-active-walk-navigation.test.tsx",
+    "sha256": "474ab98861d81d19c4bd6f898c2c81be85401d29d4655939ece8f93a3490c628",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/published-active-walk.test.tsx",
+    "sha256": "3e1571b758ddb07d23d0213bbf0bcef51b31d091e7ed8bcc13101d9e1c8073a4",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/published-route-timing.test.ts",
+    "sha256": "99802263b61715c6fa39e65c5aa02a5e51bfd4c43093d184800b5ded721192d7",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/published-routes.test.ts",
+    "sha256": "fa8e0dcc6c4f1ee3fe07cd1a8bb25bbfad8d024f1631cfe176670c59f229d5ba",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/return-by-picker.test.tsx",
+    "sha256": "fac96d0c7eb1b7813a7169c4e0dc90bca82c97587da40f8b88a55d899755e174",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/route-overview-map.test.tsx",
+    "sha256": "673fd378a1b63635587382e60a1a6bdd64077f198f49684d7e51f32f083f3faf",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/route-preview.test.tsx",
+    "sha256": "c3ef15b02ee659c278cc669a977ab0d4e93ed76d184856c1457e4c008ff914fc",
+    "exactSource142bce0": false
+  },
+  {
+    "path": "mobile/tests/screen-08-contract-pending.test.ts",
+    "sha256": "99ed0ac55f06de1664eece85b959016861d25f436d088da6c2e8ac3b9d20cd45",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/screen-08-persistence-regressions.test.ts",
+    "sha256": "745ab3ce2fbe54b9ab1935e58cdbf0971b5bbef3cf81374dad570ae0aed4a42d",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/select-interests.test.tsx",
+    "sha256": "80f3f74ce83ac8c112af28ce42e50d3a8bfd6fba83b18ffd92a398eba396422a",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/walk-flow.behavior.tsx",
+    "sha256": "72b80e0d2c6bf89499add3a961f662f3bc14a72af5f5b6b7a8b71963508c18b5",
+    "exactSource142bce0": false
+  },
+  {
+    "path": "mobile/tests/walking-routes.test.tsx",
+    "sha256": "3e038c7ba512d8e4be068d8b67984f4925a2918a576145cf2aee32d25e878bdd",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "mobile/tests/welcome.test.tsx",
+    "sha256": "9ba9b1b8bef053e54761e961f4eb88a9f0331b47e96381d342684cea741df361",
+    "exactSource142bce0": true
+  },
+  {
+    "path": "packages/traveler-core/src/curatedProgress.ts",
+    "sha256": "1b7e98968864e443d5a2fdc7aa18c8541754978a3b96237562c4be94124e870b",
+    "exactSource142bce0": true
+  }
+]
