@@ -3,8 +3,8 @@ import citySource from "../src/app/city/[citySlug]/index.tsx?raw";
 
 describe("Places V2 compact cards", () => {
   it("keeps compact image and readable typography while preserving real CMS data", () => {
-    expect(citySource).toContain("width: 88");
-    expect(citySource).toContain("height: 88");
+    expect(citySource).toContain("width: 100");
+    expect(citySource).toContain("height: 112");
     expect(citySource).toContain("borderRadius: 19");
     expect(citySource).toContain('numberOfLines={2} variant="metadata"');
     expect(citySource).toContain("place.content.shortDescription");
@@ -41,6 +41,6 @@ describe("Places V2 compact cards", () => {
     expect(citySource).toContain("setMapVisible");
     expect(citySource).toContain("NativeCityMap");
     expect(citySource).toContain("stopNames.join");
-    expect(citySource).toContain("numberOfLines={expanded ? undefined : 1}");
+    expect(citySource).toContain("numberOfLines={expanded ? undefined : 3}");
   });
 });

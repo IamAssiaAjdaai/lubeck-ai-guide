@@ -1,11 +1,17 @@
 // @vitest-environment jsdom
+vi.mock("react-native-safe-area-context", () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) }));
+vi.mock("expo-image", () => ({ Image: () => null }));
 import React from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PublicPlace } from "../src/lib/api/contracts";
 // AsyncStorage uses its real browser adapter in jsdom, shared by both screens.
 const state = vi.hoisted(() => ({ locale: "en" as "en" | "de" | "ar", openURL: vi.fn() }));
+vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { useSession: () => ({ data: null }) } }));
+vi.mock("../src/components/CityPhotoCredits", () => ({ CityPhotoCredits: () => null }));
 vi.mock("expo-router", () => ({
+  useRoute: () => ({ key: "hub", params: { citySlug: "lubeck" } }),
+  useNavigation: () => ({ isFocused: () => true, setParams: vi.fn(), getState: () => undefined, dispatch: vi.fn() }),
   Stack: { Screen: () => null },
   useLocalSearchParams: () => ({ citySlug: "lubeck", placeSlug: "holstentor" }),
   useFocusEffect: (callback: React.EffectCallback) => React.useEffect(callback, [callback]),
@@ -109,9 +115,9 @@ describe("actual Explore and Detail share current-walk state (native bridges moc
     // Explore now uses an accessible icon-only PressableSurface, while Detail keeps its labeled button.
     expect(exploreAdd.getAttribute("aria-label")).toBe(t.add);
     expect(exploreAdd.dataset.style).toBeUndefined();
-    expect(JSON.parse(detailAdd.dataset.style!)).toMatchObject({ alignSelf: "stretch", minHeight: 64 });
+    expect(JSON.parse(detailAdd.dataset.style!)).toMatchObject({ alignSelf: "stretch", minHeight: 44 });
     expect(detailAdd.dataset.tone).toBe("primary");
-    expect(detailAdd.dataset.compact).toBe("true");
+    expect(detailAdd.dataset.compact).toBe("false");
     fireEvent.click(exploreAdd);
     await detail.findByRole("button", { name: t.remove, pressed: true });
     const exploreRemove = explore.getByRole("button", { name: t.remove, pressed: true });
