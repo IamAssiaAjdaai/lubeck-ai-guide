@@ -64,6 +64,15 @@
       "android": {
         "buildType": "apk"
       }
+    },
+    "android-tester": {
+      "extends": "preview",
+      "env": {
+        "CITYWALK_ANDROID_TESTER_PREVIEW": "1",
+        "EXPO_PUBLIC_CITYWALK_ENV": "preview",
+        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://api-preview.getcitywalk.com",
+        "EXPO_PUBLIC_CITYWALK_TESTER_AUTH0_DOMAIN": "citywalk-preview.eu.auth0.com"
+      }
     }
   },
   "submit": {

@@ -6,6 +6,7 @@ type MobileEnvironment = (typeof MOBILE_ENVIRONMENTS)[number];
 const DEVELOPMENT_HTTP_PLUGIN = "./plugins/with-development-http.js";
 export const CITYWALK_STORE_IDENTIFIER = "com.citywalk.app";
 export const CITYWALK_DEVELOPMENT_IDENTIFIER = `${CITYWALK_STORE_IDENTIFIER}.dev`;
+export const CITYWALK_TESTER_IDENTIFIER = `${CITYWALK_STORE_IDENTIFIER}.preview`;
 export const CITYWALK_APP_LINK_HOST = "getcitywalk.com";
 
 export function assertPreviewBuildEnvironment(
@@ -137,14 +138,43 @@ export function createCitywalkExpoConfig(
     }
   }
 
-  const applicationIdentifier = environment === "development"
-    ? CITYWALK_DEVELOPMENT_IDENTIFIER
-    : CITYWALK_STORE_IDENTIFIER;
-  const appLinksEnabled = environment !== "development";
+  const testerPreview = process.env.CITYWALK_ANDROID_TESTER_PREVIEW === "1";
+  if (testerPreview && environment !== "preview") {
+    throw new Error("Android tester mode requires Preview.");
+  }
+
+  const testerDomain =
+    process.env.EXPO_PUBLIC_CITYWALK_TESTER_AUTH0_DOMAIN?.trim();
+
+  if (
+    testerPreview &&
+    (!testerDomain ||
+      !/^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/.test(testerDomain))
+  ) {
+    throw new Error("A valid tester Auth0 domain is required.");
+  }
+
+  const testerPlugins: NonNullable<ExpoConfig["plugins"]> =
+    testerPreview
+      ? [["react-native-auth0", {
+          domain: testerDomain,
+          customScheme: "citywalkpreviewauth0",
+        }]]
+      : [];
+
+  const applicationIdentifier = testerPreview
+    ? CITYWALK_TESTER_IDENTIFIER
+    : environment === "development"
+      ? CITYWALK_DEVELOPMENT_IDENTIFIER
+      : CITYWALK_STORE_IDENTIFIER;
+
+  const appLinksEnabled =
+    environment !== "development" && !testerPreview;
   const completeConfig: ExpoConfig = {
     ...config,
     name: config.name,
     slug: config.slug,
+    plugins: [...(config.plugins ?? []), ...testerPlugins],
     ios: {
       ...config.ios,
       bundleIdentifier: applicationIdentifier,
