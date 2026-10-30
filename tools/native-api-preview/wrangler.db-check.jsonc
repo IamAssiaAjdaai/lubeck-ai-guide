@@ -1,0 +1,14 @@
+{
+  "name": "citywalk-api-preview-db-check",
+  "main": "./hyperdriveProbe.ts",
+  "compatibility_date": "2026-10-03",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "296bd4ea316b4ab88489330b858ebb34"
+    }
+  ]
+}
