@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { ShieldX } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -13,6 +14,8 @@ export default async function AdminUnauthorizedPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }>) {
   const { reason } = await searchParams;
+  await connection();
+
   const access = await getAdminAccessOutcome();
 
   if (access.kind === "unauthenticated") {

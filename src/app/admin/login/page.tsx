@@ -1,5 +1,6 @@
 import { ShieldCheck } from "lucide-react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 
 import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
 import { getAdminAccessOutcome } from "@/lib/admin/authorization.server";
@@ -9,6 +10,8 @@ export const metadata = {
 };
 
 export default async function AdminLoginPage() {
+  await connection();
+  
   const access = await getAdminAccessOutcome();
 
   if (access.kind === "authorized") {

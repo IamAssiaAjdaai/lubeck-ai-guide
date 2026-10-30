@@ -45,7 +45,7 @@
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_CITYWALK_ENV": "production",
-        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://getcitywalk.com"
+        "EXPO_PUBLIC_CITYWALK_API_ORIGIN": "https://api.getcitywalk.com"
       },
       "environment": "production"
     },

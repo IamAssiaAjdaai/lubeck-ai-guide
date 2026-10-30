@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { ArrowRight, Building2, MapPin, Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -8,6 +9,8 @@ import { listAuthorizedCities } from "@/lib/admin/content/service.server";
 export const metadata = { title: "CITYWALK CMS" };
 
 export default async function AdminDashboardPage() {
+  await connection();
+
   const access = await getAdminAccessOutcome();
   if (access.kind === "unauthenticated") redirect("/admin/login");
   if (access.kind === "forbidden") redirect("/admin/unauthorized");
