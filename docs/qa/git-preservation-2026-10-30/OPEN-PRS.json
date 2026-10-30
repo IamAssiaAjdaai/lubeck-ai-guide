@@ -1,0 +1,191 @@
+[
+  {
+    "number": 454,
+    "title": "feat(mobile): connect selected-place picker to Build My Walk",
+    "head": "52a7ca7555a04ddbc4a11277a01395e360be8183",
+    "branch": "feat/native-walk-explicit-place-picker-20261025",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/454"
+  },
+  {
+    "number": 451,
+    "title": "feat(admin): add city-scoped publishing review queue",
+    "head": "ae4cb301869b95553ea5f23334ee86272e1d0cbb",
+    "branch": "codex/admin-publishing-queue",
+    "base": "develop",
+    "draft": false,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/451"
+  },
+  {
+    "number": 447,
+    "title": "test(preview): guarded offline schema-compatible synthetic seed",
+    "head": "639a0148244441c2f2fe41e5536a70c5308befab",
+    "branch": "codex/preview-schema-fixture-20261025",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/447"
+  },
+  {
+    "number": 422,
+    "title": "Prepare locked native API Preview access and exact-commit artifacts",
+    "head": "e9c6c92f15b012f62b2e6ad474eb551effabde59",
+    "branch": "codex/native-preview-api-design-20261022",
+    "base": "codex/cloudflare-api-preview-20261022",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/422"
+  },
+  {
+    "number": 420,
+    "title": "feat(marketing-saas): offline v2 claim-ledger spike (#418)",
+    "head": "4810ce7986bed93dc8b37ce83c299cb66650db2f",
+    "branch": "codex/mkt-ai-02-offline-v2",
+    "base": "codex/mkt-ai-qa-01-offline-acceptance",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/420"
+  },
+  {
+    "number": 419,
+    "title": "Prepare locked isolated Cloudflare API Preview target",
+    "head": "c490437a426864df3442ef8df0b4f4fafcb69eb3",
+    "branch": "codex/cloudflare-api-preview-20261022",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/419"
+  },
+  {
+    "number": 417,
+    "title": "test(marketing-saas): offline German Pack quality and cost acceptance (#416)",
+    "head": "7e67061362762020f97d707898927a82c21b2994",
+    "branch": "codex/mkt-ai-qa-01-offline-acceptance",
+    "base": "codex/mkt-brand-02-green-system",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/417"
+  },
+  {
+    "number": 409,
+    "title": "feat(marketing-saas): grounded packs, atomic budgets and human edit/export",
+    "head": "40d7bc7871603cb4df3fc3e07b57405b4c37057e",
+    "branch": "codex/mkt-mvp-03-marketing-packs",
+    "base": "codex/mkt-mvp-02-local-pilot",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/409"
+  },
+  {
+    "number": 407,
+    "title": "feat(marketing-saas): independent verified accounts and tenant-scoped brand review",
+    "head": "52d4e455a9057bda1972bb01c26bf0c9de5999f4",
+    "branch": "codex/mkt-mvp-02-local-pilot",
+    "base": "codex/mkt-mvp-01-safe-intake",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/407"
+  },
+  {
+    "number": 406,
+    "title": "feat(marketing): bounded SSRF-safe website intake proposals (#399)",
+    "head": "a60e64126db8b38043b100d28fa7c3c9db6ea585",
+    "branch": "codex/mkt-mvp-01-safe-intake",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/406"
+  },
+  {
+    "number": 393,
+    "title": "fix: Public Beta safety, test isolation and readiness evidence",
+    "head": "3679a0d6322cb7947aa185df50750f26e51fb9ab",
+    "branch": "codex/public-beta-readiness",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/393"
+  },
+  {
+    "number": 389,
+    "title": "chore(mobile): controlled beta readiness, SDK checks and release evidence",
+    "head": "092272ada6d8b7b3ee8d277e28ce726529b495a3",
+    "branch": "codex/mobile-release-readiness",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/389"
+  },
+  {
+    "number": 377,
+    "title": "[App-first] Open shared walks in iOS/Android and drive app installs",
+    "head": "55c20dfb7e183cc25d7e9575e24b63c009727e07",
+    "branch": "feature/native-shareable-walks-app-first",
+    "base": "integration/shareable-walks-v1-preview",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/377"
+  },
+  {
+    "number": 376,
+    "title": "ci: reduce GitHub Actions minute usage for CITYWALK",
+    "head": "145b775fc638fce17b36e2e2c68b7c9ca6c53cfa",
+    "branch": "chore/ci-cost-guardrails-2026",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/376"
+  },
+  {
+    "number": 375,
+    "title": "fix(commerce): align RevenueCat yearly IDs and Play base plans",
+    "head": "5f7232bdf8d5beb14db48e400c9d7b9ec7f852f8",
+    "branch": "fix/revenuecat-store-product-ids",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/375"
+  },
+  {
+    "number": 373,
+    "title": "[Integration QA] Finish Walk \u2192 Public Share \u2192 Guest Start (preview only)",
+    "head": "259aac33cf9750c85ebf8955a7523ef24f12c26c",
+    "branch": "integration/shareable-walks-v1-preview",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/373"
+  },
+  {
+    "number": 370,
+    "title": "feat(sharing): authenticated link creation and public guest route lookup",
+    "head": "d5fdc4c8f48868efcb5504ab7462430715e7f99c",
+    "branch": "feat/shareable-walks-api-v1",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/370"
+  },
+  {
+    "number": 365,
+    "title": "design(mobile): Finish Walk V2 completion summary and actions",
+    "head": "890a8fd816ee7cbf8dc2e708e8511495808ef674",
+    "branch": "design/finish-walk-v2",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/365"
+  },
+  {
+    "number": 364,
+    "title": "feat(marketing): add internal Brand Workspace onboarding and human review",
+    "head": "5cad236cf366b7c0192fbdf9f01ce3dfe4b890bd",
+    "branch": "codex/marketing-brand-onboarding",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/364"
+  },
+  {
+    "number": 354,
+    "title": "fix(security): trusted Cloudflare AI guide limits and global provider budget (#348)",
+    "head": "9d35de7d5aa4e9a3790565430219ca871324f674",
+    "branch": "fix/guide-edge-identity-global-budget-348",
+    "base": "develop",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/354"
+  },
+  {
+    "number": 213,
+    "title": "Admin security: passkey-first CMS sign-in with TOTP fallback",
+    "head": "36385cf33e97fc125a7b22c227571cb39d9c0e4b",
+    "branch": "feat/admin-passkey-v1",
+    "base": "feat/cms-control-center-v1",
+    "draft": true,
+    "url": "https://github.com/IamAssiaAjdaai/lubeck-ai-guide/pull/213"
+  }
+]
