@@ -9,7 +9,7 @@ import { useNativeLocale } from "../localization/LocaleProvider";
 import { NativeIcon } from "./NativeIcon";
 import { AppText } from "./ui";
 
-export function LocaleSelector({ showLabel = false, home = false }: { showLabel?: boolean; home?: boolean }) {
+export function LocaleSelector({ showLabel = false, home = false, welcome = false }: { showLabel?: boolean; home?: boolean; welcome?: boolean }) {
   const { locale, direction, messages, setLocale } = useNativeLocale();
   const [open, setOpen] = useState(false);
 
@@ -26,6 +26,7 @@ export function LocaleSelector({ showLabel = false, home = false }: { showLabel?
           { direction },
           showLabel && styles.labelledTrigger,
           home && styles.homeTrigger,
+          welcome && styles.welcomeTrigger,
           pressed && styles.pressed,
         ]}
       >
@@ -43,12 +44,13 @@ export function LocaleSelector({ showLabel = false, home = false }: { showLabel?
         visible={open}
       >
         <Pressable
+          accessible={false}
           accessibilityLabel={messages.close}
           accessibilityRole="button"
           onPress={() => setOpen(false)}
           style={[styles.backdrop, { direction }]}
         >
-          <View accessibilityRole="radiogroup" style={styles.menu}>
+          <View accessibilityRole="radiogroup" onAccessibilityEscape={() => setOpen(false)} style={styles.menu}>
             <ScrollView contentContainerStyle={styles.options}>
             <AppText variant="heading">{messages.language}</AppText>
             {getSelectableLocales(experimentalLocalesEnabled()).map((candidate) => (
@@ -100,6 +102,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
   },
   homeTrigger: { minWidth: 100, maxWidth: 132, flexShrink: 0, paddingHorizontal: 12 },
+  welcomeTrigger: { backgroundColor: "transparent", borderWidth: 0 },
   currentLanguage: {
     ...typography.caption,
     color: colors.textMuted,
