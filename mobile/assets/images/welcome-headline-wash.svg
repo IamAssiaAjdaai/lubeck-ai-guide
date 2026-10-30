@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="160" viewBox="0 0 400 160" preserveAspectRatio="none">
+  <defs><linearGradient id="readable-headline" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FBFDFF" stop-opacity="0"/>
+    <stop offset=".12" stop-color="#FBFDFF" stop-opacity=".85"/>
+    <stop offset=".88" stop-color="#FBFDFF" stop-opacity=".85"/>
+    <stop offset="1" stop-color="#FBFDFF" stop-opacity="0"/>
+  </linearGradient></defs>
+  <path fill="url(#readable-headline)" d="M0 0h400v160H0z"/>
+</svg>

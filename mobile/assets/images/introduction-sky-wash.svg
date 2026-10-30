@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="320" viewBox="0 0 400 320" preserveAspectRatio="none">
+  <defs><linearGradient id="sky-wash" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#B5DEF3" stop-opacity=".4"/>
+    <stop offset=".36" stop-color="#FBFDFF" stop-opacity=".35"/>
+    <stop offset="1" stop-color="#FBFDFF"/>
+  </linearGradient></defs>
+  <path fill="url(#sky-wash)" d="M0 0h400v320H0z"/>
+</svg>
