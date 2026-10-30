@@ -1,0 +1,317 @@
+{
+  "head": "689cb46c1f252ffdd7875c71d2ba9024ca1b450b",
+  "uncommitted": true,
+  "sourceManifestMatches": true,
+  "sourceManifestEntryCount": 25,
+  "changedFiles": [
+    {
+      "path": "docs/deployment/LANDING-RUNTIME-395-RELEASE-AUDIT-2026-10-19.md",
+      "sha256": "a466ecf8f2af29309356af3439cf6650115f6d117af9b19884c8b73998ef0fd2"
+    },
+    {
+      "path": "src/app/[locale]/lubeck/[slug]/page.test.tsx",
+      "sha256": "f21256d927e593a7336d9eabe89c1cc002919e6a3bdc6f256dd773d32053a825"
+    },
+    {
+      "path": "src/app/api/commerce/checkout/route.ts",
+      "sha256": "61c45ca900d3791d9c40a146ec8846c8e76c22b525890a493258c280e71e1213"
+    },
+    {
+      "path": "src/app/api/guide/route.generic.test.ts",
+      "sha256": "34a8dd36b68f28730709aa096c81b27ee85e7ca6dd17b476694b071b0a250d49"
+    },
+    {
+      "path": "src/app/api/guide/route.test.ts",
+      "sha256": "995f38a508f145d7d10a0aff2188103dc15a78cd35d0baf95d4c0d75cf2340ed"
+    },
+    {
+      "path": "src/app/api/guide/route.ts",
+      "sha256": "5ca824fbe8fdd0a31669b3c5fda3fcd5be80c5dc7382d49d07d8b083d10a38e4"
+    },
+    {
+      "path": "src/app/api/guide/walk-context.test.ts",
+      "sha256": "b8bdbfd945cae27cad206ea77e24fae26e3c3100241cd4097e0c43beffdbfa30"
+    },
+    {
+      "path": "src/components/commerce/CommerceCheckoutButton.tsx",
+      "sha256": "cd70af5df80493ea108406bd5dc2763631c37e69551f099eb13ee626b579f710"
+    },
+    {
+      "path": "src/lib/commerce/stripeProvider.server.ts",
+      "sha256": "6069aed619e700be008c75c90ee72ac26fd85b0aa19405017277c2df035c1d79"
+    },
+    {
+      "path": "src/lib/guideEligibility.server.test.ts",
+      "sha256": "ed1cfe0a4436791b4718b65b39870ff75da9b3722936f7fdd1e41359c41d72ca"
+    },
+    {
+      "path": "src/lib/guideEligibility.server.ts",
+      "sha256": "8617958d0cf6235afb41f309968c5cffa85dbec2d1e9d86ae2c93a6c6aa9e2cb"
+    },
+    {
+      "path": "src/lib/publicReleasePolicy.test.tsx",
+      "sha256": "2efea41925fb91a4e66bfef50dd8f56026a7f23b289ddc4933a46b96f6496287"
+    },
+    {
+      "path": "src/lib/publicReleasePolicy.ts",
+      "sha256": "e8b9137cb5685dce27eca6721b417897920ef3ac6b7e40667bce1774b0d14d58"
+    }
+  ],
+  "runtimeChecks": [
+    {
+      "name": "homepage-320",
+      "pass": true,
+      "details": {
+        "h1": [
+          "A better wayto walk a city."
+        ],
+        "overflow": false,
+        "broken": 0,
+        "canonical": "https://getcitywalk.com/"
+      }
+    },
+    {
+      "name": "homepage-390",
+      "pass": true,
+      "details": {
+        "h1": [
+          "A better wayto walk a city."
+        ],
+        "overflow": false,
+        "broken": 0,
+        "canonical": "https://getcitywalk.com/"
+      }
+    },
+    {
+      "name": "homepage-768",
+      "pass": true,
+      "details": {
+        "h1": [
+          "A better wayto walk a city."
+        ],
+        "overflow": false,
+        "broken": 0,
+        "canonical": "https://getcitywalk.com/"
+      }
+    },
+    {
+      "name": "homepage-1440",
+      "pass": true,
+      "details": {
+        "h1": [
+          "A better wayto walk a city."
+        ],
+        "overflow": false,
+        "broken": 0,
+        "canonical": "https://getcitywalk.com/"
+      }
+    },
+    {
+      "name": "no-browser-external-requests",
+      "pass": true,
+      "details": {
+        "origins": []
+      }
+    },
+    {
+      "name": "/explore",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/privacy",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/terms",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/imprint",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/support",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/account-deletion",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/robots.txt",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/sitemap.xml",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/open/lubeck/synthetic",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/api/content/cities",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "incomplete-/privacy",
+      "pass": true
+    },
+    {
+      "name": "incomplete-/terms",
+      "pass": true
+    },
+    {
+      "name": "incomplete-/imprint",
+      "pass": true
+    },
+    {
+      "name": "/api/account/export",
+      "pass": true,
+      "details": {
+        "status": 401,
+        "expected": 401
+      }
+    },
+    {
+      "name": "/api/account/delete",
+      "pass": true,
+      "details": {
+        "status": 401,
+        "expected": 401
+      }
+    },
+    {
+      "name": "/api/commerce/checkout",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "/api/guide",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "/.well-known/apple-app-site-association",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "/.well-known/assetlinks.json",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "/api/commerce/webhooks/revenuecat",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "anonymous-auth",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "AI-ineligible",
+      "pass": true
+    },
+    {
+      "name": "synthetic-complete-/privacy",
+      "pass": true
+    },
+    {
+      "name": "synthetic-complete-/terms",
+      "pass": true
+    },
+    {
+      "name": "synthetic-complete-/imprint",
+      "pass": true
+    },
+    {
+      "name": "synthetic-/.well-known/apple-app-site-association",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "synthetic-/.well-known/assetlinks.json",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    }
+  ],
+  "activeVersion": {
+    "version": "4c18d94c-f9a8-4102-b887-145bc3ad499d",
+    "compatibilityDate": "2026-10-03",
+    "bindingNames": [
+      "ASSETS",
+      "BETTER_AUTH_SECRET",
+      "BETTER_AUTH_URL",
+      "CITYWALK_CONTENT_SOURCE",
+      "CITYWALK_DATABASE_RUNTIME",
+      "CITYWALK_EMAIL_FROM",
+      "CITYWALK_MEDIA_S3_ACCESS_KEY_ID",
+      "CITYWALK_MEDIA_S3_BUCKET",
+      "CITYWALK_MEDIA_S3_ENDPOINT",
+      "CITYWALK_MEDIA_S3_REGION",
+      "CITYWALK_MEDIA_S3_SECRET_ACCESS_KEY",
+      "CITYWALK_MEDIA_STORAGE",
+      "DATABASE_URL",
+      "GROQ_API_KEY",
+      "HYPERDRIVE",
+      "RESEND_API_KEY"
+    ],
+    "bindingContract": "PASS",
+    "sourceShaVerified": false,
+    "routeInventoryVerified": false
+  }
+}
