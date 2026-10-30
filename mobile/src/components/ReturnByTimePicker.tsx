@@ -9,7 +9,7 @@ import { WalkInput } from "./WalkControls";
 
 function timeDate(value: string): Date {
   const now = new Date();
-  const match = /^(\\d{2}):(\\d{2})$/.exec(value);
+  const match = /^(\d{2}):(\d{2})$/.exec(value);
   const h = match ? Number(match[1]) : now.getHours();
   const m = match ? Number(match[2]) : now.getMinutes();
   now.setHours(h < 24 ? h : 12, m < 60 ? m : 0, 0, 0);

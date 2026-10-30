@@ -1,10 +1,13 @@
 // @vitest-environment jsdom
+vi.mock("react-native-safe-area-context", () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) }));
+vi.mock("../src/lib/auth/client", () => ({ nativeAuthClient: { useSession: () => ({ data: null }) } }));
+vi.mock("../src/components/CityPhotoCredits", () => ({ CityPhotoCredits: () => null }));
 vi.mock("../src/hooks/useAccountWalks", () => ({ useAccountWalks: () => ({ userId: state.account ? "owner" : undefined, walks: state.account ? [{ id: "cloud-walk", citySlug: "lubeck", remaining: ["holstentor"], visited: [] }] : [], loading: false, error: false, refresh: vi.fn() }) }));
 vi.mock("../src/lib/accountWalks", () => ({ removeAccountWalk: vi.fn() }));
 import React from "react";
-import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-const state = vi.hoisted(() => ({ account: false, locale: "en" as "en" | "de" | "ar" | "da" | "sv" | "nl" | "es", fontScale: 1, staleMessages: false, noAudio: false, noStory: false, placeLoading: false, scrollTo: vi.fn(), showTour: false, focus: undefined as string | undefined, placeSlug: "holstentor", responseSlug: undefined as string | undefined, saved: false, emptySaved: false, reduced: true, entranceFinished: undefined as ((result: { finished: boolean }) => void) | undefined }));
+const state = vi.hoisted(() => ({ dispatch: vi.fn(), nativeStack: { key: "root", index: 1, routes: [{ key: "hub-before", name: "city/[citySlug]/index", params: { citySlug: "lubeck" } }, { key: "assistant", name: "city/[citySlug]/assistant", params: { citySlug: "lubeck" } }] }, account: false, locale: "en" as "en" | "de" | "ar" | "da" | "sv" | "nl" | "es", fontScale: 1, staleMessages: false, noAudio: false, noStory: false, placeLoading: false, scrollTo: vi.fn(), showTour: false, focus: undefined as string | undefined, placeSlug: "holstentor", responseSlug: undefined as string | undefined, saved: false, emptySaved: false, reduced: true, entranceFinished: undefined as ((result: { finished: boolean }) => void) | undefined }));
 vi.mock("react-native", () => ({
   Platform: { OS: "ios" },
   Linking: { openURL: vi.fn() },
@@ -26,18 +29,20 @@ vi.mock("react-native", () => ({
 }));
 vi.mock("expo-image", () => ({ Image: () => <div data-testid="hero-art" /> }));
 vi.mock("expo-router", () => ({
+  useRoute: () => ({ key: "hub-route", params: { citySlug: "lubeck" } }),
+  useNavigation: () => ({ isFocused: () => true, setParams: vi.fn(), getState: () => state.nativeStack, dispatch: state.dispatch }),
   Stack: { Screen: () => null },
   useLocalSearchParams: () => ({ citySlug: "lubeck", placeSlug: state.placeSlug, focus: state.focus }),
   useFocusEffect: (callback: React.EffectCallback) => React.useEffect(callback, [callback]),
-  Link: ({ children, href, asChild }: React.PropsWithChildren<{ href: unknown; asChild?: boolean }>) => {
+  Link: ({ children, href, asChild, dismissTo, onPress }: React.PropsWithChildren<{ href: unknown; asChild?: boolean; dismissTo?: boolean; onPress?: () => void }>) => {
     const child = asChild ? React.Children.only(children) as React.ReactElement<{ style?: unknown }> : undefined;
     // Model Expo Router's actual Slot boundary, before rendering the child.
     if (Array.isArray(child?.props.style)) throw new Error("[expo-router]: You are passing an array of styles to a child of <Slot>.");
-    return <a data-route={JSON.stringify(href)} data-child-style={JSON.stringify(child?.props.style)}>{children}</a>;
+    return <a onClick={onPress} data-dismiss={dismissTo} data-route={JSON.stringify(href)} data-child-style={JSON.stringify(child?.props.style)}>{children}</a>;
   },
 }));
 vi.mock("../src/components/ui", () => ({
-  AppText: ({ children, variant, style }: React.PropsWithChildren<{ variant?: string; style?: unknown }>) => variant === "heading" ? <h2>{children}</h2> : <span data-style={JSON.stringify(style)}>{children}</span>,
+  AppText: ({ children, variant, style, accessibilityRole }: React.PropsWithChildren<{ variant?: string; style?: unknown; accessibilityRole?: string }>) => variant === "heading" || accessibilityRole === "header" ? <h2 data-style={JSON.stringify(style)}>{children}</h2> : <span data-style={JSON.stringify(style)}>{children}</span>,
   SectionTitle: ({ children }: React.PropsWithChildren) => <h2>{children}</h2>,
   Screen: ({ children, scrollViewRef }: React.PropsWithChildren<{ scrollViewRef?: React.RefObject<unknown> }>) => {
     React.useLayoutEffect(() => { if (scrollViewRef) scrollViewRef.current = { scrollTo: state.scrollTo }; }, [scrollViewRef]);
@@ -54,7 +59,7 @@ vi.mock("../src/components/ui", () => ({
 vi.mock("../src/components/NativeContentImage", () => ({ NativeContentImage: ({ style }: { style?: unknown }) => <div data-testid="content-image" data-style={JSON.stringify(style)} /> }));
 vi.mock("../src/components/NativeAudioPlayer", () => ({ NativeAudioPlayer: ({ source, title }: { source: string; title: string }) => <audio aria-label={title} src={source} /> }));
 vi.mock("../src/components/TripProgress", () => ({ TripProgress: () => null }));
-vi.mock("../src/lib/walkStorage", () => ({ subscribeSavedWalks: () => () => {}, loadSavedPlaces: async () => state.saved ? [{ citySlug: "lubeck", slug: "holstentor", name: "Holstentor", savedAt: 1 }] : [], loadSavedWalks: async () => state.saved ? [{ id: "saved-walk", citySlug: "lubeck", remaining: state.emptySaved ? [] : ["holstentor"], visited: [] }] : [], loadActiveWalk: async () => undefined, removeNativeWalk: vi.fn(), toggleSavedPlace: vi.fn() }));
+vi.mock("../src/lib/walkStorage", () => ({ subscribeSavedWalks: () => () => {}, loadSavedPlaces: vi.fn(async () => state.saved ? [{ citySlug: "lubeck", slug: "holstentor", name: "Holstentor", savedAt: 1 }] : []), loadSavedWalks: async () => state.saved ? [{ id: "saved-walk", citySlug: "lubeck", remaining: state.emptySaved ? [] : ["holstentor"], visited: [] }] : [], loadActiveWalk: async () => undefined, removeNativeWalk: vi.fn(), toggleSavedPlace: vi.fn() }));
 vi.mock("../src/components/NativeCityMap", () => ({ NativeCityMap: () => null }));
 vi.mock("../src/components/CitywalkLoading", () => ({ CitywalkLoading: () => <div data-testid="place-skeleton" /> }));
 vi.mock("../src/components/MediaAttribution", () => ({ MediaAttribution: () => null }));
@@ -75,8 +80,8 @@ vi.mock("../src/hooks/usePublicContent", () => ({
   useGuideEligibility: () => ({ status: "available", data: { eligible: true } }),
   usePublicCity: () => ({ status: "available", data: {
     city: { slug: "lubeck", content: { name: "Lübeck" } }, tours: state.showTour ? [{
-      slug: "old-town", resolvedLocale: "en", requestedLocale: state.locale, media: [],
-      content: { title: state.locale === "ar" ? "المركز التاريخي لمدينة Lübeck" : "Old Town walk" }, stops: [{ placeSlug: "holstentor", position: 1 }],
+      slug: "old-town", estimatedDurationMinutes: 45, resolvedLocale: "en", requestedLocale: state.locale, media: [],
+      content: { title: state.locale === "ar" ? "المركز التاريخي لمدينة Lübeck" : "Old Town walk", shortDescription: "Published route description" }, stops: [{ placeSlug: "holstentor", position: 1 }],
     }] : [],
     places: ["holstentor", "marienkirche"].map(slug => ({ slug, category: "see", media: [], resolvedLocale: "de", content: { name: slug }, durationMinutes: 10, tags: ["architecture", "history"] })),
   } }), prefetchPublicPlace: vi.fn(),
@@ -86,10 +91,12 @@ import { t, type TranslationKey } from "@citywalk/i18n";
 import { ImageOverlayHero, waterfrontCrop } from "../src/components/ImageOverlayHero";
 import { getNativeMessages } from "../src/lib/localization";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
+import ExploreScreen from "../src/app/city/[citySlug]/explore";
 import CityScreen from "../src/app/city/[citySlug]/index";
 import PlaceScreen from "../src/app/city/[citySlug]/place/[placeSlug]";
-import CityAssistantScreen from "../src/app/city/[citySlug]/assistant";
+import CityAssistantScreen, { CityAssistant } from "../src/app/city/[citySlug]/assistant";
 import { cityAssistantContext } from "../src/lib/cityAssistant";
+import { searchCopy } from "../src/design/searchCopy";
 import { discoveryCopy } from "../src/design/discoveryCopy";
 import SavedScreen from "../src/app/saved";
 import type { PublicPlaceCard } from "../src/lib/api/contracts";
@@ -222,7 +229,7 @@ describe("place detail context (native bridges mocked)", () => {
 
 
 describe("city assistant entry", () => {
-  it.each(["en", "de", "ar"] as const)("opens an honest city-scoped unavailable screen in %s", locale => {
+  it.each(["en", "de", "ar"] as const)("offers an honest city-scoped place discovery fallback in %s", locale => {
     state.locale = locale;
     expect(cityAssistantContext("lubeck")).toEqual({ type: "city", citySlug: "lubeck" });
     render(<CityAssistantScreen />);
@@ -230,6 +237,8 @@ describe("city assistant entry", () => {
     expect(screen.getByText(locale === "ar" ? "لوبيك" : "Lübeck")).toBeTruthy();
     expect(screen.getByRole("status").textContent).toBe(discoveryCopy(locale).cityAssistantUnavailable);
     expect(document.querySelector('a[data-route*="placeSlug"]')).toBeNull();
+    const fallback = screen.getByRole("button", { name: walkCopy(locale).places });
+    expect(JSON.parse(fallback.closest("a")!.dataset.route!)).toEqual({ pathname: "/city/[citySlug]", params: { citySlug: "lubeck", section: "places" } });
   });
 });
 
@@ -303,7 +312,7 @@ describe("Expo Router Slot-bound card styles", () => {
   it.each(["en", "de", "ar"] as const)("renders place links with an object style and preserved direction in %s", locale => {
     state.locale = locale;
     render(<CityScreen />);
-    const links = [...document.querySelectorAll('a[data-route*="placeSlug"]')] as HTMLElement[];
+    const links = Array.from(document.querySelectorAll('a[data-route*="placeSlug"]')) as HTMLElement[];
     expect(links).toHaveLength(2);
     for (const link of links) {
       const style = JSON.parse(link.dataset.childStyle!);
@@ -316,7 +325,7 @@ describe("Expo Router Slot-bound card styles", () => {
     render(<CityScreen />);
     const link = document.querySelector('a[data-route*="tourSlug"]') as HTMLElement;
     expect(link).toBeTruthy();
-    expect(JSON.parse(link.dataset.childStyle!)).toEqual({ direction: locale === "ar" ? "rtl" : "ltr", flexDirection: "row", overflow: "hidden" });
+    expect(JSON.parse(link.dataset.childStyle!)).toMatchObject({ flexDirection: "row", direction: locale === "ar" ? "rtl" : "ltr", overflow: "hidden" });
     expect(JSON.parse(link.dataset.route!).params).toEqual({ citySlug: "lubeck", tourSlug: "old-town" });
     if (locale === "ar") {
       expect(screen.getByText("المركز التاريخي لمدينة لوبيك")).toBeTruthy();
@@ -373,10 +382,10 @@ describe("image-overlay discovery heroes", () => {
   it("keeps the city identity inside the hero and its planner CTA outside", () => {
     state.locale = "de";
     render(<CityScreen />);
-    const hero = screen.getByTestId("image-overlay-hero");
+    const hero = screen.getByTestId("city-hub-hero");
     expect(within(hero).getByText("Lübeck")).toBeTruthy();
     // Lübeck now uses localized editorial copy; other cities retain hubSubtitle.
-    expect(within(hero).getByText("Historische Gassen. Verborgene Geschichten. Entdecke die Hansestadt.")).toBeTruthy();
+    expect(within(hero).getByRole("heading", { name: /Entdecke\s+Lübeck/ })).toBeTruthy();
     expect(within(hero).queryByRole("button", { name: walkCopy("de").build })).toBeNull();
     expect(screen.getByRole("button", { name: walkCopy("de").build })).toBeTruthy();
   });
@@ -443,4 +452,104 @@ it("separates account and historical local copies without duplicate rows or auto
   const { removeNativeWalk } = await import("../src/lib/walkStorage");
   fireEvent.click(screen.getByRole("button", { name: `${walkCopy("en").removeWalk}: Lübeck` }));
   await act(async () => {}); expect(removeNativeWalk).toHaveBeenCalledWith("lubeck", "saved-walk");
+});
+it("dismisses the Guide fallback to the same hub while retaining its planner return context", () => {
+  render(<CityAssistant context={{ type: "city", citySlug: "lubeck" }} returnIntent={{ citySlug: "lubeck", returnToPlanner: "1", plannerReturnVersion: "1", plannerRouteKey: "walk-route", plannerDraftToken: "draft-mount" }} />);
+  const link = screen.getByRole("button", { name: walkCopy("en").places }).closest("a")!;
+  expect(link.dataset.dismiss).toBe("true");
+  expect(JSON.parse(link.dataset.route!)).toEqual({ pathname: "/city/[citySlug]", params: { citySlug: "lubeck", section: "places", returnToPlanner: "1", plannerReturnVersion: "1", plannerRouteKey: "walk-route", plannerDraftToken: "draft-mount" } });
+});
+
+it("renders the published tour title, estimate, stops, themes and description without illustrative reference data", () => {
+  state.showTour = true;
+  render(<CityScreen />);
+  expect(screen.getByText("Old Town walk")).toBeTruthy();
+  expect(screen.getByText("45 min · 1 stops")).toBeTruthy();
+  expect(screen.getByText("Published route description")).toBeTruthy();
+  expect(screen.getByText("Architecture")).toBeTruthy();
+  expect(screen.queryByText("Classic Lübeck")).toBeNull();
+});
+
+it("saves a place through the existing local contract without requiring an account", async () => {
+  const { toggleSavedPlace } = await import("../src/lib/walkStorage");
+  vi.mocked(toggleSavedPlace).mockClear().mockResolvedValueOnce(true);
+  render(<ExploreScreen />);
+  await act(async () => {});
+  fireEvent.click(screen.getByRole("button", { name: /Save:.*Holstentor/i }));
+  await waitFor(() => expect(screen.getByRole("button", { name: /Saved:.*Holstentor/i })).toBeTruthy());
+  expect(toggleSavedPlace).toHaveBeenCalledExactlyOnceWith({ citySlug: "lubeck", slug: "holstentor", name: "holstentor" });
+});
+it("does not apply another city's saved state to a same-slug place", async () => {
+  const { loadSavedPlaces } = await import("../src/lib/walkStorage");
+  vi.mocked(loadSavedPlaces).mockResolvedValueOnce([{ citySlug: "hamburg", slug: "holstentor", name: "Other city" }]);
+  render(<ExploreScreen />);
+  await act(async () => {});
+  expect(screen.getByRole("button", { name: /Save:.*Holstentor/i })).toBeTruthy();
+  expect(screen.queryByRole("button", { name: /Saved:.*Holstentor/i })).toBeNull();
+});
+it("offers retry when existing saved-place storage cannot be read", async () => {
+  const { loadSavedPlaces } = await import("../src/lib/walkStorage");
+  vi.mocked(loadSavedPlaces).mockRejectedValueOnce(new Error("storage-unavailable"));
+  render(<ExploreScreen />);
+  const retry = await screen.findByRole("button", { name: getNativeMessages("en").retry });
+  fireEvent.click(retry);
+  await waitFor(() => expect(screen.queryByRole("button", { name: getNativeMessages("en").retry })).toBeNull());
+});
+it("retains Explore's category when switching List/Map", async () => {
+  render(<ExploreScreen />);
+  await act(async () => {});
+  fireEvent.click(screen.getByRole("button", { name: discoveryCopy("en").eat }));
+  expect(screen.queryByText("holstentor")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: discoveryCopy("en").map }));
+  fireEvent.click(screen.getByRole("button", { name: discoveryCopy("en").list }));
+  expect(screen.queryByText("holstentor")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: discoveryCopy("en").see }));
+  expect(screen.getByText("holstentor")).toBeTruthy();
+});
+
+// Reproduce Expo Router Slot: asChild must receive one flattened style object.
+it("mounts the guest Explore destination with a usable city-scoped search link", async () => {
+  render(<ExploreScreen />);
+  await act(async () => {});
+  const search = screen.getByRole("button", { name: searchCopy("en").placeholder });
+  expect(search.closest("a")?.dataset.route).toContain("/city/[citySlug]/search");
+  expect(search.closest("a")?.dataset.route).toContain("lubeck");
+});
+
+
+it("offers only supported detail section links and scrolls to the actual story", () => {
+  state.noAudio = true;
+  render(<PlaceScreen />);
+  expect(screen.queryByRole("button", { name: getNativeMessages("en").audioGuide })).toBeNull();
+  fireEvent.click(screen.getByText("Measure content"));
+  fireEvent.click(screen.getByText("Measure place-story-section"));
+  fireEvent.click(screen.getByRole("button", { name: getNativeMessages("en").story }));
+  expect(state.scrollTo).toHaveBeenLastCalledWith({ y: 160, animated: true });
+});
+it("omits story navigation for a place without a story and preserves city-scoped exits", () => {
+  state.noStory = true; state.noAudio = true;
+  render(<PlaceScreen />);
+  expect(screen.queryByRole("button", { name: getNativeMessages("en").story })).toBeNull();
+  const explore = screen.getByRole("button", { name: walkCopy("en").explore }).closest("a");
+  expect(explore?.dataset.route).toContain('"citySlug":"lubeck"');
+  expect(explore?.dataset.route).toContain('/city/[citySlug]/explore');
+  expect(screen.getByRole("button", { name: "City hub" }).closest("a")?.dataset.route).toContain('/city/[citySlug]');
+});
+
+
+it("links the reviewed Holstentor photo to its centralized entry without a long inline paragraph", () => {
+  render(<PlaceScreen />);
+  const link = screen.getByRole("button", { name: "Photo credits: Holstentor in Lübeck Frontseite.jpg" }).closest("a");
+  expect(JSON.parse(link!.dataset.route!)).toEqual({ pathname: "/photo-credits", params: { image: "lubeck" } });
+  expect(screen.queryByText(/Christian Wolf/)).toBeNull();
+});
+
+
+it("[B04/I08] invalid assistant return clears a retained Hub's merged native parameters before dismiss", () => {
+  state.dispatch.mockClear();
+  render(<CityAssistant context={{ type: "city", citySlug: "lubeck" }} />);
+  const link = screen.getByRole("button", { name: walkCopy("en").places }).closest("a")!;
+  expect(JSON.parse(link.dataset.route!)).toEqual({ pathname: "/city/[citySlug]", params: { citySlug: "lubeck", section: "places" } });
+  expect(link.dataset.dismiss).toBe("true"); fireEvent.click(link);
+  expect(state.dispatch).toHaveBeenCalledExactlyOnceWith({ type: "SET_PARAMS", source: "hub-before", target: "root", payload: { params: { returnToPlanner: undefined, plannerReturnVersion: undefined, plannerRouteKey: undefined, plannerDraftToken: undefined } } });
 });

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import { Link, useFocusEffect, useRouter } from "expo-router";
 import { View } from "react-native";
 import { curatedResumeIndex, type CuratedProgress } from "@citywalk/traveler-core";
@@ -9,8 +9,9 @@ import { useNativeLocale } from "../localization/LocaleProvider";
 import { AppText, PrimaryButton } from "./ui";
 import { NativeIcon } from "./NativeIcon";
 
-export function CuratedTourControls({ citySlug, tourSlug, stopSlugs, trip }: {
+export function CuratedTourControls({ citySlug, tourSlug, stopSlugs, trip, renderStart }: {
   citySlug: string; tourSlug: string; stopSlugs: readonly string[]; trip?: MobileTripContext;
+  renderStart?: (controls: { busy: boolean; disabled: boolean; onPress: () => void }) => ReactNode;
 }) {
   const router = useRouter();
   const { locale, messages } = useNativeLocale();
@@ -63,7 +64,7 @@ export function CuratedTourControls({ citySlug, tourSlug, stopSlugs, trip }: {
       <AppText accessibilityRole="alert">{messages.tripSaveFailed}</AppText>
       <PrimaryButton disabled={busy} label={messages.retry} onPress={() => void reloadProgress()} />
     </> : null}
-    {!trip ? <PrimaryButton haptic="medium" leadingIcon={<NativeIcon ios="figure.walk" android="directions_walk" color="#FFFFFF" size={20} />} busy={busy} disabled={busy || error} label={completed ? messages.tripComplete : progress ? t.continue : messages.startTour} onPress={() => void start()} /> : progress ? <>
+    {!trip ? renderStart ? renderStart({ busy, disabled: busy || error, onPress: () => void start() }) : <PrimaryButton haptic="medium" leadingIcon={<NativeIcon ios="figure.walk" android="directions_walk" color="#FFFFFF" size={20} />} busy={busy} disabled={busy || error} label={completed ? messages.tripComplete : progress ? t.continue : messages.startTour} onPress={() => void start()} /> : progress ? <>
       <AppText>{completed ? messages.tripComplete : `${progress.statuses.filter(s => s === "visited").length} / ${stopSlugs.length} ${t.visited}`}</AppText>
       {!completed && trip.currentStopIndex !== curatedResumeIndex(progress) ? <PrimaryButton disabled={busy || error} label={t.continue} onPress={() => navigate(progress)} /> : !completed ? <>
         <PrimaryButton busy={busy} disabled={busy || error} label={t.visited} onPress={() => void mark("visited")} />

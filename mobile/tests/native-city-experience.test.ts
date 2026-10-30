@@ -26,7 +26,7 @@ describe("native city experience parity", () => {
   });
 
   it("renders city hero, published tour stops, and the personalized planner", () => {
-    expect(citySource).toContain("<ImageOverlayHero");
+    expect(citySource).toContain("<CityHubHero");
     expect(citySource).toContain('stopNames.join(" · ")');
     expect(citySource).toContain("messages.startTour");
     expect(citySource).toContain('pathname: "/city/[citySlug]/walk"');
@@ -65,11 +65,11 @@ describe("native city experience parity", () => {
 
   it("uses an editorial place-detail reading order without inventing new place data", () => {
     const audio = placeSource.indexOf('testID="place-audio-section"');
-    const why = placeSource.indexOf('"place.whyItMatters"');
+    const why = placeSource.indexOf('testID="place-overview-section"');
     const story = placeSource.indexOf('testID="place-story-section"');
     const facts = placeSource.indexOf('"place.quickFacts"');
     expect(audio).toBeGreaterThan(0);
-    expect(why).toBeGreaterThan(audio);
+    expect(audio).toBeGreaterThan(story);
     expect(story).toBeGreaterThan(why);
     expect(facts).toBeGreaterThan(story);
     expect(placeSource).toContain("place.content.description ?? place.content.shortDescription");
