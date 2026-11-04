@@ -1,0 +1,11 @@
+{
+  "worker": "citywalk-preview-395-7b99bf8",
+  "origin": "https://citywalk-preview-395-7b99bf8.REPLACE.workers.dev",
+  "hyperdriveId": "UNPROVISIONED_SYNTHETIC_HYPERDRIVE",
+  "databaseHost": "synthetic-db-395.invalid",
+  "databaseName": "citywalk_preview_395",
+  "mediaBucket": "citywalk-preview-395-synthetic",
+  "resourceReview": "PENDING",
+  "accessReview": "PENDING",
+  "runtimeReview": "PENDING"
+}

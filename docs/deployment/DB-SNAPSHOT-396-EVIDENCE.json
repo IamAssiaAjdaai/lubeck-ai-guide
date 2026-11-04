@@ -1,0 +1,403 @@
+{
+  "head": "689cb46c1f252ffdd7875c71d2ba9024ca1b450b",
+  "branch": "codex/landing-runtime-rc",
+  "uncommitted": true,
+  "sourceSnapshotBlob": "84cca0f95fa706688b97d5b2f07c804648605d7d",
+  "sourceSnapshotReusedUnchanged": false,
+  "historicalMigrationsAndJournalUnchanged": true,
+  "preexistingFilesPreserved": true,
+  "landingSourceManifest": [
+    {
+      "path": "src/app/page.tsx",
+      "sha256": "eebd44aa8dc6197798993a17450d50ed6c3d95393dff53243bfaebf505652a77",
+      "matches": true
+    },
+    {
+      "path": "src/components/landing/LandingPreview.tsx",
+      "sha256": "e0a4c993dc77f386896dbd55934afe8de2c9ebb6d54d36f5d5930776d83f1def",
+      "matches": true
+    },
+    {
+      "path": "src/components/landing/LandingClosing.tsx",
+      "sha256": "449c3ce9e432dc56aeea70ad43cab0a5fc1f1f05b4e468cd980002d06680e35e",
+      "matches": true
+    },
+    {
+      "path": "src/components/landing/landing.module.css",
+      "sha256": "c43b98448a3bbd4e5bef65def49d5a7596204e031fe8f3061f3a525caffc591e",
+      "matches": true
+    },
+    {
+      "path": "src/components/landing/closing.module.css",
+      "sha256": "605aecfb28c70a429dc69919890a16e0de84d81f7a1f92e0c13782fdceb8479a",
+      "matches": true
+    },
+    {
+      "path": "src/components/brand/CitywalkLogo.tsx",
+      "sha256": "7f8512e13d265b3a540023dcfd53edf984fdbf87272db2e57d7127b7f9a15b94",
+      "matches": true
+    },
+    {
+      "path": "src/lib/brand.ts",
+      "sha256": "5d7f0c600cafcb25633be4f8169ee579ac5ca54d2d30c50fa608d2a73ca29da5",
+      "matches": true
+    },
+    {
+      "path": "src/data/cityAvailability.ts",
+      "sha256": "5420e4ac2c6a1c02b96762ad73e5227f225de7dc4d1d18966ba2360a25b68f5f",
+      "matches": true
+    },
+    {
+      "path": "packages/traveler-core/src/cityAvailability.ts",
+      "sha256": "3d2038ad7d58ed48037f798bf21cd708820552a6333de1585162807dc9e95e84",
+      "matches": true
+    },
+    {
+      "path": "src/app/globals.css",
+      "sha256": "3741b9954016b61411a4a51771a5fbdefddbd0f10686a689ae7963b2d76189fc",
+      "matches": true
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "sha256": "c9f66fdd5bea0c6c2cd4b5c7047d1fafef79ac489312a7ec0da6ab35660a5615",
+      "matches": true
+    },
+    {
+      "path": "public/images/citywalk-waterfront.webp",
+      "sha256": "3facc1dfe6a44976e1330e11e37b54321b13d6a55d2cbfc64167d08adca0d0cc",
+      "matches": true
+    },
+    {
+      "path": "public/images/city-hamburg.webp",
+      "sha256": "3bdacdaf26ae4f9293413b100c977610e96c439aea985671fb2a5593745ba37a",
+      "matches": true
+    },
+    {
+      "path": "public/images/city-duesseldorf.webp",
+      "sha256": "66956bc2d3ea2bbd97f577f49f61028db112c32d27cf3924f7e39eef04aba1ea",
+      "matches": true
+    },
+    {
+      "path": "public/landmarks/holstentor.jpg",
+      "sha256": "22257df1777b146f93c6a4bd6a79fa1e8960630263822ec9a01dd13c4a0a75e3",
+      "matches": true
+    },
+    {
+      "path": "public/brand/citywalk-mark.svg",
+      "sha256": "7f9015a65adfdd665c393fa1cac70f495b4c31f0886767e43582047671e753fa",
+      "matches": true
+    },
+    {
+      "path": "src/app/privacy/page.tsx",
+      "sha256": "cfe6b3b29be36d2bac490a8363d0ca4632f9b35ee7c35253bc697174e6ad98da",
+      "matches": true
+    },
+    {
+      "path": "src/app/terms/page.tsx",
+      "sha256": "3dcae1554f5b9df7f028b383f6bee53502398207cbed5ea400b4753e0badfb39",
+      "matches": true
+    },
+    {
+      "path": "src/app/imprint/page.tsx",
+      "sha256": "ef12927b3a9263b8904b48faf69f276093c739775cace18bd0e45eb302a66e1d",
+      "matches": true
+    },
+    {
+      "path": "src/app/support/page.tsx",
+      "sha256": "bf66b4055d28670dde140f3429cc417cbc6f27b2d1dc84d65fc1518b7e37de16",
+      "matches": true
+    },
+    {
+      "path": "src/app/account-deletion/page.tsx",
+      "sha256": "b478f3ce8f9dde1ee5dac82869982185bac2ed9c103a9d42125a7abb53c93cd5",
+      "matches": true
+    },
+    {
+      "path": "src/components/account/AccountDeletionRequestPanel.tsx",
+      "sha256": "1391eb1f81a29f038f5ad943a690cb62fc4f518bbb8ffa93b5af54acd5157093",
+      "matches": true
+    },
+    {
+      "path": "src/components/legal/LegalPage.tsx",
+      "sha256": "3e641cd907e53950fdee0acaf5da3b45627ed310d81e20287591d8b5b2405ac2",
+      "matches": true
+    },
+    {
+      "path": "src/lib/legal.ts",
+      "sha256": "d1d4c00b499c7d58171b4c2a92af4a8ccdfe84c78825dc818bbf35020fb19011",
+      "matches": true
+    },
+    {
+      "path": "src/lib/site.ts",
+      "sha256": "5a1c3d689916d3296475bd618760b44ffecc767050cb1bd7bfda1c96891d5451",
+      "matches": true
+    }
+  ],
+  "newTaskFiles": [
+    {
+      "path": "drizzle/meta/0026_snapshot.json",
+      "sha256": "f87ce82b45fe626940449864960aa4b03be62160cb511d612990ea7c67826dd8"
+    },
+    {
+      "path": "src/db/travelerSchema.ts",
+      "sha256": "59ca2b7416ef5f13499daf8f906885d8e153bc02147a614b191a55aa81693dad"
+    },
+    {
+      "path": "scripts/migrationSnapshot396.test.ts",
+      "sha256": "b2f6f015e5fd6198b151050c77a68c266fb4d0caf936203f2203f74e7d677535"
+    },
+    {
+      "path": "src/lib/nativeReleaseCompatibility.test.ts",
+      "sha256": "1f874660ddf756e5a52b2d3777623c6e4f1e95ccbb8bf9160789388be2c81d8f"
+    },
+    {
+      "path": "docs/deployment/DB-SNAPSHOT-396-REVIEW-2026-10-19.md",
+      "sha256": "534e81f09689105817db6e4ea6f605ab24598cc1074a17f2eda4dabf3423e16b"
+    }
+  ],
+  "databaseChecks": {
+    "passed": 8,
+    "checks": [
+      "upgrade starts at 0025 without shared table",
+      "upgrade through committed 0026",
+      "physical FK and CHECK match metadata",
+      "columns and owner index exist",
+      "object routes accepted",
+      "array scalar null and number routes rejected",
+      "migration rerun preserves existing row",
+      "cascade and transactional rollback preserve integrity"
+    ]
+  },
+  "runtimeChecks": [
+    {
+      "name": "homepage-320",
+      "pass": true,
+      "details": {
+        "h1": [
+          "A better wayto walk a city."
+        ],
+        "overflow": false,
+        "broken": 0,
+        "canonical": "https://getcitywalk.com/"
+      }
+    },
+    {
+      "name": "homepage-390",
+      "pass": true,
+      "details": {
+        "h1": [
+          "A better wayto walk a city."
+        ],
+        "overflow": false,
+        "broken": 0,
+        "canonical": "https://getcitywalk.com/"
+      }
+    },
+    {
+      "name": "homepage-768",
+      "pass": true,
+      "details": {
+        "h1": [
+          "A better wayto walk a city."
+        ],
+        "overflow": false,
+        "broken": 0,
+        "canonical": "https://getcitywalk.com/"
+      }
+    },
+    {
+      "name": "homepage-1440",
+      "pass": true,
+      "details": {
+        "h1": [
+          "A better wayto walk a city."
+        ],
+        "overflow": false,
+        "broken": 0,
+        "canonical": "https://getcitywalk.com/"
+      }
+    },
+    {
+      "name": "no-browser-external-requests",
+      "pass": true,
+      "details": {
+        "origins": []
+      }
+    },
+    {
+      "name": "/explore",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/privacy",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/terms",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/imprint",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/support",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/account-deletion",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/robots.txt",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/sitemap.xml",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/open/lubeck/synthetic",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "/api/content/cities",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "incomplete-/privacy",
+      "pass": true
+    },
+    {
+      "name": "incomplete-/terms",
+      "pass": true
+    },
+    {
+      "name": "incomplete-/imprint",
+      "pass": true
+    },
+    {
+      "name": "/api/account/export",
+      "pass": true,
+      "details": {
+        "status": 401,
+        "expected": 401
+      }
+    },
+    {
+      "name": "/api/account/delete",
+      "pass": true,
+      "details": {
+        "status": 401,
+        "expected": 401
+      }
+    },
+    {
+      "name": "/api/commerce/checkout",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "/api/guide",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "/.well-known/apple-app-site-association",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "/.well-known/assetlinks.json",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "/api/commerce/webhooks/revenuecat",
+      "pass": true,
+      "details": {
+        "status": 503,
+        "expected": 503
+      }
+    },
+    {
+      "name": "anonymous-auth",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "AI-ineligible",
+      "pass": true
+    },
+    {
+      "name": "synthetic-complete-/privacy",
+      "pass": true
+    },
+    {
+      "name": "synthetic-complete-/terms",
+      "pass": true
+    },
+    {
+      "name": "synthetic-complete-/imprint",
+      "pass": true
+    },
+    {
+      "name": "synthetic-/.well-known/apple-app-site-association",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "synthetic-/.well-known/assetlinks.json",
+      "pass": true,
+      "details": {
+        "status": 200
+      }
+    }
+  ]
+}
