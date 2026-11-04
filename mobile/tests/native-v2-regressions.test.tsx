@@ -59,7 +59,7 @@ vi.mock("../src/components/ui", () => ({
 vi.mock("../src/components/NativeContentImage", () => ({ NativeContentImage: ({ style }: { style?: unknown }) => <div data-testid="content-image" data-style={JSON.stringify(style)} /> }));
 vi.mock("../src/components/NativeAudioPlayer", () => ({ NativeAudioPlayer: ({ source, title }: { source: string; title: string }) => <audio aria-label={title} src={source} /> }));
 vi.mock("../src/components/TripProgress", () => ({ TripProgress: () => null }));
-vi.mock("../src/lib/walkStorage", () => ({ subscribeSavedWalks: () => () => {}, loadSavedPlaces: vi.fn(async () => state.saved ? [{ citySlug: "lubeck", slug: "holstentor", name: "Holstentor", savedAt: 1 }] : []), loadSavedWalks: async () => state.saved ? [{ id: "saved-walk", citySlug: "lubeck", remaining: state.emptySaved ? [] : ["holstentor"], visited: [] }] : [], loadActiveWalk: async () => undefined, removeNativeWalk: vi.fn(), toggleSavedPlace: vi.fn() }));
+vi.mock("../src/lib/walkStorage", () => ({ subscribeSavedWalks: () => () => {}, subscribeCurrentWalk: () => () => {}, loadSavedPlaces: vi.fn(async () => state.saved ? [{ citySlug: "lubeck", slug: "holstentor", name: "Holstentor", savedAt: 1 }] : []), loadSavedWalks: async () => state.saved ? [{ id: "saved-walk", citySlug: "lubeck", remaining: state.emptySaved ? [] : ["holstentor"], visited: [] }] : [], loadActiveWalk: async () => undefined, removeNativeWalk: vi.fn(), toggleSavedPlace: vi.fn() }));
 vi.mock("../src/components/NativeCityMap", () => ({ NativeCityMap: () => null }));
 vi.mock("../src/components/CitywalkLoading", () => ({ CitywalkLoading: () => <div data-testid="place-skeleton" /> }));
 vi.mock("../src/components/MediaAttribution", () => ({ MediaAttribution: () => null }));

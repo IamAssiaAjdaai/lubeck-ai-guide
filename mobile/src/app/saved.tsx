@@ -18,6 +18,7 @@ import {
   loadSavedPlaces,
   loadSavedWalks,
   subscribeSavedWalks,
+  subscribeCurrentWalk,
   removeNativeWalk,
   toggleSavedPlace,
   type SavedPlace,
@@ -69,36 +70,70 @@ export default function SavedScreen() {
   const [removing, setRemoving] = useState<string>();
   const removeLock = useRef(false);
   const savedRevision = useRef(0);
-  const reload = useCallback(async () => {
+  const snapshotVersion = useRef(0);
+  const focused = useRef(false);
+  const currentSubscriptions = useRef(new Map<string, () => void>());
+  const reload = useCallback(async function reloadSnapshot(): Promise<boolean> {
+    if (!focused.current) return false;
+    const version = ++snapshotVersion.current;
     const revision = savedRevision.current;
-    const [w, l, p] = await Promise.all([
-      loadSavedWalks(),
-      loadLocalTrips(),
-      loadSavedPlaces(),
-    ]);
-    if (revision === savedRevision.current) setWalks(w);
-    setLegacy(l);
-    setPlaces(p);
-    const citySlugs = [
-      ...new Set([
-        ...Object.keys(cityLaunches).filter(
-          (slug) => cityLaunches[slug].status === "available",
-        ),
+    const isCurrent = () => focused.current && snapshotVersion.current === version;
+    function subscribeCities(cities: readonly string[]) {
+      for (const city of cities) {
+        if (!currentSubscriptions.current.has(city)) {
+          currentSubscriptions.current.set(city, subscribeCurrentWalk(city, () => {
+            void reloadSnapshot();
+          }));
+        }
+      }
+    }
+    try {
+      const availableCities = Object.keys(cityLaunches).filter(
+        (slug) => cityLaunches[slug].status === "available",
+      );
+      // Observe commits before reading: Start may finish while the first snapshot is pending.
+      subscribeCities(availableCities);
+      const [w, l, p] = await Promise.all([
+        loadSavedWalks(),
+        loadLocalTrips(),
+        loadSavedPlaces(),
+      ]);
+      if (!isCurrent()) return false;
+      const citySlugs = [...new Set([
+        ...availableCities,
         ...w.map((item) => item.citySlug),
         ...l.map((item) => item.citySlug),
-      ]),
-    ];
-    const journeys = await Promise.all(
-      citySlugs.map((slug) => loadActiveWalk(slug)),
-    );
-    setActive(journeys.filter((item): item is WalkJourney => Boolean(item)));
-    setLoading(false);
-  }, []);
+      ])];
+      subscribeCities(citySlugs);
+      const journeys = await Promise.all(
+        citySlugs.map((slug) => loadActiveWalk(slug)),
+      );
+      if (!isCurrent()) return false;
+      if (revision === savedRevision.current) setWalks(w);
+      setLegacy(l);
+      setPlaces(p);
+      setActive(journeys.filter((item): item is WalkJourney => Boolean(item)));
+      setError("");
+      setLoading(false);
+      return true;
+    } catch {
+      if (isCurrent()) { setLoading(false); setError(messages.unavailable); }
+      return false;
+    }
+  }, [messages.unavailable]);
   useFocusEffect(
     useCallback(() => {
-      void reload().catch(() => { setLoading(false); setError(messages.unavailable); });
-      return subscribeSavedWalks(walks => { savedRevision.current++; setWalks(walks); });
-    }, [reload, messages.unavailable]),
+      focused.current = true;
+      void reload();
+      const unsubscribeSaved = subscribeSavedWalks(walks => { savedRevision.current++; setWalks(walks); });
+      return () => {
+        focused.current = false;
+        snapshotVersion.current++;
+        unsubscribeSaved();
+        currentSubscriptions.current.forEach(unsubscribe => unsubscribe());
+        currentSubscriptions.current.clear();
+      };
+    }, [reload]),
   );
   async function remove(key: string, work: () => Promise<unknown>) {
     if (removeLock.current) return;
@@ -106,7 +141,6 @@ export default function SavedScreen() {
     try {
       await work();
       await reload();
-      setError("");
     } catch {
       setError(t.removeFailed);
     } finally { removeLock.current = false; setRemoving(undefined); }
@@ -138,7 +172,7 @@ export default function SavedScreen() {
 
       {isTrips ? (
         <>
-          {error ? <ContentRecovery retry={() => { setError(""); void reload().catch(() => setError(messages.unavailable)); }} /> : null}
+          {error ? <ContentRecovery retry={() => { setError(""); void reload(); }} /> : null}
 
           {!activeTrips.length && !finishedTrips.length ? (
             <View style={styles.tripEmpty}>
@@ -266,7 +300,7 @@ export default function SavedScreen() {
 
           {showAccount && account.loading ? <CitywalkLoading compact label={uxCopy(locale).saved} /> : null}
           {showAccount && account.error ? <ContentRecovery retry={() => void account.refresh()} /> : null}
-          {error ? <ContentRecovery retry={() => { setError(""); void reload().catch(() => setError(messages.unavailable)); }} /> : null}
+          {error ? <ContentRecovery retry={() => { setError(""); void reload(); }} /> : null}
 
           <View style={styles.savedSection}>
             <SectionTitle>{t.places}</SectionTitle>
