@@ -8,9 +8,77 @@ on:
     branches:
       - main
       - develop
+  workflow_dispatch:
+
+# Change detection reads PR file lists; no write access and no production secrets.
+permissions:
+  contents: read
+  pull-requests: read
+
+# Cancel superseded runs for the same PR/branch before expensive test jobs start.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      web: ${{ steps.filter.outputs.web }}
+      mobile: ${{ steps.filter.outputs.mobile }}
+      database: ${{ steps.filter.outputs.database }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        # Pinned v3.0.3 action; PR changes are read using a read-only token.
+        uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad
+        with:
+          filters: |
+            web:
+              - '.github/workflows/ci.yml'
+              - 'src/**'
+              - 'packages/**'
+              - 'public/**'
+              - 'scripts/**'
+              - 'drizzle/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'next.config.*'
+              - 'tsconfig.json'
+              - 'vitest.config.ts'
+              - 'eslint.config.*'
+              - 'postcss.config.*'
+              - 'tailwind.config.*'
+              - 'drizzle.config.ts'
+              - 'vite.config.mts'
+              - 'cloudflare.config.ts'
+            mobile:
+              - '.github/workflows/ci.yml'
+              - 'mobile/**'
+              - 'packages/i18n/**'
+              - 'packages/traveler-core/**'
+            database:
+              - '.github/workflows/ci.yml'
+              - 'src/db/**'
+              - 'src/lib/**'
+              - 'src/app/api/**'
+              - 'src/data/**'
+              - 'drizzle/**'
+              - 'packages/traveler-core/**'
+              - 'packages/marketing-core/**'
+              - 'scripts/run-*-integration-tests.ts'
+              - 'scripts/*database*'
+              - 'scripts/*migration*'
+              - 'scripts/seed-database.ts'
+              - 'scripts/verify-database.ts'
+              - 'scripts/import-*-cms.ts'
+              - 'drizzle.config.ts'
+              - 'package.json'
+              - 'package-lock.json'
+
   mobile:
+    needs: changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.mobile == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -49,6 +117,8 @@ jobs:
         run: npm run doctor
 
   build:
+    needs: changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.web == 'true' }}
     runs-on: ubuntu-latest
     env:
       # No reachable database; auth initialization does not connect during build.
@@ -81,16 +151,16 @@ jobs:
       - name: Check standalone Marketing Core types
         run: npm run typecheck --workspace @marketing/core
       
-      - name: Run tests
-        run: npm run test:run
-
-      - name: Check coverage
+      # Vitest coverage executes the entire test suite; don't run tests twice.
+      - name: Run tests with coverage
         run: npm run test:coverage
 
       - name: Build project
         run: npm run build
 
   database-integration:
+    needs: changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.database == 'true' }}
     runs-on: ubuntu-latest
 
     services:
@@ -149,9 +219,6 @@ jobs:
 
       - name: Re-seed database
         run: npm run db:seed
-
-      - name: Verify seed idempotency
-        run: npm run db:verify
 
       - name: Verify seed idempotency
         run: npm run db:verify

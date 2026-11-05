@@ -13,6 +13,10 @@ on:
       - "scripts/check-account-deletion-e2e.mjs"
       - ".github/workflows/account-deletion-e2e.yml"
 
+concurrency:
+  group: account-e2e-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 

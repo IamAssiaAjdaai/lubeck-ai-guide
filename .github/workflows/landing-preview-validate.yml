@@ -17,6 +17,10 @@ on:
       - "scripts/check-landing-preview.mjs"
       - ".github/workflows/landing-preview-validate.yml"
 
+concurrency:
+  group: landing-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
