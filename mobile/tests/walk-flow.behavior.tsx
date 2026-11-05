@@ -13,7 +13,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   guest: false,
   navigation: { isFocused: () => true, setOptions: vi.fn(), addListener: () => () => {} },
@@ -410,6 +410,17 @@ function setup(authorizeStart?: () => Promise<boolean>) {
   mocks.loadTravelerStyle.mockImplementation(async () => mocks.travelerStyle);
   render(<NativeWalkFlow citySlug="city" cityName="City" places={places} authorizeStart={authorizeStart} />);
 }
+// Each case must also work as the first/only selected test, without relying on
+// setup() or the preceding case's afterEach to establish async mock defaults.
+beforeEach(() => {
+  mocks.load.mockResolvedValue(undefined);
+  mocks.persist.mockResolvedValue(undefined);
+  mocks.save.mockResolvedValue(undefined);
+  mocks.feedback.mockResolvedValue(undefined);
+  mocks.share.mockResolvedValue({});
+  mocks.location.mockResolvedValue({ status: "denied" });
+  mocks.loadTravelerStyle.mockImplementation(async () => mocks.travelerStyle);
+});
 afterEach(() => {
   vi.useRealTimers();
   mocks.holdPresentation = false; mocks.presented = undefined;
@@ -864,12 +875,42 @@ describe("the actual Expo walk route loading boundary", () => {
     if (screen.queryByRole("button", { name: t.continue })) fireEvent.click(screen.getByRole("button", { name: t.continue }));
     if (screen.queryByTestId("location-entry")) fireEvent.click(screen.getByRole("button", { name: "Not now" }));
     if (screen.queryByTestId("first-experience")) fireEvent.click(screen.getByRole("button", { name: "Continue planning" }));
+    await waitFor(() => expect((screen.getByRole("button", { name: t.buildAction }) as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(screen.getByRole("button", { name: t.buildAction }));
     await waitFor(() => expect(screen.getByTestId("build-stage").textContent).toBe("matching"));
     expect(screen.queryByTestId("content-loader")).toBeNull();
     for (let stage = 0; stage < 4; stage++) await act(async () => frames.shift()!(0));
     expect(screen.getByRole("button", { name: t.startWalk })).toBeTruthy();
   });
+  it("keeps Arabic Build disabled until delayed focus validation completes", async () => {
+    mocks.locale = "ar";
+    let release!: () => void;
+    const validation = new Promise<void>(resolve => { release = resolve; });
+    // First read hydrates the empty draft; the second is its focus validation.
+    mocks.readSlot.mockImplementationOnce(async () => undefined).mockImplementationOnce(() => validation);
+    const frames: FrameRequestCallback[] = [];
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => { frames.push(callback); return frames.length; });
+    render(<WalkScreen />);
+    const t = walkCopy("ar");
+    fireEvent.click(await screen.findByRole("button", { name: t.continue }));
+    fireEvent.click(screen.getByRole("button", { name: t.continue }));
+    fireEvent.click(screen.getByRole("button", { name: "Not now" }));
+    fireEvent.click(screen.getByRole("button", { name: "Continue planning" }));
+    await waitFor(() => expect(mocks.readSlot).toHaveBeenCalledTimes(2));
+    const build = screen.getByRole("button", { name: t.buildAction }) as HTMLButtonElement;
+    expect(build.disabled).toBe(true);
+    fireEvent.click(build);
+    expect(screen.queryByTestId("build-stage")).toBeNull();
+    expect(mocks.persist).not.toHaveBeenCalled();
+    await act(async () => { release(); await validation; });
+    await waitFor(() => expect(build.disabled).toBe(false));
+    fireEvent.click(build);
+    await waitFor(() => expect(screen.getByTestId("build-stage").textContent).toBe("matching"));
+    expect(screen.queryByTestId("content-loader")).toBeNull();
+    for (let stage = 0; stage < 4; stage++) await act(async () => frames.shift()!(0));
+    expect(screen.getByRole("button", { name: t.startWalk })).toBeTruthy();
+  });
+
 });
 
 describe("empty previews and confirmed start-over planning", () => {
