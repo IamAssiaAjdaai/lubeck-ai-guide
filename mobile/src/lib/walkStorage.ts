@@ -72,6 +72,94 @@ function uniqueJourney(journey: WalkJourney): WalkJourney {
   const visited = [...new Set(journey.visited)];
   return { ...journey, visited, remaining: [...new Set(journey.remaining)].filter(slug => !visited.includes(slug)) };
 }
+// Receipts are navigation-independent, runtime-only observations. Raw bytes and
+// storage handles stay private; a forged, serialized or cross-store receipt fails closed.
+declare const slotReceiptBrand: unique symbol;
+export type WalkSlotReceipt = Readonly<{ [slotReceiptBrand]: true }>;
+export type CurrentWalkObservation =
+  | Readonly<{ kind: "empty"; receipt: WalkSlotReceipt }>
+  | Readonly<{ kind: "current"; current: CurrentWalk; receipt: WalkSlotReceipt }>
+  | Readonly<{ kind: "terminal"; journey: WalkJourney; receipt: WalkSlotReceipt }>
+  | Readonly<{ kind: "blocked" }>
+  | Readonly<{ kind: "unavailable" }>;
+export type PreviewWriteIntent = "new" | "replay" | Readonly<{ customize: string }>;
+const slotReceipts = new WeakMap<WalkSlotReceipt, { city: string; store: WalkStore; raw: string | null }>();
+
+function classifyCurrentSlot(city: string, raw: string | null):
+  { kind: "empty" } | { kind: "blocked" } |
+  { kind: "terminal"; journey: WalkJourney } | { kind: "current"; current: CurrentWalk } {
+  if (raw === null) return { kind: "empty" };
+  let value: unknown;
+  try { value = JSON.parse(raw); } catch { return { kind: "blocked" }; }
+  if (value === null) return { kind: "empty" };
+  if (!isWalkJourney(value) || value.citySlug !== city) return { kind: "blocked" };
+  const { nativePhase, ...journey } = value as WalkJourney & { nativePhase?: unknown };
+  if (nativePhase !== undefined && nativePhase !== "preview" && nativePhase !== "active") return { kind: "blocked" };
+  if (journey.finishedAt !== undefined) return { kind: "terminal", journey: uniqueJourney(journey) };
+  return { kind: "current", current: { journey: uniqueJourney(journey), phase: nativePhase === "preview" ? "preview" : "active" } };
+}
+async function observeSlot(city: string, target: WalkStore): Promise<CurrentWalkObservation> {
+  let raw: string | null;
+  try { raw = await target.getItem(activeKey(city)); } catch { return { kind: "unavailable" }; }
+  const slot = classifyCurrentSlot(city, raw);
+  if (slot.kind === "blocked") return Object.freeze(slot);
+  const receipt = Object.freeze({}) as WalkSlotReceipt;
+  slotReceipts.set(receipt, { city, store: target, raw });
+  return Object.freeze({ ...slot, receipt });
+}
+export async function observeCurrentWalk(city: string, store?: WalkStore): Promise<CurrentWalkObservation> {
+  return mutate(async () => {
+    try { return await observeSlot(city, store ?? await defaultStore()); }
+    catch { return { kind: "unavailable" } as const; }
+  });
+}
+function requireReadableSlot(slot: CurrentWalkObservation): void {
+  if (slot.kind === "blocked") throw new Error("walk-storage-blocked");
+  if (slot.kind === "unavailable") throw new Error("walk-storage-unavailable");
+}
+
+/** Single-runtime queued compare/write, not cross-process CAS or persistent drafts. */
+export async function commitCurrentWalkPreview(
+  input: WalkJourney, receipt: WalkSlotReceipt, writeIntent: PreviewWriteIntent,
+  options: { store?: WalkStore; isCurrent?: () => boolean } = {},
+): Promise<CurrentWalk> {
+  if (!isWalkJourney(input) || input.finishedAt !== undefined) throw new Error("Invalid journey");
+  const phase = (input as WalkJourney & { nativePhase?: unknown }).nativePhase;
+  if (phase !== undefined && phase !== "active" && phase !== "preview") throw new Error("Invalid journey");
+  // Capture input ownership before joining the queue; caller edits cannot alter
+  // the accepted candidate while asynchronous storage work is pending.
+  const journey: WalkJourney = JSON.parse(JSON.stringify(input));
+  const intent = typeof writeIntent === "object" ? { customize: writeIntent.customize } : writeIntent;
+  return mutate(async () => {
+    const target = options.store ?? await defaultStore();
+    const observed = slotReceipts.get(receipt);
+    if (!observed || observed.city !== journey.citySlug || observed.store !== target) throw new Error("walk-changed");
+    if (!isWalkJourney(journey) || journey.finishedAt !== undefined) throw new Error("Invalid journey");
+    if (options.isCurrent && !options.isCurrent()) throw new Error("walk-cancelled");
+    const raw = await target.getItem(activeKey(journey.citySlug));
+    if (raw !== observed.raw) throw new Error("walk-changed");
+    const slot = classifyCurrentSlot(journey.citySlug, raw);
+    if (slot.kind === "blocked") throw new Error("walk-storage-blocked");
+    if (intent === "new" || intent === "replay") {
+      if (slot.kind === "current") throw new Error("walk-changed");
+    } else if (slot.kind !== "current" || slot.current.journey.id !== intent.customize) throw new Error("walk-changed");
+    // An explicit Customize may keep its saved lineage in the new preview
+    // execution. Never infer linkage for an unrelated new or replayed route.
+    const previous = slot.kind === "current" ? slot.current.journey as WalkJourney & {
+      savedWalkId?: string; accountSavedWalkId?: string; accountSavedUserId?: string;
+    } : undefined;
+    const candidate = previous && typeof intent === "object" ? { ...journey,
+      ...(previous.savedWalkId ? { savedWalkId: previous.savedWalkId } : {}),
+      ...(previous.accountSavedWalkId ? { accountSavedWalkId: previous.accountSavedWalkId, accountSavedUserId: previous.accountSavedUserId } : {}),
+    } : journey;
+    // One accepted attempt consumes its receipt, including failed/uncertain writes.
+    // Retry must inspect actual storage again instead of blindly replaying it.
+    slotReceipts.delete(receipt);
+    const written = await writeCurrent({ journey: candidate, phase: "preview" }, target, options.isCurrent, observed.raw);
+    return { journey: written, phase: "preview" };
+  });
+}
+
 export async function loadCurrentWalk(city: string, store?: WalkStore): Promise<CurrentWalk | undefined> {
   const value = await read(activeKey(city), store ?? (await defaultStore()));
   if (!isWalkJourney(value) || value.citySlug !== city || value.finishedAt) return;
@@ -82,9 +170,12 @@ export async function loadActiveWalk(city: string, store?: WalkStore) {
   const current = await loadCurrentWalk(city, store);
   return current?.phase === "active" ? current.journey : undefined;
 }
-async function writeCurrent(current: CurrentWalk, target: WalkStore) {
+async function writeCurrent(current: CurrentWalk, target: WalkStore, isCurrent?: () => boolean, expectedRaw?: string | null) {
   if (!isWalkJourney(current.journey)) throw new Error("Invalid journey");
-  const previous = await read(activeKey(current.journey.citySlug), target);
+  const slot = await observeSlot(current.journey.citySlug, target);
+  requireReadableSlot(slot);
+  if (expectedRaw !== undefined && (slot.kind === "blocked" || slot.kind === "unavailable" || slotReceipts.get(slot.receipt)?.raw !== expectedRaw)) throw new Error("walk-changed");
+  const previous = slot.kind === "current" ? slot.current.journey : slot.kind === "terminal" ? slot.journey : undefined;
   const linkedId = isWalkJourney(previous) && previous.id === current.journey.id
     ? (previous as LinkedJourney).savedWalkId : undefined;
   const accountLink = isWalkJourney(previous) && previous.id === current.journey.id
@@ -94,6 +185,7 @@ async function writeCurrent(current: CurrentWalk, target: WalkStore) {
     ...((current.journey as LinkedJourney).savedWalkId || linkedId
       ? { savedWalkId: (current.journey as LinkedJourney).savedWalkId ?? linkedId } : {}),
   });
+  if (isCurrent && !isCurrent()) throw new Error("walk-cancelled");
   await target.setItem(activeKey(journey.citySlug), JSON.stringify(
     current.phase === "preview" ? { ...journey, nativePhase: "preview" } : journey,
   ));
@@ -125,7 +217,10 @@ export function walkSaveStatus(journey: WalkJourney, places: readonly PublicPlac
 export async function startCurrentWalk(city: string, id: string, places: readonly PublicPlaceCard[], contentReady = true, store?: WalkStore) {
   return mutate(async () => {
     const target = store ?? await defaultStore();
-    const current = await loadCurrentWalk(city, target);
+    const slot = await observeSlot(city, target);
+    if (slot.kind === "blocked") throw new Error("walk-changed");
+    requireReadableSlot(slot);
+    const current = slot.kind === "current" ? slot.current : undefined;
     if (!current || current.journey.id !== id) throw new Error("walk-changed");
     // Idempotent: repeated taps never reset a running timer or write another start.
     if (current.phase === "active") return current;
@@ -142,7 +237,10 @@ export async function startCurrentWalk(city: string, id: string, places: readonl
 export async function clearCurrentWalk(city: string, expected: CurrentWalk | undefined, store?: WalkStore) {
   return mutate(async () => {
     const target = store ?? await defaultStore();
-    const current = await loadCurrentWalk(city, target);
+    const slot = await observeSlot(city, target);
+    requireReadableSlot(slot);
+    const current = slot.kind === "current" ? slot.current : undefined;
+    if (slot.kind === "terminal") throw new Error("walk-changed");
     if (current?.phase !== expected?.phase || JSON.stringify(current?.journey) !== JSON.stringify(expected?.journey)) throw new Error("walk-changed");
     await target.setItem(activeKey(city), "null");
     notifyCurrentWalk(city, undefined);
@@ -157,7 +255,9 @@ export async function changeCurrentWalk(
 ): Promise<CurrentWalk> {
   return mutate(async () => {
     const target = store ?? (await defaultStore());
-    const next = change(await loadCurrentWalk(city, target));
+    const slot = await observeSlot(city, target);
+    requireReadableSlot(slot);
+    const next = change(slot.kind === "current" ? slot.current : undefined);
     if (next.journey.citySlug !== city) throw new Error("Wrong walk city");
     const normalized = { ...next, journey: uniqueJourney(next.journey) };
     const journey = await writeCurrent(normalized, target);

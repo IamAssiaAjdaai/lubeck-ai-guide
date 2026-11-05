@@ -3,6 +3,7 @@ import { router, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
+import { welcomeCopy } from "../lib/welcomeCopy";
 import { NativeIcon } from "../components/NativeIcon";
 import { AppText, PressableSurface, PrimaryButton, Screen } from "../components/ui";
 import { colors, spacing } from "../design/tokens";
@@ -91,12 +92,12 @@ export default function LegalScreen() {
 
       <PressableSurface
         accessibilityRole="link"
-        accessibilityLabel="Photo credits"
+        accessibilityLabel={welcomeCopy[locale].photoCredits}
         onPress={() => router.navigate("/photo-credits")}
         style={styles.photoCreditsRow}
       >
         <NativeIcon ios="photo" android="image" color={colors.primary} size={21} />
-        <AppText variant="label">Photo credits</AppText>
+        <AppText variant="label">{welcomeCopy[locale].photoCredits}</AppText>
         <NativeIcon ios={direction === "rtl" ? "chevron.left" : "chevron.right"} android={direction === "rtl" ? "chevron_left" : "chevron_right"} color={colors.textMuted} size={16} />
       </PressableSurface>
       <View style={styles.analytics} testID="native-analytics-consent">

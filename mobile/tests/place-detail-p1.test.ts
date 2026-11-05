@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import placeSource from "../src/app/city/[citySlug]/place/[placeSlug].tsx?raw";
 
 describe("Place Detail P1 presentation", () => {
-  it("uses an icon-only Save action and compact primary place actions", () => {
+  it("uses a labeled Save action and compact primary place actions", () => {
     expect(placeSource).toContain("style={styles.saveAction}");
     expect(placeSource).toContain('ios={saved ? "heart.fill" : "heart"}');
     expect(placeSource).toContain("accessibilityState={{");
@@ -25,7 +25,7 @@ describe("Place Detail P1 presentation", () => {
 
   it("preserves storytelling, trust, audio playback and trip controls", () => {
     expect(placeSource).toContain("<NativeAudioPlayer");
-    expect(placeSource).toContain('translate(locale, "place.whyItMatters")');
+    expect(placeSource).toContain("{copy.overview}");
     expect(placeSource).toContain("place.content.story");
     expect(placeSource).toContain('translate(locale, "place.quickFacts")');
     expect(placeSource).toContain("styles.verifiedCard");

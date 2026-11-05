@@ -25,6 +25,7 @@ import {
   type FlatListProps,
   type StyleProp,
   type TextProps,
+  type TextStyle,
   type ViewProps,
   type ViewStyle,
 } from "react-native";
@@ -125,14 +126,18 @@ export function VirtualizedScreen<T>({
   includeTopSafeArea = true,
   contentContainerStyle,
   ListHeaderComponent,
+  navigationLabelMaxFontSizeMultiplier,
+  brandVariant,
   ref: listRef,
   ...props
 }: FlatListProps<T> & {
   includeTopSafeArea?: boolean;
+  brandVariant?: "city-hub";
+  navigationLabelMaxFontSizeMultiplier?: number;
   ref?: Ref<FlatList<T>>;
 }) {
   const { direction } = useNativeLocale();
-  const { width } = useWindowDimensions();
+  const { width, fontScale } = useWindowDimensions();
   const list = useRef<FlatList<T>>(null);
   useImperativeHandle(listRef, () => list.current!, []);
   const scrollToTop = useCallback((animated = true) => list.current?.scrollToOffset({ offset: 0, animated }), []);
@@ -142,7 +147,7 @@ export function VirtualizedScreen<T>({
       style={[styles.safeArea, { direction }]}
       edges={getScreenSafeAreaEdges(includeTopSafeArea)}
     >
-      <NativeBrand />
+      <NativeBrand variant={brandVariant} />
       <FlatList
         {...props}
         ref={list}
@@ -163,7 +168,7 @@ export function VirtualizedScreen<T>({
         ]}
         keyboardShouldPersistTaps="handled"
       />
-      <NativeBottomNavigation onScrollToTop={scrollToTop} />
+      <NativeBottomNavigation onScrollToTop={scrollToTop} labelMaxFontSizeMultiplier={navigationLabelMaxFontSizeMultiplier} labelFontScale={fontScale} />
     </SafeAreaView>
   );
 }
@@ -234,6 +239,7 @@ export function PrimaryButton({
   wrapLabel = true,
   compact = false,
   contentStyle,
+  labelStyle,
   onPress,
   ...props
 }: PressableProps & {
@@ -246,6 +252,7 @@ export function PrimaryButton({
   wrapLabel?: boolean;
   compact?: boolean;
   contentStyle?: StyleProp<ViewStyle>;
+  labelStyle?: StyleProp<TextStyle>;
 }) {
   const { direction } = useNativeLocale();
   const buttonTone =
@@ -283,7 +290,7 @@ export function PrimaryButton({
           <Text
             numberOfLines={wrapLabel ? undefined : 1}
             adjustsFontSizeToFit={false}
-            style={[textTone, { writingDirection: direction, textAlign: "center", flexShrink: 1, minWidth: 0 }, compact && styles.tileLabel, direction === "rtl" && { lineHeight: compact ? 20 : 24 }, compact && direction === "rtl" && { textAlign: "right", alignSelf: "stretch" }]}
+            style={[textTone, { writingDirection: direction, textAlign: "center", flexShrink: 1, minWidth: 0 }, compact && styles.tileLabel, direction === "rtl" && { lineHeight: compact ? 20 : 24 }, compact && direction === "rtl" && { textAlign: "right", alignSelf: "stretch" }, labelStyle]}
           >
             {direction === "rtl" ? isolateLatinRuns(label) : label}
           </Text>
