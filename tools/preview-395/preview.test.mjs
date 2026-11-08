@@ -1,10 +1,64 @@
-import test from 'node:test';
+// @vitest-environment node
+import { test, vi } from 'vitest';
+import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { previewConfig } from './config.mjs';
-import { profile, validate, provenance, root } from './preflight.mjs';
+import { profile, validate, provenance, root, head, branch } from './preflight.mjs';
 import { createPreviewFetch } from './guard.mjs';
 import path from 'node:path';
+
+// Exercise the real preflight against explicit, scoped I/O fixtures. Other tests
+// retain the real filesystem and installed parser; deployment checks are unchanged.
+const provenanceIO = vi.hoisted(() => ({ fixture: undefined }));
+vi.mock('node:fs', async importOriginal => {
+  const actual = await importOriginal();
+  const { fileURLToPath } = await import('node:url');
+  return { ...actual, readFileSync(file, options) {
+    const key = file instanceof URL ? fileURLToPath(file) : String(file);
+    const fixture = provenanceIO.fixture;
+    if (!fixture) return actual.readFileSync(file, options);
+    assert.ok(fixture.files.has(key), `Unexpected provenance file: ${key}`);
+    const value = fixture.files.get(key);
+    return typeof options === 'string' || options?.encoding ? value : Buffer.from(value);
+  } };
+});
+vi.mock('node:child_process', async importOriginal => {
+  const actual = await importOriginal();
+  return { ...actual, execFileSync(command, args, options) {
+    const fixture = provenanceIO.fixture;
+    if (!fixture) return actual.execFileSync(command, args, options);
+    assert.equal(command, 'git');
+    assert.equal(options.cwd, root);
+    const key = args.join(' ');
+    assert.ok(fixture.git.has(key), `Unexpected provenance command: ${key}`);
+    fixture.calls.push(key);
+    const value = fixture.git.get(key);
+    if (value instanceof Error) throw value;
+    return options.encoding ? value : Buffer.from(value);
+  } };
+});
+function withProvenanceFixture(check) {
+  const files = new Map(), git = new Map(), hashes = {};
+  git.set('rev-parse HEAD', head);
+  git.set('branch --show-current', branch);
+  for (const sha of ['53186fdfdfb26b605f6432e5a0484da2ab6def7a', '3057e81aad70d612a174dd2b5ae68ea5bf5182ee', head]) {
+    git.set(`merge-base --is-ancestor ${sha} HEAD`, '');
+  }
+  for (let i = 0; i < 31; i++) {
+    const file = `src/provenance-fixture-${i}.ts`, bytes = `controlled source ${i}\n`;
+    hashes[file] = createHash('sha256').update(bytes).digest('hex');
+    files.set(path.join(root, file), bytes);
+    git.set(`show ${head}:${file}`, bytes);
+  }
+  files.set(path.join(root, 'tools/preview-395/source-hashes.json'), JSON.stringify(hashes));
+  for (const name of ['cf', '@vinext/cloudflare', 'vinext']) {
+    files.set(path.join(root, 'node_modules', name, 'package.json'), JSON.stringify({ version: name === 'cf' ? '1.0.0-beta.12' : '1.0.1' }));
+  }
+  const fixture = { files, git, calls: [] };
+  provenanceIO.fixture = fixture;
+  try { return check(fixture); } finally { provenanceIO.fixture = undefined; }
+}
 
 const origin = 'https://citywalk-preview-395-7b99bf8.synthetic.workers.dev';
 const environment = {
@@ -22,7 +76,24 @@ function request(route, method = 'GET', authenticated = true) {
   return new Request(origin + route, { method, headers: authenticated ? { Authorization: auth } : {} });
 }
 
-test('exact branch, HEAD, preserved commits and original source hashes', () => assert.ok(provenance() > 20));
+test('exact branch, HEAD, preserved commits and original source hashes', () => withProvenanceFixture(fixture => {
+  assert.equal(head, '7b99bf81c7c19010ef6019ac9a31cf974903e3b6');
+  assert.equal(branch, 'codex/landing-runtime-rc');
+  assert.ok(provenance() > 20);
+  assert.equal(fixture.calls.filter(command => command.startsWith('show ')).length, 31);
+  assert.equal(fixture.calls.filter(command => command.startsWith('merge-base ')).length, 3);
+}));
+for (const [label, change, expected] of [
+  ['invalid revision', fixture => fixture.git.set('rev-parse HEAD', '0'.repeat(40)), /strictly equal/],
+  ['invalid branch', fixture => fixture.git.set('branch --show-current', 'unreviewed-branch'), /strictly equal/],
+  ['changed working source hash', fixture => fixture.files.set(path.join(root, 'src/provenance-fixture-0.ts'), 'changed working bytes'), /Source changed:/],
+  ['changed pinned source hash', fixture => fixture.git.set(`show ${head}:src/provenance-fixture-0.ts`, 'changed pinned bytes'), /Baseline differs from HEAD:/],
+  ['missing preserved commit', fixture => fixture.git.set(`merge-base --is-ancestor ${head} HEAD`, Error('not an ancestor')), /not an ancestor/],
+  ['incorrect tool version', fixture => fixture.files.set(path.join(root, 'node_modules/cf/package.json'), JSON.stringify({ version: 'unreviewed' })), /strictly equal/],
+]) test(`provenance rejects ${label}`, () => withProvenanceFixture(fixture => {
+  change(fixture);
+  assert.throws(() => provenance(), expected);
+}));
 test('sanitized draft passes; deployable mode fails on placeholders', () => {
   assert.equal(validate(previewConfig(profile), profile), true);
   assert.throws(() => validate(previewConfig(profile), profile, true), /Unprovisioned Hyperdrive/);
