@@ -76,3 +76,13 @@ next-env.d.ts
 /mobile/android
 /mobile/dist
 /mobile/web-build
+
+# CITYWALK release image-rights quarantine. Keep Git history/source files;
+# never upload these unverified bytes into the native release source archive.
+/public/landmarks/**
+/mobile/assets/images/home-holstentor.jpg
+/mobile/assets/images/home-multicity-approved.webp
+/mobile/assets/images/city-hub-lubeck-approved.webp
+/mobile/assets/images/citywalk-hero.png
+# Byte-identical public alias of the quarantined legacy mobile hero.
+/public/images/citywalk-hero.png

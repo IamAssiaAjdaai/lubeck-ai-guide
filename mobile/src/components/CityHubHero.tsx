@@ -3,7 +3,7 @@ import { Link } from "expo-router";
 import { Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 import type { PublicCity } from "../lib/api/contracts";
 import { citywalkApi } from "../lib/api/instance";
-import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
+import { selectImageUrl, selectPrimaryImageMedia } from "../lib/releasePhotography";
 import { nativeCityName } from "../lib/displayNames";
 import { cityHubBundledPhoto } from "../lib/cityHubPhotography";
 import { useNativeLocale } from "../localization/LocaleProvider";

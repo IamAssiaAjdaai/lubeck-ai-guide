@@ -5,7 +5,7 @@ import { Linking, StyleSheet, View } from "react-native";
 import { AppText, PressableSurface, Screen, StatusMessage } from "../components/ui";
 import { colors, spacing } from "../design/tokens";
 import { nativeTextBlock } from "../design/rtlPresentation";
-import { photoCreditEntries, photoCreditsCopy } from "../lib/photoCredits";
+import { photoCreditEntries, photoCreditsCopy, photoCreditUsage } from "../lib/photoCredits";
 import { useNativeLocale } from "../localization/LocaleProvider";
 
 export default function PhotoCreditsScreen() {
@@ -30,10 +30,11 @@ export default function PhotoCreditsScreen() {
       <AppText accessibilityRole="header" variant="heading">{entry.location} · {entry.title}</AppText>
       <AppText>{copy.creator}: {entry.creator}</AppText>
       <AppText variant="label">{entry.licenseName}</AppText>
-      <AppText variant="metadata" style={styles.detail}>{copy.usage}: {locale === "de" ? entry.de : entry.en}</AppText>
+      <AppText variant="metadata" style={styles.detail}>{copy.usage}: {photoCreditUsage(entry, locale)}</AppText>
       <AppText variant="caption" style={styles.detail}>{copy.assets}: {entry.assets}</AppText>
       {[{ label: copy.source, url: entry.source }, { label: `${copy.license} · ${entry.licenseName}`, url: entry.license }].map(link => <PressableSurface key={link.url} accessibilityRole="link" accessibilityLabel={`${entry.location}: ${link.label}`} onPress={() => void follow(link.url)} style={styles.link}>
         <AppText style={styles.linkText}>{link.label} ↗</AppText>
+        <AppText selectable variant="caption" style={styles.url}>{link.url}</AppText>
       </PressableSurface>)}
     </View>)}
   </Screen>;
@@ -43,5 +44,6 @@ const styles = StyleSheet.create({
   detail: { color: colors.textMuted, lineHeight: 22 },
   credit: { gap: spacing.sm, paddingVertical: spacing.md, borderTopWidth: StyleSheet.hairlineWidth, borderColor: colors.border },
   link: { minHeight: 44, justifyContent: "center", paddingVertical: 8 },
+  url: { color: colors.textMuted, writingDirection: "ltr", textAlign: "left", flexShrink: 1 },
   linkText: { color: colors.primary, textDecorationLine: "underline" },
 });

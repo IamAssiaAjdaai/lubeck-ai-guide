@@ -12,7 +12,8 @@ describe("physical-device card and keyboard follow-up", () => {
     expect(homeSource).toContain("<PressableSurface");
     expect(homeSource).toContain("prefetchPublicCity(city.slug, locale)");
     expect(homeSource).toContain('triggerCitywalkHaptic("medium")');
-    expect(homeSource).toContain("<MediaAttribution attribution={city.attribution} />");
+    expect(homeSource).toContain("<CityPhotoCredits cityName={cityName} photo={selectionCredit} />");
+    expect(homeSource).toContain("source={localImage}");
     expect(homeSource).not.toContain("cityAffordance");
     expect(homeSource).toContain("numberOfLines={1}");
     expect(homeSource).toContain("accessibilityLabel={cityName}");

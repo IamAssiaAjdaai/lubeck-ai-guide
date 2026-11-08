@@ -11,8 +11,8 @@ import { discoveryCopy } from "../design/discoveryCopy";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import type { WalkBuildStage } from "@citywalk/traveler-core/walkPlanner";
 import type { PublicPlaceCard } from "../lib/api/contracts";
-import { citywalkApi } from "../lib/api/instance";
-import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
+import { cityHubBundledPhoto } from "../lib/cityHubPhotography";
+import { PlacePhotoCredit } from "./PlacePhotoCredit";
 import { useNativeLocale } from "../localization/LocaleProvider";
 import { useReducedMotion } from "../lib/motion";
 import { colors, layout, motion, radius, shadows, spacing } from "../design/tokens";
@@ -127,14 +127,7 @@ export function V2Itinerary({
   return (
     <View style={[styles.itinerary, compact && styles.compactItinerary]}>
       {places.map((place, index) => {
-        const url = compact
-          ? undefined
-          : selectImageUrl(
-              selectPrimaryImageMedia(place.media),
-              place.image,
-              place.imageVariants,
-              "thumbnail",
-            );
+        const photo = compact ? undefined : cityHubBundledPhoto(citySlug, place.slug);
         const row = (
           <View style={[styles.itineraryRow, compact && styles.compactItineraryRow, { direction }]}>
             <View style={[styles.number, compact && styles.compactNumber]}>
@@ -142,12 +135,7 @@ export function V2Itinerary({
             </View>
             {!compact ? (
               <NativeContentImage
-                source={url ? { uri: citywalkApi.resolveUrl(url) } : undefined}
-                fallbackSource={
-                  place.image
-                    ? { uri: citywalkApi.resolveUrl(place.image) }
-                    : undefined
-                }
+                source={photo?.source}
                 contentFit="cover"
                 style={styles.thumbnail}
                 accessibilityLabel={nativePlaceName(citySlug, place.slug, place.content.name, locale)}
@@ -242,9 +230,10 @@ export function V2Itinerary({
                 />
               </>
             )}
+            {photo ? <PlacePhotoCredit credit={photo.credit} /> : null}
           </View>
         ) : (
-          <View key={place.slug}>{row}</View>
+          <View key={place.slug}>{row}{photo ? <PlacePhotoCredit credit={photo.credit} /> : null}</View>
         );
       })}
     </View>

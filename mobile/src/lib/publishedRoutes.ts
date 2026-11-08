@@ -1,6 +1,6 @@
 import { TOUR_TIME_BUDGETS, type TourTimeBudget } from "@citywalk/traveler-core";
 import type { PublicPlaceCard, PublicTour } from "./api/contracts";
-import { selectImageUrl, selectPrimaryImageMedia } from "./api/media";
+import { selectImageUrl, selectPrimaryImageMedia } from "./releasePhotography";
 import { explorePhotography } from "./explorePhotography";
 
 export const routeTimeBudgets = TOUR_TIME_BUDGETS.filter(minutes => minutes !== 90);

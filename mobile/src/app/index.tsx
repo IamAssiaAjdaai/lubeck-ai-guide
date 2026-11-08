@@ -5,11 +5,11 @@ import { citySelectionCopy } from "../lib/citySelectionCopy";
 import { introductionCopy } from "../lib/introductionCopy";
 import { welcomePhotos } from "../lib/welcomeCopy";
 import { nativeTextStyle } from "../design/rtlPresentation";
-import homeHolstentor from "../../assets/images/home-holstentor.jpg";
+
 import homeHamburg from "../../assets/images/home-hamburg.webp";
 import homeDuesseldorf from "../../assets/images/home-duesseldorf.webp";
 import homeAppMark from "../../assets/images/citywalk-mark.svg";
-import homeMulticityApproved from "../../assets/images/home-multicity-approved.webp";
+
 import homeCardGradient from "../../assets/images/home-card-gradient.svg";
 import homeHeroSkyGradient from "../../assets/images/home-hero-sky-gradient.svg";
 import { Image } from "expo-image";
@@ -24,7 +24,6 @@ import { useEffect, useRef, useState } from "react";
 import { Platform, ScrollView, StyleSheet, TextInput, View, useWindowDimensions } from "react-native";
 import { NativeContentImage } from "../components/NativeContentImage";
 import { CitywalkLoading } from "../components/CitywalkLoading";
-import { MediaAttribution } from "../components/MediaAttribution";
 import { NativeIcon } from "../components/NativeIcon";
 import {
   AppText,
@@ -36,8 +35,7 @@ import {
 } from "../components/ui";
 import { motion, radius, spacing } from "../design/tokens";
 import { prefetchPublicCity, usePublicCities } from "../hooks/usePublicContent";
-import { citywalkApi } from "../lib/api/instance";
-import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
+import { selectImageUrl, selectPrimaryImageMedia } from "../lib/releasePhotography";
 import { requestForegroundLocation } from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import { useNativeLocale } from "../localization/LocaleProvider";
@@ -65,7 +63,7 @@ const editorialLabels: Record<string, { eyebrow: string; featured: string; more:
 
 function bundledCityImage(slug: string) {
   switch (slug) {
-    case "lubeck": return homeHolstentor;
+    case "lubeck": return selectionLubeck;
     case "hamburg": return homeHamburg;
     case "duesseldorf": return homeDuesseldorf;
     default: return undefined;
@@ -108,12 +106,12 @@ function HomeCityCard({
   const shortDeck = featuredDeck[locale]?.[city.slug] ?? city.shortDescription;
   const localImage = selection && city.slug === "lubeck" ? selectionLubeck : bundledCityImage(city.slug);
   const selectionCredit = welcomePhotos.find(photo => photo.id === city.slug);
-  const fallback = cityLaunches[city.slug]?.heroImage;
+
   const card = (
     <View style={[styles.destinationCard, isFeatured ? styles.featuredCard : styles.smallCard, selection && styles.selectionCard, selection && fontScale > 1.3 && styles.selectionFlexibleCard]}>
       <NativeContentImage
-        source={selection && localImage ? localImage : city.image ? { uri: citywalkApi.resolveUrl(city.image) } : localImage ?? (fallback ? { uri: citywalkApi.resolveUrl(fallback) } : undefined)}
-        fallbackSource={localImage ?? (fallback ? { uri: citywalkApi.resolveUrl(fallback) } : undefined)}
+        source={localImage}
+
         contentFit="cover"
         cachePolicy="memory-disk"
         transition={motion.component}
@@ -170,8 +168,7 @@ function HomeCityCard({
           </PressableSurface>
         </Link>
       ) : selection ? <View accessible accessibilityLabel={`${cityName}, ${city.unavailable ? unavailableLabel : comingSoonLabel}`} accessibilityState={{ disabled: true }}>{card}</View> : card}
-      {selection ? <CityPhotoCredits cityName={cityName} photo={localImage ? selectionCredit : undefined} attribution={!localImage ? city.attribution : undefined} /> : null}
-      {!selection && city.attribution && city.available ? <MediaAttribution attribution={city.attribution} /> : null}
+      {selection && localImage && selectionCredit ? <CityPhotoCredits cityName={cityName} photo={selectionCredit} /> : null}
     </View>
   );
 }
@@ -295,14 +292,7 @@ export default function HomeScreen() {
   return (
     <Screen scrollViewRef={scroll} scrollDiagnostics="home" brand={false}>
       <View style={styles.homeHero}>
-        <NativeContentImage
-          source={homeMulticityApproved}
-          contentFit="cover"
-          contentPosition="center"
-          cachePolicy="memory-disk"
-          accessibilityLabel={undefined}
-          style={styles.heroImage}
-        />
+        {/* Unverified composite hidden; existing sky, scrim and layout retained. */}
         <View pointerEvents="none" style={styles.heroScrim} />
         <View pointerEvents="none" style={styles.heroSky}>
           <Image source={homeHeroSkyGradient} style={styles.heroSkyImage} contentFit="fill" accessible={false} />

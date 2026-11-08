@@ -1,3 +1,4 @@
+import { PlacePhotoCredit } from "../../../components/PlacePhotoCredit";
 import { nativeTextBlock, nativeContentTextStyle, nativeRowStyle } from "../../../design/rtlPresentation";
 import { nativeArabicDisplayText, nativeCategoryLabel } from "../../../lib/contentLabels";
 import { ContentRecovery } from "../../../components/ContentRecovery";
@@ -46,7 +47,7 @@ import { citywalkApi } from "../../../lib/api/instance";
 import {
   selectImageUrl,
   selectPrimaryImageMedia,
-} from "../../../lib/api/media";
+} from "../../../lib/releasePhotography";
 import { triggerCitywalkHaptic } from "../../../lib/haptics";
 import { getNativeDirection } from "../../../lib/localization";
 import { parseCityRouteIdentity } from "../../../lib/routing";
@@ -409,11 +410,6 @@ function TourCard({
           {imageUrl || bundled ? (
             <Image
               source={bundled?.source ?? { uri: citywalkApi.resolveUrl(imageUrl!) }}
-              fallbackSource={
-                firstPlace?.image
-                  ? { uri: citywalkApi.resolveUrl(firstPlace.image) }
-                  : undefined
-              }
               cachePolicy="memory-disk"
               contentFit="cover"
               style={[styles.tourImage, expanded && { width: "100%", minHeight: 0, height: 160 }]}
@@ -529,11 +525,6 @@ function PlaceCard({
             <Image
               source={bundled?.source ?? (image ? { uri: citywalkApi.resolveUrl(image) } : undefined)}
               placeholderIcon={place.category === "eat" ? { ios: "fork.knife", android: "restaurant" } : place.category === "fun" ? { ios: "sparkles", android: "auto_awesome" } : { ios: "mappin", android: "place" }}
-              fallbackSource={
-                place.image
-                  ? { uri: citywalkApi.resolveUrl(place.image) }
-                  : undefined
-              }
               cachePolicy="memory-disk"
               contentFit="cover"
               recyclingKey={`${citySlug}:${place.slug}`}
@@ -576,7 +567,7 @@ function PlaceCard({
           ) : null}
         </View>
       ) : null}
-      {bundled ? <View pointerEvents="box-none" style={styles.placePhotoCredit}><CityPhotoCredits cityName={nativePlaceName(citySlug, place.slug, place.content.name, locale)} photo={bundled.credit} /></View> : null}
+      {bundled ? <PlacePhotoCredit credit={bundled.credit} /> : null}
       {imageMedia?.attribution ? <View style={styles.cardAttribution}>
         <MediaAttribution attribution={imageMedia.attribution} />
       </View> : null}
@@ -597,7 +588,6 @@ const styles = StyleSheet.create({
   quickIcon: { width: 28, height: 28, borderRadius: 14, backgroundColor: "#E6F2FF", alignItems: "center", justifyContent: "center" },
   nearIcon: { backgroundColor: "#E5F7F3" },
   tourPhotoCredit: { position: "absolute", top: 0, left: 0, width: "40%", height: 64 },
-  placePhotoCredit: { position: "absolute", top: 0, left: 0, width: 100, height: 64 },
   placeTitle: { fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 19, lineHeight: 24, fontWeight: "700" },
   buildMyWalk: { backgroundColor: "transparent", borderRadius: 16, minHeight: 48 },
   quickActions: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
