@@ -1,3 +1,4 @@
+import { photoCreditsCopy } from "../lib/photoCredits";
 import { t, type TranslationKey } from "@citywalk/i18n";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import { router, Stack } from "expo-router";
@@ -224,7 +225,7 @@ export default function ProfileScreen() {
             direction={direction}
             ios="doc.text"
             android="description"
-            title={label("legal.profileRow")}
+            title={photoCreditsCopy(locale).legalTitle}
             detail={label("legal.description")}
             onPress={() => router.navigate("/legal")}
             last

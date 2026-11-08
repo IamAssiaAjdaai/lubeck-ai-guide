@@ -1,4 +1,5 @@
-import { welcomePhotos, welcomeCopy } from "./welcomeCopy";
+import { welcomePhotos } from "./welcomeCopy";
+import { translatedPhotoUsage } from "./photoCreditsCopy";
 import type { NativeLocale } from "./api/contracts";
 
 // Individually reviewed bundled images only. CMS attribution is never silently
@@ -43,16 +44,9 @@ export const photoCreditEntries = welcomePhotos.map(photo => ({
   ...details[photo.id],
 }));
 
-export function photoCreditsCopy(locale: NativeLocale) {
-  const german = locale === "de";
-  return {
-    title: welcomeCopy[locale].photoCredits,
-    description: german ? "Urheber, Quellen, Lizenzen und Bearbeitungen der verifizierten CITYWALK-Fotos. Abgebildete Städte sind keine Zusage ihrer Verfügbarkeit." : "Creators, sources, licenses and modifications for verified CITYWALK photographs. Featured cities do not imply destination availability.",
-    creator: german ? "Urheber" : "Creator",
-    usage: german ? "Verwendung und Bearbeitungen" : "Usage and modifications",
-    assets: german ? "Bilddateien" : "Image files",
-    source: german ? "Originalquelle" : "Original source",
-    license: german ? "Lizenz" : "License",
-    failed: german ? "Der Link konnte nicht geöffnet werden. Bitte erneut versuchen." : "The link could not be opened. Please try again.",
-  };
+export { photoCreditsCopy } from "./photoCreditsCopy";
+
+export function photoCreditUsage(entry: (typeof photoCreditEntries)[number], locale: NativeLocale) {
+  if (locale === "en" || locale === "de") return entry[locale];
+  return translatedPhotoUsage[locale][entry.id];
 }

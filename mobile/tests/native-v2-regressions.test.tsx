@@ -539,7 +539,7 @@ it("omits story navigation for a place without a story and preserves city-scoped
 
 it("links the reviewed Holstentor photo to its centralized entry without a long inline paragraph", () => {
   render(<PlaceScreen />);
-  const link = screen.getByRole("button", { name: "Photo credits: Holstentor in Lübeck Frontseite.jpg" }).closest("a");
+  const link = screen.getByRole("button", { name: "Image Credits: Holstentor in Lübeck Frontseite.jpg" }).closest("a");
   expect(JSON.parse(link!.dataset.route!)).toEqual({ pathname: "/photo-credits", params: { image: "lubeck" } });
   expect(screen.queryByText(/Christian Wolf/)).toBeNull();
 });

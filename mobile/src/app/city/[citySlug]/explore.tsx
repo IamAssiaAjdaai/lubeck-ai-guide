@@ -7,7 +7,7 @@ import { walkCopy } from "@citywalk/traveler-core/walkCopy";
 import type { PublicCitySummaryResponse, PublicPlaceCard } from "../../../lib/api/contracts";
 import { ContentRecovery } from "../../../components/ContentRecovery";
 import { CitywalkLoading } from "../../../components/CitywalkLoading";
-import { MediaAttribution } from "../../../components/MediaAttribution";
+import { PlacePhotoCredit } from "../../../components/PlacePhotoCredit";
 import { NativeCityMap } from "../../../components/NativeCityMap";
 import { NativeContentImage as Image } from "../../../components/NativeContentImage";
 import { NativeIcon } from "../../../components/NativeIcon";
@@ -250,9 +250,7 @@ function ExplorePlaceRow({
           </PressableSurface>
           <WalkMembershipControl citySlug={citySlug} placeSlug={place.slug} dense inline discoveryCard onFeedback={(message, showCustomize) => { setFeedback(message); setCustomize(showCustomize); }} />
         </View>
-      {photo?.credit || photo?.attribution ? <MediaAttribution attribution={photo.credit ? {
-        text: `${photo.credit.credit} · Wikimedia Commons ${photo.credit.source} · ${photo.credit.licenseName} ${photo.credit.license}`,
-      } : photo.attribution} /> : null}
+      <PlacePhotoCredit credit={photo?.credit} attribution={photo?.attribution} />
       {feedback ? <AppText accessibilityLiveRegion="polite" style={styles.feedback}>{feedback}</AppText> : null}
       {customize ? <Link href={{ pathname: "/city/[citySlug]/walk", params: { citySlug } }} asChild><PrimaryButton label={walkCopy(locale).customize} tone="secondary" /></Link> : null}
     </View>
