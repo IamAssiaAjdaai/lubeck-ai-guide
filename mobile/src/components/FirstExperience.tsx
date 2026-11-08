@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import lubeckPhoto from "../../assets/images/introduction-holstentor.jpg";
 import type { PublicMedia } from "../lib/api/contracts";
 import { citywalkApi } from "../lib/api/instance";
-import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
+import { selectImageUrl, selectPrimaryImageMedia } from "../lib/releasePhotography";
 import { firstExperienceCopy } from "../lib/firstExperienceCopy";
 import { introductionCopy } from "../lib/introductionCopy";
 import { nativeCityName } from "../lib/displayNames";

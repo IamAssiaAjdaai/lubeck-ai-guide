@@ -98,7 +98,7 @@ vi.mock("../src/components/NativeContentImage", () => ({
     source?: { uri?: string };
     fallbackSource?: unknown;
     accessibilityLabel?: string;
-  }) => <img src={source?.uri ?? "bundled-photo"} data-has-fallback={fallbackSource ? "true" : "false"} alt={accessibilityLabel ?? ""} />,
+  }) => <img src={source?.uri ?? "bundled-photo"} data-source={JSON.stringify(source)} data-has-fallback={fallbackSource ? "true" : "false"} alt={accessibilityLabel ?? ""} />,
 }));
 vi.mock("../src/components/NativeIcon", () => ({ NativeIcon: () => null }));
 vi.mock("../src/components/CitywalkLoading", () => ({
@@ -148,18 +148,18 @@ describe("native Home V2 (native bridges mocked)", () => {
     rerender(<HomeScreen />);
     expect(state.scroll).toHaveBeenCalledExactlyOnceWith({ y: 0, animated: true });
   });
-  it("uses V2 copy and published imagery even when the API has no city media", () => {
+  it("uses V2 copy and the verified bundled photograph when the API has no release-cleared media", () => {
     render(<HomeScreen />);
     expect(
       screen.getByRole("heading", { name: "Where do you want to explore?" }),
     ).toBeTruthy();
     expect(
-      screen.getByRole("img", { name: "Lübeck" }).getAttribute("src"),
-    ).toBe("https://preview.example/landmarks/holstentor.jpg");
-    expect(screen.getByRole("img", { name: "Lübeck" }).getAttribute("data-has-fallback")).toBe("true");
+      screen.getByRole("img", { name: "Lübeck" }).getAttribute("data-source"),
+    ).toContain("introduction-holstentor.jpg");
+    expect(screen.getByRole("img", { name: "Lübeck" }).getAttribute("data-has-fallback")).toBe("false");
     expect(
-      screen.getByRole("img", { name: "Hamburg" }).getAttribute("src"),
-    ).toContain("city-hamburg.webp");
+      screen.getByRole("img", { name: "Hamburg" }).getAttribute("data-source"),
+    ).toContain("home-hamburg.webp");
     expect(document.querySelectorAll('a[href="/city/lubeck"]')).toHaveLength(1);
     expect(document.querySelectorAll('a[href="/profile"]')).toHaveLength(1);
     expect(screen.getByText("Featured cities")).toBeTruthy();
@@ -167,8 +167,8 @@ describe("native Home V2 (native bridges mocked)", () => {
     expect(screen.getAllByTestId("citywalk-brand-mark").length).toBeGreaterThan(0);
     expect(homeSource).toContain('homeAppMark from "../../assets/images/citywalk-mark.svg"');
     expect(homeSource).not.toContain('home-city-mark.svg');
-    expect(homeSource).toContain('homeMulticityApproved from "../../assets/images/home-multicity-approved.webp"');
-    expect(homeSource).toContain("source={homeMulticityApproved}");
+    expect(homeSource).not.toContain("home-multicity-approved.webp");
+    expect(homeSource).toContain("Unverified composite hidden");
     expect(homeSource).not.toContain("HOME_PANORAMA_URI");
     expect(homeSource).not.toContain("HOME_PANORAMA_CREDIT_URL");
   });
@@ -238,22 +238,23 @@ it("keeps incoming cities compact and removes the flat photo-darkening stripe", 
 });
 
 
-it("shows the approved multi-city photo and the official app mark without third-party credits", () => {
+it("hides the unverified multi-city photo while preserving the official app mark", () => {
   expect(homeSource).toContain('source={homeAppMark}');
   expect(homeSource).toContain('homeAppMark from "../../assets/images/citywalk-mark.svg"');
-  expect(homeSource).toContain('homeMulticityApproved from "../../assets/images/home-multicity-approved.webp"');
-  expect(homeSource).toContain('source={homeMulticityApproved}');
+  expect(homeSource).not.toContain("home-multicity-approved.webp");
+  expect(homeSource).toContain("Unverified composite hidden");
   expect(homeSource).toContain('contentFit="cover"');
   expect(homeSource).not.toContain("Edelmauswaldgeist");
   expect(homeSource).not.toContain("HOME_PANORAMA_URI");
   expect(homeSource).not.toContain("HOME_PANORAMA_CREDIT_URL");
-  expect(homeSource).toContain('case "lubeck": return homeHolstentor;');
+  expect(homeSource).toContain('case "lubeck": return selectionLubeck;');
 });
 
 
 it("keeps Home preview credits off cards and links to accessible licensing details", () => {
   expect(homeSource).toContain('href="/photo-credits"');
-  expect(homeSource).toContain("city.attribution && city.available");
+  expect(homeSource).toContain("selection && localImage && selectionCredit");
+  expect(homeSource).not.toContain("city.attribution && city.available");
   expect(homeSource).not.toContain('<MediaAttribution attribution={city.attribution} />\n    </View>');
 });
 

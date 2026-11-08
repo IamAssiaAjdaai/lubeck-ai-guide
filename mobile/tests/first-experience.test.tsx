@@ -29,12 +29,12 @@ import { FirstExperience } from "../src/components/FirstExperience";
 import { firstExperienceCopy } from "../src/lib/firstExperienceCopy";
 afterEach(cleanup);
 describe("First Experience city entry", () => {
-  it.each(["en", "de"] as const)("uses the selected available city without claiming a route exists in %s", locale => {
+  it.each(["en", "de"] as const)("keeps selected-city navigation but blocks its unfrozen CMS photograph in %s", locale => {
     state.locale = locale; state.fontScale = 3.571;
     const explore = vi.fn(); const back = vi.fn();
     render(<FirstExperience citySlug="test-city" cityName="Test City" cityMedia={[{ assetKey: "test-city/hero", kind: "image", purpose: "hero", url: "/test-city.jpg", mimeType: "image/jpeg", attribution: { text: "Licensed test city photo" } }]} onExplore={explore} onBack={back} />);
     expect(screen.getByRole("heading").textContent).toBe(firstExperienceCopy[locale].title);
-    expect(screen.getByRole("img", { name: "Test City" }).getAttribute("src")).toBe("https://qa.invalid/test-city.jpg");
+    expect(screen.getByRole("img", { name: "Test City" }).getAttribute("src")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: firstExperienceCopy[locale].explore.replace("{city}", "Test City") }));
     expect(explore).toHaveBeenCalledOnce(); expect(screen.queryByText(/Lübeck/)).toBeNull();
     fireEvent.click(screen.getAllByRole("button")[0]); expect(back).toHaveBeenCalledOnce();

@@ -46,7 +46,7 @@ import {
   selectExactLocaleAudio,
   selectImageUrl,
   selectPrimaryImageMedia,
-} from "../../../../lib/api/media";
+} from "../../../../lib/releasePhotography";
 import { parsePlaceRouteIdentity } from "../../../../lib/routing";
 import {
   adjacentMobileTripParams,

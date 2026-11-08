@@ -18,10 +18,11 @@ describe("published routes use existing data contracts", () => {
     expect(publishedRoutePresentation("another-city", route, [place]).photo).toBeUndefined();
     expect(publishedRoutePresentation("lubeck", route, [place]).photo?.credit?.licenseName).toBe("CC BY-SA 3.0 DE");
   });
-  it("prefers a real route image and does not label it as a particular stop", () => {
+  it("blocks unfrozen route media and identifies the verified first-stop photograph", () => {
     const route = { ...tour(45), media: [{ assetKey: "approved", kind: "image" as const, purpose: "hero" as const, url: "/api/media/approved", mimeType: "image/jpeg", attribution: { text: "Author · license" } }] };
     const result = publishedRoutePresentation("lubeck", route, [place]);
-    expect(result.photo).toEqual({ uri: "/api/media/approved", attribution: { text: "Author · license" } });
-    expect(result.photoPlace).toBeUndefined();
+    expect(result.photo?.credit?.licenseName).toBe("CC BY-SA 3.0 DE");
+    expect(result.photoPlace).toBe(place);
+    expect(route.media[0].attribution).toEqual({ text: "Author · license" });
   });
 });

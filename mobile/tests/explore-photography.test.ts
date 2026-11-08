@@ -17,9 +17,11 @@ describe("Explore place-specific photography", () => {
   it("does not silently present legacy images lacking source/license records", () => {
     expect(explorePhotography("lubeck", place("marienkirche", { image: "/landmarks/marienkirche.jpg" }))).toBeUndefined();
   });
-  it("prefers public approved media and preserves its attribution", () => {
+  it("blocks CMS imagery without a frozen manifest while preserving its attribution metadata", () => {
     const attribution = { text: "Photo: Example · CC BY 4.0" };
     const media: PublicPlaceCard["media"] = [{ assetKey: "own-place", mimeType: "image/jpeg", kind: "image", purpose: "card", url: "/api/media/own-place", variants: { thumbnail: "/api/media/thumb", card: "/api/media/own-card", detail: "/api/media/detail", hero: "/api/media/hero" }, attribution }];
-    expect(explorePhotography("other-city", place("own-place", { media }))).toEqual({ uri: "/api/media/own-card", attribution });
+    expect(explorePhotography("other-city", place("own-place", { media }))).toBeUndefined();
+    expect(media[0].attribution).toBe(attribution);
+    expect(explorePhotography("lubeck", place("holstentor", { media }))?.credit?.licenseName).toBe("CC BY-SA 3.0 DE");
   });
 });

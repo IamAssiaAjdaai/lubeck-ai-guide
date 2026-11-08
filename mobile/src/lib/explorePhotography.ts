@@ -1,5 +1,5 @@
 import type { PublicPlaceCard } from "./api/contracts";
-import { selectImageUrl, selectPrimaryImageMedia } from "./api/media";
+import { selectImageUrl, selectPrimaryImageMedia } from "./releasePhotography";
 import { cityHubBundledPhoto } from "./cityHubPhotography";
 
 /** Public approved media or an explicitly credited matching asset; never borrow another POI's photo. */

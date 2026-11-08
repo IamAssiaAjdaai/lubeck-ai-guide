@@ -47,7 +47,7 @@ import { citywalkApi } from "../../../lib/api/instance";
 import {
   selectImageUrl,
   selectPrimaryImageMedia,
-} from "../../../lib/api/media";
+} from "../../../lib/releasePhotography";
 import { triggerCitywalkHaptic } from "../../../lib/haptics";
 import { getNativeDirection } from "../../../lib/localization";
 import { parseCityRouteIdentity } from "../../../lib/routing";
@@ -410,11 +410,6 @@ function TourCard({
           {imageUrl || bundled ? (
             <Image
               source={bundled?.source ?? { uri: citywalkApi.resolveUrl(imageUrl!) }}
-              fallbackSource={
-                firstPlace?.image
-                  ? { uri: citywalkApi.resolveUrl(firstPlace.image) }
-                  : undefined
-              }
               cachePolicy="memory-disk"
               contentFit="cover"
               style={[styles.tourImage, expanded && { width: "100%", minHeight: 0, height: 160 }]}
@@ -530,11 +525,6 @@ function PlaceCard({
             <Image
               source={bundled?.source ?? (image ? { uri: citywalkApi.resolveUrl(image) } : undefined)}
               placeholderIcon={place.category === "eat" ? { ios: "fork.knife", android: "restaurant" } : place.category === "fun" ? { ios: "sparkles", android: "auto_awesome" } : { ios: "mappin", android: "place" }}
-              fallbackSource={
-                place.image
-                  ? { uri: citywalkApi.resolveUrl(place.image) }
-                  : undefined
-              }
               cachePolicy="memory-disk"
               contentFit="cover"
               recyclingKey={`${citySlug}:${place.slug}`}
