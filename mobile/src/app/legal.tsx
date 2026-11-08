@@ -3,6 +3,7 @@ import { router, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
+import { photoCreditsCopy } from "../lib/photoCredits";
 import { NativeIcon } from "../components/NativeIcon";
 import { AppText, PressableSurface, PrimaryButton, Screen } from "../components/ui";
 import { colors, spacing } from "../design/tokens";
@@ -56,9 +57,9 @@ export default function LegalScreen() {
 
   return (
     <Screen navigation={false}>
-      <Stack.Screen options={{ title: label("legal.title") }} />
+      <Stack.Screen options={{ title: photoCreditsCopy(locale).legalTitle }} />
       <View style={styles.heading}>
-        <AppText variant="screenTitle">{label("legal.title")}</AppText>
+        <AppText variant="screenTitle">{photoCreditsCopy(locale).legalTitle}</AppText>
         <AppText variant="metadata" style={styles.secondary}>{label("legal.description")}</AppText>
       </View>
 
@@ -91,12 +92,12 @@ export default function LegalScreen() {
 
       <PressableSurface
         accessibilityRole="link"
-        accessibilityLabel="Photo credits"
+        accessibilityLabel={photoCreditsCopy(locale).title}
         onPress={() => router.navigate("/photo-credits")}
         style={styles.photoCreditsRow}
       >
         <NativeIcon ios="photo" android="image" color={colors.primary} size={21} />
-        <AppText variant="label">Photo credits</AppText>
+        <AppText variant="label">{photoCreditsCopy(locale).title}</AppText>
         <NativeIcon ios={direction === "rtl" ? "chevron.left" : "chevron.right"} android={direction === "rtl" ? "chevron_left" : "chevron_right"} color={colors.textMuted} size={16} />
       </PressableSurface>
       <View style={styles.analytics} testID="native-analytics-consent">

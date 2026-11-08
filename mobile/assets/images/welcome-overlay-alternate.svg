@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="860" viewBox="0 0 400 860" preserveAspectRatio="none">
+  <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#74ADCF" stop-opacity=".72"/>
+    <stop offset=".20" stop-color="#D6EAF6" stop-opacity=".93"/>
+    <stop offset=".34" stop-color="#FBFDFF" stop-opacity=".87"/>
+    <stop offset=".58" stop-color="#FBFDFF" stop-opacity="0"/>
+    <stop offset=".68" stop-color="#09234D" stop-opacity="0"/>
+    <stop offset="1" stop-color="#03182D" stop-opacity=".72"/>
+  </linearGradient></defs>
+  <path fill="url(#sky)" d="M0 0h400v860H0z"/>
+</svg>

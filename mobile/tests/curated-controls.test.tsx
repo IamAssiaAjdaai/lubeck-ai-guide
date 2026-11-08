@@ -75,3 +75,23 @@ describe("rendered curated controls (native bridges mocked)", () => {
     expect(mocks.replace).not.toHaveBeenCalled();
   });
 });
+
+
+it("reuses durable Start with a presentation adapter and refuses navigation when its write fails", async () => {
+  const view = render(<CuratedTourControls citySlug="lubeck" tourSlug="historic" stopSlugs={stops}
+    renderStart={({ busy, disabled, onPress }) => <button disabled={busy || disabled} onClick={onPress}>Approved Start Walk</button>} />);
+  const button = await screen.findByRole("button", { name: "Approved Start Walk" });
+  await waitFor(() => expect((button as HTMLButtonElement).disabled).toBe(false));
+  expect(mocks.open).not.toHaveBeenCalled();
+  mocks.open.mockRejectedValueOnce(Error("disk"));
+  fireEvent.click(button);
+  expect(await screen.findByText("Save failed")).toBeTruthy();
+  expect(mocks.push).not.toHaveBeenCalled();
+  view.unmount(); mocks.open.mockResolvedValue(progress);
+  render(<CuratedTourControls citySlug="lubeck" tourSlug="historic" stopSlugs={stops}
+    renderStart={({ disabled, onPress }) => <button disabled={disabled} onClick={onPress}>Approved Start Walk</button>} />);
+  await waitFor(() => expect((screen.getByRole("button", { name: "Approved Start Walk" }) as HTMLButtonElement).disabled).toBe(false));
+  fireEvent.click(screen.getByRole("button", { name: "Approved Start Walk" }));
+  await waitFor(() => expect(mocks.push).toHaveBeenCalledOnce());
+  expect(mocks.push.mock.calls[0][0].params).toMatchObject({ tripSource: "published", placeSlug: "holstentor" });
+});

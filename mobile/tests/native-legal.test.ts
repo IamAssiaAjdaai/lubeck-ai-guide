@@ -31,7 +31,9 @@ describe("native legal and support access", () => {
   it("keeps legal and support access available from Profile without duplicating legal copy", () => {
     expect(profileSource).toContain('testID="profile-legal-menu"');
     expect(profileSource).toContain('router.navigate("/legal")');
-    expect(profileSource).toContain('label("legal.profileRow")');
+    expect(profileSource).toContain("title={photoCreditsCopy(locale).legalTitle}");
+    expect(legalScreenSource).toContain('router.navigate("/photo-credits")');
+    expect(legalScreenSource).toContain("photoCreditsCopy(locale).title");
     expect(profileSource).not.toContain("https://getcitywalk.com/privacy");
   });
 });

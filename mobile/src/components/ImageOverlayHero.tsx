@@ -20,7 +20,7 @@ export function waterfrontCrop(width: number, height: number) {
 }
 
 // Editorial is opt-in: planner, cards and all other legacy heroes keep their old crop.
-export function ImageOverlayHero({ title, subtitle, compact = false, editorial = false, citySlug, badge }: {
+export function ImageOverlayHero({ title, subtitle, compact = false, editorial = false, badge }: {
   title: string;
   subtitle?: string;
   compact?: boolean;
@@ -39,9 +39,7 @@ export function ImageOverlayHero({ title, subtitle, compact = false, editorial =
         {editorial ? (
           <>
             <NativeContentImage
-              source={citySlug === "lubeck"
-                ? require("../../assets/images/city-hub-lubeck-approved.webp")
-                : require("../../assets/images/citywalk-waterfront.webp")}
+              source={require("../../assets/images/citywalk-waterfront.webp")}
               fallbackSource={require("../../assets/images/citywalk-waterfront.webp")}
               contentFit="cover"
               accessible={false}

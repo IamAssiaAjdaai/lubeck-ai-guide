@@ -1,9 +1,15 @@
+import selectionGradient from "../../assets/images/selection-card-gradient.svg";
+import { CityPhotoCredits } from "../components/CityPhotoCredits";
+import selectionLubeck from "../../assets/images/introduction-holstentor.jpg";
+import { citySelectionCopy } from "../lib/citySelectionCopy";
+import { introductionCopy } from "../lib/introductionCopy";
+import { welcomePhotos } from "../lib/welcomeCopy";
 import { nativeTextStyle } from "../design/rtlPresentation";
-import homeHolstentor from "../../assets/images/home-holstentor.jpg";
+
 import homeHamburg from "../../assets/images/home-hamburg.webp";
 import homeDuesseldorf from "../../assets/images/home-duesseldorf.webp";
 import homeAppMark from "../../assets/images/citywalk-mark.svg";
-import homeMulticityApproved from "../../assets/images/home-multicity-approved.webp";
+
 import homeCardGradient from "../../assets/images/home-card-gradient.svg";
 import homeHeroSkyGradient from "../../assets/images/home-hero-sky-gradient.svg";
 import { Image } from "expo-image";
@@ -13,12 +19,11 @@ import { triggerCitywalkHaptic } from "../lib/haptics";
 import { cityLaunches, getLaunchDescription } from "@citywalk/traveler-core/cityAvailability";
 import { calculateDistanceMeters } from "@citywalk/traveler-core";
 import { walkCopy } from "@citywalk/traveler-core/walkCopy";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, TextInput, View, useWindowDimensions } from "react-native";
 import { NativeContentImage } from "../components/NativeContentImage";
 import { CitywalkLoading } from "../components/CitywalkLoading";
-import { MediaAttribution } from "../components/MediaAttribution";
 import { NativeIcon } from "../components/NativeIcon";
 import {
   AppText,
@@ -30,8 +35,7 @@ import {
 } from "../components/ui";
 import { motion, radius, spacing } from "../design/tokens";
 import { prefetchPublicCity, usePublicCities } from "../hooks/usePublicContent";
-import { citywalkApi } from "../lib/api/instance";
-import { selectImageUrl, selectPrimaryImageMedia } from "../lib/api/media";
+import { selectImageUrl, selectPrimaryImageMedia } from "../lib/releasePhotography";
 import { requestForegroundLocation } from "../lib/location";
 import { expoForegroundLocationAdapter } from "../lib/location.expo";
 import { useNativeLocale } from "../localization/LocaleProvider";
@@ -59,7 +63,7 @@ const editorialLabels: Record<string, { eyebrow: string; featured: string; more:
 
 function bundledCityImage(slug: string) {
   switch (slug) {
-    case "lubeck": return homeHolstentor;
+    case "lubeck": return selectionLubeck;
     case "hamburg": return homeHamburg;
     case "duesseldorf": return homeDuesseldorf;
     default: return undefined;
@@ -89,36 +93,39 @@ function HomeCityCard({
 }: {
   city: HomeCity;
   locale: ReturnType<typeof useNativeLocale>["locale"];
-  size: "featured" | "small";
+  size: "featured" | "small" | "selection";
   availableLabel: string;
   comingSoonLabel: string;
   unavailableLabel: string;
   exploreLabel: string;
 }) {
-  const isFeatured = size === "featured";
+  const { fontScale } = useWindowDimensions();
+  const selection = size === "selection";
+  const isFeatured = size !== "small";
   const cityName = nativeCityName(city.slug, city.name, locale);
   const shortDeck = featuredDeck[locale]?.[city.slug] ?? city.shortDescription;
-  const localImage = bundledCityImage(city.slug);
-  const fallback = cityLaunches[city.slug]?.heroImage;
+  const localImage = selection && city.slug === "lubeck" ? selectionLubeck : bundledCityImage(city.slug);
+  const selectionCredit = welcomePhotos.find(photo => photo.id === city.slug);
+
   const card = (
-    <View style={[styles.destinationCard, isFeatured ? styles.featuredCard : styles.smallCard]}>
+    <View style={[styles.destinationCard, isFeatured ? styles.featuredCard : styles.smallCard, selection && styles.selectionCard, selection && fontScale > 1.3 && styles.selectionFlexibleCard]}>
       <NativeContentImage
-        source={city.image ? { uri: citywalkApi.resolveUrl(city.image) } : localImage ?? (fallback ? { uri: citywalkApi.resolveUrl(fallback) } : undefined)}
-        fallbackSource={localImage ?? (fallback ? { uri: citywalkApi.resolveUrl(fallback) } : undefined)}
+        source={localImage}
+
         contentFit="cover"
         cachePolicy="memory-disk"
         transition={motion.component}
         accessibilityLabel={cityName}
         style={styles.destinationImage}
       />
-      <View pointerEvents="none" style={styles.imageTint} />
-      <View pointerEvents="none" style={styles.imageGradientContainer}>
-        <Image source={homeCardGradient} style={styles.imageGradient} contentFit="fill" accessible={false} />
+      <View pointerEvents="none" style={[styles.imageTint, selection && !city.available && styles.selectionUnavailableTint]} />
+      <View pointerEvents="none" style={[styles.imageGradientContainer, selection && styles.selectionGradient]}>
+        <Image source={selection ? selectionGradient : homeCardGradient} style={styles.imageGradient} contentFit="fill" accessible={false} />
       </View>
       {isFeatured ? (
-        <View style={styles.statusPill}>
-          <View style={[styles.pillDot, !city.available && styles.pillDotMuted]} />
-          <AppText variant="metadata" style={styles.pillText}>
+        <View style={[styles.statusPill, selection && styles.selectionStatus, selection && !city.available && styles.selectionComingStatus]}>
+          {selection && !city.available ? <NativeIcon ios="lock.fill" android="lock" color="#FFFFFF" size={13} /> : <View style={[styles.pillDot, !city.available && styles.pillDotMuted]} />}
+          <AppText variant="metadata" style={[styles.pillText, selection && !city.available && styles.selectionComingText]}>
             {city.unavailable ? unavailableLabel : city.available ? availableLabel : comingSoonLabel}
           </AppText>
         </View>
@@ -126,13 +133,13 @@ function HomeCityCard({
       <View style={[isFeatured ? styles.featuredCopy : styles.smallCopy, isFeatured && city.available && styles.featuredCopyWithArrow]}>
         <AppText
           variant={isFeatured ? "heading" : "label"}
-          numberOfLines={isFeatured ? 2 : 1}
-          style={[styles.destinationName, isFeatured && styles.featuredName]}
+          numberOfLines={selection ? undefined : isFeatured ? 2 : 1}
+          style={[styles.destinationName, isFeatured && styles.featuredName, selection && styles.selectionName, selection && fontScale > 2.5 && styles.selectionAccessibleName]}
         >
           {cityName}
         </AppText>
         {isFeatured && shortDeck ? (
-          <AppText variant="caption" numberOfLines={2} style={styles.destinationDescription}>
+          <AppText variant="caption" numberOfLines={selection ? undefined : 2} style={[styles.destinationDescription, selection && styles.selectionDescription]}>
             {shortDeck}
           </AppText>
         ) : !isFeatured ? (
@@ -148,7 +155,7 @@ function HomeCityCard({
   );
 
   return (
-    <View style={isFeatured ? styles.featuredItem : styles.smallItem}>
+    <View style={selection ? styles.selectionItem : isFeatured ? styles.featuredItem : styles.smallItem}>
       {city.available ? (
         <Link href={{ pathname: "/city/[citySlug]", params: { citySlug: city.slug } }} asChild>
           <PressableSurface
@@ -160,13 +167,14 @@ function HomeCityCard({
             {card}
           </PressableSurface>
         </Link>
-      ) : card}
-      {city.attribution && city.available ? <MediaAttribution attribution={city.attribution} /> : null}
+      ) : selection ? <View accessible accessibilityLabel={`${cityName}, ${city.unavailable ? unavailableLabel : comingSoonLabel}`} accessibilityState={{ disabled: true }}>{card}</View> : card}
+      {selection && localImage && selectionCredit ? <CityPhotoCredits cityName={cityName} photo={selectionCredit} /> : null}
     </View>
   );
 }
 
 export default function HomeScreen() {
+  const { fontScale } = useWindowDimensions();
   const { locale, direction, messages } = useNativeLocale();
   const t = walkCopy(locale);
   const editorial = editorialLabels[locale] ?? editorialLabels.en;
@@ -179,7 +187,8 @@ export default function HomeScreen() {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState<{ lat: number; lng: number }>();
   const [locating, setLocating] = useState(false);
-  const [locationHelp, setLocationHelp] = useState("");
+  const [locationFeedback, setLocationHelp] = useState<"nearest" | "optional">();
+  const locationHelp = locationFeedback ? (locationFeedback === "nearest" ? t.nearest : t.locationHelp) : "";
 
   async function locate() {
     setLocating(true);
@@ -187,12 +196,12 @@ export default function HomeScreen() {
       const result = await requestForegroundLocation(expoForegroundLocationAdapter);
       if (result.status === "available") {
         setLocation({ lat: result.location.latitude, lng: result.location.longitude });
-        setLocationHelp(t.nearest);
+        setLocationHelp("nearest");
       } else {
-        setLocationHelp(t.locationHelp);
+        setLocationHelp("optional");
       }
     } catch {
-      setLocationHelp(t.locationHelp);
+      setLocationHelp("optional");
     } finally {
       setLocating(false);
     }
@@ -248,17 +257,42 @@ export default function HomeScreen() {
   const featured = choices.slice(0, 2);
   const remaining = choices.slice(2);
 
+  // A focused presentation of the same discovery state, handlers and availability gates.
+  if (section === "cities") {
+    const copy = citySelectionCopy[locale];
+    return <Screen key={`selection-${fontScale}`} scrollViewRef={scroll} brand={false} navigation={false}>
+      <View style={[styles.selectionHeader, { direction }]}>
+        <PressableSurface accessibilityRole="button" accessibilityLabel={introductionCopy[locale].back} onPress={() => router.canGoBack() ? router.back() : router.replace("/welcome")} style={styles.selectionBack}>
+          <NativeIcon ios={direction === "rtl" ? "chevron.right" : "chevron.left"} android={direction === "rtl" ? "chevron_right" : "chevron_left"} color="#09234D" size={22} />
+        </PressableSurface>
+        <LocaleSelector welcome />
+      </View>
+      <View style={styles.selectionIntro}>
+        <AppText accessibilityRole="header" style={[styles.selectionTitle, fontScale > 1.5 && styles.selectionLargeTitle, fontScale > 2.5 && styles.selectionLargestTitle]}>{copy.title}</AppText>
+        <AppText style={styles.selectionReassurance}>{copy.reassurance}</AppText>
+      </View>
+      <View style={[styles.selectionSearch, { direction }]}>
+        <NativeIcon ios="magnifyingglass" android="search" color="#506984" size={20} />
+        <TextInput accessibilityLabel={t.search} placeholder={t.search} placeholderTextColor="#506984" value={query} onChangeText={setQuery} autoCorrect={false} style={[styles.selectionInput, nativeTextStyle(direction)]} />
+      </View>
+      <PrimaryButton label={t.location} tone="secondary" busy={locating} onPress={() => void locate()} leadingIcon={<NativeIcon ios="location" android="near_me" color="#155CAF" size={18} />} />
+      {locationHelp ? <AppText accessibilityLiveRegion="polite" style={styles.selectionReassurance}>{locationHelp}</AppText> : null}
+      {cities.status === "loading" ? <CitywalkLoading compact label={editorial.featured} /> : null}
+      {cities.status === "available" && !choices.length ? <EmptyState title={t.noCities} description={t.search} icon={<NativeIcon ios="magnifyingglass" android="search" />} /> : null}
+      {cities.status === "error" ? <View style={styles.contentWarning}>
+        <AppText variant="metadata" style={styles.warningText}>{messages.unavailable}</AppText>
+        <PrimaryButton label={t.retry} tone="secondary" onPress={cities.retry} />
+      </View> : null}
+      <View style={styles.selectionList}>
+        {choices.map(city => <HomeCityCard key={city.slug} city={city} locale={locale} size="selection" availableLabel={t.availableNow} comingSoonLabel={t.comingSoon} unavailableLabel={messages.unavailable} exploreLabel={messages.exploreCity} />)}
+      </View>
+    </Screen>;
+  }
+
   return (
     <Screen scrollViewRef={scroll} scrollDiagnostics="home" brand={false}>
       <View style={styles.homeHero}>
-        <NativeContentImage
-          source={homeMulticityApproved}
-          contentFit="cover"
-          contentPosition="center"
-          cachePolicy="memory-disk"
-          accessibilityLabel={undefined}
-          style={styles.heroImage}
-        />
+        {/* Unverified composite hidden; existing sky, scrim and layout retained. */}
         <View pointerEvents="none" style={styles.heroScrim} />
         <View pointerEvents="none" style={styles.heroSky}>
           <Image source={homeHeroSkyGradient} style={styles.heroSkyImage} contentFit="fill" accessible={false} />
@@ -404,6 +438,27 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  selectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: -4 },
+  selectionBack: { minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
+  selectionIntro: { gap: 12, paddingTop: 8, paddingBottom: 4 },
+  selectionTitle: { fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 36, lineHeight: 41, fontWeight: "700", letterSpacing: -0.9, color: "#09234D" },
+  selectionLargeTitle: { fontSize: 28, lineHeight: 34 },
+  selectionLargestTitle: { fontSize: 16, lineHeight: 22 },
+  selectionAccessibleName: { fontSize: 20, lineHeight: 26 },
+  selectionReassurance: { color: "#506984", fontSize: 15, lineHeight: 22 },
+  selectionSearch: { minHeight: 52, borderWidth: 1, borderColor: "#DDE8F2", backgroundColor: "#F0F6FC", borderRadius: 14, flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 14 },
+  selectionInput: { minHeight: 52, flex: 1, fontSize: 16, color: "#09234D" },
+  selectionList: { gap: 18 },
+  selectionItem: { width: "100%", position: "relative" },
+  selectionCard: { height: undefined, aspectRatio: 2, justifyContent: "space-between", borderRadius: 20, backgroundColor: "#09234D" },
+  selectionFlexibleCard: { aspectRatio: undefined, minHeight: 174 },
+  selectionGradient: { height: "100%" },
+  selectionUnavailableTint: { backgroundColor: "rgba(9,35,77,0.24)" },
+  selectionComingStatus: { backgroundColor: "#09234D" },
+  selectionComingText: { color: "#FFFFFF" },
+  selectionStatus: { position: "relative", top: undefined, left: undefined, alignSelf: "flex-start", maxWidth: "72%", margin: 12, backgroundColor: "#FBFDFF" },
+  selectionName: { fontFamily: Platform.OS === "ios" ? "Georgia" : "serif", fontSize: 28, lineHeight: 34 },
+  selectionDescription: { fontSize: 12, lineHeight: 18 },
   homeHero: {
     minHeight: 418,
     marginHorizontal: -spacing.lg,

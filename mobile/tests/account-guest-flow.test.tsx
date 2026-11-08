@@ -54,6 +54,8 @@ vi.mock("react-native", () => ({
   TextInput: ({ accessibilityLabel, value, onChangeText, secureTextEntry, editable, autoComplete, textContentType }: { accessibilityLabel: string; value: string; onChangeText: (v: string) => void; secureTextEntry?: boolean; editable: boolean; autoComplete?: string; textContentType?: string }) =>
     <input data-autocomplete={autoComplete} data-content-type={textContentType} aria-label={accessibilityLabel} type={secureTextEntry ? "password" : "text"} value={value} onChange={e => onChangeText(e.target.value)} disabled={!editable} />,
 }));
+vi.mock("../src/components/AccountOnboardingFrame", () => ({ AccountOnboardingFrame: ({ title, description, children, footer, onBack }: React.PropsWithChildren<{ title: string; description: string; footer: React.ReactNode; onBack: () => void }>) => <main><button onClick={onBack}>Header back</button><h1>{title}</h1><p>{description}</p>{children}{footer}</main> }));
+vi.mock("../src/components/AccountOnboardingFrame", () => ({ AccountOnboardingFrame: ({ title, children, footer, onBack }: React.PropsWithChildren<{ title: string; footer: React.ReactNode; onBack: () => void }>) => <main><button onClick={onBack}>Header back</button><h1>{title}</h1>{children}{footer}</main> }));
 vi.mock("../src/components/NativeIcon", () => ({ NativeIcon: () => null }));
 vi.mock("../src/components/CitywalkLoading", () => ({ CitywalkLoading: () => <span>Pending</span> }));
 vi.mock("../src/components/ui", () => ({
@@ -397,4 +399,93 @@ it("does not claim a reset acknowledgement for an unexpected API response", asyn
   mocks.requestPasswordReset.mockResolvedValue({ data: {} }); render(<AccountScreen />); open(); press("profile.forgotPassword");
   enter("profile.email", "synthetic@example.test"); press("profile.sendResetLink");
   await screen.findByText(copy("lifecycle.unavailable")); expect(screen.queryByText(copy("lifecycle.resetRequested"))).toBeNull();
+});
+
+describe("optional onboarding account presentation", () => {
+  it("opens email sign-up using the existing verified-email client and keeps discovery optional", async () => {
+    mocks.params = { onboarding: "1" };
+    render(<AccountScreen />);
+    fireEvent.click(screen.getByRole("button", { name: "Sign up with email" }));
+    fill();
+    fireEvent.click(screen.getByRole("button", { name: messages().signUp }));
+    await waitFor(() => expect(mocks.signUp).toHaveBeenCalledWith(expect.objectContaining({ email: "traveler@example.test", callbackURL: "citywalk://account", fetchOptions: { headers: { "X-Citywalk-Locale": "en" } } })));
+    await waitFor(() => expect(screen.getByText(t("en", "profile.verificationSent"))).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: "Explore Cities" }));
+    expect(mocks.replace).toHaveBeenCalledWith({ pathname: "/", params: { section: "cities" } });
+    expect(mocks.clear).not.toHaveBeenCalled();
+  });
+  it("preserves German copy and does not advertise unconfigured providers", () => {
+    mocks.params = { onboarding: "1" }; mocks.locale = "de";
+    render(<AccountScreen />);
+    expect(screen.getByRole("button", { name: "Mit E-Mail registrieren" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: t("de", "profile.continueWithApple") })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: messages().signIn }));
+    expect(screen.getByLabelText(messages().email)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: t("de", "profile.forgotPassword") }));
+    expect(screen.getByRole("button", { name: t("de", "profile.sendResetLink") })).toBeTruthy();
+  });
+  it("keeps configured social sign-in in the onboarding callback context", async () => {
+    vi.stubEnv("EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH", "1");
+    mocks.params = { onboarding: "1" };
+    render(<AccountScreen />);
+    fireEvent.click(screen.getByRole("button", { name: t("en", "profile.continueWithGoogle") }));
+    await waitFor(() => expect(mocks.socialSignIn).toHaveBeenCalledWith({ provider: "google", callbackURL: "citywalk://account?onboarding=1", errorCallbackURL: "citywalk://account?onboarding=1" }));
+  });
+});
+
+describe("optional onboarding account presentation", () => {
+  it("uses existing email sign-up and preserves optional guest discovery", async () => {
+    mocks.params = { onboarding: "1" };
+    render(<AccountScreen />);
+    fireEvent.click(screen.getByRole("button", { name: "Sign up with email" }));
+    fill();
+    fireEvent.click(screen.getByRole("button", { name: messages().signUp }));
+    await waitFor(() => expect(mocks.signUp).toHaveBeenCalledWith(expect.objectContaining({ email: "traveler@example.test", callbackURL: "citywalk://account", fetchOptions: { headers: { "X-Citywalk-Locale": "en" } } })));
+    await waitFor(() => expect(screen.getByText(t("en", "profile.verificationSent"))).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: "Explore Cities" }));
+    expect(mocks.replace).toHaveBeenCalledWith({ pathname: "/", params: { section: "cities" } });
+    expect(mocks.clear).not.toHaveBeenCalled();
+  });
+  it("preserves German recovery and hides unconfigured providers", () => {
+    mocks.params = { onboarding: "1" }; mocks.locale = "de";
+    render(<AccountScreen />);
+    expect(screen.getByRole("button", { name: "Mit E-Mail registrieren" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: t("de", "profile.continueWithApple") })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: messages().signIn }));
+    expect(screen.getByLabelText(messages().email)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: t("de", "profile.forgotPassword") }));
+    expect(screen.getByRole("button", { name: t("de", "profile.sendResetLink") })).toBeTruthy();
+  });
+  it("uses existing social provider with an onboarding callback", async () => {
+    vi.stubEnv("EXPO_PUBLIC_CITYWALK_GOOGLE_AUTH", "1");
+    mocks.params = { onboarding: "1" };
+    render(<AccountScreen />);
+    fireEvent.click(screen.getByRole("button", { name: t("en", "profile.continueWithGoogle") }));
+    await waitFor(() => expect(mocks.socialSignIn).toHaveBeenCalledWith({ provider: "google", callbackURL: "citywalk://account?onboarding=1", errorCallbackURL: "citywalk://account?onboarding=1" }));
+  });
+});
+
+describe("onboarding account boundaries", () => {
+  it("validates locally before using the existing sign-in client", async () => {
+    mocks.params = { onboarding: "1", entry: "sign-in" };
+    render(<AccountScreen />);
+    fireEvent.click(screen.getByRole("button", { name: messages().signIn }));
+    expect(mocks.signIn).not.toHaveBeenCalled();
+    expect(screen.getByRole("status")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Explore Cities" })).toBeTruthy();
+  });
+  it("offers existing account access when a traveler is already signed in", () => {
+    mocks.params = { onboarding: "1" };
+    mocks.session = { user: { id: "traveler-test", name: "Traveler", email: "traveler@example.test" } };
+    render(<AccountScreen />);
+    expect(screen.queryByRole("button", { name: "Sign up with email" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: t("en", "profile.nativeAccountTitle") }));
+    expect(mocks.replace).toHaveBeenCalledWith("/account");
+  });
+  it("retains onboarding context after a provider error", async () => {
+    mocks.params = { onboarding: "1", error: "access_denied" };
+    render(<AccountScreen />);
+    await waitFor(() => expect(mocks.replace).toHaveBeenCalledWith("/account?onboarding=1"));
+    expect(screen.getByRole("button", { name: "Explore Cities" })).toBeTruthy();
+  });
 });

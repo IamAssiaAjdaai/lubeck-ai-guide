@@ -1,52 +1,49 @@
 import { describe, expect, it } from "vitest";
-
-import cityHubSource from "../src/app/city/[citySlug]/index.tsx?raw";
-import heroSource from "../src/components/ImageOverlayHero.tsx?raw";
-
-describe("City Hub V1 editorial design (approved preview)", () => {
-  it("uses a distinct opt-in editorial hero, leaving other heroes unchanged", () => {
-    expect(cityHubSource).toContain("<ImageOverlayHero");
-    expect(cityHubSource).toContain("              editorial");
-    expect(cityHubSource).toContain("citySlug={city.slug}");
-    expect(heroSource).toContain("editorial = false");
-    expect(heroSource).toContain("editorial && styles.editorialHero");
-    expect(heroSource).toContain("editorialBadge");
-    expect(heroSource).toContain("waterfrontCrop(size.width, size.height)");
+import { cityHubRecommendations } from "../src/lib/cityHubRecommendations";
+import type { PublicPlaceCard, PublicTour } from "../src/lib/api/contracts";
+import hub from "../src/app/city/[citySlug]/index.tsx?raw";
+import hero from "../src/components/CityHubHero.tsx?raw";
+const content = { requestedLocale: "en", resolvedLocale: "en", didFallback: false, media: [] };
+const places: PublicPlaceCard[] = [
+  { ...content, slug: "museum", content: { name: "Museum", shortDescription: "Museum fixture" }, category: "see", durationMinutes: 20, coordinates: { lat: 1, lng: 1 }, tags: ["museum", "history"] },
+  { ...content, slug: "cafe", content: { name: "Cafe", shortDescription: "Cafe fixture" }, category: "eat", durationMinutes: 20, coordinates: { lat: 1, lng: 1 }, tags: ["cafe"] },
+];
+const tours: PublicTour[] = [
+  { ...content, slug: "history", content: { title: "History" }, stops: [{ placeSlug: "museum", position: 0 }] },
+  { ...content, slug: "food", content: { title: "Food" }, stops: [{ placeSlug: "cafe", position: 0 }] },
+];
+describe("City Hub published route recommendations", () => {
+  it("keeps editorial order for guests without preferences", () => {
+    expect(cityHubRecommendations(tours, places)).toBe(tours);
   });
-
-  it("loads approved local Lübeck artwork without Wikimedia network dependency or stale photo credit", () => {
-    expect(heroSource).toContain('city-hub-lubeck-approved.webp');
-    expect(heroSource).toContain('citySlug === "lubeck"');
-    expect(heroSource).toContain('fallbackSource={require("../../assets/images/citywalk-waterfront.webp")}');
-    expect(heroSource).not.toContain("lubeckRiversidePhoto");
-    expect(cityHubSource).not.toContain("Edelmauswaldgeist");
+  it("uses real stop tags and canonical planner interests without modifying tours", () => {
+    const result = cityHubRecommendations(tours, places, ["food"]);
+    expect(result.map(tour => tour.slug)).toEqual(["food", "history"]);
+    expect(result[0]).toBe(tours[1]);
+    expect(tours[0].slug).toBe("history");
+    expect(cityHubRecommendations(tours, places, ["culture"])[0]).toBe(tours[0]);
   });
-
-  it("keeps the personalized walk and existing three actions wired to real paths", () => {
-    expect(cityHubSource).toContain('pathname: "/city/[citySlug]/walk"');
-    expect(cityHubSource).toContain('testID="city-hub-quick-actions"');
-    expect(cityHubSource).toContain("list.current?.scrollToOffset");
-    expect(cityHubSource).toContain("requestForegroundLocation");
-    expect(cityHubSource).toContain("cityAssistantRoute(city.slug)");
-    expect(cityHubSource).toContain("locating");
+  it("preserves ties and handles empty/missing published stops", () => {
+    expect(cityHubRecommendations(tours, [], ["food"])).toEqual(tours);
+    expect(cityHubRecommendations([], places, ["history"])).toEqual([]);
   });
-
-  it("keeps city-specific claims restricted to Lübeck and respects localization", () => {
-    expect(cityHubSource).toContain('city.slug === "lubeck" ? editorial.story : t.hubSubtitle');
-    expect(cityHubSource).toContain('city.slug === "lubeck" ? editorial.badge : undefined');
-    for (const locale of ["en", "de", "fr", "es", "nl", "da", "sv", "ar"]) {
-      expect(cityHubSource).toContain(`${locale}: { story:`);
-    }
-    expect(cityHubSource).toContain("cityHubEditorial[locale] ?? cityHubEditorial.en");
-    expect(cityHubSource).toContain('styles.introRow, nativeRowStyle(appDirection)');
+});
+describe("Screen 09 integration boundaries", () => {
+  it("uses licensed city-specific photography, real city switching, and accessible credits", () => {
+    expect(hero).toContain('cityHubBundledPhoto(city.slug)');
+    expect(hero).toContain('selectPrimaryImageMedia(city.media');
+    expect(hero).toContain('<CityPhotoCredits');
+    expect(hero).toContain('href="/?section=cities"');
+    expect(hero).toContain('accessibilityLabel={`${name} · ${copy.switch}`}');
+    expect(hero).not.toContain('citywalk-waterfront');
   });
-
-  it("preserves published tour data, place controls, and list virtualization", () => {
-    expect(cityHubSource).toContain("tours.map");
-    expect(cityHubSource).toContain("stopNames.join");
-    expect(cityHubSource).toContain("<WalkChoices");
-    expect(cityHubSource).toContain("<VirtualizedScreen");
-    expect(cityHubSource).toContain("renderItem={({ item }) =>");
-    expect(cityHubSource).not.toContain("navigation={false}");
+  it("preserves virtualized places, actual tours, account ownership and planner navigation", () => {
+    expect(hub).toContain('accountInterests?.userId === userId');
+    expect(hub).toContain('suggestedTours.map');
+    expect(hub).toContain('<VirtualizedScreen');
+    // B05: valid/invalid return behavior is asserted against the real rendered Hub
+    // in city-hub-actions.test.tsx (B01 and I02/I03), replacing the boolean source contract.
+    expect(hub).toContain('requestForegroundLocation');
+    expect(hub).not.toContain('UNESCO Old Town · Hanseatic history');
   });
 });

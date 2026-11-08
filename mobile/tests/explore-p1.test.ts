@@ -12,8 +12,9 @@ describe("Explore P1 presentation", () => {
     expect(tabNavigationSource).toContain('route.name === "city/[citySlug]/explore"');
   });
 
-  it("keeps Explore a root surface without nested brand/back chrome", () => {
-    expect(exploreSource).toContain("<Screen brand={false}");
+  it("reuses the approved premium header on the virtualized Explore surface", () => {
+    expect(exploreSource).toContain("<VirtualizedScreen");
+    expect(exploreSource).toContain('brandVariant="city-hub"');
   });
 
   it("keeps Explore dense and routes search into the dedicated Search flow", () => {
@@ -22,7 +23,7 @@ describe("Explore P1 presentation", () => {
     expect(exploreSource).toContain('variant="segment"');
     expect(exploreSource).toContain("<NativeCityMap");
     expect(exploreSource).toContain("<WalkMembershipControl");
-    expect(exploreSource).toContain("dense");
-    expect(exploreSource).toContain("inline");
+    expect(exploreSource).toContain("discoveryCard");
+    expect(exploreSource).toContain("toggleSavedPlace");
   });
 });
