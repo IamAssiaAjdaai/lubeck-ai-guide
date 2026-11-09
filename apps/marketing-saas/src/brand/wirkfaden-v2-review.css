@@ -1,0 +1,87 @@
+/*
+ * Wirkfaden V2 — founder-approved Forest/Sage/Ivory visual review.
+ * CSS-only, authenticated workspace scope. No changes to data, approvals,
+ * routes, auth, export, public landing, or production infrastructure.
+ * Keep this isolated until desktop/mobile visual and accessibility QA.
+ */
+.simple-workspace {
+  --wirk-forest: #17382f;
+  --wirk-sage: #dce8dc;
+  --wirk-ivory: #f8f6f0;
+  --wirk-warm: #e4a77f;
+  --wirk-ink: #25312d;
+  --reference-canvas: var(--wirk-ivory);
+  --reference-card: #fff;
+  --reference-border: #dce4d9;
+  --reference-muted: #50645a;
+  --brand-ink: var(--wirk-forest);
+  --brand-paper: var(--wirk-ivory);
+  --workspace-soft: #f4f7f2;
+  --workspace-border: #dce4d9;
+  --workspace-muted: #50645a;
+  background: var(--wirk-ivory);
+  color: var(--wirk-ink);
+}
+.simple-workspace .main,
+.simple-workspace .topbar {
+  background: var(--wirk-ivory);
+}
+.simple-workspace .sidebar {
+  background: var(--wirk-forest);
+  color: #fff;
+  border-right: 1px solid #36574a;
+}
+.simple-workspace .sidebar .brand,
+.simple-workspace .sidebar .product-identity,
+.simple-workspace .sidebar .identity-copy,
+.simple-workspace .sidebar .brand .identity-copy,
+.simple-workspace .sidebar .identity-copy strong {
+  color: #fff;
+}
+.simple-workspace .sidebar .identity-copy small {
+  color: #e0ece0;
+}
+.simple-workspace .sidebar .brand-symbol,
+.simple-workspace .sidebar .brand .product-identity .workspace-wordmark {
+  color: #dce8dc;
+  background: #265245;
+}
+.simple-workspace .sidebar .side-nav button {
+  color: #eef4ed;
+  background: transparent;
+}
+.simple-workspace .sidebar .side-nav button:hover {
+  color: #fff;
+  background: #285445;
+}
+.simple-workspace .sidebar .side-nav button.active,
+.simple-workspace .sidebar .side-nav button[aria-current="page"] {
+  color: #17382f;
+  background: #dce8dc;
+}
+.simple-workspace .sidebar .sidebar-note {
+  color: #f5faf5;
+  background: #265044;
+  border: 1px solid #527566;
+}
+.simple-workspace .sidebar .sidebar-note small { color: #e4eee4; }
+.simple-workspace :is(.reference-surface, .panel) {
+  border-color: #dce4d9;
+}
+.simple-workspace .button.primary {
+  background: #17382f;
+  color: #fff;
+  border-color: #17382f;
+}
+.simple-workspace .button.primary:hover { background: #275345; }
+.simple-workspace :is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 3px solid #aa704d;
+  outline-offset: 3px;
+}
+@media (max-width: 800px) {
+  /* Preserve the working bottom navigation and its real destinations. */
+  .simple-workspace .sidebar { background: var(--wirk-forest); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .simple-workspace * { scroll-behavior: auto; }
+}
