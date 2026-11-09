@@ -103,3 +103,13 @@
   outline-color: #f6d2b4;
   outline-offset: -3px;
 }
+
+/* The reference-lock rail was light; its inherited ink color must not leak
+   into the new dark rail. Match the full product-identity selector chain. */
+.simple-workspace .sidebar .brand .product-identity .identity-copy,
+.simple-workspace .sidebar .brand .product-identity .identity-copy strong {
+  color: #ffffff;
+}
+.simple-workspace .sidebar .brand .product-identity .identity-copy small {
+  color: #e4eee4;
+}
