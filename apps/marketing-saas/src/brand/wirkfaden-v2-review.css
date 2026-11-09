@@ -85,3 +85,21 @@
 @media (prefers-reduced-motion: reduce) {
   .simple-workspace * { scroll-behavior: auto; }
 }
+
+/* Mobile gets the same forest navigation treatment, without adding destinations. */
+.simple-workspace .mobile-nav {
+  background: var(--wirk-forest);
+  border-top-color: #36574a;
+}
+.simple-workspace .mobile-nav button {
+  background: transparent;
+  color: #eef4ed;
+}
+.simple-workspace .mobile-nav button[aria-current="page"] {
+  background: var(--wirk-sage);
+  color: var(--wirk-forest);
+}
+.simple-workspace .mobile-nav button:focus-visible {
+  outline-color: #f6d2b4;
+  outline-offset: -3px;
+}
