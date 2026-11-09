@@ -8,6 +8,7 @@ import { api } from "./api";
 import "./brand/system.css";
 import "./marketing/marketing.css";
 import "./marketing/direction-d2/landing-d2.css";
+import "./brand/wirkfaden-v2-review.css";
 import { brandIdentity } from "./brand/identity";
 document.title = `${brandIdentity.name} · lokaler geschlossener Pilot`;
 function ProductLanding() {
