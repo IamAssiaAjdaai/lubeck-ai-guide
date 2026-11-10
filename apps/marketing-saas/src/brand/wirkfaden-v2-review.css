@@ -113,3 +113,13 @@
 .simple-workspace .sidebar .brand .product-identity .identity-copy small {
   color: #e4eee4;
 }
+
+/* Keep disabled primary actions readable: the base disabled state is pale,
+   so its label must be dark instead of inheriting primary white. */
+.simple-workspace .button.primary:disabled {
+  opacity: 1;
+  color: var(--wirk-ink);
+  background: #e6eedc;
+  border-color: #a9bdac;
+  cursor: not-allowed;
+}
