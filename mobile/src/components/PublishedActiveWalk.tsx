@@ -29,7 +29,7 @@ export function PublishedActiveWalk({ trip }: { trip: MobileTripContext }) {
   const state = usePublicCity(trip.citySlug, locale);
   const copy = activeWalkCopy(locale);
   if (state.status === "loading") return <Screen navigation={false}><CitywalkLoading variant="city" /></Screen>;
-  if (state.status === "error") return <Screen navigation={false}><ContentRecovery citySlug={trip.citySlug} retry={state.retry} /></Screen>;
+  if (state.status === "error") return <Screen navigation={false}><ContentRecovery citySlug={trip.citySlug} retry={state.retry} cityUnavailable={state.removed} /></Screen>;
   const resolved = resolveActivePublishedTrip(state.data, trip);
   if (!resolved) return <Screen navigation={false}><StatusMessage>{copy.invalid}</StatusMessage></Screen>;
   return <ActiveContent key={`${trip.citySlug}:${resolved.tour.slug}`} data={state.data} resolved={resolved} />;

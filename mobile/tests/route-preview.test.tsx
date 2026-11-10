@@ -26,18 +26,25 @@ vi.mock("../src/lib/explorePhotography",()=>({explorePhotography:()=>undefined})
 vi.mock("../src/lib/api/instance",()=>({citywalkApi:{resolveUrl:(url:string)=>url}}));
 vi.mock("../src/localization/LocaleProvider",()=>({useNativeLocale:()=>({locale:state.locale,direction:"ltr",messages:{minutes:"min",stops:"stops",visitMinutes:"min visit",unavailable:"Unavailable",fallbackContent:"Fallback"}})}));
 vi.mock("../src/hooks/usePublicContent",()=>({usePublicCity:()=>({status:state.status,retry:state.retry,data:{city:{slug:state.city,content:{name:"Selected city"}},places:(state.missing?["first"]:["first","second"]).map(slug=>({slug,content:{name:slug},resolvedLocale:"en",coordinates:{lat:53.8,lng:10.7},media:[]})),tours:[{slug:"published-tour",content:{title:"Real published title",shortDescription:"Published description"},resolvedLocale:"en",estimatedDurationMinutes:state.estimate,media:[],stops:[{placeSlug:"second",position:2,visitDurationMinutes:10},{placeSlug:"first",position:1,visitDurationMinutes:20}]}]}})}));
-vi.mock("../src/lib/curatedProgressStorage",()=>({loadCuratedProgress:async()=>undefined,openCuratedProgress:async(city:string,tour:string,stops:string[])=>createCuratedProgress(city,tour,stops)}));
+const progressStore = vi.hoisted(() => {
+  const values = new Map<string, string>();
+  return { values, getItem: vi.fn(async (key: string) => values.get(key) ?? null),
+    setItem: vi.fn(async (key: string, value: string) => { values.set(key, value); }) };
+});
+vi.mock("@react-native-async-storage/async-storage", () => ({ default: progressStore }));
 import TourScreen from "../src/app/city/[citySlug]/tour/[tourSlug]";
-afterEach(()=>{cleanup();state.locale="en";state.city="test-city";state.status="available";state.missing=false;state.estimate=45;vi.clearAllMocks();});
+afterEach(()=>{cleanup();progressStore.values.clear();state.locale="en";state.city="test-city";state.status="available";state.missing=false;state.estimate=45;vi.clearAllMocks();});
 it.each(["en","de"])("keeps %s guest browsing outside trip execution until Start Walk",async locale=>{
   state.locale=locale;render(<TourScreen/>);
   expect(screen.getByText("Real published title")).toBeTruthy();expect(screen.getByText(locale==="de"?"30 Min. an den Stopps · 2 stops":"30 min at stops · 2 stops")).toBeTruthy();
   const start=screen.getByRole("button",{name:locale==="de"?"Spaziergang starten":"Start Walk"});
   await waitFor(()=>expect((start as HTMLButtonElement).disabled).toBe(false));
   expect(state.push).not.toHaveBeenCalled();
+  expect(progressStore.setItem).not.toHaveBeenCalled();
   fireEvent.click(start);
   await waitFor(()=>expect(state.push).toHaveBeenCalledOnce());
   expect(state.push.mock.calls[0][0].params).toMatchObject({citySlug:"test-city",placeSlug:"first",tripStops:"first,second",tripIndex:"0",tripSource:"published"});
+  expect(progressStore.setItem).toHaveBeenCalledOnce();
   const stop=screen.getByRole("button",{name:locale==="de"?"Stopp 2: second · 10 min visit":"Stop 2: second · 10 min visit"}).closest("a")!;
   expect(JSON.parse(stop.dataset.route!).params).toEqual({citySlug:"test-city",placeSlug:"second"});
   expect(document.querySelectorAll('a[data-route*="tripSource"]')).toHaveLength(0);
@@ -52,9 +59,32 @@ it("shows content loading and retryable failure states",()=>{state.status="loadi
 
 it.each(["en","de"])("explains the unverified published timing in %s without presenting it as full duration", locale=>{
   state.locale=locale;state.estimate=10;render(<TourScreen/>);
+  expect(screen.getByText(locale === "de" ? /Min. an den Stopps · 2/ : /min at stops · 2/)).toBeTruthy();
+  expect(screen.getByText(locale === "de" ? "Geh- und Gesamtzeit unbestätigt" : "Walking & total time unverified")).toBeTruthy();
   expect(screen.queryByText(/Published estimate:|Veröffentlichte Schätzung:/)).toBeNull();
   fireEvent.click(screen.getByRole("button",{name:locale==="de"?"Zeitangaben erläutern":"Explain duration estimates"}));
   expect(screen.getByText(locale==="de"?/Veröffentlichte Schätzung: 10 Min/:/Published estimate: 10 min/)).toBeTruthy();
   expect(screen.getByText(locale==="de"?/Sie wird deshalb nicht als Gesamtdauer verwendet/:/not used as the full experience duration/)).toBeTruthy();
   expect(screen.queryByText("10 min · 2 stops")).toBeNull();
+});
+
+it("hydrates an existing published walk and resumes the same stop across preview remounts", async () => {
+  const key = "citywalk:native:v1:curated:test-city:published-tour";
+  const initial = createCuratedProgress("test-city", "published-tour", ["first", "second"], 100);
+  const saved = JSON.stringify({ ...initial, statuses: ["visited", "pending"], updatedAt: 101 });
+  progressStore.values.set(key, saved);
+  const first = render(<TourScreen />);
+  await waitFor(() => expect((screen.getByRole("button", { name: "Start Walk" }) as HTMLButtonElement).disabled).toBe(false));
+  first.unmount();
+
+  render(<TourScreen />);
+  const start = screen.getByRole("button", { name: "Start Walk" }) as HTMLButtonElement;
+  await waitFor(() => expect(start.disabled).toBe(false));
+  fireEvent.click(start);
+  await waitFor(() => expect(state.push).toHaveBeenCalledOnce());
+  expect(state.push.mock.calls[0][0].params).toMatchObject({
+    citySlug: "test-city", placeSlug: "second", tripStops: "first,second", tripIndex: "1", tripSource: "published",
+  });
+  expect(progressStore.setItem).not.toHaveBeenCalled();
+  expect([...progressStore.values]).toEqual([[key, saved]]);
 });

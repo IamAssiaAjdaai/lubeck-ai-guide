@@ -1,3 +1,5 @@
+import { t } from "@citywalk/i18n";
+import { publishedRouteTiming } from "@citywalk/traveler-core";
 import AppHeader from "@/components/walk/AppHeader";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -309,6 +311,7 @@ function resolveTours(
         : [];
     });
 
+    const { visitMinutes } = publishedRouteTiming(tour);
     return [
       {
         tour,
@@ -318,15 +321,9 @@ function resolveTours(
           content.content.description,
         ].find((value) => value && value !== translations.explore.walkingTour),
         contentLocale: content.resolvedLocale,
-        ...(tour.estimatedDurationMinutes
-          ? {
-              duration: formatMessage(translations.tourBuilder.minutesFormat, {
-                minutes: new Intl.NumberFormat(locale).format(
-                  tour.estimatedDurationMinutes,
-                ),
-              }),
-            }
-          : {}),
+        ...(visitMinutes === undefined
+          ? {}
+          : { duration: `${new Intl.NumberFormat(locale).format(visitMinutes)} ${t(locale, "place.visitMinutes")}` }),
         stopsLabel: `${new Intl.NumberFormat(locale).format(stops.length)} ${translations.tourBuilder.stops}`,
         stops,
         startPlace,

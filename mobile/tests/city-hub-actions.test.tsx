@@ -2,7 +2,7 @@
 import React from "react";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { NativeLocale, PublicPlaceCard } from "../src/lib/api/contracts";
+import type { NativeLocale, PublicPlaceCard, PublicTour } from "../src/lib/api/contracts";
 
 type LayoutEvent = { nativeEvent: { layout: { y: number } } };
 const state = vi.hoisted(() => ({
@@ -10,6 +10,7 @@ const state = vi.hoisted(() => ({
   scrollToOffset: vi.fn(), requestLocation: vi.fn(), returnToPlanner: undefined as string | undefined, back: vi.fn(), canGoBack: true,
   dispatch: vi.fn(), focused: true, setParams: vi.fn(), nativeStack: undefined as unknown,
   s08ReturnParams: {} as Record<string, string>,
+  tours: [] as PublicTour[],
   headerLayout: undefined as ((event: LayoutEvent) => void) | undefined,
   placesLayout: undefined as ((event: LayoutEvent) => void) | undefined,
 }));
@@ -84,7 +85,7 @@ vi.mock("../src/localization/LocaleProvider", () => ({ useNativeLocale: () => ({
 }) }));
 vi.mock("../src/hooks/usePublicContent", () => ({
   usePublicCity: () => ({ status: "available", data: {
-    city: { slug: state.citySlug, content: { name: "Test city" } }, places, tours: [],
+    city: { slug: state.citySlug, content: { name: "Test city" } }, places, tours: state.tours,
   } }),
   prefetchPublicPlace: vi.fn(),
 }));
@@ -314,4 +315,21 @@ describe("B01/B05 real owning-stack return adapter", () => {
     expect(state.setParams).toHaveBeenCalledWith({ returnToPlanner: undefined, plannerReturnVersion: undefined, plannerRouteKey: undefined, plannerDraftToken: undefined });
     expect(routeFor(screen.getByRole("button", { name: walkCopy("en").ask }))).toEqual({ pathname: "/city/[citySlug]/assistant", params: { citySlug: "lubeck" } });
   });
+});
+
+it("shows stop time in the Hub without using the unscoped published estimate", () => {
+  state.tours = [{
+    slug: "historic-center-walk", content: { title: "Historic walk" }, requestedLocale: "en",
+    resolvedLocale: "en", didFallback: false, media: [], estimatedDurationMinutes: 45,
+    stops: [30, 30, 20, 30, 10].map((visitDurationMinutes, position) => ({
+      placeSlug: places[position % places.length].slug, position, visitDurationMinutes,
+    })),
+  }];
+  try {
+    render(<CityScreen />);
+    expect(screen.getByText(/^120 min at stops · 5 /)).toBeTruthy();
+    expect(screen.queryByText(/^45 min · 5 /)).toBeNull();
+  } finally {
+    state.tours = [];
+  }
 });

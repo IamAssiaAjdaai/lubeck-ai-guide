@@ -63,7 +63,7 @@ export default function ExploreScreen() {
   if (cityState.status === "error") {
     return (
       <Screen brand={false}>
-        <ContentRecovery retry={cityState.retry} citySlug={identity.citySlug} />
+        <ContentRecovery retry={cityState.retry} cityUnavailable={cityState.removed} citySlug={identity.citySlug} />
       </Screen>
     );
   }

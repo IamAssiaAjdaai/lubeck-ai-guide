@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import type { PublicPlaceCard, PublicTour } from "../src/lib/api/contracts";
 import { filterPublishedRoutes, publishedRoutePresentation, routeTimeBudgets } from "../src/lib/publishedRoutes";
 import { TOUR_TIME_BUDGETS } from "@citywalk/traveler-core";
-function tour(minutes?: number): PublicTour { return { slug: `route-${minutes ?? "unknown"}`, requestedLocale: "en", resolvedLocale: "en", didFallback: false, estimatedDurationMinutes: minutes, content: { title: "Published route" }, stops: [{ placeSlug: "holstentor", position: 1 }], media: [] }; }
+function tour(minutes?: number, visitMinutes = minutes): PublicTour { return { slug: `route-${minutes ?? "unknown"}`, requestedLocale: "en", resolvedLocale: "en", didFallback: false, estimatedDurationMinutes: minutes, content: { title: "Published route" }, stops: [{ placeSlug: "holstentor", position: 1, visitDurationMinutes: visitMinutes }], media: [] }; }
 const place: PublicPlaceCard = { slug: "holstentor", requestedLocale: "en", resolvedLocale: "en", didFallback: false, category: "see", coordinates: { lat: 53, lng: 10 }, durationMinutes: 30, content: { name: "Holstentor", shortDescription: "Published place" }, tags: ["history", "architecture"], image: "/unverified.jpg", media: [] };
 describe("published routes use existing data contracts", () => {
   it("uses only canonical builder time budgets", () => { for (const minutes of routeTimeBudgets) expect(TOUR_TIME_BUDGETS).toContain(minutes); });
-  it("filters actual duration inclusively, excludes unknown timings only under a budget and restores All", () => {
-    const routes = [tour(45), tour(60), tour(120), tour()];
+  it("filters complete stop time inclusively, excludes unknown timings only under a budget and restores All", () => {
+    const routes = [tour(45), tour(60), tour(46, 120), tour()];
     expect(filterPublishedRoutes(routes, 60)).toEqual(routes.slice(0, 2));
     expect(filterPublishedRoutes(routes, 120)).toEqual(routes.slice(0, 3));
     expect(filterPublishedRoutes(routes)).toBe(routes);

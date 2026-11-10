@@ -117,8 +117,8 @@ describe("generic public city landing", () => {
           },
         },
         stops: [
-          { placeSlug: "belfry", position: 2 },
-          { placeSlug: "gravensteen", position: 1 },
+          { placeSlug: "belfry", position: 2, visitDurationMinutes: 30 },
+          { placeSlug: "gravensteen", position: 1, visitDurationMinutes: 90 },
         ],
       }],
       places: [
@@ -131,7 +131,8 @@ describe("generic public city landing", () => {
 
     expect(screen.getByRole("heading", { name: "Medieval Ghent" })).not.toBeNull();
     expect(screen.getByText("A curated old-city walk.")).not.toBeNull();
-    expect(screen.getByText("75 min")).not.toBeNull();
+    expect(screen.getByText("120 min visit")).not.toBeNull();
+    expect(screen.queryByText("75 min")).toBeNull();
     expect(screen.getAllByText("2 Stops").length).toBeGreaterThan(0);
     const orderedStops = document.querySelectorAll("ol li");
     expect(orderedStops[0]?.textContent).toContain("Gravensteen");

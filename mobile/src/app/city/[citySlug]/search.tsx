@@ -74,7 +74,7 @@ export default function SearchScreen() {
   if (cityState.status === "error") {
     return (
       <Screen navigation={false}>
-        <ContentRecovery retry={cityState.retry} citySlug={identity.citySlug} />
+        <ContentRecovery retry={cityState.retry} cityUnavailable={cityState.removed} citySlug={identity.citySlug} />
       </Screen>
     );
   }

@@ -12,6 +12,7 @@ import {
   type PublicPlaceResponse,
 } from "../lib/api/contracts";
 import {
+  PublicContentRemovedError,
   publicContentCache,
   publicContentCacheKey,
   type PublicContentFetch,
@@ -20,7 +21,7 @@ import {
 type ContentState<T> =
   | Readonly<{ status: "loading" }>
   | Readonly<{ status: "available"; data: T }>
-  | Readonly<{ status: "error" }>;
+  | Readonly<{ status: "error"; removed?: true }>;
 
 type RemoteState<T> = ContentState<T> & { retry: () => void };
 
@@ -116,12 +117,12 @@ function useCachedPublicContent<T>(
 
   useEffect(() => {
     let active = true;
-    const updateFromCache = () => {
+    const updateFromCache = (removal?: PublicContentRemovedError) => {
       if (!active) return;
       const data = publicContentCache.peek<T>(key);
       setState({
         requestKey: key,
-        result: data ? { status: "available", data } : { status: "error" },
+        result: data ? { status: "available", data } : contentError(removal),
       });
     };
     const unsubscribe = publicContentCache.subscribe(key, updateFromCache);
@@ -129,9 +130,9 @@ function useCachedPublicContent<T>(
       .then((data) => {
         if (active) setState({ requestKey: key, result: { status: "available", data } });
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (active && !publicContentCache.peek<T>(key)) {
-          setState({ requestKey: key, result: { status: "error" } });
+          setState({ requestKey: key, result: contentError(error) });
         }
       });
     return () => {
@@ -149,6 +150,12 @@ function useCachedPublicContent<T>(
     ? cached ? { status: "available" as const, data: cached } : { status: "loading" as const }
     : state.result;
   return { ...result, retry };
+}
+
+function contentError(error: unknown): { status: "error"; removed?: true } {
+  return error instanceof PublicContentRemovedError
+    ? { status: "error", removed: true }
+    : { status: "error" };
 }
 
 function useRemoteContent<T>(load: () => Promise<T>, dependencies: readonly unknown[]): RemoteState<T> {

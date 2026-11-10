@@ -39,6 +39,7 @@ export type PublicContentMeasurement = Readonly<{
 }>;
 
 type MeasurementReporter = (measurement: PublicContentMeasurement) => void;
+type CacheListener = (removal?: PublicContentRemovedError) => void;
 
 export class PublicContentCache {
   private readonly memory = new Map<string, CacheEntry<unknown>>();
@@ -46,7 +47,7 @@ export class PublicContentCache {
     string,
     Readonly<{ promise: Promise<unknown>; controller: AbortController }>
   >();
-  private readonly listeners = new Map<string, Set<() => void>>();
+  private readonly listeners = new Map<string, Set<CacheListener>>();
 
   constructor(
     private readonly storage: Storage = AsyncStorage,
@@ -62,7 +63,7 @@ export class PublicContentCache {
     return entry.data as T;
   }
 
-  subscribe(key: string, listener: () => void): () => void {
+  subscribe(key: string, listener: CacheListener): () => void {
     const listeners = this.listeners.get(key) ?? new Set();
     listeners.add(listener);
     this.listeners.set(key, listeners);
@@ -175,8 +176,9 @@ export class PublicContentCache {
       const response = await fetcher(previous?.etag, controller.signal);
       if (response.status === 404 || response.status === 410) {
         await this.evict(key);
-        this.listeners.get(key)?.forEach((listener) => listener());
-        throw new PublicContentRemovedError(response.status);
+        const removal = new PublicContentRemovedError(response.status);
+        this.listeners.get(key)?.forEach((listener) => listener(removal));
+        throw removal;
       }
       const entry: CacheEntry<T> = response.status === 304 && previous
         ? { ...previous, ...(response.etag ? { etag: response.etag } : {}), storedAt: this.now() }

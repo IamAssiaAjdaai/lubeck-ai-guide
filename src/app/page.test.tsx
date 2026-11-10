@@ -58,6 +58,7 @@ describe("Homepage cutover", () => {
     expect(heading.textContent).toBe("Make every city your own.");
     expect(document.querySelectorAll("main > section")).toHaveLength(9);
     expect(screen.getByRole("link", { name: "Start exploring" }).getAttribute("href")).toBe("/explore");
+    expect(screen.getByRole("link", { name: /^Explore cities$/ }).getAttribute("href")).toBe("/explore");
     expect(document.querySelectorAll('a[href*="apps.apple.com"],a[href*="play.google.com"]')).toHaveLength(0);
     expect(homeMetadata.robots).toEqual({ index: true, follow: true });
   });
@@ -126,6 +127,15 @@ describe("Explore available cities", () => {
     expect(screen.getByRole("heading", { name: "Available cities" })).not.toBeNull();
     expect(screen.getByRole("heading", { name: "Hamburg" }).closest("a")).toBeNull();
     expect(screen.getByRole("heading", { name: "Düsseldorf" }).closest("a")).toBeNull();
+  });
+
+  it("links the cityless Explore tab to the available cities section of the Explore page", async () => {
+    await renderExplore();
+    const link = screen.getByRole("navigation", { name: "CITYWALK" }).querySelector('a[href^="/explore"]');
+    const [path, anchor] = link?.getAttribute("href")?.split("#") ?? [];
+    expect(path).toBe("/explore");
+    expect(anchor).toBe("available-cities");
+    expect(document.getElementById(anchor!)?.contains(screen.getByRole("heading", { name: "Available cities" }))).toBe(true);
   });
 
   it("renders Lübeck as the currently published available city", async () => {

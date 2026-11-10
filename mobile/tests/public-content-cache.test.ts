@@ -152,7 +152,7 @@ describe("native public content cache", () => {
 
     await vi.waitFor(() => expect(storage.removeItem).toHaveBeenCalledWith(storageKey));
     expect(cache.peek(key)).toBeUndefined();
-    expect(listener).toHaveBeenCalled();
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({ name: "PublicContentRemovedError", status: 404 }));
   });
 
   it("prefers fresh network content over the offline fallback when connectivity returns", async () => {

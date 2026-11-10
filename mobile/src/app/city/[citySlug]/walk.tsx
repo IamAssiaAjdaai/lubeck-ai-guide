@@ -34,7 +34,7 @@ export default function WalkScreen() {
   if (!identity || !scope || (state.status === "error" && !data))
     return (
       <Screen>
-        <ContentRecovery retry={state.status === "error" ? state.retry : undefined} citySlug={identity?.citySlug} />
+        <ContentRecovery retry={state.status === "error" ? state.retry : undefined} cityUnavailable={state.status === "error" && state.removed} citySlug={identity?.citySlug} />
       </Screen>
     );
   if (!data)
@@ -46,7 +46,7 @@ export default function WalkScreen() {
   return (
     <>
       <Stack.Screen options={{ title: nativeCityName(data.city.slug, data.city.content.name, locale) }} />
-      {state.status === "error" ? <ContentRecovery retry={state.retry} citySlug={identity.citySlug} /> : null}
+      {state.status === "error" ? <ContentRecovery retry={state.retry} cityUnavailable={state.removed} citySlug={identity.citySlug} /> : null}
       <NativeWalkFlow
         key={scope}
         plannerNavigation={{ routeKey: route.key, navigation }}
