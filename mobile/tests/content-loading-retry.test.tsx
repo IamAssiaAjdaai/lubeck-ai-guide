@@ -12,7 +12,11 @@ const cache = vi.hoisted(() => ({
     return vi.fn();
   }),
 }));
-vi.mock("../src/lib/publicContentCache", () => ({ publicContentCache: cache, publicContentCacheKey: (...parts: string[]) => parts.join(":") }));
+vi.mock("@react-native-async-storage/async-storage", () => ({ default: {} }));
+vi.mock("../src/lib/publicContentCache", async (importOriginal) => ({
+  ...await importOriginal<typeof import("../src/lib/publicContentCache")>(),
+  publicContentCache: cache,
+}));
 vi.mock("../src/lib/api/instance", () => ({ citywalkApi: {} }));
 import { usePublicCity, usePublicPlace } from "../src/hooks/usePublicContent";
 function Content() {

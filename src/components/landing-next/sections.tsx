@@ -206,7 +206,7 @@ export function PersonalizedWalks() {
               <span>Estimated return</span>
               <span>16:45</span>
             </div>
-            <Link className={styles.btn + " " + styles.btnPrimary + " " + styles.wideCta} href="/explore" prefetch={false}>Preview route</Link>
+            <Link className={styles.btn + " " + styles.btnPrimary + " " + styles.wideCta} href="/explore" prefetch={false}>Explore cities</Link>
           </div>
         </div>
       </div>

@@ -18,7 +18,7 @@ export default function BottomNavigation({
       key: "explore",
       label: t.explore,
       icon: Compass,
-      href: citySlug ? `/${locale}/${citySlug}#places` : "/#available-cities",
+      href: citySlug ? `/${locale}/${citySlug}#places` : "/explore#available-cities",
     },
     {
       key: "trips",

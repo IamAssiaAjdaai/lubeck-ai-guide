@@ -17,7 +17,7 @@ import { citywalkApi } from "../../../../lib/api/instance";
 import { explorePhotography } from "../../../../lib/explorePhotography";
 import { photoCreditEntries, photoCreditsCopy } from "../../../../lib/photoCredits";
 import { routesCopy } from "../../../../lib/publishedRoutes";
-import { publishedRouteTiming } from "../../../../lib/publishedRouteTiming";
+import { publishedRouteTiming, publishedVisitTimeLabel } from "../../../../lib/publishedRouteTiming";
 import { routePreviewCopy } from "../../../../lib/routePreviewCopy";
 import { parseTourRouteIdentity, resolveTourForRoute } from "../../../../lib/routing";
 import { CuratedTourControls } from "../../../../components/CuratedTourControls";
@@ -30,7 +30,7 @@ export default function TourScreen() {
   const state = usePublicCity(identity?.citySlug ?? "invalid", locale);
   if (!identity) return <Screen navigation={false}><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
   if (state.status === "loading") return <Screen navigation={false}><CitywalkLoading variant="city" /></Screen>;
-  if (state.status === "error") return <Screen navigation={false}><ContentRecovery retry={state.retry} citySlug={identity.citySlug} /></Screen>;
+  if (state.status === "error") return <Screen navigation={false}><ContentRecovery retry={state.retry} cityUnavailable={state.removed} citySlug={identity.citySlug} /></Screen>;
   const tour = resolveTourForRoute(state.data, identity);
   if (!tour) return <Screen navigation={false}><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
   return <RoutePreview key={`${identity.citySlug}:${tour.slug}`} data={state.data} tour={tour} />;
@@ -64,7 +64,7 @@ function RoutePreview({ data, tour }: { data: PublicCitySummaryResponse; tour: P
       <AppText accessibilityRole="header" maxFontSizeMultiplier={2} style={[styles.title, largeText && styles.largeTitle, fontScale > 2.5 && styles.largestTitle, textStyle]}>{tour.content.title}</AppText>
       <View style={[styles.summary, nativeRowStyle(direction)]}>
         <NativeIcon ios="clock" android="schedule" color={colors.primary} size={17} />
-        <AppText variant="metadata" style={styles.muted}>{timing.visitMinutes !== undefined ? copy.visits.replace("{minutes}", String(timing.visitMinutes)) : copy.visitsUnknown} · {tour.stops.length} {messages.stops}</AppText>
+        <AppText variant="metadata" style={styles.muted}>{publishedVisitTimeLabel(timing.visitMinutes, locale)} · {tour.stops.length} {messages.stops}</AppText>
       </View>
       <PressableSurface accessibilityRole="button" accessibilityLabel={copy.timingDetails} accessibilityState={{ expanded: timingExpanded }} onPress={() => setTimingExpanded(value => !value)} style={styles.timingToggle}>
         <AppText variant="caption" style={styles.timingLabel}>{copy.timing}</AppText><NativeIcon ios={timingExpanded ? "chevron.up" : "chevron.down"} android={timingExpanded ? "expand_less" : "expand_more"} size={15} color={colors.primary} />

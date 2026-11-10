@@ -21,16 +21,16 @@ vi.mock("../src/components/ContentRecovery", () => ({ ContentRecovery: () => nul
 vi.mock("../src/design/responsiveText", () => ({ useResponsiveTextLayout: () => ({ expanded: false }) }));
 vi.mock("../src/localization/LocaleProvider", () => ({ useNativeLocale: () => ({ locale: state.locale, direction: "ltr", messages: { minutes: "min", stops: "stops", unavailable: "Unavailable", fallbackContent: "Content fallback" } }) }));
 vi.mock("../src/lib/api/instance", () => ({ citywalkApi: { resolveUrl: (x:string) => x } }));
-vi.mock("../src/hooks/usePublicContent", () => ({ usePublicCity: () => ({ status: "available", data: { city: {slug:state.returnedCity,content:{name:"Selected City"}}, places:[],tours:state.empty ? [] : [45,120].map(minutes=>({slug:`published-${minutes}`,estimatedDurationMinutes:minutes,stops:[],media:[],resolvedLocale:"en",content:{title:`Published ${minutes}`,shortDescription:"Published description"}})) } }) }));
+vi.mock("../src/hooks/usePublicContent", () => ({ usePublicCity: () => ({ status: "available", data: { city: {slug:state.returnedCity,content:{name:"Selected City"}}, places:[],tours:state.empty ? [] : [45,120].map(minutes=>({slug:`published-${minutes}`,estimatedDurationMinutes:45,stops:[{placeSlug:"stop",position:1,visitDurationMinutes:minutes}],media:[],resolvedLocale:"en",content:{title:`Published ${minutes}`,shortDescription:"Published description"}})) } }) }));
 import WalkingRoutesScreen from "../src/app/city/[citySlug]/routes";
 beforeEach(() => vi.stubGlobal("require", () => 1));
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); state.city="another-city";state.returnedCity="another-city";state.locale="en";state.empty=false; });
 it.each(["en","de"] as const)("keeps guest route filtering and exact preview navigation in %s", locale => {
   state.locale=locale;render(<WalkingRoutesScreen />);
   expect(screen.getByText("Selected City")).toBeTruthy();
-  fireEvent.click(screen.getByRole("radio",{name:locale==="de"?"Bis 60 Min.":"Up to 60 min"}));
+  fireEvent.click(screen.getByRole("radio",{name:locale==="de"?"Bis 60 Min. an den Stopps":"Up to 60 min at stops"}));
   expect(screen.queryByText("Published 120")).toBeNull();
-  const preview=screen.getByRole("button",{name:locale==="de"?"Route ansehen: Published 45 · 45 min · 0 stops":"Preview route: Published 45 · 45 min · 0 stops"}).closest("a")!;
+  const preview=screen.getByRole("button",{name:locale==="de"?"Route ansehen: Published 45 · 45 Min. an den Stopps · 1 stops":"Preview route: Published 45 · 45 min at stops · 1 stops"}).closest("a")!;
   expect(JSON.parse(preview.dataset.route!)).toEqual({pathname:"/city/[citySlug]/tour/[tourSlug]",params:{citySlug:"another-city",tourSlug:"published-45"}});
   fireEvent.click(screen.getByRole("radio",{name:locale==="de"?"Alle":"All"}));
   expect(screen.getByText("Published 120")).toBeTruthy();

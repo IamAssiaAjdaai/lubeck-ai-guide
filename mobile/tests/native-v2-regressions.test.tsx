@@ -460,11 +460,12 @@ it("dismisses the Guide fallback to the same hub while retaining its planner ret
   expect(JSON.parse(link.dataset.route!)).toEqual({ pathname: "/city/[citySlug]", params: { citySlug: "lubeck", section: "places", returnToPlanner: "1", plannerReturnVersion: "1", plannerRouteKey: "walk-route", plannerDraftToken: "draft-mount" } });
 });
 
-it("renders the published tour title, estimate, stops, themes and description without illustrative reference data", () => {
+it("renders the published tour with unknown visit time, stops, themes and description without illustrative reference data", () => {
   state.showTour = true;
   render(<CityScreen />);
   expect(screen.getByText("Old Town walk")).toBeTruthy();
-  expect(screen.getByText("45 min · 1 stops")).toBeTruthy();
+  expect(screen.getByText("Visit estimates incomplete · 1 stops")).toBeTruthy();
+  expect(screen.queryByText("45 min · 1 stops")).toBeNull();
   expect(screen.getByText("Published route description")).toBeTruthy();
   expect(screen.getByText("Architecture")).toBeTruthy();
   expect(screen.queryByText("Classic Lübeck")).toBeNull();

@@ -1,3 +1,4 @@
+import { publishedRouteTiming, publishedVisitTimeLabel } from "../../../lib/publishedRouteTiming";
 import { PlacePhotoCredit } from "../../../components/PlacePhotoCredit";
 import { nativeTextBlock, nativeContentTextStyle, nativeRowStyle } from "../../../design/rtlPresentation";
 import { nativeArabicDisplayText, nativeCategoryLabel } from "../../../lib/contentLabels";
@@ -126,7 +127,7 @@ export default function CityScreen() {
       </Screen>
     );
   if (cityState.status === "error")
-    return <Screen><ContentRecovery retry={cityState.retry} citySlug={identity.citySlug} /></Screen>;
+    return <Screen><ContentRecovery retry={cityState.retry} cityUnavailable={cityState.removed} citySlug={identity.citySlug} /></Screen>;
 
   const { city, places, tours } = cityState.data;
   const assistantRoute = cityAssistantRoute(city.slug);
@@ -384,6 +385,7 @@ function TourCard({
   const bundled = !image ? cityHubBundledPhoto(citySlug, firstPlace?.slug ?? "") : undefined;
   const { locale: uiLocale } = useNativeLocale();
   const textStyle = nativeContentTextStyle(uiLocale, tour.resolvedLocale);
+  const visitTime = publishedVisitTimeLabel(publishedRouteTiming(tour).visitMinutes, uiLocale);
   const stopNames = [...tour.stops]
     .sort((first, second) => first.position - second.position)
     .flatMap((stop) => {
@@ -401,7 +403,7 @@ function TourCard({
       >
         <PressableSurface
           accessibilityRole="link"
-          accessibilityLabel={`${nativeArabicDisplayText(tour.content.title, uiLocale)} · ${tour.estimatedDurationMinutes ? `${tour.estimatedDurationMinutes} ${messages.minutes} · ` : ""}${tour.stops.length} ${messages.stops} · ${stopNames.join(" · ")}`}
+          accessibilityLabel={`${nativeArabicDisplayText(tour.content.title, uiLocale)} · ${visitTime} · ${tour.stops.length} ${messages.stops} · ${stopNames.join(" · ")}`}
           onPress={() => {
             void triggerCitywalkHaptic("medium");
           }}
@@ -422,10 +424,7 @@ function TourCard({
               {nativeArabicDisplayText(tour.content.title, uiLocale)}
             </AppText>
             <AppText variant="metadata" style={styles.metadata}>
-              {tour.estimatedDurationMinutes
-                ? `${tour.estimatedDurationMinutes} ${messages.minutes} · `
-                : ""}
-              {tour.stops.length} {messages.stops}
+              {visitTime} · {tour.stops.length} {messages.stops}
             </AppText>
             <View style={styles.chips}>
               {[

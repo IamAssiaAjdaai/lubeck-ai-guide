@@ -1,3 +1,4 @@
+import { publishedRouteTiming, publishedVisitTimeLabel } from "../../../lib/publishedRouteTiming";
 import { useState } from "react";
 import { Link, useLocalSearchParams } from "expo-router";
 import { Platform, StyleSheet, View } from "react-native";
@@ -28,7 +29,7 @@ export default function WalkingRoutesScreen() {
   const state = usePublicCity(identity?.citySlug ?? "invalid", locale);
   if (!identity) return <Screen navigation={false}><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
   if (state.status === "loading") return <Screen navigation={false}><CitywalkLoading variant="city" /></Screen>;
-  if (state.status === "error") return <Screen navigation={false}><ContentRecovery citySlug={identity.citySlug} retry={state.retry} /></Screen>;
+  if (state.status === "error") return <Screen navigation={false}><ContentRecovery citySlug={identity.citySlug} retry={state.retry} cityUnavailable={state.removed} /></Screen>;
   if (state.data.city.slug !== identity.citySlug) return <Screen navigation={false}><StatusMessage>{messages.unavailable}</StatusMessage></Screen>;
   return <RoutesContent key={identity.citySlug} data={state.data} />;
 }
@@ -42,7 +43,7 @@ function RoutesContent({ data }: { data: PublicCitySummaryResponse }) {
       <View style={[styles.city, nativeRowStyle(direction)]}><NativeIcon ios="mappin" android="place" size={16} color="#FFFFFF" /><AppText style={styles.cityLabel}>{nativeCityName(data.city.slug, data.city.content.name, locale)}</AppText></View>
       <AppText accessibilityRole="header" style={styles.heading}>{copy.title}</AppText>
       <AppText style={styles.introduction}>{copy.introduction}</AppText>
-      {data.tours.length ? <View accessibilityRole="radiogroup" accessibilityLabel={messages.minutes} style={[styles.filters, nativeRowStyle(direction)]}>
+      {data.tours.length ? <View accessibilityRole="radiogroup" accessibilityLabel={copy.filterLabel} style={[styles.filters, nativeRowStyle(direction)]}>
         {[undefined, ...routeTimeBudgets].map(value => <PressableSurface key={value ?? "all"} accessibilityRole="radio" accessibilityLabel={value ? copy.budget.replace("{minutes}", String(value)) : copy.all} accessibilityState={{ checked: budget === value }}
           onPress={() => setBudget(value)} style={[styles.filter, budget === value && styles.selectedFilter]}>
           <AppText style={[styles.filterLabel, budget === value && styles.selectedFilterLabel]}>{value ? `≤ ${value} ${messages.minutes}` : copy.all}</AppText>
@@ -64,12 +65,13 @@ function RoutesContent({ data }: { data: PublicCitySummaryResponse }) {
 function PublishedRouteCard({ tour, data }: { tour: PublicTour; data: PublicCitySummaryResponse }) {
   const { locale, direction, messages } = useNativeLocale();
   const copy = routesCopy(locale), { expanded } = useResponsiveTextLayout();
+  const visitTime = publishedVisitTimeLabel(publishedRouteTiming(tour).visitMinutes, locale);
   const { photo, photoPlace, themes } = publishedRoutePresentation(data.city.slug, tour, data.places);
   const centralCredit = photo?.credit ? photoCreditEntries.find(entry => entry.source === photo.credit?.source) : undefined;
   const textStyle = nativeContentTextStyle(locale, tour.resolvedLocale);
   return <View style={styles.card}>
     <Link href={{ pathname: "/city/[citySlug]/tour/[tourSlug]", params: { citySlug: data.city.slug, tourSlug: tour.slug } }} asChild>
-      <PressableSurface accessibilityRole="link" accessibilityLabel={`${copy.preview}: ${tour.content.title} · ${tour.estimatedDurationMinutes !== undefined ? `${tour.estimatedDurationMinutes} ${messages.minutes}` : copy.unknownDuration} · ${tour.stops.length} ${messages.stops}${themes.length ? ` · ${themes.map(theme => nativeCategoryLabel(theme, locale)).join(" · ")}` : ""}`} style={styles.routeLink}>
+      <PressableSurface accessibilityRole="link" accessibilityLabel={`${copy.preview}: ${tour.content.title} · ${visitTime} · ${tour.stops.length} ${messages.stops}${themes.length ? ` · ${themes.map(theme => nativeCategoryLabel(theme, locale)).join(" · ")}` : ""}`} style={styles.routeLink}>
         {photo ? <NativeContentImage source={photo.uri ? { uri: citywalkApi.resolveUrl(photo.uri) } : photo.source} style={styles.photo} contentFit="cover" cachePolicy="memory-disk"
           accessibilityLabel={photoPlace ? copy.photoStop.replace("{place}", nativePlaceName(data.city.slug, photoPlace.slug, photoPlace.content.name, locale)) : tour.content.title} />
           : <View style={[styles.photo, styles.placeholder]}><NativeIcon ios="map" android="map" size={42} /><AppText style={styles.muted}>{copy.noPhoto}</AppText></View>}
@@ -77,7 +79,7 @@ function PublishedRouteCard({ tour, data }: { tour: PublicTour; data: PublicCity
           <AppText accessibilityRole="header" style={[styles.routeTitle, textStyle]}>{tour.content.title}</AppText>
           <View style={[styles.metadata, nativeRowStyle(direction)]}>
             <NativeIcon ios="clock" android="schedule" size={16} color={colors.primary} />
-            <AppText variant="metadata" style={styles.muted}>{tour.estimatedDurationMinutes !== undefined ? `${tour.estimatedDurationMinutes} ${messages.minutes}` : copy.unknownDuration} · {tour.stops.length} {messages.stops}</AppText>
+            <AppText variant="metadata" style={styles.muted}>{visitTime} · {tour.stops.length} {messages.stops}</AppText>
           </View>
           {themes.length ? <View style={[styles.themes, nativeRowStyle(direction)]}>{themes.slice(0, 3).map(theme => <AppText key={theme} variant="caption" style={styles.theme}>{nativeCategoryLabel(theme, locale)}</AppText>)}</View> : null}
           {tour.content.shortDescription ? <AppText numberOfLines={expanded ? undefined : 3} variant="metadata" style={[styles.muted, textStyle]}>{tour.content.shortDescription}</AppText> : null}
